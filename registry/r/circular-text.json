@@ -77,5 +77,15 @@
 			"target": "circular-text/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/circular-text/circular-text.variants.test.ts",
+			"target": "circular-text/circular-text.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

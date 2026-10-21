@@ -107,5 +107,24 @@
 			"target": "sortable/use-sortable-drag-gesture.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/sortable/sortable.variants.test.ts",
+			"target": "sortable/sortable.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

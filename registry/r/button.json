@@ -157,5 +157,29 @@
 			"target": "button/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/button/button.variants.test.ts",
+			"target": "button/button.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../styles/tokens",
+					"to": "@registry/styles/tokens"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"cn",
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

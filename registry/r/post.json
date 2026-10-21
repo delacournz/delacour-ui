@@ -249,5 +249,29 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/post/post.utils.test.ts",
+			"target": "post/post.utils.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post.variants.test.ts",
+			"target": "post/post.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -95,5 +95,21 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-fade/scroll-fade.variants.test.ts",
+			"target": "scroll-fade/scroll-fade.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/scroll-edges",
+					"to": "@registry/lib/scroll-edges"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

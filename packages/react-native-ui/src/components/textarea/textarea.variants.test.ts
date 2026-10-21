@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { INPUT_SIZES, inputVariants, resolveInputFieldClass } from "../input/input.variants";
 import {
 	resolveTextareaCount,
@@ -15,8 +14,6 @@ import {
 	TEXTAREA_PADDING_Y,
 	textareaVariants,
 } from "./textarea.variants";
-
-const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
 
 /** Points behind a `--text-input-*` token in `tokens.css`. */
 function inputTextPoints(size: string): number {

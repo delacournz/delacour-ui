@@ -2,8 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { extendTailwindMerge } from "tailwind-merge";
-import { type CustomClassGroupId, TW_MERGE_CONFIG } from "../styles/tokens";
-import { cn } from "./cn";
+import { cn } from "./lib/cn";
+import { type CustomClassGroupId, TW_MERGE_CONFIG } from "./styles/tokens";
 
 /**
  * `cn` against the tailwind-merge it replaced, on this library's own classes.
@@ -26,7 +26,7 @@ function variantFiles(dir: string): string[] {
 
 const literals = [
 	...new Set(
-		variantFiles(join(import.meta.dir, "../components")).flatMap((file) =>
+		variantFiles(join(import.meta.dir, "components")).flatMap((file) =>
 			[...readFileSync(file, "utf8").matchAll(/"([a-z0-9!:[\]/.\-_% ]+)"/g)]
 				.map((match) => match[1] ?? "")
 				.filter((value) => value.includes("-"))

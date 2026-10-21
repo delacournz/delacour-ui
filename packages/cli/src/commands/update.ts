@@ -57,6 +57,8 @@ export type UpdateOptions = {
 	prune?: boolean;
 	/** Merge into files with uncommitted changes. */
 	force?: boolean;
+	/** Bring every component's tests along, not only the ones the project already copied. */
+	tests?: boolean;
 	/** `true` installs, `false` never does, unset asks when there is someone to ask. */
 	install?: boolean;
 	offline?: boolean;
@@ -222,7 +224,7 @@ async function promptUntracked(files: readonly string[]): Promise<UntrackedAnswe
 }
 
 /** What reading a plan needs of the options — the part `diff` shares. */
-export type PlanOptions = Pick<UpdateOptions, "cwd" | "base" | "format" | "offline" | "ref" | "registry">;
+export type PlanOptions = Pick<UpdateOptions, "cwd" | "base" | "format" | "offline" | "ref" | "registry" | "tests">;
 
 /**
  * Reads the project and the registry into a plan.
@@ -254,6 +256,7 @@ export async function readPlan(
 			baseClient: clients?.baseClient ?? open,
 			format,
 			baseRef: options.base,
+			tests: options.tests,
 		})
 	);
 

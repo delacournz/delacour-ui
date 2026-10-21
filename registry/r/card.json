@@ -128,5 +128,21 @@
 			"target": "card/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/card/card.variants.test.ts",
+			"target": "card/card.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -109,7 +109,8 @@ export const CHECKS: Check[] = [
 				const item = registryItemSchema.parse(
 					JSON.parse(await readFile(join(registryDir, "r", `${entry.name}.json`), "utf-8"))
 				);
-				for (const file of item.files) referenced.add(file.path);
+				// A test is named in `tests`, not `files` — still named, so not dropped.
+				for (const file of [...item.files, ...item.tests]) referenced.add(file.path);
 			}
 
 			// The registry serves the library itself, so `files[].path` resolves

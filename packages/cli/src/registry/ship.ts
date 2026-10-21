@@ -1,4 +1,4 @@
-import { isUnshippedSource } from "./classify";
+import { isTest } from "./classify";
 
 /**
  * What a consumer's copy of a library file leaves out, and the check that it
@@ -7,7 +7,7 @@ import { isUnshippedSource } from "./classify";
  * The library's docs are written for the people who maintain it, in a Bun
  * monorepo with a test beside every pure module. A copied `AGENTS.md` lands in
  * a project on any package manager, without one of those tests — the registry
- * drops them (`classifySource`) — so a sentence holding a design rule to
+ * copies them only for `add --tests` (`classifySource`) — so a sentence holding a design rule to
  * `bun test` or to `tokens.test.ts` cites a toolchain and a file its new owner
  * does not have. Two things close that, and both are here:
  *
@@ -90,7 +90,7 @@ function dropUnshippedRows(content: string): string {
 		.split("\n")
 		.filter((line) => {
 			const file = FIRST_CELL.exec(line)?.[1];
-			return file === undefined || !isUnshippedSource(file);
+			return file === undefined || !isTest(file);
 		})
 		.join("\n");
 }

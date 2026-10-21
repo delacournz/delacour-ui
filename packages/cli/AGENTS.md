@@ -137,21 +137,21 @@ scripts/
    that edits a fetched file cannot be used to splice arbitrary source into someone's project.
 
 8. **Nothing a consumer receives cites Bun or a file the registry does not ship.** A copy lands in
-   a project on npm, pnpm, yarn or bun, and `classifySource` drops every `*.test.ts`,
-   `*.test-helpers.ts` and `*.fixtures.ts` — so `bun test`, `bunx`, `tokens.test.ts` or a playground
-   `*.e2e.ts` in a copied file names a toolchain and a file that are not there, and an agent reading
+   a project on npm, pnpm, yarn or bun, and a plain `add` copies no `*.test.ts`,
+   `*.test-helpers.ts` or `*.fixtures.ts` — they reach a project only under `add --tests` — so
+   `bun test`, `bunx`, `tokens.test.ts` or a playground `*.e2e.ts` in a copied file names a toolchain and a file that are not there, and an agent reading
    the copy takes it at its word. `registry/ship.ts` holds both halves:
 
    - **`shipContent`** strips a component `AGENTS.md` at add time, in `client.loadItem` after the
      rewrites — so `add`, `update`, `view` and the MCP server receive the same text and the lock
      hashes it. It removes every `<!-- registry:omit -->` … `<!-- /registry:omit -->` span (whole
      lines when the markers sit alone on theirs, an exact cut otherwise; unbalanced or nested markers
-     throw), and every table row whose first cell is a backticked file the registry drops. The Files
-     tables therefore keep listing tests in this repository, where `src/docs.test.ts` wants them, and
+     throw), and every table row whose first cell is a backticked file a plain `add` does not copy.
+     The Files tables therefore keep listing tests in this repository, where `src/docs.test.ts` wants them, and
      list the folder as it lands in the copy.
    - **`findUnshippableReferences`** is run by the builder over the shipped text of every file —
-     Markdown, `.ts`, `.tsx`, `.css` — and any hit fails `registry:build` with every offence listed
-     at once. `build.test.ts` holds the same guard over what `loadItem` delivers.
+     Markdown, `.ts`, `.tsx`, `.css`, every test excepted — and any hit fails `registry:build` with
+     every offence listed at once. `build.test.ts` holds the same guard over what `loadItem` delivers.
 
    The fix for a hit is to state the invariant rather than what checks it — "pure, so it is
    unit-testable", not "reachable from `bun test`". A pointer that is genuinely maintainer-only (which
@@ -522,6 +522,30 @@ the version, so the snapshot bump in `alpha.yml` is what switches it.
 `__CLI_VERSION__` comes from `package.json` through the same `define` block. It used to read
 `process.env.npm_package_version`, which only exists under a package manager running a script —
 `bunx delacour` is not that, so every published build reported the hardcoded fallback.
+
+### Tests ship in `tests`, not in `files`
+
+A `*.test.ts` (and a `*.test-helpers.ts` / `*.fixtures.ts`) is classified like the file beside it,
+marked `test: true`, and lands in its item's `tests` list with its own `testRegistryDependencies` and
+`testDependencies` — what only the tests need. `add --tests` folds all three into the item with
+`withTests` (in `registry/schema.ts`) before resolving or loading anything, so from there a test is
+an ordinary file: planned, written, recorded in the lock, updated. Four things are load-bearing:
+
+- **A separate list, not a flag on `files`.** zod strips the unknown key, so a CLI from before
+  `tests` reads a new registry and copies exactly what it always did. A `test: true` on a file entry
+  would have handed every old CLI the whole suite.
+- **The lock is the record of the choice.** `planUpdate` takes an item's tests when `--tests` is
+  passed or the lock already holds one of that item's tests (`isTest` on the key). A project that
+  never asked is never handed them; one that did keeps them current without repeating the flag.
+- **A test reads off disk only from its own folder.** `escapingReads` fails the build on
+  `join(import.meta.dirname, "../…")` — that path is this repository's layout, not the consumer's.
+  Suites import `THEME_CSS` / `TOKENS_CSS` from `styles/theme-tokens.test.ts` instead, which the
+  canonicaliser rewrites like any import. Source that imports a test fails the build too: a plain
+  `add` would not copy it.
+- **A suite at the root of `src` belongs to no item.** `docs.test.ts`, `cn.parity.test.ts` and the
+  rest check the library as a whole and never ship.
+
+`bun:test` maps to `@types/bun` (classified `dev` in `PACKAGE_INSTALL`); `node:*` needs nothing.
 
 ### Markdown is canonicalised too, but differently
 

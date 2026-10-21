@@ -161,5 +161,24 @@
 			"target": "alert/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert.variants.test.ts",
+			"target": "alert/alert.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

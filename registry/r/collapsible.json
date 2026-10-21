@@ -132,5 +132,37 @@
 			"target": "collapsible/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible.variants.test.ts",
+			"target": "collapsible/collapsible.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../accordion/accordion.variants",
+					"to": "@registry/ui/accordion/accordion.variants"
+				},
+				{
+					"from": "../accordion/accordion.variants.test",
+					"to": "@registry/ui/accordion/accordion.variants.test"
+				},
+				{
+					"from": "../icon/icon.variants",
+					"to": "@registry/ui/icon/icon.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"accordion",
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

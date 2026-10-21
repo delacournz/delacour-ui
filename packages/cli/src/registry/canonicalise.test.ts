@@ -18,6 +18,7 @@ const SOURCE_PATHS = [
 	"lib/color.ts",
 	"lib/merge-props.ts",
 	"styles/tokens.ts",
+	"styles/theme-tokens.test.ts",
 ];
 
 const PACKAGE_SUBPATHS = new Map([
@@ -131,6 +132,22 @@ describe("canonicaliseFile", () => {
 
 	test("throws on a relative import that resolves to nothing, rather than shipping it broken", () => {
 		expect(() => run("lib/cn.ts", 'import { x } from "./gone";')).toThrow(/gone/);
+	});
+
+	test("rewrites a test's import of another folder's test helper to a placeholder", () => {
+		const result = run(
+			"components/button/button.variants.test.ts",
+			'import { THEME_CSS } from "../../styles/theme-tokens.test";'
+		);
+
+		expect(result.content).toContain('"@registry/styles/theme-tokens.test"');
+		expect(result.registryDependencies).toEqual(["styles"]);
+	});
+
+	test("throws when source imports a test, which a plain add never copies", () => {
+		expect(() =>
+			run("components/button/button.tsx", 'import { THEME_CSS } from "../../styles/theme-tokens.test";')
+		).toThrow(/test/);
 	});
 
 	test("rewrites every specifier when a file holds several", () => {

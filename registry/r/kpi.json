@@ -249,5 +249,21 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi.variants.test.ts",
+			"target": "kpi/kpi.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../card/card.variants",
+					"to": "@registry/ui/card/card.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

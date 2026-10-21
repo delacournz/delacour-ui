@@ -102,6 +102,24 @@ Then it asks. `--install` answers yes without asking, `--no-install` answers no,
 nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead. Copying
 source into your repository is local and reversible; running your package manager is neither.
 
+### Tests, if you want them
+
+Every component's `bun test` suites ship in the registry too, and `--tests` copies them beside the
+source:
+
+```bash
+delacour add button --tests
+```
+
+They land next to what they test — `button/button.variants.test.ts` beside `button.variants.ts` —
+with their imports rewritten to your aliases like any other file, and they are recorded in the
+[lock](/docs/native/cli/configuration#the-lock-file) under the component they test. A test that
+imports another component's helper brings that helper along. The one package they add is
+`@types/bun`, as a dev dependency, so `tsc` knows what `bun:test` is.
+
+`update` keeps the tests you copied current and leaves alone the components you copied without
+them; `update --tests` brings them in for everything.
+
 <Callout title="Dependencies are split three ways">
 `expo install` for native modules and anything pinned to the SDK, your package manager for plain
 JavaScript, and `registryDependencies` — which are other components to copy, not packages to
@@ -128,6 +146,7 @@ Arguments:
 Options:
   -a, --all         add every component
   -o, --overwrite   replace files that differ
+  -t, --tests       copy each component's tests too, and record them in the lock
   -y, --yes         accept every default without asking
   -s, --src <dir>   base directory for source files, when setting the project up
   --install         install the packages the components need, without asking
@@ -354,6 +373,7 @@ Options:
                     existed
   --prune           delete untouched files their component no longer has
   -f, --force       merge into files with uncommitted changes
+  -t, --tests       bring every component's tests, not only those already copied
   --no-format       compare without running the project's formatter
   -y, --yes         accept every default without asking
   --install         install any packages the updated components need, without
@@ -394,6 +414,8 @@ Arguments:
   name              one component, or every installed one
 
 Options:
+  -t, --tests       compare every component's tests, not only those already
+                    copied
   --silent          print nothing but errors
   --registry <url>  registry to read from: a URL, github:owner/repo, or a local
                     path

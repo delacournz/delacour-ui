@@ -98,5 +98,15 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/skeleton.variants.test.ts",
+			"target": "skeleton/skeleton.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

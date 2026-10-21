@@ -112,5 +112,20 @@
 			"target": "theme-selector/use-theme-selection.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.logic.test.ts",
+			"target": "theme-selector/theme-selector.logic.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.variants.test.ts",
+			"target": "theme-selector/theme-selector.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

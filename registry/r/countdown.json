@@ -102,5 +102,15 @@
 			"target": "countdown/use-countdown-clock.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/countdown/countdown.variants.test.ts",
+			"target": "countdown/countdown.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -116,5 +116,28 @@
 			"target": "badge/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/badge/badge.variants.test.ts",
+			"target": "badge/badge.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../../styles/tokens",
+					"to": "@registry/styles/tokens"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -107,5 +107,29 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/progress-button/progress-button.variants.test.ts",
+			"target": "progress-button/progress-button.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"button",
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

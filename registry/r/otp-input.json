@@ -114,5 +114,26 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input.logic.test.ts",
+			"target": "otp-input/otp-input.logic.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input.variants.test.ts",
+			"target": "otp-input/otp-input.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -336,5 +336,42 @@
 			"target": "combobox/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.collect.test.ts",
+			"target": "combobox/combobox.collect.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.filter.test.ts",
+			"target": "combobox/combobox.filter.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.variants.test.ts",
+			"target": "combobox/combobox.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../select/select.variants",
+					"to": "@registry/ui/select/select.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

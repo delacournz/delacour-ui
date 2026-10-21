@@ -24,5 +24,21 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/cn.test.ts",
+			"target": "cn.test.ts",
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../styles/tokens",
+					"to": "@registry/styles/tokens"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

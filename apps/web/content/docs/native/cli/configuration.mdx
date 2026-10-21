@@ -157,6 +157,10 @@ served it — before you edited or formatted it. That pair is what
 [`update`](/docs/native/cli/commands#update) merges from. The file's own text is not stored; the
 registry names the library's source at a commit, so it can be fetched again from `ref`.
 
+Tests copied with `add --tests` are recorded the same way, under the component they test. The lock is
+also how `update` knows you wanted them: a component with a test in the lock has its tests kept
+current, and one without is never handed any unless you pass `--tests`.
+
 Delete the file and nothing breaks: the components work as they did, and `update` goes back to
 recording whatever still matches the registry.
 

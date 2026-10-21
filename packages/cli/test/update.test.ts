@@ -44,6 +44,11 @@ const CARD_V1 = [
 /** Upstream fixed the padding. */
 const CARD_V2 = CARD_V1.replace("const padding = 4;", "const padding = 6;");
 
+const CARD_TEST_KEY = "ui/card/card.test.ts";
+const CARD_TEST = "src/components/ui/card/card.test.ts";
+const CARD_TEST_V1 = 'import { test } from "bun:test";\n\ntest("card", () => {});\n';
+const CARD_TEST_V2 = CARD_TEST_V1.replace('"card"', '"card pads"');
+
 const BADGE = 'export function Badge() {\n\treturn "badge";\n}\n';
 const CN = 'export function cn(...parts: string[]) {\n\treturn parts.join(" ");\n}\n';
 
@@ -53,6 +58,8 @@ type FixtureItem = {
 	registryDependencies?: string[];
 	/** `<namespace>/<target>` → the library's text for it. */
 	files: Record<string, string>;
+	/** The same, for the item's tests. */
+	tests?: Record<string, string>;
 };
 
 const V1: FixtureItem[] = [
@@ -61,6 +68,7 @@ const V1: FixtureItem[] = [
 		type: "registry:ui",
 		registryDependencies: ["cn"],
 		files: { "ui/card/card.tsx": CARD_V1, "ui/card/card.styles.ts": "export const styles = {};\n" },
+		tests: { [CARD_TEST_KEY]: CARD_TEST_V1 },
 	},
 	{ name: "badge", type: "registry:ui", files: { "ui/badge/badge.tsx": BADGE } },
 	{ name: "cn", type: "registry:lib", files: { "lib/cn.ts": CN } },
@@ -72,6 +80,7 @@ const V2: FixtureItem[] = [
 		type: "registry:ui",
 		registryDependencies: ["cn", "tag"],
 		files: { "ui/card/card.tsx": CARD_V2, "ui/card/card.types.ts": "export type CardProps = object;\n" },
+		tests: { [CARD_TEST_KEY]: CARD_TEST_V2 },
 	},
 	{ name: "badge", type: "registry:ui", files: { "ui/badge/badge.tsx": BADGE } },
 	{ name: "cn", type: "registry:lib", files: { "lib/cn.ts": CN } },
@@ -94,23 +103,26 @@ async function temp(prefix: string): Promise<string> {
 
 /** Writes a registry the way the builder would: an index, an item each, and the source beside them. */
 async function buildRegistry(root: string, items: readonly FixtureItem[]): Promise<void> {
+	const toFile = (key: string) => {
+		const namespace = key.slice(0, key.indexOf("/"));
+		const target = key.slice(key.indexOf("/") + 1);
+
+		return {
+			path: `source/${key}`,
+			target,
+			namespace,
+			...(key === CARD_KEY ? { rewrites: [{ from: "../../lib/cn", to: "@registry/lib/cn" }] } : {}),
+		};
+	};
+
 	const entries = items.map((item) => ({
 		name: item.name,
 		type: item.type,
 		title: item.name,
 		description: `The ${item.name}.`,
 		registryDependencies: item.registryDependencies ?? [],
-		files: Object.keys(item.files).map((key) => {
-			const namespace = key.slice(0, key.indexOf("/"));
-			const target = key.slice(key.indexOf("/") + 1);
-
-			return {
-				path: `source/${key}`,
-				target,
-				namespace,
-				...(key === CARD_KEY ? { rewrites: [{ from: "../../lib/cn", to: "@registry/lib/cn" }] } : {}),
-			};
-		}),
+		files: Object.keys(item.files).map(toFile),
+		tests: Object.keys(item.tests ?? {}).map(toFile),
 	}));
 
 	await put(
@@ -118,14 +130,19 @@ async function buildRegistry(root: string, items: readonly FixtureItem[]): Promi
 		JSON.stringify({
 			name: "fixture",
 			homepage: "https://example.test",
-			items: entries.map((entry) => ({ ...entry, files: entry.files.map((f) => `${f.namespace}/${f.target}`) })),
+			items: entries.map(({ tests: _tests, ...entry }) => ({
+				...entry,
+				files: entry.files.map((f) => `${f.namespace}/${f.target}`),
+			})),
 		})
 	);
 
 	for (const entry of entries) await put(join(root, `registry/r/${entry.name}.json`), JSON.stringify(entry));
 
 	for (const item of items) {
-		for (const [key, content] of Object.entries(item.files)) await put(join(root, "source", key), content);
+		for (const [key, content] of Object.entries({ ...item.files, ...item.tests })) {
+			await put(join(root, "source", key), content);
+		}
 	}
 }
 
@@ -136,8 +153,8 @@ async function put(path: string, content: string): Promise<void> {
 
 const clientAt = (ref: string) => createRegistryClient({ cwd: registries, url: join(registries, ref, "registry") });
 
-/** A project with `card` and `badge` copied in from `v1`, lock and all. */
-async function project(): Promise<string> {
+/** A project with `card` and `badge` copied in from `v1`, lock and all — and their tests, when asked. */
+async function project(options: { tests?: boolean } = {}): Promise<string> {
 	const root = await temp("delacour-update-");
 	await cp(join(FIXTURES, "expo-app"), root, { recursive: true });
 
@@ -162,6 +179,7 @@ async function project(): Promise<string> {
 		install: false,
 		silent: true,
 		yes: true,
+		tests: options.tests,
 	});
 
 	return root;
@@ -254,6 +272,36 @@ describe("update, in a project nobody has edited", () => {
 
 		expect(again.written).toBe(0);
 		expect(again.files.filter((file) => file.action !== "current" && file.action !== "skipped")).toEqual([]);
+	});
+});
+
+describe("update, and a component's tests", () => {
+	test("leaves tests out of a project that never asked for them", async () => {
+		const root = await project();
+		await run(root);
+
+		await expect(exists(root, CARD_TEST)).resolves.toBe(false);
+		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]).toBeUndefined();
+	});
+
+	test("keeps the tests a project copied in step with the registry", async () => {
+		const root = await project({ tests: true });
+		expect(await read(root, CARD_TEST)).toBe(CARD_TEST_V1);
+
+		const result = await run(root);
+
+		expect(action(result, CARD_TEST)).toBe("updated");
+		expect(await read(root, CARD_TEST)).toBe(CARD_TEST_V2);
+		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]?.hash).toBe(contentHash(CARD_TEST_V2));
+	});
+
+	test("--tests copies them into a project that has none yet", async () => {
+		const root = await project();
+		const result = await run(root, { tests: true });
+
+		expect(action(result, CARD_TEST)).toBe("added");
+		expect(await read(root, CARD_TEST)).toBe(CARD_TEST_V2);
+		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]?.ref).toBe("v2");
 	});
 });
 

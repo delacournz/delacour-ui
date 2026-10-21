@@ -291,5 +291,65 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.logic.test.ts",
+			"target": "questionnaire/questionnaire.logic.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.variants.test.ts",
+			"target": "questionnaire/questionnaire.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../checkbox/checkbox.variants",
+					"to": "@registry/ui/checkbox/checkbox.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../progress/progress.variants",
+					"to": "@registry/ui/progress/progress.variants"
+				},
+				{
+					"from": "../radio/radio.variants",
+					"to": "@registry/ui/radio/radio.variants"
+				},
+				{
+					"from": "../rating/rating.variants",
+					"to": "@registry/ui/rating/rating.variants"
+				},
+				{
+					"from": "../steps/steps.variants",
+					"to": "@registry/ui/steps/steps.variants"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				},
+				{
+					"from": "../toggle-button/toggle-button.variants",
+					"to": "@registry/ui/toggle-button/toggle-button.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

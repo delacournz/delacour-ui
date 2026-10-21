@@ -14,5 +14,15 @@
 			"target": "calm-motion.ts",
 			"namespace": "lib"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/calm-motion.test.ts",
+			"target": "calm-motion.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

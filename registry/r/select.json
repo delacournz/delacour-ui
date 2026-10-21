@@ -227,5 +227,38 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/select/select.collect.test.ts",
+			"target": "select/select.collect.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select.variants.test.ts",
+			"target": "select/select.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../list-group/list-group.variants",
+					"to": "@registry/ui/list-group/list-group.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"list-group",
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

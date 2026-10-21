@@ -1,7 +1,8 @@
 import { beforeAll, describe, expect, test } from "bun:test";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { type BuildResult, buildRegistry } from "./build";
+import { type BuildResult, buildRegistry, escapingReads } from "./build";
+import { isTest } from "./classify";
 import { PLACEHOLDER_PREFIX, parsePlaceholder } from "./namespaces";
 import { applyRewrites } from "./rewrite";
 import { scanImports } from "./scan-imports";
@@ -36,7 +37,7 @@ beforeAll(async () => {
 
 	delivered = new Map();
 	for (const item of registry.items) {
-		for (const file of item.files) {
+		for (const file of [...item.files, ...item.tests]) {
 			const source = await readFile(join(REPO_ROOT, file.path), "utf-8");
 			delivered.set(file.path, shipContent(file.target, applyRewrites(source, file.rewrites)));
 		}
@@ -46,11 +47,14 @@ beforeAll(async () => {
 describe("buildRegistry", () => {
 	// The guard the builder also enforces, held here over what a consumer
 	// actually receives: a copy lands on any package manager with none of the
-	// library's tests, so it must cite neither.
+	// library's tests, so it must cite neither. A test is exempt — it is Bun's
+	// by nature and only lands under `add --tests`, beside its own suite.
 	test("nothing shipped cites Bun or a file the registry does not ship", () => {
-		const offences = [...delivered].flatMap(([path, content]) =>
-			findUnshippableReferences(content).map(({ line, match }) => `${path}:${line} ${match}`)
-		);
+		const offences = [...delivered]
+			.filter(([path]) => !isTest(path))
+			.flatMap(([path, content]) =>
+				findUnshippableReferences(content).map(({ line, match }) => `${path}:${line} ${match}`)
+			);
 
 		expect(offences).toEqual([]);
 	});
@@ -146,8 +150,48 @@ describe("buildRegistry", () => {
 		expect(styles?.dependencies).toContain("tailwindcss");
 	});
 
-	test("excludes tests", () => {
-		for (const { file } of everyFile()) expect(file.path).not.toContain(".test.");
+	test("keeps tests out of the files a plain add copies", () => {
+		for (const item of registry.items) {
+			for (const file of item.files) expect(file.path).not.toMatch(/\.(test|test-helpers|fixtures)\.tsx?$/);
+		}
+	});
+
+	test("ships each item's tests beside its files, under the same targets", () => {
+		const button = byName.get("button");
+
+		expect(button?.tests.map((file) => file.target)).toContain("button/button.variants.test.ts");
+		expect(byName.get("cn")?.tests.map((file) => file.target)).toContain("cn.test.ts");
+		expect(byName.get("styles")?.tests.map((file) => file.target)).toContain("theme-tokens.test.ts");
+	});
+
+	test("ships no library-wide suite — those check the library, not an item", () => {
+		const paths = registry.items.flatMap((item) => item.tests.map((file) => file.path));
+
+		expect(paths).not.toContain(`${PACKAGE_DIR}/src/docs.test.ts`);
+		for (const path of paths) expect(path.slice(`${PACKAGE_DIR}/src/`.length)).toContain("/");
+	});
+
+	test("records what only the tests need apart from what the source needs", () => {
+		for (const item of registry.items) {
+			for (const dependency of item.testRegistryDependencies) {
+				expect(item.registryDependencies).not.toContain(dependency);
+				expect(dependency).not.toBe(item.name);
+			}
+		}
+
+		expect(byName.get("button")?.testDependencies).toContain("@types/bun");
+		expect(byName.get("button")?.dependencies).not.toContain("@types/bun");
+		expect(byName.get("button")?.devDependencies).not.toContain("@types/bun");
+	});
+
+	test("an item with no tests needs nothing for them", () => {
+		const untested = registry.items.filter((item) => item.tests.length === 0);
+
+		expect(untested.length).toBeGreaterThan(0);
+		for (const item of untested) {
+			expect(item.testRegistryDependencies).toEqual([]);
+			expect(item.testDependencies).toEqual([]);
+		}
 	});
 
 	test("leaves no import pointing outside the item it was copied with", () => {
@@ -224,9 +268,10 @@ describe("buildRegistry", () => {
 	});
 });
 
+/** Tests included: a copied test is held to every rule a copied component is. */
 function everyFile(): { item: RegistryItem; file: RegistryFile; content: string; where: string }[] {
 	return registry.items.flatMap((item) =>
-		item.files.map((file) => ({
+		[...item.files, ...item.tests].map((file) => ({
 			item,
 			file,
 			content: delivered.get(file.path) as string,
@@ -249,5 +294,22 @@ function everyImport(): { where: string; specifier: string }[] {
 function itemOf(namespace: string | undefined, moduleId: string | undefined): string {
 	if (namespace === "ui") return (moduleId ?? "").split("/")[0] as string;
 	if (namespace === "styles" || namespace === "icons") return namespace;
-	return moduleId ?? "";
+	// `cn.test` is a test of `cn`.
+	return (moduleId ?? "").split(".")[0] as string;
 }
+
+describe("escapingReads", () => {
+	test("finds a read that climbs out of the test's own folder", () => {
+		const source = 'const CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");';
+		expect(escapingReads(source)).toEqual(["../../styles/theme.css"]);
+	});
+
+	test("finds it through import.meta.dir as well", () => {
+		expect(escapingReads('readdirSync(join(import.meta.dir, "../components"))')).toEqual(["../components"]);
+	});
+
+	test("lets a read of a sibling through", () => {
+		expect(escapingReads('readFileSync(join(import.meta.dirname, "tokens.css"), "utf-8")')).toEqual([]);
+		expect(escapingReads('readFileSync(join(import.meta.dirname, "./tokens.css"), "utf-8")')).toEqual([]);
+	});
+});

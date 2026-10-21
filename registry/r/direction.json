@@ -45,5 +45,15 @@
 			"target": "direction/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/direction/direction.variants.test.ts",
+			"target": "direction/direction.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

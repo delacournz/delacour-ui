@@ -251,5 +251,28 @@
 			"target": "bottom-sheet/use-bottom-sheet-input.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.variants.test.ts",
+			"target": "bottom-sheet/bottom-sheet.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "@delacour/react-native-ui/bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

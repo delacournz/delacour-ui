@@ -29,6 +29,12 @@ export type SourceClassification = {
 	 * collapsed. `null` for a file that is never imported from TypeScript.
 	 */
 	moduleId: string | null;
+	/**
+	 * A test, or a file that exists only to serve tests. It belongs to the item
+	 * it tests, ships in that item's `tests` rather than its `files`, and is
+	 * copied only when someone asks for tests.
+	 */
+	test: boolean;
 };
 
 const SOURCE_EXTENSIONS = [".ts", ".tsx"] as const;
@@ -40,24 +46,34 @@ const UNIWIND_ENV = "uniwind-env.d.ts";
  * Classifies one source path, or returns `null` for a file the registry does
  * not ship.
  *
- * Tests are dropped rather than rewritten: `button.variants.test.ts` imports
- * `bun:test` and reaches at internals the consumer has no reason to hold, and
- * shipping a test that cannot run is worse than shipping none.
+ * A test is classified like the file beside it and marked, rather than dropped:
+ * `add --tests` copies it into the consumer's tree next to what it tests. The
+ * one exception is the library-wide suite at the root of `src`, which checks
+ * the library as a whole and has no item to travel with.
  */
 export function classifySource(path: string): SourceClassification | null {
-	if (isUnshippedSource(path)) return null;
 	if (path === UNIWIND_ENV) {
-		return { item: "styles", type: "registry:style", namespace: "styles", target: UNIWIND_ENV, moduleId: null };
+		return {
+			item: "styles",
+			type: "registry:style",
+			namespace: "styles",
+			target: UNIWIND_ENV,
+			moduleId: null,
+			test: false,
+		};
 	}
 
 	const [directory, ...rest] = path.split("/");
 	if (!directory || rest.length === 0) return null;
 
-	return DIRECTORIES[directory]?.(rest) ?? null;
+	const classification = DIRECTORIES[directory]?.(rest) ?? null;
+	return classification && { ...classification, test: isTest(path) };
 }
 
 /** One classifier per source directory. Anything else is not registry source. */
-const DIRECTORIES: Record<string, (rest: string[]) => SourceClassification | null> = {
+type Classified = Omit<SourceClassification, "test">;
+
+const DIRECTORIES: Record<string, (rest: string[]) => Classified | null> = {
 	components: classifyComponent,
 	// A lib file or a hook is its own item, named for the file.
 	lib: (rest) => classifyOwnItem(rest, "lib", "registry:lib"),
@@ -92,7 +108,7 @@ const EXPO_OWN_ITEMS: Record<string, string> = {
 };
 
 /** A component is a folder; a bare file directly under `components/` is not one. */
-function classifyComponent(rest: string[]): SourceClassification | null {
+function classifyComponent(rest: string[]): Classified | null {
 	const [folder, ...within] = rest;
 	if (!folder || within.length === 0) return null;
 
@@ -100,14 +116,16 @@ function classifyComponent(rest: string[]): SourceClassification | null {
 	return { item: folder, type: "registry:ui", namespace: "ui", target, moduleId: toModuleId(target) };
 }
 
-function classifyOwnItem(rest: string[], namespace: Namespace, type: RegistryType): SourceClassification | null {
+function classifyOwnItem(rest: string[], namespace: Namespace, type: RegistryType): Classified | null {
 	const target = onlyFile(rest);
 	if (!target) return null;
 
 	const moduleId = toModuleId(target);
 	if (moduleId === null) return null;
 
-	return { item: moduleId, type, namespace, target, moduleId };
+	// `cn.test.ts` is a test of `cn`, not an item of its own.
+	const item = isTest(target) ? (moduleId.split(".")[0] as string) : moduleId;
+	return { item, type, namespace, target, moduleId };
 }
 
 type DirectoryItem = {
@@ -118,7 +136,7 @@ type DirectoryItem = {
 	prefix?: string;
 };
 
-function classifyDirectoryItem(rest: string[], options: DirectoryItem): SourceClassification | null {
+function classifyDirectoryItem(rest: string[], options: DirectoryItem): Classified | null {
 	const file = onlyFile(rest);
 	if (!file) return null;
 
@@ -151,11 +169,8 @@ export function resolveModuleId(fromPath: string, specifier: string, known: read
 	return candidates.find((candidate) => known.includes(candidate)) ?? null;
 }
 
-/**
- * A test, or a file that exists only to serve tests — `*.test-helpers.ts`, `*.fixtures.ts`.
- * Exported for `ship.ts`, which drops a copied doc's mention of one.
- */
-export function isUnshippedSource(path: string): boolean {
+/** A test, or a file that exists only to serve tests — `*.test-helpers.ts`, `*.fixtures.ts`. */
+export function isTest(path: string): boolean {
 	return /\.(test|test-helpers|fixtures)\.tsx?$/.test(path);
 }
 

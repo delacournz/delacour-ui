@@ -97,7 +97,8 @@ A row of media, text and actions, for lists and settings. Compound root plus
   rebuilt the children as an array. Under `asChild` nothing is wrapped at all;
   without it, a lone element still comes back as that same element, not a
   re-keyed copy or a one-item array. Text under `asChild` is the caller's to
-  wrap — `Slot` cannot pass props to a string. `wrap-text-children.test.ts`
-  holds the single-element, `asChild`, string and mixed cases.
+  wrap — `Slot` cannot pass props to a string.
+  <!-- registry:omit -->`wrap-text-children.test.ts` holds the single-element,
+  `asChild`, string and mixed cases.<!-- /registry:omit -->
 - **Text colour goes on the text.** No slot but `title` and `description` holds
   a `text-*` colour; the tests assert the root never does.

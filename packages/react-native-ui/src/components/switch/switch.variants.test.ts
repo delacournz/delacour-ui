@@ -1,7 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { declarationCount } from "../../styles/theme-tokens.test";
+import { declarationCount, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
 	hasThumbChild,
@@ -33,8 +31,6 @@ import {
 	switchTravel,
 	switchVariants,
 } from "./switch.variants";
-
-const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
 
 /** The minimum a touch target may be, in points. Apple's number, and Android's. */
 const MINIMUM_TARGET = 44;

@@ -285,5 +285,20 @@
 			"target": "screen/use-screen-scroll-insets.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/screen/screen-scroll-handler.test.ts",
+			"target": "screen/screen-scroll-handler.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/screen/screen.variants.test.ts",
+			"target": "screen/screen.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

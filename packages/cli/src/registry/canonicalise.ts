@@ -101,6 +101,9 @@ function resolve(specifier: string, input: CanonicaliseInput, self: SourceClassi
 		const classification = classifySource(path);
 		if (!classification)
 			throw new Error(`${input.path}: "${specifier}" resolves to ${path}, which the registry excludes`);
+		// Tests travel only on request, so source that imports one would not resolve after a plain `add`.
+		if (classification.test && !self.test)
+			throw new Error(`${input.path}: "${specifier}" is a test, and a test is copied only by \`add --tests\``);
 
 		return classification;
 	}

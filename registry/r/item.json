@@ -159,5 +159,28 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/item/item.variants.test.ts",
+			"target": "item/item.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/tokens",
+					"to": "@registry/styles/tokens"
+				},
+				{
+					"from": "../list-group/list-group.variants",
+					"to": "@registry/ui/list-group/list-group.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

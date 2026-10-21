@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
@@ -16,8 +15,6 @@ import {
 	resolveRadioState,
 	shouldEmitSelection,
 } from "./radio.variants";
-
-const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
 
 /** Points behind a `--spacing-*` token, failing loudly rather than yielding NaN. */
 function spacingPx(token: string): number {

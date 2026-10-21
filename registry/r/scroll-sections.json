@@ -14,5 +14,15 @@
 			"target": "scroll-sections.ts",
 			"namespace": "lib"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/scroll-sections.test.ts",
+			"target": "scroll-sections.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

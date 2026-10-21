@@ -14,5 +14,15 @@
 			"target": "keyboard-animation.ts",
 			"namespace": "lib"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/keyboard-animation.test.ts",
+			"target": "keyboard-animation.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { THEME_CSS } from "../../styles/theme-tokens.test";
 import {
 	clampAutoscrollStep,
 	computeOffsets,
@@ -23,8 +22,6 @@ import {
 	SORTABLE_SHIFT_SPRING,
 	sortableVariants,
 } from "./sortable.variants";
-
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
 
 /** The resting geometry of a column of rows, the way the root derives it on the UI thread. */
 function column(heights: number[], gap = 0) {

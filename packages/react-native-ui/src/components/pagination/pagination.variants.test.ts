@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { THEME_CSS, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import {
 	clampPage,
 	formatCompact,
@@ -32,9 +31,6 @@ import {
 	resolvePaginationStatus,
 	shouldEmitPage,
 } from "./pagination.variants";
-
-const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
 
 /** A slot's class string, with `tv`'s empty-slot `undefined` flattened. */
 function cls(value: string | undefined): string {

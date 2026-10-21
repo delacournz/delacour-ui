@@ -27,7 +27,7 @@ export type WrapTextChildrenOptions = {
  * With `asChild` the children are returned untouched — see
  * {@link WrapTextChildrenOptions.asChild}.
  *
- * Free of React Native imports, so `bun test` reaches it.
+ * Free of React Native imports, so it is unit-testable.
  */
 export function wrapTextChildren(
 	children: ReactNode,

@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { THEME_CSS } from "../../styles/theme-tokens.test";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
 	BREADCRUMB_DEFAULT_SIZE,
@@ -17,8 +16,6 @@ import {
 	resolveBreadcrumbSeparatorGlyph,
 	resolveBreadcrumbSequence,
 } from "./breadcrumb.variants";
-
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
 
 /** Tailwind v4's default line heights, in points, for the text utility each `Text` size emits. */
 const LINE_HEIGHT_PX: Record<string, number> = { sm: 20, md: 24 };

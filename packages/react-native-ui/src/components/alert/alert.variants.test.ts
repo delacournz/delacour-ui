@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { THEME_CSS } from "../../styles/theme-tokens.test";
 import {
 	ALERT_FOREGROUND_TOKEN,
 	ALERT_SIZES,
@@ -162,7 +161,7 @@ describe("ALERT_FOREGROUND_TOKEN", () => {
 	// A token no theme declares compiles to nothing and the icon falls back to
 	// whatever colour it inherited.
 	test("every token is declared in both themes and aliased", () => {
-		const css = readFileSync(join(import.meta.dir, "../../styles/theme.css"), "utf8");
+		const css = THEME_CSS;
 		for (const token of Object.values(ALERT_FOREGROUND_TOKEN)) {
 			expect(css).toContain(`--color-${token}: var(--${token})`);
 			expect(css.split(`--${token}:`).length - 1).toBeGreaterThanOrEqual(2);

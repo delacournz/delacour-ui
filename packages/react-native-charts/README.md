@@ -17,10 +17,10 @@ Docs: [ui.delacour.co.nz/docs/charts](https://ui.delacour.co.nz/docs/charts).
 
 ```bash
 bun add @delacour/react-native-charts
-bunx expo install @shopify/react-native-skia react-native-gesture-handler react-native-reanimated react-native-worklets
+bunx expo install react-native-skia react-native-gesture-handler react-native-reanimated react-native-worklets
 ```
 
-Peers: `@shopify/react-native-skia`, `react-native-reanimated`,
+Peers: `react-native-skia`, `react-native-reanimated`,
 `react-native-gesture-handler`, `react-native-worklets`, `react`,
 `react-native`. The native four go through `expo install`, so the SDK picks
 versions it can build; `react` and `react-native` are already in any app.

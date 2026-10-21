@@ -228,15 +228,20 @@ Shared native and React versions are pinned once, in the root `package.json`
 `workspaces.catalog`, and referenced as `catalog:` from each package:
 
 ```
-@legendapp/list  @shopify/react-native-skia 2.14.0  react 19.3.0  react-native 0.88.0
+@legendapp/list  react 19.3.0  react-native 0.88.0
 react-native-gesture-handler ~3.3.0  react-native-keyboard-controller 1.22.7  react-native-reanimated 4.7.1
-react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-svg 15.16.0
-react-native-worklets 0.13.0
+react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.7.2
+react-native-svg 15.16.0  react-native-worklets 0.13.0
 ```
 
 Every version here is the one Expo SDK 58 bundles. That is the rule, not a coincidence: `expo
 install` and `expo-doctor` both check against it, and a native module a minor ahead of the SDK
 fails at the linker rather than at install.
+
+`react-native-skia` is the one exception. SDK 58 bundles `@shopify/react-native-skia` 2.14, the last
+release under that name; v3 moved to `react-native-skia` and draws through Graphite, so `expo install`
+and `expo-doctor` flag it — that is expected. v3 needs Android API 26 (Vulkan 1.1), which the
+playground sets through `expo-build-properties`.
 
 A native module the SDK does not bundle is **not** catalogued, because the catalog is that list
 and nothing else. `react-native-pulsar` (`^1.7.0`), `react-native-teleport` (`^1.2.2`) and
@@ -272,10 +277,10 @@ which is why `apps/playground`'s `metro.config.js` pins twelve of them — plus 
 
 ## `trustedDependencies`
 
-`@shopify/react-native-skia` is the one package whose lifecycle scripts Bun is allowed to run. Its
-`postinstall` copies the prebuilt `.xcframework`s out of `react-native-skia-apple-ios` into its own
-`libs/`; blocked, the iOS build fails at link time with no framework to find. Bun blocks postinstall
-scripts by default, so the package is named in `trustedDependencies` in the root `package.json`.
+None. `@shopify/react-native-skia` 2 needed one — its `postinstall` copied the prebuilt
+`.xcframework`s into its own `libs/`, and blocked, the iOS build failed at link time. `react-native-skia`
+3 ships its binaries as npm packages (`react-native-skia-graphite-apple-*`, `react-native-webgpu-dawn`)
+and runs no install script, so the list went with it.
 
 ## Releases
 

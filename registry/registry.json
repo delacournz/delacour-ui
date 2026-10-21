@@ -608,9 +608,9 @@
 				"@delacour/react-native-charts"
 			],
 			"expoDependencies": [
-				"@shopify/react-native-skia",
 				"react-native-gesture-handler",
 				"react-native-reanimated",
+				"react-native-skia",
 				"react-native-worklets",
 				"uniwind"
 			],
@@ -3915,9 +3915,9 @@
 				"tailwind-variants"
 			],
 			"expoDependencies": [
-				"@shopify/react-native-skia",
 				"react-native-gesture-handler",
 				"react-native-reanimated",
+				"react-native-skia",
 				"react-native-svg",
 				"react-native-worklets",
 				"uniwind"

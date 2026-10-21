@@ -1,8 +1,8 @@
-import { Canvas, Group, Path, Picture, Skia } from "@shopify/react-native-skia";
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo } from "react";
 import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
+import { Canvas, Group, Path, Picture, Skia } from "react-native-skia";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useSketchPart } from "./sketch.context";
 import {

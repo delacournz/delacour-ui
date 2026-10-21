@@ -17,7 +17,7 @@ const config = getDefaultConfig(projectRoot);
 // came from the workspace root instead.
 const pinned = new Set([
 	"react",
-	"@shopify/react-native-skia",
+	"react-native-skia",
 	"react-native",
 	"react-native-gesture-handler",
 	"react-native-keyboard-controller",

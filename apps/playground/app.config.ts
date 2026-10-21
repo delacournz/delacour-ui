@@ -186,6 +186,9 @@ const expoConfig: ExpoConfig = {
 	plugins: [
 		"expo-router",
 		"expo-status-bar",
+		// react-native-skia 3 draws through Graphite, which needs Vulkan 1.1 on Android and so API 26;
+		// React Native's default is 24, and the Android build fails below it.
+		["expo-build-properties", { android: { minSdkVersion: 26 } }],
 		// The colours mirror --background as the house preset resolves it — graphite's
 		// light oklch(1 0 0) is #ffffff and dark oklch(0.188 0 0) is #131313 —
 		// because a fresh install opens in HOUSE_CONFIG and the splash is the frame

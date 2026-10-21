@@ -54,7 +54,7 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"react-native-teleport": "expo",
 	// Ships a native 2D renderer, and Expo 58 bundles 2.14.0 — a bare `bun add`
 	// would fetch the newest and fail at the linker rather than at install.
-	"@shopify/react-native-skia": "expo",
+	"react-native-skia": "expo",
 	// Ships MapLibre's native map view and a config plugin, so it needs a
 	// rebuild. Expo does not bundle it; `expo install` takes npm's latest. Only
 	// `map` imports it, so an app without a map never installs it.
@@ -193,7 +193,7 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		// Reanimated and Worklets are named too, so the list stays whole if a file
 		// here stops importing them.
 		dependencies: [
-			"@shopify/react-native-skia",
+			"react-native-skia",
 			"react-native-gesture-handler",
 			"react-native-reanimated",
 			"react-native-worklets",

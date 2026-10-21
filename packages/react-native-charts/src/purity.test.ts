@@ -17,7 +17,7 @@ const FORBIDDEN = [
 	"react",
 	"react-native",
 	"react-dom",
-	"@shopify/react-native-skia",
+	"react-native-skia",
 	"react-native-reanimated",
 	"react-native-gesture-handler",
 	"react-native-worklets",

@@ -1,5 +1,5 @@
-import type { SkFont } from "@shopify/react-native-skia";
 import type { ReactNode } from "react";
+import type { SkFont } from "react-native-skia";
 import type { ChartAnimation } from "../animation/animation.types";
 import type { ChartBounds, ChartOrientation, ChartPoint, ChartRow, ChartSegment, ChartSize } from "../core/chart.types";
 import type { CurveType } from "../core/curve/curves";

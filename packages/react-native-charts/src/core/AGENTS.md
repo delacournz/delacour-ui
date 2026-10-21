@@ -4,7 +4,7 @@ Every number this package computes, and nothing that draws.
 
 ## The rule
 
-**No runtime import of `react`, `react-native`, `@shopify/react-native-skia`,
+**No runtime import of `react`, `react-native`, `react-native-skia`,
 `react-native-reanimated`, `react-native-gesture-handler` or
 `react-native-worklets`.** Type-only imports are fine. `d3-scale` and
 `d3-shape` are fine — they are pure ESM JavaScript that Bun can parse.

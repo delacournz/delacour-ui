@@ -185,7 +185,7 @@
 		"@delacour/react-native-bottom-sheet": ">=0.2.0",
 		"@delacour/react-native-charts": ">=0.1.0",
 		"@legendapp/list": ">=3.3",
-		"@shopify/react-native-skia": ">=2",
+		"react-native-skia": ">=3",
 		"expo-linear-gradient": ">=15",
 		"expo-router": ">=57",
 		"react": ">=19",
@@ -218,7 +218,7 @@
 		"@legendapp/list": {
 			"optional": true
 		},
-		"@shopify/react-native-skia": {
+		"react-native-skia": {
 			"optional": true
 		},
 		"expo-router": {

@@ -4512,7 +4512,7 @@ export const install = {
 		description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
 		importPath: "@delacour/react-native-ui/chart",
 		exportName: "Chart",
-		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-reanimated", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-reanimated", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["@delacour/react-native-charts", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 44,
@@ -4920,7 +4920,7 @@ export const install = {
 		description: "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card.",
 		importPath: "@delacour/react-native-ui/kpi",
 		exportName: "Kpi",
-		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 103,
@@ -16864,7 +16864,7 @@ export const install = {
 		description: "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, drawn with Skia and exported as SVG or PNG.",
 		importPath: "@delacour/react-native-ui/sketch",
 		exportName: "Sketch",
-		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 95,
@@ -18257,7 +18257,7 @@ export type InstallName = keyof typeof install;
  * package's declared peers — see `peerNames` in the generator.
  */
 export const peers = {
-	expo: ["@legendapp/list", "@maplibre/maplibre-react-native", "@shopify/react-native-skia", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
+	expo: ["@legendapp/list", "@maplibre/maplibre-react-native", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 	npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "tailwindcss"],
 	dev: [],
 } as const;

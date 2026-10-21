@@ -1,7 +1,7 @@
-import { Canvas } from "@shopify/react-native-skia";
 import { type ReactElement, useMemo, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { Gesture, type GestureType } from "react-native-gesture-handler";
+import { Canvas } from "react-native-skia";
 import { useCanvasSize } from "../cartesian/hooks/use-canvas-size";
 import type { ChartRow } from "../core/chart.types";
 import { sliceIndexAt } from "../core/polar/slice-index-at";

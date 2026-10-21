@@ -1,6 +1,6 @@
-import { Circle, DashPathEffect, Line } from "@shopify/react-native-skia";
 import type { ReactElement } from "react";
 import { useDerivedValue } from "react-native-reanimated";
+import { Circle, DashPathEffect, Line } from "react-native-skia";
 import type { ChartBounds } from "../../core/chart.types";
 import type { ChartScrubSeriesState, ChartScrubState } from "../../gesture/gesture.types";
 import { useChartContext } from "../cartesian-chart.context";

@@ -742,6 +742,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "scrollEdges",
 		description: "Where an affordance at a scrollable's edges sits, and which way its gradient runs.",
 	},
+	"skia-native-id": {
+		title: "skiaNativeId",
+		description: "Starts each JS runtime's Skia canvas ids in a fresh range, so a canvas is not blank after a reload.",
+	},
 	"scroll-maths": {
 		title: "scrollMaths",
 		description: "The pure maths behind the scroll-linked components.",

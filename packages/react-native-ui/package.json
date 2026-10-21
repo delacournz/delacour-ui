@@ -162,6 +162,7 @@
 		"./lib/scroll-edges": "./src/lib/scroll-edges.ts",
 		"./lib/scroll-maths": "./src/lib/scroll-maths.ts",
 		"./lib/scroll-sections": "./src/lib/scroll-sections.ts",
+		"./lib/skia-native-id": "./src/lib/skia-native-id.ts",
 		"./lib/slot": "./src/lib/slot.tsx",
 		"./lib/tv": "./src/lib/tv.ts",
 		"./lib/wrap-text-children": "./src/lib/wrap-text-children.ts",

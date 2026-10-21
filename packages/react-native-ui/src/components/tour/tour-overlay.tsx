@@ -1,19 +1,22 @@
 import { type ReactElement, type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type LayoutChangeEvent, StyleSheet, useWindowDimensions, type ViewInstance } from "react-native";
-import Animated, { Easing, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { Easing, ReduceMotion, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { HapticFeedback } from "../pressable";
 import type { TourStepEntry } from "./tour.types";
 import {
+	isSameHoleRect,
 	resolveCardPlacement,
 	resolveHoleRect,
 	resolveOverlayInsets,
 	resolveRelativeRect,
 	resolveTourFooter,
-	resolveTourTransitionDuration,
+	resolveTourHoleFadeDuration,
 	TOUR_CARD_GAP,
 	TOUR_CARD_MAX_WIDTH,
+	TOUR_ENTER_MS,
 	TOUR_GUTTER,
+	type TourHoleRect,
 	type TourLabels,
 	type TourPoint,
 	type TourRect,
@@ -63,13 +66,16 @@ function measureInWindow(view: ViewInstance): Promise<TourRect> {
  * coordinates. An interactive tour draws inside the tour's root rather than over the window, so
  * it measures that root too and subtracts its origin.
  *
- * **The hole** is five shared values eased to each new target, so the mask and an interactive
- * scrim follow it on the UI thread. The first target of an opening and every target under reduce
- * motion jump.
+ * **The hole** is five shared values set straight to each new target, so an interactive scrim
+ * passes touches to the new control at once. The mask keeps the hole it replaced in a second set
+ * and crossfades the two: the dim fills in over the old target while it lifts over the new one.
+ * The first hole of an opening is open from the start, and the dim fades up around it
+ * (`TOUR_ENTER_MS`) — the tour's entrance (`resolveTourHoleFadeDuration`).
  *
- * **The card** is keyed by step; each caches the height it measured, and the card is only
- * shown once both its height and its target are known — so it is placed once, on the right
- * side, and never seen flipping.
+ * **The card** is mounted once for the whole tour and glides to each step's place, its content
+ * swapping as it goes. It keeps the last height it measured, so the next step is placed with it
+ * at once and retargeted if the new content lays out taller or shorter. It is first shown once
+ * both its height and its target are known, so the opening never shows it unplaced.
  */
 export function TourOverlay({
 	entry,
@@ -95,7 +101,7 @@ export function TourOverlay({
 
 	const [size, setSize] = useState<TourSize | null>(null);
 	const [measured, setMeasured] = useState<Measured | null>(null);
-	const [cardHeights, setCardHeights] = useState<Readonly<Record<number, number>>>({});
+	const [cardHeight, setCardHeight] = useState<number | null>(null);
 
 	const x = useSharedValue(0);
 	const y = useSharedValue(0);
@@ -103,7 +109,19 @@ export function TourOverlay({
 	const height = useSharedValue(0);
 	const radius = useSharedValue(0);
 	const hole = useMemo<TourHoleValues>(() => ({ x, y, width, height, radius }), [x, y, width, height, radius]);
-	const hasHole = useRef(false);
+	const previousX = useSharedValue(0);
+	const previousY = useSharedValue(0);
+	const previousWidth = useSharedValue(0);
+	const previousHeight = useSharedValue(0);
+	const previousRadius = useSharedValue(0);
+	const previous = useMemo<TourHoleValues>(
+		() => ({ x: previousX, y: previousY, width: previousWidth, height: previousHeight, radius: previousRadius }),
+		[previousX, previousY, previousWidth, previousHeight, previousRadius]
+	);
+	const reveal = useSharedValue(0);
+	const previousReveal = useSharedValue(0);
+	const dim = useSharedValue(0);
+	const lastHole = useRef<TourHoleRect | null>(null);
 
 	const { order, ref } = entry;
 
@@ -147,31 +165,73 @@ export function TourOverlay({
 		[measured, padding, shape, corner]
 	);
 
+	// The hole being left becomes the previous one, at whatever opacity it had reached, so a step
+	// changed mid-fade hands over without a pop.
 	useEffect(() => {
 		if (!holeRect) return;
-		const duration = resolveTourTransitionDuration({ isReducedMotion, isFirst: !hasHole.current });
-		hasHole.current = true;
-		const config = { duration, easing: Easing.inOut(Easing.cubic) };
-		x.value = duration === 0 ? holeRect.x : withTiming(holeRect.x, config);
-		y.value = duration === 0 ? holeRect.y : withTiming(holeRect.y, config);
-		width.value = duration === 0 ? holeRect.width : withTiming(holeRect.width, config);
-		height.value = duration === 0 ? holeRect.height : withTiming(holeRect.height, config);
-		radius.value = duration === 0 ? holeRect.radius : withTiming(holeRect.radius, config);
-	}, [holeRect, isReducedMotion, x, y, width, height, radius]);
+		const last = lastHole.current;
+		lastHole.current = holeRect;
+		const duration = resolveTourHoleFadeDuration({
+			isFirst: last === null,
+			isSameHole: last !== null && isSameHoleRect(last, holeRect),
+		});
+
+		if (last) {
+			previousX.value = last.x;
+			previousY.value = last.y;
+			previousWidth.value = last.width;
+			previousHeight.value = last.height;
+			previousRadius.value = last.radius;
+		}
+		x.value = holeRect.x;
+		y.value = holeRect.y;
+		width.value = holeRect.width;
+		height.value = holeRect.height;
+		radius.value = holeRect.radius;
+
+		if (last === null) {
+			dim.value = withTiming(1, {
+				duration: TOUR_ENTER_MS,
+				easing: Easing.out(Easing.cubic),
+				reduceMotion: ReduceMotion.Never,
+			});
+		}
+		if (duration === 0) {
+			previousReveal.value = 0;
+			reveal.value = 1;
+			return;
+		}
+		const config = { duration, easing: Easing.out(Easing.cubic), reduceMotion: ReduceMotion.Never };
+		previousReveal.value = reveal.value;
+		previousReveal.value = withTiming(0, config);
+		reveal.value = 0;
+		reveal.value = withTiming(1, config);
+	}, [
+		holeRect,
+		x,
+		y,
+		width,
+		height,
+		radius,
+		previousX,
+		previousY,
+		previousWidth,
+		previousHeight,
+		previousRadius,
+		reveal,
+		previousReveal,
+		dim,
+	]);
 
 	const handleLayout = (event: LayoutChangeEvent): void => {
 		const { width: w, height: h } = event.nativeEvent.layout;
 		setSize((previous) => (previous?.width === w && previous.height === h ? previous : { width: w, height: h }));
 	};
 
-	const handleCardHeight = useCallback(
-		(cardHeight: number) => {
-			setCardHeights((previous) => (previous[order] === cardHeight ? previous : { ...previous, [order]: cardHeight }));
-		},
-		[order]
-	);
+	const handleCardHeight = useCallback((next: number) => {
+		setCardHeight((current) => (current === next ? current : next));
+	}, []);
 
-	const cardHeight = cardHeights[order];
 	const overlayInsets =
 		size && measured
 			? resolveOverlayInsets({ insets, origin: measured.origin, size, window })
@@ -186,7 +246,7 @@ export function TourOverlay({
 		maxWidth: TOUR_CARD_MAX_WIDTH,
 		preference: options.placement,
 	});
-	const isPlaced = isCurrent && cardHeight !== undefined && size !== null;
+	const isPlaced = isCurrent && cardHeight !== null && size !== null;
 	const footer = resolveTourFooter({ index, total, hasSkip });
 
 	// `direction: "ltr"` because every coordinate here is a physical window position; the card
@@ -205,7 +265,16 @@ export function TourOverlay({
 						onPress={isDismissible ? onSkip : undefined}
 						size={size}
 					/>
-					{holeRect ? <TourMask hole={hole} size={size} /> : null}
+					{holeRect ? (
+						<TourMask
+							dim={dim}
+							hole={hole}
+							previous={previous}
+							previousReveal={previousReveal}
+							reveal={reveal}
+							size={size}
+						/>
+					) : null}
 				</>
 			) : null}
 			<TourCard
@@ -216,7 +285,7 @@ export function TourOverlay({
 				hasProgress={hasProgress}
 				index={index}
 				isPlaced={isPlaced}
-				key={order}
+				isReducedMotion={isReducedMotion}
 				labels={labels}
 				onBack={onBack}
 				onEscape={isDismissible ? onSkip : undefined}

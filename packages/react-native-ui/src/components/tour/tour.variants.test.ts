@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import {
 	buildMaskPath,
+	isSameHoleRect,
 	resolveAdjacent,
 	resolveCardPlacement,
 	resolveCurrentOrder,
@@ -13,12 +14,15 @@ import {
 	resolveStepIndex,
 	resolveStepOptions,
 	resolveTourAnnouncement,
+	resolveTourCardEntrance,
 	resolveTourFooter,
+	resolveTourHoleFadeDuration,
 	resolveTourLabels,
 	resolveTourProgressLabel,
 	resolveTourTestIDs,
 	resolveTourTransitionDuration,
 	sortSteps,
+	TOUR_CARD_FADE_MS,
 	TOUR_CARD_GAP,
 	TOUR_CARD_MAX_WIDTH,
 	TOUR_DEFAULT_LABELS,
@@ -26,7 +30,9 @@ import {
 	TOUR_DEFAULT_PLACEMENT,
 	TOUR_DEFAULT_RADIUS,
 	TOUR_DEFAULT_SHAPE,
+	TOUR_ENTER_MS,
 	TOUR_GUTTER,
+	TOUR_HOLE_FADE_MS,
 	TOUR_PLACEMENTS,
 	TOUR_SCRIM_TOKEN,
 	TOUR_SHAPES,
@@ -51,6 +57,9 @@ describe("constants", () => {
 		expect(TOUR_DEFAULT_PADDING).toBe(8);
 		expect(TOUR_DEFAULT_RADIUS).toBe(12);
 		expect(TOUR_TRANSITION_MS).toBe(280);
+		expect(TOUR_HOLE_FADE_MS).toBe(220);
+		expect(TOUR_ENTER_MS).toBe(240);
+		expect(TOUR_CARD_FADE_MS).toBe(240);
 	});
 
 	test("the scrim token is declared in both themes", () => {
@@ -458,13 +467,61 @@ describe("resolveTourFooter", () => {
 });
 
 describe("resolveTourTransitionDuration", () => {
-	test("reduce motion jumps the hole", () => {
+	test("reduce motion jumps the card", () => {
 		expect(resolveTourTransitionDuration({ isReducedMotion: false, isFirst: false })).toBe(TOUR_TRANSITION_MS);
 		expect(resolveTourTransitionDuration({ isReducedMotion: true, isFirst: false })).toBe(0);
 	});
 
 	test("the first hole of an opening never travels in from nowhere", () => {
 		expect(resolveTourTransitionDuration({ isReducedMotion: false, isFirst: true })).toBe(0);
+	});
+});
+
+describe("resolveTourHoleFadeDuration", () => {
+	test("a new target fades, reduce motion or not — a fade is not travel", () => {
+		expect(resolveTourHoleFadeDuration({ isFirst: false, isSameHole: false })).toBe(TOUR_HOLE_FADE_MS);
+	});
+
+	test("the first hole of an opening appears with the tour", () => {
+		expect(resolveTourHoleFadeDuration({ isFirst: true, isSameHole: false })).toBe(0);
+	});
+
+	test("a re-measure that lands on the same hole does not dip", () => {
+		expect(resolveTourHoleFadeDuration({ isFirst: false, isSameHole: true })).toBe(0);
+	});
+});
+
+describe("resolveTourCardEntrance", () => {
+	test("the card follows the dim in and rises into place", () => {
+		const entrance = resolveTourCardEntrance({ isReducedMotion: false });
+		expect(entrance.duration).toBe(TOUR_CARD_FADE_MS);
+		expect(entrance.delay).toBeGreaterThan(0);
+		expect(entrance.delay).toBeLessThan(TOUR_ENTER_MS);
+		expect(entrance.rise).toBe(8);
+	});
+
+	test("reduce motion keeps the fade and drops the rise", () => {
+		const entrance = resolveTourCardEntrance({ isReducedMotion: true });
+		expect(entrance.duration).toBe(TOUR_CARD_FADE_MS);
+		expect(entrance.rise).toBe(0);
+	});
+});
+
+describe("isSameHoleRect", () => {
+	const hole = { x: 10, y: 20, width: 100, height: 40, radius: 12 };
+
+	test("an identical hole is the same", () => {
+		expect(isSameHoleRect(hole, { ...hole })).toBe(true);
+	});
+
+	test("sub-point measuring noise is the same", () => {
+		expect(isSameHoleRect(hole, { ...hole, x: 10.3, height: 39.8 })).toBe(true);
+	});
+
+	test("any edge or the corner moving a point is a new hole", () => {
+		expect(isSameHoleRect(hole, { ...hole, x: 11 })).toBe(false);
+		expect(isSameHoleRect(hole, { ...hole, width: 101 })).toBe(false);
+		expect(isSameHoleRect(hole, { ...hole, radius: 20 })).toBe(false);
 	});
 });
 

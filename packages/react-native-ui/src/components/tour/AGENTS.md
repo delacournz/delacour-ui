@@ -14,7 +14,7 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
 | `tour.tsx` | Root — open and step state, the step registry, the `Modal` or in-tree overlay, and the `Object.assign` |
 | `tour-step.tsx` | `Tour.Step` — the measured wrapper; registers on mount |
 | `tour-overlay.tsx` | Everything drawn while open: measuring, the hole's shared values, card placement — internal |
-| `tour-mask.tsx` | The dimmed window with the hole cut out — one Skia canvas, a rect clipped by the hole — internal |
+| `tour-mask.tsx` | The dimmed window with the hole cut out — one Skia canvas, a rect with the current and previous holes erased — internal |
 | `tour-scrim.tsx` | What a touch on the dim meets: one full-window `Pressable`, or four around the hole — internal |
 | `tour-card.tsx` | The card: position, title, description, footer actions — internal |
 | `tour.context.tsx` | The state context (`useTour`) and the registry context `Tour.Step` reads |
@@ -38,12 +38,13 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
 - **Two hole shapes, one rounded rectangle.** `resolveHoleRect` grows the target by the padding;
   `circle` is a square around the larger side with a radius of half of it. `resolveMaskHole`
   clamps the size to zero and the radius to half the shorter side, and the mask always cuts a
-  rounded rectangle — a circle is the case where the straight runs are zero — so a hole travelling
-  from a rectangle to a circle never changes kind and nothing pops.
-- **The mask is Skia, not SVG.** A window-sized `Rect` in a `Group` with `clip` set to the hole and
-  `invertClip`, so the hole is subtracted. The clip is a `Skia.RRectXY` derived on the UI thread
-  from the five shared values — no path string is built or parsed per frame, which the SVG
-  `evenodd` path it replaced did on every frame of a transition. `@shopify/react-native-skia` is
+  rounded rectangle — a circle is the case where the straight runs are zero — so one drawing
+  serves both shapes.
+- **The mask is Skia, not SVG.** A window-sized `Rect`, then two `RoundedRect`s drawn with
+  `blendMode="dstOut"` that erase it — the current hole and the one it replaced, each with its own
+  opacity. Each is a `Skia.RRectXY` derived on the UI thread from five shared values — no path
+  string is built or parsed per frame, which the SVG `evenodd` path it replaced did on every frame
+  of a transition. `@shopify/react-native-skia` is
   therefore a peer of `Tour`. `buildMaskPath`, the old path builder, stays exported and
   deprecated so the public surface does not shrink in a patch; nothing in the tour reads it.
 - **Card placement** (`resolveCardPlacement`): `auto` is below the hole when the card fits inside
@@ -56,14 +57,26 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
   that is where a caller scrolls the target into view — then the overlay waits a
   `requestAnimationFrame` and calls `measureInWindow`. It re-measures on every window change,
   which is rotation. A measurement is tagged with its step, so a stale one is never placed.
-- **The hole is five shared values**, eased with `withTiming` 280ms to each new target, read by
-  the mask's `useDerivedValue` clip and by an interactive scrim's animated styles — the hole travels
-  on the UI thread with no render. The first hole of an opening jumps (travelling in from a zero
-  rect would grow it out of the corner), and so does every hole under reduce motion
-  (`resolveTourTransitionDuration`).
-- **The card is keyed by step and caches its own height.** Remounting per step is what makes
-  `onLayout` fire for a step that happens to be as tall as the last; the card is laid out
-  invisible, measured, placed, and only then faded in, so it never flips sides mid-transition.
+- **The hole crossfades; it does not travel.** Five shared values are set straight to each new
+  target — so an interactive scrim passes touches to the new control at once — and a second five
+  keep the hole being left. The old hole's opacity falls to 0 while the new one's rises to 1, 220ms
+  ease-out (`TOUR_HOLE_FADE_MS`), so the dim fills in over the last control while it lifts over
+  the next. A step changed mid-fade hands the old hole over at the opacity it had reached, so
+  nothing pops. The first hole of an opening appears with the tour, and a re-measure that lands
+  on the same hole swaps at once — crossfading a hole with itself would dim it for a moment
+  (`resolveTourHoleFadeDuration`, `isSameHoleRect`). A sliding hole read as a block dragged
+  across the screen; the crossfade keeps the eye on the card instead.
+- **Opening has an entrance.** The first hole is open from the start and the whole mask fades up
+  around it, 240ms ease-out (`TOUR_ENTER_MS`) — the room dimming around a spotlight. The card
+  follows 60ms later, fading in over 240ms while it rises 8pt into place
+  (`resolveTourCardEntrance`); reduce motion keeps its fade and drops the rise. The overlay is
+  mounted only while the tour is open, so every opening starts from zero.
+- **The card is mounted once and glides.** It is laid out invisible, measured, placed and brought
+  in on opening; from then on it stays visible and glides 280ms ease-out to each step's place
+  while its content swaps (`resolveTourTransitionDuration`). It keeps the last height it measured,
+  so the next step is placed with it at once and the glide retargets if the new content lays out
+  taller or shorter. It used to be keyed by step, which unmounted it and faded a new one in on
+  every step — a visible blink.
 - **The overlay lays out left-to-right.** Window coordinates are physical, and React Native swaps
   `left` for `right` in a right-to-left locale; `direction: "ltr"` on the overlay keeps a hole at
   x=20 at x=20. The card restores the app's direction for its own content, so its footer still
@@ -110,8 +123,8 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
   two-finger scrub through the card's `onAccessibilityEscape`, and a tap on the dim. With
   `isDismissible={false}` the dim still swallows touches but does nothing.
 - **The scrim is hidden from assistive technology.** The card's actions are the accessible way out.
-- **Reduce motion**: the hole jumps; the card still fades, because a fade is not travel
-  (`ReduceMotion.Never` on that one timing).
+- **Reduce motion**: the card jumps instead of gliding. The hole still crossfades and the card
+  still fades in on opening, because a fade is not travel (`ReduceMotion.Never` on those timings).
 
 ## Deviations from the design spec
 

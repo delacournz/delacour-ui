@@ -1,8 +1,9 @@
-import { Canvas, Group, Path, Picture, Skia, type SkPicture } from "react-native-skia";
 import { type ReactElement, useLayoutEffect, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { type SharedValue, useDerivedValue, useSharedValue, withTiming } from "react-native-reanimated";
+import { Canvas, Group, Path, Picture, Skia, type SkPicture } from "react-native-skia";
 import { scheduleOnRN } from "react-native-worklets";
+import "../../lib/skia-native-id";
 import { recordSignaturePicture } from "./signature.skia";
 import { traceStroke } from "./signature.stroke";
 import type { SignaturePoint, SignatureStroke } from "./signature.types";

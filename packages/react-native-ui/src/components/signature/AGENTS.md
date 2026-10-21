@@ -53,6 +53,10 @@ standalone SVG document, or as a PNG.
   and had it parsed back on every move. Each stroke is still its own `drawPath`,
   so a translucent ink darkens where two strokes cross exactly as separate SVG
   paths did.
+- **The canvas imports `lib/skia-native-id` for its effect**, as `Sketch.Canvas`
+  does. After a JS reload Skia reused the old runtime's canvas ids, which its
+  native registry still held as torn down, so the pad came up blank until a
+  stroke re-rendered it.
 - **The live and the finished stroke are traced by the same function.**
   `traceStroke` is a worklet, so the UI thread and the committed picture build
   the identical path and a stroke does not shift by a hair when it is handed
@@ -126,7 +130,7 @@ standalone SVG document, or as a PNG.
   `resolveSignatureExport`, so the same options give the same box, the same
   literal ink and the same background or none — a PNG is transparent unless
   `background` is set. It renders the cached stroke paths off screen on a CPU
-  surface at `scale` pixels per point (default the screen's ratio) and returns
+  surface (`Skia.Surface.MakeRaster`) at `scale` pixels per point (default the screen's ratio) and returns
   base64 with no `data:` prefix, as `Sketch.toPNG` does. Off screen rather than a
   snapshot of the pad, so the guideline, the placeholder and the pad's fill never
   reach the file. `""` before the pad is measured. The point's `t` is stored so

@@ -7677,10 +7677,10 @@ export const install = {
 		description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON, SVG or PNG.",
 		importPath: "@delacour/react-native-ui/signature",
 		exportName: "Signature",
-		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 81,
+		fileCount: 82,
 		groups: [
 			{
 				name: "signature",
@@ -7871,6 +7871,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "skia-native-id",
+				title: "skiaNativeId",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{

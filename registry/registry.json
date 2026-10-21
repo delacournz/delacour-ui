@@ -3820,6 +3820,7 @@
 				"icon",
 				"icons",
 				"pressable",
+				"skia-native-id",
 				"text",
 				"tv",
 				"use-calm-motion",
@@ -3829,9 +3830,9 @@
 				"tailwind-variants"
 			],
 			"expoDependencies": [
-				"@shopify/react-native-skia",
 				"react-native-gesture-handler",
 				"react-native-reanimated",
+				"react-native-skia",
 				"react-native-worklets"
 			],
 			"devDependencies": [],

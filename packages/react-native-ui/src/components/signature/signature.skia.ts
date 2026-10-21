@@ -77,7 +77,7 @@ export function renderSignaturePng(value: SignatureValue, options: SignaturePngO
 	const size = signaturePngSize(box, options.scale);
 	if (size === null) return "";
 
-	const surface = Skia.Surface.Make(size.width, size.height);
+	const surface = Skia.Surface.MakeRaster(size.width, size.height);
 	if (surface === null) return "";
 	const canvas = surface.getCanvas();
 	canvas.scale(size.width / box.width, size.height / box.height);

@@ -1,7 +1,8 @@
-import { Canvas, Group, Rect, RoundedRect, Skia } from "@shopify/react-native-skia";
 import type { ReactElement } from "react";
 import { StyleSheet } from "react-native";
 import { type SharedValue, useDerivedValue } from "react-native-reanimated";
+import { Canvas, Group, Rect, RoundedRect, Skia } from "react-native-skia";
+import "../../lib/skia-native-id";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { resolveMaskHole, TOUR_SCRIM_TOKEN, type TourSize } from "./tour.variants";
 

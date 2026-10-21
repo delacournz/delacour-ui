@@ -44,7 +44,7 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
   `blendMode="dstOut"` that erase it — the current hole and the one it replaced, each with its own
   opacity. Each is a `Skia.RRectXY` derived on the UI thread from five shared values — no path
   string is built or parsed per frame, which the SVG `evenodd` path it replaced did on every frame
-  of a transition. `@shopify/react-native-skia` is
+  of a transition. `react-native-skia` is
   therefore a peer of `Tour`. `buildMaskPath`, the old path builder, stays exported and
   deprecated so the public surface does not shrink in a patch; nothing in the tour reads it.
 - **Card placement** (`resolveCardPlacement`): `auto` is below the hole when the card fits inside

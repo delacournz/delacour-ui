@@ -25,7 +25,7 @@ whole-screen states.
 | `screen-header.tsx` | `Screen.Header` |
 | `screen-footer.tsx` | `Screen.Footer` |
 | `screen-footer-background.tsx` | The footer's backing and its top hairline — internal |
-| `screen-scroll-shadow.tsx` | `Screen.ScrollShadow`, and `SCROLL_SHADOW_EDGES` |
+| `screen-scroll-shadow.tsx` | `Screen.ScrollShadow`, and its two axes — `SCROLL_SHADOW_EDGES` and `SCROLL_SHADOW_ANCHORS` |
 | `screen-scroll-area.tsx` | `Screen.ScrollArea` |
 | `screen-flat-list.tsx` | `Screen.FlatList` |
 | `screen-section-list.tsx` | `Screen.SectionList` |

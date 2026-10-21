@@ -254,4 +254,5 @@ for a chunk that says something rather than doing something. An
   inset top edge at 16%); `secondary`, `tertiary` and `outline` take the light/dark edge
   (`shadow-etched dark:shadow-etched-dark`); `ghost`, `destructive` and `destructive-soft` stay flat
   — a ghost has no surface to lift and a signal colour does not take a second highlight. The press
-  scale is already 0.97. The tokens live in `tokens.css`.
+  scale is already 0.97. The tokens live in `tokens.css`. `BUTTON_MATERIALS` and `ButtonMaterial`
+  are exported from the index like every other axis.

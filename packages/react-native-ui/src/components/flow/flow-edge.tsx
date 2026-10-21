@@ -1,18 +1,15 @@
 import { type ReactElement, useEffect } from "react";
-import Animated, {
+import {
 	cancelAnimation,
 	Easing,
-	useAnimatedProps,
 	useDerivedValue,
 	useSharedValue,
 	withRepeat,
 	withTiming,
 } from "react-native-reanimated";
-import { G, Path } from "react-native-svg";
-import { useCalmMotion } from "../../hooks/use-calm-motion";
-import { useThemeColor } from "../../hooks/use-theme-color";
-import { useFlowPart, useIsInFlowSvgLayer } from "./flow.context";
-import { FLOW_DEFAULTS, resolveArrowSize, resolveEdgeDash } from "./flow.variants";
+import { DashPathEffect, Group, Path, Skia, type SkPath } from "react-native-skia";
+import { useFlowCanvasLayer, useFlowPart } from "./flow.context";
+import { FLOW_DEFAULTS, resolveArrowSize, resolveEdgeDash, resolveFlowCanvasToken } from "./flow.variants";
 import {
 	type FlowEdgeVariant,
 	type FlowEndpointReference,
@@ -21,10 +18,11 @@ import {
 	parseEndpoint,
 } from "./flow-geometry";
 
-const AnimatedPath = Animated.createAnimatedComponent(Path);
-
-/** A path that draws nothing, for the frames before both ends have measured. */
-const EMPTY_PATH = "M0 0";
+/** A route as a Skia path — an empty one for the frames before both ends have measured. */
+function toSkiaPath(d: string | undefined): SkPath {
+	"worklet";
+	return (d ? Skia.Path.MakeFromSVGString(d) : null) ?? Skia.Path.Make();
+}
 
 export type FlowEdgeProps = {
 	/** `"nodeId"` or `"nodeId.handleId"`. */
@@ -84,9 +82,10 @@ export function FlowEdge({
 	curvature = FLOW_DEFAULTS.edgeCurvature,
 }: FlowEdgeProps): ReactElement | null {
 	const { registry } = useFlowPart("Flow.Edge");
-	const isInLayer = useIsInFlowSvgLayer();
-	const isCalm = useCalmMotion();
-	const stroke = useThemeColor(color ?? "muted-foreground");
+	const layer = useFlowCanvasLayer();
+	const isCalm = layer?.isCalm ?? false;
+	const token = resolveFlowCanvasToken(FlowEdge.displayName, color);
+	const stroke = (token === undefined ? undefined : layer?.colors[token]) ?? "transparent";
 
 	const source = parseEndpoint(from);
 	const target = parseEndpoint(to);
@@ -133,18 +132,12 @@ export function FlowEdge({
 		return () => cancelAnimation(dashOffset);
 	}, [dash.cycle, dashOffset, shouldMarch]);
 
-	const lineProps = useAnimatedProps(() => ({
-		d: geometry.value?.d ?? EMPTY_PATH,
-		opacity: geometry.value ? 1 : 0,
-		strokeDashoffset: dashOffset.value,
-	}));
+	const linePath = useDerivedValue(() => toSkiaPath(geometry.value?.d));
+	const lineOpacity = useDerivedValue(() => (geometry.value ? 1 : 0));
+	const arrowPath = useDerivedValue(() => toSkiaPath(geometry.value?.arrow));
+	const arrowOpacity = useDerivedValue(() => (geometry.value?.arrow ? 1 : 0));
 
-	const arrowProps = useAnimatedProps(() => ({
-		d: geometry.value?.arrow || EMPTY_PATH,
-		opacity: geometry.value?.arrow ? 1 : 0,
-	}));
-
-	if (!isInLayer) {
+	if (layer === null) {
 		if (process.env.NODE_ENV !== "production") {
 			console.warn(
 				`Flow.Edge ${from} → ${to}: render edges as direct children of <Flow> (or from a .map() there), ` +
@@ -155,20 +148,20 @@ export function FlowEdge({
 	}
 
 	return (
-		<G>
-			<AnimatedPath
-				animatedProps={lineProps}
-				fill="none"
-				stroke={stroke}
-				strokeDasharray={dash.dashArray}
-				strokeLinecap="round"
-				strokeLinejoin="round"
+		<Group>
+			<Path
+				color={stroke}
+				opacity={lineOpacity}
+				path={linePath}
+				strokeCap="round"
+				strokeJoin="round"
 				strokeWidth={width}
-			/>
-			{hasArrow ? (
-				<AnimatedPath animatedProps={arrowProps} fill={stroke} stroke={stroke} strokeLinejoin="round" />
-			) : null}
-		</G>
+				style="stroke"
+			>
+				{dash.dashArray ? <DashPathEffect intervals={dash.dashArray} phase={dashOffset} /> : null}
+			</Path>
+			{hasArrow ? <Path color={stroke} opacity={arrowOpacity} path={arrowPath} strokeJoin="round" /> : null}
+		</Group>
 	);
 }
 FlowEdge.displayName = "DelacourUI.Flow.Edge";

@@ -78,16 +78,35 @@ export function useFlow(): UseFlowResult {
 	return { fitView: () => fitView(), getNodeRect, isLocked, setLocked, viewport, zoomBy };
 }
 
-/** True inside the canvas's SVG layer — the only place an edge or a background can draw. */
-const FlowSvgLayerContext = createContext(false);
+/**
+ * What a part drawing on the Skia canvas cannot look up for itself.
+ *
+ * `<Canvas>` is a second React reconciler, so a theme hook or `useCalmMotion` called inside it
+ * reads no provider from the app — no `ScopedTheme`, no `CalmMotionProvider`. The root resolves
+ * both above the canvas and re-provides them here, beside a re-rendered `FlowProvider`.
+ */
+export type FlowCanvasLayerValue = {
+	/** Every colour token the canvas's children name, resolved against the app's theme. */
+	colors: Readonly<Record<string, string | undefined>>;
+	isCalm: boolean;
+};
 
-export function FlowSvgLayerProvider({ children }: { children: ReactNode }): ReactElement {
-	return <FlowSvgLayerContext.Provider value>{children}</FlowSvgLayerContext.Provider>;
+const FlowCanvasLayerContext = createContext<FlowCanvasLayerValue | null>(null);
+
+export function FlowCanvasLayerProvider({
+	value,
+	children,
+}: {
+	value: FlowCanvasLayerValue;
+	children: ReactNode;
+}): ReactElement {
+	return <FlowCanvasLayerContext.Provider value={value}>{children}</FlowCanvasLayerContext.Provider>;
 }
-FlowSvgLayerProvider.displayName = "DelacourUI.Flow.SvgLayerProvider";
+FlowCanvasLayerProvider.displayName = "DelacourUI.Flow.CanvasLayerProvider";
 
-export function useIsInFlowSvgLayer(): boolean {
-	return useContext(FlowSvgLayerContext);
+/** The canvas layer's values, or `null` outside it — the only place an edge or a background can draw. */
+export function useFlowCanvasLayer(): FlowCanvasLayerValue | null {
+	return useContext(FlowCanvasLayerContext);
 }
 
 export type FlowGroupContextValue = { id: string; entry: FlowRegistryEntry };

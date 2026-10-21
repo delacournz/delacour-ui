@@ -4625,7 +4625,7 @@ export const install = {
 		description: "A pan-and-zoom canvas of nodes joined by self-routing edges, with groups, handle-to-handle connections, controls and a minimap — the app owns the graph.",
 		importPath: "@delacour/react-native-ui/flow",
 		exportName: "Flow",
-		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 72,
@@ -4646,7 +4646,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/flow/flow-minimap.tsx", target: "src/components/ui/flow/flow-minimap.tsx" },
 					{ source: "packages/react-native-ui/src/components/flow/flow-node.tsx", target: "src/components/ui/flow/flow-node.tsx" },
 					{ source: "packages/react-native-ui/src/components/flow/flow-registry.ts", target: "src/components/ui/flow/flow-registry.ts" },
-					{ source: "packages/react-native-ui/src/components/flow/flow-svg.ts", target: "src/components/ui/flow/flow-svg.ts" },
 					{ source: "packages/react-native-ui/src/components/flow/flow.context.tsx", target: "src/components/ui/flow/flow.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/flow/flow.tsx", target: "src/components/ui/flow/flow.tsx" },
 					{ source: "packages/react-native-ui/src/components/flow/flow.variants.ts", target: "src/components/ui/flow/flow.variants.ts" },
@@ -4810,6 +4809,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "skia-native-id",
+				title: "skiaNativeId",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{

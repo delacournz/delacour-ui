@@ -427,7 +427,7 @@ describe("worklet hygiene", () => {
 	// parameter defaults — `max = FLIP_CARD_RUBBER_BAND` threw "Property doesn't exist"
 	// on the UI thread the first time a swipe card was dragged.
 	test("no worklet reads a module binding from a parameter default", () => {
-		const source = readFileSync(join(import.meta.dir, "flip-card.variants.ts"), "utf8");
+		const source = readFileSync(join(import.meta.dirname, "flip-card.variants.ts"), "utf8");
 		const offenders = [...source.matchAll(/export function (\w+)\(([^)]*)\)[^{]*\{\s*"worklet";/g)]
 			.filter(([, , params]) => /=\s*[A-Za-z_]/.test(params ?? ""))
 			.map(([, name]) => name);

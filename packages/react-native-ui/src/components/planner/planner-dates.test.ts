@@ -240,7 +240,7 @@ describe("resolveWeekStart", () => {
 
 	test("auto falls back to Monday for a locale the runtime cannot read", () => {
 		expect(resolveWeekStart("not a locale", "auto")).toBe(1);
-		expect(resolveWeekStart(undefined, "auto")).toBeOneOf([0, 1, 2, 3, 4, 5, 6]);
+		expect([0, 1, 2, 3, 4, 5, 6]).toContain(resolveWeekStart(undefined, "auto"));
 	});
 });
 

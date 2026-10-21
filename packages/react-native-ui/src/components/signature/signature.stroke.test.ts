@@ -279,8 +279,10 @@ describe("boundsOf", () => {
 describe("toSVG", () => {
 	test("the default is the whole pad, black ink, no background", () => {
 		const svg = toSVG(VALUE);
-		expect(svg).toStartWith('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200" height="100">');
-		expect(svg).toEndWith("</svg>");
+		expect(
+			svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200" height="100">')
+		).toBe(true);
+		expect(svg.endsWith("</svg>")).toBe(true);
 		expect(svg).not.toContain("<rect");
 		expect(svg.match(/<path /g)).toHaveLength(2);
 		expect(svg).toContain(`stroke="${SIGNATURE_EXPORT_STROKE_COLOR}"`);

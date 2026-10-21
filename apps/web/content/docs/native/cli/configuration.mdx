@@ -134,6 +134,23 @@ live in a shared package — see [Monorepos](/docs/native/cli/monorepo).
 
 Covered in [The registry](/docs/native/cli/registry).
 
+## `tests`
+
+```json
+{
+  "tests": { "runner": "vitest" }
+}
+```
+
+<TypeTable
+  type={{
+    "tests.runner": { type: '"bun" | "jest" | "vitest"', description: "What `add --tests` writes copied suites for. Read from package.json when unset — the test script, then a vitest, jest or jest-expo dependency — and Bun when it names none." },
+  }}
+/>
+
+Covered in [Tests, if you want them](/docs/native/cli/commands#tests-if-you-want-them). Changing it
+rewrites each copied suite on the next `update`.
+
 ## The lock file
 
 `native-components.lock.json` sits beside the config and is written by `add` and `update`, never by

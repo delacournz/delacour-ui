@@ -553,6 +553,27 @@ an ordinary file: planned, written, recorded in the lock, updated. Five things a
 
 `bun:test` maps to `@types/bun` (classified `dev` in `PACKAGE_INSTALL`); `node:*` needs nothing.
 
+### A copied test is written for the project's runner
+
+`config.testRunner` is `tests.runner` from `native-components.json`, else what `detectTestRunner`
+reads off the config's `package.json` and then the app's (the `test` script, then a `vitest`,
+`jest` or `jest-expo` dependency, then a top-level `jest` key), else `bun`. `transformFile` passes a
+test through `adaptTest` after the alias transform, and `withTests(item, runner)` swaps the
+`@types/bun` the registry records for that runner's packages. Three things hold it together:
+
+- **It is two substitutions because the guard keeps it two.** `runnerSpecificUses` (above) is what
+  lets `adaptTest` be a string replace: the import's module, and for Jest `import.meta.dirname` →
+  `__dirname`, since Jest evaluates CommonJS. A suite needing a third rewrite fails the build first.
+- **It happens in `transformFile`, so the lock agrees.** The lock hashes the text after the
+  transform, and `add`, `update` and `diff` all go through `transformFile`, so the hash is of the
+  runner's text. Switching runners reads as an upstream change on the next `update`, not an edit.
+- **What the runner itself needs is out of scope.** Vitest needs the project's `@/` alias in its own
+  config, and Jest needs `@delacour/.*`, `d3-.*` and `internmap` in `transformIgnorePatterns` for
+  `chart` and `bottom-sheet`. The docs say so; the CLI does not write a runner's config.
+
+Verified by hand: `add --all --tests` into a Vitest app and a `jest-expo` app ran 163 suites and
+7279 tests green under each.
+
 ### Markdown is canonicalised too, but differently
 
 Each component folder's `AGENTS.md` travels with its source, so an agent in the consumer's

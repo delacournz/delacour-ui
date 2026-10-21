@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { REGISTRY_TYPES } from "./classify";
 import { NAMESPACES, parsePlaceholder } from "./namespaces";
+import { BUN_TEST_TYPES, type TestRunner, testRunnerPackages } from "./test-runner";
 
 /**
  * The shape of the JSON the builder emits and the `add` command consumes.
@@ -166,14 +167,19 @@ export function toIndexEntry(item: RegistryItem): RegistryIndexEntry {
  * then treats a test like any other file, which is the point: a copied test is
  * the consumer's from then on, recorded and updated exactly as the source is.
  */
-export function withTests<T extends RegistryItem | RegistryIndexEntry>(item: T): T {
+export function withTests<T extends RegistryItem | RegistryIndexEntry>(item: T, runner: TestRunner = "bun"): T {
 	const tests = "tests" in item ? item.tests : [];
+	// The registry records `bun:test` as Bun's types; a project on another
+	// runner gets the suites rewritten for it, and that runner's packages instead.
+	const testDependencies = item.testDependencies.flatMap((name) =>
+		name === BUN_TEST_TYPES ? testRunnerPackages(runner) : [name]
+	);
 
 	return {
 		...item,
 		...("files" in item && "tests" in item ? { files: [...item.files, ...tests] } : {}),
 		registryDependencies: union(item.registryDependencies, item.testRegistryDependencies),
-		devDependencies: union(item.devDependencies, item.testDependencies),
+		devDependencies: union(item.devDependencies, testDependencies),
 	};
 }
 

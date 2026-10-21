@@ -109,9 +109,10 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 		return null;
 	}
 
-	// With tests, an item is its tests too — files, the items they import, the
-	// types `bun:test` needs — so everything after this treats them as source.
-	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T => (options.tests ? withTests(item) : item);
+	// With tests, an item is its tests too — files, the items they import, what
+	// the project's runner needs — so everything after this treats them as source.
+	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T =>
+		options.tests ? withTests(item, config.testRunner) : item;
 	const byName = new Map(index.items.map((item) => [item.name, item]));
 	const order = resolveItemGraph(requested, (name) => {
 		const entry = byName.get(name);

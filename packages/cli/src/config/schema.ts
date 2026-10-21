@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { NAMESPACES } from "../registry/namespaces";
+import { TEST_RUNNERS } from "../registry/test-runner";
 
 /**
  * `native-components.json` — the file that says where components go and how the app
@@ -59,6 +60,15 @@ const packageSchema = z.object({
 	name: z.string().min(1),
 });
 
+/**
+ * How copied tests are written. Without a `runner`, `add --tests` reads the one
+ * the project's `package.json` tests with, and falls back to Bun's, which the
+ * library's suites are written for.
+ */
+const testsSchema = z.object({
+	runner: z.enum(TEST_RUNNERS).optional(),
+});
+
 export const configSchema = z.object({
 	$schema: z.string().optional(),
 	framework: z.enum(["expo", "react-native"]).default("expo"),
@@ -71,6 +81,7 @@ export const configSchema = z.object({
 	/** Absent when the components live in the app itself. */
 	package: packageSchema.optional(),
 	app: appSchema.prefault({}),
+	tests: testsSchema.optional(),
 });
 
 export type Config = z.infer<typeof configSchema>;

@@ -360,6 +360,26 @@ describe("runnerSpecificUses", () => {
 		]);
 	});
 
+	test("finds an expect given a message, which Jest refuses", () => {
+		expect(runnerSpecificUses("expect(value, `no ${name}`).toBeDefined();")).toEqual(["expect(…, message)"]);
+	});
+
+	test("lets an expect whose one argument holds commas through", () => {
+		const source = [
+			"expect(fn(a, b)).toBe(1);",
+			'expect([name, value]).toEqual([name, "x"]);',
+			"expect({ a, b }).toEqual({ a, b });",
+			"expect(`${a}, ${b}`).toBe('1, 2');",
+			'expect(",").toBe(",");',
+			"expect((a, b) => a).toBeDefined();",
+			"expect(text).toMatch(/[\"',]/); // a comment, with a comma",
+			"expect(a /* b, c */).toBe(1);",
+			"expect(a / b).toBe(c / d);",
+		].join("\n");
+
+		expect(runnerSpecificUses(source)).toEqual([]);
+	});
+
 	test("finds a modifier only some runners have", () => {
 		expect(runnerSpecificUses("test.if(ok)('x', () => {}); describe.skipIf(ci)('y', () => {});")).toEqual([
 			"test.if(",

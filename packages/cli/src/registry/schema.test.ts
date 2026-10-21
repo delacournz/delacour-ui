@@ -131,6 +131,11 @@ describe("withTests", () => {
 		expect(withTests(item).devDependencies).toEqual(["@types/bun", "a"]);
 	});
 
+	test("asks for the runner the project tests with in place of Bun's types", () => {
+		expect(withTests(item, "vitest").devDependencies).toEqual(["@types/node", "a", "vitest"]);
+		expect(withTests(item, "jest").devDependencies).toEqual(["@jest/globals", "@types/node", "a"]);
+	});
+
 	test("leaves the item alone otherwise", () => {
 		expect(item.files).toHaveLength(1);
 		expect(item.registryDependencies).toEqual(["icon"]);

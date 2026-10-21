@@ -12,8 +12,8 @@ and only `onPress` and `onLongPress` cross back to JS.
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/pressable` |
 | `pressable.tsx` | The Gesture API primitive |
-| `pressable.variants.ts` | Shared feedback vocabulary, no RN imports |
-| `pressable.variants.test.ts` | Feedback, rest opacity, accessibility state and activation matrices |
+| `pressable.variants.ts` | Shared feedback vocabulary and screen-reader activation routing, no RN imports |
+| `pressable.variants.test.ts` | Feedback, rest opacity, accessibility state, activation and action-dispatch matrices |
 
 ## Design
 
@@ -71,6 +71,19 @@ and only `onPress` and `onLongPress` cross back to JS.
   `ProgressButton` — owns it on both platforms and the pressable wires nothing;
   a caller's own `onAccessibilityTap` wins the same way. A caller's other
   actions and its `onAccessibilityAction` are merged in, never replaced.
+- **TalkBack's long press is wired to `onLongPress` the same way.**
+  Double-tap-and-hold performs `ACTION_LONG_CLICK`, which React Native routes
+  only to a listed `longpress` action and otherwise drops into an empty
+  `View.performLongClick` — so on Android the pressable appends `longpress`
+  whenever there is an `onLongPress`. iOS gets no entry: VoiceOver's
+  double-tap-and-hold passes a held touch through, which the long-press gesture
+  already recognises, and a `longpress` entry would only become a rotor custom
+  action. A caller that lists `longpress` itself — `SelectionMode.Item`,
+  `Attachment` — owns it, as with `activate`. The dispatch is two pure functions
+  in `pressable.variants.ts`: `dispatchPressableAccessibilityAction` maps an
+  action name to its handler, and `invokePressableHandler` is the
+  `isPressableInteractive` gate every screen-reader path calls exactly once.
+  A gated control consumes both actions and fires neither.
   `Button`, `ListGroup.Item`, `Screen.Navbar.BackButton`, `Dialog.Close`,
   `BottomSheet.Close` and every other `Pressable` consumer inherit it.
   Verified on an iOS simulator with `AXPress` through Simulator.app's

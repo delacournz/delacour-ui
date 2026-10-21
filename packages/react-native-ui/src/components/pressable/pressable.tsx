@@ -18,6 +18,8 @@ import { useResolveClassNames } from "uniwind";
 import { composeRefs } from "../../lib/compose-refs";
 import { mergeProps } from "../../lib/merge-props";
 import {
+	dispatchPressableAccessibilityAction,
+	invokePressableHandler,
 	isPressableInteractive,
 	type PressableFeedback,
 	resolvePressableAccessibilityState,
@@ -142,8 +144,9 @@ export type PressableProps = Omit<ViewProps, "style"> & {
  *
  * A gesture only ever sees touches, so a screen reader's activation is wired
  * to `onPress` separately — `onAccessibilityTap` on iOS, an `activate` action on
- * Android — behind the same `disabled` / `busy` guard. See
- * `resolvePressableActivation`.
+ * Android — and TalkBack's long press to `onLongPress` through a `longpress`
+ * action, all behind the same `disabled` / `busy` guard. See
+ * `resolvePressableActivation` and `dispatchPressableAccessibilityAction`.
  */
 export function Pressable({
 	children,
@@ -220,26 +223,33 @@ export function Pressable({
 	const activation = resolvePressableActivation({
 		accessibilityActions,
 		hasAccessibilityTap: onAccessibilityTap !== undefined,
+		hasLongPress: onLongPress !== undefined,
 		hasPress: onPress !== undefined,
 		platform: Platform.OS,
 	});
-	const activate = () => {
-		if (interactive) onPress?.();
-	};
 	// Built once and spread last at both render sites, after `{...props}`, so a
 	// caller's actions and handlers are merged in here rather than replacing the
-	// activation the pressable adds. `activate` is consumed only when the
-	// pressable added it; every other action reaches the caller's handler.
+	// activation the pressable adds. `activate` and `longpress` are consumed only
+	// when the pressable added them; every other action reaches the caller's
+	// handler. Both paths share the gesture's `disabled` / `busy` guard.
 	const accessibilityWiring = {
 		accessibilityActions: activation.accessibilityActions,
 		onAccessibilityAction: (event: AccessibilityActionEvent) => {
-			if (activation.routesActivate && event.nativeEvent.actionName === "activate") {
-				activate();
-				return;
-			}
-			onAccessibilityAction?.(event);
+			const consumed = dispatchPressableAccessibilityAction({
+				actionName: event.nativeEvent.actionName,
+				activation,
+				busy,
+				disabled,
+				onLongPress,
+				onPress,
+			});
+			if (!consumed) onAccessibilityAction?.(event);
 		},
-		onAccessibilityTap: activation.wiresAccessibilityTap ? activate : onAccessibilityTap,
+		onAccessibilityTap: activation.wiresAccessibilityTap
+			? () => {
+					invokePressableHandler(onPress, { busy, disabled });
+				}
+			: onAccessibilityTap,
 	};
 
 	const content = asChild ? (

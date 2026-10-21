@@ -125,16 +125,19 @@ export function isPressableInteractive({ busy, disabled }: { busy: boolean; disa
 type PressableAccessibilityAction = { name: string; label?: string };
 
 export type PressableActivation<A extends PressableAccessibilityAction> = {
-	/** What the view's `accessibilityActions` becomes — the caller's own, plus `activate` on Android. */
-	accessibilityActions: ReadonlyArray<A | { name: "activate" }> | undefined;
+	/** What the view's `accessibilityActions` becomes — the caller's own, plus `activate` / `longpress` on Android. */
+	accessibilityActions: ReadonlyArray<A | { name: "activate" } | { name: "longpress" }> | undefined;
 	/** The pressable consumes `activate` in `onAccessibilityAction` and calls `onPress` itself. */
 	routesActivate: boolean;
+	/** The pressable consumes `longpress` in `onAccessibilityAction` and calls `onLongPress` itself. */
+	routesLongPress: boolean;
 	/** The pressable sets `onAccessibilityTap`, which is what VoiceOver's double-tap reaches. */
 	wiresAccessibilityTap: boolean;
 };
 
 /**
- * How a screen reader's activation reaches `onPress`.
+ * How a screen reader's activation reaches `onPress`, and its long press
+ * `onLongPress`.
  *
  * The press is a Gesture Handler tap, which only ever sees touches. Each
  * platform's activation is something else:
@@ -146,40 +149,54 @@ export type PressableActivation<A extends PressableAccessibilityAction> = {
  *   call return `YES`, which also stops UIKit synthesising the touch: one
  *   activation, one `onPress`. An `activate` entry in `accessibilityActions` is
  *   no use here: Fabric lists every entry as a rotor custom action, so it would
- *   add a literal "activate" to every button's rotor.
+ *   add a literal "activate" to every button's rotor. The same is true of
+ *   `longpress`, and VoiceOver needs none: double-tap-and-hold passes a held
+ *   touch through to the view, which the long-press gesture recognises.
  * - **Android.** A TalkBack double-tap performs `ACTION_CLICK`, which React
  *   Native routes to `onAccessibilityAction` only when `activate` is listed.
  *   Without it the click falls to `View.performClick`, with no listener behind
- *   it. React Native ignores `onAccessibilityTap` on Android.
+ *   it. Double-tap-and-hold performs `ACTION_LONG_CLICK`, which reaches
+ *   `onAccessibilityAction` only when `longpress` is listed and otherwise falls
+ *   to an equally empty `View.performLongClick`. React Native ignores
+ *   `onAccessibilityTap` on Android.
  *
  * A caller that lists `activate` itself owns it on both platforms — a
  * `NumberInput` stepper, a `Message`, a `FlipCard` — and the pressable wires
- * nothing, so the press cannot fire twice. A caller's own `onAccessibilityTap`
- * wins the same way. With no `onPress` there is nothing to reach.
+ * nothing for it, so the press cannot fire twice. `longpress` is owned the same
+ * way, by `SelectionMode.Item` and `Attachment`. A caller's own
+ * `onAccessibilityTap` wins too. With no handler there is nothing to reach.
  *
  * The `disabled` / `busy` guard is not decided here: activation stays wired on
- * a gated control and the handler checks `isPressableInteractive`, so a gated
- * control's double-tap is consumed and does nothing rather than falling back
- * to a synthesised touch.
+ * a gated control and the handler goes through `invokePressableHandler`, so a
+ * gated control's double-tap is consumed and does nothing rather than falling
+ * back to a synthesised touch.
  */
 export function resolvePressableActivation<A extends PressableAccessibilityAction>({
 	accessibilityActions,
 	hasAccessibilityTap,
+	hasLongPress = false,
 	hasPress,
 	platform,
 }: {
 	accessibilityActions?: ReadonlyArray<A>;
 	hasAccessibilityTap: boolean;
+	hasLongPress?: boolean;
 	hasPress: boolean;
 	platform: string;
 }): PressableActivation<A> {
-	const ownedByCaller = accessibilityActions?.some((action) => action.name === "activate") === true;
-	const wires = hasPress && !ownedByCaller;
+	const owns = (name: string) => accessibilityActions?.some((action) => action.name === name) === true;
+	const wiresPress = hasPress && !owns("activate");
+	const wiresLongPress = hasLongPress && !owns("longpress");
 
-	if (wires && platform === "android") {
+	if (platform === "android" && (wiresPress || wiresLongPress)) {
 		return {
-			accessibilityActions: [...(accessibilityActions ?? []), { name: "activate" }],
-			routesActivate: true,
+			accessibilityActions: [
+				...(accessibilityActions ?? []),
+				...(wiresPress ? [{ name: "activate" as const }] : []),
+				...(wiresLongPress ? [{ name: "longpress" as const }] : []),
+			],
+			routesActivate: wiresPress,
+			routesLongPress: wiresLongPress,
 			wiresAccessibilityTap: false,
 		};
 	}
@@ -187,6 +204,55 @@ export function resolvePressableActivation<A extends PressableAccessibilityActio
 	return {
 		accessibilityActions,
 		routesActivate: false,
-		wiresAccessibilityTap: wires && platform === "ios" && !hasAccessibilityTap,
+		routesLongPress: false,
+		wiresAccessibilityTap: wiresPress && platform === "ios" && !hasAccessibilityTap,
 	};
+}
+
+/**
+ * Calls a pressable's handler behind `isPressableInteractive` — the one call
+ * every screen-reader path makes, so a disabled or busy control can never be
+ * reached by one. Returns whether the handler ran. Exactly one call per
+ * invocation: nothing here retries, queues or re-dispatches.
+ */
+export function invokePressableHandler(
+	handler: (() => void) | undefined,
+	gate: { busy: boolean; disabled: boolean }
+): boolean {
+	if (!handler || !isPressableInteractive(gate)) return false;
+	handler();
+	return true;
+}
+
+/**
+ * Routes one `onAccessibilityAction` event. `activate` and `longpress` are
+ * consumed only when `resolvePressableActivation` added them — returning `true`
+ * whether or not the gate let the handler run, so a gated control swallows the
+ * action. Anything else returns `false` and belongs to the caller's own
+ * `onAccessibilityAction`.
+ */
+export function dispatchPressableAccessibilityAction({
+	actionName,
+	activation,
+	busy,
+	disabled,
+	onLongPress,
+	onPress,
+}: {
+	actionName: string;
+	activation: { routesActivate: boolean; routesLongPress: boolean };
+	busy: boolean;
+	disabled: boolean;
+	onLongPress?: () => void;
+	onPress?: () => void;
+}): boolean {
+	if (activation.routesActivate && actionName === "activate") {
+		invokePressableHandler(onPress, { busy, disabled });
+		return true;
+	}
+	if (activation.routesLongPress && actionName === "longpress") {
+		invokePressableHandler(onLongPress, { busy, disabled });
+		return true;
+	}
+	return false;
 }

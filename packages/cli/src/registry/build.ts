@@ -163,7 +163,10 @@ async function collectFiles(sources: readonly SourceFile[], context: BuildItemCo
 
 	for (const { path, classification } of sources) {
 		const raw = await readFile(join(context.sourceRoot, path), "utf-8");
-		if (classification.test) assertReadsStayLocal(path, raw);
+		if (classification.test) {
+			assertReadsStayLocal(path, raw);
+			assertRunnerNeutral(path, raw);
+		}
 
 		// CSS carries no module specifiers a scanner could rewrite, and its own
 		// `@import "./base.css"` siblings all land in the same directory anyway.
@@ -236,6 +239,99 @@ function assertReadsStayLocal(path: string, content: string): void {
 	throw new Error(
 		`${path}: reads ${reads.map((read) => `"${read}"`).join(", ")} off disk, which will not exist where the test is copied. ` +
 			"Import what it needs instead — `styles/theme-tokens.test.ts` exports the stylesheets."
+	);
+}
+
+/** What a test may import from `bun:test` — the part of it Jest and Vitest export under the same names. */
+const SHARED_TEST_API = new Set([
+	"afterAll",
+	"afterEach",
+	"beforeAll",
+	"beforeEach",
+	"describe",
+	"expect",
+	"it",
+	"test",
+]);
+
+/** Matchers Bun ships that neither Jest nor Vitest does (they come from jest-extended). */
+const BUN_ONLY_MATCHERS = [
+	"toBeArray",
+	"toBeArrayOfSize",
+	"toBeBoolean",
+	"toBeDate",
+	"toBeEmpty",
+	"toBeEmptyObject",
+	"toBeEven",
+	"toBeFalse",
+	"toBeFinite",
+	"toBeFunction",
+	"toBeInteger",
+	"toBeNegative",
+	"toBeNil",
+	"toBeNumber",
+	"toBeObject",
+	"toBeOdd",
+	"toBeOneOf",
+	"toBePositive",
+	"toBeString",
+	"toBeSymbol",
+	"toBeTrue",
+	"toBeValidDate",
+	"toBeWithin",
+	"toContainAllKeys",
+	"toContainAllValues",
+	"toContainAnyKeys",
+	"toContainAnyValues",
+	"toContainKey",
+	"toContainKeys",
+	"toContainValue",
+	"toContainValues",
+	"toEndWith",
+	"toEqualIgnoringWhitespace",
+	"toInclude",
+	"toIncludeRepeated",
+	"toSatisfy",
+	"toStartWith",
+];
+
+/**
+ * What in a test only Bun runs: an import from `bun:test` beyond the shared API,
+ * the `Bun` global, `import.meta` beyond `dirname`, a Bun-only matcher, or a
+ * conditional modifier (`test.if`, `describe.skipIf`, …) not every runner has.
+ *
+ * A copied suite lands in a project on Jest or Vitest as often as on Bun. Kept
+ * to what the three share, porting it is a change of import line.
+ */
+export function runnerSpecificUses(content: string): string[] {
+	const imports = [...content.matchAll(/import\s*\{([^}]*)\}\s*from\s*["']bun:test["']/g)].flatMap((match) =>
+		(match[1] as string)
+			.split(",")
+			.map((name) => name.trim().replace(/^type\s+/, ""))
+			.filter((name) => name !== "" && !SHARED_TEST_API.has(name))
+			.map((name) => `imports "${name}" from bun:test`)
+	);
+	const globals = [...content.matchAll(/\bBun\.\w+/g)].map((match) => match[0]);
+	const meta = [...content.matchAll(/import\.meta\.(\w+)/g)]
+		.filter((match) => match[1] !== "dirname")
+		.map((match) => match[0]);
+	const matchers = [...content.matchAll(new RegExp(`\\.(?:${BUN_ONLY_MATCHERS.join("|")})\\(`, "g"))].map(
+		(match) => match[0]
+	);
+	const modifiers = [...content.matchAll(/\b(?:test|it|describe)\.(?:if|skipIf|todoIf|runIf|failing)\(/g)].map(
+		(match) => match[0]
+	);
+
+	return [...imports, ...globals, ...meta, ...matchers, ...modifiers];
+}
+
+function assertRunnerNeutral(path: string, content: string): void {
+	const uses = runnerSpecificUses(content);
+	if (uses.length === 0) return;
+
+	throw new Error(
+		`${path}: ${uses.join(", ")} — only Bun runs this, and a copied test lands on Jest and Vitest too. ` +
+			"Keep to describe / test / expect and the before/after hooks."
 	);
 }
 

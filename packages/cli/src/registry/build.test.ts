@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, test } from "bun:test";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { type BuildResult, buildRegistry, escapingReads } from "./build";
+import { type BuildResult, buildRegistry, escapingReads, runnerSpecificUses } from "./build";
 import { isTest } from "./classify";
 import { PLACEHOLDER_PREFIX, parsePlaceholder } from "./namespaces";
 import { applyRewrites } from "./rewrite";
@@ -171,6 +171,17 @@ describe("buildRegistry", () => {
 		for (const path of paths) expect(path.slice(`${PACKAGE_DIR}/src/`.length)).toContain("/");
 	});
 
+	// A test lands in a project on Jest or Vitest as often as on Bun, and the
+	// three share one API. Holding every suite to it is what keeps porting one
+	// to another runner a change of import line rather than a rewrite.
+	test("every shipped test keeps to the API Bun, Jest and Vitest share", () => {
+		const offences = [...delivered]
+			.filter(([path]) => isTest(path))
+			.flatMap(([path, content]) => runnerSpecificUses(content).map((use) => `${path} ${use}`));
+
+		expect(offences).toEqual([]);
+	});
+
 	test("records what only the tests need apart from what the source needs", () => {
 		for (const item of registry.items) {
 			for (const dependency of item.testRegistryDependencies) {
@@ -311,5 +322,48 @@ describe("escapingReads", () => {
 	test("lets a read of a sibling through", () => {
 		expect(escapingReads('readFileSync(join(import.meta.dirname, "tokens.css"), "utf-8")')).toEqual([]);
 		expect(escapingReads('readFileSync(join(import.meta.dirname, "./tokens.css"), "utf-8")')).toEqual([]);
+	});
+});
+
+describe("runnerSpecificUses", () => {
+	test("passes the API every runner shares", () => {
+		const source = [
+			'import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, test } from "bun:test";',
+			'const CSS = readFileSync(join(import.meta.dirname, "tokens.css"), "utf-8");',
+			"test.each([1, 2])('%d', (n) => expect([n]).toContain(n));",
+			"expect(value).toBeCloseTo(1); expect(fn).toThrow(); expect(list).toHaveLength(2);",
+		].join("\n");
+
+		expect(runnerSpecificUses(source)).toEqual([]);
+	});
+
+	test("finds a Bun-only import from bun:test", () => {
+		const source = 'import { describe, expect, mock, spyOn, test } from "bun:test";';
+		expect(runnerSpecificUses(source)).toEqual(['imports "mock" from bun:test', 'imports "spyOn" from bun:test']);
+	});
+
+	test("finds the Bun global", () => {
+		expect(runnerSpecificUses('await Bun.file("x").text()')).toEqual(["Bun.file"]);
+	});
+
+	test("finds import.meta beyond dirname", () => {
+		expect(runnerSpecificUses("join(import.meta.dir, 'x'); new URL('x', import.meta.url)")).toEqual([
+			"import.meta.dir",
+			"import.meta.url",
+		]);
+	});
+
+	test("finds a matcher only Bun ships", () => {
+		expect(runnerSpecificUses("expect(s).toStartWith('a'); expect(n).toBeOneOf([1]);")).toEqual([
+			".toStartWith(",
+			".toBeOneOf(",
+		]);
+	});
+
+	test("finds a modifier only some runners have", () => {
+		expect(runnerSpecificUses("test.if(ok)('x', () => {}); describe.skipIf(ci)('y', () => {});")).toEqual([
+			"test.if(",
+			"describe.skipIf(",
+		]);
 	});
 });

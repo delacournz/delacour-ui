@@ -529,7 +529,7 @@ A `*.test.ts` (and a `*.test-helpers.ts` / `*.fixtures.ts`) is classified like t
 marked `test: true`, and lands in its item's `tests` list with its own `testRegistryDependencies` and
 `testDependencies` — what only the tests need. `add --tests` folds all three into the item with
 `withTests` (in `registry/schema.ts`) before resolving or loading anything, so from there a test is
-an ordinary file: planned, written, recorded in the lock, updated. Four things are load-bearing:
+an ordinary file: planned, written, recorded in the lock, updated. Five things are load-bearing:
 
 - **A separate list, not a flag on `files`.** zod strips the unknown key, so a CLI from before
   `tests` reads a new registry and copies exactly what it always did. A `test: true` on a file entry
@@ -544,6 +544,12 @@ an ordinary file: planned, written, recorded in the lock, updated. Four things a
   `add` would not copy it.
 - **A suite at the root of `src` belongs to no item.** `docs.test.ts`, `cn.parity.test.ts` and the
   rest check the library as a whole and never ship.
+- **A shipped test keeps to what Bun, Jest and Vitest share.** `runnerSpecificUses` fails the build
+  on an import from `bun:test` beyond `describe` / `test` / `it` / `expect` and the four hooks, the
+  `Bun` global, `import.meta` beyond `dirname`, a matcher only Bun ships (`toStartWith`,
+  `toInclude`, `toBeOneOf`, …) and a conditional modifier (`test.if`, `describe.skipIf`). A copy
+  lands in a project on any runner, and kept to the shared API, porting it is a change of import
+  line. Spy by swapping the function and restoring it in `afterEach`, not with `spyOn` / `mock`.
 
 `bun:test` maps to `@types/bun` (classified `dev` in `PACKAGE_INSTALL`); `node:*` needs nothing.
 

@@ -4,9 +4,14 @@ import {
 	resolveLabelMaxWidth,
 	resolveLabelStep,
 	resolveLabelWidth,
+	resolveListOpacity,
+	resolveOpenPanelHeight,
 	resolvePanelDirection,
+	resolvePanelFrame,
 	resolvePanelMaxHeight,
 	resolvePanelTransformOrigin,
+	resolvePanelWidth,
+	resolvePillSize,
 	resolvePlacementStyle,
 	resolveProgressPercent,
 	resolveRevealed,
@@ -74,7 +79,7 @@ describe("constants", () => {
 	test("the named default placement matches tv's defaultVariants", () => {
 		const fromDefaults = sectionProgressVariants();
 		const named = sectionProgressVariants({ placement: SECTION_PROGRESS_DEFAULT_PLACEMENT });
-		for (const slot of ["root", "stack", "pill", "panel", "list"] as const) {
+		for (const slot of ["root", "stack", "pillRow", "panel", "list"] as const) {
 			expect(cls(fromDefaults[slot]())).toBe(cls(named[slot]()));
 		}
 	});
@@ -325,6 +330,66 @@ describe("resolveLabelStep", () => {
 	});
 });
 
+describe("resolvePanelWidth", () => {
+	test("the card's width when the screen has room", () => {
+		expect(resolvePanelWidth(358)).toBe(288);
+	});
+
+	test("the room there is when it has less", () => {
+		expect(resolvePanelWidth(240)).toBe(240);
+	});
+
+	test("the card's width before the room is measured", () => {
+		expect(resolvePanelWidth(0)).toBe(288);
+	});
+});
+
+describe("resolvePillSize", () => {
+	test("the row's chrome and the title, inside a hairline on each side", () => {
+		expect(resolvePillSize(54, 88, 44)).toEqual({ width: 144, height: 46 });
+	});
+});
+
+describe("resolveOpenPanelHeight", () => {
+	test("hugs a short list: the row, the rule, the rows, the border", () => {
+		expect(resolveOpenPanelHeight(44, 140, 272)).toBe(44 + 1 + 140 + 2);
+	});
+
+	test("stops at the list's max height, past which the list scrolls", () => {
+		expect(resolveOpenPanelHeight(44, 600, 272)).toBe(44 + 1 + 272 + 2);
+	});
+});
+
+describe("resolvePanelFrame", () => {
+	const closed = { width: 144, height: 46, radius: 23 };
+	const open = { width: 288, height: 319, radius: 10 };
+
+	test("is the pill when closed and the card when open", () => {
+		expect(resolvePanelFrame(closed, open, 0)).toEqual(closed);
+		expect(resolvePanelFrame(closed, open, 1)).toEqual(open);
+	});
+
+	test("grows every edge together in between", () => {
+		expect(resolvePanelFrame(closed, open, 0.5)).toEqual({ width: 216, height: 182.5, radius: 16.5 });
+	});
+});
+
+describe("resolveListOpacity", () => {
+	test("hidden for the first stretch of the grow, so rows never show cramped", () => {
+		expect(resolveListOpacity(0)).toBe(0);
+		expect(resolveListOpacity(0.4)).toBe(0);
+	});
+
+	test("fully shown once the card is open", () => {
+		expect(resolveListOpacity(1)).toBe(1);
+	});
+
+	test("clamped past either end, as a spring can carry it", () => {
+		expect(resolveListOpacity(-0.1)).toBe(0);
+		expect(resolveListOpacity(1.05)).toBe(1);
+	});
+});
+
 describe("sectionProgressVariants", () => {
 	test("the label box clips the titles it resizes around", () => {
 		expect(cls(sectionProgressVariants().labelBox())).toContain("overflow-hidden");
@@ -335,6 +400,10 @@ describe("sectionProgressVariants", () => {
 		expect(cls(sectionProgressVariants().root())).toContain("inset-0");
 	});
 
+	test("the list box floats over the panel, out of its layout", () => {
+		expect(cls(sectionProgressVariants().listBox())).toContain("absolute");
+	});
+
 	test("the panel stacks above a bottom pill and below a top one", () => {
 		expect(cls(sectionProgressVariants({ placement: "bottom-center" }).panel())).toContain("flex-col-reverse");
 		expect(cls(sectionProgressVariants({ placement: "top-end" }).panel())).not.toContain("flex-col-reverse");
@@ -342,9 +411,13 @@ describe("sectionProgressVariants", () => {
 
 	test("the panel is a card surface", () => {
 		const panel = cls(sectionProgressVariants().panel());
-		for (const utility of ["bg-card", "border", "border-border", "rounded-lg"]) {
+		for (const utility of ["bg-card", "border", "border-border", "overflow-hidden"]) {
 			expect(panel.split(" ")).toContain(utility);
 		}
+	});
+
+	test("the open card's corner is the theme's large radius", () => {
+		expect(cls(sectionProgressVariants().panelCorner())).toBe("rounded-lg");
 	});
 
 	test("the active item reads stronger, and its label owns its colour (rule 1)", () => {
@@ -360,7 +433,8 @@ describe("sectionProgressVariants", () => {
 	test("the pill label owns its colour, the pill does not (rule 1)", () => {
 		const slots = sectionProgressVariants();
 		expect(cls(slots.label())).toContain("text-foreground");
-		expect(cls(slots.pill())).not.toMatch(/(^|\s)text-/);
+		expect(cls(slots.pillRow())).not.toMatch(/(^|\s)text-/);
+		expect(cls(slots.panel())).not.toMatch(/(^|\s)text-/);
 	});
 
 	test("the scrim covers the whole container", () => {

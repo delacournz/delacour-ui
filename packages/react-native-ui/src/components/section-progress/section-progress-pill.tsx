@@ -1,13 +1,13 @@
 import { type ReactElement, useCallback, useEffect, useMemo, useState } from "react";
-import { type TextLayoutEvent, useWindowDimensions } from "react-native";
+import { type LayoutChangeEvent, type TextLayoutEvent, useWindowDimensions } from "react-native";
 import Animated, {
 	Easing,
 	type EntryAnimationsValues,
 	type ExitAnimationsValues,
 	type LayoutAnimation,
+	type SharedValue,
 	useAnimatedStyle,
 	useReducedMotion,
-	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
 import { Pressable } from "../pressable";
@@ -61,17 +61,20 @@ function labelExiting(step: LabelStep, isReducedMotion: boolean) {
 }
 
 export type SectionProgressPillProps = {
-	/** Drawn as the open panel's edge row rather than as a free-standing capsule. */
-	isInPanel: boolean;
+	/** The title box's width, owned by the panel so the capsule can size itself from it on the UI thread. */
+	labelWidth: SharedValue<number>;
+	/** The row's layout, which the panel reads for its height. */
+	onLayout: (event: LayoutChangeEvent) => void;
 };
 
 /**
- * The pill: the ring and the active section's title, one button that opens and
- * closes the panel.
+ * The pill's row: the ring and the active section's title, one button that
+ * opens and closes the panel.
  *
- * Closed it wears its own capsule; open it is the panel's edge row, the same
- * content without the chrome, so the card reads as the pill grown out of
- * itself. The title is capped at sixty percent of the window on one line.
+ * It has no chrome of its own — the panel's surface is the capsule around it
+ * closed and the card around it open, so the row never remounts and the card
+ * reads as the pill grown out of itself. The title is capped at sixty percent
+ * of the window on one line.
  *
  * On a section change the label box eases to the new title's width, so the
  * pill resizes rather than jumps, while the old title slides out and the new
@@ -84,7 +87,7 @@ export type SectionProgressPillProps = {
  *
  * VoiceOver reads it as "Sections, Pricing, 42 percent, button, collapsed".
  */
-export function SectionProgressPill({ isInPanel }: SectionProgressPillProps): ReactElement {
+export function SectionProgressPill({ labelWidth, onLayout }: SectionProgressPillProps): ReactElement {
 	const { accessibilityLabel, accessibilityValue, index, isOpen, label, pillTestID, setOpen, value } =
 		useSectionProgressPart("SectionProgress.Pill");
 	const { width } = useWindowDimensions();
@@ -105,7 +108,6 @@ export function SectionProgressPill({ isInPanel }: SectionProgressPillProps): Re
 	const entering = useMemo(() => labelEntering(step, isReducedMotion), [step, isReducedMotion]);
 	const exiting = useMemo(() => labelExiting(step, isReducedMotion), [step, isReducedMotion]);
 
-	const labelWidth = useSharedValue(0);
 	const measure = useCallback(
 		(event: TextLayoutEvent) => {
 			const next = resolveLabelWidth(event.nativeEvent.lines[0]?.width ?? 0, maxWidth);
@@ -120,8 +122,9 @@ export function SectionProgressPill({ isInPanel }: SectionProgressPillProps): Re
 			accessibilityLabel={accessibilityLabel}
 			accessibilityState={{ expanded: isOpen }}
 			accessibilityValue={{ text: accessibilityValue }}
-			className={isInPanel ? slots.pillRow() : slots.pill()}
-			feedback={isInPanel ? "fade" : "scale"}
+			className={slots.pillRow()}
+			feedback="fade"
+			onLayout={onLayout}
 			onPress={toggle}
 			testID={pillTestID}
 		>

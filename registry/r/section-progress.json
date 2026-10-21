@@ -23,7 +23,8 @@
 		"@shopify/react-native-skia",
 		"react-native-reanimated",
 		"react-native-safe-area-context",
-		"react-native-worklets"
+		"react-native-worklets",
+		"uniwind"
 	],
 	"devDependencies": [],
 	"files": [

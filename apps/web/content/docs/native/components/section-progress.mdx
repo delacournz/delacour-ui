@@ -110,6 +110,8 @@ directly; a jump of more than a tenth eases over 180ms.
 
 ## Controlled open
 
+Tapping the pill grows it into the card — one surface, its width, height and corners easing together
+while the list fades in — and the card hugs its sections up to six, past which the list scrolls.
 `isOpen` and `onOpenChange` hand the panel to you. The pill, an outside tap, the escape gesture and
 Android back all close it through the same callback.
 
@@ -129,7 +131,8 @@ const [isOpen, setOpen] = useState(false);
   gesture closes it.
 - Sections are buttons; the active one is announced selected. The ring and the markers are hidden.
 - Android back closes the open panel.
-- Reduce motion turns the panel's scale and the title's slide into fades, and snaps the pill's width.
+- Reduce motion snaps the pill's and the card's size, and turns the list's reveal and the title's
+  slide into fades.
   The ring keeps tracking — it is information, not decoration.
 
 ## API Reference

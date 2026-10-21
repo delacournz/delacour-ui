@@ -10,7 +10,14 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { AccessibilityInfo, BackHandler, findNodeHandle, View, type ViewProps } from "react-native";
+import {
+	AccessibilityInfo,
+	BackHandler,
+	findNodeHandle,
+	type LayoutChangeEvent,
+	View,
+	type ViewProps,
+} from "react-native";
 import Animated, {
 	FadeIn,
 	isSharedValue,
@@ -34,7 +41,6 @@ import {
 	resolveSectionLabel,
 	resolveSectionProgressAccessibilityValue,
 	SECTION_PROGRESS_DEFAULT_PLACEMENT,
-	SECTION_PROGRESS_LABEL_FADE_MS,
 	SECTION_PROGRESS_REVEAL_MS,
 	SECTION_PROGRESS_RING_SETTLE_MS,
 	type SectionProgressEntry,
@@ -43,7 +49,6 @@ import {
 } from "./section-progress.variants";
 import { SectionProgressItem, type SectionProgressItemProps } from "./section-progress-item";
 import { SectionProgressPanel } from "./section-progress-panel";
-import { SectionProgressPill } from "./section-progress-pill";
 
 /** What the pill reads from `useScrollSections` — pass the whole result. */
 export type SectionProgressScroll = Pick<UseScrollSectionsResult, "progress" | "scrollY">;
@@ -266,6 +271,9 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 		]
 	);
 
+	const [availableWidth, setAvailableWidth] = useState(0);
+	const measureStack = useCallback((event: LayoutChangeEvent) => setAvailableWidth(event.nativeEvent.layout.width), []);
+
 	const insets = useSafeAreaInsets();
 	const slots = sectionProgressVariants({ placement });
 
@@ -286,16 +294,11 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 					<Animated.View
 						className={slots.stack()}
 						entering={FadeIn.duration(SECTION_PROGRESS_REVEAL_MS)}
+						onLayout={measureStack}
 						pointerEvents="box-none"
 						style={resolvePlacementStyle(placement, insets, offset)}
 					>
-						{isOpen ? (
-							<SectionProgressPanel>{children}</SectionProgressPanel>
-						) : (
-							<Animated.View entering={FadeIn.duration(SECTION_PROGRESS_LABEL_FADE_MS)}>
-								<SectionProgressPill isInPanel={false} />
-							</Animated.View>
-						)}
+						<SectionProgressPanel availableWidth={availableWidth}>{children}</SectionProgressPanel>
 					</Animated.View>
 				) : null}
 			</View>

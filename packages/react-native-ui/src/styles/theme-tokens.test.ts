@@ -9,8 +9,15 @@ import { join } from "node:path";
  * It lives in a `.test.ts` on purpose. Nine suites need to know what the
  * palette declares, and nine hand-rolled regexes drifted from each other and
  * from the file. It also reads from disk, so it could never ship to a React
- * Native app — and the registry builder skips `*.test.ts`, which keeps it out
- * of what `delacour add styles` copies. See `packages/cli/src/registry/classify.ts`.
+ * Native app — and the registry ships a `*.test.ts` only in an item's `tests`,
+ * which `delacour add` copies only under `--tests`. See
+ * `packages/cli/src/registry/classify.ts`.
+ *
+ * It is also the one place a suite gets `theme.css` or `tokens.css` from. A
+ * copied test lands wherever the consumer keeps that folder, so a read of
+ * `../../styles/theme.css` names a file that is not there; an import of
+ * `THEME_CSS` is rewritten with the copy and still resolves. The registry
+ * builder fails on the first kind.
  *
  * Import it from a sibling suite:
  *

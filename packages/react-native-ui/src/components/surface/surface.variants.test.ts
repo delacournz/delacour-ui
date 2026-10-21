@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { THEME_CSS } from "../../styles/theme-tokens.test";
 import {
 	resolveSurfacePlane,
 	resolveSurfaceVariant,
@@ -117,7 +116,7 @@ describe("SURFACE_FOREGROUND_TOKENS", () => {
 	// Every token named here has to exist, or the class compiles to nothing and
 	// the text keeps whatever colour it inherited.
 	test("every token is declared in theme.css", () => {
-		const css = readFileSync(join(import.meta.dir, "../../styles/theme.css"), "utf8");
+		const css = THEME_CSS;
 		for (const token of Object.values(SURFACE_FOREGROUND_TOKENS)) {
 			expect(css).toContain(`--color-${token}: var(--${token})`);
 		}

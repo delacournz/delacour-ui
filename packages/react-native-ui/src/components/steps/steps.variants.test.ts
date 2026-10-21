@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { THEME_CSS, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
 	isConnectorComplete,
@@ -23,9 +22,6 @@ import {
 	shouldEmitStep,
 	stepsVariants,
 } from "./steps.variants";
-
-const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
 
 /** Tailwind's own spacing scale, in points. `size-8` is thirty-two. */
 const SPACING_STEP_PX = 4;

@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { THEME_CSS } from "../../styles/theme-tokens.test";
 import { COLLAPSIBLE_SPRING } from "../collapsible/collapsible.variants";
 import { ICON_SIZES } from "../icon/icon.variants";
 import { TEXT_SIZES } from "../text/text.variants";
@@ -33,8 +32,6 @@ import {
 	toggleExpanded,
 	treeVariants,
 } from "./tree.variants";
-
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
 
 /** Tailwind's own spacing scale, in points. `w-6` is twenty-four. */
 const SPACING_STEP_PX = 4;

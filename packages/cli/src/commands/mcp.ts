@@ -109,7 +109,7 @@ export async function mcp(options: McpOptions): Promise<void> {
 					.boolean()
 					.optional()
 					.describe(
-						"Copy each component's `bun test` suites beside it too. They are recorded in the lock and kept current by updates."
+						"Copy each component's unit tests beside it too, written for the project's test runner (Bun, Jest or Vitest). They are recorded in the lock and kept current by updates."
 					),
 				install: z
 					.boolean()

@@ -276,7 +276,7 @@ drift from reality". It still is not the list of what is installed: `installedIt
 for that, and a project with no lock is a supported state, not a broken one. What the lock adds is
 the one fact the disk cannot hold, which is where a file started.
 
-Three things follow, and each is easy to undo by accident:
+Four things follow, and each is easy to undo by accident:
 
 - **After a merge, the entry is the hash of the registry's new text, not of the merged file.** The
   hash names the base the *next* update starts from. Hash what was written and every merged or
@@ -286,6 +286,12 @@ Three things follow, and each is easy to undo by accident:
   `ref` is only used if *it* hashes to the entry — `--ref develop` records a branch, the branch
   moves, and merging from the wrong base would silently revert upstream work.
   `classify` returns `untracked: base-unavailable` instead, and the file is left alone.
+- **A commit pins the library's text, not what the CLI did to it.** A CLI from before `shipContent`
+  wrote each `AGENTS.md` whole, so the same commit served through today's CLI hashes differently and
+  every doc such a project edited came back `base-unavailable`. `fetchBase` therefore also offers a
+  Markdown file as an older CLI served it — rewrites applied, nothing stripped — and keeps whichever
+  candidate matches the hash. The hash still decides, so a moved branch gains nothing. Change what a
+  copy strips again and the same thing recurs: add that era's text as a candidate there.
 - **No file content is stored.** Rule 6 is what makes that possible: an item names the library's
   source at a commit, so `ref` is enough to fetch the base again.
 

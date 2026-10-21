@@ -9,6 +9,7 @@ import { isTest } from "../registry/classify";
 import type { RegistryClient } from "../registry/client";
 import { isNamespace, type Namespace } from "../registry/namespaces";
 import { resolveItemGraph } from "../registry/resolve";
+import { applyRewrites } from "../registry/rewrite";
 import { type LoadedItem, type RegistryIndexEntry, type RegistryItem, withTests } from "../registry/schema";
 import { classify, type FileState } from "./classify";
 
@@ -117,7 +118,7 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 			const base =
 				assumed?.base ??
 				(entry && needsBase(file.current, file.content, entry)
-					? await fetchBase(clientAt(entry.ref), file.item, file.key, file.path, config)
+					? await fetchBase(clientAt(entry.ref), file.item, file.key, file.path, config, entry.hash)
 					: null);
 
 			return {
@@ -193,13 +194,21 @@ async function assumeBase(
  * file was not part of it, the machine is offline with nothing cached. None of
  * them is an error in the update — they all mean there is no base to merge
  * from, and `classify` has an answer for that.
+ *
+ * The ref pins the library's text, not what a CLI did to it on the way out. A
+ * CLI from before `shipContent` wrote a component's `AGENTS.md` whole, so the
+ * same commit served through today's CLI no longer hashes to what that project
+ * recorded, and every doc it edited would be skipped. With `hash`, the text as
+ * an older CLI served it is offered too, and only a match is returned — the
+ * hash is still what decides, so this widens nothing a moved branch could use.
  */
 async function fetchBase(
 	client: RegistryClient,
 	item: string,
 	key: string,
 	path: string,
-	config: ResolvedConfig
+	config: ResolvedConfig,
+	hash?: string
 ): Promise<string | null> {
 	try {
 		const fetched = await client.getItem(item);
@@ -208,8 +217,13 @@ async function fetchBase(
 
 		const loaded = await client.loadItem({ ...fetched, files: [file] });
 		const content = loaded.files[0]?.content;
+		if (content === undefined) return null;
 
-		return content === undefined ? null : transformFile(content, path, config);
+		const shipped = transformFile(content, path, config);
+		if (hash === undefined || contentHash(shipped) === hash || !file.target.endsWith(".md")) return shipped;
+
+		const whole = transformFile(applyRewrites(await client.getFile(file), file.rewrites), path, config);
+		return contentHash(whole) === hash ? whole : shipped;
 	} catch {
 		return null;
 	}
@@ -228,7 +242,7 @@ async function removedFile(
 	const { path, displayPath } = destination(input.config, parsed.namespace, parsed.target);
 	const local = await readText(path);
 	const edited = local !== null && contentHash(local) !== entry.hash;
-	const base = edited ? await fetchBase(clientAt(entry.ref), item, key, path, input.config) : null;
+	const base = edited ? await fetchBase(clientAt(entry.ref), item, key, path, input.config, entry.hash) : null;
 
 	return {
 		item,

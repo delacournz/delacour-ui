@@ -91,7 +91,7 @@ export const sectionProgressVariants = tv({
 		pill: "min-h-11 flex-row items-center gap-2 rounded-full border border-border bg-card py-2 ps-2.5 pe-4",
 		/** The pill's row inside the open panel — the same content, without the capsule. */
 		pillRow: "min-h-11 flex-row items-center gap-2 py-2 ps-2.5 pe-4",
-		/** The SVG ring's box. Hidden from assistive technology. */
+		/** The Skia ring's box. Hidden from assistive technology. */
 		ring: "size-5",
 		/** The section title in the pill — one line, truncated. */
 		label: "shrink text-foreground",
@@ -146,14 +146,22 @@ export function resolveRingGeometry(size: number, stroke: number): { radius: num
 }
 
 /**
- * The `strokeDashoffset` that draws `progress` of the ring: the whole
- * circumference at 0 (nothing drawn), none of it at 1. Clamped, and a NaN —
- * a progress read before layout — draws an empty ring rather than none at all.
+ * The box the ring's stroke is centred on: inset half a stroke from the ring's own box, so the
+ * stroke sits wholly inside it, as `resolveRingGeometry`'s radius does.
  */
-export function resolveRingDashOffset(progress: number, circumference: number): number {
+export function resolveRingOval(size: number, stroke: number): { x: number; y: number; width: number; height: number } {
+	const inset = stroke / 2;
+	const diameter = size - stroke;
+	return { x: inset, y: inset, width: diameter, height: diameter };
+}
+
+/**
+ * How far round the fill's trim reaches: `progress`, clamped to 0..1. A NaN — a progress read
+ * before layout — draws an empty ring rather than none at all.
+ */
+export function resolveRingTrimEnd(progress: number): number {
 	"worklet";
-	const clamped = Number.isNaN(progress) ? 0 : Math.min(1, Math.max(0, progress));
-	return circumference * (1 - clamped);
+	return Number.isNaN(progress) ? 0 : Math.min(1, Math.max(0, progress));
 }
 
 /**

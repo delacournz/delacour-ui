@@ -13528,7 +13528,7 @@ export const install = {
 		description: "A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to.",
 		importPath: "@delacour/react-native-ui/section-progress",
 		exportName: "SectionProgress",
-		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 33,

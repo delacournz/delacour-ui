@@ -31,7 +31,7 @@ const sections = useScrollSections({ readingLine: 96 });
 | `section-progress-item.tsx` | `SectionProgress.Item` — one row of the panel: marker and title |
 | `section-progress-pill.tsx` | The pill — ring and label, as a capsule or as the panel's edge row. Internal |
 | `section-progress-panel.tsx` | The open card — the pill row, a rule, the scrolling list. Internal |
-| `section-progress-ring.tsx` | The SVG ring, driven by a shared value. Internal |
+| `section-progress-ring.tsx` | The Skia ring — a track circle and a trimmed fill path, driven by a shared value. Internal |
 | `section-progress.context.tsx` | The root's context and `useSectionProgress` |
 | `section-progress.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `section-progress.variants.test.ts` | |
@@ -79,8 +79,11 @@ rule keeps such a type in its consumer's file.
 
 ## Motion
 
-- **The ring never renders React.** `strokeDashoffset` is an animated prop on the UI thread,
-  following a shared value. A scroll moves that value directly, frame by frame; a jump of more than
+- **The ring never renders React.** It is one small Skia canvas: a track `Circle` and a fill
+  `Path` — the whole circle, built once at module scope from twelve o'clock clockwise — whose
+  `end` trim is a derived value (`resolveRingTrimEnd`, clamped 0..1, NaN → 0) passed straight
+  to the Skia prop. Nothing crosses to the JS thread per frame and no path is rebuilt; the
+  trim follows a shared value. A scroll moves that value directly, frame by frame; a jump of more than
   `SECTION_PROGRESS_RING_JUMP` — a picked section, a new `progress` — eases over 180ms
   (`resolveRingTransition`). That is how the spec's "eases to the settled value" is read: scroll
   events already arrive every frame, so the ease belongs to the moments the value leaps.
@@ -114,7 +117,8 @@ rule keeps such a type in its consumer's file.
 ## Colour
 
 - **An item's `color` paints its marker, and the ring while that section is active.** The marker is
-  a `bg-*` class; the ring is SVG and takes the same token through `useThemeColor`.
+  a `bg-*` class; the ring is Skia and takes the same token through `useThemeColor`, resolved
+  above the canvas — context does not cross into Skia's reconciler.
   `resolveSectionColorToken` names it, and the suite asserts each one is declared in both themes and
   that the marker slot emits the matching `bg-*`. The ring's track is `border`.
 - **Text colour is on the label slots, never the pressables** (rule 1). The active row is tinted
@@ -124,6 +128,11 @@ rule keeps such a type in its consumer's file.
 
 - **`haptic` plays on a section change**, through `playHaptic` — scrolling across a boundary, or a
   pick. Off by default: a long article would otherwise buzz at every heading.
+
+## Peers
+
+- **`@shopify/react-native-skia` is an optional peer, needed here.** The ring draws with it, as
+  `Chart`, `Flow` and `Sketch` do; `react-native-svg` is no longer imported by this component.
 
 ## What it does not do
 

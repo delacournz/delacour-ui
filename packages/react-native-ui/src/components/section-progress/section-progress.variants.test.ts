@@ -8,9 +8,10 @@ import {
 	resolvePlacementStyle,
 	resolveProgressPercent,
 	resolveRevealed,
-	resolveRingDashOffset,
 	resolveRingGeometry,
+	resolveRingOval,
 	resolveRingTransition,
+	resolveRingTrimEnd,
 	resolveSectionColor,
 	resolveSectionColorToken,
 	resolveSectionLabel,
@@ -94,20 +95,34 @@ describe("resolveRingGeometry", () => {
 	});
 });
 
-describe("resolveRingDashOffset", () => {
-	test("empty at 0, full at 1, half at 0.5", () => {
-		expect(resolveRingDashOffset(0, 100)).toBe(100);
-		expect(resolveRingDashOffset(1, 100)).toBe(0);
-		expect(resolveRingDashOffset(0.5, 100)).toBe(50);
+describe("resolveRingOval", () => {
+	test("the stroke's centre line, inset half a stroke from the box", () => {
+		expect(resolveRingOval(20, 2)).toEqual({ x: 1, y: 1, width: 18, height: 18 });
+	});
+
+	test("its diameter is twice the geometry's radius", () => {
+		const { radius } = resolveRingGeometry(SECTION_PROGRESS_RING_SIZE, SECTION_PROGRESS_RING_STROKE);
+		const oval = resolveRingOval(SECTION_PROGRESS_RING_SIZE, SECTION_PROGRESS_RING_STROKE);
+		expect(oval.width).toBe(radius * 2);
+		expect(oval.height).toBe(radius * 2);
+		expect(oval.x + oval.width / 2).toBe(SECTION_PROGRESS_RING_SIZE / 2);
+	});
+});
+
+describe("resolveRingTrimEnd", () => {
+	test("nothing at 0, all of it at 1, half at 0.5", () => {
+		expect(resolveRingTrimEnd(0)).toBe(0);
+		expect(resolveRingTrimEnd(1)).toBe(1);
+		expect(resolveRingTrimEnd(0.5)).toBe(0.5);
 	});
 
 	test("clamps overscroll at both ends", () => {
-		expect(resolveRingDashOffset(-0.2, 100)).toBe(100);
-		expect(resolveRingDashOffset(1.4, 100)).toBe(0);
+		expect(resolveRingTrimEnd(-0.2)).toBe(0);
+		expect(resolveRingTrimEnd(1.4)).toBe(1);
 	});
 
 	test("a NaN progress draws an empty ring rather than a broken one", () => {
-		expect(resolveRingDashOffset(Number.NaN, 100)).toBe(100);
+		expect(resolveRingTrimEnd(Number.NaN)).toBe(0);
 	});
 });
 

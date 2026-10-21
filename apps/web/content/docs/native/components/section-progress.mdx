@@ -57,8 +57,8 @@ export default function Policy() {
 ```
 
 `useScrollSections` tracks the scroll view; the pill reads its `progress` and `scrollY` through
-`scroll`, its `activeId` as `value` and its `scrollTo` as `onValueChange`. The ring fills on the UI
-thread, so scrolling renders nothing — the label changes only when the section does.
+`scroll`, its `activeId` as `value` and its `scrollTo` as `onValueChange`. The ring is drawn with Skia
+and fills on the UI thread, so scrolling renders nothing — the label changes only when the section does.
 
 <Callout type="warn">
 Mount the pill as the **last child of the screen's container**, a sibling of the scroll view. It

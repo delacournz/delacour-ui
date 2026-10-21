@@ -131,6 +131,11 @@ export type VerifyPaths = {
 	cli: string;
 	/** The workspace engines this run packed for the project to install. */
 	packages: string;
+	/**
+	 * Bun's install cache for a `--dir` run, or `null` for Bun's shared one. Two runs adding the same
+	 * engine tarball into one cache at once both hung on its lock, at no CPU, until killed.
+	 */
+	cache: string | null;
 };
 
 /**
@@ -142,8 +147,11 @@ export type VerifyPaths = {
  * the three `--tests` runs in sequence.
  */
 export function verifyPaths(dir: string | undefined, cwd: string): VerifyPaths {
-	const app = dir === undefined ? VERIFY_DIR : resolve(cwd, dir);
-	return { app, cli: `${app}.cli`, packages: `${app}.packages` };
+	if (dir === undefined) {
+		return { app: VERIFY_DIR, cli: `${VERIFY_DIR}.cli`, packages: `${VERIFY_DIR}.packages`, cache: null };
+	}
+	const app = resolve(cwd, dir);
+	return { app, cli: `${app}.cli`, packages: `${app}.packages`, cache: `${app}.cache` };
 }
 
 /**

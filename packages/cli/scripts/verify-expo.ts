@@ -148,6 +148,8 @@ const reporter: Reporter = {
 
 const paths = verifyPaths(options.dir, process.cwd());
 const appDir = paths.app;
+// Every subprocess inherits it, so each `bun add` and `bunx` this run makes uses its own cache.
+if (paths.cache) process.env.BUN_INSTALL_CACHE_DIR = paths.cache;
 await resetVerifyDir(appDir, { fresh: options.fresh });
 
 let failures = 0;

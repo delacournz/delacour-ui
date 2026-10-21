@@ -39,6 +39,7 @@ bun run fmt                # format only
 bun test                   # unit tests
 bun run previews           # recapture component preview media from a simulator
 bun run previews:verify    # recapture a selection, pixel-diff it against origin/develop, write a report
+bun run signoff            # run the merge gate's checks locally and sign off the open pull request
 bun run cli:link           # build the CLI and link it, so `delacour` on PATH is this tree
 bun run cli:unlink         # put back whatever `delacour` was before cli:link
 bun run nuke               # delete every node_modules and reinstall from scratch
@@ -78,9 +79,9 @@ or `git config branch.<name>.gh-merge-base develop` once per branch — and bran
 not `main`.
 
 `.github/rulesets/develop.json` (`develop-protected`) is the merge gate: it blocks force-pushes and
-deletion, requires linear history, and requires a pull request whose four CI checks are green, whose
-review threads are resolved, and whose branch is up to date with `develop`. Squash is the only merge
-method.
+deletion, requires linear history, and requires a pull request whose `signoff` statuses are green
+(see [Signoff](#signoff)), whose review threads are resolved, and whose branch is up to date with
+`develop`. Squash is the only merge method.
 
 `.github/rulesets/main.json` (`main-protected`) is release-only: it blocks deletion and non-fast-forward
 pushes, requires linear history, and restricts updates to its bypass list — repository admins and
@@ -91,7 +92,7 @@ token, which is why the app is on that list. Because `develop` only takes squash
 release then fails at the push.
 
 Approvals are **not** required — a sole maintainer cannot approve their own pull request — so the
-gate is CI plus resolved conversations. A worktree is therefore a feature branch: opening a pull
+gate is signoff plus resolved conversations. A worktree is therefore a feature branch: opening a pull
 request is the only way in. Repository admins can bypass in an emergency, and the audit log records
 it when they do.
 
@@ -117,14 +118,80 @@ The `POST` branch is not decoration: the files were once committed and never app
 with no ruleset at all, and the loop as first written could only update one that already existed.
 Check `gh api "repos/$REPO/rulesets"` after applying.
 
+## Signoff
+
+Pull requests into `develop` are gated on **local** CI. The checks run on the machine that authored
+the change and [`basecamp/gh-signoff`](https://github.com/basecamp/gh-signoff) writes commit
+statuses for them, which `develop-protected` requires. Every one of these checks had already run
+there once — through prek, `bun test`, or the agent that wrote the change — and running them again
+on billed runners for every push was the bulk of the Actions spend.
+
+```bash
+gh extension install basecamp/gh-signoff   # once per machine (the wrapper does it if missing)
+bun run signoff -- --dry-run               # the plan for this branch's diff; runs and writes nothing
+bun run signoff                            # run the checks, write the statuses, post the report
+bun run signoff -- --only typecheck,test --skip registry --no-comment --concurrency 1
+```
+
+`scripts/signoff.ts` refuses a dirty tree, an unpushed `HEAD` and a branch with no open pull request,
+plans the checks from the diff against the pull request's base, runs each one through turbo, and
+writes `signoff/<check>` for every check that passed, then the bare `signoff` umbrella **last** —
+and only when something ran and nothing failed. It posts (or edits in place) one comment on the
+pull request naming the `gh` user, the runner — **Claude Code** when an agent ran it — and every
+check's duration and skip reason.
+
+The checks are defined once, in `scripts/signoff-checks.ts`:
+
+| Context | Required | Runs | Command |
+| --- | --- | --- | --- |
+| `signoff/typecheck` | yes | always | `turbo typecheck` |
+| `signoff/check` | yes | always | `turbo check` |
+| `signoff/test` | yes | always | `turbo test test:release test:scripts` |
+| `signoff/build` | yes | always | `turbo build --filter=@delacour/web` |
+| `signoff/registry` | no | the library, CLI, skills, registry or a manifest changed | `turbo registry:build gen-install gen-skill`, `git diff --exit-code`, `turbo verify:expo -- --no-install` (both layouts) |
+| `signoff` | yes | — | the umbrella, written only when every applicable check passed |
+
+Only always-on checks are required. A ruleset's required list is static, so a required context
+that never arrives leaves a pull request unmergeable forever; `registry` gates **transitively**
+instead, because the umbrella is withheld when a check the diff needed did not pass.
+`scripts/signoff.test.ts` pins `REQUIRED_CONTEXTS` against `.github/rulesets/develop.json`, so the
+two cannot drift.
+
+**A status binds to a SHA.** Push again — or press **Update branch**, which the up-to-date rule
+makes routine — and the signoff drops; run it again. Never write a status for a check that did not
+run, and never weaken a check to get one: bare `gh signoff` writes green without running anything,
+and is break-glass only, by a maintainer, said so in the pull request.
+
+When a check genuinely cannot run on a laptop, dispatch the workflow instead — it runs the real
+checks and, given a SHA, writes the same statuses from CI:
+
+```bash
+gh workflow run ci.yml --ref "$(git branch --show-current)" -f signoff-sha="$(git rev-parse HEAD)"
+```
+
+The release pull request is the one pull request signed off in CI, automatically — see below.
+
 ## CI
 
-`.github/workflows/ci.yml` runs four jobs in parallel on every pull request and on every push to
-`develop` — `typecheck`, `check (lint + format)`, `test`, `build` — in about a minute.
+`.github/workflows/ci.yml` is no longer the gate for an ordinary pull request. It runs the same
+checks — `typecheck`, `check (lint + format)`, `test`, `build`, `registry` and `verify-expo` — in
+three cases only:
 
-It does not run on push to `main`. `main` only ever fast-forwards to a commit already on `develop`,
-whose push run checked that exact SHA, so a run there would only repeat it. Railway does not wait on
-check suites, so no deploy depends on one either.
+| Trigger | Why |
+| --- | --- |
+| `pull_request` from `changeset-release/develop` | No person authors the release pull request, so nobody is at a laptop to sign it off. Its final `signoff` job writes the five required statuses for the head SHA it tested. Every job is gated by `if:` to that head branch, so an ordinary pull request starts the workflow and bills nothing |
+| `workflow_dispatch` | The escape hatch above. With `signoff-sha`, a green run writes the statuses; blank is a report |
+| push to `release/playground/*` | Advisory — see [apps/playground/AGENTS.md](apps/playground/AGENTS.md#eas) |
+
+It does not run on push to `develop` or `main`. A commit on `develop` is the squash of a pull request
+signed off at its head and up to date with `develop`, so the tree is the one already verified; `main`
+only fast-forwards to such a commit. Railway does not wait on check suites, so no deploy depends on
+one either. `scripts/signoff.test.ts` fails if `ci.yml` regains a push to `develop` or an ungated
+pull request job.
+
+`verify-expo` — the CLI against a real, npm-installed Expo app — is not part of local signoff: it
+installs from the registry and takes minutes. It runs on the release pull request, before anything
+reaches npm, and on dispatch.
 
 Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
 `namespace-profile-linux-small` for Linux work — `namespace-profile-linux-medium` for `typecheck`,
@@ -140,12 +207,9 @@ with `E422 … Unsupported GitHub Actions runner environment: "self-hosted"`. Mo
 Namespace means either `--provenance=false` (OIDC without the attestation) or an npm token, and
 neither is worth one short job per release.
 
-All four are required status checks on `develop`, which makes the job `name:` values an API contract:
-they appear verbatim in `.github/rulesets/develop.json` and GitHub matches them by string. Rename a job
-without updating that file and every pull request blocks forever on a check that never reports.
-
-For the same reason the workflow carries no `paths:` filter and no draft skip. A check that is
-skipped is not a check that passed — it is a pull request that can never be merged.
+The required contexts carry no `integration_id` in the ruleset, on purpose: a local signoff is
+written through the GitHub CLI's OAuth app and the release pull request's through GitHub Actions,
+and both have to satisfy the same rule.
 
 Socket Security posts two further checks. They stay advisory on purpose: requiring a third-party app
 would couple the merge gate to a vendor's uptime.
@@ -368,8 +432,9 @@ The release pull request is **🔖 chore(release): version packages**, from `cha
 into `develop`. It holds what `changeset version` produces — every pending changeset consumed into
 stable versions and changelogs, and `bun.lock` regenerated to match. Each merge to `develop`
 force-pushes it from scratch on top of the new tip, so it always describes the release that merging
-it would cut and it is always up to date for `develop-protected`. It is an ordinary pull request:
-the four checks run on it and it squash-merges like any other.
+it would cut and it is always up to date for `develop-protected`. It is an ordinary pull request,
+except that `ci.yml` signs it off rather than a person: the checks, plus `verify-expo`, run on it and
+write its `signoff` statuses, and it squash-merges like any other.
 
 **Merging it is the release.** The squash lands on `develop` as the release commit, `alpha.yml` finds
 nothing pending and skips, and the `release` job rebuilds and checks the registry, builds the CLI
@@ -467,7 +532,7 @@ build are Bun's.
 from the `delacour-release` app with `actions/create-github-app-token` at the top of both jobs that
 write. That token does two things `GITHUB_TOKEN` cannot. It pushes the release pull request's
 branch: a push made with `GITHUB_TOKEN` starts no workflows, so `ci.yml` would never run on that
-pull request and its four required checks would never report. And it fast-forwards `main`, which
+pull request, and its required `signoff` statuses would never be written. And it fast-forwards `main`, which
 `main-protected` lets only its bypass list update — the app is on it, as an `Integration` actor
 whose `actor_id` is the app id.
 

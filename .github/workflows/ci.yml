@@ -1,42 +1,51 @@
 name: CI
 
-# Not on push to `main`. `main` moves only when `release.yml` fast-forwards it to a commit that is
-# already on `develop`, and that commit's push to `develop` ran these checks on the same SHA — a run
-# on `main` could only repeat the answer. Railway does not wait on check suites for
-# ui.delacour.co.nz either, so nothing downstream reads a `main` run.
+# NOT THE MERGE GATE FOR ORDINARY PULL REQUESTS. `bun run signoff` runs these checks on the machine
+# that authored the change — where they had already run once — and writes the `signoff/*` commit
+# statuses `.github/rulesets/develop.json` requires. See AGENTS.md § Signoff. The path gate for the
+# registry check lives in scripts/signoff-checks.ts, the single copy both halves read.
 #
-# `develop` is listed because every commit there — a squash-merged pull request — is the tree
-# ui.staging.delacour.co.nz deploys and the one a release later ships, and its push run is the check
-# the commit itself carries. `develop-protected` requires the pull request to be green and up to
-# date, so this run should only ever repeat it; if it is red, the tree is broken.
+# What still runs here, and why:
 #
-# `release/playground/*` is listed for an unrelated reason: a push to a `release/playground/x.y.z`
-# branch triggers the EAS `release:prod` workflow, which ships the app to the stores. GitHub and EAS
-# run independently, so these checks cannot hold that release back — they only mean a push that
-# shipped something broken is visibly red rather than silently green. Railway does not deploy from
-# these branches.
+# - The release pull request (`changeset-release/develop`). No person authors it — `release.yml`
+#   force-pushes it with the release app's token on every merge — so nobody is at a laptop to sign it
+#   off. Every job is gated to that head branch on `pull_request`, and the `signoff` job writes the
+#   same statuses `bun run signoff` would, for the head SHA it tested. It is also the one run that
+#   includes `verify-expo` before a release reaches npm.
+# - `workflow_dispatch`, the escape hatch for a check a laptop cannot run. Passing `signoff-sha`
+#   makes a green run write the statuses itself; blank is a report only.
+# - A push to `release/playground/*`, which triggers the EAS `release:prod` workflow that ships the
+#   app to the stores. GitHub and EAS run independently, so these checks cannot hold that release
+#   back — they only mean a push that shipped something broken is visibly red rather than silently
+#   green. Railway does not deploy from these branches.
 #
-# The four job `name:` values are also an API contract, not labels. They are listed verbatim as
-# required status checks in `.github/rulesets/develop.json`, and GitHub matches them by string.
-# Rename a job without updating that file and every pull request into `develop` blocks forever on a
-# check that will never report.
+# Not on push to `develop` any more. Every commit there is a squash of a pull request that was
+# signed off at its head and up to date with `develop` (`strict_required_status_checks_policy`), so
+# the tree is the one that was verified; a run there only repeated the answer, billed.
 
 on:
   push:
-    branches: [develop, release/playground/*]
+    branches: [release/playground/*]
   pull_request:
   workflow_dispatch:
+    inputs:
+      signoff-sha:
+        description: "Commit SHA to sign off on success (blank = report only)"
+        required: false
+        type: string
 
-# No `paths:` filter, deliberately. A required check that is skipped is not a check that passed —
-# it is a pull request that can never be merged.
+# No `paths:` filter. On a pull request the jobs are gated by `if:` to the release pull request
+# instead: a skipped job bills nothing, and the gate itself is the signoff statuses, not these jobs.
 #
 # Runners are Namespace profiles, not GitHub-hosted labels. `namespace-profile-linux-small` is
 # the default for everything here; a job that needs macOS (Xcode, a simulator) must use
 # `namespace-profile-mac-small` instead, and one that needs Windows `namespace-profile-windows-small`.
 # Nothing in this workflow needs either — `previews` is deliberately kept out of CI (see the build job).
 
+# `statuses: write` is for the `signoff` job. The default token is read-only on statuses.
 permissions:
   contents: read
+  statuses: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -53,6 +62,7 @@ env:
 jobs:
   typecheck:
     name: typecheck
+    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     # tsc over every workspace at once outgrew the small profile: with the component stack applied,
     # the playground's tsc was OOM-killed (exit 137) on every run.
     runs-on: namespace-profile-linux-medium
@@ -73,6 +83,7 @@ jobs:
 
   check:
     name: check (lint + format)
+    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 15
     steps:
@@ -85,6 +96,7 @@ jobs:
 
   test:
     name: test
+    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 15
     steps:
@@ -97,6 +109,7 @@ jobs:
 
   build:
     name: build
+    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 15
     steps:
@@ -119,6 +132,7 @@ jobs:
 
   registry:
     name: registry
+    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -177,6 +191,7 @@ jobs:
 
   verify-expo:
     name: CLI against a real Expo app (${{ matrix.layout }})
+    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 20
 
@@ -209,3 +224,33 @@ jobs:
       - name: Scaffold, install, typecheck and bundle
         working-directory: packages/cli
         run: bun run verify:expo --bundle --layout ${{ matrix.layout }}
+
+  # Writes what `bun run signoff` would have, for the commit these jobs tested: every always-on
+  # sub-context, then the umbrella last. `needs` covers every job above, so the umbrella is earned
+  # only when all of them — registry and both verify-expo legs included — passed.
+  signoff:
+    name: signoff
+    needs: [typecheck, check, test, build, registry, verify-expo]
+    if: >-
+      success() &&
+      ((github.event_name == 'pull_request' && github.head_ref == 'changeset-release/develop') ||
+      (github.event_name == 'workflow_dispatch' && inputs.signoff-sha != ''))
+    runs-on: namespace-profile-linux-small
+    timeout-minutes: 5
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha || inputs.signoff-sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ACTOR: ${{ github.actor }}
+        # Same contexts as REQUIRED_CONTEXTS in scripts/signoff-checks.ts, which signoff.test.ts pins
+        # against `.github/rulesets/develop.json`.
+        run: |
+          for CONTEXT in signoff/typecheck signoff/check signoff/test signoff/build signoff; do
+            gh api "repos/${{ github.repository }}/statuses/${SHA}" --method POST \
+              -f state=success \
+              -f "context=${CONTEXT}" \
+              -f "description=passed in CI, triggered by ${ACTOR}" \
+              -f "target_url=${RUN_URL}"
+            echo "✓ ${CONTEXT} written for ${SHA}"
+          done

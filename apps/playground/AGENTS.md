@@ -1492,8 +1492,8 @@ installs pods, so a release build carries both — check the file after `pod ins
   activity → App interactions** (Analytics), **Device or other IDs** (Analytics, App
   functionality), and **App info and performance → Crash logs, Diagnostics and Other app
   performance data** (Analytics, App functionality), encrypted in transit, with the same URL.
-- **CI on the release branch.** `.github/workflows/ci.yml` runs on
-  `[develop, release/playground/*]`, so a push to a release branch is
+- **CI on the release branch.** `.github/workflows/ci.yml` runs on a push to
+  `release/playground/*`, so a push to a release branch is
   typechecked, linted, tested and built. Those checks are advisory here: GitHub
   and EAS run independently, so a red check does not hold the release back. It
   only tells you a push shipped something broken.

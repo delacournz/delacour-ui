@@ -762,6 +762,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		// cannot see it — but Yarn does not install peers, and `tv()` needs it.
 		dependencies: ["tailwind-merge"],
 	},
+	"wrap-text-children": {
+		title: "wrapTextChildren",
+		description: "Wraps bare text children in an element React Native can render; asChild is left alone.",
+	},
 
 	"use-calm-motion": {
 		title: "useCalmMotion",

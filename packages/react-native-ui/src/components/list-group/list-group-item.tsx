@@ -1,6 +1,7 @@
-import { Children, type ReactElement, type ReactNode, useMemo } from "react";
+import { type ReactElement, type ReactNode, useMemo } from "react";
 import type { AccessibilityState } from "react-native";
 import Animated from "react-native-reanimated";
+import { wrapTextChildren } from "../../lib/wrap-text-children";
 import { Pressable, type PressableProps } from "../pressable";
 import { useListGroupPart } from "./list-group.context";
 import { listGroupVariants, resolveListGroupItemRender } from "./list-group.variants";
@@ -48,7 +49,7 @@ export function ListGroupItem({
 	...props
 }: ListGroupItemProps): ReactElement {
 	const { size } = useListGroupPart("ListGroup.Item");
-	const content = useMemo(() => wrapTextChildren(children), [children]);
+	const content = useMemo(() => wrapListGroupItemText(children, asChild), [asChild, children]);
 	const itemClassName = listGroupVariants({ isDisabled, size }).item({ className });
 
 	if (resolveListGroupItemRender({ isDisabled, onLongPress, onPress }) === "pressable") {
@@ -87,39 +88,23 @@ ListGroupItem.displayName = "DelacourUI.ListGroup.Item";
  *
  * Consecutive strings and numbers are collected into a single title rather than
  * one each — `Row {index}` is one piece of text, and wrapping the parts
- * separately would space them apart by the row's gap.
+ * separately would space them apart by the row's gap. A single child, and every
+ * child under `asChild`, comes back untouched: `Pressable` with `asChild` hands
+ * its children to `Children.only`, which rejects any array. The shared
+ * `wrapTextChildren` holds both rules and their tests.
  *
  * Lives here rather than with the root: it is the row that wraps its own text,
  * and importing it from `./list-group` would close a cycle back through the
  * root. See AGENTS.md rule 3.
- *
- * One node comes back as that node, never a one-item array: `Pressable` with
- * `asChild` hands its children to `Children.only`, which rejects any array.
  */
-function wrapTextChildren(children: ReactNode): ReactNode {
-	const items = Children.toArray(children);
-	const output: ReactNode[] = [];
-	let run: (string | number)[] = [];
-
-	const flushRun = () => {
-		if (run.length === 0) return;
-		output.push(
-			<ListGroupItemContent key={`content-${output.length}`}>
-				<ListGroupItemTitle>{run.join("")}</ListGroupItemTitle>
+function wrapListGroupItemText(children: ReactNode, asChild: boolean | undefined): ReactNode {
+	return wrapTextChildren(
+		children,
+		(text, key) => (
+			<ListGroupItemContent key={key}>
+				<ListGroupItemTitle>{text}</ListGroupItemTitle>
 			</ListGroupItemContent>
-		);
-		run = [];
-	};
-
-	for (const child of items) {
-		if (typeof child === "string" || typeof child === "number") {
-			run.push(child);
-			continue;
-		}
-		flushRun();
-		output.push(child);
-	}
-	flushRun();
-
-	return output.length === 1 ? output[0] : output;
+		),
+		{ asChild }
+	);
 }

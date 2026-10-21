@@ -75,8 +75,12 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
   tunes that glyph and is ignored once it does.
 - **String children** are wrapped in an `ItemContent` around an `ItemTitle`
   automatically, consecutive strings collapsing into one — the same rule, and
-  the same reason, as [`Button`](../button/AGENTS.md). A single node comes
-  back unwrapped, not as a one-item array, so `asChild` (which calls
-  `Children.only`) takes it.
+  the same reason, as [`Button`](../button/AGENTS.md). The rule is the shared
+  `lib/wrap-text-children`, which `Item` calls too.
+- **`ListGroup.Item asChild` passes its child through untouched.** `Pressable`
+  with `asChild` calls `Children.only`, which throws on any array, even a
+  one-element one. Under `asChild` nothing is wrapped; without it a lone
+  element still comes back as that same element. Wrap text yourself under
+  `asChild` — a string cannot take the row's props.
 - **Title colour goes on the title.** The `item` slot carries no `text-*`; a row
   is a `View` and cannot cascade colour to a `Text`. The tests assert this.

@@ -25,6 +25,14 @@
 		"test": { "cache": false, "outputs": [] },
 		// The release scripts under `.github/` belong to no workspace; this runs their tests.
 		"//#test:release": { "cache": false, "outputs": [] },
+		// `scripts/*.test.ts` (the signoff wrapper) belong to no workspace either.
+		"//#test:scripts": { "cache": false, "outputs": [] },
+		// The registry and the two modules derived from it, regenerated in order so `bun run signoff`'s
+		// drift check runs them as one turbo invocation. Each later one reads `registry/`.
+		"registry:build": { "cache": false, "outputs": [] },
+		"gen-install": { "dependsOn": ["delacour#registry:build"], "cache": false, "outputs": [] },
+		"gen-skill": { "dependsOn": ["delacour#registry:build"], "cache": false, "outputs": [] },
+		"verify:expo": { "cache": false, "outputs": [] },
 		// Drives a simulator and writes into apps/web; never cached, never parallel.
 		"previews": { "cache": false, "outputs": [], "persistent": false },
 		"previews:verify": { "cache": false, "outputs": [], "persistent": false }

@@ -29,6 +29,7 @@ same push that changed the visuals.
 
 ## Checklist
 
+- [ ] `bun run signoff` run on the final head — the merge gate is its `signoff` statuses, and every push drops them
 - [ ] Docs updated in the same commit — `react-native-ui`'s `docs.test.ts` fails by name for a component folder with no `AGENTS.md`
 - [ ] `bun.lock` committed alongside any dependency change — CI installs with `--frozen-lockfile` and fails on drift
 - [ ] `bun run previews` recaptured and committed, if a component's visuals changed (needs a Mac with Xcode; never runs in CI)

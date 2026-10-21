@@ -85,7 +85,7 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 	// name: every file of it is simply no longer upstream.
 	const dropped = candidates.filter((name) => !byName.has(name) && lock.items[name] !== undefined);
 	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T =>
-		input.tests || hasTests(lock, item.name) ? withTests(item) : item;
+		input.tests || hasTests(lock, item.name) ? withTests(item, config.testRunner) : item;
 	const order = resolveItemGraph(
 		candidates.filter((name) => !dropped.includes(name)),
 		(name) => {

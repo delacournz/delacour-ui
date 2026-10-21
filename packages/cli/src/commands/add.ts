@@ -13,12 +13,14 @@ import {
 	runInstall,
 } from "../project/package-manager";
 import { linkPackageToApp, syncSharedPackage } from "../project/shared-package";
+import { readTestSetup } from "../project/test-setup";
 import { type PlannedFile, planFiles, writeFiles } from "../project/write-files";
 import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
 import { type RegistryIndexEntry, type RegistryItem, withTests } from "../registry/schema";
 import { DEFAULT_REGISTRY_REF } from "../registry/source";
 import { createOutput, type Output, style } from "../ui/output";
+import { type Check, testChecks } from "./doctor";
 // A cycle — `init` ends in an `add`. Safe, because neither module touches the
 // other at load time, only inside a call.
 import { init } from "./init";
@@ -74,6 +76,8 @@ export type AddResult = {
 	dependencies: DependencyPlan;
 	/** Whether the package manager was actually run. */
 	installed: boolean;
+	/** Under `--tests`, whether the project's runner can run what was copied; empty otherwise. */
+	testSetup: Check[];
 };
 
 export async function add(names: string[], options: AddOptions): Promise<AddResult | null> {
@@ -109,9 +113,10 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 		return null;
 	}
 
-	// With tests, an item is its tests too — files, the items they import, the
-	// types `bun:test` needs — so everything after this treats them as source.
-	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T => (options.tests ? withTests(item) : item);
+	// With tests, an item is its tests too — files, the items they import, what
+	// the project's runner needs — so everything after this treats them as source.
+	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T =>
+		options.tests ? withTests(item, config.testRunner) : item;
 	const byName = new Map(index.items.map((item) => [item.name, item]));
 	const order = resolveItemGraph(requested, (name) => {
 		const entry = byName.get(name);
@@ -133,7 +138,24 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	report(toWrite, planned, requested, output);
 
 	const settled = await settleDependencies(items, config, project, options, output);
-	return { items: items.map((item) => item.name), written: toWrite.length, ...settled };
+	const testSetup = options.tests ? await checkTestSetup(config, project, output) : [];
+	return { items: items.map((item) => item.name), written: toWrite.length, ...settled, testSetup };
+}
+
+/**
+ * Says what the runner still needs before the copied tests will run.
+ *
+ * After the install, so a package it just added is not reported missing. The
+ * CLI writes no runner config — that file is the project's — so a suite that
+ * cannot load is said here, where it was copied, rather than found at the first
+ * test run with an error naming neither the cause nor the fix.
+ */
+async function checkTestSetup(config: ResolvedConfig, project: ProjectInfo, output: Output): Promise<Check[]> {
+	const checks = testChecks(await readTestSetup(config, project));
+	for (const check of checks.filter((entry) => entry.status === "warn" || entry.status === "fail")) {
+		output.warn([`${check.name}: ${check.detail}`, ...(check.fix ? [`  ${check.fix}`] : [])].join("\n"));
+	}
+	return checks;
 }
 
 /**

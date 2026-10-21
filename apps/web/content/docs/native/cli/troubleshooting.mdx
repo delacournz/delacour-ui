@@ -191,6 +191,26 @@ collapse to `never`. Metro cannot follow that layout either.
 linker = "hoisted"
 ```
 
+### `Must use import to load ES Module` under Jest
+
+A suite reached `chart` or `bottom-sheet`, whose engines ship TypeScript source that Jest leaves
+untransformed by default. Add `@delacour/.*` — and for `chart`, `d3-.*` and `internmap` — to the
+packages `transformIgnorePatterns` lets through, beside `jest-expo`'s own. `delacour doctor` warns
+about this under **Jest transforms**.
+
+### Copied tests fail to load under Vitest or Jest
+
+`delacour add --tests` checks the runner straight after copying, and `delacour doctor` checks it
+again under **Test runner**. Each problem comes with its fix:
+
+| Problem | Fix |
+| --- | --- |
+| A package the suites import is missing | Install `@jest/globals` or `vitest`, and `@types/node` |
+| The `test` script runs another runner | Set `tests.runner` and run `update --tests`, or point the script at the right runner |
+| No Jest config | `"jest": { "preset": "jest-expo" }` in `package.json` |
+| Vitest does not resolve `@/` | Map it in `resolve.alias` in `vitest.config.ts` |
+| Vite cannot follow `expo/tsconfig.base` | `esbuild: { tsconfigRaw: "{}" }` in `vitest.config.ts` |
+
 ### A copied component does not typecheck
 
 That is a registry defect rather than something wrong with your project — an import the registry
@@ -230,6 +250,16 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
     },
     "Gesture Handler": { type: "check", description: "A GestureHandlerRootView exists at the app root." },
     "Native modules": { type: "check", description: "One copy of each native module, not two." },
+    "Test runner": {
+      type: "check",
+      description:
+        "With copied tests, the runner they were written for can run them: its packages are installed, the test script runs that runner, Jest has a config (jest-expo, or a moduleNameMapper for your alias), and Vitest maps your alias and, when tsconfig.json extends expo/tsconfig.base, sets esbuild.tsconfigRaw. A warning: only the tests break. add --tests runs it too.",
+    },
+    "Jest transforms": {
+      type: "check",
+      description:
+        "On Jest with chart or bottom-sheet installed, transformIgnorePatterns lets @delacour/.* through, and d3-.* and internmap for chart. The engines ship TypeScript source; untransformed, every suite importing them fails with \"Must use import to load ES Module\". A warning: only the tests break.",
+    },
   }}
 />
 

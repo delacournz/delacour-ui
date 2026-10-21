@@ -210,6 +210,14 @@ holds on either line.
 | *(default)* | Every import resolves and every type lines up. |
 | `--bundle` | Metro resolves every module and **Uniwind compiles every class**. |
 | `--simulator` | The components render on a device. Needs a Mac with Xcode. |
+| `--tests <runner>` | Every copied suite passes under `bun`, `jest` or `vitest`, set up the way the docs say. Combines with any level. |
+
+`--tests` sets the package the tests land in up on the runner before `add` reads it — `jest-expo` at
+the scaffold's SDK with the engines in `transformIgnorePatterns`, or a `vitest.config.ts` mapping the
+project's `tsconfig` paths — then runs `add --all --tests`, runs the suites, and fails unless every
+suite the lock records ran and none failed. A runner that matched no files passes everything it
+found, which is why the count is checked as well. Under it `doctor`'s **Test runner** and **Jest
+transforms** must pass, not merely warn. `signoff/tests` runs all three runners on every change but markdown.
 
 `--layout monorepo` runs the whole thing again with the components in a shared package the app
 imports by name. That layout has wiring the standalone one does not — a workspace link, an
@@ -230,7 +238,12 @@ Both were found by building it, and both are silent:
 
 The app is built at `.verify/app` — gitignored and outside the workspace globs. The default run
 removes it afterwards, `node_modules` and all; `--keep` retains it and makes the next run take
-seconds rather than two minutes, and `--fresh` discards what a previous `--keep` left.
+seconds rather than two minutes, and `--fresh` discards what a previous `--keep` left. `--dir <path>`
+builds somewhere else instead, with the CLI bundle, the packed engines and Bun's install cache
+beside it (`<path>.cli`, `<path>.packages`, `<path>.cache`) rather than in `dist`, a shared folder and
+`~/.bun/install/cache` — so runs with different directories share nothing they write and can run at
+once, which is how `signoff/tests` runs its three runners. The cache is the one that bites: two runs
+adding the same engine tarball into Bun's shared cache at once both hung on its lock at no CPU.
 
 <!-- Cleaning up means all of it. -->
 An earlier version kept `node_modules` through cleanup, on the theory that it was only a cache.
@@ -529,7 +542,7 @@ A `*.test.ts` (and a `*.test-helpers.ts` / `*.fixtures.ts`) is classified like t
 marked `test: true`, and lands in its item's `tests` list with its own `testRegistryDependencies` and
 `testDependencies` — what only the tests need. `add --tests` folds all three into the item with
 `withTests` (in `registry/schema.ts`) before resolving or loading anything, so from there a test is
-an ordinary file: planned, written, recorded in the lock, updated. Four things are load-bearing:
+an ordinary file: planned, written, recorded in the lock, updated. Five things are load-bearing:
 
 - **A separate list, not a flag on `files`.** zod strips the unknown key, so a CLI from before
   `tests` reads a new registry and copies exactly what it always did. A `test: true` on a file entry
@@ -544,8 +557,42 @@ an ordinary file: planned, written, recorded in the lock, updated. Four things a
   `add` would not copy it.
 - **A suite at the root of `src` belongs to no item.** `docs.test.ts`, `cn.parity.test.ts` and the
   rest check the library as a whole and never ship.
+- **A shipped test keeps to what Bun, Jest and Vitest share.** `runnerSpecificUses` fails the build
+  on an import from `bun:test` beyond `describe` / `test` / `it` / `expect` and the four hooks, the
+  `Bun` global, `import.meta` beyond `dirname`, a matcher only Bun ships (`toStartWith`,
+  `toInclude`, `toBeOneOf`, …) and a conditional modifier (`test.if`, `describe.skipIf`). A copy
+  lands in a project on any runner, and kept to the shared API, porting it is a change of import
+  line. Spy by swapping the function and restoring it in `afterEach`, not with `spyOn` / `mock`.
 
 `bun:test` maps to `@types/bun` (classified `dev` in `PACKAGE_INSTALL`); `node:*` needs nothing.
+
+### A copied test is written for the project's runner
+
+`config.testRunner` is `tests.runner` from `native-components.json`, else what `detectTestRunner`
+reads off the config's `package.json` and then the app's (the `test` script, then a `vitest`,
+`jest` or `jest-expo` dependency, then a top-level `jest` key), else `bun`. `transformFile` passes a
+test through `adaptTest` after the alias transform, and `withTests(item, runner)` swaps the
+`@types/bun` the registry records for that runner's packages. Three things hold it together:
+
+- **It is two substitutions because the guard keeps it two.** `runnerSpecificUses` (above) is what
+  lets `adaptTest` be a string replace: the import's module, and for Jest `import.meta.dirname` →
+  `__dirname`, since Jest evaluates CommonJS. A suite needing a third rewrite fails the build first.
+- **It happens in `transformFile`, so the lock agrees.** The lock hashes the text after the
+  transform, and `add`, `update` and `diff` all go through `transformFile`, so the hash is of the
+  runner's text. Switching runners reads as an upstream change on the next `update`, not an edit.
+- **The runner's own setup is checked, never written.** Vitest needs the project's `@/` alias in its own
+  config, and on SDK 58 `esbuild: { tsconfigRaw: "{}" }` too, because `expo`'s `exports` map hides
+  `tsconfig.base` from Vite's tsconfig loader (and from `vite-tsconfig-paths`), and Jest needs `@delacour/.*`, `d3-.*` and `internmap` in `transformIgnorePatterns` for
+  `chart` and `bottom-sheet`. The CLI does not write a runner's config — that file is the project's —
+  so `project/test-setup.ts` checks it instead: `checkTestRunner` (packages installed, the `test`
+  script on the same runner, a Jest config with `jest-expo` or a `moduleNameMapper` for the alias,
+  a Vitest alias and `tsconfigRaw`) and `checkJestTransform`. `doctor` runs both as `testChecks`, and
+  `add --tests` runs them after its install, warns, and returns them as `AddResult.testSetup` for
+  the MCP reply. The config is read as text, so a setting built in code can be missed; both stay
+  warnings, since only the tests break. Under `verify:expo --tests` both have to pass.
+
+`verify:expo --tests bun`, `--tests jest` and `--tests vitest` (see Testing) prove it end to end, and
+`signoff/tests` runs all three.
 
 ### Markdown is canonicalised too, but differently
 

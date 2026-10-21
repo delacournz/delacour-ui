@@ -1,3 +1,5 @@
+import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
+
 /**
  * What a pull request has to pass before it can merge, and which of it a given diff actually needs.
  *
@@ -25,6 +27,13 @@
  * `verify-expo` (the CLI against a real, npm-installed Expo app) is absent on purpose. It installs
  * from the registry and takes minutes; it stays a `workflow_dispatch` job in `ci.yml`, and the
  * structure-only half of it (`verify:expo --no-install`) runs inside `registry`.
+ *
+ * `tests` is the one installed verify that does run here: every component's suites copied into a real
+ * app on Bun, on Jest and on Vitest, and run by each. A guard can only reject what someone already
+ * knew only Bun runs; this is what finds the rest. The three run at once, each in its own
+ * `verify:expo --dir`, so the check costs one runner's time rather than three. It is path-gated on
+ * everything but markdown rather than `always`, so it gates through the umbrella and the ruleset's
+ * required list stays as it is.
  */
 
 /** One process to spawn. `cwd` is repo-root-relative; omitted means the repo root. */
@@ -42,12 +51,17 @@ export type SignoffCheck = {
 	/** The workflow that still runs this check on `workflow_dispatch`, for the escape hatch. */
 	workflow: string;
 	run: readonly SignoffCommand[];
+	/** Run the commands at once rather than in order; every one runs, and the check fails if any did. */
+	parallel?: boolean;
 	/**
 	 * Resources this check holds for its whole run; `signoff.ts` never runs two checks naming the
 	 * same one at once (see ./signoff-pool.ts).
 	 */
 	locks?: readonly string[];
 };
+
+/** `packages/cli/.verify/app`, which every `verify:expo` run empties and rebuilds — two at once wreck each other. */
+const VERIFY_APP = "verify-app";
 
 /** The bare context the ruleset requires. Emitted last, and only when everything passed. */
 export const UMBRELLA_CONTEXT = "signoff";
@@ -138,6 +152,20 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--no-install"] },
 			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--no-install", "--layout", "monorepo"] },
 		],
+		locks: [VERIFY_APP],
+	},
+	{
+		context: "tests",
+		label: "copied tests under Bun, Jest and Vitest",
+		always: false,
+		paths: ["**"],
+		workflow: "ci.yml",
+		// Each runner in its own `--dir`, which also keeps it off `registry`'s `.verify/app`.
+		run: TEST_RUNNERS.map((runner) => ({
+			argv: ["bun", "run", "verify:expo", "--tests", runner, "--dir", `.verify/tests-${runner}`],
+			cwd: "packages/cli",
+		})),
+		parallel: true,
 	},
 ];
 

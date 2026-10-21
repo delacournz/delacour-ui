@@ -59,8 +59,8 @@ describe("the CSS readers", () => {
 describe("the geometry block", () => {
 	test("restates every number tokens.css declares, with the same value", () => {
 		for (const [name, value] of NATIVE) {
-			expect(TOKENS.get(name), `tokens.css declares no ${name}`).toBeDefined();
-			expect(TOKENS.get(name), `${name} disagrees between tokens.css and theme.css`).toBe(value);
+			// Paired with its name, so a failure says which token disagrees.
+			expect([name, TOKENS.get(name)]).toEqual([name, value]);
 		}
 	});
 
@@ -86,9 +86,7 @@ describe("the geometry block", () => {
 			...(["sm", "md", "lg"] as const).map((step) => `--spacing-fab-${step}`),
 		];
 
-		for (const name of required) {
-			expect(NATIVE.has(name), `theme.css's @variant native declares no ${name}`).toBe(true);
-		}
+		expect(required.filter((name) => !NATIVE.has(name))).toEqual([]);
 	});
 
 	// The generic corner scale is derived from `--radius` in `tokens.css`'s
@@ -108,7 +106,7 @@ describe("the font families", () => {
 			const declared = variantDeclarations(platform);
 
 			for (const token of ["--font-sans", "--font-serif", "--font-mono", "--font-heading"] as const) {
-				expect(declared.get(token), `@variant ${platform} declares no ${token}`).toBeDefined();
+				expect([platform, token, declared.has(token)]).toEqual([platform, token, true]);
 				// React Native's `fontFamily` takes one name and no fallback
 				// list, so a comma-separated web stack resolves to nothing.
 				expect(declared.get(token)).not.toContain(",");

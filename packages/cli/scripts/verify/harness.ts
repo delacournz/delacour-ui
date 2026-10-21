@@ -1,5 +1,5 @@
 import { mkdir, readdir, rm, stat, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { x } from "tinyexec";
 
 /**
@@ -23,7 +23,7 @@ export type Reporter = {
 };
 
 /** Pinned to the SDK this monorepo develops against. */
-const EXPO_SDK = "~58.0.16";
+export const EXPO_SDK = "~58.0.16";
 
 const PACKAGE_JSON = {
 	name: "delacour-verify-app",
@@ -123,6 +123,36 @@ export function App() {
  * scope themselves to `src` and `scripts`, and it is gitignored.
  */
 export const VERIFY_DIR = join(import.meta.dirname, "../../.verify/app");
+
+export type VerifyPaths = {
+	/** The scaffolded project. */
+	app: string;
+	/** The CLI bundle this run built and drives. */
+	cli: string;
+	/** The workspace engines this run packed for the project to install. */
+	packages: string;
+	/**
+	 * Bun's install cache for a `--dir` run, or `null` for Bun's shared one. Two runs adding the same
+	 * engine tarball into one cache at once both hung on its lock, at no CPU, until killed.
+	 */
+	cache: string | null;
+};
+
+/**
+ * Everything one run writes, from `--dir` (relative to where it ran) or the default.
+ *
+ * The CLI and the tarballs sit beside the app rather than in `dist` and a shared
+ * `.verify/packages`, so two runs with different directories share nothing they
+ * write: one rebuilding `dist` while another is running it was the race that kept
+ * the three `--tests` runs in sequence.
+ */
+export function verifyPaths(dir: string | undefined, cwd: string): VerifyPaths {
+	if (dir === undefined) {
+		return { app: VERIFY_DIR, cli: `${VERIFY_DIR}.cli`, packages: `${VERIFY_DIR}.packages`, cache: null };
+	}
+	const app = resolve(cwd, dir);
+	return { app, cli: `${app}.cli`, packages: `${app}.packages`, cache: `${app}.cache` };
+}
 
 /**
  * The two shapes a consumer's project can take.
@@ -284,14 +314,14 @@ export async function scaffoldExpoApp(dir: string, options: ScaffoldOptions): Pr
 }
 
 /** Builds the CLI and returns the path to the bundle. */
-export async function buildCli(reporter: Reporter): Promise<string> {
+export async function buildCli(outDir: string, reporter: Reporter): Promise<string> {
 	const packageRoot = join(import.meta.dirname, "../..");
-	await run("bun", ["run", "build"], { cwd: packageRoot, reporter, label: "tsdown" });
+	await run("bun", ["x", "tsdown", "--out-dir", outDir], { cwd: packageRoot, reporter, label: "tsdown" });
 
-	const bundle = join(packageRoot, "dist/index.js");
+	const bundle = join(outDir, "index.js");
 	if (!(await Bun.file(bundle).exists())) throw new Error(`Build produced no bundle at ${bundle}`);
 
-	reporter.pass("dist/index.js");
+	reporter.pass(relative(process.cwd(), bundle));
 	return bundle;
 }
 
@@ -411,8 +441,11 @@ const WORKSPACE_PACKAGES: Record<string, string> = {
  * dependencies — so a type dependency missing from the manifest fails here
  * rather than in someone's app.
  */
-export async function installWorkspacePackages(workspace: Workspace, reporter: Reporter): Promise<void> {
-	const destination = join(VERIFY_DIR, "..", "packages");
+export async function installWorkspacePackages(
+	workspace: Workspace,
+	destination: string,
+	reporter: Reporter
+): Promise<void> {
 	await mkdir(destination, { recursive: true });
 
 	for (const [name, relativePath] of Object.entries(WORKSPACE_PACKAGES)) {

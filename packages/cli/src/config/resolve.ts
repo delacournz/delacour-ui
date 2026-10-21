@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import type { Namespace } from "../registry/namespaces";
+import { detectTestRunner, type RunnerManifest, type TestRunner } from "../registry/test-runner";
 import { CONFIG_FILENAME, type Config, configSchema } from "./schema";
 
 /**
@@ -23,6 +24,8 @@ export type ResolvedConfig = Config & {
 	configPath: string;
 	/** Absolute destination directory per namespace. */
 	directories: Record<Namespace, string>;
+	/** What copied tests are written for: `tests.runner`, else the project's own, else Bun. */
+	testRunner: TestRunner;
 	app: Config["app"] & {
 		/** Absolute paths to the Expo app's own files. */
 		resolved: { root: string; css: string; metroConfig: string; uniwindTypes: string };
@@ -76,16 +79,48 @@ export async function readConfig(configPath: string): Promise<ResolvedConfig> {
 		throw new Error(`${configPath} is not a valid config:\n${issues.join("\n")}`);
 	}
 
-	return resolveConfig(result.data, dirname(configPath), configPath);
+	const root = dirname(configPath);
+	const detected = result.data.tests?.runner
+		? null
+		: await readTestRunner([root, absolute(root, result.data.app.root)]);
+
+	return resolveConfig(result.data, root, configPath, detected);
 }
 
-export function resolveConfig(config: Config, root: string, configPath: string): ResolvedConfig {
+/**
+ * The runner the first of `directories` to name one tests with. The config's
+ * own `package.json` comes first — in a monorepo that is the shared package the
+ * tests land in — then the app's.
+ */
+async function readTestRunner(directories: readonly string[]): Promise<TestRunner | null> {
+	for (const directory of new Set(directories)) {
+		let manifest: RunnerManifest;
+		try {
+			manifest = JSON.parse(await readFile(join(directory, "package.json"), "utf-8"));
+		} catch {
+			continue;
+		}
+
+		const runner = detectTestRunner(manifest);
+		if (runner) return runner;
+	}
+
+	return null;
+}
+
+export function resolveConfig(
+	config: Config,
+	root: string,
+	configPath: string,
+	detectedRunner: TestRunner | null = null
+): ResolvedConfig {
 	const appRoot = absolute(root, config.app.root);
 
 	return {
 		...config,
 		root,
 		configPath,
+		testRunner: config.tests?.runner ?? detectedRunner ?? "bun",
 		directories: {
 			ui: absolute(root, config.paths.ui),
 			lib: absolute(root, config.paths.lib),

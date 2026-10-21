@@ -38,7 +38,13 @@
  */
 
 import { readdirSync } from "node:fs";
-import { ALWAYS_CONTEXTS, type PlannedCheck, planChecks, type SignoffCommand } from "./signoff-checks";
+import {
+	ALWAYS_CONTEXTS,
+	type PlannedCheck,
+	planChecks,
+	type SignoffCheck,
+	type SignoffCommand,
+} from "./signoff-checks";
 import { runPool } from "./signoff-pool";
 
 export type CheckStatus = "passed" | "failed" | "skipped";
@@ -380,25 +386,64 @@ async function readSummaryFile(path: string, task: string): Promise<SummaryRead 
  * because the slowest task of a failed build is exactly the thing you want named.
  */
 async function runCheck(
-	commands: readonly SignoffCommand[],
+	check: SignoffCheck,
 	sink: string[] | null
 ): Promise<{ code: number; timings: CommandTiming[] }> {
+	if (check.parallel) return await runParallel(check.run, sink);
+
 	const timings: CommandTiming[] = [];
 	let code = 0;
-	for (const command of commands) {
-		const task = turboTaskName(command.argv);
-		const before = task === null ? new Set<string>() : summaryFilenames();
-		const started = Bun.nanoseconds();
-		code = await spawn(task === null ? command : { ...command, argv: [...command.argv, "--summarize"] }, sink);
-		const durationMs = (Bun.nanoseconds() - started) / 1e6;
-		timings.push({
-			label: commandLabel(command.argv),
-			durationMs,
-			tasks: task === null ? [] : await readNewSummary(before, task),
-		});
+	for (const command of check.run) {
+		const result = await runCommand(command, sink);
+		timings.push(result.timing);
+		code = result.code;
 		if (code !== 0) break;
 	}
 	return { code, timings };
+}
+
+/**
+ * Run every command at once, each into its own buffer, and print the buffers in declaration order
+ * once all have exited — attached stdio would interleave three logs line by line. Every command
+ * runs to the end, so a failure names every runner that failed rather than the first.
+ */
+async function runParallel(
+	commands: readonly SignoffCommand[],
+	sink: string[] | null
+): Promise<{ code: number; timings: CommandTiming[] }> {
+	const results = await Promise.all(
+		commands.map(async (command) => {
+			const output: string[] = [];
+			return { output, ...(await runCommand(command, output)) };
+		})
+	);
+	for (const { output } of results) {
+		if (sink === null) process.stdout.write(output.join(""));
+		else sink.push(...output);
+	}
+	return {
+		code: results.find((result) => result.code !== 0)?.code ?? 0,
+		timings: results.map((result) => result.timing),
+	};
+}
+
+async function runCommand(
+	command: SignoffCommand,
+	sink: string[] | null
+): Promise<{ code: number; timing: CommandTiming }> {
+	const task = turboTaskName(command.argv);
+	const before = task === null ? new Set<string>() : summaryFilenames();
+	const started = Bun.nanoseconds();
+	const code = await spawn(task === null ? command : { ...command, argv: [...command.argv, "--summarize"] }, sink);
+	const durationMs = (Bun.nanoseconds() - started) / 1e6;
+	return {
+		code,
+		timing: {
+			label: commandLabel(command.argv),
+			durationMs,
+			tasks: task === null ? [] : await readNewSummary(before, task),
+		},
+	};
 }
 
 /** Run a command for its stdout. Returns null when it fails, so callers can branch on absence. */
@@ -708,8 +753,10 @@ async function outcomeFor(entry: PlannedCheck, args: Args): Promise<CheckOutcome
 	}
 	const sink: string[] | null = args.concurrency === 1 ? null : [];
 	console.log(sink === null ? `\n━━ ${check.label} ━━` : `▶ ${check.label}`);
-	const { code, timings } = await runCheck(check.run, sink);
-	const durationMs = timings.reduce((total, timing) => total + timing.durationMs, 0);
+	// Wall clock, not the sum of the commands: a parallel check's commands overlap.
+	const started = Bun.nanoseconds();
+	const { code, timings } = await runCheck(check, sink);
+	const durationMs = (Bun.nanoseconds() - started) / 1e6;
 	if (sink !== null) {
 		console.log(`\n━━ ${check.label} ${code === 0 ? "✓" : "✗"} ${formatDuration(durationMs)} ━━`);
 		process.stdout.write(sink.join(""));

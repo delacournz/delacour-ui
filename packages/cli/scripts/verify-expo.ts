@@ -2,9 +2,11 @@
 import { join, relative } from "node:path";
 import { readConfig } from "../src/config/resolve";
 import { CONFIG_FILENAME } from "../src/config/schema";
+import { TEST_RUNNERS, type TestRunner } from "../src/registry/test-runner";
 import { CHECKS, standaloneItems } from "./verify/checks";
 import {
 	buildCli,
+	EXPO_SDK,
 	installWorkspacePackages,
 	type Layout,
 	type Reporter,
@@ -12,9 +14,10 @@ import {
 	resetVerifyDir,
 	runCli,
 	scaffoldWorkspace,
-	VERIFY_DIR,
+	verifyPaths,
 } from "./verify/harness";
 import { bootOnSimulator, bundleWithMetro, writeVerifyScreen } from "./verify/render";
+import { copiedSuites, prepareTestRunner, runCopiedTests } from "./verify/test-runner";
 
 /**
  * Proves the CLI works against a real Expo app, for every component at once.
@@ -41,6 +44,7 @@ import { bootOnSimulator, bundleWithMetro, writeVerifyScreen } from "./verify/re
  *   bun run verify:expo --bundle       # also compile it with Metro
  *   bun run verify:expo --simulator    # also build a dev client and launch it
  *   bun run verify:expo --only button,input
+ *   bun run verify:expo --tests jest   # also copy every suite and run it under Jest
  */
 
 type Options = {
@@ -56,6 +60,10 @@ type Options = {
 	bundle: boolean;
 	/** Build a dev client and launch it. Implies `bundle`. Needs a Mac with Xcode. */
 	simulator: boolean;
+	/** Copy every component's tests too, and run them under this runner. */
+	tests: TestRunner | null;
+	/** Where to scaffold, from `--dir`; the default `.verify/app` when unset. */
+	dir: string | undefined;
 };
 
 function parseOptions(argv: string[]): Options {
@@ -67,6 +75,11 @@ function parseOptions(argv: string[]): Options {
 	const only = value("--only");
 
 	const simulator = argv.includes("--simulator");
+	const tests = value("--tests");
+	if (tests !== undefined && !TEST_RUNNERS.includes(tests as TestRunner)) {
+		console.error(`--tests takes one of ${TEST_RUNNERS.join(", ")}, not "${tests}"`);
+		process.exit(2);
+	}
 
 	return {
 		install: !argv.includes("--no-install"),
@@ -78,6 +91,8 @@ function parseOptions(argv: string[]): Options {
 		simulator,
 		registry: value("--registry") ?? join(import.meta.dirname, "../../../registry"),
 		only: only ? only.split(",").map((name) => name.trim()) : null,
+		tests: (tests as TestRunner | undefined) ?? null,
+		dir: value("--dir"),
 	};
 }
 
@@ -94,6 +109,8 @@ Levels, each catching what the one above cannot
   (default)        every import resolves and every type lines up (tsc)
   --bundle         Metro resolves every module and Uniwind compiles every class
   --simulator      the components render on a device (needs a Mac with Xcode)
+  --tests <runner> every copied suite passes under bun, jest or vitest, set up
+                   the way the docs say (combines with any level above)
 
 Options
   --only <names>   comma-separated components instead of the whole registry
@@ -103,6 +120,9 @@ Options
   --layout <name>  standalone (default) or monorepo — components in a shared
                    package the app imports by name
   --registry <p>   a registry directory or URL (default: this repo's)
+  --dir <path>     scaffold here instead of .verify/app; the CLI build and the
+                   packed engines go beside it, so runs with different
+                   directories can run at the same time
   --verbose        stream every subprocess
   --help           this
 
@@ -126,14 +146,17 @@ const reporter: Reporter = {
 	verbose: options.verbose,
 };
 
-const appDir = VERIFY_DIR;
+const paths = verifyPaths(options.dir, process.cwd());
+const appDir = paths.app;
+// Every subprocess inherits it, so each `bun add` and `bunx` this run makes uses its own cache.
+if (paths.cache) process.env.BUN_INSTALL_CACHE_DIR = paths.cache;
 await resetVerifyDir(appDir, { fresh: options.fresh });
 
 let failures = 0;
 
 try {
 	reporter.step("Building the CLI");
-	const cli = await buildCli(reporter);
+	const cli = await buildCli(paths.cli, reporter);
 
 	reporter.step(`Scaffolding a ${options.layout} project in ${relative(process.cwd(), appDir)}`);
 	const workspace = await scaffoldWorkspace(appDir, {
@@ -166,12 +189,20 @@ try {
 	// this repo — and, until its first publish, is not on npm at all.
 	if (options.install) {
 		reporter.step("Installing the workspace packages the registry depends on");
-		await installWorkspacePackages(workspace, reporter);
+		await installWorkspacePackages(workspace, paths.packages, reporter);
 	}
+
+	// Before `add`, which reads the runner off this package.json to decide what
+	// the copied suites import.
+	if (options.tests) {
+		reporter.step(`Setting the project up on ${options.tests}`);
+		await prepareTestRunner(workspace, options.tests, { expoSdk: EXPO_SDK, install: options.install, reporter });
+	}
+	const withTests = options.tests ? ["--tests"] : [];
 
 	if (options.only) {
 		reporter.step(`delacour add ${options.only.join(" ")}`);
-		await runCli(cli, ["add", ...options.only, "--overwrite", "--yes", "--registry", options.registry], {
+		await runCli(cli, ["add", ...options.only, ...withTests, "--overwrite", "--yes", "--registry", options.registry], {
 			cwd: workspace.configRoot,
 			reporter,
 			install: options.install,
@@ -181,8 +212,8 @@ try {
 		// shadcn set. The standalone utilities — the expo navigation theme and
 		// its two helpers — are reachable only by name, so they are named here:
 		// this run has to cover every item, not most of them.
-		reporter.step("delacour add --all");
-		await runCli(cli, ["add", "--all", "--overwrite", "--yes", "--registry", options.registry], {
+		reporter.step(`delacour add --all${options.tests ? " --tests" : ""}`);
+		await runCli(cli, ["add", "--all", ...withTests, "--overwrite", "--yes", "--registry", options.registry], {
 			cwd: workspace.configRoot,
 			reporter,
 			install: options.install,
@@ -191,7 +222,7 @@ try {
 		const rest = await standaloneItems(options.registry, workspace.configRoot);
 		if (rest.length > 0) {
 			reporter.step(`delacour add ${rest.join(" ")}`);
-			await runCli(cli, ["add", ...rest, "--overwrite", "--yes", "--registry", options.registry], {
+			await runCli(cli, ["add", ...rest, ...withTests, "--overwrite", "--yes", "--registry", options.registry], {
 				cwd: workspace.configRoot,
 				reporter,
 				install: options.install,
@@ -227,7 +258,9 @@ try {
 			configDir: workspace.configRoot,
 			workspaceRoot: workspace.installRoot,
 			registryDir: options.registry,
+			cli,
 			only: options.only,
+			tests: options.tests,
 			reporter,
 		});
 
@@ -238,6 +271,25 @@ try {
 			for (const line of result.details ?? []) reporter.detail(line);
 		}
 	}
+
+	if (options.tests && options.install) {
+		reporter.step(`Every copied suite passes under ${options.tests}`);
+		const expected = await copiedSuites(workspace.configRoot);
+		const result = await runCopiedTests(workspace.configRoot, options.tests, reporter);
+
+		// The count matters as much as the failures: a runner that matched no
+		// files, or skipped a folder, passes everything it found.
+		if (result.failed === 0 && result.files === expected.length && expected.length > 0) {
+			reporter.pass(`${result.tests} tests across ${result.files} copied suites`);
+		} else {
+			failures += 1;
+			reporter.fail(`${result.failed} failed; ${result.files} suites ran of the ${expected.length} the lock records`);
+			for (const line of result.failures.slice(0, 20)) reporter.detail(line);
+		}
+	} else if (options.tests) {
+		reporter.step(`Every copied suite passes under ${options.tests} — skipped (--no-install)`);
+	}
+
 	if (options.simulator && failures === 0) {
 		reporter.step("Building a dev client and launching it (this takes a while)");
 		await bootOnSimulator(workspace.appRoot, reporter);

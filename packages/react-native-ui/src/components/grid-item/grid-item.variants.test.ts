@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { Children, createElement, isValidElement } from "react";
 import {
 	GRID_ITEM_BACKGROUND_DISPLAY_NAME,
@@ -269,8 +271,8 @@ describe("orderGridItemChildren", () => {
 });
 
 describe("GRID_ITEM_BACKGROUND_DISPLAY_NAME", () => {
-	test("is the name grid-item-background.tsx assigns", async () => {
-		const source = await Bun.file(new URL("./grid-item-background.tsx", import.meta.url)).text();
-		expect(source).toInclude(`GridItemBackground.displayName = "${GRID_ITEM_BACKGROUND_DISPLAY_NAME}";`);
+	test("is the name grid-item-background.tsx assigns", () => {
+		const source = readFileSync(join(import.meta.dirname, "grid-item-background.tsx"), "utf-8");
+		expect(source).toContain(`GridItemBackground.displayName = "${GRID_ITEM_BACKGROUND_DISPLAY_NAME}";`);
 	});
 });

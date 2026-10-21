@@ -12,8 +12,10 @@ import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
 import { expoCommand } from "../project/package-manager";
 import { findRootLayout } from "../project/root-layout";
+import { checkTestRunner, readTestSetup, type TestSetup } from "../project/test-setup";
 import { UNIWIND_ENV_FILENAME, UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
+import type { TestRunner } from "../registry/test-runner";
 import { createOutput, type Output, style } from "../ui/output";
 
 /**
@@ -77,8 +79,63 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
 		await checkCssEntryImported(config),
 		await checkGestureHandlerRoot(config),
 		await checkDuplicateNativeModules(project),
+		...testChecks(await readTestSetup(config, project)),
 		checkLock(existsSync(lockPath(config.root)), await hasEntries(config.directories.ui)),
 	];
+}
+
+/**
+ * What `transformIgnorePatterns` has to let through for each engine. Both
+ * publish TypeScript source; the charts engine also imports d3, whose packages
+ * ship ES modules only.
+ */
+const ENGINE_TRANSFORMS: Record<string, readonly string[]> = {
+	"@delacour/react-native-bottom-sheet": ["@delacour/.*"],
+	"@delacour/react-native-charts": ["@delacour/.*", "d3-.*", "internmap"],
+};
+
+/** Whether copied tests can run: the runner's setup, then what Jest has to transform. */
+export function testChecks(setup: TestSetup): Check[] {
+	return [checkTestRunner(setup), checkJestTransform(setup)];
+}
+
+export type JestSetup = {
+	runner: TestRunner;
+	/** Every dependency the app and the config's package declare. */
+	dependencies: Record<string, string>;
+	/** The Jest config's text — a `jest.config.*` file, or `package.json`'s `jest` key — or `null`. */
+	jestConfig: string | null;
+};
+
+/**
+ * A Jest project that imports an engine has to transform it.
+ *
+ * Jest skips `node_modules` by default and `jest-expo`'s list does not name
+ * these, so every suite reaching `chart` or `bottom-sheet` dies with "Must use
+ * import to load ES Module" and a path inside `node_modules`. Nothing in the app
+ * is wrong, so it is a warning: only the tests are broken. The config is read as
+ * text, so a pattern built in code may be missed — the fix names exactly what
+ * the pattern has to contain.
+ */
+export function checkJestTransform(setup: JestSetup): Check {
+	const name = "Jest transforms";
+	if (setup.runner !== "jest") return { name, status: "pass", detail: `tests run on ${setup.runner}, not Jest` };
+
+	const engines = Object.keys(ENGINE_TRANSFORMS).filter((engine) => engine in setup.dependencies);
+	if (engines.length === 0) return { name, status: "pass", detail: "no engine package to transform" };
+
+	const patterns = setup.jestConfig?.includes("transformIgnorePatterns") ? setup.jestConfig : "";
+	const needed = [...new Set(engines.flatMap((engine) => ENGINE_TRANSFORMS[engine] ?? []))];
+	const missing = needed.filter((pattern) => !patterns.includes(pattern.replace(".*", "")));
+
+	if (missing.length === 0) return { name, status: "pass", detail: `${engines.join(", ")} transformed` };
+
+	return {
+		name,
+		status: "warn",
+		detail: `${engines.join(", ")} ship${engines.length === 1 ? "s" : ""} untranspiled, and transformIgnorePatterns does not let ${missing.join(", ")} through`,
+		fix: `Add ${missing.map((pattern) => `\`${pattern}\``).join(", ")} to the packages transformIgnorePatterns lets through, beside jest-expo's own.`,
+	};
 }
 
 /**

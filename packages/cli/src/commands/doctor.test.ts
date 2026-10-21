@@ -7,6 +7,7 @@ import { configSchema } from "../config/schema";
 import type { ProjectInfo } from "../project/detect";
 import {
 	checkGestureHandlerRoot,
+	checkJestTransform,
 	checkLock,
 	checkNewArchitecture,
 	checkStylingConflict,
@@ -342,5 +343,54 @@ describe("checkLock", () => {
 
 		expect(check.status).toBe("warn");
 		expect(check.fix).toContain("delacour update");
+	});
+});
+
+/**
+ * The engines publish TypeScript source, and Jest leaves `node_modules` alone
+ * unless told otherwise — so a Jest project with `chart` or `bottom-sheet`
+ * fails every suite that imports them with "Must use import to load ES
+ * Module", naming a file under `node_modules` rather than the config.
+ */
+describe("checkJestTransform", () => {
+	const CHARTS = { "@delacour/react-native-charts": "^0.1.0" };
+	const SHEET = { "@delacour/react-native-bottom-sheet": "^0.1.0" };
+	const PATTERN = (allowed: string) =>
+		JSON.stringify({ preset: "jest-expo", transformIgnorePatterns: [`node_modules/(?!(${allowed}))`] });
+
+	test("passes a project that does not test with Jest", () => {
+		expect(checkJestTransform({ runner: "vitest", dependencies: CHARTS, jestConfig: null }).status).toBe("pass");
+	});
+
+	test("passes a Jest project with no engine to transform", () => {
+		expect(checkJestTransform({ runner: "jest", dependencies: {}, jestConfig: null }).status).toBe("pass");
+	});
+
+	test("warns a Jest project with an engine and no transformIgnorePatterns", () => {
+		const check = checkJestTransform({ runner: "jest", dependencies: SHEET, jestConfig: '{ "preset": "jest-expo" }' });
+
+		expect(check.status).toBe("warn");
+		expect(check.detail).toContain("@delacour/react-native-bottom-sheet");
+		expect(check.fix).toContain("@delacour/.*");
+	});
+
+	test("warns when there is no Jest config to read at all", () => {
+		expect(checkJestTransform({ runner: "jest", dependencies: SHEET, jestConfig: null }).status).toBe("warn");
+	});
+
+	test("asks for d3 and internmap too when the charts engine is installed", () => {
+		const check = checkJestTransform({ runner: "jest", dependencies: CHARTS, jestConfig: PATTERN("@delacour/.*") });
+
+		expect(check.status).toBe("warn");
+		expect(check.fix).toContain("d3-.*");
+		expect(check.fix).toContain("internmap");
+		expect(check.fix).not.toContain("@delacour/.*");
+	});
+
+	test("passes once the pattern lets everything through", () => {
+		const both = { ...CHARTS, ...SHEET };
+		const jestConfig = PATTERN("react-native|@delacour/.*|d3-.*|internmap");
+
+		expect(checkJestTransform({ runner: "jest", dependencies: both, jestConfig }).status).toBe("pass");
 	});
 });

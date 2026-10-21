@@ -7,6 +7,7 @@ import { classifySource } from "../../src/registry/classify";
 import { NAMESPACES } from "../../src/registry/namespaces";
 import { scanImports } from "../../src/registry/scan-imports";
 import { type RegistryItem, registryIndexSchema, registryItemSchema } from "../../src/registry/schema";
+import type { TestRunner } from "../../src/registry/test-runner";
 import { type Reporter, run } from "./harness";
 
 /**
@@ -26,8 +27,12 @@ export type CheckContext = {
 	/** The project's outermost directory. Bounds the module walk. */
 	workspaceRoot: string;
 	registryDir: string;
+	/** The CLI bundle this run built — not `dist`, which another run may be rebuilding. */
+	cli: string;
 	/** The items requested, or `null` for `--all`. */
 	only: string[] | null;
+	/** The runner `--tests` copied suites for, or `null` when none were asked for. */
+	tests: TestRunner | null;
 	reporter: Reporter;
 };
 
@@ -175,7 +180,10 @@ export const CHECKS: Check[] = [
 				if (content.includes("@registry/")) problems.push(`${display}: unresolved @registry/ placeholder`);
 				if (content.includes("@delacour/react-native-ui"))
 					problems.push(`${display}: still cites @delacour/react-native-ui`);
-				if (path.endsWith(".test.ts") || path.endsWith(".test.tsx")) problems.push(`${display}: a test was copied`);
+				const test = path.endsWith(".test.ts") || path.endsWith(".test.tsx");
+				if (test && !context.tests) problems.push(`${display}: a test was copied`);
+				if (test && context.tests !== "bun" && content.includes("bun:test"))
+					problems.push(`${display}: still imports bun:test under ${context.tests}`);
 			}
 
 			return problems.length === 0
@@ -220,7 +228,9 @@ export const CHECKS: Check[] = [
 				if (!isTypeScript(path)) continue;
 
 				for (const { specifier } of scanImports(content)) {
-					if (specifier.startsWith(".") || specifier.startsWith("node:")) continue;
+					// `bun:test` is Bun's own module, as `node:fs` is Node's; the registry
+					// declares its types as `@types/bun`, not a package by that name.
+					if (specifier.startsWith(".") || specifier.startsWith("node:") || specifier.startsWith("bun:")) continue;
 					if (AMBIENT.has(specifier)) continue;
 					if (aliases.some((alias) => specifier === alias || specifier.startsWith(`${alias}/`))) continue;
 
@@ -275,8 +285,7 @@ export const CHECKS: Check[] = [
 	{
 		name: "The app is wired up (delacour doctor)",
 		needsInstall: true,
-		async run({ configDir, reporter }) {
-			const bundle = join(import.meta.dirname, "../../dist/index.js");
+		async run({ cli: bundle, configDir, reporter, tests }) {
 			// From the config, not the app: `findConfig` walks *up*, and in the
 			// shared-package layout the config is a sibling of the app rather than
 			// an ancestor. `doctor` finds the app through `app.root` regardless.
@@ -299,7 +308,13 @@ export const CHECKS: Check[] = [
 
 			// The gesture root lives in the consumer's own layout, which this
 			// scaffold deliberately does not write — the CLI never creates it.
-			const failed = checks.filter((check) => check.status === "fail");
+			// Test runner and Jest transforms are only warnings to a consumer, but
+			// `--tests` sets the project up the way the docs say, so here both have
+			// to pass — Test runner included, since a skip means no test was copied.
+			const mustPass = tests ? ["Test runner", "Jest transforms"] : ["Jest transforms"];
+			const failed = checks.filter(
+				(check) => check.status === "fail" || (mustPass.includes(check.name) && check.status !== "pass")
+			);
 
 			return failed.length === 0
 				? { ok: true, summary: `${checks.filter((c) => c.status === "pass").length} checks passed` }
@@ -316,8 +331,7 @@ export const CHECKS: Check[] = [
 		// this run would notice if the two stopped agreeing about a file's key or
 		// its hash: every file would read as edited, in every project.
 		name: "The lock records every file, and an update finds nothing to do",
-		async run({ configDir, registryDir, reporter }) {
-			const bundle = join(import.meta.dirname, "../../dist/index.js");
+		async run({ cli: bundle, configDir, registryDir, reporter }) {
 			const output = await run(
 				"node",
 				[bundle, "update", "--dry-run", "--json", "--no-install", "--registry", registryDir],

@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
+import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
 import {
 	commandLabel,
 	describeRunner,
@@ -47,13 +48,36 @@ describe("planChecks", () => {
 		expect(applicable(["bun.lock"])).toContain("registry");
 	});
 
-	test("a docs-site or playground change runs only the always-on checks", () => {
-		expect(applicable(["apps/web/src/routes/index.tsx"])).toEqual([...ALWAYS_CONTEXTS]);
-		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS]);
+	test("a docs-site or playground change runs the always-on checks and the copied tests, not the registry", () => {
+		expect(applicable(["apps/web/src/routes/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
+		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
+	});
+
+	test("every change but markdown runs the copied tests", () => {
+		expect(applicable(["packages/cli/src/registry/test-runner.ts"])).toContain("tests");
+		expect(applicable(["bun.lock"])).toContain("tests");
+		expect(applicable(["README.md"])).not.toContain("tests");
+	});
+
+	test("the copied tests run under every runner a consumer may use", () => {
+		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
+		const runners = (tests?.run ?? []).map((step) => step.argv[step.argv.indexOf("--tests") + 1]);
+		expect(runners.sort()).toEqual([...TEST_RUNNERS].sort());
+	});
+
+	test("each runner verifies in its own directory, so the three run side by side", () => {
+		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
+		const dirs = (tests?.run ?? []).map((step) => step.argv[step.argv.indexOf("--dir") + 1]);
+
+		expect(tests?.parallel).toBe(true);
+		expect(new Set(dirs).size).toBe(TEST_RUNNERS.length);
+		expect(dirs).not.toContain(".verify/app");
+		expect(tests?.locks ?? []).toEqual([]);
 	});
 
 	test("markdown never triggers a path-gated check", () => {
 		expect(applicable(["packages/cli/AGENTS.md"])).toEqual([...ALWAYS_CONTEXTS]);
+		expect(applicable(["apps/web/content/docs/native/cli/commands.mdx"])).not.toContain("registry");
 	});
 
 	test("a markdown file alongside real source does not mask the real source", () => {

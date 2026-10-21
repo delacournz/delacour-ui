@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { createElement, Fragment, type ReactNode } from "react";
 import {
 	collectTableHeaderLabels,
@@ -22,14 +22,18 @@ import {
 	tableVariants,
 } from "./table.variants";
 
-let warn: ReturnType<typeof spyOn>;
+const consoleWarn = console.warn;
+let warnings: unknown[][] = [];
 
 beforeEach(() => {
-	warn = spyOn(console, "warn").mockImplementation(mock(() => undefined));
+	warnings = [];
+	console.warn = (...args: unknown[]) => {
+		warnings.push(args);
+	};
 });
 
 afterEach(() => {
-	warn.mockRestore();
+	console.warn = consoleWarn;
 });
 
 describe("resolveTableColumn", () => {
@@ -58,23 +62,23 @@ describe("resolveTableColumn", () => {
 	test("rejects a width of zero or less, warns, and falls back to flex 1", () => {
 		expect(resolveTableColumn({ width: 0 })).toEqual({ align: "start", flex: 1, kind: "flex" });
 		expect(resolveTableColumn({ width: -10, align: "end" })).toEqual({ align: "end", flex: 1, kind: "flex" });
-		expect(warn).toHaveBeenCalledTimes(2);
+		expect(warnings).toHaveLength(2);
 	});
 
 	test("rejects a non-finite width", () => {
 		expect(resolveTableColumn({ width: Number.NaN })).toEqual({ align: "start", flex: 1, kind: "flex" });
-		expect(warn).toHaveBeenCalledTimes(1);
+		expect(warnings).toHaveLength(1);
 	});
 
 	test("rejects a flex of zero or less, falling back to 1", () => {
 		expect(resolveTableColumn({ flex: 0 })).toEqual({ align: "start", flex: 1, kind: "flex" });
-		expect(warn).toHaveBeenCalledTimes(1);
+		expect(warnings).toHaveLength(1);
 	});
 
 	test("does not warn on a valid column", () => {
 		resolveTableColumn({ width: 1 });
 		resolveTableColumn({ flex: 0.5 });
-		expect(warn).not.toHaveBeenCalled();
+		expect(warnings).toHaveLength(0);
 	});
 });
 

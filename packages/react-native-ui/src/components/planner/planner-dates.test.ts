@@ -240,7 +240,7 @@ describe("resolveWeekStart", () => {
 
 	test("auto falls back to Monday for a locale the runtime cannot read", () => {
 		expect(resolveWeekStart("not a locale", "auto")).toBe(1);
-		expect(resolveWeekStart(undefined, "auto")).toBeOneOf([0, 1, 2, 3, 4, 5, 6]);
+		expect([0, 1, 2, 3, 4, 5, 6]).toContain(resolveWeekStart(undefined, "auto"));
 	});
 });
 
@@ -277,8 +277,15 @@ describe("msUntilNextMidnight", () => {
 
 	test("follows the clock across daylight-saving nights", () => {
 		// The night of 4–5 April 2026 is 25 hours long in Auckland; 26–27 September is 23.
-		expect(msUntilNextMidnight(new Date(2026, 3, 5, 0, 0, 0))).toBe(25 * 3_600_000);
-		expect(msUntilNextMidnight(new Date(2026, 8, 27, 0, 0, 0))).toBe(23 * 3_600_000);
+		// Read off the zone's offsets rather than written down: a runner that
+		// sandboxes `process.env` keeps the machine's zone, where those nights
+		// may be 24 hours long.
+		const night = (year: number, month: number, day: number) =>
+			24 * 3_600_000 +
+			(new Date(year, month, day + 1).getTimezoneOffset() - new Date(year, month, day).getTimezoneOffset()) * 60_000;
+
+		expect(msUntilNextMidnight(new Date(2026, 3, 5, 0, 0, 0))).toBe(night(2026, 3, 5));
+		expect(msUntilNextMidnight(new Date(2026, 8, 27, 0, 0, 0))).toBe(night(2026, 8, 27));
 	});
 
 	test("is always positive, so a timer can never fire in a loop", () => {

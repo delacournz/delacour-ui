@@ -225,12 +225,39 @@ jobs:
         working-directory: packages/cli
         run: bun run verify:expo --bundle --layout ${{ matrix.layout }}
 
+  # Every component's suites copied into a real app on each runner a consumer may use, and run by
+  # it — the `tests` signoff check. The conversion is two string substitutions held up by a build
+  # guard; this is what proves the guard knew everything Jest and Vitest refuse.
+  copied-tests:
+    name: copied tests (${{ matrix.runner }})
+    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
+    runs-on: namespace-profile-linux-small
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [bun, jest, vitest]
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.3.14
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - run: bun install --frozen-lockfile
+      - name: Copy every suite and run it
+        working-directory: packages/cli
+        run: bun run verify:expo --tests ${{ matrix.runner }}
+
   # Writes what `bun run signoff` would have, for the commit these jobs tested: every always-on
   # sub-context, then the umbrella last. `needs` covers every job above, so the umbrella is earned
-  # only when all of them — registry and both verify-expo legs included — passed.
+  # only when all of them — registry, both verify-expo legs and both copied-tests legs included — passed.
   signoff:
     name: signoff
-    needs: [typecheck, check, test, build, registry, verify-expo]
+    needs: [typecheck, check, test, build, registry, verify-expo, copied-tests]
     if: >-
       success() &&
       ((github.event_name == 'pull_request' && github.head_ref == 'changeset-release/develop') ||

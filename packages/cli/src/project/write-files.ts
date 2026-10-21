@@ -2,8 +2,10 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative, sep } from "node:path";
 import type { ResolvedConfig } from "../config/resolve";
 import { fileKey } from "../lock/lock";
+import { isTest } from "../registry/classify";
 import type { Namespace } from "../registry/namespaces";
 import type { LoadedFile, LoadedItem } from "../registry/schema";
+import { adaptTest } from "../registry/test-runner";
 import { transformContent } from "../registry/transform";
 
 /**
@@ -65,13 +67,18 @@ export function destination(
 	return { path, displayPath: toPosix(relative(config.root, path)) };
 }
 
-/** A fetched file's text as this project would hold it at `path`: placeholders resolved to its aliases. */
+/**
+ * A fetched file's text as this project would hold it at `path`: placeholders
+ * resolved to its aliases, and a test written for the runner it tests with.
+ */
 export function transformFile(content: string, path: string, config: ResolvedConfig): string {
-	return transformContent(content, {
+	const transformed = transformContent(content, {
 		fileDirectory: dirname(path),
 		directories: config.directories,
 		aliases: config.aliases,
 	});
+
+	return isTest(path) ? adaptTest(transformed, config.testRunner) : transformed;
 }
 
 export async function writeFiles(files: readonly Pick<PlannedFile, "path" | "content">[]): Promise<void> {

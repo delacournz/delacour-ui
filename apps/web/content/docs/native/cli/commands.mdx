@@ -104,7 +104,7 @@ source into your repository is local and reversible; running your package manage
 
 ### Tests, if you want them
 
-Every component's `bun test` suites ship in the registry too, and `--tests` copies them beside the
+Every component's test suites ship in the registry too, and `--tests` copies them beside the
 source:
 
 ```bash
@@ -114,8 +114,31 @@ delacour add button --tests
 They land next to what they test — `button/button.variants.test.ts` beside `button.variants.ts` —
 with their imports rewritten to your aliases like any other file, and they are recorded in the
 [lock](/docs/native/cli/configuration#the-lock-file) under the component they test. A test that
-imports another component's helper brings that helper along. The one package they add is
-`@types/bun`, as a dev dependency, so `tsc` knows what `bun:test` is.
+imports another component's helper brings that helper along.
+
+They are written for the runner your project already uses, read from its `package.json` — the
+`test` script first, then a `vitest`, `jest` or `jest-expo` dependency — or from
+[`tests.runner`](/docs/native/cli/configuration#tests) when you set it:
+
+| Runner | The suites import from | Dev dependencies added |
+| --- | --- | --- |
+| Bun (no runner found) | `bun:test` | `@types/bun` |
+| Vitest | `vitest` | `vitest`, `@types/node` |
+| Jest | `@jest/globals` | `@jest/globals`, `@types/node` |
+
+Every suite keeps to the API the three share, so nothing else in it changes, except that under Jest a
+suite reading a file beside itself does so through `__dirname`.
+
+<Callout title="Two settings your runner may need">
+Vitest does not read `tsconfig` paths, so a project importing through `@/` needs the same alias in
+`vitest.config.ts` (`resolve.alias`). On SDK 58, Vite also cannot follow
+`extends: "expo/tsconfig.base"` — `expo`'s `exports` map does not include it — so every suite fails
+to load until the config sets `esbuild: { tsconfigRaw: "{}" }`. Under Jest, `chart` and
+`bottom-sheet` import engines published as TypeScript source, so `transformIgnorePatterns` has to
+let `@delacour/.*` through, and for `chart` also `d3-.*` and `internmap`, which ship ES modules
+only. `add --tests` checks all of this as soon as it has copied the suites, and [`doctor`](#doctor)
+checks it again — each warning names the fix.
+</Callout>
 
 `update` keeps the tests you copied current and leaves alone the components you copied without
 them; `update --tests` brings them in for everything.

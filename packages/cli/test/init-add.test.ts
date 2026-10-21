@@ -515,6 +515,103 @@ describe("add --tests", () => {
 	});
 });
 
+describe("add --tests, in a project on another runner", () => {
+	const TEST = "src/components/ui/button/button.variants.test.ts";
+	const HELPER = "src/styles/theme-tokens.test.ts";
+
+	async function scaffoldOn(manifest: Record<string, unknown>): Promise<string> {
+		const root = await scaffold("expo-app");
+		const packageJson = JSON.parse(await read(root, "package.json"));
+		await write(root, "package.json", JSON.stringify({ ...packageJson, ...manifest }, null, "\t"));
+		await init([], { ...SHARED, cwd: root });
+		return root;
+	}
+
+	test("writes Jest's suites against @jest/globals and __dirname, and asks for them", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest" }, devDependencies: { "jest-expo": "~57.0.0" } });
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		expect(await read(root, TEST)).toContain('from "@jest/globals"');
+		expect(await read(root, HELPER)).toContain("join(__dirname, ");
+		for (const path of (await written(root)).filter((path) => path.includes(".test."))) {
+			const content = await read(root, path);
+			expect(`${path}: ${content}`).not.toContain("bun:test");
+			expect(`${path}: ${content}`).not.toContain("import.meta");
+		}
+		expect(result?.dependencies.wanted).toEqual(expect.arrayContaining(["@jest/globals", "@types/node"]));
+		expect(result?.dependencies.wanted).not.toContain("@types/bun");
+	});
+
+	test("writes Vitest's suites against vitest, and records what it wrote", async () => {
+		const root = await scaffoldOn({ devDependencies: { vitest: "^3.2.0" } });
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		expect(await read(root, TEST)).toContain('from "vitest"');
+		expect((await readLock(root)).items.button?.files["ui/button/button.variants.test.ts"]?.hash).toBe(
+			contentHash(await read(root, TEST))
+		);
+		expect(result?.dependencies.wanted).toEqual(expect.arrayContaining(["@types/node", "vitest"]));
+		expect(result?.dependencies.wanted).not.toContain("@types/bun");
+	});
+
+	test("takes tests.runner in the config over what package.json suggests", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest" } });
+		const config = JSON.parse(await read(root, "native-components.json"));
+		await write(root, "native-components.json", JSON.stringify({ ...config, tests: { runner: "vitest" } }));
+
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		expect(await read(root, TEST)).toContain('from "vitest"');
+	});
+
+	test("says what Vitest is missing — a config mapping the alias — once the tests are copied", async () => {
+		const root = await scaffoldOn({ devDependencies: { vitest: "^3.2.0", "@types/node": "^24.0.0" } });
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		const runner = result?.testSetup.find((check) => check.name === "Test runner");
+		expect(runner?.status).toBe("warn");
+		expect(runner?.detail).toContain("@/");
+		expect(runner?.fix).toContain("vitest.config.ts");
+	});
+
+	test("finds nothing to say once Jest is set up the way the docs say", async () => {
+		const root = await scaffoldOn({
+			scripts: { test: "jest" },
+			devDependencies: {
+				jest: "^30.0.0",
+				"jest-expo": "~57.0.0",
+				"@jest/globals": "^30.0.0",
+				"@types/node": "^24.0.0",
+			},
+			jest: { preset: "jest-expo" },
+		});
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		expect(result?.testSetup.map((check) => [check.name, check.status])).toEqual([
+			["Test runner", "pass"],
+			["Jest transforms", "pass"],
+		]);
+	});
+
+	test("checks no runner when no tests were asked for", async () => {
+		const root = await scaffoldOn({ devDependencies: { vitest: "^3.2.0" } });
+		expect((await add(["button"], { ...SHARED, cwd: root }))?.testSetup).toEqual([]);
+	});
+
+	test("leaves the source a plain add copies untouched by the runner", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest" } });
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		const bun = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: bun });
+		await add(["button"], { ...SHARED, cwd: bun });
+
+		expect(await read(root, "src/components/ui/button/button.tsx")).toBe(
+			await read(bun, "src/components/ui/button/button.tsx")
+		);
+	});
+});
+
 const UNWIRED_METRO = `const { getDefaultConfig } = require("expo/metro-config");
 
 const config = getDefaultConfig(__dirname);

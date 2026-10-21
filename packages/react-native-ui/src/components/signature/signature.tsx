@@ -9,10 +9,11 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { AccessibilityInfo, View, type ViewProps } from "react-native";
+import { AccessibilityInfo, PixelRatio, View, type ViewProps } from "react-native";
 import { useFieldContext } from "../field/field.context";
 import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SignatureContextValue, SignatureProvider } from "./signature.context";
+import { renderSignaturePng } from "./signature.skia";
 import {
 	canRedo,
 	canUndo,
@@ -88,7 +89,7 @@ export type SignatureProps = Omit<ViewProps, "children" | "style"> & {
 	haptic?: false | HapticFeedback;
 	/** Offers a typed-name route for anyone who cannot draw; renders `Signature.Alternative`. */
 	onRequestAlternative?: () => void;
-	/** `undo`, `redo`, `clear`, `isEmpty`, `strokeCount`, `value`, `toSVG()` and `toPaths()`. */
+	/** `undo`, `redo`, `clear`, `isEmpty`, `strokeCount`, `value`, `toSVG()`, `toPNG()` and `toPaths()`. */
 	ref?: Ref<SignatureHandle>;
 	className?: string;
 	/** Classes for the default pad, when no children are given. */
@@ -231,6 +232,13 @@ function SignatureRoot({
 					{ strokeWidth, ...options }
 				);
 			},
+			toPNG: (options) => {
+				const current = historyRef.current;
+				return renderSignaturePng(
+					{ height: current.height, strokes: current.strokes, width: current.width },
+					{ strokeWidth, ...options, scale: options?.scale ?? PixelRatio.get() }
+				);
+			},
 			toPaths: () => strokesToPaths(historyRef.current.strokes),
 		}),
 		[clear, redo, strokeWidth, undo]
@@ -330,8 +338,8 @@ function SignatureRoot({
  *
  * **The value is plain JSON** — `{ width, height, strokes }` — so it can be stored
  * and handed back as `value` or `defaultValue` later. A pad rendered at another
- * size re-fits it, keeping its aspect. The ref adds `toSVG()` for a file and
- * `toPaths()` for drawing it elsewhere.
+ * size re-fits it, keeping its aspect. The ref adds `toSVG()` and `toPNG()` for a
+ * file, framed and coloured alike, and `toPaths()` for drawing it elsewhere.
  *
  * **Offer `onRequestAlternative`.** A signature is a path a finger has to trace,
  * and no accessibility label makes that possible for everyone; the prop renders
@@ -361,6 +369,7 @@ function SignatureRoot({
  *
  * @example
  * const svg = pad.current?.toSVG({ viewBox: "tight", background: "#ffffff" });
+ * const png = pad.current?.toPNG({ viewBox: "tight", background: "#ffffff" }); // base64
  */
 export const Signature = Object.assign(SignatureRoot, {
 	/** The drawing surface — the gesture, the ink, the guideline and the accessibility surface. */

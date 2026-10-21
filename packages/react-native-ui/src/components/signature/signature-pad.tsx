@@ -1,7 +1,7 @@
 import { type ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
-import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
+import { type AccessibilityActionEvent, type LayoutChangeEvent, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { FadeOut, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useThemeColor } from "../../hooks/use-theme-color";
@@ -19,11 +19,7 @@ import {
 	type SignatureAction,
 	signatureVariants,
 } from "./signature.variants";
-import { SignatureLivePath } from "./signature-live-path";
-import { SignaturePath } from "./signature-path";
-
-/** A cleared signature's ink fades rather than vanishing, so the clear reads as an action. */
-const CLEAR_EXITING = FadeOut.duration(150);
+import { SignatureInk } from "./signature-ink";
 
 /** How long the placeholder takes to fade on first touch, in ms. */
 const PLACEHOLDER_FADE_MS = 150;
@@ -40,10 +36,11 @@ export type SignaturePadProps = Omit<ViewProps, "children" | "style"> & {
  * the whole accessibility surface.
  *
  * **Drawing happens on the UI thread.** One `Gesture.Pan()` samples the finger
- * into a shared value and the live stroke's path is an animated prop rebuilt
- * from it, so a finger moving across the pad renders nothing in React. When the
- * finger lifts, the stroke crosses to the JS thread once and joins the finished
- * paths — **one render per stroke, none per move**.
+ * into a shared value and the live stroke is a Skia path traced from it on the
+ * UI thread, so a finger moving across the pad renders nothing in React. When
+ * the finger lifts, the stroke crosses to the JS thread once and joins the
+ * finished strokes' picture — **one render per stroke, none per move**. Both
+ * draw on one Skia canvas; see `SignatureInk`.
  *
  * **The stroke starts in `onBegin`**, with `minDistance(0)`, so a tap that never
  * moves still leaves a dot and the pad wins the touch from an enclosing scroll
@@ -203,15 +200,14 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 				<Animated.View className={slots.placeholder()} pointerEvents="none" style={placeholderStyle}>
 					<Text.Paragraph color="muted">{placeholder}</Text.Paragraph>
 				</Animated.View>
-				<Animated.View
-					exiting={isCalm ? undefined : CLEAR_EXITING}
-					key={clearCount}
-					pointerEvents="none"
-					style={StyleSheet.absoluteFill}
-				>
-					<SignaturePath color={ink} strokes={strokes} strokeWidth={strokeWidth} />
-				</Animated.View>
-				<SignatureLivePath color={ink} points={live} strokeWidth={strokeWidth} />
+				<SignatureInk
+					clearCount={clearCount}
+					color={ink}
+					isCalm={isCalm}
+					live={live}
+					strokes={strokes}
+					strokeWidth={strokeWidth}
+				/>
 			</View>
 		</GestureDetector>
 	);

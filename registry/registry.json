@@ -3809,7 +3809,7 @@
 			"name": "signature",
 			"type": "registry:ui",
 			"title": "Signature",
-			"description": "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+			"description": "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON, SVG or PNG.",
 			"categories": [
 				"forms"
 			],
@@ -3820,6 +3820,7 @@
 				"icon",
 				"icons",
 				"pressable",
+				"skia-native-id",
 				"text",
 				"tv",
 				"use-calm-motion",
@@ -3831,7 +3832,7 @@
 			"expoDependencies": [
 				"react-native-gesture-handler",
 				"react-native-reanimated",
-				"react-native-svg",
+				"react-native-skia",
 				"react-native-worklets"
 			],
 			"devDependencies": [],
@@ -3841,13 +3842,13 @@
 				"ui/signature/signature-action-button.tsx",
 				"ui/signature/signature-alternative.tsx",
 				"ui/signature/signature-clear.tsx",
-				"ui/signature/signature-live-path.tsx",
+				"ui/signature/signature-ink.tsx",
 				"ui/signature/signature-pad.tsx",
-				"ui/signature/signature-path.tsx",
 				"ui/signature/signature-redo.tsx",
 				"ui/signature/signature-toolbar.tsx",
 				"ui/signature/signature-undo.tsx",
 				"ui/signature/signature.context.tsx",
+				"ui/signature/signature.skia.ts",
 				"ui/signature/signature.stroke.ts",
 				"ui/signature/signature.tsx",
 				"ui/signature/signature.types.ts",

@@ -7674,13 +7674,13 @@ export const install = {
 	"signature": {
 		name: "signature",
 		title: "Signature",
-		description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+		description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON, SVG or PNG.",
 		importPath: "@delacour/react-native-ui/signature",
 		exportName: "Signature",
-		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 81,
+		fileCount: 82,
 		groups: [
 			{
 				name: "signature",
@@ -7692,13 +7692,13 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/signature/signature-action-button.tsx", target: "src/components/ui/signature/signature-action-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature-alternative.tsx", target: "src/components/ui/signature/signature-alternative.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature-clear.tsx", target: "src/components/ui/signature/signature-clear.tsx" },
-					{ source: "packages/react-native-ui/src/components/signature/signature-live-path.tsx", target: "src/components/ui/signature/signature-live-path.tsx" },
+					{ source: "packages/react-native-ui/src/components/signature/signature-ink.tsx", target: "src/components/ui/signature/signature-ink.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature-pad.tsx", target: "src/components/ui/signature/signature-pad.tsx" },
-					{ source: "packages/react-native-ui/src/components/signature/signature-path.tsx", target: "src/components/ui/signature/signature-path.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature-redo.tsx", target: "src/components/ui/signature/signature-redo.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature-toolbar.tsx", target: "src/components/ui/signature/signature-toolbar.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature-undo.tsx", target: "src/components/ui/signature/signature-undo.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature.context.tsx", target: "src/components/ui/signature/signature.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/signature/signature.skia.ts", target: "src/components/ui/signature/signature.skia.ts" },
 					{ source: "packages/react-native-ui/src/components/signature/signature.stroke.ts", target: "src/components/ui/signature/signature.stroke.ts" },
 					{ source: "packages/react-native-ui/src/components/signature/signature.tsx", target: "src/components/ui/signature/signature.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature.types.ts", target: "src/components/ui/signature/signature.types.ts" },
@@ -7871,6 +7871,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "skia-native-id",
+				title: "skiaNativeId",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{

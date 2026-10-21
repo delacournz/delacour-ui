@@ -2,8 +2,8 @@
 
 A pad to sign with a finger or a stylus. Compound root plus `Signature.Pad`,
 `Signature.Toolbar`, `Signature.Undo`, `Signature.Redo`, `Signature.Clear` and
-`Signature.Alternative`. Hands back the strokes as JSON, as SVG path data, or as
-a standalone SVG document.
+`Signature.Alternative`. Hands back the strokes as JSON, as SVG path data, as a
+standalone SVG document, or as a PNG.
 
 `import { Signature } from "@delacour/react-native-ui/signature";`
 
@@ -14,8 +14,8 @@ a standalone SVG document.
 | `index.ts` | → `@delacour/react-native-ui/signature` |
 | `signature.tsx` | Root: the history, the controlled-value sync, the imperative handle, the announcements, and the `Object.assign` surface |
 | `signature-pad.tsx` | `Signature.Pad` — the pan, the live stroke, the guideline, the placeholder and the accessibility surface |
-| `signature-path.tsx` | The finished strokes as static SVG paths. Internal |
-| `signature-live-path.tsx` | The stroke under the finger, an animated `d` rebuilt on the UI thread. Internal |
+| `signature-ink.tsx` | The one Skia canvas: the finished strokes' picture, the live stroke traced on the UI thread, and the clear's fade. Internal |
+| `signature.skia.ts` | Skia only: a stroke's cached `SkPath`, the recorded picture of the finished strokes, and the off-screen PNG render |
 | `signature-toolbar.tsx` | `Signature.Toolbar` |
 | `signature-action-button.tsx` | The shared body of the three action buttons. Internal |
 | `signature-undo.tsx` | `Signature.Undo` |
@@ -23,8 +23,8 @@ a standalone SVG document.
 | `signature-clear.tsx` | `Signature.Clear` |
 | `signature-alternative.tsx` | `Signature.Alternative` — the typed-name link |
 | `signature.context.tsx` | `SignatureContext`, `useSignature()`, `useSignatureContext()`, `useSignaturePart()` |
-| `signature.types.ts` | `SignaturePoint`, `SignatureStroke`, `SignatureValue`, `SignatureHandle`, `SignatureExportOptions` |
-| `signature.stroke.ts` | Pure, no RN: point filter and smoother (worklets), history reducer, bounds, re-fit, SVG export, JSON round trip |
+| `signature.types.ts` | `SignaturePoint`, `SignatureStroke`, `SignatureValue`, `SignatureHandle`, `SignatureExportOptions`, `SignaturePngOptions` |
+| `signature.stroke.ts` | Pure, no RN: point filter, smoother and path tracer (worklets), history reducer, bounds, re-fit, the export frame and PNG size, SVG export, JSON round trip |
 | `signature.stroke.test.ts` | |
 | `signature.variants.ts` | Pure `tv()` slots, the size tables, the axis ladder and the accessibility resolvers |
 | `signature.variants.test.ts` | |
@@ -40,17 +40,31 @@ a standalone SVG document.
   test pins the classes to the numbers so the decision is visible if that
   changes.
 - **Drawing is on the UI thread, and React sees a stroke once.** The pan writes
-  points into a shared value and the live stroke's `d` is an animated prop
-  rebuilt from it, so a moving finger renders nothing. On finger-up the stroke
-  crosses to the JS thread with `scheduleOnRN` and joins the static paths: one
-  render per stroke, none per move. A signature is a few dozen strokes of a few
-  hundred points; a render per move would be thousands.
-- **The live and the static path are drawn by the same function.**
-  `smoothStroke` is a worklet, so the UI thread and the committed path compute
-  the identical string and a stroke does not shift by a hair when it is handed
+  points into a shared value and a derived value traces them into a Skia path,
+  so a moving finger renders nothing. On finger-up the stroke crosses to the JS
+  thread with `scheduleOnRN` and joins the finished strokes' picture: one render
+  per stroke, none per move. A signature is a few dozen strokes of a few hundred
+  points; a render per move would be thousands.
+- **One Skia canvas holds all the ink, and no path is a string on screen.** The
+  finished strokes are one recorded `SkPicture` — one draw call however many
+  strokes — and each stroke's `SkPath` is cached against the immutable stroke,
+  so a commit traces one path, not the signature. The live stroke is traced
+  straight into a `PathBuilder` each frame: the SVG version wrote a `d` string
+  and had it parsed back on every move. Each stroke is still its own `drawPath`,
+  so a translucent ink darkens where two strokes cross exactly as separate SVG
+  paths did.
+- **The canvas imports `lib/skia-native-id` for its effect**, as `Sketch.Canvas`
+  does. After a JS reload Skia reused the old runtime's canvas ids, which its
+  native registry still held as torn down, so the pad came up blank until a
+  stroke re-rendered it.
+- **The live and the finished stroke are traced by the same function.**
+  `traceStroke` is a worklet, so the UI thread and the committed picture build
+  the identical path and a stroke does not shift by a hair when it is handed
   over. Points are midpoint-quadratic smoothed — each sampled point is a control
   and each midpoint an end — which passes near every point without overshooting
-  any, the failure a Catmull-Rom spline has on a sharp turn.
+  any, the failure a Catmull-Rom spline has on a sharp turn. `smoothStroke`
+  writes that curve as path data for the exports, verb for verb the same.<!-- registry:omit -->
+  `signature.stroke.test.ts` holds the two to identical output.<!-- /registry:omit -->
 - **The live stroke is cleared after its committed copy renders, and only if it
   is still that stroke.** Cleared at finger-up, the ink blinks out for a frame;
   cleared unconditionally, a fast second stroke — the dot on an i — loses its
@@ -72,9 +86,13 @@ a standalone SVG document.
 - **Clear is final.** It empties the redo stack too and is not undoable. A clear
   that undo could reverse is a clear that needs explaining, and the button is
   labelled "Clear signature" because that label is the only warning there is.
-  The ink fades out over 150 ms by keying the ink layer on a clear counter and
-  letting the old layer's `exiting` animation run — instant under
-  `useCalmMotion()`.
+  The ink fades out over 150 ms: a clear counter bumps, the canvas keeps the
+  picture from before it as a ghost inside a layer whose paint's alpha runs to
+  zero, then drops it — instant under `useCalmMotion()`. A layer and not a group
+  opacity, because a picture replays with its own paints and ignores one. The
+  ghost is picked during the render the clear lands in, not in an effect after
+  it: from an effect it reaches the canvas a commit late, so the ink blinked out
+  and then popped back at full strength before fading.
 - **`value` re-seeds; it does not gate.** The pad reports a value at each stroke
   end and remembers it, so a parent echoing it back is a no-op and a parent
   passing anything else replaces the drawing and its history. A parent cannot
@@ -108,7 +126,12 @@ a standalone SVG document.
 - **Haptics**: the `haptic` preset (default `light`) as each stroke begins,
   nothing while drawing — a buzz per point would be a motor running — and a
   selection tick on clear. `haptic={false}` silences both.
-- **No raster export.** A PNG needs `react-native-view-shot` or Skia, and neither
-  is worth a peer for a format SVG already covers; it is an open question rather
-  than a missing feature. The point's `t` is stored so a speed-eased stroke width
-  can follow without a format change.
+- **`toPNG()` is `toSVG()` rasterised.** Both resolve their options through one
+  `resolveSignatureExport`, so the same options give the same box, the same
+  literal ink and the same background or none — a PNG is transparent unless
+  `background` is set. It renders the cached stroke paths off screen on a CPU
+  surface (`Skia.Surface.MakeRaster`) at `scale` pixels per point (default the screen's ratio) and returns
+  base64 with no `data:` prefix, as `Sketch.toPNG` does. Off screen rather than a
+  snapshot of the pad, so the guideline, the placeholder and the pad's fill never
+  reach the file. `""` before the pad is measured. The point's `t` is stored so
+  a speed-eased stroke width can follow without a format change.

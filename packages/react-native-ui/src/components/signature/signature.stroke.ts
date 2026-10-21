@@ -93,6 +93,56 @@ export function smoothStroke(points: SignatureStroke): string {
 	return `${path}${end}`;
 }
 
+/**
+ * What {@link traceStroke} draws into — the three path verbs it uses. A Skia
+ * `SkPathBuilder` is one; so is anything that records the calls.
+ */
+export type SignaturePathSink = {
+	moveTo: (x: number, y: number) => unknown;
+	lineTo: (x: number, y: number) => unknown;
+	quadTo: (x1: number, y1: number, x2: number, y2: number) => unknown;
+};
+
+/**
+ * One stroke drawn straight into a path, verb by verb — the curve
+ * {@link smoothStroke} writes, without a string to build and parse back.
+ *
+ * Coordinates go in unrounded, so the live stroke and its committed copy, both
+ * traced here, match to the bit; a non-finite one is traced as zero, as the
+ * string form writes it. Self-contained, with no helper of this module's: a
+ * module-scope function called from a worklet can be missing from its closure on
+ * the UI thread.
+ *
+ * A worklet: the live stroke calls this on the UI thread on every move.
+ */
+export function traceStroke(points: SignatureStroke, sink: SignaturePathSink): void {
+	"worklet";
+	const count = points.length;
+	if (count === 0) return;
+
+	const first = points[0] as SignaturePoint;
+	const firstX = Number.isFinite(first.x) ? first.x : 0;
+	const firstY = Number.isFinite(first.y) ? first.y : 0;
+	sink.moveTo(firstX, firstY);
+	if (count === 1) {
+		sink.lineTo(firstX, firstY);
+		return;
+	}
+
+	for (let index = 1; index < count - 1; index++) {
+		const control = points[index] as SignaturePoint;
+		const next = points[index + 1] as SignaturePoint;
+		const controlX = Number.isFinite(control.x) ? control.x : 0;
+		const controlY = Number.isFinite(control.y) ? control.y : 0;
+		const midX = (control.x + next.x) / 2;
+		const midY = (control.y + next.y) / 2;
+		sink.quadTo(controlX, controlY, Number.isFinite(midX) ? midX : 0, Number.isFinite(midY) ? midY : 0);
+	}
+
+	const last = points[count - 1] as SignaturePoint;
+	sink.lineTo(Number.isFinite(last.x) ? last.x : 0, Number.isFinite(last.y) ? last.y : 0);
+}
+
 /** One smoothed path per stroke, in order. */
 export function strokesToPaths(strokes: readonly SignatureStroke[]): readonly string[] {
 	return strokes.map((stroke) => smoothStroke(stroke));
@@ -300,19 +350,25 @@ function formatNumber(value: number): string {
 	return formatCoordinate(value);
 }
 
+/** What an export draws, with every option resolved: the same for `toSVG` and `toPNG`. */
+export type SignatureExport = {
+	/** The frame, in pad coordinates. */
+	box: SignatureBounds;
+	strokeColor: string;
+	strokeWidth: number;
+	/** A literal colour, or `null` for none. */
+	background: string | null;
+};
+
 /**
- * The signature as a standalone SVG document.
+ * An export's options resolved against a value.
  *
- * One `<path>` per stroke, unfilled, with round caps and joins — the same
- * geometry the pad draws, so the file opens looking like what was signed.
- * `viewBox: "pad"` keeps the whole pad; `"tight"` crops to the ink plus
- * `padding`, and falls back to the pad when there is no ink to crop to.
- *
- * Colours must be literal. A token name is ignored — the ink falls back to
- * {@link SIGNATURE_EXPORT_STROKE_COLOR} and the background to none — because a
- * file has no theme to resolve one against. Every attribute is escaped.
+ * One function so the SVG and the PNG frame and colour a signature identically:
+ * `viewBox: "pad"` keeps the whole pad, `"tight"` crops to the ink plus
+ * `padding` and falls back to the pad with no ink; a token name or
+ * `transparent` is no colour.
  */
-export function toSVG(value: SignatureValue, options: SignatureExportOptions = {}): string {
+export function resolveSignatureExport(value: SignatureValue, options: SignatureExportOptions = {}): SignatureExport {
 	const strokeWidth = options.strokeWidth ?? SIGNATURE_STROKE_WIDTH;
 	const strokeColor =
 		options.strokeColor !== undefined && isLiteralColor(options.strokeColor)
@@ -330,6 +386,36 @@ export function toSVG(value: SignatureValue, options: SignatureExportOptions = {
 				height: bounds.height + padding * 2,
 			}
 		: { x: 0, y: 0, width: value.width, height: value.height };
+
+	return { background, box, strokeColor, strokeWidth };
+}
+
+/**
+ * A PNG's size in whole pixels: the box times `scale`, rounded. `null` when that
+ * is no pixels at all — an unmeasured pad, or a scale that is not positive.
+ */
+export function signaturePngSize(box: SignatureBounds, scale: number): { width: number; height: number } | null {
+	if (!(Number.isFinite(scale) && scale > 0)) return null;
+	const width = Math.round(box.width * scale);
+	const height = Math.round(box.height * scale);
+	if (!(width > 0 && height > 0)) return null;
+	return { width, height };
+}
+
+/**
+ * The signature as a standalone SVG document.
+ *
+ * One `<path>` per stroke, unfilled, with round caps and joins — the same
+ * geometry the pad draws, so the file opens looking like what was signed.
+ * `viewBox: "pad"` keeps the whole pad; `"tight"` crops to the ink plus
+ * `padding`, and falls back to the pad when there is no ink to crop to.
+ *
+ * Colours must be literal. A token name is ignored — the ink falls back to
+ * {@link SIGNATURE_EXPORT_STROKE_COLOR} and the background to none — because a
+ * file has no theme to resolve one against. Every attribute is escaped.
+ */
+export function toSVG(value: SignatureValue, options: SignatureExportOptions = {}): string {
+	const { background, box, strokeColor, strokeWidth } = resolveSignatureExport(value, options);
 
 	const x = formatNumber(box.x);
 	const y = formatNumber(box.y);

@@ -3,7 +3,7 @@
 	"name": "signature",
 	"type": "registry:ui",
 	"title": "Signature",
-	"description": "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+	"description": "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON, SVG or PNG.",
 	"categories": [
 		"forms"
 	],
@@ -14,6 +14,7 @@
 		"icon",
 		"icons",
 		"pressable",
+		"skia-native-id",
 		"text",
 		"tv",
 		"use-calm-motion",
@@ -25,7 +26,7 @@
 	"expoDependencies": [
 		"react-native-gesture-handler",
 		"react-native-reanimated",
-		"react-native-svg",
+		"react-native-skia",
 		"react-native-worklets"
 	],
 	"devDependencies": [],
@@ -84,9 +85,15 @@
 			]
 		},
 		{
-			"path": "packages/react-native-ui/src/components/signature/signature-live-path.tsx",
-			"target": "signature/signature-live-path.tsx",
-			"namespace": "ui"
+			"path": "packages/react-native-ui/src/components/signature/signature-ink.tsx",
+			"target": "signature/signature-ink.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/skia-native-id",
+					"to": "@registry/lib/skia-native-id"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/signature/signature-pad.tsx",
@@ -114,11 +121,6 @@
 					"to": "@registry/ui/text"
 				}
 			]
-		},
-		{
-			"path": "packages/react-native-ui/src/components/signature/signature-path.tsx",
-			"target": "signature/signature-path.tsx",
-			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/signature/signature-redo.tsx",
@@ -157,6 +159,11 @@
 					"to": "@registry/ui/pressable"
 				}
 			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature.skia.ts",
+			"target": "signature/signature.skia.ts",
+			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/signature/signature.stroke.ts",

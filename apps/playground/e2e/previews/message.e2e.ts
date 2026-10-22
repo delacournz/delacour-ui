@@ -4,7 +4,24 @@ import { capture } from "./capture";
 
 capture("message/directions");
 
-capture("message/runs");
+capture("message/runs", async (f) => {
+	// Starting the run over, then sending it one message at a time: each arrival tightens the
+	// corners it now shares with the one above
+	await f.tap("message-runs-next");
+	await f.wait(500);
+	await f.tap("message-runs-next");
+	await f.wait(500);
+	await f.tap("message-runs-next");
+	await f.wait(500);
+	await f.tap("message-runs-next");
+	await f.wait(500);
+	await f.tap("message-runs-next");
+	await f.wait(900);
+	// Right to left mirrors the run, tightened corners included, then back so the clip loops
+	await f.tap("message-runs-rtl");
+	await f.wait(1200);
+	await f.tap("message-runs-rtl");
+});
 
 capture("message/status", async (f) => {
 	// Walking the top receipt through sent, delivered and read

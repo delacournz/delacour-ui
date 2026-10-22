@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Delivery status",
 	caption:
 		"`status` is a receipt under the last outgoing bubble: sending dims the bubble, read turns the ticks to `info`, and failed edges the bubble in `destructive` with a Retry beside the receipt when `onRetry` is set.",
-	capture: { align: "stretch", flow: true, hero: true },
+	capture: { align: "stretch", flow: true },
 };
 
 const CYCLE: MessageStatus[] = [{ type: "sending" }, { type: "sent" }, { type: "delivered" }, { type: "read" }];

@@ -132,8 +132,10 @@ an image viewer, text selection by default (`selectable` steals the long press).
 
 ## Previews
 
-Five demos are captured: `status` (**hero**, a clip — the receipt walks sending →
+Five demos are captured: `runs` (**hero**, a clip — the run is sent one message
+at a time, each arrival tightening the corners it shares with the one above, then
+flips to right to left and back), `status` (a clip — the receipt walks sending →
 read, the failed one retries and fails again), `typing` (a clip of the dots),
-and stills of `directions`, `runs` and `reactions`, all but `typing` at
+and stills of `directions` and `reactions`, all but `typing` at
 `align: "stretch"`. The Retry control carries no `testID`, so
-`.argent/flows/previews/message/status.yaml` taps it by its text.
+`apps/playground/e2e/previews/message.e2e.ts` taps it by its text.

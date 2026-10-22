@@ -1,7 +1,7 @@
 # Performance and installation reliability proposal
 
-Status: draft for option 5. This PR contains a plan.
-Base: `develop` at `36b3b80f`. Review date: 2026-10-22.
+Status: draft. This PR contains a plan and no runtime changes.
+Base: `develop` at `99570e94`. Review date: 2026-10-22.
 
 Measure the native workloads that users can feel. Fix the bottlenecks that the
 measurements show. Verify the UI package through its npm path. Make installation
@@ -12,12 +12,14 @@ diagnostics describe the modules and native configuration that an application us
 - The [Expo verification harness](../../packages/cli/scripts/verify/harness.ts)
   already packs the chart and bottom sheet engines. It installs UI components
   through the CLI copy path. Add the UI tarball path to this harness.
+  Its current Metro bundle step exports for iOS only. It does not check an
+  Android bundle or build a native binary.
 - The [doctor command](../../packages/cli/src/commands/doctor.ts) checks whether
   module paths exist in both the app and workspace. It does not compare their
   resolved physical paths. Two links to one copy can therefore produce a warning.
 - The [local signoff plan](../../scripts/signoff-checks.ts) already includes
   copied tests and registry checks. Extend the appropriate checks.
-  Keep ordinary PR verification local. Use the existing dispatch fallback when needed.
+  Reuse these checks through the documented CI dispatch or local signoff.
 - The playground has preview flows and visual comparison. These give interaction
   and image evidence. They do not establish frame-time or memory budgets.
 
@@ -42,6 +44,10 @@ Warm each workload once. Record three measured runs for both commits.
 Store the raw profiles and the measurement summary together.
 Report p50 and p95 values where the profiler supplies them.
 Name any missing metric instead of estimating it from a screen recording.
+Record the profiler name, version, and exact metric field for each result.
+Use the same profiler and metric field for both commits on each device.
+Report peak process memory and post-idle retained memory separately.
+Use the same fixed idle interval for both commits.
 
 Proposed review budgets:
 
@@ -76,9 +82,12 @@ Acceptance checks:
 
 - A minimal app imports Button and Input through public package paths.
   Optional chart and sheet engines can remain absent for this case.
+- Typecheck the app, then export Metro bundles separately for iOS and Android.
+  The current `verify:expo --bundle` step exports only for iOS.
 - A second app installs the packed engines. It imports Chart and BottomSheet
-  through the UI package. Types and Metro bundles pass on iOS and Android.
-- A native run opens a chart and sheet without a duplicate-context error.
+  through the UI package. Type checks and both platform bundles pass.
+- A separate native run opens a chart and sheet without a duplicate-context
+  error. A Metro export does not prove native module linking or runtime behavior.
 - Every documented public subpath resolves from the tarball. TypeScript and Metro
   use the packaged TSX and CSS entries. Private workspace aliases do not escape.
 - A removed export or missing file makes the smoke check fail with its path.
@@ -107,7 +116,7 @@ Reuse the existing form, overlay, and chart flows. Automate the failures found b
 the workloads above. Include one Android run for shared gesture and keyboard paths.
 Keep screenshot comparison separate from timing checks.
 
-Option 4 owns the manual accessibility acceptance matrix. This work reuses those
+The accessibility PR (#272) owns the manual acceptance matrix. This work reuses those
 cases when a native automation tool can assert them. It does not replace recorded
 VoiceOver and TalkBack evidence with pure JavaScript tests.
 See [React Native testing guidance](https://reactnative.dev/docs/testing-overview).
@@ -120,7 +129,7 @@ See [React Native testing guidance](https://reactnative.dev/docs/testing-overvie
 | 2 | `packages/cli/scripts/verify/` and `packages/react-native-ui/package.json` | UI tarball consumer and package contract checks |
 | 3 | `apps/playground/src/demos/`, `apps/playground/e2e/`, and a small report command | Repeatable workloads, raw profiles, and a baseline report |
 | 4 | The component files identified by those profiles | Small fixes with before-and-after evidence |
-| 5 | `scripts/signoff-checks.ts` and its tests | Relevant local gates, after the workloads are stable |
+| 5 | `scripts/signoff-checks.ts` and its tests | Relevant checks, after the workloads are stable |
 | 6 | Component guides and CLI troubleshooting docs | Supported configuration, diagnostic guidance, and measured results |
 
 Add a changeset for published behavior changes. Regenerate the registry when a
@@ -130,6 +139,9 @@ release and dispatch workflows. Do not add paid checks to every PR.
 ## Open evidence
 
 No performance measurements or consumer installs ran for this draft.
-The current disk limit blocks new installs and native builds. The workspace lacks
-Skia, the web telemetry package, and Warden. Complete those prerequisites before
-collecting a baseline. Do not claim a speed or memory improvement before that run.
+The current `ci.yml` jobs use Namespace Linux runners. They install private
+GitHub packages with the upstream `NPM_TOKEN` secret. The workflow does not
+build or run an iOS or Android binary. Configure an authorized native runner or
+device path before assigning native runtime or performance checks to CI.
+Complete the runner, device, and package-access prerequisites before collecting
+a baseline. Do not claim a speed or memory improvement before that run.

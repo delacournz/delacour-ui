@@ -1581,7 +1581,6 @@
 				"button",
 				"icon",
 				"icons",
-				"skia-native-id",
 				"surface",
 				"text",
 				"tv",
@@ -3602,7 +3601,6 @@
 			"registryDependencies": [
 				"compose-refs",
 				"pressable",
-				"skia-native-id",
 				"text",
 				"tv",
 				"use-controllable-state",
@@ -3820,7 +3818,6 @@
 				"icon",
 				"icons",
 				"pressable",
-				"skia-native-id",
 				"text",
 				"tv",
 				"use-calm-motion",
@@ -3909,7 +3906,6 @@
 				"icon",
 				"icons",
 				"pressable",
-				"skia-native-id",
 				"slider",
 				"toggle-button",
 				"tv",
@@ -3945,24 +3941,6 @@
 			],
 			"testRegistryDependencies": [
 				"styles"
-			],
-			"testDependencies": [
-				"@types/bun"
-			]
-		},
-		{
-			"name": "skia-native-id",
-			"type": "registry:lib",
-			"title": "skiaNativeId",
-			"description": "Starts each JS runtime's Skia canvas ids in a fresh range, so a canvas is not blank after a reload.",
-			"registryDependencies": [],
-			"dependencies": [],
-			"expoDependencies": [
-				"react-native-skia"
-			],
-			"devDependencies": [],
-			"files": [
-				"lib/skia-native-id.ts"
 			],
 			"testDependencies": [
 				"@types/bun"
@@ -5069,7 +5047,6 @@
 			"registryDependencies": [
 				"button",
 				"pressable",
-				"skia-native-id",
 				"text",
 				"tv",
 				"use-controllable-state",

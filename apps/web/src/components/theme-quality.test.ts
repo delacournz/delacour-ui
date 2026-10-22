@@ -4,6 +4,7 @@ import { auditTheme, QUALITY_STATUS } from "@delacour/design-system/quality";
 import { resolveTokens } from "@delacour/design-system/resolve";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { ThemePreview } from "./theme-preview";
 import { ThemeQuality } from "./theme-quality";
 
 test("the server HTML contains the shared results and tokens for both modes", () => {
@@ -20,4 +21,13 @@ test("the server HTML contains the shared results and tokens for both modes", ()
 		expect(html).toContain(QUALITY_STATUS[result.status]);
 	}
 	expect(html).toContain("does not certify accessibility");
+});
+
+test("the focused control preview uses each mode's ring token", () => {
+	const { light, dark } = resolveTokens(DEFAULT_CONFIG);
+	const html = renderToStaticMarkup(createElement(ThemePreview, { config: DEFAULT_CONFIG }));
+
+	expect(html).toContain("Focused");
+	expect(html).toContain(`outline:2px solid ${light.ring}`);
+	expect(html).toContain(`outline:2px solid ${dark.ring}`);
 });

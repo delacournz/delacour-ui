@@ -104,6 +104,9 @@ function StateSamples({ mode }: { mode: ResolvedMode }): ReactElement {
 			>
 				Disabled
 			</span>
+			<span className="rounded-lg px-3 py-2" style={{ outline: `2px solid ${swatch(mode, "ring")}`, outlineOffset: 2 }}>
+				Focused
+			</span>
 			<span style={{ color: swatch(mode, "destructive") }}>Check this value.</span>
 		</fieldset>
 	);

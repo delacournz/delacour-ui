@@ -137,7 +137,7 @@ export const attachmentVariants = tv({
 		layout: {
 			chip: {
 				root: "max-w-64 flex-row items-center gap-1 rounded-xl border border-border bg-card p-1 pr-2",
-				press: "shrink flex-row items-center gap-2",
+				press: "shrink grow flex-row items-center gap-2",
 				preview: "rounded-lg",
 				previewFallback: "rounded-lg",
 				image: "rounded-lg",

@@ -106,6 +106,13 @@ describe("sizes", () => {
 		}
 	});
 
+	test("a stretched chip grows its press target, so the cross sits at the far edge", () => {
+		const press = attachmentVariants({ layout: "chip" }).press();
+		expect(press).toMatch(/(?:^|\s)grow(?:\s|$)/);
+		expect(press).toMatch(/(?:^|\s)shrink(?:\s|$)/);
+		expect(press).not.toMatch(/\bflex-1\b/);
+	});
+
 	test("every scale ascends", () => {
 		for (const layout of ATTACHMENT_LAYOUTS) {
 			const points = ATTACHMENT_SIZES.map((size) => ATTACHMENT_SIZE_POINTS[layout][size]);

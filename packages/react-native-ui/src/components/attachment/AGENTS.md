@@ -85,6 +85,11 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
   it actually has, so the extension stays visible: `report-q3-fin…ial.pdf`. `truncateMiddle` is
   the character-budget version for places with no layout — a notification, a log line — and
   backs `Attachment.Name`'s `maxLength`.
+- **A chip's press target grows, so the cross sits at the far edge.** Stretched by a column — a
+  composer tray stacked vertically — a chip is wider than its content, and a press target that only
+  shrank left the cross beside the name, mid-chip. `grow shrink` rather than `flex-1`: the basis
+  stays the content's width, so a content-sized chip in a horizontal tray is unchanged, where
+  `flex-1`'s zero basis would collapse it.
 - **A chip is capped at `max-w-64`.** Inside a horizontal `ScrollView` a child has unbounded width,
   so without a cap a long name would stretch the chip rather than ellipsize.
 - **No ring.** `Progress` draws bars only, so a tile shows a short bar centred on its dimming veil

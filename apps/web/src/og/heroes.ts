@@ -179,7 +179,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("./frames/bottom-sheet/anatomy/the-whole-composition.png?inline"),
 	},
 	"breadcrumb/ellipsis-sheet": {
-		cut: "cf187411b3ab",
+		cut: "9eb3a324880e",
 		load: () => import("./frames/breadcrumb/ellipsis-sheet.png?inline"),
 	},
 	"button/variants": { load: () => import("../../public/previews/button/variants/dark.png?inline") },

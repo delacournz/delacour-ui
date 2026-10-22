@@ -1,17 +1,17 @@
 import type { ReactElement } from "react";
-import { View } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import type { LayoutChangeEvent } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { Icon, type IconComponent } from "../icon";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useFabActionItem, useFabGroupPart } from "./fab.context";
-import { FAB_DIAL_STAGGER, FAB_FOREGROUND_TOKEN, fabVariants, resolveDialProgress } from "./fab.variants";
-
-/** How far below its resting place a closed action sits, in points. */
-const ACTION_RISE = 16;
-
-/** An action's scale at the start of its window. */
-const ACTION_START_SCALE = 0.6;
+import {
+	FAB_DIAL_STAGGER,
+	FAB_FOREGROUND_TOKEN,
+	fabVariants,
+	resolveActionMotion,
+	resolveDialProgress,
+} from "./fab.variants";
 
 export type FabActionProps = {
 	icon: IconComponent;
@@ -40,7 +40,10 @@ export type FabActionProps = {
  * screen reader meets each action once.
  *
  * Its stagger window comes from its place in the dial, read on the UI thread
- * from the dial's one spring. Under reduced motion it fades in place.
+ * from the dial's one spring. It grows out of the trigger and collapses back
+ * into it: the row travels down the centre line to the trigger's centre while
+ * the button alone scales about its own centre, so nothing swings in from the
+ * chip's side. Under reduced motion it fades in place.
  */
 export function FabAction({
 	icon,
@@ -52,26 +55,37 @@ export function FabAction({
 	labelClassName,
 	testID,
 }: FabActionProps): ReactElement {
-	const { progress, count, labelSide, size, haptic, isReducedMotion, close } = useFabGroupPart("Fab.Action");
+	const { progress, triggerCenterY, count, labelSide, size, haptic, isReducedMotion, close } =
+		useFabGroupPart("Fab.Action");
 	const { index } = useFabActionItem("Fab.Action");
 	const slots = fabVariants({ size, labelSide, isDisabled });
+	const rowY = useSharedValue(0);
+	const anchorCenterY = useSharedValue(0);
 
-	const style = useAnimatedStyle(() => {
+	const handleRowLayout = (event: LayoutChangeEvent) => {
+		rowY.value = event.nativeEvent.layout.y;
+	};
+	const handleAnchorLayout = (event: LayoutChangeEvent) => {
+		const { y, height } = event.nativeEvent.layout;
+		anchorCenterY.value = y + height / 2;
+	};
+
+	const rowStyle = useAnimatedStyle(() => {
 		if (isReducedMotion) {
 			const value = progress.value;
-			return {
-				opacity: value < 0 ? 0 : value > 1 ? 1 : value,
-				transform: [{ translateY: 0 }, { scale: 1 }],
-			};
+			return { opacity: value < 0 ? 0 : value > 1 ? 1 : value, transform: [{ translateY: 0 }] };
 		}
 		const local = resolveDialProgress({ open: progress.value, index, count, stagger: FAB_DIAL_STAGGER });
-		return {
-			opacity: local,
-			transform: [
-				{ translateY: (1 - local) * ACTION_RISE },
-				{ scale: ACTION_START_SCALE + (1 - ACTION_START_SCALE) * local },
-			],
-		};
+		const measured = triggerCenterY.value > 0 && anchorCenterY.value > 0;
+		const travel = measured ? triggerCenterY.value - (rowY.value + anchorCenterY.value) : 0;
+		const motion = resolveActionMotion({ local, travel });
+		return { opacity: motion.opacity, transform: [{ translateY: motion.translateY }] };
+	});
+
+	const anchorStyle = useAnimatedStyle(() => {
+		if (isReducedMotion) return { transform: [{ scale: 1 }] };
+		const local = resolveDialProgress({ open: progress.value, index, count, stagger: FAB_DIAL_STAGGER });
+		return { transform: [{ scale: resolveActionMotion({ local, travel: 0 }).scale }] };
 	});
 
 	const handlePress = () => {
@@ -80,7 +94,7 @@ export function FabAction({
 	};
 
 	return (
-		<Animated.View className={slots.action({ className })} style={style}>
+		<Animated.View className={slots.action({ className })} onLayout={handleRowLayout} style={rowStyle}>
 			<Pressable
 				accessibilityElementsHidden
 				accessible={false}
@@ -94,7 +108,7 @@ export function FabAction({
 					{label}
 				</Text>
 			</Pressable>
-			<View className={slots.actionAnchor()}>
+			<Animated.View className={slots.actionAnchor()} onLayout={handleAnchorLayout} style={anchorStyle}>
 				<Pressable
 					accessibilityLabel={label}
 					accessibilityRole="button"
@@ -111,7 +125,7 @@ export function FabAction({
 						icon={icon}
 					/>
 				</Pressable>
-			</View>
+			</Animated.View>
 		</Animated.View>
 	);
 }

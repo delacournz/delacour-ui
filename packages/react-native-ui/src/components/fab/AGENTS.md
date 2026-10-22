@@ -61,6 +61,16 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
   trigger — so there are no per-action timers, and closing halfway through
   opening simply runs the same cascade backwards. The window is floored so a
   stagger too wide for the count degrades to a step, never a NaN.
+- **Each action grows out of the trigger and collapses back into it.**
+  `resolveActionMotion` takes the measured distance from the action button's
+  centre down to the trigger's (`triggerCenterY` from the trigger's layout, the
+  row's `y` and the anchor's centre from theirs) and moves the row along it
+  with `translateY` only, while the button alone scales from
+  `FAB_ACTION_START_SCALE` about its own centre. Scaling the whole row used to
+  pivot on the row's centre, which sits off to the chip's side, so the button
+  swung in from the left instead of out of the trigger. The trigger renders
+  after the actions, so a closed action sits behind it. Until the layout is
+  measured the travel is 0, and the action is still clear at that point.
 - **Actions are unmounted while closed, not hidden.** They mount in the render
   that opens the dial and unmount from the close animation's `finished`
   callback, so a screen reader cannot walk into invisible buttons. A reopen

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
+	FAB_ACTION_START_SCALE,
 	FAB_DIAL_STAGGER,
 	FAB_FOREGROUND_TOKEN,
 	FAB_ICON_SIZE,
@@ -8,6 +9,7 @@ import {
 	FAB_SIZES,
 	FAB_VARIANTS,
 	fabVariants,
+	resolveActionMotion,
 	resolveDialProgress,
 	resolveFabIconSize,
 	resolveFabPlacementStyle,
@@ -270,5 +272,33 @@ describe("fabVariants", () => {
 		expect(classes(fabVariants({ labelSide: "start" }).dial())).toContain("items-end");
 		expect(classes(fabVariants({ labelSide: "end" }).dial())).toContain("items-start");
 		expect(classes(fabVariants({ labelSide: "top" }).dial())).toContain("items-center");
+	});
+});
+
+describe("resolveActionMotion", () => {
+	test("a closed action sits on the trigger's centre, shrunk and clear", () => {
+		const motion = resolveActionMotion({ local: 0, travel: 120 });
+		expect(motion.opacity).toBe(0);
+		expect(motion.translateY).toBe(120);
+		expect(motion.scale).toBe(FAB_ACTION_START_SCALE);
+	});
+
+	test("an open action rests where it was laid out, at full size", () => {
+		expect(resolveActionMotion({ local: 1, travel: 120 })).toEqual({ opacity: 1, translateY: 0, scale: 1 });
+	});
+
+	test("it travels straight down the centre line as it closes, never sideways", () => {
+		let previous = -1;
+		for (let step = 100; step >= 0; step--) {
+			const { translateY, scale } = resolveActionMotion({ local: step / 100, travel: 80 });
+			expect(translateY).toBeGreaterThanOrEqual(previous);
+			expect(scale).toBeLessThanOrEqual(1);
+			expect(scale).toBeGreaterThanOrEqual(FAB_ACTION_START_SCALE);
+			previous = translateY;
+		}
+	});
+
+	test("an unmeasured action does not move", () => {
+		expect(resolveActionMotion({ local: 0.5, travel: 0 }).translateY).toBe(0);
 	});
 });

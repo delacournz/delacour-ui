@@ -154,6 +154,38 @@ export function resolveDialProgress({
 	return local < 0 ? 0 : local > 1 ? 1 : local;
 }
 
+/** An action button's scale at the start of its window, tucked behind the trigger. */
+export const FAB_ACTION_START_SCALE = 0.4;
+
+/**
+ * Where one action is at `local` (its own 0–1 share of the dial's spring).
+ *
+ * `travel` is the measured distance, in points, from the action button's centre
+ * down to the trigger's. Closed, the action sits on the trigger's centre at
+ * {@link FAB_ACTION_START_SCALE}, behind it; open, it rests where it was laid
+ * out. Only `translateY` moves, so the action grows out of and collapses into
+ * the trigger along its centre line, never sideways. The caller scales the
+ * button alone, about its own centre — the whole row's centre sits off to the
+ * chip's side, and scaling about it drags the button in from there.
+ *
+ * `travel` is 0 until the layout is measured, and the action stays clear until
+ * its window opens, so the unmeasured frame shows nothing.
+ *
+ * A worklet, so the action's animated style calls it on the UI thread.
+ */
+export function resolveActionMotion({ local, travel }: { local: number; travel: number }): {
+	opacity: number;
+	translateY: number;
+	scale: number;
+} {
+	"worklet";
+	return {
+		opacity: local,
+		translateY: (1 - local) * travel,
+		scale: FAB_ACTION_START_SCALE + (1 - FAB_ACTION_START_SCALE) * local,
+	};
+}
+
 /**
  * Styling for every part of a fab and its dial.
  *

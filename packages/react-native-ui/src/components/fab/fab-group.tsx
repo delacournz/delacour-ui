@@ -9,7 +9,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import { BackHandler, View, type ViewProps } from "react-native";
+import { BackHandler, type LayoutChangeEvent, View, type ViewProps } from "react-native";
 import Animated, {
 	useAnimatedStyle,
 	useReducedMotion,
@@ -102,6 +102,7 @@ export function FabGroup({
 	const isReducedMotion = useReducedMotion();
 	const insets = use(SafeAreaInsetsContext);
 	const progress = useSharedValue(isOpen ? 1 : 0);
+	const triggerCenterY = useSharedValue(0);
 	const [isMounted, setIsMounted] = useState(isOpen);
 
 	// Mount before the open spring starts, in the same render that opened it,
@@ -134,10 +135,14 @@ export function FabGroup({
 
 	const close = useCallback(() => setIsOpen(false), [setIsOpen]);
 	const toggle = () => setIsOpen(!isOpen);
+	const handleTriggerLayout = (event: LayoutChangeEvent) => {
+		const { y, height } = event.nativeEvent.layout;
+		triggerCenterY.value = y + height / 2;
+	};
 
 	const context = useMemo<FabGroupContextValue>(
-		() => ({ progress, isOpen, count, labelSide, size, haptic, isReducedMotion, close }),
-		[progress, isOpen, count, labelSide, size, haptic, isReducedMotion, close]
+		() => ({ progress, triggerCenterY, isOpen, count, labelSide, size, haptic, isReducedMotion, close }),
+		[progress, triggerCenterY, isOpen, count, labelSide, size, haptic, isReducedMotion, close]
 	);
 
 	const isExtended = label !== undefined && !isOpen;
@@ -194,6 +199,7 @@ export function FabGroup({
 						disabled={isDisabled}
 						feedback="scale"
 						haptic={haptic}
+						onLayout={handleTriggerLayout}
 						onPress={toggle}
 						testID={testID}
 					>

@@ -47,6 +47,11 @@ export function useFabPart(component: string): FabContextValue {
 export type FabGroupContextValue = {
 	/** The dial's one spring, 0 closed → 1 open. It overshoots; readers clamp. */
 	progress: SharedValue<number>;
+	/**
+	 * The trigger's vertical centre in the dial's own coordinates, from its
+	 * layout. Each action collapses onto it. 0 until measured.
+	 */
+	triggerCenterY: SharedValue<number>;
 	isOpen: boolean;
 	/** How many actions the dial holds — each action's stagger window depends on it. */
 	count: number;

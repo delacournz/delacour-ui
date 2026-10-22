@@ -32,7 +32,7 @@ typed text can become a value.
 | `combobox.context.tsx` | `ComboboxProvider`, `useCombobox()`, `useComboboxContext()`, `useComboboxPart()` |
 | `combobox.types.ts` | `ComboboxOption`, `ComboboxOptionGroup`, `ComboboxEntry`, `ComboboxFilter`, `ComboboxListRow`, … |
 | `combobox.filter.ts` | Pure: normalise, match, filter, create row, highlight ranges, pending remove, query reset, announcement, remembered selection |
-| `combobox.variants.ts` | Pure: the added slots, the trigger class, chip size / colour / cap, trigger text, the keyboard-aware sheet cap |
+| `combobox.variants.ts` | Pure: the added slots, the trigger class, chip size / colour / cap, trigger text, the keyboard-aware sheet cap and the held sheet height |
 | `*.test.ts` | |
 
 ## Design
@@ -119,6 +119,17 @@ typed text can become a value.
   feeds the cap the keyboard it will get: the live height once one is up, else
   the last one seen, else `COMBOBOX_KEYBOARD_ESTIMATE_FRACTION` (0.42) of the
   window.
+- **The sheet opens at its cap and holds it.** It used to size itself to its
+  rows (`dynamicSizing` under `maxDynamicContentSize`), so every keystroke that
+  dropped or restored a row resized it, and the cap followed the keyboard's
+  reported height, so it moved again as the keyboard arrived, was measured and
+  left. Now the cap is the sheet's one snap point, `dynamicSizing` is off, and
+  `resolveComboboxSheetHeight` sizes it for the keyboard expected when `open()`
+  ran, held until the next open. A live keyboard counts only when it is taller
+  than the one held — the engine's lift would otherwise carry the top under the
+  status bar — so a smaller one, or none, leaves the height alone. A short list
+  sits at the top of a full-height sheet; a caller who wants it shorter passes
+  `snapPoints`, which replaces the cap entirely.
 - **Closing blurs the search field first.** Done, the scrim, the close button
   and a single pick all `blur()` before the sheet leaves, so the keyboard goes
   down with it rather than lingering over the screen for a beat.

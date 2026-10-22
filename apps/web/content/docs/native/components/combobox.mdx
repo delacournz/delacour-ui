@@ -235,7 +235,7 @@ become a value. Both draw the same trigger box and the same rows, so they sit to
     formatResultsCount: { type: "(count: number) => string", description: "What a screen reader hears." },
     highlight: { type: "boolean", default: "true" },
     presentation: { type: '"sheet"', default: '"sheet"' },
-    snapPoints: { type: "(string | number)[]", description: "Forwarded to the sheet. Unset, it sizes to its rows." },
+    snapPoints: { type: "(string | number)[]", description: "Forwarded to the sheet. Unset, it opens at its cap and holds that height while you type." },
     maxSelected: { type: "number", description: "Multiple only. Disables the remaining rows once reached." },
     limitReachedText: { type: "string", default: '"Limit reached"', description: "Multiple only." },
     chipVariant: { type: '"soft" | "outline"', default: '"soft"', description: "Multiple only." },

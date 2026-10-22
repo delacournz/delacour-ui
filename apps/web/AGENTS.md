@@ -819,6 +819,12 @@ Four things about it are load-bearing, and the fourth is what keeps the other th
 
 ### The pieces
 
+The Theme quality panel reads `auditTheme` from `@delacour/design-system/quality`.
+It shows the two modes, measured ratios, and exact token pairs in server HTML.
+The CSS panel also offers `quality.txt` for copying or download. That report
+uses the same results and includes the preset code. The report does not certify
+accessibility. The existing native CSS, web CSS, and shared URLs keep their formats.
+
 | File | What it is |
 | --- | --- |
 | `src/lib/theme-preset.ts` | `resolvePreset`, `axisOptions`, `themeSummary`, `presetNativeCss` / `presetCss` — the URL contract, testable with no renderer |

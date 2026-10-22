@@ -17,7 +17,8 @@
 		"./emit": "./src/emit.ts",
 		"./convert": "./src/convert.ts",
 		"./house": "./src/house.ts",
-		"./contrast": "./src/contrast.ts"
+		"./contrast": "./src/contrast.ts",
+		"./quality": "./src/quality.ts"
 	},
 	"files": [
 		"src"

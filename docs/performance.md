@@ -119,6 +119,11 @@ Both cases run TypeScript and Metro exports for iOS and Android.
 The existing CI job runs this check for each layout.
 The normal copied-source check still runs.
 
+A maintainer must dispatch CI on a branch at the PR's exact head.
+The `signoff-sha` input must match that branch's commit.
+The signoff job rejects a mismatch before it writes a status.
+Do not dispatch on `develop` with a different PR commit as the input.
+
 Doctor compares package real paths from the app and workspace.
 Shared symlinks do not count as duplicate native modules.
 Distinct physical packages still produce a warning.

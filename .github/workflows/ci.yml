@@ -276,6 +276,10 @@ jobs:
         # Same contexts as REQUIRED_CONTEXTS in scripts/signoff-checks.ts, which signoff.test.ts pins
         # against `.github/rulesets/develop.json`.
         run: |
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ] && [ "$SHA" != "$GITHUB_SHA" ]; then
+            echo "The signoff SHA must match the commit tested by this dispatch." >&2
+            exit 1
+          fi
           for CONTEXT in signoff/typecheck signoff/check signoff/test signoff/build signoff; do
             gh api "repos/${{ github.repository }}/statuses/${SHA}" --method POST \
               -f state=success \

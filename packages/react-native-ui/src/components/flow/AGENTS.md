@@ -79,10 +79,6 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
   the canvas — the trick `@delacour/react-native-charts` uses. A part off the canvas gets `null`
   from `useFlowCanvasLayer()` and warns. The preview and the minimap own their canvases and
   resolve their colours just outside them.
-- **`flow.tsx` imports `lib/skia-native-id` for its effect.** After a JS reload Skia reused the old
-  runtime's canvas ids, which its native registry still held as torn down, so the edges and the
-  background came up blank — the minimap too — until a re-render (pressing the lock was enough).
-  The import moves this runtime's ids to a fresh range before any of the three canvases asks for one.
 - **Shared values go straight into Skia props.** The pan and zoom are one derived `transform` on
   the canvas's `Group`; an edge's route is a derived `SkPath` (`Skia.Path.MakeFromSVGString` in
   the worklet), its march a `DashPathEffect` `phase`. Nothing crosses to the JS thread per frame.

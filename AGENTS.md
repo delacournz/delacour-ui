@@ -230,7 +230,7 @@ Shared native and React versions are pinned once, in the root `package.json`
 ```
 @legendapp/list  react 19.3.0  react-native 0.88.0
 react-native-gesture-handler ~3.3.0  react-native-keyboard-controller 1.22.7  react-native-reanimated 4.7.1
-react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.7.2
+react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.7.3
 react-native-svg 15.16.0  react-native-worklets 0.13.0
 ```
 

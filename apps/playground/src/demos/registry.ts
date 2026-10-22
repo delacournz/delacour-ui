@@ -760,6 +760,7 @@ import * as demo_switch_start_and_end_content from "./switch/start-and-end-conte
 import * as demo_switch_tap_or_drag from "./switch/tap-or-drag";
 import * as demo_table_basic from "./table/basic";
 import * as demo_table_columns from "./table/columns";
+import * as demo_table_data_explorer from "./table/data-explorer";
 import * as demo_table_empty from "./table/empty";
 import * as demo_table_frame from "./table/frame";
 import * as demo_table_selectable from "./table/selectable";
@@ -1626,6 +1627,7 @@ export const DEMOS = {
 	"switch/tap-or-drag": demo_switch_tap_or_drag,
 	"table/basic": demo_table_basic,
 	"table/columns": demo_table_columns,
+	"table/data-explorer": demo_table_data_explorer,
 	"table/empty": demo_table_empty,
 	"table/frame": demo_table_frame,
 	"table/selectable": demo_table_selectable,

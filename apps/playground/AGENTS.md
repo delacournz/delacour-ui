@@ -105,6 +105,11 @@ src/
 
 ## Routes
 
+The Table gallery includes a data explorer with 10,000 fixed records.
+Its pure model lives in `src/demos/table/data-explorer.model.ts`.
+The `data-explorer` Warden suite checks selection, query changes, pages, and retries.
+See `../../docs/data-explorer.md` for state ownership and pending native acceptance.
+
 `(components)` is a **route group**: the parentheses keep it out of the URL, so
 the file `(components)/button.tsx` is the route `/button`.
 

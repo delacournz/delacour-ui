@@ -13,6 +13,7 @@ import {
 	footerTop,
 	indexForHeight,
 	isLayoutReady,
+	keyboardCeiling,
 	keyboardLift,
 	positionFor,
 	restingBottom,
@@ -56,6 +57,17 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 	const keyboardEffective = useDerivedValue(() =>
 		state.keyboardOwned.value && state.config.value.keyboardBehavior !== "none" ? state.keyboardHeight.value : 0
 	);
+	// Under `keyboardLiftLimit="maxDynamicContentSize"` a capped dynamic sheet is
+	// lifted no higher than its cap — decided here, on the UI thread, so it holds
+	// from the keyboard's first frame.
+	const ceiling = useDerivedValue(() =>
+		keyboardCeiling({
+			limit: state.config.value.keyboardLiftLimit,
+			dynamicSizing: state.config.value.dynamicSizing,
+			maxDynamicContentSize: state.config.value.maxDynamicContentSize,
+			maxHeight: maxHeight.value,
+		})
+	);
 	const lift = useDerivedValue(() =>
 		keyboardLift({
 			keyboardHeight: keyboardEffective.value,
@@ -63,6 +75,8 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 			band: band.value,
 			behavior: state.config.value.keyboardBehavior,
 			gapBelow: resting.value,
+			base: state.base.value,
+			ceiling: ceiling.value,
 		})
 	);
 	const height = useDerivedValue(() => clampHeight(state.base.value + lift.value, closed.value, maxHeight.value));
@@ -92,7 +106,17 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 	// never reflows during a snap between snap points — but a `fillParent` snap
 	// takes `base` above every snap point, and the body follows it up.
 	const area = useDerivedValue(() => {
-		const sheetHeight = Math.min(maxHeight.value, Math.max(highest.value, state.base.value) + lift.value);
+		const from = Math.max(highest.value, state.base.value);
+		const fromLift = keyboardLift({
+			keyboardHeight: keyboardEffective.value,
+			progress: state.keyboardProgress.value,
+			band: band.value,
+			behavior: state.config.value.keyboardBehavior,
+			gapBelow: resting.value,
+			base: from,
+			ceiling: ceiling.value,
+		});
+		const sheetHeight = Math.min(maxHeight.value, from + fromLift);
 		return contentArea({
 			sheetHeight,
 			handleHeight: state.handleHeight.value,

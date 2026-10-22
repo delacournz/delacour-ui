@@ -31,7 +31,13 @@ export { isLayoutReady, type LayoutReadyInput } from "./intent/layout-ready";
 export { type IntentResolution, type IntentState, resolveIntent } from "./intent/resolve-intent";
 export { acceptContainerLayout, type ContainerLayoutInput } from "./keyboard/container-layout-guard";
 export { type ContentAreaInput, contentArea } from "./keyboard/content-area";
-export { type KeyboardLiftInput, keyboardInContainer, keyboardLift } from "./keyboard/keyboard-lift";
+export {
+	type KeyboardCeilingInput,
+	type KeyboardLiftInput,
+	keyboardCeiling,
+	keyboardInContainer,
+	keyboardLift,
+} from "./keyboard/keyboard-lift";
 export { type InputInsideSheetInput, isInputInsideSheet } from "./keyboard/keyboard-owner";
 export { type KeyboardOwnerInput, resolveKeyboardOwner } from "./keyboard/keyboard-ownership";
 export { type KeyboardAnimationState, shouldResetKeyboardAnimation } from "./keyboard/keyboard-reset-guard";
@@ -75,6 +81,7 @@ export {
 	type GestureSource,
 	type KeyboardBehavior,
 	type KeyboardBlurBehavior,
+	type KeyboardLiftLimit,
 	type KeyboardScope,
 	SCROLLABLE_TYPE,
 	type ScrollableType,

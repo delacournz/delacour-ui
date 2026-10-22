@@ -23,6 +23,15 @@ export type KeyboardBehavior = "interactive" | "extend" | "fillParent" | "none";
 export type KeyboardBlurBehavior = "none" | "restore";
 
 /**
+ * How high a keyboard may lift the sheet.
+ *
+ * `container` — to the container's top. `maxDynamicContentSize` — a sheet
+ * sized to its content stops at that cap, and the keyboard covers its bottom
+ * instead; for a caller whose cap already keeps the page in view.
+ */
+export type KeyboardLiftLimit = "container" | "maxDynamicContentSize";
+
+/**
  * Which focused inputs count as the sheet's own.
  *
  * `registered` — only inputs that went through `useBottomSheetTextInput`.

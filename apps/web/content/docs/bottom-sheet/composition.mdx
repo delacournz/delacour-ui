@@ -177,6 +177,11 @@ the available height and never adds a snap point. `open` and `close` are the sam
     overDragResistanceFactor: { type: "number", default: "2.5", description: "Larger allows more travel." },
     keyboardBehavior: { type: '"interactive" | "extend" | "fillParent" | "none"', default: '"interactive"' },
     keyboardBlurBehavior: { type: '"none" | "restore"', default: '"restore"' },
+    keyboardLiftLimit: {
+      type: '"container" | "maxDynamicContentSize"',
+      default: '"container"',
+      description: "Whether maxDynamicContentSize also stops the keyboard's lift.",
+    },
     keyboardScope: { type: '"registered" | "inside" | "always"', default: '"inside"' },
     enableBlurKeyboardOnGesture: { type: "boolean", default: "true" },
     animation: { type: "SheetAnimation", description: "A spring or a timing. Platform default when omitted." },

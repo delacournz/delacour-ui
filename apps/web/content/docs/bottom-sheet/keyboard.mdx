@@ -105,6 +105,15 @@ screen and a sheet needs no branch.
 `BottomSheet.TextInput` is the hook over React Native's `TextInput`, for the plain case. Spread the
 hook onto a skin's field, a library's, or your own.
 
+## Lift limit
+
+`interactive` and `extend` lift the sheet as far as the container's top. With
+`keyboardLiftLimit="maxDynamicContentSize"`, a sheet sized to its content stops at that cap instead:
+a short sheet still rides the keyboard up until its top reaches the cap, and a sheet already there
+holds still while the keyboard covers its bottom and the body shrinks by it. The limit is applied on
+the UI thread from the keyboard's first frame, so a capped list never overshoots and settles back —
+which is what shrinking the cap yourself from a keyboard event does.
+
 ## Blur
 
 `keyboardBlurBehavior` is what `extend` and `fillParent` do when the keyboard they snapped for goes

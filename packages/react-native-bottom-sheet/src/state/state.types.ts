@@ -5,6 +5,7 @@ import type {
 	GestureSource,
 	KeyboardBehavior,
 	KeyboardBlurBehavior,
+	KeyboardLiftLimit,
 	KeyboardScope,
 	ScrollableType,
 	SheetIntent,
@@ -38,6 +39,7 @@ export type SheetWorkletConfig = {
 	animateOnMount: boolean;
 	keyboardBehavior: KeyboardBehavior;
 	keyboardBlurBehavior: KeyboardBlurBehavior;
+	keyboardLiftLimit: KeyboardLiftLimit;
 	keyboardScope: KeyboardScope;
 	enableBlurKeyboardOnGesture: boolean;
 };

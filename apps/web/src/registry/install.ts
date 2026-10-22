@@ -4628,7 +4628,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 72,
+		fileCount: 71,
 		groups: [
 			{
 				name: "flow",
@@ -4809,14 +4809,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
-				],
-			},
-			{
-				name: "skia-native-id",
-				title: "skiaNativeId",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{
@@ -7680,7 +7672,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 82,
+		fileCount: 81,
 		groups: [
 			{
 				name: "signature",
@@ -7871,14 +7863,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
-				],
-			},
-			{
-				name: "skia-native-id",
-				title: "skiaNativeId",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{
@@ -13546,7 +13530,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 34,
+		fileCount: 33,
 		groups: [
 			{
 				name: "section-progress",
@@ -13622,14 +13606,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
-				name: "skia-native-id",
-				title: "skiaNativeId",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{
@@ -15742,7 +15718,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 61,
+		fileCount: 60,
 		groups: [
 			{
 				name: "tour",
@@ -15899,14 +15875,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
-				name: "skia-native-id",
-				title: "skiaNativeId",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{
@@ -16898,7 +16866,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 96,
+		fileCount: 95,
 		groups: [
 			{
 				name: "sketch",
@@ -17118,14 +17086,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
-				],
-			},
-			{
-				name: "skia-native-id",
-				title: "skiaNativeId",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{

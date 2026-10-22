@@ -14,7 +14,6 @@
 		"icon",
 		"icons",
 		"pressable",
-		"skia-native-id",
 		"text",
 		"tv",
 		"use-calm-motion",
@@ -87,13 +86,7 @@
 		{
 			"path": "packages/react-native-ui/src/components/signature/signature-ink.tsx",
 			"target": "signature/signature-ink.tsx",
-			"namespace": "ui",
-			"rewrites": [
-				{
-					"from": "../../lib/skia-native-id",
-					"to": "@registry/lib/skia-native-id"
-				}
-			]
+			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/signature/signature-pad.tsx",

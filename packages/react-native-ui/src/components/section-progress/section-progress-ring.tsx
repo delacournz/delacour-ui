@@ -2,7 +2,6 @@ import type { ReactElement } from "react";
 import { View } from "react-native";
 import { useDerivedValue } from "react-native-reanimated";
 import { Canvas, Circle, Path, Skia } from "react-native-skia";
-import "../../lib/skia-native-id";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { useSectionProgressPart } from "./section-progress.context";
 import {

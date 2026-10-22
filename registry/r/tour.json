@@ -10,7 +10,6 @@
 	"registryDependencies": [
 		"button",
 		"pressable",
-		"skia-native-id",
 		"text",
 		"tv",
 		"use-controllable-state",
@@ -70,10 +69,6 @@
 				{
 					"from": "../../hooks/use-theme-color",
 					"to": "@registry/hooks/use-theme-color"
-				},
-				{
-					"from": "../../lib/skia-native-id",
-					"to": "@registry/lib/skia-native-id"
 				}
 			]
 		},

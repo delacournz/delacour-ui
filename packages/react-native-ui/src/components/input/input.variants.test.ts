@@ -496,6 +496,21 @@ describe("a block", () => {
 		expect(inputVariants().block()).toContain("flex-row");
 	});
 
+	// The box's vertical padding is the field's. Stacked on a block's own, it
+	// left a toolbar half again as far from the border as from its separator,
+	// and the same slack under a footer. A block bleeds out by exactly that
+	// padding on its outer edge, so its own padding is all there is either side.
+	test("bleeds out through the box's vertical padding on its outer edge", () => {
+		for (const size of INPUT_SIZES) {
+			const padding = resolveInputGroupClass({ hasBlocks: true, size }).match(/\bpy-([\d.]+)\b/)?.[1];
+			expect(padding).toBeDefined();
+			expect(inputVariants({ blockPosition: "start", size }).block()).toMatch(new RegExp(`(?:^|\\s)-mt-${padding}\\b`));
+			expect(inputVariants({ blockPosition: "end", size }).block()).toMatch(new RegExp(`(?:^|\\s)-mb-${padding}\\b`));
+			expect(inputVariants({ blockPosition: "start", size }).block()).not.toMatch(/-mb-/);
+			expect(inputVariants({ blockPosition: "end", size }).block()).not.toMatch(/-mt-/);
+		}
+	});
+
 	test("carries no raw palette colour and no chrome", () => {
 		for (const state of everyBoxState()) {
 			const block = inputVariants(state).block();

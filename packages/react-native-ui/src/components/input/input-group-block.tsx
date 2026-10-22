@@ -38,10 +38,10 @@ export type InputGroupBlockProps = {
  *   </Input.Group.Block>
  * </Input.Group>
  */
-export function InputGroupBlock({ className, children }: InputGroupBlockProps): ReactElement {
+export function InputGroupBlock({ position, className, children }: InputGroupBlockProps): ReactElement {
 	const { isInvalid, size } = useInputGroupPart("Input.Group.Block");
 	const placement = useInputGroupPlacement();
-	const slots = inputVariants({ isInvalid, size });
+	const slots = inputVariants({ blockPosition: position, isInvalid, size });
 
 	if (process.env.NODE_ENV !== "production" && placement === "row") {
 		console.warn(

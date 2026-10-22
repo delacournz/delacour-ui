@@ -140,6 +140,11 @@ export const inputVariants = tv({
 			row: { separator: "my-2 w-px self-stretch" },
 			box: { separator: "h-px self-stretch" },
 		},
+		/**
+		 * Which edge of the box a block sits on. `none` is everything that is
+		 * not a block.
+		 */
+		blockPosition: { none: {}, start: {}, end: {} },
 		isDisabled: { true: { root: "opacity-50" }, false: {} },
 		isMultiline: { true: {}, false: {} },
 		// A grouped field shares its row, so it stretches — and it clears React
@@ -190,6 +195,18 @@ export const inputVariants = tv({
 		{ placement: "box", size: "sm", class: { separator: "-mx-2.5" } },
 		{ placement: "box", size: "md", class: { separator: "-mx-3" } },
 		{ placement: "box", size: "lg", class: { separator: "-mx-3.5" } },
+		// A block bleeds out through the box's vertical padding on its outer
+		// edge, the way a horizontal hairline bleeds through the horizontal. That
+		// padding is the field's breathing room; stacked on the block's own it
+		// set a toolbar half again as far from the border as from its separator,
+		// and left the same slack under a footer. Each value is the multiline
+		// `py-*` above, so the block's own padding is all there is either side.
+		{ blockPosition: "start", size: "sm", class: { block: "-mt-2" } },
+		{ blockPosition: "start", size: "md", class: { block: "-mt-2.5" } },
+		{ blockPosition: "start", size: "lg", class: { block: "-mt-3" } },
+		{ blockPosition: "end", size: "sm", class: { block: "-mb-2" } },
+		{ blockPosition: "end", size: "md", class: { block: "-mb-2.5" } },
+		{ blockPosition: "end", size: "lg", class: { block: "-mb-3" } },
 		// The corner a lone field draws: the generic ramp, deliberately not the
 		// button's, because a field and the button beside it are meant to be
 		// retunable apart. `sm` steps down a notch; the other two share `lg`.
@@ -288,6 +305,7 @@ export const inputVariants = tv({
 		isMultiline: false,
 		isGrouped: false,
 		placement: "row",
+		blockPosition: "none",
 		orientation: "horizontal",
 		groupPosition: "none",
 		isSeamed: false,

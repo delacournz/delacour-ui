@@ -142,6 +142,13 @@ An `accessibilityLabel` on a thumb names that thumb yourself, and wins outright:
 <Slider.Thumb accessibilityLabel="Highest price" index={1} />
 ```
 
+The app can supply labels in another language:
+
+```tsx
+<Slider.Thumb accessibilityLabel="الحد الأدنى للسعر" index={0} />
+<Slider.Thumb accessibilityLabel="الحد الأعلى للسعر" index={1} />
+```
+
 <Callout type="warn">
 A `Text.Label` sitting beside the slider does not name it — React Native has no `<label for>`. Only
 a `Field.Label` reaches the thumb, and only when its children are a plain string. A slider with

@@ -482,6 +482,23 @@ when the root is `detached`. Extends `ViewProps`.
 The grabber's row and the pill inside it. The sheet's one `adjustable` accessibility element —
 increment and decrement move a snap point, escape closes. Extends `ViewProps`.
 
+The handle's default label and value are English. Pass app translations through `accessibilityLabel`
+and `accessibilityValue`. The close control and overlay also accept `accessibilityLabel`.
+
+```tsx
+function ArabicHandle() {
+  const { index, snapPointCount } = useBottomSheet();
+  const text = index < 0 ? "مغلق" : `نقطة ${index + 1} من ${snapPointCount}`;
+
+  return (
+    <BottomSheet.Handle
+      accessibilityLabel="اللوح السفلي"
+      accessibilityValue={{ text }}
+    />
+  );
+}
+```
+
 <TypeTable
   type={{
     enablePanningGesture: { type: "boolean", description: "Overrides the root's enableHandlePanningGesture for this handle." },

@@ -2,9 +2,11 @@
 
 Review date: 2026-10-22. Base: `develop` at `36b3b80f`.
 
-This change covers Calendar, DatePicker, Dialog, BottomSheet, Input, and Slider.
-It adds translation support where built-in messages previously stayed in English.
-It also fixes the accessible name of an Input inside a Field.
+This review covers Calendar, DatePicker, Dialog, BottomSheet, Input, and Slider.
+Calendar and DatePicker now accept partial `messages` objects. Dialog, BottomSheet,
+and Slider accept app-supplied accessibility labels. Input uses the app's
+`Field.Label` by default, or accepts `accessibilityLabel`.
+
 Native acceptance remains open. Source checks and pure tests do not prove native behavior.
 
 ## Changes
@@ -13,11 +15,17 @@ Native acceptance remains open. Source checks and pure tests do not prove native
 - DatePicker accepts partial `messages` for controls, values, and announcements.
   Functions receive dates that the existing locale formatter has already formatted.
   The application can control sentence order and plural forms.
-- Omitted entries keep the existing English defaults. Explicit label, title,
-  placeholder, and formatter props retain priority.
+- Omitted Calendar and DatePicker entries keep their existing English defaults.
+  Explicit label, title, placeholder, and formatter props retain priority.
+- Dialog.Close accepts a translated `accessibilityLabel`. BottomSheet.Close and
+  BottomSheet.Overlay accept one too. BottomSheet.Handle accepts translated
+  `accessibilityLabel` and `accessibilityValue` props. Slider.Thumb accepts a
+  translated `accessibilityLabel`.
 - Input uses `Field.Label` when `accessibilityLabel` is absent.
   Textarea uses Input and inherits this fallback.
   SearchBar keeps its explicit accessible name.
+- Input has no built-in text to translate. The app supplies its Field label,
+  placeholder, and any icon-only button label.
 - The playground includes Arabic examples under `Direction dir="rtl"`.
 
 ## Source evidence
@@ -26,10 +34,10 @@ Native acceptance remains open. Source checks and pure tests do not prove native
 | --- | --- | --- |
 | Calendar | Messages now cover navigation actions, day state hints, and caption hints. The existing locale still formats dates. | Read a selected date and both range ends. Open the month and year views. Repeat in RTL. |
 | DatePicker | Messages now cover placeholders, controls, range values, counts, and completion announcements. | Read empty and selected values in all three modes. Confirm focus after open, done, clear, and close. |
-| Dialog | The title receives focus on open. A mounted trigger receives focus on close. The source uses modal semantics and reduced motion. | Verify focus order and return with VoiceOver and TalkBack. Check long text and the close control in RTL. |
-| BottomSheet | The engine uses modal semantics, title labels, adjustable handle actions, and system reduced motion. Callers can override handle `accessibilityLabel` and `accessibilityValue`. | Verify focus transfer and return. Check translated handle values, the keyboard, and RTL close placement. |
+| Dialog | The title receives focus on open. A mounted trigger receives focus on close. The source uses modal semantics and reduced motion. `Dialog.Close` accepts an app-supplied label. | Verify focus order and return with VoiceOver and TalkBack. Check long text and the close control in RTL. |
+| BottomSheet | The engine uses modal semantics, title labels, adjustable handle actions, and system reduced motion. Callers can override handle, close, and overlay labels and the handle value. | Verify focus transfer and return. Check translated handle values, the keyboard, and RTL close placement. |
 | Input | The Field context provides the label. Input now passes that label to the native input unless the caller supplies one. | Read names for Input, Textarea, and SearchBar. Check an explicit label. Check clipping at the largest system text size. |
-| Slider | The thumb exposes an adjustable role, current value, increment and decrement actions, and a field label fallback. | Change each thumb with screen reader actions. Check value announcements and bounds in RTL. |
+| Slider | The thumb exposes an adjustable role, current value, increment and decrement actions, and a field label fallback. `Slider.Thumb` accepts an app-supplied label. | Change each thumb with screen reader actions. Check value announcements and bounds in RTL. |
 
 Relevant source files:
 

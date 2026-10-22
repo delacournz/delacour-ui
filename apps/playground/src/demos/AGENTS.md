@@ -64,6 +64,11 @@ not a helper two folders up. The source extractor **throws** on a violation,
 because a demo that only resolves inside this repository has stopped
 illustrating the library — a reader has to be able to write what they see.
 
+The Table data explorer has one explicit exception: `./data-explorer.model`.
+The extractor includes that pure model before it hashes the demo source.
+The model must not import another module.
+Keep its tests separate from the React Native module so Bun can load them.
+
 **The file has a pinned shape**, in this order: imports, `export const meta`,
 module-scope constants, module-scope helper components, and
 `export function Demo(): ReactElement` **last**. The extractor cuts `meta` and

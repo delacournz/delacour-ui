@@ -53,14 +53,11 @@ capture("tour/interactive", async (f) => {
 	// Tapping the heart through the hole likes it and advances to the bookmark
 	await f.tap("tour-interactive-like");
 	await f.wait(1100);
-	// Saving finishes the tour
+	// Saving finishes the tour. The clip ends here, liked and saved, rather than tapping both off
+	// again to loop: those two taps read as the tour misfiring, not as the tour
 	await f.tap("tour-interactive-save");
 	await f.hidden({ id: "tour-interactive-card" });
 	await f.wait(700);
-	// Unlike and unsave, so the clip loops back to where it began
-	await f.tap("tour-interactive-like");
-	await f.wait(250);
-	await f.tap("tour-interactive-save");
 });
 
 capture("tour/custom-labels", async (f) => {

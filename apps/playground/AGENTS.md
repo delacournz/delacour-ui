@@ -105,10 +105,18 @@ src/
 
 ## Routes
 
+`/performance` is a private workload harness.
+It is reached by deep link and has no hub card.
+Its four workloads share `src/performance/protocol.ts`.
+The `performance` Warden suite checks behavior on a simulator.
+It does not provide physical device measurements.
+`bun run performance:report baseline.json candidate.json` compares native profiles.
+See `../../docs/performance.md` for the protocol, summary fields, and limits.
+
 `(components)` is a **route group**: the parentheses keep it out of the URL, so
 the file `(components)/button.tsx` is the route `/button`.
 
-`/theme`, `/preview`, `/components`, `/components/<group>` and `/blocks` are the only routes that
+`/theme`, `/preview`, `/performance`, `/components`, `/components/<group>` and `/blocks` are the only routes that
 are not a component's gallery or a block — the last three are the lists the hub opens. `components/`
 has no parentheses, so unlike `(components)/` it is a real path segment. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
 `<Stack>` with no children, so expo-router registers both from their filenames and

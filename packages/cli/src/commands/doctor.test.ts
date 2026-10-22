@@ -1,11 +1,12 @@
 import { afterAll, describe, expect, test } from "bun:test";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { resolveConfig } from "../config/resolve";
 import { configSchema } from "../config/schema";
 import type { ProjectInfo } from "../project/detect";
 import {
+	checkDuplicateNativeModules,
 	checkGestureHandlerRoot,
 	checkJestTransform,
 	checkLock,
@@ -14,7 +15,6 @@ import {
 	cssImportSpecifier,
 	isOutermostWrapper,
 } from "./doctor";
-
 /**
  * The gesture-root check, against the layouts an Expo app actually has.
  *
@@ -392,5 +392,80 @@ describe("checkJestTransform", () => {
 		const jestConfig = PATTERN("react-native|@delacour/.*|d3-.*|internmap");
 
 		expect(checkJestTransform({ runner: "jest", dependencies: both, jestConfig }).status).toBe("pass");
+	});
+});
+
+describe("checkDuplicateNativeModules", () => {
+	const native = "react-native";
+	const project = (appRoot: string, workspaceRoot: string | null): ProjectInfo =>
+		({ appRoot, workspaceRoot }) as ProjectInfo;
+
+	async function packageAt(root: string, name: string, manifest: Record<string, unknown> = { name, main: "index.js" }) {
+		const directory = join(root, "node_modules", ...name.split("/"));
+		await mkdir(directory, { recursive: true });
+		await writeFile(join(directory, "package.json"), JSON.stringify(manifest));
+		await writeFile(join(directory, "index.js"), "module.exports = {};\n");
+		return directory;
+	}
+
+	test("passes when app and workspace resolve one hoisted physical package", async () => {
+		const root = await app({ "package.json": "{}" });
+		const shared = await packageAt(root, native);
+		const appRoot = join(root, "apps/mobile");
+		const workspaceRoot = root;
+		await mkdir(join(appRoot, "node_modules"), { recursive: true });
+		await mkdir(dirname(join(appRoot, "node_modules", native)), { recursive: true });
+		await symlink(shared, join(appRoot, "node_modules", native));
+
+		const check = await checkDuplicateNativeModules(project(appRoot, workspaceRoot), [native]);
+
+		expect(check.status).toBe("pass");
+	});
+
+	test("passes when app and workspace symlinks resolve to the same package", async () => {
+		const root = await app({ "package.json": "{}" });
+		const shared = await packageAt(join(root, "store"), native);
+		const appRoot = join(root, "apps/mobile");
+		for (const context of [appRoot, root]) {
+			const link = join(context, "node_modules", native);
+			await mkdir(dirname(link), { recursive: true });
+			await symlink(shared, link);
+		}
+
+		const check = await checkDuplicateNativeModules(project(appRoot, root), [native]);
+
+		expect(check.status).toBe("pass");
+	});
+
+	test("warns when app and workspace resolve distinct physical packages", async () => {
+		const root = await app({ "package.json": "{}" });
+		const appRoot = join(root, "apps/mobile");
+		await packageAt(appRoot, native);
+		await packageAt(root, native);
+
+		const check = await checkDuplicateNativeModules(project(appRoot, root), [native]);
+
+		expect(check.status).toBe("warn");
+		expect(check.detail).toContain(native);
+		expect(check.fix).toContain("Metro");
+	});
+
+	test("passes when an optional native package is absent", async () => {
+		const root = await app({ "package.json": "{}" });
+		const check = await checkDuplicateNativeModules(project(join(root, "apps/mobile"), root), [native]);
+		expect(check.status).toBe("pass");
+	});
+
+	test("warns with an actionable fix when resolution is broken", async () => {
+		const root = await app({ "package.json": "{}" });
+		const appRoot = join(root, "apps/mobile");
+		await packageAt(appRoot, native, { name: native, main: "missing.js" });
+		await packageAt(root, native);
+
+		const check = await checkDuplicateNativeModules(project(appRoot, root), [native]);
+
+		expect(check.status).toBe("warn");
+		expect(check.detail).toContain("could not resolve");
+		expect(check.fix).toContain("package installation");
 	});
 });

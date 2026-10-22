@@ -58,7 +58,7 @@ export function ThemeTrigger(): ReactElement | null {
 	const insets = useSafeAreaInsets();
 	const router = useRouter();
 
-	if (pathname === CAPTURE_ROUTE || pathname.startsWith(CUSTOMIZER_ROUTE)) return null;
+	if (pathname === CAPTURE_ROUTE || pathname === "/performance" || pathname.startsWith(CUSTOMIZER_ROUTE)) return null;
 
 	return (
 		<View className="absolute right-5 bottom-0 z-50" style={{ marginBottom: insets.bottom + FLOAT_GAP }}>

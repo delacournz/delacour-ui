@@ -84,8 +84,11 @@ they are unit-testable.
 - `bun test packages/react-native-ui/src/components/direction` — the resolvers.
 <!-- /registry:omit -->
 - Simulator, 2026-10-05, via warden + agent-device on the toggle demo: before the toggle,
-  `dir-step-one` at x 37; after, at x 261 and `dir-step-three` at x 37. The nested LTR row
-  (`dir-fixed-1..3`) kept x 37 / 149 / 261 in both states.
+  `dir-step-one` at x 37; after, at x 261 and `dir-step-three` at x 37. The demo then also held a
+  nested LTR number row that kept x 37 / 149 / 261 in both states; it was dropped from `toggle`
+  (2026-10-22) because a row that stays put while the card flips reads as broken in the clip.
+  Nesting is shown by `nested-override`, and the number row (`dir-number-1..3`) now mirrors with
+  the card.
 - Previews captured 2026-10-06 on an iPhone 17 Pro dev client (`--dev`): `toggle` is the hero clip
   (flow `direction/toggle`, flips to RTL and back so it loops); `mirrored-rows`, `nested-override` and
   `uniwind-variants` are stills. All four are `align: "stretch"`.

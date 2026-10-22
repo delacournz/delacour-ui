@@ -1,99 +1,78 @@
 # Data explorer proposal
 
-Status: draft for option 2. This PR contains a plan.
-Base: `develop` at `36b3b80f`. Review date: 2026-10-22.
+Status: draft. This PR contains a plan and no runtime changes.
+Base: `origin/develop` at `99570e94`. Review date: 2026-10-22.
 
-Build a reusable example for customer lists, invoices, and inventory.
-It combines search, filters, sorting, paging, selection, and bulk actions.
-The application owns the records and query state.
+Build one reusable example for customer lists, invoices, or inventory. The app owns the records and query state. The example shows how existing controls compose. It does not add a data grid or a new data layer.
 
 ## Existing parts
 
 | Part | Existing support | Use in this change |
 | --- | --- | --- |
-| [Table](../../packages/react-native-ui/src/components/table/AGENTS.md) | Sort controls, column labels, selected rows, horizontal scrolling, and FlatList row composition | Render the columns and rows. Keep data operations outside Table. |
-| [SearchBar](../../packages/react-native-ui/src/components/search-bar/AGENTS.md) | Controlled text and debounced callbacks | Edit the query and notify the application. |
-| [SelectionMode](../../packages/react-native-ui/src/components/selection-mode/AGENTS.md) | Controlled selection by string ID and actions that receive current IDs | Keep selection stable when row order changes. |
-| [Pagination](../../packages/react-native-ui/src/components/pagination/AGENTS.md) | Page controls | Change the page through an application callback. |
-| [EmptyState](../../packages/react-native-ui/src/components/empty-state/AGENTS.md) | Empty content and actions | Show no records and no search results. |
+| [Table](../../packages/react-native-ui/src/components/table/AGENTS.md) | Column layout, sort buttons, selected rows, horizontal scrolling, and `FlatList` row composition | Render the header and visible rows. Keep sorting, filtering, and paging in the app. |
+| [SearchBar](../../packages/react-native-ui/src/components/search-bar/AGENTS.md) | Controlled text, immediate `onValueChange`, and `onDebouncedChange` | Keep the input value responsive. Run the query from the debounced callback. |
+| [SelectionMode](../../packages/react-native-ui/src/components/selection-mode/AGENTS.md) | Controlled selection by string ID, select-all over supplied IDs, and actions that receive current IDs | Wrap each non-pressable `Table.Row` in `SelectionMode.Item` with `indicator="none"`. Pass selected state to `Table.Row` and an explicit `accessibilityLabel` to `SelectionMode.Item`. Omit `values` when selection spans pages; use a page-scoped app action for select-all. |
+| [Pagination](../../packages/react-native-ui/src/components/pagination/AGENTS.md) | Controlled `page`, `count`, and `onPageChange`; reports a clamp when the count shrinks | Change the page through the app. Keep result fetching and slicing in the app. |
+| [EmptyState](../../packages/react-native-ui/src/components/empty-state/AGENTS.md) | Empty content and actions | Distinguish no records from no query matches. Offer a reset action for no matches. |
 
-Use the existing FlatList composition from Table. Do not add a data grid engine.
-The first delivery is editable example source, a playground demo, and a guide.
-CLI installation of complete screens belongs to option 1 and is outside this draft.
+The current Table demo already uses `FlatList` and passes `index` and `isLast` to `Table.Row`. Extend that composition. Do not add a virtual-list abstraction. The first delivery is an editable playground example and a guide. A screen installer is outside this plan.
 
 ## Behavior
 
-The application supplies visible rows, stable IDs, a query, one sort key,
-one sort direction, a status filter, page state, selected IDs, and request state.
-Callbacks report changes. The example uses deterministic local data first.
-A second adapter shows the same contract with a delayed server query.
-The example has no network endpoint or persistence layer.
+The app owns the input value, applied query, sort key and direction, status filter, page, selected IDs, and request state. The example uses deterministic local data. A small delayed adapter demonstrates request ordering with the same app state. It uses no network endpoint, persistence, or query library. Assign each request an increasing ID when it starts. Only the newest requested ID may update rows, loading, or error state.
 
 | Action or state | Required result |
 | --- | --- |
-| Search or filter changes | Report the new query and reset to page one. A new request does not show a previous query's response. |
-| Sort changes | Report the key and direction. Equal values use a stable ID as the tie breaker in the local adapter. |
-| Page changes | Keep the query and sort. Clamp a page after the total decreases. |
-| Select a row | Store its ID. Sorting and refetching must not change which record is selected. |
-| Select all | Select the current page only. Label that scope. Do not imply selection of all server matches. |
-| Filter or page changes | Preserve explicitly selected IDs. Show a count that includes hidden selections. Provide a clear action. |
-| Bulk action | Pass the current IDs once. Disable repeat submission while pending. The application decides which IDs to clear after success. |
-| Bulk action fails | Keep selection and show the error. Allow a retry. |
-| Initial loading | Show a loading state with a name for screen readers. |
-| Refresh loading | Keep current rows visible and identify the update. |
-| Empty result | Distinguish an empty dataset from a query with no matches. Provide a reset action for the latter. |
-| Query fails | Show the error and retry action. Keep any prior rows labelled as stale. |
+| Search text changes | Update the field at once. Apply the query after `onDebouncedChange`. Reset to page one when the applied query changes. |
+| Filter changes | Apply the filter and reset to page one. |
+| Sort changes | Apply the key and direction. Use record ID as the local tie-breaker. |
+| Page changes | Keep the applied query and sort. Let `Pagination` report a clamp when a smaller result count makes the current page invalid. |
+| Select a row | Store its record ID. Use `SelectionMode.Item indicator="none"` so the 34-point leading indicator does not shift table rows away from the header. Pass `isSelected` to `Table.Row` for its selected tone. Give `SelectionMode.Item` an explicit `accessibilityLabel` for the row. Sorting, filtering, paging, and refetching do not change which ID is selected. |
+| Select all | Keep `SelectionMode` without `values` so its header count covers the full selection. Add an app-owned button that adds the current page IDs to the controlled selection. Label it as page-scoped. Do not imply that it selects all server matches. |
+| Hidden selections | Preserve selected IDs when the visible page or filter changes. Show the total selected count and provide a clear action. |
+| Bulk action | `SelectionMode.Action` receives the selected IDs at press time. Disable repeat submission while pending. Clear IDs only after the app confirms success. |
+| Bulk action fails | Keep the IDs selected. Show the error and allow a retry. |
+| Initial loading | Show a loading state with an accessible name. |
+| Refresh loading | Keep the previous rows labelled as stale. Keep the latest request loading until its own response succeeds or fails. |
+| Empty result | Distinguish an empty dataset from a query with no matches. Offer a reset action for no matches. |
+| Query fails | If the latest request fails, keep prior rows labelled as stale when available. Show its error and retry action. Ignore failures from older requests. |
 
-The server adapter must ignore stale responses after a later query completes.
-If selected IDs disappear, the application reconciles them with the server.
-The example must not infer deletion from an ID missing on the current page.
+The delayed adapter must ignore every response or failure whose request ID is not the newest requested ID, even when the newer request is still pending. An older success must not replace current rows or clear the newer loading state. An older failure must not replace the newer loading or error state. A missing ID on the current page does not mean that the record was deleted. The app owns any reconciliation of selected IDs with authoritative server data.
 
 ## Delivery map
 
 | Area | Planned change |
 | --- | --- |
-| `apps/playground/src/demos/table/` | Add the complete example and a fixed 10,000-row fixture. Keep its reducer and local query functions beside it. |
-| `apps/playground/src/app/(components)/` | Expose the example through the existing table gallery. |
-| `apps/web/content/docs/native/components/table.mdx` | Add the composition guide and callback contract. Include editable source and server adapter guidance. |
+| `apps/playground/src/demos/table/` | Add the example and a fixed 10,000-row local fixture. Keep the fixture and local query functions beside the demo. |
+| `apps/playground/src/app/(components)/` | Expose the demo through the existing Table gallery. |
+| `apps/web/content/docs/native/components/table.mdx` | Add the composition guide. Explain state ownership, callbacks, selection scope, and the delayed adapter. Link to the editable demo source. |
 | `apps/playground/src/demos/registry.ts` | Regenerate demo metadata. |
-| `apps/playground/e2e/previews/` | Add a focused interaction flow for selection, paging, and retry. |
-| `apps/web/public/previews/` and `apps/web/src/previews/manifest.ts` | Capture the final example. |
-| Library components and registry | Change only if the example exposes a defect in an existing public API. Add a changeset and regenerate the registry for that change. |
+| `apps/playground/e2e/previews/` | Add a focused interaction flow for selection, paging, and retry. Extend the existing harness where needed. |
+| `apps/web/public/previews/` and `apps/web/src/previews/manifest.ts` | Capture and register the final demo preview from the final head. |
+| Library components and registry | Change only for a reproduced defect in an existing public API. Any such change needs its own tests, registry update, and changeset. It is outside this example plan. |
 
-Keep callback and record types local to the example until a second use needs them.
-Do not add a query library, storage abstraction, generic column schema, or export service.
-Do not put sorting or fetching into Table.
+Keep record and callback types local to the demo. Use the existing controlled `SelectionMode` props and `Pagination` props. Keep page-scoped select-all as a small app action; do not duplicate the selection component. Do not add a shared query hook, generic column schema, storage abstraction, export service, or new public API. Do not put sorting or fetching into `Table`.
 
 ## Acceptance checks
 
-- Pure tests cover stable sorting, page reset and clamping, selection by ID,
-  stale responses, and bulk-action failure. Tests must use public behavior.
-- A server example records callback inputs for search, filter, sort, page, and retry.
-  Its responses complete out of order in one test. Only the current response appears.
-- A user can select rows, sort, change pages, apply a filter, and act on the same IDs.
-  The hidden selection count remains clear.
-- A narrow screen can reach every column and action. Large text does not hide controls.
-  VoiceOver and TalkBack announce column names, sort direction, selection, and loading.
-- A release build scrolls the 10,000-row fixture with virtualization active.
-  Confirm that offscreen rows are not all mounted. Reuse this fixture in option 5
-  for frame-time and memory measurements. That plan owns the performance budget.
-- Capture the final demo. Run the applicable local signoff checks on its final SHA.
+- Pure tests cover the local sort tie-breaker, page reset and clamp, selection by ID, stale response suppression, and bulk-action failure.
+- The delayed adapter test starts requests A and B. If A succeeds while B is pending, it cannot replace the current rows or clear B’s loading state. Test both completion orders. Test that an older failure cannot replace B’s loading or error state.
+- The example composes `SelectionMode.Item indicator="none"` around a non-pressable `Table.Row`. It passes selected state to `Table.Row` and an explicit `accessibilityLabel` to `SelectionMode.Item`. Tests confirm that IDs remain selected and row tones follow those IDs without a second press target or a 34-point header misalignment.
+- An interaction test selects rows, sorts, changes pages, applies a filter, and confirms the same IDs remain selected. The visible count includes hidden selections. The app-owned select-all action names its current-page scope. The SelectionMode header reports the full selected count.
+- Runtime acceptance for the future implementation includes narrow-screen horizontal scrolling, large text, VoiceOver, and TalkBack. Every column and action must remain reachable. Screen readers must announce the row label, selected state, column names, sort direction, loading state, and error action.
+- Use the 10,000-row dataset for filtering, sorting, and paging. Render the current page through the existing `FlatList` composition. Shared performance measurements belong in the separate performance plan.
+- Run the required CI checks for the final PR SHA. CI checks apply to this plan. Future runtime work must also complete the native acceptance checks above.
 
 ## Implementation order
 
-1. Confirm the local callback contract with a small typed fixture.
-2. Compose the existing controls and implement each request state.
-3. Add the delayed server adapter and failure tests.
-4. Verify selection and accessibility on iOS and Android.
-5. Measure the large fixture in release builds. Fix measured regressions.
-6. Capture the demo and complete the guide and signoff.
-
-Performance uses release builds because development mode changes JavaScript timing.
-See the [React Native performance guide](https://reactnative.dev/docs/performance).
-Option 5 owns the broader performance suite. This example only measures its own workload.
+1. Add a typed local fixture and compose `Table`, `SearchBar`, `SelectionMode`, and `Pagination` with app-owned state.
+2. Implement the local filter, sort, page, selection, loading, and error behavior.
+3. Add the delayed adapter and its out-of-order response test.
+4. Add the interaction and accessibility checks that the existing CI harness supports.
+5. Verify the implementation with VoiceOver, TalkBack, large text, and narrow-screen horizontal scrolling.
+6. Add the guide and capture the final demo preview.
+7. Run the required CI checks for the final PR SHA.
 
 ## Open evidence
 
-No runtime code or performance result is included in this draft.
-The interaction of SelectionMode and pressable table rows needs a prototype.
-The native labels and horizontal scroll behavior need device checks.
+No runtime code or performance result is included in this plan. The existing contracts support the composition. The preview and interaction harness must confirm that the selection wrapper works with the Table row. Native screen-reader and layout acceptance remains required for the future runtime implementation.

@@ -28,6 +28,7 @@ export function Demo(): ReactElement {
 			</Message>
 			<Message
 				direction="outgoing"
+				isCompound
 				onRetry={() => setFailed(false)}
 				status={isFailed ? { reason: "No connection", type: "failed" } : { type: "delivered" }}
 			>

@@ -48,7 +48,7 @@ Compound root plus `Message.Avatar`, `.Header`, `.Author`, `.Bubble`, `.Text`,
   property without remapping it, giving `borderStartStartRadius`, which React
   Native (≥ 0.71) supports and flips under RTL. No `style` fallback is needed,
   so `resolveMessageCornerStyle` from the spec was not written. The `rtl` demo
-  is the visual check.
+  is the visual check, and the `runs` clip flips one live.
 - **Run spacing is the message's.** `first`/`middle` sit `mb-0.5`, `last`/`single`
   `mb-2`, through the `position` variant, so a list needs no separator logic.
 - **Fill and foreground are a pair.** Outgoing `bg-primary` /
@@ -138,4 +138,7 @@ flips to right to left and back), `status` (a clip — the receipt walks sending
 read, the failed one retries and fails again), `typing` (a clip of the dots),
 and stills of `directions` and `reactions`, all but `typing` at
 `align: "stretch"`. The Retry control carries no `testID`, so
-`apps/playground/e2e/previews/message.e2e.ts` taps it by its text.
+`apps/playground/e2e/previews/message.e2e.ts` taps it by its text — which only
+works because the failed message in `status` is `isCompound`: without it the
+message is one accessibility element, its Retry an accessibility action that
+never reaches the tree.

@@ -1,5 +1,6 @@
 import { Avatar } from "@delacour/react-native-ui/avatar";
 import { Button } from "@delacour/react-native-ui/button";
+import { Direction, type DirectionValue } from "@delacour/react-native-ui/direction";
 import { Message, type MessageDirection, type MessagePosition } from "@delacour/react-native-ui/message";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
@@ -39,11 +40,11 @@ function positionOf(index: number, count: number): MessagePosition {
  */
 export function Demo(): ReactElement {
 	const [count, setCount] = useState(LINES.length);
-	const [isRtl, setRtl] = useState(false);
+	const [dir, setDir] = useState<DirectionValue>("ltr");
 
 	return (
 		<View className="w-full gap-4">
-			<View style={{ direction: isRtl ? "rtl" : "ltr" }}>
+			<Direction className="w-full" dir={dir}>
 				{LINES.map((line, index) => {
 					const isSent = index < count;
 					return (
@@ -69,7 +70,7 @@ export function Demo(): ReactElement {
 						</View>
 					);
 				})}
-			</View>
+			</Direction>
 			<View className="flex-row justify-center gap-2">
 				<Button
 					onPress={() => setCount((current) => (current >= LINES.length ? 1 : current + 1))}
@@ -79,8 +80,13 @@ export function Demo(): ReactElement {
 				>
 					<Button.Label>{count >= LINES.length ? "Start over" : "Next message"}</Button.Label>
 				</Button>
-				<Button onPress={() => setRtl((current) => !current)} size="sm" testID="message-runs-rtl" variant="outline">
-					<Button.Label>{isRtl ? "Left to right" : "Right to left"}</Button.Label>
+				<Button
+					onPress={() => setDir((current) => (current === "rtl" ? "ltr" : "rtl"))}
+					size="sm"
+					testID="message-runs-rtl"
+					variant="outline"
+				>
+					<Button.Label>{dir === "rtl" ? "Left to right" : "Right to left"}</Button.Label>
 				</Button>
 			</View>
 		</View>

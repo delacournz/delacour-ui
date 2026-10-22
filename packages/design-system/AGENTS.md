@@ -216,7 +216,7 @@ descending lightness; `contrast.ts` is the pure oklch → sRGB → WCAG helper i
 
 ## Theme quality
 
-`auditTheme` checks 13 token pairs in both modes. Text uses a 4.5:1 target.
+`auditTheme` checks 14 token pairs in both modes. Text uses a 4.5:1 target.
 Focus and chart indicators use a 3:1 target. The check compares the computed
 ratio before display rounding. It reuses the existing sRGB contrast estimate.
 Missing, invalid, translucent, and unsupported colors return `unknown`.

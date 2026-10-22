@@ -28,7 +28,8 @@ const PAIRS: readonly ContrastPair[] = [
 	{ label: "Secondary button", foreground: "secondary-foreground", background: "secondary", minimum: 4.5 },
 	{ label: "Selected item", foreground: "accent-foreground", background: "accent", minimum: 4.5 },
 	{ label: "Error text", foreground: "destructive", background: "card", minimum: 4.5 },
-	{ label: "Focus indicator", foreground: "ring", background: "card", minimum: 3 },
+	{ label: "Focus indicator / Page", foreground: "ring", background: "background", minimum: 3 },
+	{ label: "Focus indicator / Card", foreground: "ring", background: "card", minimum: 3 },
 	...[1, 2, 3, 4, 5].map((series) => ({
 		label: `Chart series ${series}`,
 		foreground: `chart-${series}`,

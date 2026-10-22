@@ -47,6 +47,28 @@ describe("theme quality", () => {
 		}
 	});
 
+	test("reports a failing page ring even when the card ring passes", () => {
+		const tokens = resolveTokens(DEFAULT_CONFIG);
+		for (const mode of ["light", "dark"] as const) {
+			tokens[mode].ring = "oklch(0 0 0)";
+			tokens[mode].background = "oklch(0 0 0)";
+			tokens[mode].card = "oklch(1 0 0)";
+		}
+		const results = auditTheme(tokens).filter((row) => row.foreground === "ring");
+		expect(results).toHaveLength(4);
+		for (const mode of ["light", "dark"] as const) {
+			expect(results.find((row) => row.mode === mode && row.background === "background")).toMatchObject({
+				minimum: 3,
+				ratio: 1,
+				status: "fail",
+			});
+			expect(results.find((row) => row.mode === mode && row.background === "card")).toMatchObject({
+				minimum: 3,
+				status: "pass",
+			});
+		}
+	});
+
 	test("reads every supported palette without unknown measured pairs", () => {
 		for (const base of BASE_COLORS) {
 			for (const theme of [base.name, ...ACCENT_THEMES.map((accent) => accent.name)]) {

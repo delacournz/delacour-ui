@@ -52,7 +52,7 @@ Relevant source files:
 ## Automated checks
 
 The focused Calendar, DatePicker, DateTimePicker, Input, Textarea, and SearchBar
-test run passed 353 tests. The registry build passed its static check for
+test run passed 355 tests. The registry build passed its static check for
 runner-neutral test APIs. Copied tests under Jest and Vitest remain pending.
 Demo, install, and skill metadata were regenerated.
 The root lint and format check passed with warnings.

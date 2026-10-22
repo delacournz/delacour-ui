@@ -8,6 +8,7 @@ import { useInputGroupContext } from "./input.context";
 import {
 	type InputSize,
 	type InputVariant,
+	resolveInputAccessibilityLabel,
 	resolveInputFieldClass,
 	resolvePlaceholderAccentClass,
 	resolveSelectionAccentClass,
@@ -133,7 +134,7 @@ function InputRoot({
 
 	return (
 		<TextInput
-			accessibilityLabel={accessibilityLabel ?? field?.label ?? undefined}
+			accessibilityLabel={resolveInputAccessibilityLabel(accessibilityLabel, field?.label)}
 			className={resolveInputFieldClass({
 				...resolved,
 				className,

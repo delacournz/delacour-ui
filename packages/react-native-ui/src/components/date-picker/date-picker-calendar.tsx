@@ -32,6 +32,7 @@ export function DatePickerCalendar(props: DatePickerCalendarProps): ReactElement
 	const common = {
 		captionLayout: calendar.captionLayout,
 		disabled: calendar.disabled,
+		messages: calendar.messages,
 		isDisabled: picker.isDisabled,
 		isInvalid: picker.isInvalid,
 		isReadOnly: picker.isReadOnly,

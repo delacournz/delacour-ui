@@ -37,6 +37,22 @@ export type CalendarSelection =
 /** What a month's caption is: a plain label, or a button that opens the month and year views. */
 export type CalendarCaptionLayout = "label" | "picker";
 
+/** Optional labels used by calendar controls and screen readers. */
+export type CalendarMessages = Partial<{
+	today: string;
+	rangeStart: string;
+	rangeEnd: string;
+	previousMonth: string;
+	nextMonth: string;
+	previousYear: string;
+	nextYear: string;
+	previousPage: string;
+	nextPage: string;
+	openMonthYearPicker: string;
+	openYearList: string;
+	returnToMonth: string;
+}>;
+
 export type CalendarProps = Omit<ViewProps, "children"> &
 	CalendarSelection & {
 		/** `primary` fills the selected day; `secondary` softens it. */
@@ -67,6 +83,8 @@ export type CalendarProps = Omit<ViewProps, "children"> &
 		endMonth?: CalendarDate;
 		/** A BCP 47 tag for the names and the week start. Omitted, the device's. */
 		locale?: string;
+		/** Overrides built-in English accessibility labels. Unspecified entries keep their defaults. */
+		messages?: CalendarMessages;
 		/** The first column's weekday. `auto` reads it from the locale. */
 		weekStartsOn?: Weekday | "auto";
 		/** `picker` makes the caption open the month and year views. */

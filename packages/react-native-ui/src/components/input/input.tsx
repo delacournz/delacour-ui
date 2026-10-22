@@ -53,6 +53,7 @@ export type InputProps = Omit<TextInputProps, "placeholderTextColorClassName"> &
 };
 
 function InputRoot({
+	accessibilityLabel,
 	variant,
 	size,
 	isInvalid,
@@ -132,6 +133,7 @@ function InputRoot({
 
 	return (
 		<TextInput
+			accessibilityLabel={accessibilityLabel ?? field?.label ?? undefined}
 			className={resolveInputFieldClass({
 				...resolved,
 				className,

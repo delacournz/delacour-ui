@@ -28,6 +28,18 @@ export default function Example() {
 }
 ```
 
+## Accessible name
+
+Inside a `Field`, the input uses `Field.Label` as its accessible name.
+Set `accessibilityLabel` to use a different name. A standalone input needs a label.
+
+```tsx
+<Field>
+  <Field.Label>Email</Field.Label>
+  <Input value={email} onChangeText={setEmail} />
+</Field>
+```
+
 ## Variants
 
 Use the `variant` prop to change how the box is painted.

@@ -3,6 +3,7 @@ import * as boundsAndDisabledWeekends from "./bounds-and-disabled-weekends";
 import * as controlledOpen from "./controlled-open";
 import * as customFormatLocale from "./custom-format-locale";
 import * as inFieldInvalid from "./in-field-invalid";
+import * as localizedMessages from "./localized-messages";
 import * as multiple from "./multiple";
 import * as rangeBooking from "./range-booking";
 import * as single from "./single";
@@ -18,4 +19,5 @@ export const datePickerDemos = defineDemoGroup("date-picker", {
 	"in-field-invalid": inFieldInvalid,
 	"controlled-open": controlledOpen,
 	"custom-format-locale": customFormatLocale,
+	"localized-messages": localizedMessages,
 });

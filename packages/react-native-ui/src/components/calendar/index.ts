@@ -56,7 +56,7 @@ export {
 	weekdayOf,
 	weekStartFromRegion,
 } from "./calendar.date";
-export type { CalendarCaptionLayout, CalendarProps, CalendarSelection } from "./calendar.types";
+export type { CalendarCaptionLayout, CalendarMessages, CalendarProps, CalendarSelection } from "./calendar.types";
 export {
 	CALENDAR_DAY_TONES,
 	CALENDAR_DEFAULT_SIZE,

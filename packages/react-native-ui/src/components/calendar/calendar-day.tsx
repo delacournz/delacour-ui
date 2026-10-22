@@ -25,11 +25,14 @@ export type CalendarDayProps = {
 };
 
 /** The state words a screen reader adds after the date. */
-function describeState(state: CalendarDayState): string | undefined {
+function describeState(
+	state: CalendarDayState,
+	messages: ReturnType<typeof useCalendarPart>["messages"]
+): string | undefined {
 	const parts: string[] = [];
-	if (state.isToday) parts.push("Today");
-	if (state.rangeRole === "start") parts.push("Range start");
-	if (state.rangeRole === "end") parts.push("Range end");
+	if (state.isToday) parts.push(messages.today);
+	if (state.rangeRole === "start") parts.push(messages.rangeStart);
+	if (state.rangeRole === "end") parts.push(messages.rangeEnd);
 	return parts.length > 0 ? parts.join(", ") : undefined;
 }
 
@@ -85,7 +88,7 @@ export function CalendarDay({ date, children, className }: CalendarDayProps): Re
 
 	return (
 		<Pressable
-			accessibilityHint={describeState(state)}
+			accessibilityHint={describeState(state, calendar.messages)}
 			accessibilityLabel={formatDate(date, { locale: calendar.locale, style: "full" })}
 			accessibilityState={{ selected: state.isSelected }}
 			className={slots.cell({ className })}

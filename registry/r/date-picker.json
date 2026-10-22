@@ -243,6 +243,10 @@
 					"to": "@registry/ui/calendar/calendar.date"
 				},
 				{
+					"from": "../calendar/calendar.types",
+					"to": "@registry/ui/calendar/calendar.types"
+				},
+				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
 				}

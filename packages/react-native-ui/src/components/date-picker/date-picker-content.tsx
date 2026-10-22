@@ -45,7 +45,10 @@ export function DatePickerContent({ title, className, children }: DatePickerCont
 			<BottomSheet.Overlay />
 			<BottomSheet.Container>
 				<BottomSheet.Content className={className}>
-					<BottomSheet.Close testID={resolvePartTestID(picker.testID, "close")} />
+					<BottomSheet.Close
+						accessibilityLabel={picker.messages.close}
+						testID={resolvePartTestID(picker.testID, "close")}
+					/>
 					<View className={slots.header()}>
 						<BottomSheet.Title testID={resolvePartTestID(picker.testID, "title")}>
 							{title ?? picker.title}

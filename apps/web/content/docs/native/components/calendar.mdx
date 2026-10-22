@@ -178,6 +178,25 @@ Egypt. `weekStartsOn` overrides it with a weekday number, `0` for Sunday.
 <Calendar locale="de-DE" weekStartsOn={0} />
 ```
 
+`locale` formats dates and names. It does not translate action labels or screen reader hints. Pass
+`messages` for those strings. Each omitted message keeps its English default.
+
+```tsx
+<Calendar
+  locale="ar-EG"
+  messages={{
+    today: "اليوم",
+    previousMonth: "الشهر السابق",
+    nextMonth: "الشهر التالي",
+    openMonthYearPicker: "فتح اختيار الشهر والسنة",
+  }}
+/>
+```
+
+`CalendarMessages` accepts `today`, `rangeStart`, `rangeEnd`, `previousMonth`, `nextMonth`,
+`previousYear`, `nextYear`, `previousPage`, `nextPage`, `openMonthYearPicker`, `openYearList`, and
+`returnToMonth`.
+
 ## In a field
 
 Inside a `Field`, the calendar takes `isInvalid` and `isDisabled` with nothing said at the call
@@ -254,6 +273,7 @@ library is needed:
     startMonth: { type: "CalendarDate", description: "The earliest month paging reaches. Omitted, minDate's." },
     endMonth: { type: "CalendarDate", description: "The latest month paging reaches. Omitted, maxDate's." },
     locale: { type: "string", description: "A BCP 47 tag. Omitted, the device's." },
+    messages: { type: "CalendarMessages", description: "Overrides day hints, paging labels, and caption actions. Missing entries keep English defaults." },
     weekStartsOn: { type: '0 | 1 | 2 | 3 | 4 | 5 | 6 | "auto"', default: '"auto"' },
     captionLayout: { type: '"label" | "picker"', default: '"picker"' },
     showOutsideDays: { type: "boolean", default: "true", description: "Draws neighbouring months' days in the spare cells." },

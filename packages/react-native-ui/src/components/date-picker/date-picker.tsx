@@ -16,8 +16,9 @@ import {
 	resolveAnnouncement,
 	resolveCloseDelay,
 	resolveDatePickerAxes,
-	resolveDefaultPlaceholder,
+	resolveDatePickerMessages,
 	resolveIsClearable,
+	resolveMessagePlaceholder,
 	resolveSelectionAccessibilityValue,
 	resolveShouldClose,
 	resolveTriggerState,
@@ -73,6 +74,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		placeholder,
 		format,
 		formatRange,
+		messages: messagesProp,
 		locale,
 		weekStartsOn = "auto",
 		captionLayout = "picker",
@@ -91,9 +93,9 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		variant,
 		size,
 		calendarSize = "md",
-		title = "Select date",
-		doneLabel = "Done",
-		clearLabel = "Clear",
+		title: titleProp,
+		doneLabel: doneLabelProp,
+		clearLabel: clearLabelProp,
 		isClearable,
 		accessibilityLabel,
 		className,
@@ -107,6 +109,10 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	} = props;
 
 	const mode: DatePickerMode = props.mode ?? "single";
+	const messages = useMemo(() => resolveDatePickerMessages(messagesProp), [messagesProp]);
+	const title = titleProp ?? messages.title;
+	const doneLabel = doneLabelProp ?? messages.done;
+	const clearLabel = clearLabelProp ?? messages.clear;
 	const field = useFieldContext();
 	const axes = resolveDatePickerAxes({ field, own: { isDisabled, isInvalid, isReadOnly, size, variant } });
 	const isCalm = useCalmMotion();
@@ -163,7 +169,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 
 	const finish = useCallback(
 		(next: CalendarSelectionState) => {
-			AccessibilityInfo.announceForAccessibility(resolveAnnouncement(next, locale));
+			AccessibilityInfo.announceForAccessibility(resolveAnnouncement(next, locale, messages));
 			if (presentation === "inline") return;
 			cancelPendingClose();
 			const settle = () => {
@@ -175,7 +181,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			if (delay === 0) settle();
 			else closeTimer.current = setTimeout(settle, delay);
 		},
-		[cancelPendingClose, isCalm, locale, presentation, setOpen]
+		[cancelPendingClose, isCalm, locale, messages, presentation, setOpen]
 	);
 
 	const select = useCallback(
@@ -206,17 +212,19 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	}, [open, presentation, registerPress]);
 
 	const display = useMemo(
-		() => formatSelection(shown, { format, formatRange, locale }),
-		[format, formatRange, locale, shown]
+		() => formatSelection(shown, { format, formatRange, locale, messages }),
+		[format, formatRange, locale, messages, shown]
 	);
 
 	const context = useMemo<DatePickerContextValue>(
 		() => ({
-			accessibilityLabel: accessibilityLabel ?? field?.label ?? "Date",
-			accessibilityValue: resolveSelectionAccessibilityValue(shown, locale),
+			accessibilityLabel: accessibilityLabel ?? field?.label ?? messages.accessibilityLabel,
+			accessibilityValue: resolveSelectionAccessibilityValue(shown, locale, messages),
+			messages,
 			calendar: {
 				captionLayout,
 				disabled: disabledDates,
+				messages: messages.calendar,
 				maxDate,
 				minDate,
 				selectOutsideDays,
@@ -239,7 +247,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			locale,
 			mode,
 			open,
-			placeholder: placeholder ?? resolveDefaultPlaceholder(mode),
+			placeholder: placeholder ?? resolveMessagePlaceholder(mode, messages),
 			presentation,
 			select,
 			testID,
@@ -268,6 +276,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			isClearable,
 			isOpen,
 			locale,
+			messages,
 			maxDate,
 			minDate,
 			mode,

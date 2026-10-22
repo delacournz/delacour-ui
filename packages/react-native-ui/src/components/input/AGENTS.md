@@ -26,6 +26,8 @@ Root plus `Input.Group` and its parts: `Prefix`, `Suffix`, `Button`,
 
 ## Design
 
+- `Input` uses the enclosing `Field.Label` as its accessible name. An explicit
+  `accessibilityLabel` takes priority. `Textarea` inherits this behavior through `Input`.
 - **Variants**: `primary`, `secondary`. **Sizes**: `sm`, `md`, `lg` — the box
   height, the value's type scale and a decorator's icon step, on one axis.
 - **The box is one slot with two homes, and that is the whole design.** The

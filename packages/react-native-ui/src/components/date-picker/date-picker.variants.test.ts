@@ -13,9 +13,11 @@ import {
 	resolveCloseDelay,
 	resolveDatePickerAxes,
 	resolveDatePickerIconColor,
+	resolveDatePickerMessages,
 	resolveDatePickerTriggerClass,
 	resolveDefaultPlaceholder,
 	resolveIsClearable,
+	resolveMessagePlaceholder,
 	resolveSelectionAccessibilityValue,
 	resolveShouldClose,
 	resolveTriggerState,
@@ -157,6 +159,81 @@ describe("resolveDefaultPlaceholder", () => {
 		expect(resolveDefaultPlaceholder("range")).toBe("Start – End");
 		expect(resolveDefaultPlaceholder("multiple")).toBe("Select dates");
 		expect(new Set(DATE_PICKER_MODES.map(resolveDefaultPlaceholder)).size).toBe(3);
+	});
+});
+
+describe("date picker messages", () => {
+	test("keep English defaults and fill omitted partial messages", () => {
+		const messages = resolveDatePickerMessages({ placeholderSingle: "Choose a day" });
+		expect(messages.placeholderSingle).toBe("Choose a day");
+		expect(messages.placeholderRange).toBe("Start – End");
+		expect(messages.done).toBe("Done");
+		expect(messages.calendar).toEqual({});
+	});
+
+	test("ignore undefined overrides but keep empty strings and formatter results", () => {
+		const messages = resolveDatePickerMessages({
+			title: undefined,
+			placeholderSingle: undefined,
+			selected: undefined,
+		});
+		expect(messages.title).toBe("Select date");
+		expect(messages.placeholderSingle).toBe("Select date");
+		expect(messages.selected("a date")).toBe("Selected a date");
+		expect(resolveAnnouncement({ mode: "single", value: OCT_5 }, "en-NZ", messages)).toMatch(/^Selected /);
+		const empty = resolveDatePickerMessages({ title: "", selected: () => "" });
+		expect(empty.title).toBe("");
+		expect(empty.selected("a date")).toBe("");
+	});
+
+	test("format all selection modes with caller supplied messages", () => {
+		const messages = resolveDatePickerMessages({
+			notSet: "فارغ",
+			placeholderSingle: "اختر يومًا",
+			placeholderRange: "من – إلى",
+			placeholderMultiple: "اختر أيامًا",
+			fromDateNoEnd: (date) => `من ${date}، لا يوجد تاريخ نهاية`,
+			rangeValue: (start, end) => `من ${start} إلى ${end}`,
+			multipleValues: (dates) => dates.join(" و"),
+			multipleCount: (total) => `${total} تواريخ`,
+			selected: (value) => `تم اختيار ${value}`,
+		});
+		expect(resolveMessagePlaceholder("single", messages)).toBe("اختر يومًا");
+		expect(resolveMessagePlaceholder("range", messages)).toBe("من – إلى");
+		expect(resolveMessagePlaceholder("multiple", messages)).toBe("اختر أيامًا");
+		expect(formatSelection({ mode: "single", value: OCT_5 }, { format: () => "موعد", messages })).toBe("موعد");
+		expect(
+			formatSelection(
+				{ mode: "range", value: { start: OCT_5, end: OCT_9 } },
+				{ formatRange: () => "الإقامة", messages }
+			)
+		).toBe("الإقامة");
+		expect(
+			formatSelection({ mode: "multiple", value: [OCT_5, OCT_9] }, { format: (date) => `${date.day}`, messages })
+		).toBe("5 و9");
+		expect(resolveSelectionAccessibilityValue({ mode: "single", value: OCT_5 }, "not a locale!!", messages)).toContain(
+			"October"
+		);
+		expect(
+			resolveSelectionAccessibilityValue({ mode: "range", value: { start: OCT_5, end: null } }, "en-NZ", messages)
+		).toMatch(/^من /);
+		expect(
+			resolveSelectionAccessibilityValue({ mode: "range", value: { start: OCT_5, end: OCT_9 } }, "en-NZ", messages)
+		).toContain(" إلى ");
+		expect(
+			resolveSelectionAccessibilityValue({ mode: "multiple", value: [OCT_5, OCT_9] }, "en-NZ", messages)
+		).toContain(" و");
+		expect(
+			resolveSelectionAccessibilityValue({ mode: "multiple", value: [OCT_5, OCT_9, JAN_3_NEXT] }, "en-NZ", messages)
+		).toBe("3 تواريخ");
+		expect(resolveSelectionAccessibilityValue({ mode: "multiple", value: [] }, "en-NZ", messages)).toBe("فارغ");
+		expect(resolveAnnouncement({ mode: "single", value: OCT_5 }, "en-NZ", messages)).toMatch(/^تم اختيار /);
+	});
+
+	test("overrides the sheet title and action labels", () => {
+		const messages = resolveDatePickerMessages({ title: "اختيار تاريخ", done: "تم" });
+		expect(messages.title).toBe("اختيار تاريخ");
+		expect(messages.done).toBe("تم");
 	});
 });
 

@@ -18,13 +18,18 @@ const STEPS: readonly { status: AnimatedBadgeStatus; label: string }[] = [
 	{ status: "success", label: "Live" },
 ];
 
+/**
+ * The badge carries `Badge`'s `self-start`, which beats the column's
+ * `items-center`; `self-center` puts it back on the axis, so the capsule grows
+ * and shrinks from both edges at once instead of from its left edge.
+ */
 export function Demo(): ReactElement {
 	const [step, setStep] = useState(0);
 	const current = STEPS[step] ?? STEPS[0];
 
 	return (
 		<View className="items-center gap-6">
-			<AnimatedBadge status={current.status} testID="deploy-status">
+			<AnimatedBadge className="self-center" status={current.status} testID="deploy-status">
 				{current.label}
 			</AnimatedBadge>
 			<Button

@@ -21,7 +21,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { Canvas, Group } from "react-native-skia";
 import { scheduleOnRN } from "react-native-worklets";
-import "../../lib/skia-native-id";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useThemeColors } from "../../hooks/use-theme-color";
 import {

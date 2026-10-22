@@ -53,10 +53,6 @@ standalone SVG document, or as a PNG.
   and had it parsed back on every move. Each stroke is still its own `drawPath`,
   so a translucent ink darkens where two strokes cross exactly as separate SVG
   paths did.
-- **The canvas imports `lib/skia-native-id` for its effect**, as `Sketch.Canvas`
-  does. After a JS reload Skia reused the old runtime's canvas ids, which its
-  native registry still held as torn down, so the pad came up blank until a
-  stroke re-rendered it.
 - **The live and the finished stroke are traced by the same function.**
   `traceStroke` is a worklet, so the UI thread and the committed picture build
   the identical path and a stroke does not shift by a hair when it is handed

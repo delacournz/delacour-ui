@@ -130,6 +130,14 @@ typed text can become a value.
   status bar — so a smaller one, or none, leaves the height alone. A short list
   sits at the top of a full-height sheet; a caller who wants it shorter passes
   `snapPoints`, which replaces the cap entirely.
+- **Scrolling the list keeps the keyboard up.** The engine puts the keyboard
+  away the moment any pan starts on the sheet (`enableBlurKeyboardOnGesture`),
+  and its lists dismiss interactively, so scrolling the results to look past
+  the first few dropped the keyboard and the next keystroke needed a tap on the
+  field first. The sheet turns the pan's blur off and the list passes
+  `keyboardDismissMode="none"`. A drag that carries the sheet down still puts
+  it away — the engine does that on any downward release — and every close
+  blurs the field.
 - **Closing blurs the search field first.** Done, the scrim, the close button
   and a single pick all `blur()` before the sheet leaves, so the keyboard goes
   down with it rather than lingering over the screen for a beat.

@@ -87,6 +87,9 @@ function footerElement(footer: ScrollableListFooter | undefined): ReactElement |
  * list: a virtualised list measures its content container, and an array style
  * makes that measurement lag a frame behind the layout.
  *
+ * `keyboardDismissMode` defaults to `interactive` and is the caller's to
+ * change — a search list keeps its keyboard up while it scrolls with `none`.
+ *
  * Refresh control is out of scope here — a `refreshControl` prop passes
  * through untouched, but a pull-to-refresh at the top of a locked list fights
  * the sheet's own pull-down, and no rule for that is written yet.
@@ -117,6 +120,7 @@ export function createBottomSheetScrollable<P extends object>(
 		decelerationRate,
 		children,
 		ListFooterComponent,
+		keyboardDismissMode = "interactive",
 		...rest
 	}: ScrollableProps): ReactElement {
 		const { state, geometry, pans, enableContentPanningGesture, setScrollableRef, removeScrollableRef } =
@@ -215,7 +219,7 @@ export function createBottomSheetScrollable<P extends object>(
 							{...rest}
 							animatedProps={animatedProps}
 							contentContainerStyle={StyleSheet.flatten(contentContainerStyle)}
-							keyboardDismissMode="interactive"
+							keyboardDismissMode={keyboardDismissMode}
 							ListFooterComponent={listFooter}
 							onContentSizeChange={handleContentSizeChange}
 							onScroll={scrollHandler}

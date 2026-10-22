@@ -561,6 +561,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 			{customTrigger ?? <ComboboxTrigger className={className} />}
 			<BottomSheet
 				dynamicSizing={false}
+				enableBlurKeyboardOnGesture={false}
 				isOpen={isOpen}
 				onIndexChange={handleIndexChange}
 				onOpenChange={handleOpenChange}
@@ -573,6 +574,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 							contentContainerClassName={slots.sheetBody()}
 							data={rows}
 							extraData={selected}
+							keyboardDismissMode="none"
 							keyboardShouldPersistTaps="handled"
 							keyExtractor={(row) => row.key}
 							ListEmptyComponent={empty}

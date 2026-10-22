@@ -39,13 +39,14 @@ export function MarkdownEditorPreview({
 
 	if (editor.mode !== "preview") return null;
 
-	const slots = markdownEditorVariants({ variant: editor.variant });
+	const slots = markdownEditorVariants({ size: editor.size, variant: editor.variant });
 
 	return (
 		<Animated.View
 			accessibilityLabel="Preview"
 			className={resolveMarkdownPaneClass({
-				className: [slots.preview(), className].join(" "),
+				base: slots.preview(),
+				className,
 				isAttached: editor.toolbarVariant === "bar",
 			})}
 			entering={isCalm ? undefined : FadeIn.duration(PREVIEW_FADE_MS)}

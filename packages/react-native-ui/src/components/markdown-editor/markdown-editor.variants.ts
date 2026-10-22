@@ -25,6 +25,18 @@ function inputSurface(variant: InputVariant): string {
 		.join(" ");
 }
 
+/**
+ * The corner utilities a multiline Input draws at a size, read from
+ * `inputVariants` itself so the preview's corners follow the write pane's.
+ */
+function inputRadius(size: InputSize): string {
+	return inputVariants({ isMultiline: true, size })
+		.root()
+		.split(/\s+/)
+		.filter((cls) => cls.startsWith("rounded"))
+		.join(" ");
+}
+
 export const MARKDOWN_EDITOR_VARIANTS = INPUT_VARIANTS;
 export const MARKDOWN_TOOLBAR_VARIANTS = ["bar", "pill"] as const;
 
@@ -85,6 +97,10 @@ export const MARKDOWN_EDITOR_TABS_SIZE: Record<MarkdownEditorSize, TabsSize> = {
  * flipping modes does not change what kind of box is on screen: outlined on
  * `bg-card` for `primary`, filled `bg-secondary` for `secondary`.
  *
+ * Its corners are the write pane's too, per size, and it takes its box as
+ * `base` in {@link resolveMarkdownPaneClass} rather than as a className, so a
+ * `bar` toolbar's square top corners are not overridden by its own radius.
+ *
  * `inlineCode` lifts `Text.Code`'s muted run to `bg-card` on the filled
  * `secondary` preview, where muted on secondary would draw no run at all.
  *
@@ -107,7 +123,7 @@ export const markdownEditorVariants = tv({
 		actionRow: "flex-row items-center",
 		input: "font-mono",
 		pane: "",
-		preview: "gap-3 rounded-lg px-3 py-3",
+		preview: "gap-3 px-3 py-3",
 		quote: "gap-2 border-l-2 border-border pl-3",
 		codeBlock: "rounded-md border border-border bg-card p-3",
 		listItem: "flex-row gap-2",
@@ -117,9 +133,9 @@ export const markdownEditorVariants = tv({
 	},
 	variants: {
 		size: {
-			sm: { modeSwitch: "w-40" },
-			md: { modeSwitch: "w-52" },
-			lg: { modeSwitch: "w-60" },
+			sm: { modeSwitch: "w-40", preview: inputRadius("sm") },
+			md: { modeSwitch: "w-52", preview: inputRadius("md") },
+			lg: { modeSwitch: "w-60", preview: inputRadius("lg") },
 		},
 		toolbar: {
 			bar: {
@@ -153,16 +169,20 @@ export type MarkdownEditorVariantProps = VariantProps<typeof markdownEditorVaria
  * The class for a pane — the write field or the preview box.
  *
  * Under a `bar` toolbar the pane drops its top corners so the two read as one
- * box, the bar its lid. A caller's className is merged last and still wins.
+ * box, the bar its lid. `base` is the pane's own box, merged first so its
+ * radius cannot win over the lid's square corners. A caller's className is
+ * merged last and still wins.
  */
 export function resolveMarkdownPaneClass({
 	isAttached,
+	base,
 	className,
 }: {
 	isAttached: boolean;
+	base?: string;
 	className?: string;
 }): string {
-	return markdownEditorVariants().pane({ class: [isAttached ? "rounded-t-none" : undefined, className] }) ?? "";
+	return markdownEditorVariants().pane({ class: [base, isAttached ? "rounded-t-none" : undefined, className] }) ?? "";
 }
 
 /**

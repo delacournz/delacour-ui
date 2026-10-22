@@ -99,7 +99,11 @@ parts.
   on `bg-card` and its `secondary` filled `bg-secondary`, and its `etched` the same
   card fill with the highlight set into its edge; the preview draws the same
   three — a test reads `inputVariants` and fails if they part —
-  so flipping modes never changes what kind of box is on screen. On the
+  so flipping modes never changes what kind of box is on screen. Its corners
+  are the write pane's too — read from `inputVariants` per size — and it hands
+  its box to `resolveMarkdownPaneClass` as `base`, merged before the `bar`'s
+  `rounded-t-none`; passed as a className, its own `rounded-lg` once won and
+  the preview grew round top corners the write pane did not have. On the
   filled one an inline code run lifts to `bg-card`, or `Text.Code`'s muted run
   would vanish into it. Floored at the write pane's height
   (`resolveTextareaRowsHeight`) so flipping does not jump the screen. It is a

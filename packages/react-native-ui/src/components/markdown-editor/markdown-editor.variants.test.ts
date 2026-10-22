@@ -143,6 +143,23 @@ describe("panes", () => {
 		expect(resolveMarkdownPaneClass({ className: "rounded-t-xl", isAttached: true })).not.toContain("rounded-t-none");
 	});
 
+	test("the preview's corners are the write pane's at every size", () => {
+		const radius = (cls: string | undefined): string[] =>
+			(cls ?? "").split(/\s+/).filter((c) => c.startsWith("rounded"));
+		for (const size of MARKDOWN_EDITOR_SIZES) {
+			const field = radius(inputVariants({ isMultiline: true, size }).root());
+			expect(radius(markdownEditorVariants({ size }).preview())).toEqual(field);
+		}
+	});
+
+	test("a preview under a bar toolbar loses its top corners too", () => {
+		for (const size of MARKDOWN_EDITOR_SIZES) {
+			const base = markdownEditorVariants({ size }).preview();
+			expect(resolveMarkdownPaneClass({ base, isAttached: true })).toContain("rounded-t-none");
+			expect(resolveMarkdownPaneClass({ base, isAttached: false })).not.toContain("rounded-t-none");
+		}
+	});
+
 	test("the write pane is monospaced", () => {
 		expect(markdownEditorVariants().input()).toContain("font-mono");
 	});

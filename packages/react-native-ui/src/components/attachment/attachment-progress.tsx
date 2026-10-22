@@ -48,6 +48,17 @@ export function AttachmentProgress({ className, color = "primary" }: AttachmentP
 		</Progress>
 	);
 
+	// A chip's line runs along its bottom edge, so it is clipped to the chip's
+	// corner — the root itself cannot clip without clipping the remove control's
+	// slop on Android.
+	if (layout === "chip") {
+		return (
+			<View className={slots.progressClip()} pointerEvents="none">
+				{bar}
+			</View>
+		);
+	}
+
 	// A tile has no edge to run a line along, so the bar sits on a veil that
 	// dims the picture until the upload lands.
 	if (layout !== "tile") return bar;

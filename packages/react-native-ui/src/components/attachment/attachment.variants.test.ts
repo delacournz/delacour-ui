@@ -30,6 +30,7 @@ const SLOTS = [
 	"name",
 	"meta",
 	"progress",
+	"progressClip",
 	"progressTrack",
 	"actions",
 	"action",
@@ -155,6 +156,15 @@ describe("layouts", () => {
 			const root = attachmentVariants({ layout, size }).root();
 			expect(/\boverflow-hidden\b/.test(root)).toBe(layout === "tile");
 		}
+	});
+
+	test("a chip's bar is clipped to the chip's own corner, without clipping the chip", () => {
+		const slots = attachmentVariants({ layout: "chip" });
+		const corner = slots.root().match(/\brounded-\S+/)?.[0] ?? "";
+		expect(corner).not.toBe("");
+		expect(slots.progressClip()).toMatch(/\babsolute inset-0\b/);
+		expect(slots.progressClip()).toContain("overflow-hidden");
+		expect(slots.progressClip().split(" ")).toContain(corner);
 	});
 
 	test("chip and card sit on a bordered card; the tile on muted", () => {

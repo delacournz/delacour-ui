@@ -58,8 +58,10 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
   press target; the inner detector still claims the tap, as `Chip.CloseButton` relies on.
 - **Only the tile root clips.** A chip or card with `overflow-hidden` would clip its remove
   control's 44pt slop on Android, where a touch outside an `overflow: hidden` parent never lands.
-  The picture rounds itself through the `image` slot instead. A test pins `overflow-hidden` to the
-  tile root.
+  The picture rounds itself through the `image` slot instead, and a chip's upload bar sits in a
+  `progressClip` layer — `absolute inset-0`, the chip's own `rounded-xl`, holding only the bar —
+  so its ends follow the corner rather than hanging below the curve wherever a theme's `--radius`
+  makes the corner wider than the bar's inset. A test pins `overflow-hidden` to the tile root.
 - **Sizes are fixed points.** `ATTACHMENT_SIZE_POINTS` holds the preview square for chip and card,
   and the tile's own edge, and a test pins each to its `size-*` class. A tray of mixed
   attachments lines up whatever the reader's text size; the name and meta still scale. A chip is

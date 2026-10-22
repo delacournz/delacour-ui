@@ -106,6 +106,10 @@ export const ATTACHMENT_GROUP_FADE_MS = 180;
  * - **`preview`** is the square; **`previewFallback`** the kind's tinted
  *   ground painted under the picture, so a dead URL leaves a glyph.
  * - **`dim`** is the veil a tile draws while it uploads, holding the bar.
+ * - **`progressClip`** is the chip's bar clipped to the chip's own corner, so
+ *   the bar cannot hang past a curve a theme's `--radius` made wider than its
+ *   inset. A layer of its own, holding nothing but the bar, because the chip
+ *   root must not clip (below).
  * - **`badge`** is the play disc centred on a video's poster.
  * - **`group`** is `Attachment.Group`'s content row.
  *
@@ -126,6 +130,7 @@ export const attachmentVariants = tv({
 		name: "font-sans font-medium text-foreground",
 		meta: "font-sans text-muted-foreground",
 		progress: "",
+		progressClip: "absolute inset-0 overflow-hidden",
 		progressTrack: "h-0.5",
 		actions: "flex-row items-center gap-1",
 		action: "size-6 items-center justify-center rounded-full",
@@ -143,6 +148,7 @@ export const attachmentVariants = tv({
 				image: "rounded-lg",
 				content: "shrink",
 				progress: "absolute right-3 bottom-0 left-3",
+				progressClip: "rounded-xl",
 			},
 			tile: {
 				root: "items-center justify-center overflow-hidden rounded-xl bg-muted",

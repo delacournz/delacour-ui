@@ -117,6 +117,9 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 
 ## Trigger and accessibility
 
+- **`locale` formats dates and names; it does not translate messages.** Pass Calendar messages to
+  a custom `DateTimePicker.Calendar`. Picker labels such as `doneLabel` remain separate props.
+  Omitted Calendar messages keep their English defaults.
 - **The trigger is a button** named `accessibilityLabel ?? field.label ?? "Date and time"`, valued
   with the long form — "Monday 5 October 2026 at 3:30 PM" — or "not set". `Field` cascade is
   nearest-wins `??`, and the root registers `open` with the field's `registerPress` through a

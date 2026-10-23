@@ -137,8 +137,8 @@ at a time, each arrival tightening the corners it shares with the one above, the
 flips to right to left and back), `status` (a clip — the receipt walks sending →
 read, the failed one retries and fails again), `typing` (a clip of the dots),
 and stills of `directions` and `reactions`, all but `typing` at
-`align: "stretch"`. The Retry control carries no `testID`, so
-`apps/playground/e2e/previews/message.e2e.ts` taps it by its text — which only
+`align: "stretch"`. The Retry control carries no `testID`, so the preview
+capture<!-- registry:omit --> (`apps/playground/e2e/previews/message.e2e.ts`)<!-- /registry:omit --> taps it by its text — which only
 works because the failed message in `status` is `isCompound`: without it the
 message is one accessibility element, its Retry an accessibility action that
 never reaches the tree.

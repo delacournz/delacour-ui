@@ -28,8 +28,10 @@ export type KeyboardBlurBehavior = "none" | "restore";
  * `container` — to the container's top. `maxDynamicContentSize` — a sheet
  * sized to its content stops at that cap, and the keyboard covers its bottom
  * instead; for a caller whose cap already keeps the page in view.
+ * `highestSnapPoint` — the same at the highest snap point, so a sheet resting
+ * there is never lifted and its body shrinks by the keyboard instead.
  */
-export type KeyboardLiftLimit = "container" | "maxDynamicContentSize";
+export type KeyboardLiftLimit = "container" | "maxDynamicContentSize" | "highestSnapPoint";
 
 /**
  * Which focused inputs count as the sheet's own.

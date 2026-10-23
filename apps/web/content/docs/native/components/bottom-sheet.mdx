@@ -377,9 +377,9 @@ haptics on a snap point and `impactLight` on a close, and the stale-keyboard gua
       description: "Where extend and fillParent return to when the keyboard goes.",
     },
     keyboardLiftLimit: {
-      type: '"container" | "maxDynamicContentSize"',
+      type: '"container" | "maxDynamicContentSize" | "highestSnapPoint"',
       default: '"container"',
-      description: "Whether maxDynamicContentSize also stops the keyboard's lift.",
+      description: "Where the keyboard's lift stops: the container's top, maxDynamicContentSize, or the highest snap point.",
     },
     keyboardScope: {
       type: '"registered" | "inside" | "always"',

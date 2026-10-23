@@ -942,10 +942,8 @@
 				"tailwind-variants"
 			],
 			"expoDependencies": [
-				"react-native-keyboard-controller",
 				"react-native-reanimated",
-				"react-native-safe-area-context",
-				"react-native-worklets"
+				"react-native-safe-area-context"
 			],
 			"devDependencies": [],
 			"files": [

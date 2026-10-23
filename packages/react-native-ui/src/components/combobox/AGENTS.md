@@ -32,7 +32,7 @@ typed text can become a value.
 | `combobox.context.tsx` | `ComboboxProvider`, `useCombobox()`, `useComboboxContext()`, `useComboboxPart()` |
 | `combobox.types.ts` | `ComboboxOption`, `ComboboxOptionGroup`, `ComboboxEntry`, `ComboboxFilter`, `ComboboxListRow`, … |
 | `combobox.filter.ts` | Pure: normalise, match, filter, create row, highlight ranges, pending remove, query reset, announcement, remembered selection |
-| `combobox.variants.ts` | Pure: the added slots, the trigger class, chip size / colour / cap, trigger text, the keyboard-aware sheet cap and the held sheet height |
+| `combobox.variants.ts` | Pure: the added slots, the trigger class, chip size / colour / cap, trigger text, the keyboard-aware sheet cap and the sheet's held height |
 | `*.test.ts` | |
 
 ## Design
@@ -104,32 +104,24 @@ typed text can become a value.
   sheet's chip row and multiple mode's rows sit in a view whose
   `onStartShouldSetResponder` returns true. A single pick closes the sheet, so
   its rows let the keyboard go.
-- **The sheet's cap takes the keyboard out.** The engine lifts the sheet by the
-  keyboard's height, and Select's cap assumes an empty screen, so with the
-  search field focused a long list rose under the status bar.
-  `resolveComboboxSheetMaxHeight` caps the list at the room between the
-  keyboard and the top inset (less Select's gap) while one is up. Passing the
-  engine a `topInset` instead was tried and rejected: it shrinks the frame, and
-  the scrim with it, leaving the status bar uncovered.
-- **The cap expects the keyboard before it arrives.** The search field focuses
-  as the sheet settles, so the sheet sized itself for an empty screen and the
-  keyboard's lift then carried its top under the Dynamic Island for a few
-  frames — `useKeyboardState` and even `useKeyboardHandler`'s `onStart` land a
-  frame too late to stop it. With `openOnFocus`, `resolveExpectedKeyboardHeight`
-  feeds the cap the keyboard it will get: the live height once one is up, else
-  the last one seen, else `COMBOBOX_KEYBOARD_ESTIMATE_FRACTION` (0.42) of the
-  window.
-- **The sheet opens at its cap and holds it.** It used to size itself to its
-  rows (`dynamicSizing` under `maxDynamicContentSize`), so every keystroke that
-  dropped or restored a row resized it, and the cap followed the keyboard's
-  reported height, so it moved again as the keyboard arrived, was measured and
-  left. Now the cap is the sheet's one snap point, `dynamicSizing` is off, and
-  `resolveComboboxSheetHeight` sizes it for the keyboard expected when `open()`
-  ran, held until the next open. A live keyboard counts only when it is taller
-  than the one held — the engine's lift would otherwise carry the top under the
-  status bar — so a smaller one, or none, leaves the height alone. A short list
-  sits at the top of a full-height sheet; a caller who wants it shorter passes
-  `snapPoints`, which replaces the cap entirely.
+- **The sheet opens at its full height and the keyboard never moves it.** It
+  used to size itself to its rows, so every keystroke resized it. Then it was
+  sized to the room above the keyboard and the engine lifted it by the
+  keyboard: it opened half-height, rode the keyboard up once the field
+  focused, and dropped back as the keyboard left on close — two moves per open
+  and one per close, all of it in the launch clip.
+  `resolveComboboxSheetHeight` is now Select's cap for an empty screen, the
+  sheet's one snap point, with `dynamicSizing` off and the engine's
+  `keyboardLiftLimit="highestSnapPoint"`: a sheet resting at its highest snap
+  point is not lifted, so the keyboard covers its bottom and the list's
+  viewport shrinks by it. Rows are top-aligned, so nothing visible moves but the
+  keyboard. Passing the engine a `topInset` was tried and rejected: it shrinks
+  the frame, and the scrim with it, leaving the status bar uncovered. A short
+  list sits at the top of a full-height sheet; a caller who wants it shorter
+  passes `snapPoints`, which replaces the cap, and the lift still stops at the
+  highest of them. `resolveComboboxSheetMaxHeight` and
+  `resolveExpectedKeyboardHeight` remain exported for callers sizing a sheet of
+  their own above a keyboard; the combobox no longer reads either.
 - **Scrolling the list keeps the keyboard up.** The engine puts the keyboard
   away the moment any pan starts on the sheet (`enableBlurKeyboardOnGesture`),
   and its lists dismiss interactively, so scrolling the results to look past

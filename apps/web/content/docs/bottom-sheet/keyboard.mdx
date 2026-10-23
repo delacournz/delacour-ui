@@ -114,6 +114,11 @@ holds still while the keyboard covers its bottom and the body shrinks by it. The
 the UI thread from the keyboard's first frame, so a capped list never overshoots and settles back —
 which is what shrinking the cap yourself from a keyboard event does.
 
+`keyboardLiftLimit="highestSnapPoint"` does the same at the highest snap point, explicit or dynamic.
+A sheet opened there is never lifted: the keyboard covers its bottom and the body shrinks by it, so
+the sheet holds its height while the keyboard comes and goes. `Combobox` opens at its full height
+with it, which is what keeps its sheet still while the search field's keyboard rises and leaves.
+
 ## Blur
 
 `keyboardBlurBehavior` is what `extend` and `fillParent` do when the keyboard they snapped for goes

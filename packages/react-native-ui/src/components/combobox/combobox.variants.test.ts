@@ -227,31 +227,13 @@ describe("resolveExpectedKeyboardHeight", () => {
 describe("resolveComboboxSheetHeight", () => {
 	const room = { topInset: 62, windowHeight: 874 };
 
-	test("is the cap for the keyboard held at open", () => {
-		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 358, keyboardHeight: 0 })).toBe(
-			resolveComboboxSheetMaxHeight({ ...room, keyboardHeight: 358 })
-		);
+	test("is Select's cap for an empty screen — the keyboard covers the sheet's bottom rather than lifting it", () => {
+		expect(resolveComboboxSheetHeight(room)).toBe(resolveSelectSheetMaxHeight(room));
 	});
 
-	test("does not move when a smaller keyboard than the one held arrives", () => {
-		const opened = resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 358, keyboardHeight: 0 });
-		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 358, keyboardHeight: 336 })).toBe(opened);
-	});
-
-	test("does not grow back when the keyboard leaves", () => {
-		const up = resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 336, keyboardHeight: 336 });
-		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 336, keyboardHeight: 0 })).toBe(up);
-	});
-
-	test("gives way to a keyboard taller than the one held", () => {
-		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 300, keyboardHeight: 380 })).toBe(
-			resolveComboboxSheetMaxHeight({ ...room, keyboardHeight: 380 })
-		);
-	});
-
-	test("with nothing held or up, is Select's cap", () => {
-		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 0, keyboardHeight: 0 })).toBe(
-			resolveSelectSheetMaxHeight(room)
+	test("is taller than the room above any keyboard, so a keyboard never moves it", () => {
+		expect(resolveComboboxSheetHeight(room)).toBeGreaterThan(
+			resolveComboboxSheetMaxHeight({ ...room, keyboardHeight: 336 })
 		);
 	});
 });

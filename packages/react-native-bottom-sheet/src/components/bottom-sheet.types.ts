@@ -104,7 +104,7 @@ export type BottomSheetProps = SheetHaptics & {
 	keyboardBehavior?: KeyboardBehavior;
 	/** @default "restore" */
 	keyboardBlurBehavior?: KeyboardBlurBehavior;
-	/** Whether `maxDynamicContentSize` also stops the keyboard's lift. @default "container" */
+	/** Where the keyboard's lift stops — the container's top, `maxDynamicContentSize`, or the highest snap point. @default "container" */
 	keyboardLiftLimit?: KeyboardLiftLimit;
 	/** @default "inside" */
 	keyboardScope?: KeyboardScope;

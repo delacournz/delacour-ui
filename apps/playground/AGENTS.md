@@ -556,6 +556,18 @@ its screen API; the fallback retires itself the day it does, and `previews:verif
 are where to see it happen. A demo that types passes `{ types: true }` and is relaunched after each
 theme, because a process that has typed answers the next accessibility read late or not at all.
 
+**A capture types on the on-screen keyboard, never through a hardware one.** warden's `type` and
+`press` send USB HID key events, and iOS treats the first one as a hardware keyboard attached: from
+then on it parks the software keyboard off screen for every focus, so clips showed fields with no
+keyboard and sheets sized for one that never came. `f.type` and `f.press` therefore tap the keys
+themselves — `keystrokes.ts` plans the taps (shift for a capital, the numbers plane for a digit or
+symbol, `delete` for Backspace, the return key by whatever the field names it), and a key the soft
+keyboard does not have (Tab, arrows, Escape) is an error rather than a silent HID press. The first
+capture on a device also sets `com.apple.keyboard.preferences AutomaticMinimizationEnabled` to `NO`
+and relaunches once, because a simulator typed into over HID before — by an older run, by hand —
+remembers it (`HardwareKeyboardLastSeen`). A field that focuses with no keyboard on screen fails the
+spec by name instead of recording.
+
 **Rules for a body.** Target `testID`s, not coordinates — a tap that finds nothing now fails the spec
 rather than passing with a warning. End where you began: the media loops, so a body that toggles a
 switch on and stops jump-cuts at the seam. Keep it under about three seconds. `demos.test.ts` holds a

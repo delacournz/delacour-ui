@@ -32,8 +32,12 @@ capture("combobox/multiple-chips", { types: true }, async (f) => {
 	await f.hidden({ id: "combobox-multiple-search" });
 	await f.wait(700);
 	// Unpicking Swift in the sheet, so the clip loops with two. A chip's remove button rides its
-	// accessibility element as an action, so no tap can find it by testID.
+	// accessibility element as an action, so no tap can find it by testID. The sheet holds its
+	// height, so Swift sits below the fold of the full list — find it again by typing.
 	await f.tap("combobox-multiple-chevron");
+	await f.visible({ id: "combobox-multiple-search" });
+	await f.wait(500);
+	await f.type("combobox-multiple-search", "sw");
 	await f.visible({ id: "combobox-multiple-option-swift" });
 	await f.wait(500);
 	await f.tap("combobox-multiple-option-swift");

@@ -195,3 +195,32 @@ export function resolveExpectedKeyboardHeight({
 	if (!expectsKeyboard) return 0;
 	return lastKnown > 0 ? lastKnown : Math.round(windowHeight * COMBOBOX_KEYBOARD_ESTIMATE_FRACTION);
 }
+
+/**
+ * The sheet's one snap point, for as long as it is open.
+ *
+ * The sheet opens at the cap and stays there: sized to its rows, it shrank and
+ * grew on every keystroke as the filter dropped and restored them, and a cap
+ * that followed the keyboard's reported height moved it again as the keyboard
+ * arrived and left. So the keyboard is held at open — `resolveExpectedKeyboardHeight`
+ * then — and a live one only counts when it is taller than that, since the
+ * engine's lift would otherwise carry the sheet's top under the status bar.
+ * A smaller keyboard, or none, leaves the height where it opened.
+ */
+export function resolveComboboxSheetHeight({
+	heldKeyboardHeight,
+	keyboardHeight,
+	topInset,
+	windowHeight,
+}: {
+	heldKeyboardHeight: number;
+	keyboardHeight: number;
+	topInset: number;
+	windowHeight: number;
+}): number {
+	return resolveComboboxSheetMaxHeight({
+		keyboardHeight: Math.max(heldKeyboardHeight, keyboardHeight),
+		topInset,
+		windowHeight,
+	});
+}

@@ -12,6 +12,7 @@ import {
 	comboboxVariants,
 	resolveComboboxChipColor,
 	resolveComboboxChipSize,
+	resolveComboboxSheetHeight,
 	resolveComboboxSheetMaxHeight,
 	resolveComboboxTriggerClass,
 	resolveComboboxTriggerText,
@@ -220,6 +221,38 @@ describe("resolveExpectedKeyboardHeight", () => {
 		expect(
 			resolveExpectedKeyboardHeight({ expectsKeyboard: false, keyboardHeight: 320, lastKnown: 0, windowHeight: 874 })
 		).toBe(320);
+	});
+});
+
+describe("resolveComboboxSheetHeight", () => {
+	const room = { topInset: 62, windowHeight: 874 };
+
+	test("is the cap for the keyboard held at open", () => {
+		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 358, keyboardHeight: 0 })).toBe(
+			resolveComboboxSheetMaxHeight({ ...room, keyboardHeight: 358 })
+		);
+	});
+
+	test("does not move when a smaller keyboard than the one held arrives", () => {
+		const opened = resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 358, keyboardHeight: 0 });
+		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 358, keyboardHeight: 336 })).toBe(opened);
+	});
+
+	test("does not grow back when the keyboard leaves", () => {
+		const up = resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 336, keyboardHeight: 336 });
+		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 336, keyboardHeight: 0 })).toBe(up);
+	});
+
+	test("gives way to a keyboard taller than the one held", () => {
+		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 300, keyboardHeight: 380 })).toBe(
+			resolveComboboxSheetMaxHeight({ ...room, keyboardHeight: 380 })
+		);
+	});
+
+	test("with nothing held or up, is Select's cap", () => {
+		expect(resolveComboboxSheetHeight({ ...room, heldKeyboardHeight: 0, keyboardHeight: 0 })).toBe(
+			resolveSelectSheetMaxHeight(room)
+		);
 	});
 });
 

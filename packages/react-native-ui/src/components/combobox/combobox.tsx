@@ -55,7 +55,7 @@ import type {
 } from "./combobox.types";
 import {
 	comboboxVariants,
-	resolveComboboxSheetMaxHeight,
+	resolveComboboxSheetHeight,
 	resolveComboboxTriggerText,
 	resolveExpectedKeyboardHeight,
 } from "./combobox.variants";
@@ -109,7 +109,7 @@ type ComboboxBaseProps = {
 	formatResultsCount?: (count: number) => string;
 	/** Where the options open. Only `sheet` today. */
 	presentation?: ComboboxPresentation;
-	/** Forwarded to the sheet. Leave it off and the sheet sizes to its rows. */
+	/** Forwarded to the sheet. Leave it off and the sheet opens at its cap and holds that height while you type. */
 	snapPoints?: BottomSheetProps["snapPoints"];
 	/** Bold what the query matched in each row. @default true */
 	highlight?: boolean;
@@ -259,13 +259,25 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 	};
 
 	const [isOpen, setOpen] = useState(false);
+	// The keyboard the sheet is sized for, fixed when it opens so the height
+	// holds while it is open — see `resolveComboboxSheetHeight`.
+	const [heldKeyboardHeight, setHeldKeyboardHeight] = useState(0);
 	const [pending, setPending] = useState<ComboboxPendingRemoveState>(IDLE);
 	const inputRef = useRef<TextInputInstance | null>(null);
 	const canOpen = !resolvedIsDisabled && !isReadOnly;
 
 	const open = useCallback(() => {
-		if (canOpen) setOpen(true);
-	}, [canOpen]);
+		if (!canOpen) return;
+		setHeldKeyboardHeight(
+			resolveExpectedKeyboardHeight({
+				expectsKeyboard: openOnFocus,
+				keyboardHeight,
+				lastKnown: lastKeyboardHeight,
+				windowHeight,
+			})
+		);
+		setOpen(true);
+	}, [canOpen, openOnFocus, keyboardHeight, lastKeyboardHeight, windowHeight]);
 
 	// One path for every close — Done, a swipe, the overlay, the close button —
 	// and each one empties the query, so the next open starts from the whole
@@ -279,6 +291,9 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		resetQuery("close");
 	};
 	const close = () => handleOpenChange(false);
+
+	const sheetHeight = resolveComboboxSheetHeight({ heldKeyboardHeight, keyboardHeight, topInset, windowHeight });
+	const fixedSnapPoints = useMemo(() => [sheetHeight], [sheetHeight]);
 
 	// The field is focused once the sheet has settled, never with it: a
 	// keyboard rising while the sheet is still animating up fights it for the
@@ -485,7 +500,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 	const searchLabel = field?.label ? `${field.label}, ${searchPlaceholder}` : searchPlaceholder;
 
 	// The title, chips and search field ride at the head of the list, so they
-	// count towards the height the sheet sizes itself to and scroll with it.
+	// scroll with it.
 	const header = (
 		<View className={slots.header()}>
 			<BottomSheet.Close />
@@ -545,21 +560,12 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		<ComboboxProvider value={context}>
 			{customTrigger ?? <ComboboxTrigger className={className} />}
 			<BottomSheet
-				dynamicSizing={snapPoints === undefined}
+				dynamicSizing={false}
+				enableBlurKeyboardOnGesture={false}
 				isOpen={isOpen}
-				maxDynamicContentSize={resolveComboboxSheetMaxHeight({
-					keyboardHeight: resolveExpectedKeyboardHeight({
-						expectsKeyboard: openOnFocus,
-						keyboardHeight,
-						lastKnown: lastKeyboardHeight,
-						windowHeight,
-					}),
-					topInset,
-					windowHeight,
-				})}
 				onIndexChange={handleIndexChange}
 				onOpenChange={handleOpenChange}
-				snapPoints={snapPoints}
+				snapPoints={snapPoints ?? fixedSnapPoints}
 			>
 				<BottomSheet.Portal>
 					<BottomSheet.Overlay />
@@ -568,6 +574,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 							contentContainerClassName={slots.sheetBody()}
 							data={rows}
 							extraData={selected}
+							keyboardDismissMode="none"
 							keyboardShouldPersistTaps="handled"
 							keyExtractor={(row) => row.key}
 							ListEmptyComponent={empty}

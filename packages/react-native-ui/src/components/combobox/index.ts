@@ -36,6 +36,7 @@ export {
 	comboboxVariants,
 	resolveComboboxChipColor,
 	resolveComboboxChipSize,
+	resolveComboboxSheetHeight,
 	resolveComboboxSheetMaxHeight,
 	resolveComboboxTriggerClass,
 	resolveComboboxTriggerText,

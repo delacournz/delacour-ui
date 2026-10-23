@@ -30,6 +30,7 @@ const SLOTS = [
 	"name",
 	"meta",
 	"progress",
+	"progressClip",
 	"progressTrack",
 	"actions",
 	"action",
@@ -106,6 +107,13 @@ describe("sizes", () => {
 		}
 	});
 
+	test("a stretched chip grows its press target, so the cross sits at the far edge", () => {
+		const press = attachmentVariants({ layout: "chip" }).press();
+		expect(press).toMatch(/(?:^|\s)grow(?:\s|$)/);
+		expect(press).toMatch(/(?:^|\s)shrink(?:\s|$)/);
+		expect(press).not.toMatch(/\bflex-1\b/);
+	});
+
 	test("every scale ascends", () => {
 		for (const layout of ATTACHMENT_LAYOUTS) {
 			const points = ATTACHMENT_SIZES.map((size) => ATTACHMENT_SIZE_POINTS[layout][size]);
@@ -148,6 +156,15 @@ describe("layouts", () => {
 			const root = attachmentVariants({ layout, size }).root();
 			expect(/\boverflow-hidden\b/.test(root)).toBe(layout === "tile");
 		}
+	});
+
+	test("a chip's bar is clipped to the chip's own corner, without clipping the chip", () => {
+		const slots = attachmentVariants({ layout: "chip" });
+		const corner = slots.root().match(/\brounded-\S+/)?.[0] ?? "";
+		expect(corner).not.toBe("");
+		expect(slots.progressClip()).toMatch(/\babsolute inset-0\b/);
+		expect(slots.progressClip()).toContain("overflow-hidden");
+		expect(slots.progressClip().split(" ")).toContain(corner);
 	});
 
 	test("chip and card sit on a bordered card; the tile on muted", () => {

@@ -58,8 +58,10 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
   press target; the inner detector still claims the tap, as `Chip.CloseButton` relies on.
 - **Only the tile root clips.** A chip or card with `overflow-hidden` would clip its remove
   control's 44pt slop on Android, where a touch outside an `overflow: hidden` parent never lands.
-  The picture rounds itself through the `image` slot instead. A test pins `overflow-hidden` to the
-  tile root.
+  The picture rounds itself through the `image` slot instead, and a chip's upload bar sits in a
+  `progressClip` layer — `absolute inset-0`, the chip's own `rounded-xl`, holding only the bar —
+  so its ends follow the corner rather than hanging below the curve wherever a theme's `--radius`
+  makes the corner wider than the bar's inset. A test pins `overflow-hidden` to the tile root.
 - **Sizes are fixed points.** `ATTACHMENT_SIZE_POINTS` holds the preview square for chip and card,
   and the tile's own edge, and a test pins each to its `size-*` class. A tray of mixed
   attachments lines up whatever the reader's text size; the name and meta still scale. A chip is
@@ -85,6 +87,11 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
   it actually has, so the extension stays visible: `report-q3-fin…ial.pdf`. `truncateMiddle` is
   the character-budget version for places with no layout — a notification, a log line — and
   backs `Attachment.Name`'s `maxLength`.
+- **A chip's press target grows, so the cross sits at the far edge.** Stretched by a column — a
+  composer tray stacked vertically — a chip is wider than its content, and a press target that only
+  shrank left the cross beside the name, mid-chip. `grow shrink` rather than `flex-1`: the basis
+  stays the content's width, so a content-sized chip in a horizontal tray is unchanged, where
+  `flex-1`'s zero basis would collapse it.
 - **A chip is capped at `max-w-64`.** Inside a horizontal `ScrollView` a child has unbounded width,
   so without a cap a long name would stretch the chip rather than ellipsize.
 - **No ring.** `Progress` draws bars only, so a tile shows a short bar centred on its dimming veil

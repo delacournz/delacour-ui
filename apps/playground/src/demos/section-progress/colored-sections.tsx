@@ -13,11 +13,12 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch", flow: true, hero: true },
 };
 
+/** Titles alternate short and long, so each section change visibly grows or shrinks the pill. */
 const SECTIONS: readonly { id: string; title: string; color: SectionProgressColor }[] = [
 	{ id: "summary", title: "Summary", color: "foreground" },
-	{ id: "whats-new", title: "What's new", color: "primary" },
+	{ id: "whats-new", title: "What's new in this release", color: "primary" },
 	{ id: "fixed", title: "Fixed", color: "success" },
-	{ id: "known-issues", title: "Known issues", color: "warning" },
+	{ id: "known-issues", title: "Known issues and workarounds", color: "warning" },
 	{ id: "notes", title: "Notes", color: "info" },
 	{ id: "removed", title: "Removed", color: "destructive" },
 ];

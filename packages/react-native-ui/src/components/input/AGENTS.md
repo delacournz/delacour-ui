@@ -119,6 +119,13 @@ or drops its focus.
 - **A block makes the box a floor, not a height.** With one present the box
   takes the multiline branch (min height + vertical padding) whatever the field
   is; the row keeps its own alignment, so a single-line field stays centred.
+- **A block bleeds through the box's vertical padding on its outer edge.** That
+  padding is the field's. Stacked on the block's own `py-*`, it set a toolbar
+  half again as far from the border as from its separator and left the same
+  slack under a footer's counter. The block takes a `-mt-*` / `-mb-*` equal to
+  the multiline `py-*` (the `blockPosition` compounds), the way a horizontal
+  `Separator` bleeds through the horizontal inset, so its own padding is all
+  there is on either side.
 - **A `Block` draws no border.** Divide it from the row with a `Separator`, or
   leave it flush. Bare text and `Icon`s in it take the decorator treatment.
 - **`Separator` has no `orientation` prop.** `InputGroupPlacementProvider` tells

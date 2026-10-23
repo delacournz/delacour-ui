@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Toggle at runtime",
 	caption:
-		"`dir` is an ordinary prop. Flip it and the card relayouts on the next frame — no remount, no restart, which is what `I18nManager.forceRTL` would need. The step numbers sit in their own left-to-right `Direction`, so their order holds.",
+		"`dir` is an ordinary prop. Flip it and the card relayouts on the next frame — no remount, no restart, which is what `I18nManager.forceRTL` would need. Both rows mirror together: the words and their numbers each run from the start edge.",
 	capture: { align: "stretch", flow: true, hero: true },
 };
 
@@ -46,19 +46,17 @@ export function Demo(): ReactElement {
 							</View>
 						))}
 					</View>
-					<Direction dir="ltr">
-						<View className="flex-row gap-2" testID="dir-fixed">
-							{STEPS.map((step, index) => (
-								<View
-									className="flex-1 rounded-md border border-border px-3 py-2"
-									key={step}
-									testID={`dir-fixed-${index + 1}`}
-								>
-									<Text.Code>{index + 1}</Text.Code>
-								</View>
-							))}
-						</View>
-					</Direction>
+					<View className="flex-row gap-2" testID="dir-numbers">
+						{STEPS.map((step, index) => (
+							<View
+								className="flex-1 items-start rounded-md border border-border px-3 py-2"
+								key={step}
+								testID={`dir-number-${index + 1}`}
+							>
+								<Text.Code>{index + 1}</Text.Code>
+							</View>
+						))}
+					</View>
 				</View>
 			</Direction>
 		</View>

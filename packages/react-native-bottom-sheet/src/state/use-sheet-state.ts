@@ -64,6 +64,7 @@ export function useSheetState(snapPoints: readonly SnapPointSpec[], config: Shee
 		animateOnMount,
 		keyboardBehavior,
 		keyboardBlurBehavior,
+		keyboardLiftLimit,
 		keyboardScope,
 		enableBlurKeyboardOnGesture,
 	} = config;
@@ -83,6 +84,7 @@ export function useSheetState(snapPoints: readonly SnapPointSpec[], config: Shee
 			animateOnMount,
 			keyboardBehavior,
 			keyboardBlurBehavior,
+			keyboardLiftLimit,
 			keyboardScope,
 			enableBlurKeyboardOnGesture,
 		};
@@ -100,6 +102,7 @@ export function useSheetState(snapPoints: readonly SnapPointSpec[], config: Shee
 		animateOnMount,
 		keyboardBehavior,
 		keyboardBlurBehavior,
+		keyboardLiftLimit,
 		keyboardScope,
 		enableBlurKeyboardOnGesture,
 	]);

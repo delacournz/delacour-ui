@@ -14,6 +14,7 @@ import type {
 	DetachedProp,
 	KeyboardBehavior,
 	KeyboardBlurBehavior,
+	KeyboardLiftLimit,
 	KeyboardScope,
 	ReduceMotionMode,
 	SnapPointSpec,
@@ -75,7 +76,7 @@ export type BottomSheetProps = SheetHaptics & {
 	snapPoints?: readonly SnapPointSpec[];
 	/** Adds the content's own height as a snap point. @default true */
 	dynamicSizing?: boolean;
-	/** Caps the dynamic snap point. */
+	/** Caps the dynamic snap point, and how high a keyboard may lift the sheet. */
 	maxDynamicContentSize?: number;
 	/** Pixels the frame leaves clear at the top. @default 0 */
 	topInset?: number;
@@ -103,6 +104,8 @@ export type BottomSheetProps = SheetHaptics & {
 	keyboardBehavior?: KeyboardBehavior;
 	/** @default "restore" */
 	keyboardBlurBehavior?: KeyboardBlurBehavior;
+	/** Whether `maxDynamicContentSize` also stops the keyboard's lift. @default "container" */
+	keyboardLiftLimit?: KeyboardLiftLimit;
 	/** @default "inside" */
 	keyboardScope?: KeyboardScope;
 	/** @default true */

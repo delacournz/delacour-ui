@@ -49,22 +49,20 @@ export const SELECT_SHEET_TOP_GAP = 24;
  *
  * Without one, two hundred options measure taller than the screen and the sheet
  * rises under the status bar with nothing of the page left above it. The lower
- * of a fraction of the window and the room below the top inset wins, and an
- * open keyboard comes off the second: the sheet rides above it, and a full list
- * plus the keyboard would otherwise reach the top of the screen.
+ * of a fraction of the window and the room below the top inset wins. The
+ * keyboard does not come off it here: the sheet opts into
+ * `keyboardLiftLimit="maxDynamicContentSize"`, so the engine stops its lift at
+ * this cap on the UI thread, in the keyboard's first frame.
  */
 export function resolveSelectSheetMaxHeight({
 	windowHeight,
 	topInset,
-	keyboardHeight = 0,
 }: {
 	windowHeight: number;
 	topInset: number;
-	/** The sheet is lifted above an open keyboard, so the room it may take shrinks by the keyboard's height. */
-	keyboardHeight?: number;
 }): number {
 	const byFraction = windowHeight * SELECT_SHEET_MAX_FRACTION;
-	const belowInset = windowHeight - topInset - SELECT_SHEET_TOP_GAP - keyboardHeight;
+	const belowInset = windowHeight - topInset - SELECT_SHEET_TOP_GAP;
 	return Math.max(0, Math.floor(Math.min(byFraction, belowInset)));
 }
 

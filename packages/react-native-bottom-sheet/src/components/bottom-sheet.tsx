@@ -110,6 +110,7 @@ function BottomSheetRoot({
 	overDragResistanceFactor = 2.5,
 	keyboardBehavior = "interactive",
 	keyboardBlurBehavior = "restore",
+	keyboardLiftLimit = "container",
 	keyboardScope = "inside",
 	enableBlurKeyboardOnGesture = true,
 	animation,
@@ -168,6 +169,7 @@ function BottomSheetRoot({
 			animateOnMount,
 			keyboardBehavior,
 			keyboardBlurBehavior,
+			keyboardLiftLimit,
 			keyboardScope,
 			enableBlurKeyboardOnGesture,
 		}),
@@ -184,6 +186,7 @@ function BottomSheetRoot({
 			animateOnMount,
 			keyboardBehavior,
 			keyboardBlurBehavior,
+			keyboardLiftLimit,
 			keyboardScope,
 			enableBlurKeyboardOnGesture,
 		]

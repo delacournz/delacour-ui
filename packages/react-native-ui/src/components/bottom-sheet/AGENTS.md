@@ -136,6 +136,28 @@ read those before touching behaviour, because behaviour is not here.
   `SectionList`; `@legendapp/list` is this library's optional peer, so its
   body is made here, once at module scope, and registered as a flat list.
 
+## A sheet that filters as you type holds its height
+
+A sheet sized to its content (`dynamicSizing`, the engine's default) re-measures
+whenever its rows change, so a search field over a list resizes the sheet on
+every keystroke that drops or restores a row. Any sheet whose content changes
+while an input in it has focus holds one height instead:
+
+- **Fixed snap points.** `dynamicSizing={false}` and a `snapPoints` of one
+  height — the SearchBar demo's `"50%"`. The keyboard lifts the sheet as usual,
+  and nothing it types moves it.
+- **A floor at the cap.** A scrollable list that should fill the sheet keeps
+  `dynamicSizing` and `maxDynamicContentSize`, passes
+  `keyboardLiftLimit="maxDynamicContentSize"`, and floors its content at the
+  cap — `Select`'s searchable sheet. Under that limit the keyboard covers the
+  sheet's bottom rather than lifting it, which a fixed snap point at the cap
+  cannot do: the limit only clamps a dynamically sized sheet, and an
+  unclamped lift from the cap carries the top under the status bar.
+- **A held snap point.** `Combobox` computes its one snap point at open, for
+  the keyboard it expects, and keeps it until the next open.
+
+A form whose fields never change the content's height needs none of this.
+
 ## Compat
 
 Two names survive from the previous implementation for callers that imported

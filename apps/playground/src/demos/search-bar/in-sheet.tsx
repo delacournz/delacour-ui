@@ -8,10 +8,13 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "In a sheet",
 	caption:
-		"Spread `useBottomSheetInput()` across `inputRef`, `onFocus` and `onBlur`, and the sheet lifts for the keyboard the search bar raises.",
-	note: "Open the sheet and tap the field: the sheet must grow above the keyboard rather than be covered by it. Cancel dismisses the keyboard and the sheet settles back.",
+		"Spread `useBottomSheetInput()` across `inputRef`, `onFocus` and `onBlur`, and the sheet lifts for the keyboard the search bar raises. A fixed snap point holds its height while the search filters the rows.",
+	note: "Open the sheet and tap the field: the sheet must grow above the keyboard rather than be covered by it, then hold still while you type — no shrinking as rows drop out. Cancel dismisses the keyboard and the sheet settles back.",
 	keyboardAware: true,
 };
+
+/** One fixed height: sized to its rows, the sheet would shrink and grow as the search filtered them. */
+const SHEET_SNAP_POINTS = ["50%"];
 
 const COUNTRIES = ["Australia", "Canada", "Fiji", "Ireland", "New Zealand", "Samoa", "Tonga"] as const;
 
@@ -55,7 +58,7 @@ export function Demo(): ReactElement {
 	};
 
 	return (
-		<BottomSheet isOpen={isOpen} onOpenChange={setOpen}>
+		<BottomSheet dynamicSizing={false} isOpen={isOpen} onOpenChange={setOpen} snapPoints={SHEET_SNAP_POINTS}>
 			<BottomSheet.Trigger asChild>
 				<Button testID="open-country-sheet" variant="secondary">
 					{country}

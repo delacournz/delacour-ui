@@ -123,7 +123,8 @@ scroll.
   `keyboard` demo measures it with `measureInWindow`.
 
 **Preview media.** Six demos are captured, each `align: "stretch"`. Three are clips: `basic`
-(the hero) scrolls back through the history and returns to the end, `load-older` reaches the top,
+(the hero) scrolls back through the history and returns to the end — it renders through `Message`,
+so the runs it scrolls past show their tightened corners, not a stack of pills — `load-older` reaches the top,
 pulls in a page and comes back down, and `jump-to-latest` scrolls up while replies arrive and taps
 the button. `stick-to-bottom`, `date-separators` and `unread-divider` are stills.
 `stick-to-bottom` stays a still because every press appends a message, so no flow can bring it back

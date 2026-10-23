@@ -18,10 +18,11 @@ requires a route here for anything new.
 ## Commands
 
 ```bash
-bun dev                    # ensure-prebuild, then expo start --dev-client --clear, port 8088
-bun start                  # the same, on Expo's default port
-bun ios                    # ensure-prebuild, then expo run:ios --device --port 8088
-bun android                # ensure-prebuild, then expo run:android --device --port 8088
+bun dev                    # warden dev ios: leased simulator + cached dev build + Metro, app opened on it
+bun dev:android            # the same on a leased Android emulator
+bun run metro              # Metro alone (expo start --dev-client --clear, port 8088) — physical devices
+bun ios                    # ensure-prebuild, then expo run:ios --device --port 8088 — a physical iPhone
+bun android                # ensure-prebuild, then expo run:android --device --port 8088 — a physical phone
 bun run prebuild           # expo prebuild — regenerate ios/ and android/
 bun run icons              # rasterise the app icon from @delacour/brand
 bun run check              # Biome
@@ -58,7 +59,18 @@ haptics. `scripts/ensure-prebuild.ts` guards `dev`, `ios` and `android`: if
 `ios/` or `android/` is missing it stops and tells you to run `bun expo prebuild`.
 Both directories are gitignored, so a fresh clone always prebuilds once.
 
-**Port 8088, not 8081.** `dev`, `ios` and `android` all pin it, so a Metro left
+**On a simulator, always `bun dev` (`warden dev`).** It claims a simulator, installs the dev
+build cached for this worktree's native fingerprint, starts Metro on a port it leases and
+relaunches the app with `--initialUrl` pointing at it, so the app boots straight into this
+worktree's bundle. Never start Metro yourself and then tap the icon or relaunch the app
+bare: expo-dev-client's `launchMode: "most-recent"` reopens whatever Metro the simulator
+last used — usually another worktree's, on a port that is gone — and a dead one leaves you
+on the dev launcher's home. To relaunch by hand, pass the Metro URL `bun dev` printed:
+`warden ui open nz.co.delacour.ui.playground --relaunch --metro http://127.0.0.1:<port>`.
+Metro started by warden gets `WARDEN_WORKTREE`, which `app.config.ts` appends to the name,
+so the launcher lists "Delacour UI · <worktree>" rather than a row of identical names.
+
+**Port 8088, not 8081, off warden.** `metro`, `ios` and `android` pin it, so a Metro left
 running from another project does not silently serve this one.
 
 ## Directory structure
@@ -254,7 +266,7 @@ The themed `bottom-sheet/` gallery has seven facets — `anatomy`, `sizing`, `sc
 2. Add it to that folder's `index.ts` **in the position it should be read**.
    Order is editorial and lives in the barrel; completeness is mechanical and
    lives in the generated `registry.ts`.
-3. `bun dev`, then open the component's gallery and interact with it. That is
+3. `bun dev` (it opens the app on a simulator), then open the component's gallery and interact with it. That is
    still the whole point of this app — `bun test` in the library cannot render
    anything.
 

@@ -64,6 +64,16 @@ const rawVersion = (process.env as Record<string, string | undefined>).APP_VERSI
 const APP_VERSION = rawVersion && /^\d+\.\d+\.\d+$/.test(rawVersion) ? rawVersion : "1.0.0";
 
 /**
+ * `warden dev` / `warden e2e` hand the Metro they start `WARDEN_WORKTREE` (the
+ * checkout's folder), so the dev launcher's server list and "Recently opened"
+ * name each worktree's Metro instead of showing several "Delacour UI"s. Only
+ * Metro sees it: a native build never does, so the binary's name — and the
+ * fingerprint it is cached under — stay "Delacour UI".
+ */
+const DEV_SERVER_SUFFIX = (process.env as Record<string, string | undefined>).WARDEN_WORKTREE;
+const APP_NAME = DEV_SERVER_SUFFIX ? `Delacour UI · ${DEV_SERVER_SUFFIX}` : "Delacour UI";
+
+/**
  * Icon art comes from `packages/brand`'s `assets/icon-source.svg` via
  * `bun run icons`. The PNGs
  * below are generated — edit the SVG, not them. `ios/` and `android/` are
@@ -71,7 +81,7 @@ const APP_VERSION = rawVersion && /^\d+\.\d+\.\d+$/.test(rawVersion) ? rawVersio
  * and a native rebuild.
  */
 const expoConfig: ExpoConfig = {
-	name: "Delacour UI",
+	name: APP_NAME,
 	slug: "delacour-ui",
 	scheme: "dlc-ui-playground",
 	owner: "delacour",

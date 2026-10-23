@@ -63,6 +63,7 @@ import {
 	untimed,
 	type Window,
 } from "./geometry";
+import { type Keystroke, planKeystrokes, softKeyFor } from "./keystrokes";
 import { startRecording } from "./video";
 
 /** How a flow names what it touches: a `testID`, visible text, a regex over text, or a screen fraction. */
@@ -106,7 +107,8 @@ export type FlowBody = (f: Flow) => Promise<void>;
 
 export type CaptureOptions = {
 	/**
-	 * The flow drives the software keyboard. The app is relaunched after it,
+	 * The flow drives the software keyboard — by tapping its keys, so it stays on screen in the clip. The app is
+	 * relaunched after it,
 	 * because a process that has typed answers the next accessibility read
 	 * late or not at all, and the next demo's sentinel then never appears.
 	 */
@@ -212,6 +214,67 @@ async function centreOf(screen: Screen, target: Target, window: Window): Promise
 	return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 }
 
+// ---- the on-screen keyboard ----
+
+/** The software keyboard's layout view; its keys are buttons named for what they type. */
+const KEYBOARD_ID = "UIKeyboardLayoutStar Preview";
+const KEYBOARD_TIMEOUT_MS = 5000;
+
+/**
+ * Focuses the field when the keyboard is not already up, and returns the keyboard. A keyboard that never shows means
+ * the simulator is set to a hardware keyboard, which no capture should be recorded with.
+ */
+async function openKeyboard(screen: Screen, id: string): Promise<Locator> {
+	const keyboard = screen.getByTestId(KEYBOARD_ID);
+	if (await keyboard.isVisible()) return keyboard;
+	await screen.getByTestId(id).tap();
+	try {
+		await keyboard.waitFor({ state: "visible", timeout: KEYBOARD_TIMEOUT_MS });
+	} catch {
+		throw new E2eError(
+			"ASSERTION",
+			`no on-screen keyboard after focusing ${id} — the simulator is using a hardware keyboard (I/O › Keyboard › Connect Hardware Keyboard)`
+		);
+	}
+	return keyboard;
+}
+
+/** A key on whichever plane shows it: the letters first, then the numbers plane and back. */
+async function tapSymbol(keyboard: Locator, label: string): Promise<void> {
+	const key = keyboard.getByRole("button", { exact: true, name: label });
+	if (await key.isVisible()) {
+		await key.tap();
+		return;
+	}
+	await keyboard.getByTestId("more").tap();
+	await key.tap();
+	await keyboard.getByTestId("more").tap();
+}
+
+async function tapKeystroke(keyboard: Locator, stroke: Keystroke): Promise<void> {
+	if (stroke.kind === "space") return keyboard.getByTestId("space").tap();
+	if (stroke.kind === "symbol") return tapSymbol(keyboard, stroke.label);
+	// Shift relabels the keys in capitals, a beat after the tap, so the key is matched in either case.
+	if (stroke.shifted) await keyboard.getByTestId("shift").tap();
+	return keyboard.getByRole("button", { name: new RegExp(`^${stroke.label}$`, "i") }).tap();
+}
+
+/** Types by tapping the on-screen keys, never through warden's HID keyboard — see `keystrokes.ts`. */
+async function softType(screen: Screen, id: string, text: string): Promise<void> {
+	const keyboard = await openKeyboard(screen, id);
+	for (const stroke of planKeystrokes(text)) await tapKeystroke(keyboard, stroke);
+}
+
+async function softPress(screen: Screen, id: string, key: KeyName, times: number): Promise<void> {
+	const soft = softKeyFor(key);
+	if (soft === undefined) {
+		throw new E2eError("INVALID_ARGUMENT", `the on-screen keyboard has no ${key} key, and a capture types on screen`);
+	}
+	const keyboard = await openKeyboard(screen, id);
+	const target = soft.kind === "id" ? keyboard.getByTestId(soft.id) : keyboard.getByRole("button", { name: soft.name });
+	for (let press = 0; press < times; press += 1) await target.tap();
+}
+
 function makeFlow(fixtures: { screen: Screen; device: Device; app: App }, window: Window): Flow {
 	const { screen, device, app } = fixtures;
 	return {
@@ -234,11 +297,8 @@ function makeFlow(fixtures: { screen: Screen; device: Device; app: App }, window
 			}
 			await screen.swipe({ durationMs, from: start, to: end });
 		},
-		type: (id, text) => screen.getByTestId(id).type(text),
-		async press(id, key, times = 1) {
-			const field = screen.getByTestId(id);
-			for (let press = 0; press < times; press += 1) await field.press(key);
-		},
+		type: (id, text) => softType(screen, id, text),
+		press: (id, key, times = 1) => softPress(screen, id, key, times),
 		visible: (target, options) => expect(locate(screen, target)).toBeVisible(options),
 		hidden: (target, options) => expect(locate(screen, target)).toBeHidden(options),
 		containsText: (id, text, options) => expect(screen.getByTestId(id)).toContainText(text, options),
@@ -409,10 +469,28 @@ async function relaunch(fixtures: { screen: Screen; device: Device; app: App }):
  * the first capture waits for the app to be on screen before it opens a link.
  */
 let loaded = false;
-async function ensureLoaded(fixtures: { screen: Screen; device: Device }): Promise<void> {
+async function ensureLoaded(fixtures: { screen: Screen; device: Device; app: App }): Promise<void> {
 	if (loaded) return;
 	await awaitLoaded(fixtures);
+	if (keepSoftwareKeyboard()) await relaunch(fixtures);
 	loaded = true;
+}
+
+/**
+ * Once per device: iOS hides the software keyboard while a hardware keyboard is attached, and a simulator that has
+ * ever been typed into over HID counts as one, so every later capture on it recorded fields with no keyboard. This
+ * preference keeps the software keyboard on screen regardless. True when it had to be written, which UIKit only reads
+ * at launch.
+ */
+function keepSoftwareKeyboard(): boolean {
+	const domain = ["com.apple.keyboard.preferences", "AutomaticMinimizationEnabled"];
+	const read = Bun.spawnSync(["xcrun", "simctl", "spawn", udid(), "defaults", "read", ...domain]);
+	if (read.exitCode === 0 && read.stdout.toString().trim() === "0") return false;
+	const write = Bun.spawnSync(["xcrun", "simctl", "spawn", udid(), "defaults", "write", ...domain, "-bool", "NO"]);
+	if (write.exitCode !== 0) {
+		throw new E2eError("SESSION", `could not keep the software keyboard on: ${write.stderr.toString().trim()}`);
+	}
+	return true;
 }
 
 // ---- the spec API ----

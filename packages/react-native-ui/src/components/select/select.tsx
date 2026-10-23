@@ -20,6 +20,7 @@ import {
 	filterGroups,
 	normalizeOptions,
 	resolveSelectedOptions,
+	resolveSelectListMinHeight,
 	resolveSelectRowState,
 	resolveSelectSheetMaxHeight,
 	resolveSelectTriggerText,
@@ -60,7 +61,7 @@ type SelectBaseProps = {
 	emptyText?: string;
 	/** Where the options open. Only `sheet` today. */
 	presentation?: SelectPresentation;
-	/** Forwarded to the sheet. Leave it off and the sheet sizes to its rows. */
+	/** Forwarded to the sheet. Leave it off and the sheet sizes to its rows — or, searchable, opens at its cap and holds it while you type. */
 	snapPoints?: BottomSheetProps["snapPoints"];
 	/** Custom trigger content for a non-empty selection. */
 	renderValue?: (selected: SelectOption[]) => ReactNode;
@@ -214,6 +215,15 @@ function SelectRoot(props: SelectProps): ReactElement {
 		variant,
 	};
 
+	const sheetMaxHeight = resolveSelectSheetMaxHeight({ topInset, windowHeight });
+	// A searchable list measures at least the cap, so the sheet holds its height
+	// while the filter drops rows — see `resolveSelectListMinHeight`.
+	const listMinHeight = resolveSelectListMinHeight({ isSearchable, maxHeight: sheetMaxHeight, snapPoints });
+	const listContentStyle = useMemo(
+		() => (listMinHeight === undefined ? undefined : { minHeight: listMinHeight }),
+		[listMinHeight]
+	);
+
 	const rows = buildSelectRows(isSearchable ? filterGroups(entries, query) : entries);
 	const slots = selectVariants({ size, variant });
 
@@ -296,7 +306,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 				dynamicSizing={snapPoints === undefined}
 				isOpen={isOpen}
 				keyboardLiftLimit="maxDynamicContentSize"
-				maxDynamicContentSize={resolveSelectSheetMaxHeight({ topInset, windowHeight })}
+				maxDynamicContentSize={sheetMaxHeight}
 				onOpenChange={handleOpenChange}
 				snapPoints={snapPoints}
 			>
@@ -305,6 +315,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 					<BottomSheet.Container>
 						<BottomSheet.FlatList
 							contentContainerClassName={slots.sheetBody()}
+							contentContainerStyle={listContentStyle}
 							data={rows}
 							extraData={selected}
 							keyboardShouldPersistTaps="handled"

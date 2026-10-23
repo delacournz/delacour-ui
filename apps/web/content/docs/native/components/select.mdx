@@ -169,7 +169,7 @@ Compose `Select.Trigger` with `asChild` to open the sheet from a control of your
     searchPlaceholder: { type: "string", default: '"Search"' },
     emptyText: { type: "string", default: '"No results"' },
     presentation: { type: '"sheet"', default: '"sheet"' },
-    snapPoints: { type: "(string | number)[]", description: "Forwarded to the sheet. Unset, it sizes to its rows." },
+    snapPoints: { type: "(string | number)[]", description: "Forwarded to the sheet. Unset, it sizes to its rows — or, with `isSearchable`, opens at its cap and holds it while you type." },
     renderValue: { type: "(selected: SelectOption[]) => ReactNode", description: "Custom trigger content." },
     maxLabels: { type: "number", default: "2", description: "Labels a multiple trigger joins before it counts." },
     formatSelectedCount: { type: "(count: number) => string", default: "(n) => `${n} selected`" },

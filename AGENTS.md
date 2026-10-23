@@ -80,8 +80,7 @@ not `main`.
 
 `.github/rulesets/develop.json` (`develop-protected`) is the merge gate: it blocks force-pushes and
 deletion, requires linear history, and requires a pull request whose `signoff` statuses are green
-(see [Signoff](#signoff)), whose review threads are resolved, and whose branch is up to date with
-`develop`. Squash is the only merge method.
+(see [Signoff](#signoff)) and whose review threads are resolved. Squash is the only merge method.
 
 `.github/rulesets/main.json` (`main-protected`) is release-only: it blocks deletion and non-fast-forward
 pushes, requires linear history, and restricts updates to its bypass list — repository admins and
@@ -96,8 +95,12 @@ gate is signoff plus resolved conversations. A worktree is therefore a feature b
 request is the only way in. Repository admins can bypass in an emergency, and the audit log records
 it when they do.
 
-Because the branch must be up to date, `gh pr merge --auto` waits on a stale branch rather than
-rebasing it. Press **Update branch**, or rebase, to clear it.
+The branch does **not** have to be up to date with `develop` (`strict_required_status_checks_policy`
+is off). With it on, every merge staled every other open pull request's signoff, and a batch of
+pull requests became a serial train of rebase, re-sign-off, merge. The cost is that a squash lands a
+tree nobody signed off — the head plus whatever `develop` gained meanwhile. Git conflicts still block
+the merge; a semantic conflict between two independently green pull requests does not. When two
+pull requests touch the same code, rebase the second and sign it off again before merging it.
 
 GitHub does not apply the rulesets from those files; the files are the reproducible copy of what was
 applied. To change protection, edit the JSON, apply it, and commit both in the same change:
@@ -165,8 +168,8 @@ instead, because the umbrella is withheld when a check the diff needed did not p
 `scripts/signoff.test.ts` pins `REQUIRED_CONTEXTS` against `.github/rulesets/develop.json`, so the
 two cannot drift.
 
-**A status binds to a SHA.** Push again — or press **Update branch**, which the up-to-date rule
-makes routine — and the signoff drops; run it again. Never write a status for a check that did not
+**A status binds to a SHA.** Push again — or press **Update branch** — and the signoff drops; run
+it again. Never write a status for a check that did not
 run, and never weaken a check to get one: bare `gh signoff` writes green without running anything,
 and is break-glass only, by a maintainer, said so in the pull request.
 
@@ -192,8 +195,9 @@ three cases only:
 | push to `release/playground/*` | Advisory — see [apps/playground/AGENTS.md](apps/playground/AGENTS.md#eas) |
 
 It does not run on push to `develop` or `main`. A commit on `develop` is the squash of a pull request
-signed off at its head and up to date with `develop`, so the tree is the one already verified; `main`
-only fast-forwards to such a commit. Railway does not wait on check suites, so no deploy depends on
+signed off at its head; the merged tree can differ from that head when `develop` moved in between
+(see [Branches](#branches)), and the next pull request's signoff covers it. `main` only
+fast-forwards to a release commit, whose pull request `ci.yml` signs off on its own head. Railway does not wait on check suites, so no deploy depends on
 one either. `scripts/signoff.test.ts` fails if `ci.yml` regains a push to `develop` or an ungated
 pull request job.
 
@@ -332,7 +336,7 @@ workflows:
                                │                                             │
   PR opened ──► base = main? ──┤ retarget-pr.yml moves it to develop         │
                                │                                             │
-  squash merge ──────────────► ● develop-protected: 4 checks, up to date     │
+  squash merge ──────────────► ● develop-protected: signoff checks          │
   (+ .changeset/*.md)          │                                             │
                                │ push                                        │
                                ▼                                             │
@@ -445,7 +449,7 @@ The release pull request is **🔖 chore(release): version packages**, from `cha
 into `develop`. It holds what `changeset version` produces — every pending changeset consumed into
 stable versions and changelogs, and `bun.lock` regenerated to match. Each merge to `develop`
 force-pushes it from scratch on top of the new tip, so it always describes the release that merging
-it would cut and it is always up to date for `develop-protected`. It is an ordinary pull request,
+it would cut. It is an ordinary pull request,
 except that `ci.yml` signs it off rather than a person: the checks, plus `verify-expo`, run on it and
 write its `signoff` statuses, and it squash-merges like any other.
 

@@ -304,6 +304,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 			{customTrigger ?? <SelectTrigger className={className} />}
 			<BottomSheet
 				dynamicSizing={snapPoints === undefined}
+				enableBlurKeyboardOnGesture={!isSearchable}
 				isOpen={isOpen}
 				keyboardLiftLimit="maxDynamicContentSize"
 				maxDynamicContentSize={sheetMaxHeight}
@@ -318,6 +319,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 							contentContainerStyle={listContentStyle}
 							data={rows}
 							extraData={selected}
+							keyboardDismissMode={isSearchable ? "none" : undefined}
 							keyboardShouldPersistTaps="handled"
 							keyExtractor={(row) => row.key}
 							ListEmptyComponent={empty}

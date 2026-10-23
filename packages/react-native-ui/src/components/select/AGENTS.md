@@ -104,6 +104,13 @@ engine. An app that imports no picker still never resolves it.
   short searchable list sits at the top of a full-height sheet, as `Combobox`'s
   does. Without search the rows cannot change while it is open, so it keeps
   sizing to them.
+- **Scrolling a searchable list keeps the keyboard up**, as in `Combobox`. The
+  engine puts the keyboard away the moment any pan starts on the sheet
+  (`enableBlurKeyboardOnGesture`), and its lists dismiss interactively, so
+  scrolling the results past the first few dropped the keyboard and the next
+  keystroke needed a tap on the field first. A searchable sheet turns the pan's
+  blur off and the list passes `keyboardDismissMode="none"`. A drag that carries
+  the sheet down still puts it away, and every close clears the query.
 - **The row floor is ListGroup's**, `min-h-12/14/16`, pinned by the test, so a
   row in the sheet sits level with a `ListGroup` row on the screen behind it. It
   is a floor, never a height, so a description can wrap.

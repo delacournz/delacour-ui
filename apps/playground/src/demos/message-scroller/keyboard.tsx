@@ -65,6 +65,7 @@ export function Demo(): ReactElement {
 		<View className="gap-3">
 			<View onLayout={measure} ref={frameRef}>
 				<MessageScroller
+					bottomInset={12}
 					className="h-80 flex-none rounded-lg border border-border bg-background"
 					getDate={(message) => message.sentAt}
 					getKey={(message) => message.id}

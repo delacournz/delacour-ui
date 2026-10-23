@@ -41,6 +41,7 @@ function Bubble({ message, position }: { message: ChatMessage; position: Message
 export function Demo(): ReactElement {
 	return (
 		<MessageScroller
+			bottomInset={12}
 			className="h-96 flex-none rounded-lg border border-border bg-background"
 			firstUnreadKey={`u${COUNT - UNREAD}`}
 			getDate={(message) => message.sentAt}

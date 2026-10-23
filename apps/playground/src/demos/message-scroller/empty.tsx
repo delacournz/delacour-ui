@@ -33,6 +33,7 @@ function Bubble({ message, position }: { message: ChatMessage; position: Message
 export function Demo(): ReactElement {
 	return (
 		<MessageScroller
+			bottomInset={12}
 			className="h-80 flex-none rounded-lg border border-border bg-background"
 			getDate={(message) => message.sentAt}
 			getKey={(message) => message.id}

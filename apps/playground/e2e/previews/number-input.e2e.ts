@@ -3,19 +3,16 @@
 import { capture } from "./capture";
 
 capture("number-input/basic", async (f) => {
-	// Stepping up three times
+	// Holding the plus past the 400ms delay, so it repeats and speeds up from 2 to 9
+	await f.longPress("basic-increment", 1200);
+	await f.wait(400);
+	// Holding the minus longer than the plus was held, so it runs down and stops at 0
+	await f.longPress("basic-decrement", 1500);
+	await f.wait(400);
+	// And two taps back up, so the clip loops at 2 without a jump cut
 	await f.tap("basic-increment");
 	await f.wait(350);
 	await f.tap("basic-increment");
-	await f.wait(350);
-	await f.tap("basic-increment");
-	await f.wait(700);
-	// And back down three, so the clip loops at 2 without a jump cut
-	await f.tap("basic-decrement");
-	await f.wait(350);
-	await f.tap("basic-decrement");
-	await f.wait(350);
-	await f.tap("basic-decrement");
 });
 
 capture("number-input/bounds", async (f) => {

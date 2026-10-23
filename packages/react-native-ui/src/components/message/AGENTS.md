@@ -48,7 +48,7 @@ Compound root plus `Message.Avatar`, `.Header`, `.Author`, `.Bubble`, `.Text`,
   property without remapping it, giving `borderStartStartRadius`, which React
   Native (≥ 0.71) supports and flips under RTL. No `style` fallback is needed,
   so `resolveMessageCornerStyle` from the spec was not written. The `rtl` demo
-  is the visual check.
+  is the visual check, and the `runs` clip flips one live.
 - **Run spacing is the message's.** `first`/`middle` sit `mb-0.5`, `last`/`single`
   `mb-2`, through the `position` variant, so a list needs no separator logic.
 - **Fill and foreground are a pair.** Outgoing `bg-primary` /
@@ -132,8 +132,13 @@ an image viewer, text selection by default (`selectable` steals the long press).
 
 ## Previews
 
-Five demos are captured: `status` (**hero**, a clip — the receipt walks sending →
+Five demos are captured: `runs` (**hero**, a clip — the run is sent one message
+at a time, each arrival tightening the corners it shares with the one above, then
+flips to right to left and back), `status` (a clip — the receipt walks sending →
 read, the failed one retries and fails again), `typing` (a clip of the dots),
-and stills of `directions`, `runs` and `reactions`, all but `typing` at
-`align: "stretch"`. The Retry control carries no `testID`, so
-`.argent/flows/previews/message/status.yaml` taps it by its text.
+and stills of `directions` and `reactions`, all but `typing` at
+`align: "stretch"`. The Retry control carries no `testID`, so the preview
+capture<!-- registry:omit --> (`apps/playground/e2e/previews/message.e2e.ts`)<!-- /registry:omit --> taps it by its text — which only
+works because the failed message in `status` is `isCompound`: without it the
+message is one accessibility element, its Retry an accessibility action that
+never reaches the tree.

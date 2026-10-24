@@ -39,6 +39,8 @@ bun run fmt                # format only
 bun test                   # unit tests
 bun run previews           # recapture component preview media from a simulator
 bun run previews:verify    # recapture a selection, pixel-diff it against origin/develop, write a report
+bun run previews:affected  # which components' preview media this branch made stale, and the command to recapture them
+bun run previews:pr-table  # the before/after table of this branch's recaptured media, for the pull request body
 bun run signoff            # run the merge gate's checks locally and sign off the open pull request
 bun run cli:link           # build the CLI and link it, so `delacour` on PATH is this tree
 bun run cli:unlink         # put back whatever `delacour` was before cli:link
@@ -711,6 +713,33 @@ showing none, because nobody reads a pull request twice. For the docs site,
 `cd apps/web && bun run screenshots` shoots the set; where the images go, and why
 they are keyed to a commit rather than overwritten, is in
 [apps/web/AGENTS.md](apps/web/AGENTS.md#pull-request-screenshots).
+
+**A component that looks different is recaptured in the same branch, before the pull request
+opens.** A demo's capture hash covers the demo, not the component it renders, so an incremental
+`bun run previews` after a change to `button.variants.ts` re-captures nothing: the docs site goes on
+showing the old Button, and every Dialog that renders one, until someone asks. The rule:
+
+- **What triggers it.** A change under `packages/react-native-ui/src/components/<name>/`, its demos
+  (`apps/playground/src/demos/<name>/`) or its spec (`apps/playground/e2e/previews/<name>.e2e.ts`),
+  under `lib/`, `styles/` or `hooks/` that a component renders through, or in an engine
+  (`packages/react-native-charts`, `packages/react-native-bottom-sheet`). `bun run previews:affected`
+  walks the import graph from the diff and prints the components and the command.
+- **What is exempt.** A change that cannot move a pixel: tests and fixtures, `AGENTS.md` and other
+  markdown, types-only edits, comments, and logic no capture exercises (a callback's arguments, an
+  accessibility label, an error message). The test is whether any captured demo would render
+  differently; when unsure, recapture — an unchanged picture costs one run, a stale one ships.
+- **The command.** `bun run previews -- -- --only <name>[,<other>] --force --headless`, then commit
+  `apps/web/public/previews/**` and `apps/web/src/previews/manifest.ts`. `--force` because the
+  component's source is not in the hash; drop it only when the demo or spec itself changed. A
+  harness change (`src/app/preview.tsx`, the spec helpers, a stylesheet) is a full `--force` run,
+  with the user's approval — see [apps/playground/AGENTS.md](apps/playground/AGENTS.md#capturing-preview-media).
+- **The pull request embeds them when it is created**, not in a follow-up: push, then put
+  `bun run previews:pr-table`'s before/after table in the Screenshots section. The images are
+  `raw.githubusercontent.com` URLs pinned to the base and head SHAs — the same commit-keyed rule as
+  the screenshots above, with no `assets/` branch, because previews are committed. Whatever creates
+  the pull request — `gh pr create` or the `dlc-pr` skill — does this before it submits.
+
+The `recapture-previews` skill (`.claude/skills/recapture-previews/`) walks the whole loop.
 
 ## Generated, do not edit
 

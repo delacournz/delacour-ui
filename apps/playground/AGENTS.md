@@ -648,6 +648,12 @@ The stage `src/app/preview.tsx` renders is **not** in a demo's hash — only its
 and edge are. So a change to the harness alone re-captures nothing, and has to be published with
 `--force`.
 
+**Neither is the component.** A demo imports `@delacour/react-native-ui/button`; the hash reads the
+demo's text, not what that import resolves to. Edit `button.variants.ts` and an incremental run
+skips every Button demo — so a library or engine change is recaptured with
+`--only <components> --force`, and `bun run previews:affected` (from the root) names the components,
+importers included. The root `AGENTS.md` makes this a requirement of the branch, under Conventions.
+
 ### Static and animated
 
 A demo with no `capture.flow` is a screenshot. One with `flow: true` is recorded: the helper pads,

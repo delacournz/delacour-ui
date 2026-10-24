@@ -1203,6 +1203,16 @@ readers keep seeing the picture it used to hold, which is the failure this whole
 prevent. The SHA in the URL also answers the only question a reviewer has about a screenshot —
 which commit is this?
 
+### Recaptured previews are embedded from the branch itself
+
+A branch that recaptured preview media shows it in the body when the pull request is opened, before
+and after. Those files are committed, so there is nothing to push to `assets/`: the head commit
+already serves them. The SHA rule is the same one — link
+`raw.githubusercontent.com/<repo>/<full sha>/apps/web/public/previews/<id>/<theme>.png`, the merge
+base's copy beside the head's, never a branch name. `bun run previews:pr-table` (from the root) writes
+that table after the push. A clip is its poster plus a link to the `.mp4`, because a body renders an
+image from a raw URL but does not play a video from one.
+
 Playwright is a devDependency of this workspace and downloads its own browser once
 (`bunx playwright install chromium`). It is not in `bun run build` and never runs in CI, for the
 same reason `bun run previews` does not.

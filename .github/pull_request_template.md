@@ -25,6 +25,13 @@ reasons behind both halves of it.
 **Push again and the pictures are stale.** A body that shows a control the
 branch no longer has is worse than a body with no pictures — recapture in the
 same push that changed the visuals.
+
+A branch that changed a component's look also recaptured its preview media
+(`bun run previews:affected` names them). Those are committed, so after the
+push paste the before/after table here — the URLs are pinned to the base and
+head SHAs:
+
+    bun run previews:pr-table
 -->
 
 ## Checklist
@@ -32,5 +39,5 @@ same push that changed the visuals.
 - [ ] `bun run signoff` run on the final head — the merge gate is its `signoff` statuses, and every push drops them
 - [ ] Docs updated in the same commit — `react-native-ui`'s `docs.test.ts` fails by name for a component folder with no `AGENTS.md`
 - [ ] `bun.lock` committed alongside any dependency change — CI installs with `--frozen-lockfile` and fails on drift
-- [ ] `bun run previews` recaptured and committed, if a component's visuals changed (needs a Mac with Xcode; never runs in CI)
+- [ ] `bun run previews -- -- --only <components> --force --headless` recaptured and committed, if a component's visuals changed (`bun run previews:affected` lists them; needs a Mac with Xcode; never runs in CI), and the before/after table is above
 - [ ] Screenshots above captured from the current head, if this changes what anyone sees

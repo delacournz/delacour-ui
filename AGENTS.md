@@ -739,7 +739,12 @@ showing the old Button, and every Dialog that renders one, until someone asks. T
   the screenshots above, with no `assets/` branch, because previews are committed. Whatever creates
   the pull request — `gh pr create` or the `dlc-pr` skill — does this before it submits.
 
-The `recapture-previews` skill (`.claude/skills/recapture-previews/`) walks the whole loop.
+The `recapture-previews` skill (`.agents/skills/recapture-previews/`) walks the whole loop.
+
+**Agent rules and skills live in `.agents/`, and `.claude/` only links to them.** `.agents/rules/` and
+`.agents/skills/` are the source; `.claude/rules` and `.claude/skills` are symlinks to them, which is
+where Claude Code looks. Add or edit under `.agents/` — a file written through the link lands there
+anyway, but a new directory made beside the link in `.claude/` would split the set in two.
 
 ## Generated, do not edit
 

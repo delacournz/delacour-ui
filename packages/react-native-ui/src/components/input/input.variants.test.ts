@@ -19,6 +19,7 @@ import {
 	resolveGroupButtonClass,
 	resolveGroupButtonSize,
 	resolveGroupSegments,
+	resolveInputAccessibilityLabel,
 	resolveInputFieldClass,
 	resolveInputGroupClass,
 	resolveInputGroupRowClass,
@@ -146,6 +147,18 @@ describe("the root slot", () => {
 	test("merges an incoming className last", () => {
 		expect(inputVariants().root({ className: "mb-6" })).toContain("mb-6");
 		expect(inputVariants().root({ className: "bg-popover" })).not.toContain("bg-card");
+	});
+});
+
+describe("Input accessible name", () => {
+	test("uses the enclosing Field.Label when the caller omits a label", () => {
+		expect(resolveInputAccessibilityLabel(undefined, "Email address")).toBe("Email address");
+		expect(resolveInputAccessibilityLabel(undefined, null)).toBeUndefined();
+	});
+
+	test("preserves an explicit caller label, including an empty string", () => {
+		expect(resolveInputAccessibilityLabel("Work email", "Email address")).toBe("Work email");
+		expect(resolveInputAccessibilityLabel("", "Email address")).toBe("");
 	});
 });
 

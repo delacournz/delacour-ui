@@ -27,7 +27,7 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 | `date-picker-clear.tsx` | `DatePicker.Clear` — empties, reports, stays open |
 | `date-picker.context.tsx` | `DatePickerProvider`, `useDatePicker()`, `useDatePickerContext()`, `useDatePickerPart()` |
 | `date-picker.types.ts` | `DatePickerSelectionProps` (the mode union) and `DatePickerProps` |
-| `date-picker.variants.ts` | Slotted `tv()`, the trigger class, and every pure rule: close, format, a11y value, placeholder, axes |
+| `date-picker.variants.ts` | Slotted `tv()`, the trigger class, message defaults, and every pure rule: close, format, a11y value, placeholder, axes |
 | `date-picker.variants.test.ts` | |
 
 ## Imports, never duplicates
@@ -81,6 +81,23 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   shown selection; `format` replaces the day formatter (single, each of several, each range end),
   `formatRange` replaces the whole range. Multiple lists two days, then counts — a list of seven
   dates does not fit a field.
+
+## Messages
+
+`messages` supplies optional text for the picker and its nested calendar. Missing entries keep the
+English defaults. String values may be empty; `undefined` keeps the default. Sentence formatters
+receive complete values so a translation can use its own word order.
+
+The picker message keys are `accessibilityLabel`, `triggerHint`, `placeholderSingle`,
+`placeholderRange`, `placeholderMultiple`, `rangeEnd`, `title`, `done`, `clear`, `close`, and
+`notSet`. The formatter keys are `fromDateNoEnd(date)`, `rangeValue(start, end)`,
+`multipleValues(dates)`, `multipleCount(count)`, and `selected(value)`. The nested `calendar` key
+takes `CalendarMessages` for day hints, paging labels, and caption actions.
+
+An explicit `placeholder`, `title`, `doneLabel`, `clearLabel`, or root `accessibilityLabel` prop
+wins over its message. An enclosing `Field.Label` comes after the explicit accessibility label and
+before `messages.accessibilityLabel`. `DatePicker.Content title` wins over the root title.
+`DatePicker.Trigger accessibilityHint` wins over `messages.triggerHint`.
 
 - **Parts derive their `testID` from the root's**, through the calendar's `resolvePartTestID`:
   `testID="stay"` names the trigger `stay-trigger`, the calendar `stay-calendar` (so a day is

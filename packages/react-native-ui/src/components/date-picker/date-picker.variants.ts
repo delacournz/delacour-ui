@@ -8,6 +8,7 @@ import {
 	formatDate,
 	formatDateRange,
 } from "../calendar/calendar.date";
+import type { CalendarMessages } from "../calendar/calendar.types";
 import {
 	INPUT_DECORATOR_ICON_TOKEN,
 	INPUT_INVALID_DECORATOR_ICON_TOKEN,
@@ -23,6 +24,55 @@ export type DatePickerMode = (typeof DATE_PICKER_MODES)[number];
 /** Where the calendar appears: in a bottom sheet over the app, or in place on the screen. */
 export const DATE_PICKER_PRESENTATIONS = ["sheet", "inline"] as const;
 export type DatePickerPresentation = (typeof DATE_PICKER_PRESENTATIONS)[number];
+
+/** Optional text and sentence formatters for a date picker. */
+export type DatePickerMessages = Partial<{
+	accessibilityLabel: string;
+	triggerHint: string;
+	placeholderSingle: string;
+	placeholderRange: string;
+	placeholderMultiple: string;
+	rangeEnd: string;
+	title: string;
+	done: string;
+	clear: string;
+	close: string;
+	notSet: string;
+	fromDateNoEnd: (date: string) => string;
+	rangeValue: (start: string, end: string) => string;
+	multipleValues: (dates: readonly string[]) => string;
+	multipleCount: (count: number) => string;
+	selected: (value: string) => string;
+}> & { calendar?: CalendarMessages };
+
+export type ResolvedDatePickerMessages = Required<Omit<DatePickerMessages, "calendar">> & {
+	calendar: CalendarMessages;
+};
+
+const DEFAULT_DATE_PICKER_MESSAGES: ResolvedDatePickerMessages = {
+	accessibilityLabel: "Date",
+	triggerHint: "Opens calendar",
+	placeholderSingle: "Select date",
+	placeholderRange: "Start – End",
+	placeholderMultiple: "Select dates",
+	rangeEnd: "End",
+	title: "Select date",
+	done: "Done",
+	clear: "Clear",
+	close: "Close",
+	notSet: "not set",
+	fromDateNoEnd: (date) => `From ${date}, no end chosen`,
+	rangeValue: (start, end) => `${start} to ${end}`,
+	multipleValues: (dates) => dates.join(", "),
+	multipleCount: (count) => `${count} dates`,
+	selected: (value) => `Selected ${value}`,
+	calendar: {},
+};
+
+export function resolveDatePickerMessages(messages: DatePickerMessages = {}): ResolvedDatePickerMessages {
+	const overrides = Object.fromEntries(Object.entries(messages).filter(([, value]) => value !== undefined));
+	return { ...DEFAULT_DATE_PICKER_MESSAGES, ...overrides, calendar: messages.calendar ?? {} };
+}
 
 /** How long a finished pick stays on screen before the sheet closes, so the selection is seen. */
 export const DATE_PICKER_CLOSE_DELAY = 120;
@@ -217,13 +267,17 @@ export function resolveIsClearable(mode: DatePickerMode, isClearable: boolean | 
 
 /** The placeholder a mode shows when the caller names none. */
 export function resolveDefaultPlaceholder(mode: DatePickerMode): string {
+	return resolveMessagePlaceholder(mode, DEFAULT_DATE_PICKER_MESSAGES);
+}
+
+export function resolveMessagePlaceholder(mode: DatePickerMode, messages: ResolvedDatePickerMessages): string {
 	switch (mode) {
 		case "single":
-			return "Select date";
+			return messages.placeholderSingle;
 		case "range":
-			return "Start – End";
+			return messages.placeholderRange;
 		case "multiple":
-			return "Select dates";
+			return messages.placeholderMultiple;
 	}
 }
 
@@ -231,6 +285,7 @@ export type FormatSelectionOptions = {
 	locale?: string;
 	format?: DatePickerFormat;
 	formatRange?: DatePickerFormatRange;
+	messages?: ResolvedDatePickerMessages;
 };
 
 /** The range branch of {@link formatSelection}: a custom range format, then a day format, then `formatDateRange`. */
@@ -254,7 +309,7 @@ function formatRangeSelection(
  */
 export function formatSelection(
 	selection: CalendarSelectionState,
-	{ locale, format, formatRange }: FormatSelectionOptions = {}
+	{ locale, format, formatRange, messages = DEFAULT_DATE_PICKER_MESSAGES }: FormatSelectionOptions = {}
 ): string | undefined {
 	const context: DatePickerFormatContext = { locale };
 	const day = (date: CalendarDate): string => format?.(date, context) ?? formatDate(date, { locale, style: "medium" });
@@ -267,8 +322,8 @@ export function formatSelection(
 		case "multiple": {
 			const dates = selection.value;
 			if (dates.length === 0) return undefined;
-			if (dates.length > DATE_PICKER_LISTED_DATES) return `${dates.length} dates`;
-			return dates.map(day).join(", ");
+			if (dates.length > DATE_PICKER_LISTED_DATES) return messages.multipleCount(dates.length);
+			return messages.multipleValues(dates.map(day));
 		}
 	}
 }
@@ -277,28 +332,36 @@ export function formatSelection(
  * What a screen reader hears as the trigger's value: full month names, "to" rather than a dash
  * (which VoiceOver reads as "minus" or skips), and "not set" rather than silence.
  */
-export function resolveSelectionAccessibilityValue(selection: CalendarSelectionState, locale?: string): string {
+export function resolveSelectionAccessibilityValue(
+	selection: CalendarSelectionState,
+	locale?: string,
+	messages: ResolvedDatePickerMessages = DEFAULT_DATE_PICKER_MESSAGES
+): string {
 	const long = (date: CalendarDate): string => formatDate(date, { locale, style: "long" });
 
 	switch (selection.mode) {
 		case "single":
-			return selection.value ? long(selection.value) : "not set";
+			return selection.value ? long(selection.value) : messages.notSet;
 		case "range": {
 			const { start, end } = selection.value;
-			if (!start) return "not set";
-			if (!end) return `From ${long(start)}, no end chosen`;
-			return `${long(start)} to ${long(end)}`;
+			if (!start) return messages.notSet;
+			if (!end) return messages.fromDateNoEnd(long(start));
+			return messages.rangeValue(long(start), long(end));
 		}
 		case "multiple": {
 			const dates = selection.value;
-			if (dates.length === 0) return "not set";
-			if (dates.length > DATE_PICKER_LISTED_DATES) return `${dates.length} dates`;
-			return dates.map(long).join(", ");
+			if (dates.length === 0) return messages.notSet;
+			if (dates.length > DATE_PICKER_LISTED_DATES) return messages.multipleCount(dates.length);
+			return messages.multipleValues(dates.map(long));
 		}
 	}
 }
 
 /** What is announced when the sheet closes on a finished pick. */
-export function resolveAnnouncement(selection: CalendarSelectionState, locale?: string): string {
-	return `Selected ${resolveSelectionAccessibilityValue(selection, locale)}`;
+export function resolveAnnouncement(
+	selection: CalendarSelectionState,
+	locale?: string,
+	messages: ResolvedDatePickerMessages = DEFAULT_DATE_PICKER_MESSAGES
+): string {
+	return messages.selected(resolveSelectionAccessibilityValue(selection, locale, messages));
 }

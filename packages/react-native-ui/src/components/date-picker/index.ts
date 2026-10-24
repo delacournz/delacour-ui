@@ -15,6 +15,7 @@ export {
 	type DatePickerFormat,
 	type DatePickerFormatContext,
 	type DatePickerFormatRange,
+	type DatePickerMessages,
 	type DatePickerMode,
 	type DatePickerOwnAxes,
 	type DatePickerPresentation,

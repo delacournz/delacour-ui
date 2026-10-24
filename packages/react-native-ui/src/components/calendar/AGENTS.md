@@ -21,11 +21,11 @@ sheets.
 | `calendar-day.tsx` | `Calendar.Day` — one cell: band, circle, number or custom content |
 | `calendar-picker.tsx` | `Calendar.Picker` — the months and years jump views |
 | `calendar.context.tsx` | `CalendarContext`, `useCalendar()`, `useCalendarContext()`, `useCalendarPart()` |
-| `calendar.types.ts` | `CalendarSelection` (the mode union), `CalendarProps`, `CalendarCaptionLayout` |
+| `calendar.types.ts` | Shared types: `CalendarSelection`, `CalendarProps`, `CalendarCaptionLayout`, `CalendarMessages` |
 | `calendar.date.ts` | **Shared leaf.** `CalendarDate` maths, matchers, grid, selection rules, `Intl` formatters. No React Native |
 | `calendar.date.test.ts` | |
-| `calendar.variants.ts` | Slotted `tv()`, the day-state, range-role, bounds, axes and page-direction resolvers |
-| `calendar.variants.test.ts` | |
+| `calendar.variants.ts` | Slotted `tv()`, message defaults, the day-state, range-role, bounds, axes and page-direction resolvers |
+| `calendar.variants.test.ts` | Message defaults and pure variant rules |
 
 ## The date leaf
 

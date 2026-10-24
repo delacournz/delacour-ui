@@ -19,7 +19,7 @@ export function DatePickerValue({ className, ...props }: DatePickerValueProps): 
 	return (
 		<Text className={slots.value({ className })} numberOfLines={1} {...props}>
 			{picker.display ?? picker.placeholder}
-			{isHalfRange ? <Text className={slots.valuePlaceholder()}> End</Text> : null}
+			{isHalfRange ? <Text className={slots.valuePlaceholder()}> {picker.messages.rangeEnd}</Text> : null}
 		</Text>
 	);
 }

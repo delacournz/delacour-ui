@@ -111,6 +111,7 @@ import * as demo_calendar_bounds_and_disabled from "./calendar/bounds-and-disabl
 import * as demo_calendar_custom_day from "./calendar/custom-day";
 import * as demo_calendar_in_a_field from "./calendar/in-a-field";
 import * as demo_calendar_locale_week_start from "./calendar/locale-week-start";
+import * as demo_calendar_localized_messages from "./calendar/localized-messages";
 import * as demo_calendar_multiple from "./calendar/multiple";
 import * as demo_calendar_range from "./calendar/range";
 import * as demo_calendar_single from "./calendar/single";
@@ -253,6 +254,7 @@ import * as demo_date_picker_bounds_and_disabled_weekends from "./date-picker/bo
 import * as demo_date_picker_controlled_open from "./date-picker/controlled-open";
 import * as demo_date_picker_custom_format_locale from "./date-picker/custom-format-locale";
 import * as demo_date_picker_in_field_invalid from "./date-picker/in-field-invalid";
+import * as demo_date_picker_localized_messages from "./date-picker/localized-messages";
 import * as demo_date_picker_multiple from "./date-picker/multiple";
 import * as demo_date_picker_range_booking from "./date-picker/range-booking";
 import * as demo_date_picker_single from "./date-picker/single";
@@ -977,6 +979,7 @@ export const DEMOS = {
 	"calendar/custom-day": demo_calendar_custom_day,
 	"calendar/in-a-field": demo_calendar_in_a_field,
 	"calendar/locale-week-start": demo_calendar_locale_week_start,
+	"calendar/localized-messages": demo_calendar_localized_messages,
 	"calendar/multiple": demo_calendar_multiple,
 	"calendar/range": demo_calendar_range,
 	"calendar/single": demo_calendar_single,
@@ -1119,6 +1122,7 @@ export const DEMOS = {
 	"date-picker/controlled-open": demo_date_picker_controlled_open,
 	"date-picker/custom-format-locale": demo_date_picker_custom_format_locale,
 	"date-picker/in-field-invalid": demo_date_picker_in_field_invalid,
+	"date-picker/localized-messages": demo_date_picker_localized_messages,
 	"date-picker/multiple": demo_date_picker_multiple,
 	"date-picker/range-booking": demo_date_picker_range_booking,
 	"date-picker/single": demo_date_picker_single,

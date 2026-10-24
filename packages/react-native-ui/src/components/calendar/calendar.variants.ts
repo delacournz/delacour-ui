@@ -10,6 +10,7 @@ import {
 	isSameDay,
 	startOfMonth,
 } from "./calendar.date";
+import type { CalendarMessages } from "./calendar.types";
 
 export const CALENDAR_VARIANTS = ["primary", "secondary"] as const;
 export const CALENDAR_SIZES = ["sm", "md", "lg"] as const;
@@ -30,6 +31,26 @@ export type CalendarView = "days" | "months" | "years";
 
 export const CALENDAR_DEFAULT_VARIANT: CalendarVariant = "primary";
 export const CALENDAR_DEFAULT_SIZE: CalendarSize = "md";
+
+const CALENDAR_DEFAULT_MESSAGES: Required<CalendarMessages> = {
+	today: "Today",
+	rangeStart: "Range start",
+	rangeEnd: "Range end",
+	previousMonth: "Previous month",
+	nextMonth: "Next month",
+	previousYear: "Previous year",
+	nextYear: "Next year",
+	previousPage: "Previous",
+	nextPage: "Next",
+	openMonthYearPicker: "Opens the month and year picker",
+	openYearList: "Opens the year list",
+	returnToMonth: "Returns to the month",
+};
+
+export function resolveCalendarMessages(messages: CalendarMessages = {}): Required<CalendarMessages> {
+	const overrides = Object.fromEntries(Object.entries(messages).filter(([, value]) => value !== undefined));
+	return { ...CALENDAR_DEFAULT_MESSAGES, ...overrides };
+}
 
 /**
  * How far a swipe must travel, as a fraction of the grid's width, to page.

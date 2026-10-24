@@ -1,6 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { CalendarDate, CalendarSelectionState, Weekday } from "./calendar.date";
-import type { CalendarCaptionLayout } from "./calendar.types";
+import type { CalendarCaptionLayout, CalendarMessages } from "./calendar.types";
 import type { CalendarRangeRole, CalendarSize, CalendarVariant, CalendarView } from "./calendar.variants";
 
 export type CalendarContextValue = {
@@ -9,6 +9,7 @@ export type CalendarContextValue = {
 	size: CalendarSize;
 	/** The tag names are formatted in, or `undefined` for the device's own. */
 	locale: string | undefined;
+	messages: Required<CalendarMessages>;
 	/** The first column's weekday, resolved — never `auto`. */
 	weekStartsOn: Weekday;
 	/** The first of the month the grid shows. */

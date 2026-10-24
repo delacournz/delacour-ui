@@ -12,6 +12,7 @@ import {
 	calendarVariants,
 	isDateSelected,
 	resolveCalendarAxes,
+	resolveCalendarMessages,
 	resolveDayState,
 	resolveDayTone,
 	resolveMonthBounds,
@@ -23,6 +24,14 @@ import {
 function d(year: number, month: number, day: number): CalendarDate {
 	return { year, month, day };
 }
+
+describe("resolveCalendarMessages", () => {
+	test("keeps English defaults for omitted and undefined values", () => {
+		expect(resolveCalendarMessages({ today: undefined }).today).toBe("Today");
+		expect(resolveCalendarMessages({ today: "" }).today).toBe("");
+		expect(resolveCalendarMessages({ today: "اليوم" }).rangeEnd).toBe("Range end");
+	});
+});
 
 /** Every class string a slot can produce, across every axis this test cares about. */
 function everyClass(): string[] {

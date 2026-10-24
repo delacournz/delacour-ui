@@ -12,11 +12,6 @@ export type CalendarCaptionProps = Omit<ViewProps, "children"> & {
 	className?: string;
 };
 
-const PAGE_ACTIONS = [
-	{ name: "decrement", label: "Previous" },
-	{ name: "increment", label: "Next" },
-];
-
 /**
  * The month and year above the grid.
  *
@@ -39,6 +34,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 		goPrev,
 		isDisabled,
 		locale,
+		messages,
 		setView,
 		size,
 		testID,
@@ -47,6 +43,10 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 		visibleMonth,
 		yearSpan,
 	} = useCalendarPart("Calendar.Caption");
+	const pageActions = [
+		{ name: "decrement", label: messages.previousPage },
+		{ name: "increment", label: messages.nextPage },
+	];
 	const slots = calendarVariants({ size, variant });
 
 	const text =
@@ -73,7 +73,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 	if (captionLayout === "label") {
 		return (
 			<View
-				accessibilityActions={PAGE_ACTIONS}
+				accessibilityActions={pageActions}
 				accessibilityLabel={text}
 				accessibilityRole="adjustable"
 				accessible
@@ -88,15 +88,11 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 	}
 
 	const hint =
-		view === "days"
-			? "Opens the month and year picker"
-			: view === "months"
-				? "Opens the year list"
-				: "Returns to the month";
+		view === "days" ? messages.openMonthYearPicker : view === "months" ? messages.openYearList : messages.returnToMonth;
 
 	return (
 		<Pressable
-			accessibilityActions={PAGE_ACTIONS}
+			accessibilityActions={pageActions}
 			accessibilityHint={hint}
 			accessibilityLabel={text}
 			className={slots.caption({ className })}

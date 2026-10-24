@@ -28,6 +28,19 @@ export default function Example() {
 }
 ```
 
+## Accessible name
+
+Inside a `Field`, the input uses `Field.Label` as its accessible name.
+Use translated label text in the app. Set `accessibilityLabel` for a different
+translated name. A placeholder is not a label.
+
+```tsx
+<Field>
+  <Field.Label>Email</Field.Label>
+  <Input value={email} onChangeText={setEmail} />
+</Field>
+```
+
 ## Variants
 
 Use the `variant` prop to change how the box is painted.

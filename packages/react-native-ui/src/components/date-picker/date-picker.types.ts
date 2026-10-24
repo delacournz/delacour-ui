@@ -4,7 +4,12 @@ import type { CalendarDate, CalendarDateRange, DateMatcher, Weekday } from "../c
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
 import type { CalendarSize } from "../calendar/calendar.variants";
 import type { InputSize, InputVariant } from "../input/input.variants";
-import type { DatePickerFormat, DatePickerFormatRange, DatePickerPresentation } from "./date-picker.variants";
+import type {
+	DatePickerFormat,
+	DatePickerFormatRange,
+	DatePickerMessages,
+	DatePickerPresentation,
+} from "./date-picker.variants";
 
 /**
  * What a picker holds, and the value it reports — one shape per mode.
@@ -50,6 +55,8 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		formatRange?: DatePickerFormatRange;
 		/** A BCP 47 tag for the trigger text and the calendar. Omitted, the device's. */
 		locale?: string;
+		/** Overrides built-in English labels. Unspecified entries keep their defaults. */
+		messages?: DatePickerMessages;
 		/** The calendar's first column. `auto` reads it from the locale. */
 		weekStartsOn?: Weekday | "auto";
 		/** `picker` makes the calendar's caption open the month and year views. */

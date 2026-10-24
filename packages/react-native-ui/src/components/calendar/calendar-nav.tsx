@@ -26,16 +26,20 @@ export function CalendarNav({ direction, label, isDisabled, ...props }: Calendar
 		goNext,
 		goPrev,
 		isDisabled: calendarDisabled,
+		messages,
 		testID,
 		view,
 	} = useCalendarPart("Calendar.Nav");
 	const isPrev = direction === "prev";
 	const canGo = (isPrev ? canGoPrev : canGoNext) && view !== "years";
-	const unit = view === "months" ? "year" : "month";
+	const labels =
+		view === "months"
+			? { next: messages.nextYear, prev: messages.previousYear }
+			: { next: messages.nextMonth, prev: messages.previousMonth };
 
 	return (
 		<Button
-			accessibilityLabel={label ?? `${isPrev ? "Previous" : "Next"} ${unit}`}
+			accessibilityLabel={label ?? labels[direction]}
 			haptic="selection"
 			isDisabled={isDisabled ?? (calendarDisabled || !canGo)}
 			onPress={isPrev ? goPrev : goNext}

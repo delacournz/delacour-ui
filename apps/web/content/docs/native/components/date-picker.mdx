@@ -107,6 +107,34 @@ that would cross a disabled day starts again from the tapped day rather than com
 `format` replaces the day formatter everywhere — a single date, each of several, each end of a range.
 `formatRange` replaces a whole range.
 
+`locale` formats the dates and names. Use `messages` to translate the trigger, sheet actions,
+selection announcements, and the calendar's accessibility labels. Message formatters accept full
+values, so each language can use its own word order. A direct `placeholder`, `title`, `doneLabel`,
+`clearLabel`, or `accessibilityLabel` prop takes precedence over its message default.
+
+```tsx
+<DatePicker
+  locale="ar-EG"
+  messages={{
+    accessibilityLabel: "التاريخ",
+    triggerHint: "يفتح التقويم",
+    placeholderSingle: "اختر تاريخًا",
+    title: "اختر تاريخًا",
+    done: "تم",
+    clear: "مسح",
+    notSet: "غير محدد",
+    rangeValue: (start, end) => `من ${start} إلى ${end}`,
+    selected: (value) => `تم اختيار ${value}`,
+    calendar: { today: "اليوم", previousMonth: "الشهر السابق", nextMonth: "الشهر التالي" },
+  }}
+/>
+```
+
+`DatePickerMessages` accepts placeholders for each mode, `title`, `done`, `clear`, `close`,
+`accessibilityLabel`, `triggerHint`, `rangeEnd`, and `notSet`. Use `fromDateNoEnd(date)`,
+`rangeValue(start, end)`, `multipleValues(dates)`, `multipleCount(count)`, and `selected(value)` for
+sentences and counts. The nested `calendar` property accepts `CalendarMessages`.
+
 ## In a field
 
 <Preview id="date-picker/in-field-invalid" />
@@ -206,6 +234,7 @@ small field never shrinks the day targets.
     format: { type: "(value: CalendarDate, ctx: { locale }) => string", description: "Formats each day on the trigger." },
     formatRange: { type: "(range: CalendarDateRange, ctx: { locale }) => string", description: "Formats a whole range on the trigger." },
     locale: { type: "string", description: "A BCP 47 tag. Omitted, the device's." },
+    messages: { type: "DatePickerMessages", description: "Overrides trigger, sheet, announcement, and nested calendar text. Missing entries keep English defaults." },
     weekStartsOn: { type: '0 | 1 | 2 | 3 | 4 | 5 | 6 | "auto"', default: '"auto"' },
     captionLayout: { type: '"label" | "picker"', default: '"picker"' },
     minDate: { type: "CalendarDate" },

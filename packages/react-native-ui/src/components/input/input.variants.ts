@@ -511,4 +511,12 @@ export function resolveSelectionAccentClass({
 	return cn(isInvalid ? INPUT_INVALID_SELECTION_ACCENT_CLASS : INPUT_SELECTION_ACCENT_CLASS, className);
 }
 
+/** The caller's accessible name, then the enclosing Field.Label. */
+export function resolveInputAccessibilityLabel(
+	accessibilityLabel: string | undefined,
+	fieldLabel: string | null | undefined
+): string | undefined {
+	return accessibilityLabel ?? fieldLabel ?? undefined;
+}
+
 export type InputVariantProps = VariantProps<typeof inputVariants>;

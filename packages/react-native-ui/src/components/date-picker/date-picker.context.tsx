@@ -1,9 +1,9 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { CalendarDate, CalendarSelectionState, DateMatcher, Weekday } from "../calendar/calendar.date";
-import type { CalendarCaptionLayout } from "../calendar/calendar.types";
+import type { CalendarCaptionLayout, CalendarMessages } from "../calendar/calendar.types";
 import type { CalendarSize } from "../calendar/calendar.variants";
 import type { InputSize, InputVariant } from "../input/input.variants";
-import type { DatePickerMode, DatePickerPresentation } from "./date-picker.variants";
+import type { DatePickerMode, DatePickerPresentation, ResolvedDatePickerMessages } from "./date-picker.variants";
 
 export type DatePickerContextValue = {
 	mode: DatePickerMode;
@@ -22,6 +22,7 @@ export type DatePickerContextValue = {
 	accessibilityValue: string;
 	/** The trigger's accessible name. */
 	accessibilityLabel: string;
+	messages: ResolvedDatePickerMessages;
 	isOpen: boolean;
 	/** The root's `testID`, which the parts derive theirs from — `resolvePartTestID`. */
 	testID: string | undefined;
@@ -53,6 +54,7 @@ export type DatePickerContextValue = {
 		disabled: readonly DateMatcher[] | undefined;
 		weekStartsOn: Weekday | "auto";
 		captionLayout: CalendarCaptionLayout;
+		messages: CalendarMessages;
 		selectOutsideDays: boolean;
 		today: CalendarDate | undefined;
 	};

@@ -110,6 +110,30 @@ follows the locale.
 `locale` names the months, sets the first day of the week and writes the trigger and the wheel's
 AM/PM. `format` replaces the trigger's text and hears the resolved `{ locale, hourCycle }`.
 
+`locale` does not translate the picker's built-in labels or the Calendar's action labels and screen
+reader hints. To translate the Calendar messages, pass them to a custom `DateTimePicker.Calendar`.
+Other picker labels, such as `doneLabel`, remain separate props.
+
+```tsx
+<DateTimePicker locale="ar-EG" doneLabel="تم">
+  <DateTimePicker.Trigger />
+  <DateTimePicker.Content>
+    <DateTimePicker.Calendar
+      messages={{
+        today: "اليوم",
+        previousMonth: "الشهر السابق",
+        nextMonth: "الشهر التالي",
+        openMonthYearPicker: "فتح اختيار الشهر والسنة",
+      }}
+    />
+    <DateTimePicker.Time />
+  </DateTimePicker.Content>
+</DateTimePicker>
+```
+
+Omitted Calendar messages keep their English defaults. See the [Calendar messages](./calendar#locale-and-week-start)
+reference for the full list.
+
 ## Native `Date`
 
 ```tsx

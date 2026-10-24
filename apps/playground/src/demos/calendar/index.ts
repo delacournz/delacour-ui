@@ -4,6 +4,7 @@ import * as boundsAndDisabled from "./bounds-and-disabled";
 import * as customDay from "./custom-day";
 import * as inAField from "./in-a-field";
 import * as localeWeekStart from "./locale-week-start";
+import * as localizedMessages from "./localized-messages";
 import * as multiple from "./multiple";
 import * as range from "./range";
 import * as single from "./single";
@@ -19,5 +20,6 @@ export const calendarDemos = defineDemoGroup("calendar", {
 	"bordered-in-card": borderedInCard,
 	"custom-day": customDay,
 	"locale-week-start": localeWeekStart,
+	"localized-messages": localizedMessages,
 	"in-a-field": inAField,
 });

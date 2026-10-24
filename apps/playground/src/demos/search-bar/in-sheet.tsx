@@ -14,7 +14,7 @@ export const meta: DemoMeta = {
 };
 
 /** One fixed height: sized to its rows, the sheet would shrink and grow as the search filtered them. */
-const SHEET_SNAP_POINTS = ["50%"];
+const SHEET_SNAP_POINTS = ["50%"] as const;
 
 const COUNTRIES = ["Australia", "Canada", "Fiji", "Ireland", "New Zealand", "Samoa", "Tonga"] as const;
 

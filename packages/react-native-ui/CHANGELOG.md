@@ -1,5 +1,61 @@
 # @delacour/react-native-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- [#252](https://github.com/delacournz/delacour-ui/pull/252) [`56f5d10`](https://github.com/delacournz/delacour-ui/commit/56f5d1026d2884815a71118c34e09ea78a2a9982) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Flow` draws its edges, background, connection preview and minimap with Skia instead of `react-native-svg`, so `react-native-skia` is now an optional peer it needs, as `Chart` and `Sketch` do. The background is a runtime shader that stays sharp at any zoom. `useThemeColors` resolves several theme colours in one lookup.
+
+- [#249](https://github.com/delacournz/delacour-ui/pull/249) [`36b3b80`](https://github.com/delacournz/delacour-ui/commit/36b3b80fe8def84acc3c5a913c576bf32cf92c27) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Signature: the pad draws its strokes with Skia instead of `react-native-svg` — the finished strokes as one recorded picture and the stroke under the finger as a path traced on the UI thread, with no path string built and parsed per frame. `traceStroke` is exported for drawing a stroke into a Skia path builder; `smoothStroke`, `toSVG()` and `toPaths()` are unchanged. `react-native-skia` is now needed by `Signature`.
+
+  Signature: the ref gains `toPNG()`, the signature as a base64 PNG framed and coloured exactly as `toSVG()` with the same options, at `scale` pixels per point. `resolveSignatureExport` and `signaturePngSize` are exported.
+
+- [#251](https://github.com/delacournz/delacour-ui/pull/251) [`73b5b90`](https://github.com/delacournz/delacour-ui/commit/73b5b903a690078dc31764102e57dd64861e309c) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Move to `react-native-skia` 3, the package `@shopify/react-native-skia` was renamed to. The optional `react-native-skia` peer replaces `@shopify/react-native-skia` and needs `>=3.7.3`, which needs Android `minSdkVersion` 26. `Sketch`'s `toPNG()` renders on `Skia.Surface.MakeRaster`.
+
+- [#281](https://github.com/delacournz/delacour-ui/pull/281) [`b6899d6`](https://github.com/delacournz/delacour-ui/commit/b6899d69d8c4eb2397bf24a9943c8cc90f0d5aca) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - SlideButton takes `isLoading`: the handle's glyph gives way to a spinner, the drag is refused and the control announces itself busy — `Button`'s `isLoading`, on the handle.
+
+### Patch Changes
+
+- [#265](https://github.com/delacournz/delacour-ui/pull/265) [`6401689`](https://github.com/delacournz/delacour-ui/commit/6401689a21bcdf39c4d579ee910e6dbf92e50a65) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - An `Attachment` chip stretched wider than its content — a vertical composer tray — now fills its width, so the remove cross sits at the far edge instead of beside the name.
+
+  A chip's upload bar is clipped to the chip's rounded corner, so the end of an indeterminate sweep no longer hangs below the curve.
+
+- [#269](https://github.com/delacournz/delacour-ui/pull/269) [`16f8413`](https://github.com/delacournz/delacour-ui/commit/16f8413724b5468cc2d22a9391ee8a43b9fbc7be) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Combobox` opens its sheet at its cap and holds that height while it is open, instead of sizing it to the filtered rows — typing no longer resizes the sheet, and the keyboard arriving no longer moves it. `resolveComboboxSheetHeight` is the new pure resolver behind it.
+
+- [#269](https://github.com/delacournz/delacour-ui/pull/269) [`16f8413`](https://github.com/delacournz/delacour-ui/commit/16f8413724b5468cc2d22a9391ee8a43b9fbc7be) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Combobox` keeps its keyboard up while the results scroll; only a drag that carries the sheet down, or a close, puts it away. The sheet's scrollables now take a caller's `keyboardDismissMode` instead of always using `interactive`.
+
+- [#278](https://github.com/delacournz/delacour-ui/pull/278) [`d2c5481`](https://github.com/delacournz/delacour-ui/commit/d2c54818db2e1348dfd97596d995324c8e60cd57) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `BottomSheet` takes `keyboardLiftLimit="highestSnapPoint"`: the keyboard lifts the sheet no higher than its highest snap point, so a sheet resting there holds still and its body shrinks by the keyboard instead. `Combobox` opens at its full height with it, so its sheet no longer opens half-height, jumps up when the search field's keyboard rises, and drops back as the keyboard leaves on close. `resolveComboboxSheetHeight` takes only `topInset` and `windowHeight` now.
+
+- [#266](https://github.com/delacournz/delacour-ui/pull/266) [`fc37cbd`](https://github.com/delacournz/delacour-ui/commit/fc37cbd9f5e83c28eafb3f1d2af8d07b69390422) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Fab.Group`'s actions now grow out of the trigger and collapse back into it along its centre line, instead of scaling about the row's centre and swinging in from the label's side.
+
+- [#261](https://github.com/delacournz/delacour-ui/pull/261) [`caef9ac`](https://github.com/delacournz/delacour-ui/commit/caef9acdb58e1f6f8f2f5b7065860e1b5188b8ac) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Input.Group.Block` no longer stacks the box's vertical padding on its own. A toolbar above the field now sits as far from the border as from its separator, and a footer below it loses the extra space under its counter.
+
+- [#259](https://github.com/delacournz/delacour-ui/pull/259) [`a2cae76`](https://github.com/delacournz/delacour-ui/commit/a2cae763e89421c7db7c1194bc4dd12dfbb54a02) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - MarkdownEditor's preview keeps the write pane's corners: square top corners under a `bar` toolbar, and the write pane's radius at every size.
+
+- [#247](https://github.com/delacournz/delacour-ui/pull/247) [`3090648`](https://github.com/delacournz/delacour-ui/commit/30906486b8cd402a9b0975bbd14a5d2998c5bbad) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - SectionProgress's pill now eases to each section's title width instead of jumping, and the titles slide out and in as the section changes — up for a later section, down for an earlier one. Reduce motion snaps the width and only fades. `useSectionProgress()` gains `index`, the active section's position.
+
+- [#247](https://github.com/delacournz/delacour-ui/pull/247) [`3090648`](https://github.com/delacournz/delacour-ui/commit/30906486b8cd402a9b0975bbd14a5d2998c5bbad) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - SectionProgress's pill now grows into its card as one surface — width, height and corners together, the list fading in as the card opens — instead of swapping a capsule for a scaled-in card. The card hugs a short list and stops at six rows, past which it scrolls. Reduce motion snaps the size and only fades the list.
+
+- [#247](https://github.com/delacournz/delacour-ui/pull/247) [`3090648`](https://github.com/delacournz/delacour-ui/commit/30906486b8cd402a9b0975bbd14a5d2998c5bbad) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `SectionProgress` draws its ring with Skia instead of `react-native-svg`: a track circle and a fill path trimmed to the progress shared value, with the same size, stroke, colours and twelve o'clock start. `react-native-skia` (already an optional peer) is now needed by `section-progress`. `resolveRingDashOffset` is replaced by `resolveRingTrimEnd` (the clamped 0–1 trim) and `resolveRingOval` (the stroke's centre-line box).
+
+- [#277](https://github.com/delacournz/delacour-ui/pull/277) [`9a556dd`](https://github.com/delacournz/delacour-ui/commit/9a556dd1adebb3c02bc44d732326730a2ac5bfac) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A searchable `Select` opens its sheet at its cap and holds that height while it is open, instead of sizing it to the filtered rows — typing no longer resizes the sheet, and the keyboard covers its bottom rather than moving its top. A `Select` without search still sizes to its rows. `resolveSelectListMinHeight` is the new pure resolver behind it.
+
+- [#262](https://github.com/delacournz/delacour-ui/pull/262) [`9876ccb`](https://github.com/delacournz/delacour-ui/commit/9876ccbfd6e9dffe801c8c1269cd58818dd4e44f) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `BottomSheet` takes `keyboardLiftLimit`. Set to `"maxDynamicContentSize"`, a sheet sized to its content is lifted by a keyboard only as far as its cap, decided on the UI thread from the keyboard's first frame. `Select` opts in, so a searchable select no longer shoots to the top of the screen when the keyboard opens and then settles back to its cap.
+
+- [#277](https://github.com/delacournz/delacour-ui/pull/277) [`9a556dd`](https://github.com/delacournz/delacour-ui/commit/9a556dd1adebb3c02bc44d732326730a2ac5bfac) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A searchable `Select` keeps its keyboard up while the results scroll, as `Combobox` does; only a drag that carries the sheet down, or a close, puts it away.
+
+- [#251](https://github.com/delacournz/delacour-ui/pull/251) [`73b5b90`](https://github.com/delacournz/delacour-ui/commit/73b5b903a690078dc31764102e57dd64861e309c) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Fix Skia canvases — `Chart`, `Flow`, `SectionProgress`, `Signature`, `Sketch`, `Tour` — that came up blank after a JS reload (the dev menu's, or `Updates.reloadAsync` after an OTA update) until something re-rendered them. `react-native-skia` 3.7.3 allocates canvas ids natively, unique for the life of the process, so the optional `react-native-skia` peer now needs `>=3.7.3`.
+
+- [#281](https://github.com/delacournz/delacour-ui/pull/281) [`b6899d6`](https://github.com/delacournz/delacour-ui/commit/b6899d69d8c4eb2397bf24a9943c8cc90f0d5aca) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - SlideButton's trail now fills the whole rail at the end of the travel instead of stopping under the handle's middle.
+
+- [#248](https://github.com/delacournz/delacour-ui/pull/248) [`9ba73a4`](https://github.com/delacournz/delacour-ui/commit/9ba73a442991496cd7a8a93cabb7e9343e54963c) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Tour` draws its dimmed mask with Skia instead of react-native-svg: a window-sized rect with the spotlight clipped out, its rounded-rectangle hole derived on the UI thread from the existing shared values rather than rebuilt as a path string every frame. `react-native-skia` is now a peer of `Tour`. `resolveMaskHole` is exported; `buildMaskPath` is deprecated and no longer used by the tour.
+
+  Between steps the hole now crossfades — the old one fades closed while the new one opens — instead of sliding across the screen, and the card stays mounted and glides to its new place instead of blinking out and fading back in. Under reduce motion the card jumps; the hole still fades. Opening the tour now has an entrance: the dim fades up around the first hole and the card follows a beat later, rising a few points into place (reduce motion keeps the fade and drops the rise). `TOUR_CARD_FADE_MS` is now 240. `TOUR_HOLE_FADE_MS`, `TOUR_ENTER_MS`, `resolveTourHoleFadeDuration`, `resolveTourCardEntrance` and `isSameHoleRect` are exported.
+
+- Updated dependencies [[`16f8413`](https://github.com/delacournz/delacour-ui/commit/16f8413724b5468cc2d22a9391ee8a43b9fbc7be), [`d2c5481`](https://github.com/delacournz/delacour-ui/commit/d2c54818db2e1348dfd97596d995324c8e60cd57), [`9876ccb`](https://github.com/delacournz/delacour-ui/commit/9876ccbfd6e9dffe801c8c1269cd58818dd4e44f), [`73b5b90`](https://github.com/delacournz/delacour-ui/commit/73b5b903a690078dc31764102e57dd64861e309c), [`73b5b90`](https://github.com/delacournz/delacour-ui/commit/73b5b903a690078dc31764102e57dd64861e309c)]:
+  - @delacour/react-native-bottom-sheet@0.3.0
+  - @delacour/react-native-charts@0.2.0
+
 ## 0.4.1
 
 ### Patch Changes

@@ -923,7 +923,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 35,
+		fileCount: 42,
 		groups: [
 			{
 				name: "slide-button",
@@ -960,6 +960,20 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
 					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
 					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "spinner",
+				title: "Spinner",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
 				],
 			},
 			{

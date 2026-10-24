@@ -67,6 +67,29 @@ export function resolveSelectSheetMaxHeight({
 }
 
 /**
+ * The floor under a searchable list's content, so the sheet holds the cap.
+ *
+ * Sized to its rows, the sheet shrank and grew on every keystroke as the filter
+ * dropped and restored them. Measuring at least the cap, it opens there and
+ * stays: the engine's dynamic snap point is clamped to the cap either way, and
+ * `keyboardLiftLimit` still stops the keyboard's lift at it on the UI thread,
+ * so the keyboard covers the sheet's bottom and its top never moves. Without
+ * search the rows cannot change while it is open, and caller `snapPoints` turn
+ * dynamic sizing off, so neither needs one.
+ */
+export function resolveSelectListMinHeight({
+	isSearchable,
+	maxHeight,
+	snapPoints,
+}: {
+	isSearchable: boolean;
+	maxHeight: number;
+	snapPoints: readonly unknown[] | undefined;
+}): number | undefined {
+	return isSearchable && snapPoints === undefined ? maxHeight : undefined;
+}
+
+/**
  * Styling for every part of a select.
  *
  * **The trigger draws no box of its own.** Its chrome is `Input`'s `root` slot,

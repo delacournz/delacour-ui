@@ -11,6 +11,7 @@ import {
 	normalizeOptions,
 	normalizeSearchText,
 	resolveSelectIconToken,
+	resolveSelectListMinHeight,
 	resolveSelectRowState,
 	resolveSelectSheetMaxHeight,
 	resolveSelectTriggerClass,
@@ -553,5 +554,21 @@ describe("resolveSelectSheetMaxHeight", () => {
 
 	test("never goes negative on a degenerate window", () => {
 		expect(resolveSelectSheetMaxHeight({ topInset: 50, windowHeight: 20 })).toBe(0);
+	});
+});
+
+describe("resolveSelectListMinHeight", () => {
+	const maxHeight = resolveSelectSheetMaxHeight({ topInset: 62, windowHeight: 874 });
+
+	test("holds a searchable list at the cap, so a filter that drops rows cannot shrink the sheet", () => {
+		expect(resolveSelectListMinHeight({ isSearchable: true, maxHeight, snapPoints: undefined })).toBe(maxHeight);
+	});
+
+	test("leaves a list without search sized to its rows", () => {
+		expect(resolveSelectListMinHeight({ isSearchable: false, maxHeight, snapPoints: undefined })).toBeUndefined();
+	});
+
+	test("steps aside for caller snap points, which replace dynamic sizing", () => {
+		expect(resolveSelectListMinHeight({ isSearchable: true, maxHeight, snapPoints: ["50%"] })).toBeUndefined();
 	});
 });

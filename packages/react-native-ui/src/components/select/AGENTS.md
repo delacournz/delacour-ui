@@ -24,7 +24,7 @@ engine. An app that imports no picker still never resolves it.
 | `select.collect.ts` | `collectOptions` / `findChildOfType` — reads the markers into the `options` shape |
 | `select.context.tsx` | `SelectProvider`, `useSelect()`, `useSelectContext()`, `useSelectPart()` |
 | `select.types.ts` | `SelectOption`, `SelectOptionGroup`, `SelectRowOption`, `SelectEntry`, `SelectListRow`, `SelectHighlightRange` |
-| `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
+| `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports — the sheet cap and the searchable list's floor among them |
 | `select.variants.test.ts` | |
 | `select.collect.test.ts` | |
 
@@ -92,6 +92,25 @@ engine. An app that imports no picker still never resolves it.
   started — so a full list shot to the top of the screen and settled back
   about a quarter of a second later. `snapPoints` bypasses dynamic sizing, and
   the cap and the limit with it.
+- **A searchable sheet opens at the cap and holds it.** Sized to its rows, it
+  shrank and grew on every keystroke as the filter dropped and restored them —
+  typing "zur" took the sheet from nine rows to one. `resolveSelectListMinHeight`
+  gives the list's content a floor of the cap, so the dynamic snap point is the
+  cap whatever the filter leaves, and the lift limit above still stops the
+  keyboard there: the keyboard covers the sheet's bottom and its top never
+  moves. Dynamic sizing stays on rather than passing the cap as a snap point,
+  because `keyboardLiftLimit` only clamps a dynamically sized sheet — a fixed
+  snap point at the cap would ride the keyboard to the top of the screen. A
+  short searchable list sits at the top of a full-height sheet, as `Combobox`'s
+  does. Without search the rows cannot change while it is open, so it keeps
+  sizing to them.
+- **Scrolling a searchable list keeps the keyboard up**, as in `Combobox`. The
+  engine puts the keyboard away the moment any pan starts on the sheet
+  (`enableBlurKeyboardOnGesture`), and its lists dismiss interactively, so
+  scrolling the results past the first few dropped the keyboard and the next
+  keystroke needed a tap on the field first. A searchable sheet turns the pan's
+  blur off and the list passes `keyboardDismissMode="none"`. A drag that carries
+  the sheet down still puts it away, and every close clears the query.
 - **The row floor is ListGroup's**, `min-h-12/14/16`, pinned by the test, so a
   row in the sheet sits level with a `ListGroup` row on the screen behind it. It
   is a floor, never a height, so a description can wrap.

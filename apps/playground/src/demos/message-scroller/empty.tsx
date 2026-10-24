@@ -1,10 +1,9 @@
 import { EmptyState } from "@delacour/react-native-ui/empty-state";
 import { Icon } from "@delacour/react-native-ui/icon";
 import { IconBubble2 } from "@delacour/react-native-ui/icons/central";
+import { Message } from "@delacour/react-native-ui/message";
 import { type MessageRunPosition, MessageScroller } from "@delacour/react-native-ui/message-scroller";
-import { Text } from "@delacour/react-native-ui/text";
 import type { ReactElement } from "react";
-import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -17,16 +16,14 @@ type ChatMessage = { id: string; author: "me" | "aria"; text: string; sentAt: Da
 
 const MESSAGES: ChatMessage[] = [];
 
-const RUN_GAP: Record<MessageRunPosition, string> = { single: "mt-3", first: "mt-3", middle: "mt-0.5", last: "mt-0.5" };
-
+/** `Message` reads `position` for both the run's spacing and the corners that face a neighbour. */
 function Bubble({ message, position }: { message: ChatMessage; position: MessageRunPosition }): ReactElement {
-	const isMine = message.author === "me";
 	return (
-		<View
-			className={`${RUN_GAP[position]} max-w-[80%] rounded-2xl px-3 py-2 ${isMine ? "self-end bg-primary" : "self-start bg-secondary"}`}
-		>
-			<Text className={isMine ? "text-primary-foreground" : "text-secondary-foreground"}>{message.text}</Text>
-		</View>
+		<Message direction={message.author === "me" ? "outgoing" : "incoming"} position={position}>
+			<Message.Bubble>
+				<Message.Text>{message.text}</Message.Text>
+			</Message.Bubble>
+		</Message>
 	);
 }
 

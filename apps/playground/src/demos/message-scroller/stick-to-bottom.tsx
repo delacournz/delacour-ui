@@ -1,6 +1,6 @@
 import { Button } from "@delacour/react-native-ui/button";
+import { Message } from "@delacour/react-native-ui/message";
 import { type MessageRunPosition, MessageScroller } from "@delacour/react-native-ui/message-scroller";
-import { Text } from "@delacour/react-native-ui/text";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
@@ -24,16 +24,14 @@ const SEED: ChatMessage[] = Array.from({ length: 16 }, (_, index) => ({
 	sentAt: new Date(START + index * 60_000),
 }));
 
-const RUN_GAP: Record<MessageRunPosition, string> = { single: "mt-3", first: "mt-3", middle: "mt-0.5", last: "mt-0.5" };
-
+/** `Message` reads `position` for both the run's spacing and the corners that face a neighbour. */
 function Bubble({ message, position }: { message: ChatMessage; position: MessageRunPosition }): ReactElement {
-	const isMine = message.author === "me";
 	return (
-		<View
-			className={`${RUN_GAP[position]} max-w-[80%] rounded-2xl px-3 py-2 ${isMine ? "self-end bg-primary" : "self-start bg-secondary"}`}
-		>
-			<Text className={isMine ? "text-primary-foreground" : "text-secondary-foreground"}>{message.text}</Text>
-		</View>
+		<Message direction={message.author === "me" ? "outgoing" : "incoming"} position={position}>
+			<Message.Bubble>
+				<Message.Text>{message.text}</Message.Text>
+			</Message.Bubble>
+		</Message>
 	);
 }
 

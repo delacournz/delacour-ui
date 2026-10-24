@@ -31,7 +31,7 @@ Run from the repo root; turbo fans each out across every workspace.
 
 ```bash
 bun install                # postinstall wires the prek hooks
-bun run dev                # turbo dev — the playground, in practice
+bun run dev                # turbo dev — the playground via `warden dev ios`, in practice
 bun run typecheck          # tsc --noEmit everywhere
 bun run check              # Biome lint + format
 bun run lint               # lint only

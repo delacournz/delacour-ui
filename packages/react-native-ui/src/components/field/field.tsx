@@ -19,6 +19,11 @@ export type FieldProps = ViewProps & {
 	isInvalid?: boolean;
 	/** The control inside is unavailable. Fades the label and disables the control. */
 	isDisabled?: boolean;
+	/**
+	 * Keeps `Field.Error`'s line when it has no message, so the error appearing or
+	 * clearing shifts nothing. Default `false`: an empty error takes no space.
+	 */
+	reserveError?: boolean;
 	className?: string;
 };
 
@@ -26,6 +31,7 @@ function FieldRoot({
 	orientation = "vertical",
 	isInvalid = false,
 	isDisabled = false,
+	reserveError = false,
 	className,
 	...props
 }: FieldProps): ReactElement {
@@ -44,8 +50,8 @@ function FieldRoot({
 	const registerLabel = useCallback((next: string | null) => setLabel(next), []);
 
 	const context = useMemo<FieldContextValue>(
-		() => ({ isDisabled, isInvalid, label, orientation, registerLabel, registerPress }),
-		[isDisabled, isInvalid, label, orientation, registerLabel, registerPress]
+		() => ({ isDisabled, isInvalid, label, orientation, registerLabel, registerPress, reserveError }),
+		[isDisabled, isInvalid, label, orientation, registerLabel, registerPress, reserveError]
 	);
 
 	const rootClassName = fieldVariants({ isDisabled, isInvalid, orientation }).root({ className });
@@ -92,6 +98,11 @@ function FieldRoot({
  * A control's own prop still wins, so one field inside an invalid group can opt
  * out with `<Input isInvalid={false} />`.
  *
+ * **`reserveError` holds the error's line open.** By default an empty
+ * `Field.Error` takes no space, so a message arriving pushes everything below it
+ * down. Set it where that jump matters — a field above a submit button, a form
+ * centred on screen — and the line is kept, invisible, until there is a message.
+ *
  * **The label names the control, too.** `Field.Label` hands its text down the
  * same context, so a control with no text of its own — a `Slider.Thumb`, a
  * `Switch` — reads "Volume" to a screen reader rather than a bare number. React
@@ -121,6 +132,13 @@ function FieldRoot({
  * <Field isInvalid={!isValid}>
  *   <Field.Label>Email</Field.Label>
  *   <Input inputMode="email" onChangeText={setEmail} value={email} />
+ *   <Field.Error>{error}</Field.Error>
+ * </Field>
+ *
+ * @example
+ * <Field isInvalid={!!error} reserveError>
+ *   <Field.Label>Signature</Field.Label>
+ *   <Signature onValueChange={setSignature} />
  *   <Field.Error>{error}</Field.Error>
  * </Field>
  *

@@ -774,6 +774,30 @@ the web inherits), the display steps above `3xl`, the vertical rhythm (`py-secti
 The library default is untouched by any of this. `DEFAULT_CONFIG` and `theme.css` stay the neutral
 identity theme a fresh `delacour init` ships; the house is what *this site* wears.
 
+## `@delacournz/ui` and `@delacournz/apogee`: installed, not used
+
+`delacournz/delacour-monorepo` publishes its two React DOM design systems to GitHub Packages,
+through the same `@delacournz` scope and `NPM_TOKEN` as [Tracing](#tracing)'s otel family. Both are
+dependencies of this app and of nothing else — they are Base UI + Tailwind v4, so React Native, Expo
+and the CLI never take them.
+
+| Package | What it is | CSS entry |
+| --- | --- | --- |
+| `@delacournz/ui` | The "site" design system — Base UI + shadcn base-lyra. `/<component>`, `/lib/<name>`, `/hooks/<name>`, `/icons/<name>`, `/tokens` | `@import "@delacournz/ui/styles";` |
+| `@delacournz/apogee` | The "app" design system — coss on Base UI, Orbit palettes, Phosphor icons. `/<component>`, `/kit/<name>`, `/x/<name>`, `/themes/<name>`, `/theme-provider` | `@import "@delacournz/apogee/styles.css";` |
+
+- **Nothing imports them yet.** No component, no CSS. Moving the site onto either is a migration,
+  planned separately; until then the house theme above — `tokens.css`, the generated `house.css`
+  and `@delacour/design-system` — stays the source of truth, and nothing here is renamed or removed.
+- **Never load both in one document.** They define the same shadcn token names (`--primary`,
+  `.dark`, …) with different values; whichever stylesheet lands last wins every shared token.
+- **The CSS entry is the whole setup.** Each declares its own `@source` for its `dist/`, so one
+  `@import` in a Tailwind v4 stylesheet is enough — no `@source` line of our own.
+- **Peers are `react` / `react-dom` ^19.2 and `tailwindcss` ^4**, all already here.
+- **`0.1.0` is not on the registry yet**, so `bun install` fails with a 404 until the monorepo
+  publishes it. Do not work around that with `file:` / `link:` paths or a hand-edited `bun.lock`;
+  the lockfile update lands with the first install after `0.1.0` is out.
+
 ## `/theme` builds a preset and renders it
 
 `src/routes/theme.tsx` takes a `?preset=` code — typed, pasted, arrived from `apps/playground`'s

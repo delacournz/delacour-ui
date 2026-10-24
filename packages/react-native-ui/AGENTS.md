@@ -334,6 +334,16 @@ its slot set, so a sibling would buy nothing but a second file to open.
     assignment forms are in **Compound component layout**;
     `src/display-name.test.ts` fails the build with the name of any component
     that lacks one.
+13. **A change that moves a component's pixels recaptures its previews in the same
+    branch.** The capture hash covers the demo, not this package, so editing
+    `button.variants.ts` and running `bun run previews` incrementally re-captures
+    nothing and the docs keep the old picture. Run `bun run previews:affected` —
+    it walks the imports from the diff, so a Button change also names the Dialog
+    that renders one — then `bun run previews -- -- --only <list> --force --headless`,
+    commit the media and `manifest.ts`, and embed the before/after in the pull
+    request when it opens. Tests, docs, comments and logic no capture exercises
+    are exempt. The full rule is under Conventions in the root `AGENTS.md`; the
+    `recapture-previews` skill walks it.
 
 ## Sizing
 
@@ -683,6 +693,9 @@ and `resolveSpinnerRootClass` live there so the whole matrix is reachable from
    `bun run previews` from the repo root to photograph them. That is what puts
    the component on the documentation site; a component with no captured demo
    shows a placeholder on the components index.
+
+   Every later change that alters how it looks recaptures them again, in the
+   same branch (rule 13).
 
 ## Compound component layout
 

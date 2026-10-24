@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Controlled, with slow work",
 	caption:
-		"Controlled by `isCompleted`. The release asks for completion; the handle waits at the end while the request runs, and the tick lands only when the parent says so.",
+		"Controlled by `isCompleted`. The release asks for completion; the handle waits at the end with a spinner while the request runs (`isLoading`), and the tick lands only when the parent says so.",
 	align: "stretch",
 	capture: { flow: true, align: "stretch" },
 };
@@ -31,6 +31,7 @@ export function Demo(): ReactElement {
 				accessibilityActionLabel="Transfer $240"
 				isCompleted={transfer.status === "sent"}
 				isFullWidth
+				isLoading={transfer.status === "sending"}
 				onComplete={send}
 				testID="controlled-transfer"
 				variant="success"

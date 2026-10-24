@@ -46,7 +46,12 @@ export function SlideButtonLabel({ className, ...props }: SlideButtonLabelProps)
 
 	const clipStyle = useAnimatedStyle(() => ({
 		opacity: handleWidth.value > 0 ? resolveSlideTrailOpacity(offset.value) : 0,
-		width: resolveSlideTrailWidth({ handleWidth: handleWidth.value, inset: SLIDE_BUTTON_INSET, offset: offset.value }),
+		width: resolveSlideTrailWidth({
+			handleWidth: handleWidth.value,
+			inset: SLIDE_BUTTON_INSET,
+			offset: offset.value,
+			travel: travel.value,
+		}),
 	}));
 
 	const onTrailStyle = useAnimatedStyle(() => ({

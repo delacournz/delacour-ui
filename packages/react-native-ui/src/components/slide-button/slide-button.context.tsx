@@ -8,6 +8,8 @@ export type SlideButtonContextValue = {
 	/** Whether the slide has been confirmed, on the **JS thread** — what accessibility reads. */
 	isCompleted: boolean;
 	isDisabled: boolean;
+	/** Whether work is running — the handle shows a spinner and takes no drag. */
+	isLoading: boolean;
 	/** Whether the layout runs right to left, so the handle travels leftwards. */
 	isRTL: boolean;
 	/**

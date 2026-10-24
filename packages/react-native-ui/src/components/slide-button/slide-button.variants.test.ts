@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { aliasedTokens } from "../../styles/theme-tokens.test";
 import {
 	isSlideArmed,
+	isSlideDraggable,
 	resolveSlideHandleWidth,
 	resolveSlideLabelGutter,
 	resolveSlideRelease,
@@ -49,9 +50,31 @@ describe("resolveSlideTrailOpacity", () => {
 });
 
 describe("resolveSlideTrailWidth", () => {
-	test("runs from the rail's start edge to the handle's middle", () => {
-		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 0 })).toBe(33);
-		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 100 })).toBe(133);
+	test("runs from the rail's start edge to the handle's middle at rest", () => {
+		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 0, travel: 200 })).toBe(33);
+	});
+
+	test("reaches the rail's far edge at the end of the travel", () => {
+		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 200, travel: 200 })).toBe(200 + 58 + 4 * 2);
+	});
+
+	test("holds the handle's middle until the last half-handle of travel", () => {
+		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 100, travel: 200 })).toBe(133);
+		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 167, travel: 200 })).toBe(200);
+	});
+
+	test("closes the gap to the far edge over that last stretch", () => {
+		const width = resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 183.5, travel: 200 });
+		expect(width).toBeCloseTo(4 + 183.5 + 29 + 16.5);
+		expect(width).toBeLessThan(4 + 183.5 + 58);
+	});
+
+	test("never runs past the rail, even while a spring overshoots", () => {
+		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 212, travel: 200 })).toBe(266);
+	});
+
+	test("holds the handle's middle before the rail is measured", () => {
+		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 0, travel: 0 })).toBe(33);
 	});
 });
 
@@ -284,5 +307,17 @@ describe("slideButtonVariants", () => {
 			for (const token of tokens) expect(ALIASED.has(`--color-${token}`)).toBe(true);
 		}
 		expect(ALIASED.has(`--color-${SLIDE_BUTTON_GLYPH_TOKEN}`)).toBe(true);
+	});
+});
+
+describe("isSlideDraggable", () => {
+	test("an idle handle takes the drag", () => {
+		expect(isSlideDraggable({ isDisabled: false, isLoading: false, isPinned: false })).toBe(true);
+	});
+
+	test("disabled, loading or pinned at the far end, it refuses", () => {
+		expect(isSlideDraggable({ isDisabled: true, isLoading: false, isPinned: false })).toBe(false);
+		expect(isSlideDraggable({ isDisabled: false, isLoading: true, isPinned: false })).toBe(false);
+		expect(isSlideDraggable({ isDisabled: false, isLoading: false, isPinned: true })).toBe(false);
 	});
 });

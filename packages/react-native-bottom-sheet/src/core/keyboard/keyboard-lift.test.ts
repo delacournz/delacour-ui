@@ -78,7 +78,7 @@ describe("keyboardLift under a ceiling", () => {
 });
 
 describe("keyboardCeiling", () => {
-	const capped = { limit: "maxDynamicContentSize", dynamicSizing: true, maxHeight: 852 } as const;
+	const capped = { limit: "maxDynamicContentSize", dynamicSizing: true, maxHeight: 852, highest: 0 } as const;
 
 	test("a dynamic sheet with a cap is lifted no higher than the cap", () => {
 		expect(keyboardCeiling({ ...capped, maxDynamicContentSize: 724 })).toBe(724);
@@ -95,5 +95,43 @@ describe("keyboardCeiling", () => {
 
 	test("the default limit is the container, cap or no cap", () => {
 		expect(keyboardCeiling({ ...capped, limit: "container", maxDynamicContentSize: 724 })).toBe(852);
+	});
+
+	test("highestSnapPoint stops the lift at the highest snap point, explicit or dynamic", () => {
+		const held = { ...capped, limit: "highestSnapPoint", maxDynamicContentSize: undefined } as const;
+		expect(keyboardCeiling({ ...held, dynamicSizing: false, highest: 772 })).toBe(772);
+		expect(keyboardCeiling({ ...held, highest: 400 })).toBe(400);
+	});
+
+	test("highestSnapPoint never lifts past the container, and an unmeasured one falls back to it", () => {
+		const held = {
+			...capped,
+			limit: "highestSnapPoint",
+			dynamicSizing: false,
+			maxDynamicContentSize: undefined,
+		} as const;
+		expect(keyboardCeiling({ ...held, highest: 900 })).toBe(852);
+		expect(keyboardCeiling({ ...held, highest: 0 })).toBe(852);
+	});
+
+	test("a sheet resting at its highest snap point under highestSnapPoint is not lifted at all", () => {
+		const ceiling = keyboardCeiling({
+			...capped,
+			limit: "highestSnapPoint",
+			dynamicSizing: false,
+			maxDynamicContentSize: undefined,
+			highest: 772,
+		});
+		expect(
+			keyboardLift({
+				keyboardHeight: 336,
+				progress: 1,
+				band: 34,
+				behavior: "interactive",
+				gapBelow: 0,
+				base: 772,
+				ceiling,
+			})
+		).toBe(0);
 	});
 });

@@ -58,14 +58,16 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 		state.keyboardOwned.value && state.config.value.keyboardBehavior !== "none" ? state.keyboardHeight.value : 0
 	);
 	// Under `keyboardLiftLimit="maxDynamicContentSize"` a capped dynamic sheet is
-	// lifted no higher than its cap — decided here, on the UI thread, so it holds
-	// from the keyboard's first frame.
+	// lifted no higher than its cap, and under `"highestSnapPoint"` no higher than
+	// that — decided here, on the UI thread, so it holds from the keyboard's first
+	// frame.
 	const ceiling = useDerivedValue(() =>
 		keyboardCeiling({
 			limit: state.config.value.keyboardLiftLimit,
 			dynamicSizing: state.config.value.dynamicSizing,
 			maxDynamicContentSize: state.config.value.maxDynamicContentSize,
 			maxHeight: maxHeight.value,
+			highest: highest.value,
 		})
 	);
 	const lift = useDerivedValue(() =>

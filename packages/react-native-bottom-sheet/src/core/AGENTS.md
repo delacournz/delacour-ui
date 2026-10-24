@@ -33,7 +33,7 @@ at the moment a view needs it, by `geometry/position.ts`, and nowhere else.
 | `snap-points/select-snap-height.ts` | W `selectSnapHeight` — nearest candidate to `height + projection · velocity`; closes only when given a closed height |
 | `snap-points/over-drag.ts` | W `resistOverDrag` — slope 1 at the edge, square-root beyond; factor 0 clamps |
 | `snap-points/sheet-state.ts` | W `sheetState` — closed / opened / extended / overExtended / fill |
-| `keyboard/keyboard-lift.ts` | W `keyboardInContainer`, W `keyboardLift` — the lift, band and gap subtracted in step with progress, stopped at the ceiling; W `keyboardCeiling` — a capped dynamic sheet is lifted no higher than its cap |
+| `keyboard/keyboard-lift.ts` | W `keyboardInContainer`, W `keyboardLift` — the lift, band and gap subtracted in step with progress, stopped at the ceiling; W `keyboardCeiling` — a capped dynamic sheet is lifted no higher than its cap, and under `highestSnapPoint` no sheet past its highest snap point |
 | `keyboard/keyboard-owner.ts` | W `isInputInsideSheet` — the `keyboardScope: "inside"` geometry test |
 | `keyboard/content-area.ts` | W `contentArea` — what the body may fill, never negative |
 | `keyboard/container-layout-guard.ts` | `acceptContainerLayout` — refuses Android's adjustResize double-count |
@@ -71,7 +71,8 @@ band          = detached ? 0 : inset                         bandNow = band · (
 footerHeight  = hasFooter ? footerContent + bandNow : 0
 dynamicSnapPoint = min(handle + content + (hasFooter ? footerContent : 0) + band, maxDynamicContentSize, available)
 snapPoints       = sortAsc(unique(normalize(spec, available) ∪ {dynamicSnapPoint if dynamicSizing}))
-ceiling       = keyboardLiftLimit = maxDynamicContentSize && dynamicSizing && maxDynamicContentSize ? min(maxDynamicContentSize, maxHeight) : maxHeight
+ceiling       = keyboardLiftLimit = maxDynamicContentSize && dynamicSizing && maxDynamicContentSize ? min(maxDynamicContentSize, maxHeight)
+              : keyboardLiftLimit = highestSnapPoint && highest > 0 ? min(highest, maxHeight) : maxHeight
 keyboardLift  = behavior ∈ {interactive, extend} ? clamp(kb − band · p − (detached ? restingBottom : 0), 0, ceiling − base) : 0
 height        = clamp(base + keyboardLift, closedHeight, maxHeight)
 translateY    = C − restingBottom − height

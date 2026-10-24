@@ -178,9 +178,9 @@ the available height and never adds a snap point. `open` and `close` are the sam
     keyboardBehavior: { type: '"interactive" | "extend" | "fillParent" | "none"', default: '"interactive"' },
     keyboardBlurBehavior: { type: '"none" | "restore"', default: '"restore"' },
     keyboardLiftLimit: {
-      type: '"container" | "maxDynamicContentSize"',
+      type: '"container" | "maxDynamicContentSize" | "highestSnapPoint"',
       default: '"container"',
-      description: "Whether maxDynamicContentSize also stops the keyboard's lift.",
+      description: "Where the keyboard's lift stops: the container's top, maxDynamicContentSize, or the highest snap point.",
     },
     keyboardScope: { type: '"registered" | "inside" | "always"', default: '"inside"' },
     enableBlurKeyboardOnGesture: { type: "boolean", default: "true" },

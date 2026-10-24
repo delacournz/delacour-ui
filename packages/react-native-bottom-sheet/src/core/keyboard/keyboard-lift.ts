@@ -60,6 +60,8 @@ export type KeyboardCeilingInput = {
 	maxDynamicContentSize: number | undefined;
 	/** The container's available height. */
 	maxHeight: number;
+	/** The highest snap point; read only under `highestSnapPoint`. */
+	highest: number;
 };
 
 /**
@@ -68,12 +70,17 @@ export type KeyboardCeilingInput = {
  * The container's top, unless `limit` is `maxDynamicContentSize` and the sheet
  * sizes to its content under that cap: then the lift stops at the cap and the
  * keyboard covers the sheet's bottom instead, the body shrinking by it as
- * always. Decided on the UI thread, in the frame the keyboard moves — a caller
+ * always. `highestSnapPoint` does the same at the highest snap point, explicit
+ * or dynamic, so a sheet opened there holds still while a keyboard comes and
+ * goes. Decided on the UI thread, in the frame the keyboard moves — a caller
  * shrinking the cap from a JS keyboard event lands a few frames late, and the
  * sheet overshoots to the container's top before settling.
  */
 export function keyboardCeiling(input: KeyboardCeilingInput): number {
 	"worklet";
+	if (input.limit === "highestSnapPoint") {
+		return input.highest > 0 && input.highest < input.maxHeight ? input.highest : input.maxHeight;
+	}
 	const cap = input.maxDynamicContentSize;
 	if (input.limit !== "maxDynamicContentSize" || !input.dynamicSizing || cap === undefined) return input.maxHeight;
 	const bounded = cap > 0 ? cap : 0;

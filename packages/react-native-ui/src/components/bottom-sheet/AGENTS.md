@@ -156,6 +156,10 @@ while an input in it has focus holds one height instead:
 - **A held snap point.** `Combobox` computes its one snap point at open, for
   the keyboard it expects, and keeps it until the next open.
 
+Scrolling the filtered list should not drop the keyboard either: `Select` and
+`Combobox` pass `enableBlurKeyboardOnGesture={false}` to the sheet and
+`keyboardDismissMode="none"` to the list while a search field is in it.
+
 A form whose fields never change the content's height needs none of this.
 
 ## Compat

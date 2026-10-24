@@ -1,5 +1,11 @@
 # delacour
 
+## 0.5.1
+
+### Patch Changes
+
+- [#253](https://github.com/delacournz/delacour-ui/pull/253) [`979740a`](https://github.com/delacournz/delacour-ui/commit/979740a4b83e8e2bc4167a6282bd7267d4771203) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `update` merges a component's `AGENTS.md` that a project edited after copying it with an older CLI, instead of skipping it with no base to merge from — so docs still naming `bun test` pick up the package-manager-neutral text. The MCP `add_components` tool and the README describe `--tests` as copying tests written for the project's own runner.
+
 ## 0.5.0
 
 ### Minor Changes

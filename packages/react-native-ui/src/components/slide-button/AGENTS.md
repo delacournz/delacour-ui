@@ -44,6 +44,14 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
   rear is a curve; a trail stopping at the straight edge leaves a sliver of rail
   above and below it. Ending under the handle reads as one shape — the handle
   dragging its colour along — while still sharing an edge with it as seen.
+- **At the end of the travel the trail fills the whole rail.** Held at the
+  handle's middle all the way, a confirmed handle left the rail showing around
+  its front curve and in the inset past it, so the fill looked as if it stopped
+  halfway under the handle. Over the last `handleWidth / 2 + inset` of travel
+  `resolveSlideTrailWidth` runs the lead edge on to the far edge, landing there
+  exactly at full travel, clamped so a spring's overshoot cannot run it past.
+  Before that stretch it stays under the handle, so mid-drag nothing peeks out
+  around the handle's front curve.
 - **The trail is invisible at rest.** It fades in over the first 8pt of travel
   (`resolveSlideTrailOpacity`). Ending under the handle's middle, it would
   otherwise peek out behind the resting handle's rear curve — a coloured sliver

@@ -254,24 +254,39 @@ export function resolveSlideTrailOpacity(offset: number): number {
 }
 
 /**
- * How wide the trail is: from the rail's start edge to the handle's middle.
+ * How wide the trail is: from the rail's start edge to the handle's middle, and
+ * over the last half-handle of travel, on to the rail's far edge.
  *
  * It ends *under* the handle rather than at its rear edge — a stadium's rear is
  * a curve, and a trail stopping at the straight edge leaves a sliver of rail
- * above and below it. The label's trail-coloured copy is clipped to the same
- * width, so the two cannot disagree.
+ * above and below it. Held at the middle all the way, though, a confirmed
+ * handle left the rail showing around its front curve and in the inset beyond
+ * it, so the fill read as stopping short. Over the final `handleWidth / 2 +
+ * inset` points the lead edge closes that gap, landing on the far edge exactly
+ * at the end of the travel. Clamped to the rail, so a spring's overshoot cannot
+ * run it past. The label's trail-coloured copy is clipped to the same width, so
+ * the two cannot disagree.
  */
 export function resolveSlideTrailWidth({
 	offset,
 	handleWidth,
 	inset,
+	travel,
 }: {
 	offset: number;
 	handleWidth: number;
 	inset: number;
+	travel: number;
 }): number {
 	"worklet";
-	return inset + offset + handleWidth / 2;
+	const middle = inset + offset + handleWidth / 2;
+	if (travel <= 0) return middle;
+	const ramp = handleWidth / 2 + inset;
+	const into = offset - (travel - ramp);
+	const extension = into <= 0 ? 0 : into >= ramp ? ramp : into;
+	const width = middle + extension;
+	const rail = travel + handleWidth + inset * 2;
+	return width > rail ? rail : width;
 }
 
 /**

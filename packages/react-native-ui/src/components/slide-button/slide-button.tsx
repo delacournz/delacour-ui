@@ -325,7 +325,7 @@ function SlideButtonRoot({
 					onLayout={handleLayout}
 					{...props}
 				>
-					<SlideButtonTrail className={slots.trail()} handleWidth={handleWidth} offset={offset} />
+					<SlideButtonTrail className={slots.trail()} handleWidth={handleWidth} offset={offset} travel={travel} />
 					{content}
 				</Animated.View>
 			</GestureDetector>
@@ -339,7 +339,9 @@ function SlideButtonRoot({
  * It ends *under* the handle rather than at its rear edge: a stadium's rear is a
  * curve, and a trail that stopped at its straight edge would leave a sliver of
  * rail showing above and below that curve. Ending under the handle means the two
- * read as one shape — the handle dragging its colour along.
+ * read as one shape — the handle dragging its colour along. Over the last
+ * half-handle of travel it runs on to the rail's far edge, so a confirmed slide
+ * reads as filled rather than stopping short of the end.
  *
  * Internal: the root renders it, so it lives here rather than in a part file.
  */
@@ -347,14 +349,21 @@ function SlideButtonTrail({
 	className,
 	offset,
 	handleWidth,
+	travel,
 }: {
 	className: string;
 	offset: SharedValue<number>;
 	handleWidth: SharedValue<number>;
+	travel: SharedValue<number>;
 }): ReactElement {
 	const style = useAnimatedStyle(() => ({
 		opacity: handleWidth.value > 0 ? resolveSlideTrailOpacity(offset.value) : 0,
-		width: resolveSlideTrailWidth({ handleWidth: handleWidth.value, inset: SLIDE_BUTTON_INSET, offset: offset.value }),
+		width: resolveSlideTrailWidth({
+			handleWidth: handleWidth.value,
+			inset: SLIDE_BUTTON_INSET,
+			offset: offset.value,
+			travel: travel.value,
+		}),
 	}));
 	return <Animated.View className={className} style={style} />;
 }

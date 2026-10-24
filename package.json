@@ -25,7 +25,9 @@
 		"cli:unlink": "cd packages/cli && bun scripts/link.ts unlink",
 		"nuke": "rm -rf node_modules ./apps/**/node_modules ./packages/**/node_modules && bun install --no-cache -f",
 		"previews": "turbo previews --filter=@delacour/playground",
-		"previews:verify": "turbo previews:verify --filter=@delacour/playground"
+		"previews:verify": "turbo previews:verify --filter=@delacour/playground",
+		"previews:affected": "bun scripts/affected-previews.ts",
+		"previews:pr-table": "bun scripts/preview-pr-table.ts"
 	},
 	"workspaces": {
 		"packages": [

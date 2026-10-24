@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
+import { chmod, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
 import {
 	commandLabel,
@@ -451,6 +454,47 @@ describe("commandLabel", () => {
 });
 
 describe("drift guard", () => {
+	test("CI writes dispatch statuses only for the commit it tested", async () => {
+		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
+			jobs: { signoff: { steps: { run?: string }[] } };
+		};
+		const script = workflow.jobs.signoff.steps.find((step) => step.run)?.run;
+		if (!script) throw new Error("The CI signoff script is missing.");
+		const directory = await mkdtemp(join(tmpdir(), "signoff-ci-test-"));
+		try {
+			const gh = join(directory, "gh");
+			await Bun.write(gh, '#!/bin/sh\nprintf "%s\\n" "$*" >> "$STATUS_LOG"\n');
+			await chmod(gh, 0o755);
+			for (const [event, requested, tested, expectedExit] of [
+				["workflow_dispatch", "a".repeat(40), "a".repeat(40), 0],
+				["workflow_dispatch", "b".repeat(40), "a".repeat(40), 1],
+				["pull_request", "b".repeat(40), "a".repeat(40), 0],
+			] as const) {
+				const log = join(directory, `${event}-${requested}.log`);
+				const child = Bun.spawn(["bash", "-e", "-c", script.replaceAll("${{ github.repository }}", "test/repo")], {
+					env: {
+						...process.env,
+						PATH: `${directory}:${process.env.PATH}`,
+						GITHUB_EVENT_NAME: event,
+						GITHUB_SHA: tested,
+						SHA: requested,
+						STATUS_LOG: log,
+						ACTOR: "test",
+						RUN_URL: "https://example.test/run",
+					},
+					stdout: "ignore",
+					stderr: "ignore",
+				});
+				expect(await child.exited).toBe(expectedExit);
+				const calls = existsSync(log) ? (await Bun.file(log).text()).trim().split("\n") : [];
+				expect(calls).toHaveLength(expectedExit === 0 ? REQUIRED_CONTEXTS.length : 0);
+				for (const call of calls) expect(call).toContain(`/statuses/${requested}`);
+			}
+		} finally {
+			await rm(directory, { recursive: true, force: true });
+		}
+	});
+
 	test("every check points at a workflow file that exists", () => {
 		for (const check of SIGNOFF_CHECKS) {
 			expect(existsSync(`.github/workflows/${check.workflow}`)).toBe(true);

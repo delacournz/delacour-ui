@@ -394,6 +394,12 @@ export async function removeVerifyDir(dir: string, reporter: Reporter): Promise<
 		);
 }
 
+export async function removeVerifyArtifacts(paths: VerifyPaths, reporter: Reporter): Promise<void> {
+	for (const path of [paths.app, paths.cli, paths.packages, paths.cache]) {
+		if (path) await removeVerifyDir(path, reporter);
+	}
+}
+
 async function directorySize(dir: string): Promise<number> {
 	let total = 0;
 

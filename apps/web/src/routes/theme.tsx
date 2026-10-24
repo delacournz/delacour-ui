@@ -1,3 +1,6 @@
+import { encodePreset } from "@delacour/design-system/preset";
+import { auditTheme, formatThemeQualityReport } from "@delacour/design-system/quality";
+import { resolveTokens } from "@delacour/design-system/resolve";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactElement, ReactNode } from "react";
@@ -5,6 +8,7 @@ import { PresetsRow } from "@/components/presets-row";
 import { ResetThemeLink, ThemeBuilder } from "@/components/theme-builder";
 import { CopyThemeButton, PresetNotice, ThemeCssPanel, ThemeSummary } from "@/components/theme-css";
 import { ThemePreview } from "@/components/theme-preview";
+import { ThemeQuality } from "@/components/theme-quality";
 import { themeFontLinks } from "@/lib/google-fonts";
 import { homeOptions } from "@/lib/layout.shared";
 import { appName } from "@/lib/shared";
@@ -79,6 +83,8 @@ function ThemePage(): ReactElement {
 	const resolved = resolvePreset(preset);
 	const native = presetNativeCss(resolved.config);
 	const web = presetCss(resolved.config);
+	const quality = auditTheme(resolveTokens(resolved.config));
+	const report = formatThemeQualityReport(quality, encodePreset(resolved.config));
 
 	return (
 		<HomeLayout {...homeOptions()}>
@@ -125,8 +131,12 @@ function ThemePage(): ReactElement {
 							<ThemeSummary config={resolved.config} />
 						</Panel>
 
+						<Panel kicker="Theme quality">
+							<ThemeQuality results={quality} />
+						</Panel>
+
 						<Panel kicker="Theme tokens">
-							<ThemeCssPanel native={native} web={web} />
+							<ThemeCssPanel native={native} report={report} web={web} />
 						</Panel>
 
 						<section className="flex max-w-reading flex-col gap-3 border-fd-border/70 border-t pt-8">

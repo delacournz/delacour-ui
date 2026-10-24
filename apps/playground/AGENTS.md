@@ -821,6 +821,12 @@ app exactly as `react-native-ui` ships — asserted against `theme.css` rather t
 
 ### Generate CSS
 
+The Design tab has a Theme quality panel. It uses the shared `auditTheme`
+function to show contrast results for both modes. Each result names its token
+pair and target. Generate CSS opens the same preset on the web, where
+`quality.txt` exports these results. The Preview tab shows selected, loading,
+disabled, and error states for visual review. These checks do not certify accessibility.
+
 `/theme`'s footer is the way a theme leaves the phone. It encodes the seven axes as a
 twelve-character code and opens `https://ui.delacour.co.nz/theme?preset=<code>`, where the docs site
 resolves the same tokens and renders a `theme.css` with a copy button, plus a `globals.css` tab

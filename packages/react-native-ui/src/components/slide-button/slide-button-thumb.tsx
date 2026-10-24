@@ -1,11 +1,12 @@
-import { type ReactElement, type ReactNode, useMemo } from "react";
+import { type ReactElement, type ReactNode, useEffect, useMemo } from "react";
 import type { ViewProps } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { IconCheckmark1Small, IconChevronLeft, IconChevronRight } from "../../icons/central";
 import { Icon, IconDefaultsProvider } from "../icon";
+import { Spinner } from "../spinner";
 import { useSlideButtonPart } from "./slide-button.context";
-import { SLIDE_BUTTON_GLYPH_TOKEN, slideButtonVariants } from "./slide-button.variants";
+import { SLIDE_BUTTON_GLYPH_MS, SLIDE_BUTTON_GLYPH_TOKEN, slideButtonVariants } from "./slide-button.variants";
 
 export type SlideButtonThumbProps = Omit<ViewProps, "children" | "style"> & {
 	/** Replaces the chevron. An `Icon` inherits the handle's glyph size and colour. */
@@ -32,9 +33,13 @@ export type SlideButtonThumbProps = Omit<ViewProps, "children" | "style"> & {
  * With no children it draws a chevron pointing the way it travels (mirrored
  * under RTL), which crosses into a tick when the slide confirms. Children replace
  * both: a custom glyph is the caller's to change.
+ *
+ * While the root is `isLoading` the glyph — default or custom — fades out under a
+ * `Spinner` that takes the glyph's size and colour from the same icon defaults, so
+ * the handle shows the work running without a glyph of its own to restyle.
  */
 export function SlideButtonThumb({ className, children, ...props }: SlideButtonThumbProps): ReactElement {
-	const { size, variant, isRTL, offset, handleWidth } = useSlideButtonPart("SlideButton.Thumb");
+	const { size, variant, isRTL, isLoading, offset, handleWidth } = useSlideButtonPart("SlideButton.Thumb");
 	const direction = isRTL ? -1 : 1;
 
 	const thumbStyle = useAnimatedStyle(() => ({
@@ -42,6 +47,12 @@ export function SlideButtonThumb({ className, children, ...props }: SlideButtonT
 		transform: [{ translateX: offset.value * direction }],
 		width: handleWidth.value,
 	}));
+
+	const loading = useSharedValue(isLoading ? 1 : 0);
+	useEffect(() => {
+		loading.value = withTiming(isLoading ? 1 : 0, { duration: SLIDE_BUTTON_GLYPH_MS });
+	}, [isLoading, loading]);
+	const glyphStyle = useAnimatedStyle(() => ({ opacity: 1 - loading.value }));
 
 	const slots = slideButtonVariants({ size, variant });
 	const glyphColor = useThemeColor(SLIDE_BUTTON_GLYPH_TOKEN);
@@ -53,7 +64,12 @@ export function SlideButtonThumb({ className, children, ...props }: SlideButtonT
 
 	return (
 		<Animated.View className={slots.thumb({ className })} style={thumbStyle} {...props}>
-			<IconDefaultsProvider value={iconDefaults}>{children ?? <SlideButtonGlyph />}</IconDefaultsProvider>
+			<IconDefaultsProvider value={iconDefaults}>
+				<Animated.View className="items-center justify-center" style={glyphStyle}>
+					{children ?? <SlideButtonGlyph />}
+				</Animated.View>
+				<Spinner className="absolute" isLoading={isLoading} />
+			</IconDefaultsProvider>
 		</Animated.View>
 	);
 }

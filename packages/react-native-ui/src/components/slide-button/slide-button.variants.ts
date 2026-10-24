@@ -223,6 +223,26 @@ export function resolveSlideHandleWidth({ railHeight, inset }: { railHeight: num
 }
 
 /**
+ * Whether the handle takes a drag — or a screen reader's activate — right now.
+ *
+ * Disabled refuses it, and so does loading: the work a slide asked for is still
+ * running, and a second slide would ask again. Pinned at the far end, confirmed or
+ * awaiting an answer, the handle has nowhere left to go.
+ */
+export function isSlideDraggable({
+	isDisabled,
+	isLoading,
+	isPinned,
+}: {
+	isDisabled: boolean;
+	isLoading: boolean;
+	isPinned: boolean;
+}): boolean {
+	"worklet";
+	return !isDisabled && !isLoading && !isPinned;
+}
+
+/**
  * Whether the handle is far enough along that letting go here would confirm —
  * what the arming haptic reports.
  *

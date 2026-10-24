@@ -25,6 +25,7 @@ import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SlideButtonContextValue, SlideButtonProvider } from "./slide-button.context";
 import {
 	isSlideArmed,
+	isSlideDraggable,
 	resolveSlideHandleWidth,
 	resolveSlideRelease,
 	resolveSlideThreshold,
@@ -74,6 +75,11 @@ export type SlideButtonProps = Omit<ViewProps, "children" | "style"> & {
 	autoResetDelay?: number;
 	/** Fades the control and refuses the drag — the handle does not move at all. */
 	isDisabled?: boolean;
+	/**
+	 * Swaps the handle's glyph for a spinner, refuses the drag and announces the
+	 * control as busy. Does not dim it — the slide landed, the work is running.
+	 */
+	isLoading?: boolean;
 	/** Played as a drag crosses the threshold; a success knock follows on commit. Off by default. */
 	haptic?: false | HapticFeedback;
 	/** What the screen reader's activate action is called. Imperative, naming the outcome. Default "Confirm". */
@@ -94,6 +100,7 @@ function SlideButtonRoot({
 	isAutoReset = false,
 	autoResetDelay = SLIDE_BUTTON_DEFAULT_AUTO_RESET_MS,
 	isDisabled = false,
+	isLoading = false,
 	haptic = false,
 	accessibilityActionLabel = "Confirm",
 	accessibilityLabel,
@@ -213,7 +220,7 @@ function SlideButtonRoot({
 			.failOffsetY([-SLIDE_BUTTON_FAIL_OFFSET_Y, SLIDE_BUTTON_FAIL_OFFSET_Y])
 			.onStart(() => {
 				"worklet";
-				if (isDisabled || pinned.value) return;
+				if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value })) return;
 				cancelAnimation(offset);
 				grabbed.value = offset.value;
 				armed.value = false;
@@ -221,7 +228,7 @@ function SlideButtonRoot({
 			.onUpdate((event) => {
 				"worklet";
 				const span = travel.value;
-				if (isDisabled || pinned.value || span <= 0) return;
+				if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value }) || span <= 0) return;
 
 				// No easing on the way out: the handle tracks the finger exactly.
 				const next = Math.min(span, Math.max(0, grabbed.value + event.translationX * direction));
@@ -236,7 +243,7 @@ function SlideButtonRoot({
 			})
 			.onEnd((event, success) => {
 				"worklet";
-				if (isDisabled || pinned.value) return;
+				if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value })) return;
 				armed.value = false;
 				const velocity = event.velocityX * direction;
 				const release = resolveSlideRelease({
@@ -265,6 +272,7 @@ function SlideButtonRoot({
 		grabbed,
 		haptic,
 		isDisabled,
+		isLoading,
 		isReducedMotion,
 		offset,
 		pinned,
@@ -273,11 +281,11 @@ function SlideButtonRoot({
 	]);
 
 	const activate = useCallback(() => {
-		if (isDisabled || pinned.value) return;
+		if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value })) return;
 		pinned.value = true;
 		moveTo(travel.value);
 		complete();
-	}, [complete, isDisabled, moveTo, pinned, travel]);
+	}, [complete, isDisabled, isLoading, moveTo, pinned, travel]);
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
@@ -297,13 +305,14 @@ function SlideButtonRoot({
 			handleWidth,
 			isCompleted: completed,
 			isDisabled,
+			isLoading,
 			isRTL,
 			offset,
 			size,
 			travel,
 			variant,
 		}),
-		[completed, glyph, handleWidth, isDisabled, offset, size, travel, variant]
+		[completed, glyph, handleWidth, isDisabled, isLoading, offset, size, travel, variant]
 	);
 
 	const content = useMemo(() => withThumb(children), [children]);
@@ -317,7 +326,7 @@ function SlideButtonRoot({
 					accessibilityActions={accessibilityActions}
 					accessibilityLabel={label}
 					accessibilityRole="button"
-					accessibilityState={{ checked: completed, disabled: isDisabled }}
+					accessibilityState={{ busy: isLoading, checked: completed, disabled: isDisabled }}
 					accessible
 					className={slots.root({ className })}
 					onAccessibilityAction={handleAccessibilityAction}
@@ -435,6 +444,11 @@ function isPart(child: ReactNode, part: { displayName?: string }): boolean {
  *
  * The label is centred in the whole rail and never fades. A `SlideButton.Thumb` is
  * composed in when none is written; write one to put a different glyph on the handle.
+ *
+ * **`isLoading` shows the work.** The handle's glyph gives way to a spinner, the
+ * drag is refused and the rail announces itself busy — `Button`'s `isLoading`,
+ * on the handle. Pair it with a controlled `isCompleted` to show slow work
+ * running while the handle waits at the end.
  *
  * Under RTL the handle rests at the right and travels left. A screen reader's
  * activate confirms it outright, named by `accessibilityActionLabel`.

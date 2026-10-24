@@ -11,6 +11,7 @@
 		"icon",
 		"icons",
 		"pressable",
+		"spinner",
 		"text",
 		"tv",
 		"use-controllable-state",
@@ -69,6 +70,10 @@
 				{
 					"from": "../icon",
 					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
 				}
 			]
 		},

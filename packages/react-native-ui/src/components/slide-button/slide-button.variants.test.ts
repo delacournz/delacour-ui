@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { aliasedTokens } from "../../styles/theme-tokens.test";
 import {
 	isSlideArmed,
+	isSlideDraggable,
 	resolveSlideHandleWidth,
 	resolveSlideLabelGutter,
 	resolveSlideRelease,
@@ -306,5 +307,17 @@ describe("slideButtonVariants", () => {
 			for (const token of tokens) expect(ALIASED.has(`--color-${token}`)).toBe(true);
 		}
 		expect(ALIASED.has(`--color-${SLIDE_BUTTON_GLYPH_TOKEN}`)).toBe(true);
+	});
+});
+
+describe("isSlideDraggable", () => {
+	test("an idle handle takes the drag", () => {
+		expect(isSlideDraggable({ isDisabled: false, isLoading: false, isPinned: false })).toBe(true);
+	});
+
+	test("disabled, loading or pinned at the far end, it refuses", () => {
+		expect(isSlideDraggable({ isDisabled: true, isLoading: false, isPinned: false })).toBe(false);
+		expect(isSlideDraggable({ isDisabled: false, isLoading: true, isPinned: false })).toBe(false);
+		expect(isSlideDraggable({ isDisabled: false, isLoading: false, isPinned: true })).toBe(false);
 	});
 });

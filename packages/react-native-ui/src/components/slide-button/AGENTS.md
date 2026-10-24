@@ -24,7 +24,7 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
 ## Design
 
 - **Variants**: `secondary` (default), `destructive`, `success`. **Sizes**:
-  `sm`, `md`, `lg`. Plus `isFullWidth` and `isDisabled`.
+  `sm`, `md`, `lg`. Plus `isFullWidth`, `isDisabled` and `isLoading`.
 - **There is no `primary` variant.** The handle is neutral, so a primary rail
   with a neutral handle draws the same picture as `secondary` in any theme whose
   primary sits close to its foreground — the default palette included. Two names
@@ -98,6 +98,14 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
   returns early. A disabled recognizer lets the touch fall through to whatever
   is behind it — inside a stack with a full-screen back swipe, dragging a
   disabled slide navigated back. Found on the simulator.
+- **`isLoading` is `Button`'s prop, on the handle.** The glyph — the default
+  chevron or a custom `SlideButton.Thumb` child — fades out under a `Spinner`
+  that inherits the glyph's size and colour through the handle's icon defaults,
+  the drag and the screen reader's activate are refused (`isSlideDraggable`), and
+  the rail reports `busy`. It does not dim: the slide landed and the work is
+  running, where dimming says the control is unavailable. The control does not
+  infer it from a pending `onComplete` promise — the caller owns the request, so
+  the caller says when it is running, the same way `Button` never guesses.
 - **One `Gesture.Pan()` on the rail, `activeOffsetX ±8`, `failOffsetY ±12`.** A
   vertical scroll that starts on the rail fails the pan first, so the control
   survives inside a vertical `ScrollView`. A cancelled pan returns home.

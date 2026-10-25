@@ -77,7 +77,7 @@ src/
 │   ├── api/search.ts
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
 │   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
-├── start.ts               crawler block + br/gzip + csrf + Accept: text/markdown negotiation
+├── start.ts               crawler block + preset rate limit + br/gzip + csrf + Accept: text/markdown negotiation
 ├── server/otel.ts         Nitro middleware — one OpenTelemetry SERVER span per request
 ├── server/trace.ts        traceRequest(), adapts withServerSpan to the middleware — see "Tracing"
 └── styles/app.css         Tailwind + Fumadocs preset + the react-native-ui palette
@@ -977,32 +977,74 @@ cannot be `immutable` the way `/assets` is.
 
 ### Crawler block, and why the edge is the real fix
 
-`src/lib/crawler-block.ts` holds one typed constant, `BLOCKED_CRAWLERS` (Meta's `57.141.0.0/16`
-and the `meta-externalagent` / `meta-externalfetcher` / `facebookexternalhit` / `FacebookBot` user
-agents), and `src/start.ts` runs it as the first request middleware: a match gets a bare `403`
+`src/lib/crawler-block.ts` holds one typed constant, `BLOCKED_CRAWLERS` — Meta's `57.141.0.0/16`
+and `2a03:2880::/32`, Alibaba Cloud's `47.79.192.0/19`, and the `meta-externalagent` /
+`meta-externalfetcher` / `meta-webindexer` / `facebookexternalhit` / `FacebookBot` user agents —
+and `src/start.ts` runs it as the first request middleware: a match gets a bare `403`
 with `Cache-Control: no-store` (so the edge never caches it under the path's key), everything but
-`/robots.txt`. The client IP is Railway's `X-Real-IP` (set by the edge, documented in Public
+`/robots.txt`. `inCidr` takes IPv4 and IPv6; an address never matches a block of the other family.
+The client IP is Railway's `X-Real-IP` (set by the edge, documented in Public
 Networking specs); `X-Forwarded-For` is never read because a client can prepend to it.
 
 **This only sees requests that reach the process.** Railway's CDN (`--html-caching force`, and the
 pages already send `s-maxage`) answers a cached URL at the edge: a `x-cache: HIT` never touches
 the app, so this middleware cannot stop a crawler from being served `/theme` from cache. Query
 strings are part of the cache key, so `/theme?x=…` always misses and does reach it. The complete
-fix is a Railway **edge rule** (service Settings > Edge > Edge Rules: block on Client IP in
-`57.141.0.0/16`, or Header `user-agent` matches `*meta-external*`), evaluated before the cache.
-Keep the two in step.
+fix is a Railway **edge rule**, evaluated before the cache, and the production service `ui-web`
+carries four (service Settings > Edge > Edge Rules, or `updateServiceEdgeRules` on the GraphQL
+API): allow `/robots.txt`; block Client IP in `47.79.192.0/19`; block Client IP in `57.141.0.0/16`;
+block Header `user-agent` contains any of the five Meta agent names. Edge rules match IPv4 only,
+which is why the IPv6 range lives here and not there, and why the user-agent rule exists: Meta's
+IPv6 fleet names itself. Keep the constant and the rules in step — a range added to one goes in
+the other.
 
-**A crawler with no name gets a rate limit instead.** `src/lib/preset-rate-limit.ts` refuses an
-IP's 31st `/theme?preset=` load in a 10-minute window with an uncacheable `429` + `Retry-After`,
-from the same middleware, just after the block list. Readers never get near it: the builder's
-links go to a route with no loader, so clicking through it never reaches the server, and only a
-first load, a paste or a reload does. It exists for the headless fleet that started on
-2026-10-16 (Asia/Shanghai timezone, a browser user agent, outside Meta's range, ignoring
-`Disallow: /theme?`), which loaded 10–30k fresh `?preset=` URLs an hour, each one a CDN miss and a
-full render. It also showed up as ~520k PostHog pageviews, which PostHog bot rules now filter.
-The counter lives in the process, which is the whole service because `ui-web` runs one replica.
-Add replicas and the effective ceiling multiplies by their count. Once the fleet's IP range shows
-up in `railway logs --http`, it belongs in `BLOCKED_CRAWLERS` and an edge rule as well.
+**A crawler with no name gets a rate limit instead.** `src/lib/preset-rate-limit.ts` charges
+every `/theme?preset=` load against two budgets from `@delacournz/rate-limit` — the monorepo's
+shared limiter package, `packages/rate-limit` in `delacournz/delacour-monorepo` — and refuses with
+an uncacheable `429` + `RateLimit-*` + `Retry-After` from the same middleware, just after the block
+list. Readers never get near it: the builder's links go to a route with no loader, so clicking
+through it never reaches the server, and only a first load, a paste or a reload does. It exists
+for the headless fleet that started on 2026-10-16 (Asia/Shanghai timezone, a browser user agent,
+outside Meta's range, ignoring `Disallow: /theme?`), which loaded 10–30k fresh `?preset=` URLs an
+hour, each one a CDN miss and a full render. It also showed up as ~520k PostHog pageviews, which
+PostHog bot rules now filter.
+
+| Budget | Key | Ceiling | Why |
+| --- | --- | --- | --- |
+| `perAddress` | `preset:<ip>` | 30 in 10 min | far past a reader, far below a crawl |
+| `total` | `preset:total` | 600 in 10 min | the one a fleet cannot rotate past |
+
+The per-address count is no defence against a fleet: on 2026-10-25 one rotated 400+ Alibaba Cloud
+addresses, each under thirty loads, rendered `?preset=` pages at ~37 a second, and had the service
+down for twenty hours (the process stopped answering, Railway's healthcheck killed it, and
+`ON_FAILURE` gave up after ten restarts). Six hundred `?preset=` renders in ten minutes — one a
+second, more than readers load in a day — is now the most any number of addresses can extract from
+the process in a window; past it, every `?preset=` load is a `429` until the window turns, and the
+bare `/theme` is untouched. Once a fleet's range shows up in `railway logs --http`, it belongs in
+`BLOCKED_CRAWLERS` and an edge rule as well.
+
+**The counters live in Redis, not the process.** `src/lib/rate-limit.ts` builds the site's one
+limiter: over the `rate-limit-redis` service on Railway when `RATE_LIMIT_REDIS_URL` is set (the
+monorepo's `.railway/railway.ts` provisions it and wires the variable onto `ui-web` in both
+environments — it is **not** the jobs Redis, which runs `noeviction` for BullMQ), and over this
+process's memory otherwise (dev, tests, a build). Every key is prefixed `ui-web`, so another
+product on the same instance never shares a window. While Redis is unreachable the package counts
+in-process and logs `degraded` once, then `recovered` once — a Redis outage is today's posture, not
+no limiting and not a 500. The address is `clientAddress`'s: Railway's `X-Real-IP` is the hop, and
+when that hop is a Cloudflare address (Cloudflare fronts the host) `CF-Connecting-IP` is the client
+behind it — from any other hop that header is ignored, since a client that reaches the origin
+directly can write it. `X-Forwarded-For` is never read. A request with no address is not counted,
+which is what keeps local dev and the test suite out of it.
+
+Three things about the client are deliberate. ioredis, not Bun's `RedisClient`, because the latter
+cannot reach `*.railway.internal`. The package's `RATE_LIMIT_REDIS_OPTIONS` (`family: 0` for
+Railway's IPv6-only private DNS, `enableOfflineQueue: false`, a 500 ms command timeout) so a dead
+Redis fails into the fallback in milliseconds rather than queueing requests behind a reconnect.
+And `connect()` is started when the limiter is built, because with no offline queue a hit sent
+before the socket is up fails too — a `degraded` / `recovered` pair on the first request for
+nothing. The `error` listener is required: under Bun an unhandled ioredis `error` event ends the
+process. The package installs from GitHub Packages the way `@delacournz/otel-start` does — see
+[Tracing](#tracing) for `NPM_TOKEN`.
 
 ### Prerendering is off
 

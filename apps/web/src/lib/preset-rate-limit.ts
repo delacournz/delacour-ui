@@ -1,7 +1,7 @@
-import { clientIp } from "@/lib/crawler-block";
+import { clientAddress, type RateLimitDecision, type RateLimiter, type RateLimitPolicy } from "@delacournz/rate-limit";
 
 /**
- * A ceiling on how many `/theme?preset=` pages one IP can load from the server.
+ * The ceilings on `/theme?preset=` pages the server will render.
  *
  * The builder's controls are `<Link>`s to a route with no loader, so a person clicking through it
  * navigates in the client and the server never hears about it: the only server request for a
@@ -11,12 +11,24 @@ import { clientIp } from "@/lib/crawler-block";
  * a full server render. It sends no crawler user agent, and it is not in Meta's range, so
  * `crawler-block.ts` cannot name it.
  *
- * Thirty loads in ten minutes is far past anything a reader does and far below that crawl. The
- * counter is a fixed window per `X-Real-IP`, held in this process: `ui-web` runs one replica, so
- * that is the whole service. The map is dropped at each window boundary, which bounds its size to
- * the IPs seen in one window. A request with no `X-Real-IP` (local dev, tests) is never counted.
+ * - **`perAddress`** — thirty loads in ten minutes is far past anything a reader does and far
+ *   below that crawl.
+ * - **`total`** — the ceiling the per-address count cannot be. On 2026-10-25 a fleet rotated 400+
+ *   addresses, each under thirty loads, rendered at ~37 a second, and had the service down for
+ *   twenty hours. Six hundred in ten minutes is one a second — more preset pages than this site's
+ *   readers load in a day, and a hard bound on what a fleet of any size can make the process
+ *   render. Past it, every `?preset=` load is a `429` until the window turns, whoever asks.
+ *
+ * Both are counted in `@delacournz/rate-limit`'s store — the shared Redis on Railway, this
+ * process's memory elsewhere (`src/lib/rate-limit.ts`). The bare `/theme`, the presets' landing,
+ * is never counted. A request with no edge-reported address (local dev, tests) is never counted
+ * either: `clientAddress` reads Railway's `X-Real-IP`, trusts `CF-Connecting-IP` over it only when
+ * that hop is a Cloudflare address, and never reads `X-Forwarded-For`.
  */
-export const PRESET_RATE_LIMIT = { max: 30, windowMs: 10 * 60 * 1000 } as const;
+export const PRESET_RATE_LIMIT = {
+	perAddress: { max: 30, windowMs: 10 * 60 * 1000 },
+	total: { max: 600, windowMs: 10 * 60 * 1000 },
+} as const satisfies { perAddress: RateLimitPolicy; total: RateLimitPolicy };
 
 export function isPresetPageRequest(request: Request): boolean {
 	if (request.method !== "GET") return false;
@@ -25,51 +37,29 @@ export function isPresetPageRequest(request: Request): boolean {
 }
 
 export type PresetLimiter = {
-	/** Whether this request is over the ceiling. Counts it if it is a `?preset=` page load. */
-	isLimited(request: Request): boolean;
-	/** Seconds until the current window ends, for `Retry-After`. */
-	retryAfterSeconds(): number;
+	/**
+	 * Charges a `?preset=` page load against both ceilings and returns the refusal to answer with,
+	 * or `null` to let the request through. Anything that is not a `?preset=` page load is `null`
+	 * without being counted.
+	 */
+	check(request: Request): Promise<RateLimitDecision | null>;
 };
 
 export function createPresetLimiter(
-	{ max, windowMs }: { max: number; windowMs: number } = PRESET_RATE_LIMIT,
-	now: () => number = Date.now
+	limiter: RateLimiter,
+	{ perAddress, total }: { perAddress: RateLimitPolicy; total: RateLimitPolicy } = PRESET_RATE_LIMIT
 ): PresetLimiter {
-	let windowStart = now();
-	let counts = new Map<string, number>();
-
-	function roll(): void {
-		const t = now();
-		if (t - windowStart < windowMs) return;
-		windowStart = t;
-		counts = new Map();
-	}
-
 	return {
-		isLimited(request) {
-			if (!isPresetPageRequest(request)) return false;
-			const ip = clientIp(request);
-			if (ip === null) return false;
+		async check(request) {
+			if (!isPresetPageRequest(request)) return null;
+			const address = clientAddress(request.headers);
+			if (address === null) return null;
 
-			roll();
-			const count = (counts.get(ip) ?? 0) + 1;
-			counts.set(ip, count);
-			return count > max;
-		},
-		retryAfterSeconds() {
-			return Math.max(1, Math.ceil((windowStart + windowMs - now()) / 1000));
+			const decision = await limiter.limitAll([
+				{ key: `preset:${address}`, policy: perAddress },
+				{ key: "preset:total", policy: total },
+			]);
+			return decision.allowed ? null : decision;
 		},
 	};
-}
-
-/** A bare `429`. `no-store` for the same reason as `blockCrawlerResponse`: the edge must not cache it. */
-export function presetLimitedResponse(retryAfterSeconds: number): Response {
-	return new Response("Too Many Requests", {
-		status: 429,
-		headers: {
-			"Cache-Control": "no-store",
-			"Content-Type": "text/plain; charset=utf-8",
-			"Retry-After": String(retryAfterSeconds),
-		},
-	});
 }

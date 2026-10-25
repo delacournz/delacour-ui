@@ -1,10 +1,12 @@
+import { tooManyRequests } from "@delacournz/rate-limit";
 import { redirect } from "@tanstack/react-router";
 import { createCsrfMiddleware, createMiddleware, createStart } from "@tanstack/react-start";
 import { isMarkdownPreferred } from "fumadocs-core/negotiation";
 import { reportAgentFetch } from "@/lib/analytics/server";
 import { compressResponse } from "@/lib/compress";
 import { blockCrawlerResponse, isBlockedCrawler } from "@/lib/crawler-block";
-import { createPresetLimiter, presetLimitedResponse } from "@/lib/preset-rate-limit";
+import { createPresetLimiter } from "@/lib/preset-rate-limit";
+import { siteLimiter } from "@/lib/rate-limit";
 import { docsRoute, encodeMarkdownUrl } from "@/lib/shared";
 
 const csrfMiddleware = createCsrfMiddleware({
@@ -28,17 +30,19 @@ const llmMiddleware = createMiddleware().server(({ next, request }) => {
 	return next();
 });
 
-const presetLimiter = createPresetLimiter();
+const presetLimiter = createPresetLimiter(siteLimiter());
 
 /**
  * First of all: a refused crawler costs one tiny 403, never a render. A request the
  * edge cache answers does not reach this process — see `src/lib/crawler-block.ts`.
- * An IP loading `/theme?preset=` pages faster than a reader can gets a 429 — see
- * `src/lib/preset-rate-limit.ts`.
+ * An address loading `/theme?preset=` pages faster than a reader can, or everyone together
+ * loading more than the process should render, gets a 429 — see
+ * `src/lib/preset-rate-limit.ts`; the counters are in `src/lib/rate-limit.ts`'s store.
  */
-const crawlerBlockMiddleware = createMiddleware().server(({ next, request }) => {
+const crawlerBlockMiddleware = createMiddleware().server(async ({ next, request }) => {
 	if (isBlockedCrawler(request)) return blockCrawlerResponse();
-	if (presetLimiter.isLimited(request)) return presetLimitedResponse(presetLimiter.retryAfterSeconds());
+	const refused = await presetLimiter.check(request);
+	if (refused) return tooManyRequests(refused);
 	return next();
 });
 

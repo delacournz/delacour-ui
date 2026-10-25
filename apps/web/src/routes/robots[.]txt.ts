@@ -15,7 +15,9 @@ import { siteUrl } from "@/lib/shared";
  * **Meta's crawlers are barred from `/theme` entirely.** The bare path is cheap to
  * render but was fetched ~13k times an hour from 57.141.0.0/16 (AS32934), which
  * `Disallow: /theme?` does not cover. Some of that traffic spoofs Chrome and will
- * ignore this; that part needs an edge rule, not a robots line.
+ * ignore this; that part needs an edge rule, not a robots line. `meta-webindexer`
+ * is the agent Meta's IPv6 range (2a03:2880::/32) announced itself as on 2026-10-25,
+ * a Chrome string with the crawler's name appended.
  *
  * No `Sitemap:` line. Prerendering is off, so nothing produces a page list at
  * build time, and a hand-written sitemap is a transcription that would go stale
@@ -23,6 +25,7 @@ import { siteUrl } from "@/lib/shared";
  */
 export const BODY = `User-agent: meta-externalagent
 User-agent: meta-externalfetcher
+User-agent: meta-webindexer
 User-agent: FacebookBot
 User-agent: facebookexternalhit
 Disallow: /theme

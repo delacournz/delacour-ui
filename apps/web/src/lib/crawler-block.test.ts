@@ -18,6 +18,21 @@ describe("inCidr", () => {
 		expect(inCidr("57.141.0.256", "57.141.0.0/16")).toBe(false);
 		expect(inCidr("2a03:2880::1", "57.141.0.0/16")).toBe(false);
 	});
+
+	test("matches IPv6 addresses inside a /32, compressed or not", () => {
+		expect(inCidr("2a03:2880:f812:6a::", "2a03:2880::/32")).toBe(true);
+		expect(inCidr("2a03:2880:0000:0000:0000:0000:0000:0001", "2a03:2880::/32")).toBe(true);
+		expect(inCidr("2a03:2881::1", "2a03:2880::/32")).toBe(false);
+		expect(inCidr("57.141.0.1", "2a03:2880::/32")).toBe(false);
+		expect(inCidr("2a03:2880:::1", "2a03:2880::/32")).toBe(false);
+		expect(inCidr("2a03:2880::1", "2a03:2880::/129")).toBe(false);
+	});
+
+	test("matches the Alibaba /19 the 2026-10-25 fleet came from", () => {
+		expect(inCidr("47.79.201.185", "47.79.192.0/19")).toBe(true);
+		expect(inCidr("47.79.218.3", "47.79.192.0/19")).toBe(true);
+		expect(inCidr("47.79.224.1", "47.79.192.0/19")).toBe(false);
+	});
 });
 
 describe("clientIp", () => {
@@ -39,12 +54,18 @@ describe("isBlockedCrawler", () => {
 		expect(isBlockedCrawler(req("/theme", { "X-Real-IP": "57.141.3.4" }))).toBe(true);
 	});
 
+	test("blocks Meta's IPv6 fleet and the Alibaba fleet by IP", () => {
+		expect(isBlockedCrawler(req("/theme", { "X-Real-IP": "2a03:2880:f812:6a::" }))).toBe(true);
+		expect(isBlockedCrawler(req("/theme?preset=AQAAAAAAAAAA", { "X-Real-IP": "47.79.206.17" }))).toBe(true);
+	});
+
 	test("blocks Meta user agents case-insensitively", () => {
 		for (const ua of [
 			"meta-externalagent/1.1 (+https://developers.facebook.com)",
 			"Meta-ExternalFetcher/1.0",
 			"facebookexternalhit/1.1",
 			"Mozilla/5.0 (compatible; FacebookBot/1.0)",
+			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 (compatible; meta-webindexer/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler))",
 		]) {
 			expect(isBlockedCrawler(req("/", { "User-Agent": ua }))).toBe(true);
 		}
@@ -65,7 +86,9 @@ describe("isBlockedCrawler", () => {
 
 	test("constant covers the documented agents", () => {
 		expect(BLOCKED_CRAWLERS.cidrs).toContain("57.141.0.0/16");
-		expect(BLOCKED_CRAWLERS.userAgents.length).toBeGreaterThanOrEqual(4);
+		expect(BLOCKED_CRAWLERS.cidrs).toContain("2a03:2880::/32");
+		expect(BLOCKED_CRAWLERS.cidrs).toContain("47.79.192.0/19");
+		expect(BLOCKED_CRAWLERS.userAgents.length).toBeGreaterThanOrEqual(5);
 	});
 });
 

@@ -22,8 +22,8 @@ import { clientAddress, type RateLimitDecision, type RateLimiter, type RateLimit
  * Both are counted in `@delacournz/rate-limit`'s store — the shared Redis on Railway, this
  * process's memory elsewhere (`src/lib/rate-limit.ts`). The bare `/theme`, the presets' landing,
  * is never counted. A request with no edge-reported address (local dev, tests) is never counted
- * either: `clientAddress` reads only the headers Cloudflare and Railway overwrite, never
- * `X-Forwarded-For`.
+ * either: `clientAddress` reads Railway's `X-Real-IP`, trusts `CF-Connecting-IP` over it only when
+ * that hop is a Cloudflare address, and never reads `X-Forwarded-For`.
  */
 export const PRESET_RATE_LIMIT = {
 	perAddress: { max: 30, windowMs: 10 * 60 * 1000 },

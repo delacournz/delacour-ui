@@ -101,18 +101,29 @@ describe("createPresetLimiter", () => {
 		expect(await limiter.check(fromIp("203.0.113.9"))).toBeNull();
 	});
 
-	test("prefers Cloudflare's client header over Railway's", async () => {
-		const limiter = createPresetLimiter(
+	test("trusts Cloudflare's client header only when the hop is a Cloudflare address", async () => {
+		const policies = {
+			perAddress: { max: 1, windowMs: 60_000 },
+			total: { max: 10, windowMs: 60_000 },
+		};
+
+		// The edge-reported hop (X-Real-IP) is a Cloudflare address, so CF-Connecting-IP is the client.
+		const viaCloudflare = createPresetLimiter(
 			limiterAt(() => 0),
-			{
-				perAddress: { max: 1, windowMs: 60_000 },
-				total: { max: 10, windowMs: 60_000 },
-			}
+			policies
 		);
-		const headers = { "CF-Connecting-IP": "203.0.113.9", "X-Real-IP": "198.51.100.7" };
-		expect(await limiter.check(req("/theme?preset=x", headers))).toBeNull();
-		const refused = await limiter.check(req("/theme?preset=x", headers));
-		expect(refused?.key).toBe("test:preset:203.0.113.9:60000");
+		const fronted = { "CF-Connecting-IP": "203.0.113.9", "X-Real-IP": "173.245.48.10" };
+		expect(await viaCloudflare.check(req("/theme?preset=x", fronted))).toBeNull();
+		expect((await viaCloudflare.check(req("/theme?preset=x", fronted)))?.key).toBe("test:preset:203.0.113.9:60000");
+
+		// Anyone else writing CF-Connecting-IP is a client picking its own key; the hop is counted instead.
+		const direct = createPresetLimiter(
+			limiterAt(() => 0),
+			policies
+		);
+		const spoofed = { "CF-Connecting-IP": "203.0.113.9", "X-Real-IP": "198.51.100.7" };
+		expect(await direct.check(req("/theme?preset=x", spoofed))).toBeNull();
+		expect((await direct.check(req("/theme?preset=x", spoofed)))?.key).toBe("test:preset:198.51.100.7:60000");
 	});
 
 	test("ships ceilings well above a reader and well below a fleet", () => {

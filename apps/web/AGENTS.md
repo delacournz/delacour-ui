@@ -1030,9 +1030,11 @@ environments — it is **not** the jobs Redis, which runs `noeviction` for BullM
 process's memory otherwise (dev, tests, a build). Every key is prefixed `ui-web`, so another
 product on the same instance never shares a window. While Redis is unreachable the package counts
 in-process and logs `degraded` once, then `recovered` once — a Redis outage is today's posture, not
-no limiting and not a 500. The address is `clientAddress`'s: `CF-Connecting-IP` (Cloudflare fronts
-the host), then Railway's `X-Real-IP`, never `X-Forwarded-For`; a request with neither is not
-counted, which is what keeps local dev and the test suite out of it.
+no limiting and not a 500. The address is `clientAddress`'s: Railway's `X-Real-IP` is the hop, and
+when that hop is a Cloudflare address (Cloudflare fronts the host) `CF-Connecting-IP` is the client
+behind it — from any other hop that header is ignored, since a client that reaches the origin
+directly can write it. `X-Forwarded-For` is never read. A request with no address is not counted,
+which is what keeps local dev and the test suite out of it.
 
 Three things about the client are deliberate. ioredis, not Bun's `RedisClient`, because the latter
 cannot reach `*.railway.internal`. The package's `RATE_LIMIT_REDIS_OPTIONS` (`family: 0` for

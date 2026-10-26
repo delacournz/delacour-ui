@@ -511,4 +511,23 @@ export function resolveSelectionAccentClass({
 	return cn(isInvalid ? INPUT_INVALID_SELECTION_ACCENT_CLASS : INPUT_SELECTION_ACCENT_CLASS, className);
 }
 
+/**
+ * The accessible name a screen reader announces when the field takes focus.
+ *
+ * The caller's `accessibilityLabel` wins; otherwise the text an enclosing
+ * `Field.Label` registered with the field's context, so
+ * `<Field><Field.Label>Email</Field.Label><Input /></Field>` reads "Email"
+ * rather than an unnamed text field. React Native has no `<label for>`; this is
+ * that association, the same way `OtpInput` makes it. With neither there is no
+ * name, and `undefined` leaves the native default rather than an empty string.
+ *
+ * Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function resolveInputAccessibilityLabel(
+	own: string | undefined,
+	fieldLabel: string | null | undefined
+): string | undefined {
+	return own ?? fieldLabel ?? undefined;
+}
+
 export type InputVariantProps = VariantProps<typeof inputVariants>;

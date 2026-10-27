@@ -178,6 +178,15 @@ records stays out of it.
 
 ## Testing
 
+`bun run verify:expo --consumer --bundle` checks the UI npm tarball in an isolated Expo app.
+Run it for both `--layout standalone` and `--layout monorepo`.
+It checks Button and Input before adding the optional engine tarballs.
+It then checks Chart and BottomSheet.
+Both cases run TypeScript and Metro exports for iOS and Android.
+Consumer mode requires a fresh install and a directory outside this checkout.
+The CI `verify-expo` job runs both layouts after the copied-source checks.
+See `../../docs/performance.md` for the workload harness and profile report.
+
 `bun test` is unit tests plus an end-to-end pass over a fixture, all offline. It runs the real
 builder against the real `packages/react-native-ui`, not a copy of the conventions — the point of
 deriving the registry is that the two cannot diverge.

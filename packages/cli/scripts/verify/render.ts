@@ -196,12 +196,16 @@ export async function writeVerifyScreen(options: RenderOptions): Promise<void> {
  * already proved, and the `hermesc` Expo ships for Linux is an x64 binary, so
  * on an arm64 runner it fails with "cannot execute binary file".
  */
+export const BUNDLE_PLATFORMS = ["ios", "android"] as const;
+
 export async function bundleWithMetro(appDir: string, reporter: Reporter): Promise<void> {
-	await run("bunx", ["expo", "export", "--platform", "ios", "--no-bytecode", "--output-dir", "dist-verify"], {
-		cwd: appDir,
-		reporter,
-		label: "expo export",
-	});
+	for (const platform of BUNDLE_PLATFORMS) {
+		await run(
+			"bunx",
+			["expo", "export", "--platform", platform, "--no-bytecode", "--output-dir", `dist-verify-${platform}`],
+			{ cwd: appDir, reporter, label: `expo export ${platform}` }
+		);
+	}
 }
 
 /**
@@ -226,5 +230,70 @@ export async function bootOnSimulator(appDir: string, reporter: Reporter): Promi
 		cwd: appDir,
 		reporter,
 		label: "expo run:ios",
+	});
+}
+
+export type ConsumerCase = "core" | "engines";
+
+/** Render a screen that imports the public npm package, not the copied source tree. */
+export function renderConsumerScreen(stylesSpecifier: string, testCase: ConsumerCase): string {
+	const engineImports =
+		testCase === "engines"
+			? `import { Chart } from "@delacour/react-native-ui/chart";
+import { BottomSheet } from "@delacour/react-native-ui/bottom-sheet";
+`
+			: "";
+	const engineBody =
+		testCase === "engines"
+			? `
+\t\t\t\t<Chart config={{ value: { label: "Value" } }} data={[{ period: "Now", value: 1 }]} xKey="period">
+\t\t\t\t\t<Chart.Bar yKey="value" />
+\t\t\t\t</Chart>
+\t\t\t\t<BottomSheet.Provider>
+\t\t\t\t\t<BottomSheet defaultOpen snapPoints={["40%"]}>
+\t\t\t\t\t\t<BottomSheet.Portal inline>
+\t\t\t\t\t\t\t<BottomSheet.Container><BottomSheet.Content><BottomSheet.Title>Consumer sheet</BottomSheet.Title></BottomSheet.Content></BottomSheet.Container>
+\t\t\t\t\t\t</BottomSheet.Portal>
+\t\t\t\t\t</BottomSheet>
+\t\t\t\t</BottomSheet.Provider>`
+			: "";
+	return `import "${stylesSpecifier}/global.css";
+import { View } from "react-native";
+import { Button } from "@delacour/react-native-ui/button";
+import { Input } from "@delacour/react-native-ui/input";
+import { DelacourProvider } from "@delacour/react-native-ui/provider";
+${engineImports}
+
+export function App() {
+\treturn (
+\t\t<DelacourProvider>
+\t\t\t<View className="gap-4 p-4">
+\t\t\t\t<Button>Consumer button</Button>
+\t\t\t\t<Input placeholder="Consumer input" />${engineBody}
+\t\t\t</View>
+\t\t</DelacourProvider>
+\t);
+}
+`;
+}
+
+/** Write a screen that imports the public npm package, not the copied source tree. */
+export async function writeConsumerScreen(
+	appDir: string,
+	stylesSpecifier: string,
+	testCase: ConsumerCase,
+	reporter: Reporter
+): Promise<void> {
+	const path = join(appDir, "src/app.tsx");
+	await mkdir(dirname(path), { recursive: true });
+	await writeFile(path, renderConsumerScreen(stylesSpecifier, testCase), "utf-8");
+	reporter.pass(`wrote ${testCase} screen from the UI npm package`);
+}
+
+export async function typecheckConsumer(appDir: string, reporter: Reporter): Promise<void> {
+	await run("bun", ["x", "tsc", "--noEmit"], {
+		cwd: appDir,
+		reporter,
+		label: "consumer TypeScript check",
 	});
 }

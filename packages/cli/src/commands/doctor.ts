@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, realpath } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import * as clack from "@clack/prompts";
 import { detectThemeShape } from "@delacour/design-system/convert";
@@ -17,7 +18,6 @@ import { UNIWIND_ENV_FILENAME, UNIWIND_ENV_REFERENCE } from "../project/uniwind-
 import { NAMESPACES } from "../registry/namespaces";
 import type { TestRunner } from "../registry/test-runner";
 import { createOutput, type Output, style } from "../ui/output";
-
 /**
  * Checks the wiring that decides whether copied components actually work.
  *
@@ -763,12 +763,9 @@ export async function checkGestureHandlerRoot(config: ResolvedConfig): Promise<C
  * under the app while the workspace root holds another. `apps/playground`'s
  * `extraNodeModules` block in this repository exists for exactly this.
  */
-async function checkDuplicateNativeModules(project: ProjectInfo): Promise<Check> {
-	if (!project.workspaceRoot || !project.appRoot || project.workspaceRoot === project.appRoot) {
-		return { name: "Native modules", status: "pass", detail: "single package, nothing to duplicate" };
-	}
-
-	const watched = [
+export async function checkDuplicateNativeModules(
+	project: ProjectInfo,
+	packages = [
 		"react-native-skia",
 		"react-native",
 		"react-native-reanimated",
@@ -776,27 +773,81 @@ async function checkDuplicateNativeModules(project: ProjectInfo): Promise<Check>
 		"react-native-keyboard-controller",
 		"react-native-svg",
 		"react-native-teleport",
-	];
-	const duplicated = watched.filter(
-		(name) =>
-			existsSync(join(project.appRoot as string, "node_modules", name)) &&
-			existsSync(join(project.workspaceRoot as string, "node_modules", name))
-	);
-
-	if (duplicated.length === 0) {
-		return { name: "Native modules", status: "pass", detail: "one copy of each" };
+	]
+): Promise<Check> {
+	const name = "Native modules";
+	const { appRoot, workspaceRoot } = project;
+	if (!workspaceRoot || !appRoot || workspaceRoot === appRoot) {
+		return { name, status: "pass", detail: "single package, nothing to duplicate" };
 	}
 
+	const duplicated: string[] = [];
+	const unresolved: string[] = [];
+	for (const packageName of packages) {
+		const [app, workspace] = await Promise.all([
+			resolveNativePackage(packageName, appRoot),
+			resolveNativePackage(packageName, workspaceRoot),
+		]);
+		if (app.error) unresolved.push(`${packageName} from app (${app.error})`);
+		if (workspace.error) unresolved.push(`${packageName} from workspace (${workspace.error})`);
+		if (app.root && workspace.root && app.root !== workspace.root) duplicated.push(packageName);
+	}
+
+	if (unresolved.length > 0) {
+		return {
+			name,
+			status: "warn",
+			detail: `could not resolve ${unresolved.join(", ")}`,
+			fix: "Check that the package is installed and has a valid entry point in both the app and workspace dependency trees, then run the package manager install again.",
+		};
+	}
+	if (duplicated.length === 0) return { name, status: "pass", detail: "one physical copy of each resolved package" };
+
 	return {
-		name: "Native modules",
+		name,
 		status: "warn",
-		detail: `two copies of ${duplicated.join(", ")}`,
+		detail: `distinct physical copies of ${duplicated.join(", ")}`,
 		fix: [
-			"Pin them in metro.config resolver.extraNodeModules — two registrations of a native module break at runtime.",
-			"tsc does not read that, so pin them in tsconfig `paths` too, or Uniwind's className augmentation misses the",
-			"nested copy and every Animated component reports a type error naming neither cause.",
+			"Pin them in metro.config resolver.extraNodeModules so Metro uses the same physical package from both contexts.",
+			"Pin the same paths in tsconfig paths too, or React Native types can resolve from a second copy.",
 		].join(" "),
 	};
+}
+
+async function resolveNativePackage(name: string, from: string): Promise<{ root: string | null; error?: string }> {
+	try {
+		const entry = createRequire(join(from, "package.json")).resolve(name);
+		let directory = dirname(await realpath(entry));
+		while (true) {
+			const manifest = join(directory, "package.json");
+			if (existsSync(manifest)) {
+				const parsed = JSON.parse(await readFile(manifest, "utf-8")) as { name?: string };
+				if (parsed.name === name) return { root: await realpath(directory) };
+			}
+			const parent = dirname(directory);
+			if (parent === directory) break;
+			directory = parent;
+		}
+		return { root: null, error: `resolved entry has no ${name} package root` };
+	} catch (error) {
+		const code = (error as NodeJS.ErrnoException).code;
+		const installedPath = findInstalledPackage(name, from);
+		if (code === "MODULE_NOT_FOUND" && !installedPath) return { root: null };
+		const reason = code ?? (error instanceof Error ? error.message : String(error));
+		return { root: null, error: reason };
+	}
+}
+
+/** Find a package directory when its entry cannot resolve, so broken installs are not called absent. */
+function findInstalledPackage(name: string, from: string): string | null {
+	let directory = resolve(from);
+	while (true) {
+		const candidate = join(directory, "node_modules", ...name.split("/"));
+		if (existsSync(candidate)) return candidate;
+		const parent = dirname(directory);
+		if (parent === directory) return null;
+		directory = parent;
+	}
 }
 
 export type ExpoConfig = {

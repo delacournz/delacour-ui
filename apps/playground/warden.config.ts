@@ -53,6 +53,18 @@ export default {
 		},
 	],
 	e2e: {
+		performance: {
+			project: "playground",
+			flowsDir: "e2e/performance",
+			platform: "ios",
+			profile: "iphone-17-pro",
+			app: true,
+			metro: { launchArgs: DEV_MENU_OFF, prewarm: true, readyTimeout: "5m" },
+			isolate: "device",
+			shutdown: "idle",
+			jobTimeoutMs: 15 * 60_000,
+			spec: { ...PREVIEWS_SPEC, timeout: "6m", actionTimeout: "40s" },
+		},
 		previews: {
 			project: "playground",
 			flowsDir: "e2e/previews",

@@ -193,7 +193,7 @@ jobs:
     name: CLI against a real Expo app (${{ matrix.layout }})
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
-    timeout-minutes: 20
+    timeout-minutes: 40
 
     strategy:
       fail-fast: false
@@ -224,6 +224,9 @@ jobs:
       - name: Scaffold, install, typecheck and bundle
         working-directory: packages/cli
         run: bun run verify:expo --bundle --layout ${{ matrix.layout }}
+      - name: Install the UI tarball and bundle core and engine cases
+        working-directory: packages/cli
+        run: bun run verify:expo --consumer --bundle --layout ${{ matrix.layout }} --dir "$RUNNER_TEMP/consumer-${{ matrix.layout }}"
 
   # Every component's suites copied into a real app on each runner a consumer may use, and run by
   # it — the `tests` signoff check. The conversion is two string substitutions held up by a build
@@ -273,6 +276,10 @@ jobs:
         # Same contexts as REQUIRED_CONTEXTS in scripts/signoff-checks.ts, which signoff.test.ts pins
         # against `.github/rulesets/develop.json`.
         run: |
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ] && [ "$SHA" != "$GITHUB_SHA" ]; then
+            echo "The signoff SHA must match the commit tested by this dispatch." >&2
+            exit 1
+          fi
           for CONTEXT in signoff/typecheck signoff/check signoff/test signoff/build signoff; do
             gh api "repos/${{ github.repository }}/statuses/${SHA}" --method POST \
               -f state=success \

@@ -8,6 +8,7 @@ import { useInputGroupContext } from "./input.context";
 import {
 	type InputSize,
 	type InputVariant,
+	resolveInputAccessibilityLabel,
 	resolveInputFieldClass,
 	resolvePlaceholderAccentClass,
 	resolveSelectionAccentClass,
@@ -60,6 +61,7 @@ function InputRoot({
 	className,
 	placeholderColorClassName,
 	selectionColorClassName,
+	accessibilityLabel,
 	editable,
 	multiline,
 	onBlur,
@@ -148,6 +150,7 @@ function InputRoot({
 			selectionColorClassName={selectionAccent}
 			textAlignVertical={multiline ? "top" : undefined}
 			{...props}
+			accessibilityLabel={resolveInputAccessibilityLabel(accessibilityLabel, field?.label)}
 			editable={resolved.isDisabled ? false : editable}
 			onBlur={handleBlur}
 			onFocus={handleFocus}
@@ -178,6 +181,10 @@ function InputRoot({
  *
  * Wrap it in an `Input.Group` to put an icon, an affix or a control inside the
  * field's own box.
+ *
+ * Inside a `Field`, the text of its `Field.Label` becomes the field's accessible
+ * name when no `accessibilityLabel` is given, so a screen reader announces
+ * which value the editor wants.
  *
  * @example
  * <Input onChangeText={setEmail} placeholder="Email" value={email} />

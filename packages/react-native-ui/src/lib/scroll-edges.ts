@@ -79,3 +79,26 @@ export function resolveFadeGradient({
 
 	return { start: { x: near, y: 0 }, end: { x: far, y: 0 } };
 }
+
+export type KeyboardLiftInput = {
+	orientation: ScrollOrientation;
+	edge: ScrollEdge;
+	/** The keyboard's height. keyboard-controller reports it negative while open; either sign reads the same. */
+	keyboardHeight: number;
+	/** The bottom safe-area inset, which an open keyboard covers. */
+	safeAreaBottom: number;
+};
+
+/**
+ * How far a band rises to stay above an open keyboard.
+ *
+ * A keyboard covers the scrollable without resizing it, so a band pinned to
+ * the bottom of its box ends up underneath. Only a vertical end band is
+ * there. It rises by the keyboard less the safe-area band, the same distance
+ * a sticky `Screen.Footer` moves, so the band stays on the footer's top edge.
+ */
+export function resolveKeyboardLift({ orientation, edge, keyboardHeight, safeAreaBottom }: KeyboardLiftInput): number {
+	"worklet";
+	if (orientation !== "vertical" || edge !== "end") return 0;
+	return Math.max(0, Math.abs(keyboardHeight) - safeAreaBottom);
+}

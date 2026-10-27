@@ -1,6 +1,7 @@
 import { defineDemoGroup } from "../define-demo-group";
 import * as basic from "./basic";
 import * as columns from "./columns";
+import * as dataExplorer from "./data-explorer";
 import * as empty from "./empty";
 import * as frame from "./frame";
 import * as selectable from "./selectable";
@@ -15,6 +16,7 @@ export const tableDemos = defineDemoGroup("table", {
 	columns,
 	sortable,
 	selectable,
+	"data-explorer": dataExplorer,
 	"striped-small": stripedSmall,
 	frame,
 	"wide-scroll": wideScroll,

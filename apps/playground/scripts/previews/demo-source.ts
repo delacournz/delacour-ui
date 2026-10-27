@@ -14,6 +14,7 @@
  * `meta` may only hold literals.
  */
 
+import { dirname, resolve } from "node:path";
 import ts from "typescript";
 
 /**
@@ -44,8 +45,9 @@ const ALLOWED_IMPORT_PREFIXES = [
 	"uniwind",
 ];
 
-/** The one project-local import a demo may make, and the one the spliced source drops. */
+/** Project-local imports handled by the source extractor. */
 const TYPES_IMPORT = "@/demos/types";
+const INLINE_HELPER_IMPORTS = new Map([["./data-explorer.model", "data-explorer.model.ts"]]);
 
 export type DemoCaptureMeta = {
 	frame?: "stage" | "device";
@@ -146,14 +148,14 @@ function checkImports(source: ts.SourceFile, path: string): void {
 		if (!ts.isStringLiteral(statement.moduleSpecifier)) continue;
 
 		const specifier = statement.moduleSpecifier.text;
-		if (specifier === TYPES_IMPORT) continue;
+		if (specifier === TYPES_IMPORT || INLINE_HELPER_IMPORTS.has(specifier)) continue;
 		if (ALLOWED_IMPORT_PREFIXES.some((prefix) => specifier === prefix || specifier.startsWith(`${prefix}/`))) {
 			continue;
 		}
 
 		throw new Error(
 			`${path}: imports "${specifier}", which a reader's app could not resolve. ` +
-				`A demo may import only ${ALLOWED_IMPORT_PREFIXES.join(", ")} and ${TYPES_IMPORT}.`
+				`A demo may import only ${ALLOWED_IMPORT_PREFIXES.join(", ")}, ${TYPES_IMPORT}, and an inlined helper.`
 		);
 	}
 }
@@ -187,14 +189,31 @@ export async function readDemoSource(path: string): Promise<DemoSource> {
 	// comment on `meta` goes when `meta` does.
 	const cuts: [number, number][] = [[metaStatement.getFullStart(), metaStatement.getEnd()]];
 
+	const inlineHelpers: string[] = [];
 	for (const statement of source.statements) {
 		if (!ts.isImportDeclaration(statement)) continue;
 		if (!ts.isStringLiteral(statement.moduleSpecifier)) continue;
-		if (statement.moduleSpecifier.text !== TYPES_IMPORT) continue;
+		const specifier = statement.moduleSpecifier.text;
+		if (specifier === TYPES_IMPORT) {
+			cuts.push([statement.getFullStart(), statement.getEnd()]);
+			continue;
+		}
+		const helper = INLINE_HELPER_IMPORTS.get(specifier);
+		if (!helper) continue;
+		const helperPath = resolve(dirname(path), helper);
+		const helperText = await Bun.file(helperPath).text();
+		const helperSource = parse(helperPath, helperText);
+		checkImports(helperSource, helperPath);
+		if (helperSource.statements.some(ts.isImportDeclaration)) {
+			throw new Error(`${helperPath}: an inline demo helper must not import other modules`);
+		}
 		cuts.push([statement.getFullStart(), statement.getEnd()]);
+		inlineHelpers.push(helperText.trim());
 	}
 
-	const code = `${excise(text, cuts)
+	const extracted = excise(text, cuts);
+	const code = `${[...inlineHelpers, extracted]
+		.join("\n\n")
 		.replace(/\n{3,}/g, "\n\n")
 		.trim()}\n`;
 

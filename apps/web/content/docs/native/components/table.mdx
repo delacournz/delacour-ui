@@ -144,6 +144,49 @@ Render rows from a `FlatList` inside the table and pass each row its `index` and
 Rows count their cells from direct children. A `Table.Cell` behind a wrapper component reads as the first column.
 </Callout>
 
+## Data explorer composition
+
+The playground's **Data explorer** demo composes `Table`, `SearchBar`, `SelectionMode` and `Pagination` around a deterministic 10,000-record fixture. The app owns the records, query, sort, filter, page and selected IDs. The demo keeps its pure query and request helpers in a sibling model. The source extractor includes that model in the published example.
+
+Keep the input responsive and debounce only the applied search. Reset the page when the search or filter changes. Keep selection keyed by record ID so it survives sorting and paging. Omit `SelectionMode`'s `values` when the selection spans pages. That keeps the header count global. Use a small app action to select or clear the current page.
+
+`SelectionMode.Item` uses `indicator="none"` around each non-pressable `Table.Row`. The default leading indicator adds 34 points before each row's content and misaligns it with the table header. Pass the selected state to `Table.Row` and an explicit row name to the wrapper:
+
+```tsx
+<SelectionMode defaultActive onSelectedChange={setSelected} selected={selected}>
+  <SelectionMode.Header title="Invoices" />
+  <Table columns={columns}>
+    <Table.Header>…</Table.Header>
+    <FlatList
+      data={rows}
+      keyExtractor={(row) => row.id}
+      renderItem={({ item, index }) => (
+        <SelectionMode.Item
+          accessibilityLabel={`${item.invoice}, ${item.customer}, ${item.status}, ${item.amount}`}
+          indicator="none"
+          value={item.id}
+        >
+          <Table.Row index={index} isSelected={selected.includes(item.id)}>
+            <Table.Cell>{item.invoice}</Table.Cell>
+            <Table.Cell>{item.customer}</Table.Cell>
+            <Table.Cell>{item.status}</Table.Cell>
+            <Table.Cell>{item.amount}</Table.Cell>
+          </Table.Row>
+        </SelectionMode.Item>
+      )}
+    />
+  </Table>
+</SelectionMode>
+```
+
+For a delayed server query, assign an increasing request ID when each request starts. Apply a success or failure only when its ID is still the newest requested ID. A slow old success must not replace rows while a newer request is pending. A slow old failure must not clear the newer loading state or replace its error. Keep prior rows visible and label them stale while the latest request runs or fails.
+
+On bulk-action failure, keep the selected IDs and allow a retry. Clear them only after success. Do not treat an ID missing from the current page as a deleted record. The app must reconcile selection with authoritative server data.
+
+The demo shows query reset and page clamping, stable local sorting, page-scoped selection, stale results, and a retry path. Native acceptance must also check horizontal scrolling, large text, VoiceOver and TalkBack. Screen readers must hear the row name, selected state, column names, sort direction, loading state and error action.
+
+Use **Test request error** to fail the next delayed request. The first archive attempt also fails on purpose. Retry it to remove the selected records. **Reset example** restores the fixture and query state.
+
 ## Accessibility
 
 Each cell is announced with its column's heading — "Qty, 3" — a pressable row reads all of its cells as one button, and a sortable head announces its sort state.

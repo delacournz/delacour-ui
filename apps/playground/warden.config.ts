@@ -53,6 +53,17 @@ export default {
 		},
 	],
 	e2e: {
+		"data-explorer": {
+			project: "playground",
+			flowsDir: "e2e/data-explorer",
+			platform: "ios",
+			profile: "iphone-17-pro",
+			app: true,
+			metro: { launchArgs: DEV_MENU_OFF, prewarm: true, readyTimeout: "5m" },
+			isolate: "device",
+			shutdown: "idle",
+			spec: { ...PREVIEWS_SPEC, timeout: "3m" },
+		},
 		previews: {
 			project: "playground",
 			flowsDir: "e2e/previews",

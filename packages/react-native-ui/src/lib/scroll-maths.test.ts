@@ -147,3 +147,30 @@ describe("readScrollEvent", () => {
 		expect(readScrollEvent(bounce, "horizontal").offset).toBe(-40);
 	});
 });
+
+describe("scrollEdgeOpacity with a covered end", () => {
+	// A 600pt frame holding 500pt of form, with 300pt of keyboard over its end.
+	// KeyboardAwareScrollView makes room with a content inset, which the scroll
+	// event leaves out of contentSize.
+	const base = { edge: "end", contentSize: 500, layoutSize: 600, fadeInDistance: 24 } as const;
+
+	test("clears the end of content that fits the uncovered frame", () => {
+		expect(scrollEdgeOpacity({ ...base, offset: 0 })).toBe(0);
+	});
+
+	test("draws the end while content runs on under the covered band", () => {
+		expect(scrollEdgeOpacity({ ...base, offset: 0, coveredEnd: 300 })).toBe(1);
+	});
+
+	test("clears the end once the last content is scrolled above the covered band", () => {
+		expect(scrollEdgeOpacity({ ...base, offset: 200, coveredEnd: 300 })).toBe(0);
+	});
+
+	test("fades the end over the last fadeInDistance points above the covered band", () => {
+		expect(scrollEdgeOpacity({ ...base, offset: 188, coveredEnd: 300 })).toBe(0.5);
+	});
+
+	test("leaves the start edge reading the offset alone", () => {
+		expect(scrollEdgeOpacity({ ...base, edge: "start", offset: 12, coveredEnd: 300 })).toBe(0.5);
+	});
+});

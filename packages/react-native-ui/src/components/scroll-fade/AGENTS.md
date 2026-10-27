@@ -13,8 +13,8 @@ none of them; it reads them:
 | Module | What ScrollFade takes from it |
 | --- | --- |
 | `src/hooks/use-scroll-source.tsx` | `useResolvedScrollSource` and the `ScrollSource` type |
-| `src/lib/scroll-maths.ts` | `scrollEdgeOpacity`, the per-edge opacity worklet |
-| `src/lib/scroll-edges.ts` | `SCROLL_EDGES`, `resolveFadeEdges`, `resolveFadeBand`, `resolveFadeGradient` |
+| `src/lib/scroll-maths.ts` | `scrollEdgeOpacity`, the per-edge opacity worklet, and its `coveredEnd` |
+| `src/lib/scroll-edges.ts` | `SCROLL_EDGES`, `resolveFadeEdges`, `resolveFadeBand`, `resolveFadeGradient`, `resolveKeyboardLift` |
 
 Their rules and tests live with them. Nothing here keeps a copy.
 
@@ -24,7 +24,7 @@ Their rules and tests live with them. Nothing here keeps a copy.
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/scroll-fade` |
 | `scroll-fade.tsx` | `ScrollFade` — resolves the source and the colour, mounts the edges |
-| `scroll-fade-edge.tsx` | One animated edge band — internal, memoised |
+| `scroll-fade-edge.tsx` | One animated edge band, and its keyboard-aware wrapper — internal, memoised |
 | `scroll-fade.variants.ts` | Pure `tv()` slots, the defaults, and `SCROLL_FADE_EDGES` — `lib/scroll-edges`' union under ScrollFade's name |
 | `scroll-fade.variants.test.ts` | |
 
@@ -76,6 +76,20 @@ Their rules and tests live with them. Nothing here keeps a copy.
 - **`insetStart` / `insetEnd` hold a band in from its edge** — under a bar this
   component cannot see. It is not `Screen.ScrollShadow`'s `coverTop`: there is no
   solid band here.
+- **`keyboardAware` lifts the end band above an open keyboard.** A keyboard
+  covers a scrollable without resizing it, so a band pinned to the bottom of its
+  box sits under the keyboard. It is not only hidden there:
+  `KeyboardAwareScrollView` makes room with a content inset (its default
+  `insets` mode), and a scroll event leaves an inset out of `contentSize`, so a
+  form that fits the whole frame reads as too short to scroll and the end clears
+  for good. The lift is the keyboard less the bottom safe-area inset —
+  `resolveKeyboardLift`, the same distance a sticky `Screen.Footer` moves — and
+  one animated style spends it twice: as the band's `translateY`, and as
+  `coveredEnd`, so the opacity measures against the frame still visible. Off by
+  default; only a vertical end band moves. Only a keyboard-aware end edge
+  (`ScrollFadeKeyboardEdge`) calls keyboard-controller's hook, so a fade outside
+  a `KeyboardProvider` — a card row, a sheet — keeps working without its
+  warning.
 - **`enabled={false}` draws nothing without unmounting**, so the scrollable keeps
   its position and state when a fade is toggled.
 

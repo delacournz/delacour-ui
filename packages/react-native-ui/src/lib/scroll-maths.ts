@@ -59,6 +59,14 @@ export type ScrollEdgeState = {
 	layoutSize: number;
 	/** Points of travel from fully clear to fully in. 0 makes it a step. */
 	fadeInDistance: number;
+	/**
+	 * Points at the end of the frame covered by something drawn over it — an
+	 * open keyboard. `KeyboardAwareScrollView` makes room for the keyboard with
+	 * a content inset, which the scroll event leaves out of `contentSize`, so
+	 * content that fits the whole frame can still run on under the cover.
+	 * @default 0
+	 */
+	coveredEnd?: number;
 };
 
 /**
@@ -77,9 +85,10 @@ export type ScrollEdgeState = {
  */
 export function scrollEdgeOpacity(state: ScrollEdgeState): number {
 	"worklet";
-	const { edge, offset, contentSize, layoutSize, fadeInDistance } = state;
+	const { edge, offset, contentSize, layoutSize, fadeInDistance, coveredEnd = 0 } = state;
 	const isMeasured = contentSize > 0 && layoutSize > 0;
-	const maxScroll = contentSize - layoutSize;
+	// Measured against the part of the frame that is still visible.
+	const maxScroll = contentSize - (layoutSize - coveredEnd);
 
 	if (isMeasured && maxScroll <= 0) return 0;
 

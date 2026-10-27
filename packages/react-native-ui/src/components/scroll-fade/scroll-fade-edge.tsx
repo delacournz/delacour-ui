@@ -1,9 +1,11 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, type ReactElement } from "react";
 import { StyleSheet } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { useReanimatedKeyboardAnimation } from "react-native-keyboard-controller";
+import Animated, { type SharedValue, useAnimatedStyle, useDerivedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ScrollSource } from "../../hooks/use-scroll-source";
-import { resolveFadeBand, resolveFadeGradient } from "../../lib/scroll-edges";
+import { resolveFadeBand, resolveFadeGradient, resolveKeyboardLift } from "../../lib/scroll-edges";
 import { type ScrollEdge, scrollEdgeOpacity } from "../../lib/scroll-maths";
 import { scrollFadeVariants } from "./scroll-fade.variants";
 
@@ -19,6 +21,8 @@ export type ScrollFadeEdgeProps = {
 	color: string;
 	/** The same colour at zero alpha, for the far stop — never the `transparent` keyword. */
 	faded: string;
+	/** Points the band rises by, and the frame's end it treats as covered. See `resolveKeyboardLift`. */
+	lift?: SharedValue<number>;
 };
 
 /**
@@ -39,21 +43,25 @@ export const ScrollFadeEdge = memo(function ScrollFadeEdge({
 	fadeInDistance,
 	color,
 	faded,
+	lift,
 }: ScrollFadeEdgeProps): ReactElement {
 	const { offset, contentSize, layoutSize, orientation } = source;
 
-	const opacityStyle = useAnimatedStyle(
-		() => ({
+	// One value spent twice, so the band's position and its opacity cannot disagree.
+	const opacityStyle = useAnimatedStyle(() => {
+		const covered = lift === undefined ? 0 : lift.value;
+		return {
 			opacity: scrollEdgeOpacity({
 				edge,
 				offset: offset.value,
 				contentSize: contentSize.value,
 				layoutSize: layoutSize.value,
 				fadeInDistance,
+				coveredEnd: covered,
 			}),
-		}),
-		[edge, fadeInDistance]
-	);
+			transform: [{ translateY: -covered }],
+		};
+	});
 
 	const band = resolveFadeBand({ orientation, edge, size, inset });
 	const { start, end } = resolveFadeGradient({ orientation, edge });
@@ -71,3 +79,25 @@ export const ScrollFadeEdge = memo(function ScrollFadeEdge({
 	);
 });
 ScrollFadeEdge.displayName = "DelacourUI.ScrollFade.Edge";
+
+/**
+ * An edge band that rises above an open keyboard.
+ *
+ * A separate component so the keyboard is read only where it is wanted. A plain
+ * edge never touches keyboard-controller, so a fade outside a
+ * `KeyboardProvider` — a card row, a sheet — keeps working without its warning.
+ */
+export const ScrollFadeKeyboardEdge = memo(function ScrollFadeKeyboardEdge(
+	props: Omit<ScrollFadeEdgeProps, "lift">
+): ReactElement {
+	const { edge, source } = props;
+	const { orientation } = source;
+	const keyboard = useReanimatedKeyboardAnimation();
+	const { bottom: safeAreaBottom } = useSafeAreaInsets();
+	const lift = useDerivedValue(() =>
+		resolveKeyboardLift({ orientation, edge, keyboardHeight: keyboard.height.value, safeAreaBottom })
+	);
+
+	return <ScrollFadeEdge {...props} lift={lift} />;
+});
+ScrollFadeKeyboardEdge.displayName = "DelacourUI.ScrollFade.KeyboardEdge";

@@ -3405,7 +3405,9 @@
 			"dependencies": [],
 			"expoDependencies": [
 				"expo-linear-gradient",
-				"react-native-reanimated"
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context"
 			],
 			"devDependencies": [],
 			"files": [

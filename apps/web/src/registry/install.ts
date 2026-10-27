@@ -16107,7 +16107,7 @@ export const install = {
 		description: "A gradient at a scrollable's edges while content runs past them, on any axis.",
 		importPath: "@delacour/react-native-ui/scroll-fade",
 		exportName: "ScrollFade",
-		expo: ["expo-linear-gradient", "react-native-reanimated", "uniwind"],
+		expo: ["expo-linear-gradient", "react-native-keyboard-controller", "react-native-reanimated", "react-native-safe-area-context", "uniwind"],
 		npm: ["tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 17,

@@ -1,5 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { resolveFadeBand, resolveFadeEdges, resolveFadeGradient, SCROLL_EDGES, type ScrollEdges } from "./scroll-edges";
+import {
+	resolveFadeBand,
+	resolveFadeEdges,
+	resolveFadeGradient,
+	resolveKeyboardLift,
+	SCROLL_EDGES,
+	type ScrollEdges,
+} from "./scroll-edges";
 
 describe("resolveFadeEdges", () => {
 	const EXPECTED: Record<ScrollEdges, { start: boolean; end: boolean }> = {
@@ -73,5 +80,33 @@ describe("resolveFadeGradient", () => {
 			start: { x: 1, y: 0 },
 			end: { x: 0, y: 0 },
 		});
+	});
+});
+
+describe("resolveKeyboardLift", () => {
+	const open = { orientation: "vertical", edge: "end", safeAreaBottom: 34 } as const;
+
+	test("lifts a vertical end band by the keyboard less the safe-area band it covers", () => {
+		expect(resolveKeyboardLift({ ...open, keyboardHeight: 336 })).toBe(302);
+	});
+
+	test("reads keyboard-controller's negative height the same as a positive one", () => {
+		expect(resolveKeyboardLift({ ...open, keyboardHeight: -336 })).toBe(302);
+	});
+
+	test("does not lift with the keyboard closed", () => {
+		expect(resolveKeyboardLift({ ...open, keyboardHeight: 0 })).toBe(0);
+	});
+
+	test("never lifts below zero while the keyboard is shorter than the safe area", () => {
+		expect(resolveKeyboardLift({ ...open, keyboardHeight: 20 })).toBe(0);
+	});
+
+	test("leaves a start band in place", () => {
+		expect(resolveKeyboardLift({ ...open, edge: "start", keyboardHeight: 336 })).toBe(0);
+	});
+
+	test("leaves a horizontal band in place", () => {
+		expect(resolveKeyboardLift({ ...open, orientation: "horizontal", keyboardHeight: 336 })).toBe(0);
 	});
 });

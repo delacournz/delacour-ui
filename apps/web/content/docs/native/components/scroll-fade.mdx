@@ -106,6 +106,24 @@ hold a band in from its edge, under a bar the fade cannot see.
 <ScrollFade insetStart={56} scrollSource={source} />
 ```
 
+## Over a keyboard
+
+A keyboard covers the scrollable without resizing it, so the end fade would sit under it.
+`keyboardAware` lifts the end fade above an open keyboard, by the same distance a sticky
+`Screen.Footer` moves, and measures the end against the part of the scrollable still visible.
+Use it over a keyboard-aware `Screen.ScrollArea` with a footer that rides the keyboard.
+
+```tsx
+<Screen>
+  <ScrollFade className="flex-1" edges="end" keyboardAware>
+    <Screen.ScrollArea keyboardAware>{form}</Screen.ScrollArea>
+  </ScrollFade>
+  <Screen.Footer placement="static" sticky>
+    <Button>Continue</Button>
+  </Screen.Footer>
+</Screen>
+```
+
 ## ScrollFade or Screen.ScrollShadow
 
 |  | ScrollFade | Screen.ScrollShadow |
@@ -147,6 +165,7 @@ Extends React Native's `ViewProps`, without `pointerEvents`.
     fadeInDistance: { type: "number", default: "24" },
     insetStart: { type: "number", default: "0" },
     insetEnd: { type: "number", default: "0" },
+    keyboardAware: { type: "boolean", default: "false", description: "Lift the end fade above an open keyboard." },
     enabled: { type: "boolean", default: "true" },
     className: { type: "string" },
   }}

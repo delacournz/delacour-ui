@@ -10,7 +10,7 @@ import {
 	type ScrollFadeEdges,
 	scrollFadeVariants,
 } from "./scroll-fade.variants";
-import { ScrollFadeEdge } from "./scroll-fade-edge";
+import { ScrollFadeEdge, ScrollFadeKeyboardEdge } from "./scroll-fade-edge";
 
 export type ScrollFadeProps = Omit<ViewProps, "pointerEvents"> & {
 	/** The scrollable (and anything else) the fade overlays. Fades paint after it, so they sit on top. */
@@ -33,6 +33,14 @@ export type ScrollFadeProps = Omit<ViewProps, "pointerEvents"> & {
 	insetEnd?: number;
 	/** Explicit source; otherwise the nearest `ScrollSourceProvider` / the enclosing `Screen`. */
 	scrollSource?: ScrollSource;
+	/**
+	 * Lift the end fade above an open keyboard. A keyboard covers the
+	 * scrollable without resizing it, so without this the end fade sits under
+	 * the keyboard. Turn it on over a keyboard-aware scrollable with a sticky
+	 * `Screen.Footer`; the fade rises by the same distance the footer does.
+	 * @default false
+	 */
+	keyboardAware?: boolean;
 	/** Draw nothing without unmounting. @default true */
 	enabled?: boolean;
 	className?: string;
@@ -83,6 +91,7 @@ export function ScrollFade({
 	insetStart = 0,
 	insetEnd = 0,
 	scrollSource,
+	keyboardAware = false,
 	enabled = true,
 	className,
 	...props
@@ -95,6 +104,8 @@ export function ScrollFade({
 	// Without a colour to fade from there is no honest gradient, and the keyword
 	// `transparent` is no substitute — so the content renders alone.
 	const canDraw = paint !== undefined && faded !== undefined;
+	// Only a keyboard-aware end reads the keyboard; see `ScrollFadeKeyboardEdge`.
+	const EndEdge = keyboardAware ? ScrollFadeKeyboardEdge : ScrollFadeEdge;
 
 	return (
 		<View className={scrollFadeVariants().root({ className })} {...props}>
@@ -111,7 +122,7 @@ export function ScrollFade({
 				/>
 			) : null}
 			{canDraw && draw.end ? (
-				<ScrollFadeEdge
+				<EndEdge
 					color={paint}
 					edge="end"
 					fadeInDistance={fadeInDistance}

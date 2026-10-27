@@ -123,7 +123,7 @@ export function DialogContent({
 				{ scale: interpolate(progress.value, [0, 1], [DIALOG_ENTER_SCALE, 1]) },
 			],
 		};
-	}, [isReduced, topInset, windowHeight]);
+	});
 
 	if (!isPresent) return null;
 

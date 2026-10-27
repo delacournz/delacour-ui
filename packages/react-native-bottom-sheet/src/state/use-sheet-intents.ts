@@ -112,8 +112,7 @@ export function useSheetIntents(
 			const jump = resolution.action === "jump" || (mounting && !state.config.value.animateOnMount);
 			if (jump) jumpTo(resolution.target, source);
 			else animateTo(resolution.target, source, 0);
-		},
-		[state, geometry, animateTo, jumpTo]
+		}
 	);
 
 	useAnimatedReaction(
@@ -139,8 +138,7 @@ export function useSheetIntents(
 				return;
 			}
 			animateTo(target, "snapPoints", 0);
-		},
-		[state, geometry, animateTo, jumpTo]
+		}
 	);
 
 	return useMemo<SheetIntents>(() => ({ dispatch, clear, lastKind }), [dispatch, clear, lastKind]);

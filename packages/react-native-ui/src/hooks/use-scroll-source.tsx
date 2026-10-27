@@ -80,33 +80,30 @@ export function useScrollSource(options: UseScrollSourceOptions = {}): UseScroll
 	const contentSize = useSharedValue(0);
 	const layoutSize = useSharedValue(0);
 
-	const onScroll = useAnimatedScrollHandler(
-		{
-			onScroll: (event) => {
-				const reading = readScrollEvent(event, orientation);
-				offset.value = reading.offset;
-				if (reading.contentSize !== contentSize.value) contentSize.value = reading.contentSize;
-				if (reading.layoutSize !== layoutSize.value) layoutSize.value = reading.layoutSize;
-			},
-			onBeginDrag: (event) => {
-				offset.value = readScrollEvent(event, orientation).offset;
-				onBeginDrag?.(event);
-			},
-			onEndDrag: (event) => {
-				offset.value = readScrollEvent(event, orientation).offset;
-				onEndDrag?.(event);
-			},
-			onMomentumBegin: (event) => {
-				offset.value = readScrollEvent(event, orientation).offset;
-				onMomentumBegin?.(event);
-			},
-			onMomentumEnd: (event) => {
-				offset.value = readScrollEvent(event, orientation).offset;
-				onMomentumEnd?.(event);
-			},
+	const onScroll = useAnimatedScrollHandler({
+		onScroll: (event) => {
+			const reading = readScrollEvent(event, orientation);
+			offset.value = reading.offset;
+			if (reading.contentSize !== contentSize.value) contentSize.value = reading.contentSize;
+			if (reading.layoutSize !== layoutSize.value) layoutSize.value = reading.layoutSize;
 		},
-		[orientation, onBeginDrag, onEndDrag, onMomentumBegin, onMomentumEnd]
-	);
+		onBeginDrag: (event) => {
+			offset.value = readScrollEvent(event, orientation).offset;
+			onBeginDrag?.(event);
+		},
+		onEndDrag: (event) => {
+			offset.value = readScrollEvent(event, orientation).offset;
+			onEndDrag?.(event);
+		},
+		onMomentumBegin: (event) => {
+			offset.value = readScrollEvent(event, orientation).offset;
+			onMomentumBegin?.(event);
+		},
+		onMomentumEnd: (event) => {
+			offset.value = readScrollEvent(event, orientation).offset;
+			onMomentumEnd?.(event);
+		},
+	});
 
 	const onLayout = useCallback(
 		(event: LayoutChangeEvent) => {

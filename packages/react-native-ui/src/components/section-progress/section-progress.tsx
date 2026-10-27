@@ -169,8 +169,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 			} else {
 				ringProgress.value = withTiming(next, RING_SETTLE);
 			}
-		},
-		[source]
+		}
 	);
 
 	const scrollY = scroll?.scrollY;
@@ -179,8 +178,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 		() => (scrollY === undefined ? true : resolveRevealed(scrollY.value, revealAt, false)),
 		(now, was) => {
 			if (now && was !== true) scheduleOnRN(setRevealed, true);
-		},
-		[scrollY, revealAt]
+		}
 	);
 
 	// The percent only crosses to React while a screen reader is listening; with
@@ -196,8 +194,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 		() => (isScreenReaderOn ? resolveProgressPercent(source.value) : -1),
 		(next, previous) => {
 			if (next >= 0 && next !== previous) scheduleOnRN(setPercent, next);
-		},
-		[isScreenReaderOn, source]
+		}
 	);
 
 	const lastValue = useRef(value);

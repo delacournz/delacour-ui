@@ -30,7 +30,7 @@ export function CarouselCaption({ className, ...props }: CarouselCaptionProps): 
 	const animatedStyle = useAnimatedStyle(() => {
 		const offset = loop ? resolveWrappedOffset(index, position.value, count) : index - position.value;
 		return { opacity: resolveCaptionOpacity(offset) };
-	}, [count, index, loop]);
+	});
 
 	const slots = carouselVariants({ orientation, variant });
 

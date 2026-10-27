@@ -126,8 +126,7 @@ export function DrawerContent({
 		() => progress.value * (1 - resolveDrawerDragFraction(edge, drag.value, extent)),
 		(visibility) => {
 			scrimProgress.value = visibility;
-		},
-		[edge, extent]
+		}
 	);
 
 	const panelStyle = useAnimatedStyle(() => {
@@ -139,7 +138,7 @@ export function DrawerContent({
 				{ translateY: slide.translateY + (isHorizontal ? 0 : drag.value) },
 			],
 		};
-	}, [edge, extent, isHorizontal, isReduced]);
+	});
 
 	const panel = useMemo<DrawerPanelValue>(() => ({ edge, side }), [edge, side]);
 

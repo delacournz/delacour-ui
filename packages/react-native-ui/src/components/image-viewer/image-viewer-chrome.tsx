@@ -50,7 +50,7 @@ export function ImageViewerChrome({
 		return {
 			opacity: fade.value * flight * chrome.value * zoomFade * resolveBackdropOpacity(dismissY.value, windowHeight),
 		};
-	}, [windowHeight]);
+	});
 
 	const pointerEvents = isVisible ? "box-none" : "none";
 

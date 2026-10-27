@@ -274,8 +274,7 @@ function TabsRoot({
 			if (current === previous) return;
 			visual.value = current;
 			scheduleOnRN(setVisualIndex, current);
-		},
-		[count]
+		}
 	);
 
 	const context = useMemo<TabsContextValue>(

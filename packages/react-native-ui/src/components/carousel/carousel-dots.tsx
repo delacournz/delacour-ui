@@ -104,12 +104,12 @@ function CarouselDot({
 		const offset = loop ? resolveWrappedOffset(index, position.value, count) : index - position.value;
 		const length = resolveDotLength(offset);
 		return isHorizontal ? { width: length } : { height: length };
-	}, [count, index, isHorizontal, loop]);
+	});
 
 	const fillStyle = useAnimatedStyle(() => {
 		const offset = loop ? resolveWrappedOffset(index, position.value, count) : index - position.value;
 		return { opacity: resolveCaptionOpacity(offset) };
-	}, [count, index, loop]);
+	});
 
 	return (
 		<Animated.View className={className} style={dotStyle}>

@@ -77,8 +77,7 @@ export function SortableItem({
 		() => activeId.value === id,
 		(next, previous) => {
 			if (previous !== null && next !== previous) scheduleOnRN(setLifted, next);
-		},
-		[id]
+		}
 	);
 
 	const shift = useSharedValue(0);
@@ -88,8 +87,7 @@ export function SortableItem({
 			if (next === previous) return;
 			if (phase.value === 0 || isReducedMotion) shift.value = next;
 			else shift.value = withSpring(next, SORTABLE_SHIFT_SPRING);
-		},
-		[id, isReducedMotion]
+		}
 	);
 
 	const animatedStyle = useAnimatedStyle(() => {

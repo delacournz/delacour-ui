@@ -61,8 +61,7 @@ export function useCircularSpin({
 		() => isPaused || isPressed.value,
 		(paused) => {
 			velocity.value = withTiming(paused ? 0 : target, { duration: CIRCULAR_TEXT_EASE_MS });
-		},
-		[isPaused, target]
+		}
 	);
 
 	return rotation;

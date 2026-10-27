@@ -42,14 +42,11 @@ export function useScrollHeaderScrollProps(
 	const forward = callerFunction ?? noop;
 	const hasFunction = callerFunction !== null;
 
-	const forwarder = useAnimatedScrollHandler(
-		{
-			onScroll: (event) => {
-				if (hasFunction) scheduleOnRN(forward, event as NativeScrollEvent);
-			},
+	const forwarder = useAnimatedScrollHandler({
+		onScroll: (event) => {
+			if (hasFunction) scheduleOnRN(forward, event as NativeScrollEvent);
 		},
-		[hasFunction, forward]
-	);
+	});
 
 	const composed = useComposedEventHandler([scrollProps.onScroll, callerHandler, hasFunction ? forwarder : null]);
 

@@ -86,7 +86,7 @@ export function CarouselItem({
 					],
 			zIndex: Math.round(100 - distance * 10),
 		};
-	}, [count, index, isCalm, isCoverflow, isHorizontal, lengthKey, loop, turnSign, windowSize]);
+	});
 
 	const accessibility = resolveSlideAccessibility({ isActive, isPeek });
 	const itemClassName = carouselVariants({ orientation, variant }).item();

@@ -265,8 +265,7 @@ function FlipCardRoot(props: FlipCardProps): ReactElement {
 			if (!shouldTickFlipHaptic(hapticSide.value, next)) return;
 			hapticSide.value = next >= 90 ? 180 : 0;
 			if (haptic) playHaptic(haptic);
-		},
-		[haptic]
+		}
 	);
 
 	const isY = axis === "y";

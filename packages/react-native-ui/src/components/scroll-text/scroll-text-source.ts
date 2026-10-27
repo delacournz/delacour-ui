@@ -93,8 +93,7 @@ export function useScrollTextProgress({
 		},
 		(next) => {
 			if (next >= 0) own.value = next;
-		},
-		[isLive, start, end, windowHeight, viewport]
+		}
 	);
 
 	const remeasure = (): void => {

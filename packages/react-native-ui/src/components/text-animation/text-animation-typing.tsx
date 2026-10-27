@@ -216,8 +216,7 @@ export function TextAnimationTyping({
 			if (previous !== null && previous.phase === "typing" && current.phase !== "typing") {
 				scheduleOnRN(handleTyped, previous.phraseIndex, runKey);
 			}
-		},
-		[runKey, handlePhrase, handleTyped]
+		}
 	);
 
 	useEffect(() => {

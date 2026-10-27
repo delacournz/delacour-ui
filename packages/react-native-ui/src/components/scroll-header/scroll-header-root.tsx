@@ -91,8 +91,7 @@ export function ScrollHeaderRoot({
 			if (target === null) return;
 			scrollTo(scrollRef, 0, target, !isCalm);
 			snapTarget.value = null;
-		},
-		[isCalm, scrollRef]
+		}
 	);
 
 	const handleCollapsedChange = useCallback(
@@ -111,16 +110,14 @@ export function ScrollHeaderRoot({
 			if (next === previous) return;
 			if (previous === null && !next) return;
 			scheduleOnRN(handleCollapsedChange, next);
-		},
-		[handleCollapsedChange]
+		}
 	);
 
 	useAnimatedReaction(
 		() => progress.value,
 		(value) => {
 			if (progressOutput) progressOutput.value = value;
-		},
-		[progressOutput]
+		}
 	);
 
 	const registerLarge = useCallback(() => {

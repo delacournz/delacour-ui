@@ -90,10 +90,7 @@ export function ImageViewerPage({
 
 	const { height: fittedHeight, width: fittedWidth, x: fittedX, y: fittedY } = fitted;
 
-	const pageStyle = useAnimatedStyle(
-		() => ({ transform: [{ translateX: (pageIndex - position.value) * pitch }] }),
-		[pageIndex, pitch]
-	);
+	const pageStyle = useAnimatedStyle(() => ({ transform: [{ translateX: (pageIndex - position.value) * pitch }] }));
 
 	const frameStyle = useAnimatedStyle(() => {
 		const rest = { height: fittedHeight, width: fittedWidth, x: fittedX, y: fittedY };
@@ -114,7 +111,7 @@ export function ImageViewerPage({
 			],
 			width: frame.width,
 		};
-	}, [fittedHeight, fittedWidth, fittedX, fittedY, isActive, windowHeight]);
+	});
 
 	const fullStyle = useAnimatedStyle(() => ({ opacity: fullOpacity.value }));
 

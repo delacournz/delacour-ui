@@ -341,8 +341,7 @@ function CompareRoot({
 		(next, previous) => {
 			if (next < 0 || next === previous) return;
 			scheduleOnRN(commitLive, next);
-		},
-		[commitLive]
+		}
 	);
 
 	useUnnamedWarning(accessibilityLabel);

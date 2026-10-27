@@ -46,8 +46,7 @@ export function ThemeTabsShadow(): ReactElement {
 		() => footer.height.value,
 		(height, previous) => {
 			if (height !== previous) scheduleOnRN(setContentHeight, height);
-		},
-		[footer]
+		}
 	);
 
 	const shift = useAnimatedStyle(() => ({ bottom: -footer.height.value }));

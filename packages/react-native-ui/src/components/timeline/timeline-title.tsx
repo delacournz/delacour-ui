@@ -72,8 +72,7 @@ function ReadingEdgeTitle({
 			const isFirstRun = previous === null;
 			progress.value =
 				isFirstRun || isReducedMotion ? target : withTiming(target, { duration: TIMELINE_READING_EDGE_MS });
-		},
-		[step, isReducedMotion]
+		}
 	);
 
 	const colorStyle = useAnimatedStyle(() => ({

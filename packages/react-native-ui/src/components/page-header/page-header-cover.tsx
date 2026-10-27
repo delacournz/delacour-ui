@@ -123,7 +123,7 @@ export function PageHeaderCover({
 			height: resolvePageHeaderCoverHeight({ variant, height, topInset: inset, isInsetAware }),
 			marginTop: resolvePageHeaderCoverOffset({ variant, isInsetAware, isInScreen, topInset: inset }),
 		};
-	}, [navbar, top, variant, height, isInsetAware, isInScreen]);
+	});
 
 	const overlayStyle = useAnimatedStyle(() => {
 		const inset = navbar
@@ -136,7 +136,7 @@ export function PageHeaderCover({
 		return {
 			top: resolvePageHeaderCoverHeight({ variant, height, topInset: inset, isInsetAware }) - Math.max(0, height),
 		};
-	}, [navbar, top, variant, height, isInsetAware]);
+	});
 
 	const isDescribed = accessibilityLabel !== undefined;
 

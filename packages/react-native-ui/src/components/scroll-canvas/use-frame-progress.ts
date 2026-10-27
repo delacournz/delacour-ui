@@ -106,8 +106,7 @@ export function useFrameProgress(options: UseFrameProgressOptions): FrameProgres
 		() => (contentSize ? contentSize.value : 0),
 		(next, previous) => {
 			if (scroller && previous !== null && next !== previous) scheduleOnRN(measure);
-		},
-		[contentSize, scroller, measure]
+		}
 	);
 
 	const resting = resolveStaticProgress(effect);

@@ -99,8 +99,7 @@ export function useMessageScrollerState({
 				isAtEndValue.value = atEnd;
 				scheduleOnRN(setIsAtEnd, atEnd);
 			}
-		},
-		[stickThreshold]
+		}
 	);
 
 	useEffect(() => {

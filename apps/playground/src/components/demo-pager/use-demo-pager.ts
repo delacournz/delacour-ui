@@ -84,7 +84,7 @@ export function useDemoPager(count: number): DemoPagerGeometry {
 		setPageHeight((current) => (Math.abs(current - height) < 1 ? current : height));
 	}, []);
 
-	const progress = useDerivedValue(() => (pageHeight > 0 ? scrollY.value / pageHeight : 0), [pageHeight]);
+	const progress = useDerivedValue(() => (pageHeight > 0 ? scrollY.value / pageHeight : 0));
 
 	useAnimatedReaction(
 		() => Math.min(Math.max(Math.round(progress.value), 0), count - 1),
@@ -92,8 +92,7 @@ export function useDemoPager(count: number): DemoPagerGeometry {
 			if (previous === null || current === previous) return;
 			scheduleOnRN(setActiveIndex, current);
 			playHaptic("selection");
-		},
-		[count]
+		}
 	);
 
 	const scrollToIndex = useCallback(

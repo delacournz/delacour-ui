@@ -214,8 +214,7 @@ export function SliderTrack({ children, className, ...props }: SliderTrackProps)
 				if (!changed) return;
 			}
 			scheduleOnRN(commitValues, [...current]);
-		},
-		[commitValues]
+		}
 	);
 
 	const slots = sliderVariants({ color, isDisabled, isInvalid, orientation, size });

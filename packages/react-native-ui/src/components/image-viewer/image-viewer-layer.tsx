@@ -493,15 +493,12 @@ export function ImageViewerLayer({
 		windowWidth,
 	]);
 
-	const backdropStyle = useAnimatedStyle(
-		() => ({
-			opacity:
-				fade.value *
-				(progress.value < 0 ? 0 : progress.value > 1 ? 1 : progress.value) *
-				resolveBackdropOpacity(dismissY.value, windowHeight),
-		}),
-		[windowHeight]
-	);
+	const backdropStyle = useAnimatedStyle(() => ({
+		opacity:
+			fade.value *
+			(progress.value < 0 ? 0 : progress.value > 1 ? 1 : progress.value) *
+			resolveBackdropOpacity(dismissY.value, windowHeight),
+	}));
 
 	const stageStyle = useAnimatedStyle(() => ({ opacity: fade.value }));
 

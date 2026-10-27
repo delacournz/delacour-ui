@@ -87,8 +87,7 @@ export function MarqueeTrack({
 				easeMs > 0
 					? withTiming(next, { duration: easeMs, easing: Easing.out(Easing.quad), reduceMotion: ReduceMotion.Never })
 					: next;
-		},
-		[pause, target, easeMs]
+		}
 	);
 
 	useFrameCallback((frame) => {

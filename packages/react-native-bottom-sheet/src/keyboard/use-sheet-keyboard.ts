@@ -107,8 +107,7 @@ export function useSheetKeyboard({
 			if (state.keyboardHeight.value !== keyboardHeight) state.keyboardHeight.value = keyboardHeight;
 			if (state.keyboardProgress.value !== current.progress) state.keyboardProgress.value = current.progress;
 			if (state.keyboardOwned.value !== owned) state.keyboardOwned.value = owned;
-		},
-		[state, geometry, height, progress, input, focused, windowHeight]
+		}
 	);
 
 	useAnimatedReaction(
@@ -155,8 +154,7 @@ export function useSheetKeyboard({
 			if (snapPoints.length === 0) return;
 			const target = heightForIndex(Math.min(index, snapPoints.length - 1), snapPoints, closed);
 			if (Math.abs(target - state.base.value) > 0.5) animateTo(target, "keyboard", 0);
-		},
-		[state, geometry, animateTo, progress, applied, indexBefore]
+		}
 	);
 
 	return useMemo<SheetKeyboardRegistry>(() => ({ nodes, focused }), [focused]);

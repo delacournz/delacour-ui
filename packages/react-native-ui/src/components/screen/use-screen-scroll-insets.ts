@@ -43,8 +43,7 @@ function useFooterBaselineHeight(estimatedHeight = 0): number {
 		(current, previous) => {
 			if (current <= 0 || current === previous) return;
 			scheduleOnRN(setMeasured, current);
-		},
-		[]
+		}
 	);
 
 	return measured;
@@ -83,8 +82,7 @@ export function useChatComposerInset(): DerivedValue<number> {
 	const { bottom } = useSafeAreaInsets();
 
 	return useDerivedValue(
-		() => footerOccupancy(footer.height.value, bottom) + footer.overlayHeight.value + CHAT_COMPOSER_GAP,
-		[bottom]
+		() => footerOccupancy(footer.height.value, bottom) + footer.overlayHeight.value + CHAT_COMPOSER_GAP
 	);
 }
 
@@ -98,8 +96,7 @@ export function useChatComposerGrowthPadding(): DerivedValue<number> {
 	const { footer } = useScreenPart("useChatComposerGrowthPadding");
 
 	return useDerivedValue(
-		() => Math.max(0, footer.height.value - footer.initialHeight.value) + footer.overlayHeight.value,
-		[]
+		() => Math.max(0, footer.height.value - footer.initialHeight.value) + footer.overlayHeight.value
 	);
 }
 
@@ -177,29 +174,26 @@ export function useScreenScrollInsets(mode: ScreenScrollInsetMode, onScroll?: Sc
 	const caller = classifyScrollHandler(onScroll);
 	const callerCallback = caller.kind === "js" ? caller.handler : undefined;
 
-	const trackingHandler = useAnimatedScrollHandler(
-		{
-			onScroll: (event) => {
-				scrollY.value = event.contentOffset.y;
+	const trackingHandler = useAnimatedScrollHandler({
+		onScroll: (event) => {
+			scrollY.value = event.contentOffset.y;
 
-				if (event.contentSize.height !== contentHeight.value) {
-					contentHeight.value = event.contentSize.height;
-				}
+			if (event.contentSize.height !== contentHeight.value) {
+				contentHeight.value = event.contentSize.height;
+			}
 
-				if (event.layoutMeasurement.height !== layoutHeight.value) {
-					layoutHeight.value = event.layoutMeasurement.height;
-				}
+			if (event.layoutMeasurement.height !== layoutHeight.value) {
+				layoutHeight.value = event.layoutMeasurement.height;
+			}
 
-				// Only `nativeEvent` is real: a worklet sees the native payload, not
-				// React Native's synthetic wrapper, so `persist()` and the rest of the
-				// wrapper do not exist. A caller needing more passes a worklet handler.
-				if (callerCallback) {
-					scheduleOnRN(callerCallback, { nativeEvent: event } as unknown as NativeSyntheticEvent<NativeScrollEvent>);
-				}
-			},
+			// Only `nativeEvent` is real: a worklet sees the native payload, not
+			// React Native's synthetic wrapper, so `persist()` and the rest of the
+			// wrapper do not exist. A caller needing more passes a worklet handler.
+			if (callerCallback) {
+				scheduleOnRN(callerCallback, { nativeEvent: event } as unknown as NativeSyntheticEvent<NativeScrollEvent>);
+			}
 		},
-		[callerCallback]
-	);
+	});
 
 	// A caller's `useAnimatedScrollHandler` runs beside the tracking on the UI
 	// thread rather than replacing it — one `onScroll` prop, two worklets.
@@ -216,7 +210,7 @@ export function useScreenScrollInsets(mode: ScreenScrollInsetMode, onScroll?: Sc
 				safeAreaTop: top,
 			}),
 		};
-	}, [top]);
+	});
 
 	const insetBottomAnimatedStyle = useAnimatedStyle(() => {
 		return {
@@ -229,7 +223,7 @@ export function useScreenScrollInsets(mode: ScreenScrollInsetMode, onScroll?: Sc
 				safeAreaBottom: bottom,
 			}),
 		};
-	}, [mode, bottom]);
+	});
 
 	return { insetBottomAnimatedStyle, insetTopAnimatedStyle, scrollHandler };
 }

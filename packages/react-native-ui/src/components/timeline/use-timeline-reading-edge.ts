@@ -37,18 +37,15 @@ export function useTimelineReadingEdge({
 		[onColumnChange]
 	);
 
-	const scrollHandler = useAnimatedScrollHandler(
-		{
-			onScroll: (event) => {
-				const next = resolveColumnAtOffset(offsets, event.contentOffset.x);
-				if (next === activeColumn.value) return;
-				activeColumn.value = next;
-				if (haptic) playHaptic("selection");
-				if (hasListener) scheduleOnRN(notify, next);
-			},
+	const scrollHandler = useAnimatedScrollHandler({
+		onScroll: (event) => {
+			const next = resolveColumnAtOffset(offsets, event.contentOffset.x);
+			if (next === activeColumn.value) return;
+			activeColumn.value = next;
+			if (haptic) playHaptic("selection");
+			if (hasListener) scheduleOnRN(notify, next);
 		},
-		[offsets, haptic, hasListener, notify]
-	);
+	});
 
 	return { activeColumn, scrollHandler };
 }

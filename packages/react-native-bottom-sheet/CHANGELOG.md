@@ -1,5 +1,19 @@
 # @delacour/react-native-bottom-sheet
 
+## 0.3.0
+
+### Minor Changes
+
+- [#278](https://github.com/delacournz/delacour-ui/pull/278) [`d2c5481`](https://github.com/delacournz/delacour-ui/commit/d2c54818db2e1348dfd97596d995324c8e60cd57) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `BottomSheet` takes `keyboardLiftLimit="highestSnapPoint"`: the keyboard lifts the sheet no higher than its highest snap point, so a sheet resting there holds still and its body shrinks by the keyboard instead. `Combobox` opens at its full height with it, so its sheet no longer opens half-height, jumps up when the search field's keyboard rises, and drops back as the keyboard leaves on close. `resolveComboboxSheetHeight` takes only `topInset` and `windowHeight` now.
+
+- [#262](https://github.com/delacournz/delacour-ui/pull/262) [`9876ccb`](https://github.com/delacournz/delacour-ui/commit/9876ccbfd6e9dffe801c8c1269cd58818dd4e44f) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `BottomSheet` takes `keyboardLiftLimit`. Set to `"maxDynamicContentSize"`, a sheet sized to its content is lifted by a keyboard only as far as its cap, decided on the UI thread from the keyboard's first frame. `Select` opts in, so a searchable select no longer shoots to the top of the screen when the keyboard opens and then settles back to its cap.
+
+### Patch Changes
+
+- [#269](https://github.com/delacournz/delacour-ui/pull/269) [`16f8413`](https://github.com/delacournz/delacour-ui/commit/16f8413724b5468cc2d22a9391ee8a43b9fbc7be) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Combobox` keeps its keyboard up while the results scroll; only a drag that carries the sheet down, or a close, puts it away. The sheet's scrollables now take a caller's `keyboardDismissMode` instead of always using `interactive`.
+
+- [#284](https://github.com/delacournz/delacour-ui/pull/284) [`839fdc5`](https://github.com/delacournz/delacour-ui/commit/839fdc5c9547835ffe59304f847db1d207e2ab84) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Components no longer pass dependency arrays to Reanimated's `useAnimatedStyle`, `useDerivedValue`, `useAnimatedReaction` and `useAnimatedScrollHandler`. Reanimated ignores them on native and warned once per app in development: "Dependencies should only be used on the web and are always ignored on native". Nothing changes at runtime; the worklets still rebuild from their closures.
+
 ## 0.2.0
 
 ### Minor Changes

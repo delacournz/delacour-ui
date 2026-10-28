@@ -1,0 +1,122 @@
+name: promote
+
+# Turns a merged version PR into a release: fast-forward `main` to it, then tag it.
+#
+# `main` is a release pointer, not a branch anyone works on. It only ever moves here, always to a
+# `develop` commit that is a fast-forward of itself, so `main` is exactly "the last versioned commit".
+# Railway production builds `main`, and the tag push starts release.yml (GitHub Release + npm), so
+# docs and packages ship together from one commit.
+#
+# Pushes to `develop` with no unpromoted version commit behind them are no-ops here (the common case).
+#
+# This job executes no repo code (no install, no scripts): it holds the App token that bypasses the
+# `main` and `v*` rulesets, so it only reads git objects and runs git. Both the `main` push and the
+# tag are made with the App token because the tag push must start release.yml, and a push made with
+# GITHUB_TOKEN would not.
+on:
+  push:
+    branches: [develop]
+
+permissions: {}
+
+# Serialise, never cancel: a half-finished promote (main pushed, tag not yet) must be allowed to
+# finish, and a re-run is safe because every step below is idempotent.
+concurrency:
+  group: promote
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    if: github.repository_owner == 'delacournz'
+    runs-on: namespace-profile-linux-small
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      # Workflows as well as contents: `main` fast-forwards over every commit `develop` gained since the
+      # last release, and GitHub refuses a push carrying `.github/workflows/**` changes without it.
+      - id: app
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-workflows: write
+
+      # The App token is used for the checkout so the persisted credential can push to `main` and the
+      # tag. fetch-depth 0 brings every tag and origin/main for the ancestry and tag checks.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ steps.app.outputs.token }}
+          fetch-depth: 0
+
+      # Which version commit, if any, still needs promoting? Read from history rather than from this
+      # push's before/after, because a push is not guaranteed its own run: with one pending slot per
+      # concurrency group, a later push to develop replaces a queued run, and the version commit's run
+      # can be the one evicted. So every run looks for the newest commit that changed the CLI's version
+      # and promotes it if all of these hold:
+      #   1. every published package is at that version there (the fixed group; this also skips the
+      #      releases cut before the group existed, whose packages disagree),
+      #   2. no changeset was left at that commit (changeset version consumed them all),
+      #   3. tag v<version> does not exist yet (a re-run after success must not re-release).
+      # A promote that moved `main` but failed before the tag passes all three and finishes here.
+      # .github/release-detect.test.ts runs this script against throwaway repositories.
+      - id: detect
+        run: |
+          cli=packages/cli/package.json
+          sha=""
+          version=""
+          for commit in $(git log --format=%H HEAD -- "$cli"); do
+            now=$(git show "$commit:$cli" | jq -r .version)
+            before=$(git show "$commit^:$cli" 2>/dev/null | jq -r .version) || before=""
+            if [ "$now" != "$before" ]; then sha="$commit"; version="$now"; break; fi
+          done
+          if [ -z "$sha" ]; then
+            echo "no commit changed the CLI's version: nothing to release"; echo "release=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "newest version commit: $sha ($version)"
+          for dir in packages/react-native-ui packages/react-native-charts packages/react-native-bottom-sheet; do
+            other=$(git show "$sha:$dir/package.json" | jq -r .version)
+            if [ "$other" != "$version" ]; then
+              echo "$dir is $other there, not $version: not a fixed-group version commit"; echo "release=false" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+          done
+          pending=$(git ls-tree --name-only "$sha:.changeset" | awk '/\.md$/ && $0 != "README.md"' | wc -l | tr -d ' ')
+          if [ "$pending" != "0" ]; then
+            echo "$pending changeset(s) left at $sha: not the version commit"; echo "release=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/v$version" > /dev/null 2>&1; then
+            echo "tag v$version already exists: already released"; echo "release=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "promoting $sha as v$version"
+          echo "release=true" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      # Fast-forward only. If main is not an ancestor of this commit something moved it by hand;
+      # fail loudly instead of forcing, because a force would rewind what Railway serves.
+      # The version commit, not HEAD: anything develop gained after it ships with the next release.
+      - name: Fast-forward main
+        if: steps.detect.outputs.release == 'true'
+        env:
+          SHA: ${{ steps.detect.outputs.sha }}
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor origin/main "$SHA"; then
+            echo "origin/main is not an ancestor of $SHA: refusing a non-fast-forward promote" >&2
+            exit 1
+          fi
+          git push origin "$SHA:refs/heads/main"
+
+      # main first so Railway production and the tag land together. Annotated tag; its push starts
+      # release.yml, which refuses any tag that is not reachable from main.
+      - name: Tag release
+        if: steps.detect.outputs.release == 'true'
+        env:
+          VERSION: ${{ steps.detect.outputs.version }}
+          SHA: ${{ steps.detect.outputs.sha }}
+        run: |
+          git config user.name "delacour-release[bot]"
+          git config user.email "delacour-release[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "v$VERSION" "$SHA"
+          git push origin "v$VERSION"

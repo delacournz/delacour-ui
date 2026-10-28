@@ -9,11 +9,10 @@
  *      The bump is never committed; the runner's working tree is thrown away.
  *   2. `changeset publish-plan` — which of those versions npm has not seen.
  *   3. `npm publish --tag alpha` each of them, directly. `alpha.yml` has its own
- *      trusted publisher on npmjs.com that allows `npm publish`; `release.yml`
- *      keeps the stage-only one, so a stable version still waits for 2FA.
+ *      trusted publisher on npmjs.com, beside `release.yml`'s.
  *
  * No git tags and no GitHub Releases: a snapshot is a build, not a release.
- * `latest` is never touched — only `release.yml` moves it.
+ * `latest` is never touched — only `release.yml`, on a `v*` tag, moves it.
  *
  * Every package is attempted even after one fails, and a version npm already
  * serves counts as success, which is what makes a re-run safe.
@@ -21,7 +20,7 @@
 import { appendFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { $ } from "bun";
-import { findPackageDirs, lastJsonObject, type PublishRelease, parsePublishPlan } from "./changeset-stage";
+import { findPackageDirs, lastJsonObject, type PublishRelease, parsePublishPlan } from "./publish-plan";
 
 export type PublishResult =
 	| { result: "published" }

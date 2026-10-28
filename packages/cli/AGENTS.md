@@ -512,20 +512,19 @@ run is caught before a build renders its dark theme as a utility class.
 
 `tsdown.config.ts` defines `__REGISTRY_REF__` from `DELACOUR_REGISTRY_REF`, and release CI passes
 **the commit it is publishing**, not the tag — `alpha.yml` the pushed `develop` commit, `release.yml`
-the release pull request's merge commit. A published version therefore always
+the commit the `vX.Y.Z` tag points at (the version pull request's squash). A published version therefore always
 reads the registry it shipped against; `--ref develop` opts into what has landed since. `main`
-is the last release — `release.yml` fast-forwards it — so `--ref main` is only ever as new as the
+is the last release — `promote.yml` fast-forwards it — so `--ref main` is only ever as new as the
 newest published CLI.
 
-A commit rather than a tag because `changesets/action` builds before it tags: a tag-derived ref
-would name something that does not exist yet, and a publish that succeeded before a failed tag
-push would ship a CLI pointing at a ref that never appears. `raw.githubusercontent.com` serves a
-full SHA just as happily.
+A commit rather than a tag because a SHA is immutable: a tag can be deleted or moved by an admin,
+and a published CLI pointing at it would follow. `raw.githubusercontent.com` serves a full SHA just
+as happily.
 
-`DELACOUR_REGISTRY_REF` is never set on the build step alone: `alpha.yml` and `release.yml` both set
-it at job level. `npm publish` re-runs
-`prepublishOnly`, which rebuilds the bundle — if the ref were unset for that rebuild it would
-silently bake `main` over the correct value.
+`DELACOUR_REGISTRY_REF` is never set on the build step alone: `alpha.yml` and `release.yml`'s `build`
+job both set it at job level. `alpha.yml`'s `npm publish` re-runs `prepublishOnly`, which rebuilds the
+bundle — if the ref were unset for that rebuild it would silently bake `main` over the correct value.
+`release.yml` packs with `--ignore-scripts` and publishes the packed tarball, so nothing rebuilds there.
 
 ### The install channel comes from the CLI's version
 

@@ -1,0 +1,153 @@
+name: version
+
+# Keeps the "🔖 chore(release): vX.Y.Z" pull request in step with `develop`.
+#
+# Every push to `develop` that carries pending changesets (.changeset/*.md) makes changesets/action
+# run `bun run version` (changeset version + lockfile refresh) on `changeset-release/develop` and
+# open or update one PR into `develop`. Merging that PR is the release decision: promote.yml sees the
+# version commit land, fast-forwards `main` to it and tags it, which starts release.yml.
+#
+#   feature PR ─▶ develop ─▶ version.yml ─▶ version PR ─▶ develop ─▶ promote.yml ─▶ main + vX.Y.Z ─▶ release.yml
+#
+# The four published packages are one `fixed` group in .changeset/config.json, so a changeset that
+# names any of them moves all four — `delacour` (the CLI) and every library always share a version,
+# and that version is the tag.
+#
+# The PR is created with a GitHub App token, not GITHUB_TOKEN. Events caused by GITHUB_TOKEN never
+# start other workflows, so the version PR would sit without checks. The App is also what makes the
+# push-actor loop guard below possible: its pushes are attributed to `delacour-release[bot]`.
+#
+# The PR still needs the required `signoff` statuses to merge, and nobody authors it from a machine
+# that can run `bun run signoff`. ci.yml runs on `pull_request` from `changeset-release/develop` —
+# the App's push starts it — and its `signoff` job writes the same statuses a local run would.
+on:
+  push:
+    branches: [develop]
+
+permissions: {}
+
+# One version PR, one writer. Queue rather than cancel: a cancelled run could stop between pushing
+# the branch and opening the PR. GitHub keeps only the newest queued run, which is all that matters
+# because changesets/action always works from the current tip of develop.
+concurrency:
+  group: version-pr
+  cancel-in-progress: false
+
+# `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
+# with only `read:packages`, never a broader token.
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  TURBO_TELEMETRY_DISABLED: 1
+
+jobs:
+  version-pr:
+    # Loop guard 1: never react to the App's own pushes (it writes only changeset-release/*, `main`
+    # and tags, but a stray write to develop must not start a second version run).
+    if: github.repository_owner == 'delacournz' && github.actor != 'delacour-release[bot]'
+    runs-on: namespace-profile-linux-small
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Stale guard: changesets/action resets `changeset-release/develop` to the commit this run was
+      # started for and force-pushes it, so a re-run of an old run after develop moved on would replace
+      # the newer version PR with an older release plan. Only develop's tip versions; the newer push has
+      # its own run. The checkout fetched origin/develop as it is now, re-runs included.
+      #
+      # Loop guard 2: HEAD is itself the merged version PR (changesets consumed, version bumped by this
+      # push). Running changesets/action there finds nothing to do, so skip it.
+      # Both read git objects only and run no repo code. .github/release-detect.test.ts runs this script.
+      - id: detect
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/develop)" ]; then
+            echo "$(git rev-parse HEAD) is no longer develop's tip ($(git rev-parse origin/develop)): the newer push versions"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          base="$BEFORE"
+          if ! echo "$base" | grep -Eq '^[0-9a-f]{40}$' || echo "$base" | grep -Eq '^0{40}$' || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            base="HEAD^"
+          fi
+          new=$(jq -r .version packages/cli/package.json)
+          old=$(git show "$base:packages/cli/package.json" 2>/dev/null | jq -r .version || echo "")
+          pending=$(find .changeset -maxdepth 1 -name '*.md' ! -name README.md | wc -l | tr -d ' ')
+          if [ -n "$old" ] && [ "$old" != "$new" ] && [ "$pending" = "0" ]; then
+            echo "HEAD is the version commit ($old -> $new, no pending changesets): nothing to version"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Scoped to this repo only (the default) and to what the job needs: push the version branch,
+      # open the PR. Workflows too: the version commit carries whatever `develop` holds, and GitHub
+      # refuses a push touching `.github/workflows/**` from a token without it. Revoked when the job ends.
+      - id: app
+        if: steps.detect.outputs.skip == 'false'
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-workflows: write
+
+      - if: steps.detect.outputs.skip == 'false'
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.3.14
+
+      # The changesets CLI bin runs on node (`#!/usr/bin/env node`) and needs Node 22+
+      # (module.enableCompileCache); the runner image ships an older one. Same pin as release.yml.
+      - if: steps.detect.outputs.skip == 'false'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - if: steps.detect.outputs.skip == 'false'
+        run: bun install --frozen-lockfile
+
+      # The PR title and its squash commit carry the version this release will ship, so a `git log`
+      # on develop reads "🔖 chore(release): v0.6.0" rather than a bare "version packages". changesets
+      # only knows that version after `changeset version` has run, so ask `changeset status` for the
+      # same answer first: it resolves the pending changesets against the current manifests without
+      # writing anything. The four published packages are `fixed`, so the CLI's version is all of them.
+      # With nothing pending the output is empty and the action is about to close the PR, so the
+      # fallback text only ever names that closing run.
+      - id: next
+        if: steps.detect.outputs.skip == 'false'
+        run: |
+          bunx changeset status --output="$RUNNER_TEMP/changeset-status.json"
+          version=$(jq -r '.releases[] | select(.name == "delacour") | .newVersion' "$RUNNER_TEMP/changeset-status.json")
+          if [ -n "$version" ]; then
+            echo "next version: $version"
+            echo "title=🔖 chore(release): v$version" >> "$GITHUB_OUTPUT"
+          else
+            echo "no pending changesets: no version to name"
+            echo "title=🔖 chore(release): version packages" >> "$GITHUB_OUTPUT"
+          fi
+
+      # `bun run version` executes repo code (changeset version + bun install --lockfile-only) in the
+      # same step as the App token. That is acceptable only because this workflow runs solely on
+      # pushes to `develop`, which is PR-gated and signed off: no fork or unreviewed code reaches it.
+      # The branch is changeset-release/<ref name> = changeset-release/develop. Commits go through
+      # the GitHub API (verified, attributed to the App), so no git identity is configured.
+      # `@changesets/changelog-github` reads GITHUB_TOKEN to name each change's author.
+      - id: changesets
+        if: steps.detect.outputs.skip == 'false'
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          github-token: ${{ steps.app.outputs.token }}
+          version-script: bun run version
+          commit-message: ${{ steps.next.outputs.title }}
+          pr-title: ${{ steps.next.outputs.title }}
+          create-github-releases: false
+          push-git-tags: false
+        env:
+          GITHUB_TOKEN: ${{ steps.app.outputs.token }}

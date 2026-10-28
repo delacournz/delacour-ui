@@ -2,7 +2,9 @@
 	"$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
 	"changelog": ["@changesets/changelog-github", { "repo": "delacournz/delacour-ui" }],
 	"commit": false,
-	"fixed": [],
+	"fixed": [
+		["delacour", "@delacour/react-native-ui", "@delacour/react-native-charts", "@delacour/react-native-bottom-sheet"]
+	],
 	"linked": [],
 	"access": "public",
 	"baseBranch": "develop",

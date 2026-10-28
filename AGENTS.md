@@ -610,9 +610,12 @@ exist yet. See `packages/cli/AGENTS.md`.
 
 ## Deployment
 
-`apps/web` is deployed on Railway. The configuration lives in Railway, not in this repo — there
-is no `railway.json`, `railpack.json` or Dockerfile here, and adding one would override the
-service settings.
+`apps/web` is deployed on Railway as a Docker image built from
+[`apps/web/Dockerfile`](apps/web/Dockerfile) (repo-root context, trimmed by the root `.dockerignore`).
+The service itself — builder, `dockerfilePath`, watch patterns, variables, domains — is declared in
+`delacournz/delacour-monorepo`'s `apps/ui/infra/railway.ts`, not here: there is no `railway.json` or
+`railpack.json` in this repo, and adding one would fight that config. Any variable the build reads
+must be an `ARG` in the Dockerfile, or the build never sees it.
 
 | Branch | Environment | Host |
 | --- | --- | --- |

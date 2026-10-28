@@ -69,8 +69,8 @@ Two long-lived branches, and they move differently:
 
 | Branch | Holds | Moves by |
 | --- | --- | --- |
-| `develop` | Everything merged — where work lands | A squash-merged pull request — the release pull request `release.yml` opens included |
-| `main` | The last release — the repository's default branch and front page | `release.yml` fast-forwarding it to the commit it released |
+| `develop` | Everything merged — where work lands | A squash-merged pull request — the version pull request `version.yml` opens included |
+| `main` | The last release — the repository's default branch and front page | `promote.yml` fast-forwarding it to the version commit |
 
 `main` is the default branch so that anyone reaching the repository sees what was last published.
 GitHub also offers the default branch as the base of every new pull request, and it has no setting
@@ -87,7 +87,7 @@ deletion, requires linear history, and requires a pull request whose `signoff` s
 `.github/rulesets/main.json` (`main-protected`) is release-only: it blocks deletion and non-fast-forward
 pushes, requires linear history, and restricts updates to its bypass list — repository admins and
 the release app. There is no pull request rule on it, because nothing reaches `main` by pull
-request. The one routine update is the release job's fast-forward, made with the release app's
+request. The one routine update is `promote.yml`'s fast-forward, made with the release app's
 token, which is why the app is on that list. Because `develop` only takes squash merges and `main` only fast-forwards,
 `main` is always an ancestor of `develop`; a hand-made commit on `main` breaks that, and the next
 release then fails at the push.
@@ -109,12 +109,13 @@ applied. To change protection, edit the JSON, apply it, and commit both in the s
 
 ```bash
 REPO=delacournz/delacour-ui
-for NAME in main develop; do
-  ID=$(gh api "repos/$REPO/rulesets" --jq ".[] | select(.name==\"$NAME-protected\") | .id")
+for FILE in main develop release-tags; do
+  NAME=$(jq -r .name ".github/rulesets/$FILE.json")
+  ID=$(gh api "repos/$REPO/rulesets" --jq ".[] | select(.name==\"$NAME\") | .id")
   if [ -n "$ID" ]; then
-    gh api --method PUT "repos/$REPO/rulesets/$ID" --input ".github/rulesets/$NAME.json"
+    gh api --method PUT "repos/$REPO/rulesets/$ID" --input ".github/rulesets/$FILE.json"
   else
-    gh api --method POST "repos/$REPO/rulesets" --input ".github/rulesets/$NAME.json"
+    gh api --method POST "repos/$REPO/rulesets" --input ".github/rulesets/$FILE.json"
   fi
 done
 ```
@@ -182,7 +183,7 @@ checks and, given a SHA, writes the same statuses from CI:
 gh workflow run ci.yml --ref "$(git branch --show-current)" -f signoff-sha="$(git rev-parse HEAD)"
 ```
 
-The release pull request is the one pull request signed off in CI, automatically — see below.
+The version pull request is the one pull request signed off in CI, automatically — see below.
 
 ## CI
 
@@ -192,7 +193,7 @@ three cases only:
 
 | Trigger | Why |
 | --- | --- |
-| `pull_request` from `changeset-release/develop` | No person authors the release pull request, so nobody is at a laptop to sign it off. Its final `signoff` job writes the five required statuses for the head SHA it tested. Every job is gated by `if:` to that head branch, so an ordinary pull request starts the workflow and bills nothing |
+| `pull_request` from `changeset-release/develop` | No person authors the version pull request, so nobody is at a laptop to sign it off. Its final `signoff` job writes the five required statuses for the head SHA it tested. Every job is gated by `if:` to that head branch, so an ordinary pull request starts the workflow and bills nothing |
 | `workflow_dispatch` | The escape hatch above. With `signoff-sha`, a green run writes the statuses; blank is a report |
 | push to `release/playground/*` | Advisory — see [apps/playground/AGENTS.md](apps/playground/AGENTS.md#eas) |
 
@@ -204,7 +205,7 @@ one either. `scripts/signoff.test.ts` fails if `ci.yml` regains a push to `devel
 pull request job.
 
 `verify-expo` — the CLI against a real, npm-installed Expo app — is not part of local signoff: it
-installs from the registry and takes minutes. It runs on the release pull request, before anything
+installs from the registry and takes minutes. It runs on the version pull request, before anything
 reaches npm, and on dispatch.
 
 Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
@@ -214,15 +215,15 @@ needs macOS (Xcode, a simulator), and `namespace-profile-windows-small` for any 
 Windows. Nothing needs macOS or Windows today, so those two profiles are unused.
 The `ubuntu-latest` / `macos-*` / `windows-*` labels are not to be reintroduced — with one exception, below.
 
-The exception is the `release` job in `release.yml`, which stays on `ubuntu-latest`. npm's trusted
+The exceptions are `release.yml`'s `publish` job and `alpha.yml`, which stay on `ubuntu-latest`. npm's trusted
 publishing generates a sigstore provenance attestation and verifies it against the runner, and
-sigstore only attests GitHub-hosted runners: on a Namespace runner every `npm stage publish` fails
+sigstore only attests GitHub-hosted runners: on a Namespace runner every `npm publish` fails
 with `E422 … Unsupported GitHub Actions runner environment: "self-hosted"`. Moving it back to
 Namespace means either `--provenance=false` (OIDC without the attestation) or an npm token, and
 neither is worth one short job per release.
 
 The required contexts carry no `integration_id` in the ruleset, on purpose: a local signoff is
-written through the GitHub CLI's OAuth app and the release pull request's through GitHub Actions,
+written through the GitHub CLI's OAuth app and the version pull request's through GitHub Actions,
 and both have to satisfy the same rule.
 
 Socket Security posts two further checks. They stay advisory on purpose: requiring a third-party app
@@ -322,113 +323,72 @@ should ship adds one:
 bun run changeset          # pick packages, pick a bump, describe it
 ```
 
-Commit that markdown file alongside the change. From there the packages ship on two lines, from two
-workflows:
+Commit that markdown file alongside the change.
+
+**The four published packages share one version.** They are a single `fixed` group in
+`.changeset/config.json`, so a changeset naming any of them moves all four — the CLI included,
+changed or not. `delacour@x.y.z` therefore always ships beside `@delacour/react-native-ui@x.y.z` and
+the two engines at `x.y.z`, and a release is one tag, `vx.y.z`. `.github/changeset-config.test.ts`
+fails if the group and the published set drift apart.
+
+From there the packages ship on two lines:
 
 | Line | npm dist-tag | Version | Published by | When |
 | --- | --- | --- | --- | --- |
 | alpha | `alpha` | `x.y.z-alpha.<datetime>` | `.github/workflows/alpha.yml` | Every push to `develop` that carries a pending changeset |
-| stable | `latest` | `x.y.z` | `.github/workflows/release.yml` | Merging the release pull request it keeps open against `develop` |
+| stable | `latest` | `x.y.z` | `.github/workflows/release.yml` | The `vx.y.z` tag `promote.yml` pushes when the version pull request is merged |
 
 ### The flow
 
-```
- feature/*                  develop                                    main (default branch)
- ─────────                  ───────                                    ─────────────────────
-                               │                                             │
-  PR opened ──► base = main? ──┤ retarget-pr.yml moves it to develop         │
-                               │                                             │
-  squash merge ──────────────► ● develop-protected: signoff checks          │
-  (+ .changeset/*.md)          │                                             │
-                               │ push                                        │
-                               ▼                                             │
-                 ┌───────────────────────────────────┐                       │
-                 │ alpha.yml                         │                       │
-                 │ no pending changeset → exit green │                       │
-                 │ changeset version --snapshot alpha│                       │
-                 │   (x.y.z-alpha.<datetime>,        │                       │
-                 │    never committed)               │                       │
-                 │ npm publish --tag alpha  (direct) │──► npm  @alpha        │
-                 └───────────────────────────────────┘                       │
-                               │ same push                                   │
-                               ▼                                             │
-                 ┌───────────────────────────────────┐                       │
-                 │ release.yml · plan                │                       │
-                 │ pending changesets → release-pr   │                       │
-                 │ release commit     → release      │                       │
-                 │ neither            → exit green   │                       │
-                 └───────────────────────────────────┘                       │
-                               │ pending                                     │
-                               ▼                                             │
-                 ┌───────────────────────────────────┐                       │
-                 │ release.yml · release-pr          │                       │
-                 │ changeset version → x.y.z         │                       │
-                 │ force-push changeset-release/     │                       │
-                 │   develop, open or update the PR  │                       │
-                 │   "version packages" → develop    │                       │
-                 └───────────────────────────────────┘                       │
-                               │                                             │
-                    … more merges: more alphas, PR rebuilt …                 │
-                               │                                             │
-  maintainer merges the release PR                                           │
-  (squash, 4 checks) ────────► ● release commit                              │
-                               │ (alpha.yml: none pending → skip)            │
-                               ▼                                             │
-                 ┌───────────────────────────────────┐                       │
-                 │ release.yml · release             │                       │
-                 │ 1. registry check, build CLI      │                       │
-                 │    at the release commit          │                       │
-                 │ 2. git push SHA:main ─────────────┼──── fast-forward ────►● = release commit
-                 │ 3. npm stage publish --tag latest │                       │
-                 │ 4. git tags + GitHub Releases     │                       │
-                 └───────────────────────────────────┘                       │
-                               │                                             ▼
-                               ▼                                   Railway production
-                 maintainer, with 2FA:                             ui.delacour.co.nz
-                 npm stage approve <id>
-                 (charts before ui) ──────────────────────► npm  @latest
+Three workflows, one hop each, copied from warden's:
 
-  every push to develop ──► Railway staging  ui.staging.delacour.co.nz
+```
+ feature PR ─▶ develop ─▶ version.yml ─▶ "🔖 chore(release): vX.Y.Z" PR ─▶ develop
+                                                                           │
+                              promote.yml ◀────────── squash merge ────────┘
+                              │ fast-forward main, push tag vX.Y.Z
+                              ▼
+                              release.yml (tag push)
+                              │ build: tag on main? versions = tag? checks, registry, CLI, npm pack
+                              │ publish: GitHub Release + npm publish (charts, bottom-sheet, ui, cli)
+                              ▼
+                              npm @latest      main ─▶ Railway production ui.delacour.co.nz
+
+  every push to develop ─▶ alpha.yml (npm @alpha) and Railway staging ui.staging.delacour.co.nz
 ```
 
 ```mermaid
 flowchart TD
-    A[feature branch] -->|open PR| B{base is main?}
-    B -->|yes| C[retarget-pr.yml<br/>moves it to develop]
-    B -->|no| D[PR into develop]
-    C --> D
-    D -->|squash merge<br/>develop-protected| E[(develop)]
-
-    E -->|push| S[Railway staging<br/>ui.staging.delacour.co.nz]
-    E -->|push| F{alpha.yml:<br/>pending changesets?}
-    F -->|no| G[exit green]
-    F -->|yes| H[changeset version --snapshot alpha<br/>x.y.z-alpha.datetime, not committed]
-    H --> I[npm publish --tag alpha<br/>direct, trusted publisher]
-    I --> J[npm alpha]
-
-    E -->|push| L{release.yml plan:<br/>pending changesets?}
-    L -->|yes| M[changeset version<br/>stable x.y.z + changelogs]
-    M --> N[open or update the release PR<br/>changeset-release/develop into develop]
-    N -->|maintainer squash-merges| E
-    L -->|none, commit is the release merge| P[registry check, build CLI<br/>at the release commit]
-    L -->|none| Y[exit green]
-    P --> T[git push SHA:main<br/>fast-forward, never forced]
-    T --> U[(main = release commit)]
-    U --> V[Railway production<br/>ui.delacour.co.nz]
-    T --> Q[npm stage publish --tag latest]
-    Q --> R[git tags + GitHub Releases]
-    Q -.->|maintainer 2FA<br/>charts before ui| W[npm latest]
+    A[feature PR] -->|squash merge<br/>develop-protected| E[(develop)]
+    E -->|push| S[Railway staging]
+    E -->|push| F[alpha.yml<br/>snapshot → npm alpha]
+    E -->|push| V{version.yml:<br/>pending changesets?}
+    V -->|yes| N[open or update<br/>🔖 chore release: vX.Y.Z]
+    N -->|ci.yml signs off,<br/>maintainer squash-merges| E
+    E -->|push| P{promote.yml:<br/>version commit?}
+    P -->|no| Z[exit green]
+    P -->|yes| M[fast-forward main]
+    M --> T[push tag vX.Y.Z]
+    M --> PR[Railway production]
+    T --> R[release.yml build<br/>tag on main, checks, pack]
+    R --> Q[release.yml publish<br/>GitHub Release + npm latest]
 ```
+
+| Workflow | Trigger | Does |
+| --- | --- | --- |
+| `version.yml` | push to `develop` | With pending changesets, runs `bun run version` (`changeset version` + `bun install --lockfile-only`) on `changeset-release/develop` and opens or updates the version pull request. Skips the version commit itself |
+| `promote.yml` | push to `develop` | When the push is the version commit, fast-forwards `main` to it and pushes the annotated tag `vX.Y.Z`. Runs no repo code |
+| `release.yml` | push of a `v*` tag | `build` refuses a tag not on `main` or not matching every published `package.json`, runs typecheck/check/test, checks the registry, builds the CLI and `npm pack`s all four. `publish` cuts the GitHub Release and `npm publish`es each tarball not already on npm |
 
 ### Alpha: every merge
 
 `alpha.yml` runs `.github/changeset-alpha.ts` on every push to `develop`. With no pending changeset
-it exits green — a docs-only merge, or the release commit itself. Otherwise it runs
-`changeset version --snapshot alpha`, which gives every package a pending changeset names (and its
-dependents) the version the next release would give it plus an `-alpha.<datetime>` suffix —
-`useCalculatedVersion` and `prereleaseTemplate` in `.changeset/config.json` set that shape. The
-suffix is a 14-digit number, so each snapshot sorts after the one before it. The bump is never
-committed: the runner's tree is thrown away, and the changesets stay pending for the release.
+it exits green — a docs-only merge, or the version commit itself. Otherwise it runs
+`changeset version --snapshot alpha`, which gives all four packages (they are `fixed`) the version
+the next release would give them plus an `-alpha.<datetime>` suffix — `useCalculatedVersion` and
+`prereleaseTemplate` in `.changeset/config.json` set that shape. The suffix is a 14-digit number, so
+each snapshot sorts after the one before it. The bump is never committed: the runner's tree is
+thrown away, and the changesets stay pending for the release.
 
 Each unpublished snapshot then goes to npm with `npm publish --tag alpha`, directly. `latest` is
 never touched. No git tag and no GitHub Release is cut: a snapshot is a build, not a release.
@@ -436,75 +396,33 @@ never touched. No git tag and no GitHub Release is cut: a snapshot is a build, n
 After a stable release `alpha` still names the last snapshot, which is older than the new
 `latest`, until the next merge with a changeset publishes a new one.
 
-### Stable: merge the release pull request
+### Stable: merge the version pull request
 
-`release.yml` runs on every push to `develop`, and `.github/changeset-plan.ts` decides what the
-pushed commit means:
+`version.yml` keeps one pull request open from `changeset-release/develop` into `develop`, titled
+**🔖 chore(release): vX.Y.Z** — the version merging it will ship. `changeset status` names that
+version before `changeset version` runs, so the title and the commit message carry it, and the
+squash lands on `develop` as `🔖 chore(release): vX.Y.Z (#n)`. With nothing pending the title falls
+back to `version packages`, which only ever names the run that closes the pull request.
 
-| The commit | Job | What happens |
-| --- | --- | --- |
-| Carries pending changesets, and is `develop`'s tip | `release-pr` | Opens the release pull request, or rebuilds the open one on this commit |
-| Is the release pull request's merge, or follows a release commit `main` never took | `release` | Builds, fast-forwards `main`, stages on npm, tags |
-| Neither — a docs-only merge, a stale run | — | Nothing; the run is green and its summary says why |
+It holds what `changeset version` produces — every pending changeset consumed into stable versions
+and changelogs, and `bun.lock` regenerated to match. Each merge to `develop` rebuilds it on top of the
+new tip, so it always describes the release that merging it would cut. It is an ordinary pull
+request, except that `ci.yml` signs it off rather than a person: the app's push starts `ci.yml` on
+`pull_request`, the checks plus `verify-expo` run, and its `signoff` job writes the statuses.
 
-The release pull request is **🔖 chore(release): version packages**, from `changeset-release/develop`
-into `develop`. It holds what `changeset version` produces — every pending changeset consumed into
-stable versions and changelogs, and `bun.lock` regenerated to match. Each merge to `develop`
-force-pushes it from scratch on top of the new tip, so it always describes the release that merging
-it would cut. It is an ordinary pull request,
-except that `ci.yml` signs it off rather than a person: the checks, plus `verify-expo`, run on it and
-write its `signoff` statuses, and it squash-merges like any other.
+**Merging it is the release.** `promote.yml` recognises the version commit by three facts, not by its
+subject: `packages/cli/package.json`'s version differs from the pre-push tip, no changeset is
+pending, and tag `vX.Y.Z` does not exist yet. It fast-forwards `main` (never forced — if `main` is not
+an ancestor it fails, because a force would rewind what Railway serves) and pushes the tag. The tag
+starts `release.yml`.
 
-**Merging it is the release.** The squash lands on `develop` as the release commit, `alpha.yml` finds
-nothing pending and skips, and the `release` job rebuilds and checks the registry, builds the CLI
-with its registry ref pinned to that commit, fast-forwards `main` to it, stages every unpublished
-package on `latest`, pushes the tags and cuts a GitHub Release per package.
-
-The merge is recognised by its subject — the pull request title, plus the ` (#n)` GitHub appends to
-a squash — with no changeset left pending. The title lives twice, as `RELEASE_TITLE` in
-`changeset-plan.ts` and as `pr-title` / `commit-message` in `release.yml`; change both or the merge publishes
-nothing. Do not edit the title when merging, for the same reason.
-
-The plan reads the commit the run was started for, not `develop`'s tip, so a merge that lands
-straight after the release pull request cannot hide it.
-
-**A release is never versioned twice.** That happened once: a release was versioned and pushed, one
-package failed to stage, and re-running the run checked out the commit it had started on, ran
-`changeset version` over changesets `develop` had already consumed, and was refused at the push.
-Two rules in `planRelease` close it:
-
-- **Versioning only happens from `develop`'s tip.** A run for a commit `develop` has moved past is
-  stale — the newer push has its own run — so it does nothing rather than rebuild the release pull
-  request from old changesets.
-- **A release commit on `develop` that `main` does not have is an unfinished release.** `main` only
-  moves when a release does, so `origin/main..HEAD` holding a release commit means one was versioned
-  and never completed. Any later run with nothing pending resumes it from its own commit instead of
-  doing nothing: `main` moves there, and the stage script counts a version already staged as
-  success.
-
-So every retry is safe. Re-run the failed run, push anything to `develop`, or
-`gh workflow run release.yml --ref develop` to re-plan from the tip. The fast-forward comes before
-staging and is never forced: if `main` has diverged the push is refused with nothing staged, and on
-a retry after a staging failure it is a no-op.
+**Every step is safe to re-run.** `promote.yml` skips a version whose tag exists and its `main` push
+is a no-op once `main` is there. `release.yml`'s GitHub Release step replaces assets on a release that
+already exists, and its npm step skips any `name@version` npm already serves, so
+`gh run rerun --failed` finishes a partial publish.
 
 Fast-forwarding `main` is also what deploys `ui.delacour.co.nz`, so the production docs move with
-each release and not with each merge. It lands before the staged versions are approved; approve them
-promptly, or the site documents a version `latest` does not serve yet.
-
-The action is `changesets/action@v2`, used one half per job. `release-pr` gives it a `version-script`
-and no `publish-script`, so that job cannot publish. `release` gives it only `publish-script`:
-the release commit consumed every changeset, so it goes straight there, then pushes the tags that
-script wrote and cuts the Releases. v2 rather than v1 because `@changesets/cli` 3 files the changesets a pre-mode
-`changeset version` consumes under `.changeset/pre/`, and v1 read that directory as a Changesets-v1
-changeset and died on `.changeset/pre/changes.md`.
-
-### Leaving pre mode
-
-The packages were published as `0.1.0-alpha.N` from Changesets **pre mode**, which cannot coexist
-with snapshots (`changeset version --snapshot` refuses to run in it). `.changeset/pre.json` is
-therefore in mode `exit`: snapshots work, and the first stable release versions `0.1.0`, folds the
-changesets under `.changeset/pre/` into its changelog, and deletes `pre.json` and `pre/`. Do not
-delete them by hand before then — they are that changelog.
+each release and not with each merge, and land with the npm publish the same tag starts.
 
 ### The CLI follows its own line
 
@@ -519,45 +437,38 @@ untagged from `latest`. The documented commands are `bunx delacour@latest` and a
 **Both workflows authenticate with OIDC — there is no npm token.** Each package has two trusted
 publishers on npmjs.com, bound to this repository and a workflow filename:
 
-| Workflow | Allowed action | Why |
+| Workflow | Environment | Allowed action |
 | --- | --- | --- |
-| `alpha.yml` | `npm publish` | An alpha on every merge cannot wait for 2FA |
-| `release.yml` | `npm stage publish` only | A stable version reaches `latest` only after a maintainer approves it |
+| `alpha.yml` | — | `npm publish` |
+| `release.yml` | `release` | `npm publish` |
 
-The binding is the filename: rename either workflow and its publishes are refused until the
-publisher is recreated. `release.yml` therefore does not run `changeset publish` — that shells out
-to `npm publish`, and the registry answers `E403 OIDC permission denied for this action`. It runs
-`.github/changeset-stage.ts` instead, which asks Changesets for the publish plan, runs
-`npm stage publish` in each unpublished package, writes the stage ids to the job summary, and
-finishes with `changeset git-tag` so the action still pushes the tags and opens the GitHub Releases.
-Nothing is on a dist-tag at that point. A maintainer approves each staged version with 2FA, from the
-**Staged Packages** tab on npmjs.com or:
+The binding is the filename (and, for `release.yml`, the environment): rename either and its
+publishes are refused until the publisher is recreated. There is no staging and no 2FA approval —
+merging the version pull request is the approval, as in warden. The `release` environment has no
+required reviewer; its deployment branch policy limits it to `v*` tags.
 
-```bash
-npm stage list                   # everything waiting, with ids
-npm stage view <stage-id>        # contents, tag, provenance
-npm stage approve <stage-id>     # 2FA prompt, then it is live on `latest`
-npm stage reject <stage-id>      # discard; the version can be staged again
-```
+`release.yml`'s `publish` job never installs or runs repo code: `build` packs the tarballs with a
+read-only token and no registry secret, and `publish` uploads them byte for byte with
+`--ignore-scripts`, engines before `@delacour/react-native-ui` (which peers on both) and the CLI last.
+Both npm jobs run on `ubuntu-latest` because sigstore only attests GitHub-hosted runners.
+`bun publish` cannot do any of this: it has no OIDC or provenance support, so the publish call is
+npm's even though install and build are Bun's.
 
-Approve `@delacour/react-native-charts` and `@delacour/react-native-bottom-sheet` before
-`@delacour/react-native-ui`, which peers on both.
-`npm stage` needs npm 11.15 or newer, which is why both jobs install a current npm and why a
-maintainer's machine may need `npx npm@latest stage …`. `bun publish` cannot do any of this: it
-has no OIDC, provenance or staging support, so the publish call is npm's even though install and
-build are Bun's.
+**Only the release app may create `v*` tags.** A tag push publishes, so `.github/rulesets/release-tags.json`
+(`release-tags`) restricts creating, moving and deleting them to repository admins and the app, and
+`release.yml` refuses a tag whose commit is not on `main`.
 
-**The GitHub side is a GitHub App, not a PAT.** `release.yml` mints a short-lived installation token
-from the `delacour-release` app with `actions/create-github-app-token` at the top of both jobs that
-write. That token does two things `GITHUB_TOKEN` cannot. It pushes the release pull request's
-branch: a push made with `GITHUB_TOKEN` starts no workflows, so `ci.yml` would never run on that
-pull request, and its required `signoff` statuses would never be written. And it fast-forwards `main`, which
-`main-protected` lets only its bypass list update — the app is on it, as an `Integration` actor
-whose `actor_id` is the app id.
+**The GitHub side is a GitHub App, not a PAT.** `version.yml` and `promote.yml` mint a short-lived
+installation token from the `delacour-release` app with `actions/create-github-app-token`. That
+token does what `GITHUB_TOKEN` cannot. It pushes the version pull request's branch: a push made with
+`GITHUB_TOKEN` starts no workflows, so `ci.yml` would never run on that pull request, and its
+required `signoff` statuses would never be written. It fast-forwards `main`, which `main-protected`
+lets only its bypass list update — the app is on it, as an `Integration` actor whose `actor_id` is
+the app id. And it pushes the tag, which has to start `release.yml`.
 
 An app rather than a PAT because a fine-grained PAT expires within a year and belongs to one
 person; the app does neither, and its token lasts an hour. There is deliberately no fallback to
-`GITHUB_TOKEN`: the first release run under this flow fell back to it silently, got as far as the
+`GITHUB_TOKEN`: the first release run under the old flow fell back to it silently, got as far as the
 push to `main`, and was refused there with a ruleset error that named neither the missing secret
 nor the token.
 
@@ -566,8 +477,8 @@ webhook and three repository permissions, all read/write:
 
 | Permission | For |
 | --- | --- |
-| Contents | Pushing `changeset-release/develop`, `main` and the tags; cutting GitHub Releases |
-| Pull requests | Opening and updating the release pull request |
+| Contents | Pushing `changeset-release/develop`, `main` and the tags |
+| Pull requests | Opening and updating the version pull request |
 | Workflows | Either push, whenever the commits it carries touch `.github/workflows/**` — GitHub refuses those from a token without it |
 
 Its id and key reach the workflow as a variable and a secret:
@@ -578,25 +489,15 @@ gh secret set RELEASE_APP_PRIVATE_KEY --repo delacournz/delacour-ui < <downloade
 ```
 
 Rotating the key is generating a new one on the app's settings page, setting the secret again and
-deleting the old key there. Uninstalling the app, or removing it from `main-protected`'s bypass
-list, stops every release at the push to `main`.
+deleting the old key there. Uninstalling the app, or removing it from `main-protected`'s or
+`release-tags`' bypass list, stops every release at `promote.yml`.
 
-The first publish of each package had to be manual: npm can only bind a trusted publisher to a
-package that already exists. That applies to any package added later — publish it by hand once,
-bind the publisher, and CI takes over. `@delacour/react-native-bottom-sheet` is the current case,
-and the steps, in order, are:
-
-```bash
-cd packages/react-native-bottom-sheet
-npx npm@latest publish --access public --tag alpha      # npm ≥ 11.15, prompts for 2FA
-```
-
-then on npmjs.com, under the package's **Settings → Trusted publishers**, bind GitHub Actions to
-repository `delacournz/delacour-ui` twice — workflow `alpha.yml` allowed `npm publish`, and workflow
-`release.yml` allowed `npm stage publish` only — the same two bindings the other packages carry. From
-the next merge on, `alpha.yml` snapshots it with the rest and `release.yml` stages it; approve in
-peer order, `@delacour/react-native-bottom-sheet` and `@delacour/react-native-charts` before
-`@delacour/react-native-ui`.
+The first publish of a package has to be manual: npm can only bind a trusted publisher to a package
+that already exists. Publish it by hand once (`npx npm@latest publish --access public --tag alpha`,
+2FA), then on npmjs.com under **Settings → Trusted publishers** bind GitHub Actions to repository
+`delacournz/delacour-ui` twice — workflow `alpha.yml`, and workflow `release.yml` with environment
+`release` — and add it to the `fixed` group, `release.yml`'s pack and publish lists and
+`.github/changeset-config.test.ts`.
 
 `verify:expo` does not wait for that: it packs each
 workspace package a registry item depends on (`@delacour/react-native-charts` for `chart`,
@@ -604,9 +505,8 @@ workspace package a registry item depends on (`@delacour/react-native-charts` fo
 before `add`, so the check covers this branch's engines rather than whatever npm last served — and
 passes before a package exists there at all.
 
-The registry the published CLI reads is pinned to the **commit** being released, not the tag —
-`changesets/action` builds before it tags, so a tag-derived ref would name something that does not
-exist yet. See `packages/cli/AGENTS.md`.
+The registry the published CLI reads is pinned to the **commit** being released, not the tag — a
+SHA is immutable. See `packages/cli/AGENTS.md`.
 
 ## Deployment
 

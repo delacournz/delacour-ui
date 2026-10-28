@@ -7,7 +7,7 @@ name: CI
 #
 # What still runs here, and why:
 #
-# - The release pull request (`changeset-release/develop`). No person authors it — `release.yml`
+# - The version pull request (`changeset-release/develop`). No person authors it — `version.yml`
 #   force-pushes it with the release app's token on every merge — so nobody is at a laptop to sign it
 #   off. Every job is gated to that head branch on `pull_request`, and the `signoff` job writes the
 #   same statuses `bun run signoff` would, for the head SHA it tested. It is also the one run that

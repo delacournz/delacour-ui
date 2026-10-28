@@ -1,214 +1,102 @@
-name: Release
+name: release
 
-# The stable release, driven by one pull request. Every push to `develop` lands in one of three
-# places, decided by `.github/changeset-plan.ts`:
+# Publishes a release: GitHub Release + npm packages for one `v*` tag.
 #
-# 1. Changesets are pending: `release-pr` opens "🔖 chore(release): version packages" against
-#    `develop`, or rebuilds the one already open on top of the new commit. It holds what
-#    `changeset version` produces — stable versions, changelogs, the consumed changesets deleted.
-# 2. That pull request was just squash-merged: `release` fast-forwards `main` to the merge commit,
-#    stages every unpublished package on npm under `latest`, pushes the tags and cuts a GitHub
-#    Release per package.
-# 3. Neither: nothing to do, and the run exits green.
+# Nobody pushes this tag by hand. The flow is:
 #
-# Merging the release pull request is the only thing a maintainer does by hand, besides approving
-# the staged versions. It is also the only way `main` moves, so the repository's front page is
-# always the last release and `main` is always an ancestor of `develop`.
+#   changeset PR ─▶ develop ─▶ version.yml opens the "🔖 chore(release): vX.Y.Z" PR
+#   merge it ─▶ develop @ V ─▶ promote.yml fast-forwards `main` to V, then pushes the annotated tag vX.Y.Z
+#   tag push ─▶ this workflow (Railway production builds `main` at the same commit)
+#
+# The four published packages — `delacour` (the CLI), `@delacour/react-native-ui`,
+# `@delacour/react-native-charts` and `@delacour/react-native-bottom-sheet` — are one `fixed`
+# changesets group, so every one of them is at the tag's version and every release ships all four,
+# changed or not.
+#
+# Because the trigger is a bare tag, anything able to create `v*` tags could start a publish. Two
+# checks keep that honest: the `release-tags` ruleset (.github/rulesets/release-tags.json) restricts
+# who may create them (the delacour-release App from promote.yml, and repo admins), and `build`
+# below refuses a tag whose commit is not on `main`, so a tag made off a feature branch cannot publish.
 #
 # Alphas are not this file's job: `alpha.yml` publishes a snapshot on every merge to `develop`.
-#
-# Publishing is *staged*: `.github/changeset-stage.ts` runs `npm stage publish`
-# and a maintainer approves each staged version with 2FA. The trusted publisher
-# configured on npmjs.com for this workflow allows staging only, so a direct
-# `npm publish` — which is what `changeset publish` runs — is refused with
-# `E403 OIDC permission denied for this action`. That is what authenticates the
-# job; there is no npm token anywhere, and `bun publish` cannot do either.
-#
-# Nothing here versions twice. `release-pr` only runs for `develop`'s tip, so a re-run of an old
-# run cannot rebuild the pull request from changesets `develop` has since consumed. And a release
-# commit that is on `develop` but not on `main` is a release that never finished: any later run
-# resumes it — `main` moves, and a version already staged counts as staged.
-#
-# `workflow_dispatch` is the retry: on `develop` it re-plans from the tip. Re-running a failed
-# release run works too.
 on:
   push:
-    branches: [develop]
-  workflow_dispatch:
+    tags: ["v*"]
 
-# `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
-# with only `read:packages`, never a broader token.
-env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+permissions: {}
 
+# Never let two releases interleave; a cancelled publish is worse than a slow one.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+# Build and publish are split so dependency code never runs next to publish
+# credentials: `build` installs/compiles with a read-only token and no registry secret;
+# `publish` holds the OIDC + release write permissions but never installs or
+# executes repo dependencies. `build` runs on Namespace like CI; `publish` stays
+# on a GitHub-hosted runner — npm trusted publishing + provenance refuse
+# self-hosted ones (`E422 Unsupported GitHub Actions runner environment: "self-hosted"`),
+# which is what a Namespace profile is to GitHub.
 jobs:
-  plan:
-    name: Plan
-    # A dispatch from any other branch would plan against whatever that branch holds.
-    if: github.repository_owner == 'delacournz' && github.ref == 'refs/heads/develop'
-    runs-on: namespace-profile-linux-small
-    timeout-minutes: 5
+  build:
+    if: github.repository_owner == 'delacournz'
+    # Medium, not small: typecheck across every workspace was OOM-killed on the small profile.
+    runs-on: namespace-profile-linux-medium
+    timeout-minutes: 30
     permissions:
       contents: read
-    outputs:
-      mode: ${{ steps.plan.outputs.mode }}
-
-    steps:
-      # The default ref: the commit this run was started for, not `develop`'s tip. A merge that
-      # lands right after the release pull request must not turn its run into a no-op. Full
-      # history, because the plan compares this commit with `origin/develop` and `origin/main`.
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        with:
-          bun-version: 1.3.14
-
-      # No install: the script imports nothing outside Bun and Node.
-      - name: Decide between the release pull request, a release, and nothing
-        id: plan
-        run: bun .github/changeset-plan.ts
-
-  release-pr:
-    name: Open or update the release pull request
-    needs: plan
-    if: needs.plan.outputs.mode == 'version'
-    runs-on: namespace-profile-linux-small
-    timeout-minutes: 15
-    permissions:
-      contents: write
-      pull-requests: write
-
-    # Latest wins: the pull request is rebuilt from scratch on each push, so a run for an older
-    # commit has nothing to add once a newer one is queued.
-    concurrency:
-      group: release-pr
-      cancel-in-progress: true
-
     env:
       TURBO_TELEMETRY_DISABLED: 1
-
-    steps:
-      # The release app's token, so the push to `changeset-release/develop` is not made with
-      # `GITHUB_TOKEN`. A push made with that starts no workflows, so `ci.yml` would never run on
-      # the release pull request and its four required checks would never report — unmergeable.
-      # No fallback to `GITHUB_TOKEN`: a missing variable or key fails here, by name.
-      - name: Mint the release app's token
-        id: app-token
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-        with:
-          app-id: ${{ vars.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          token: ${{ steps.app-token.outputs.token }}
-
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        with:
-          bun-version: 1.3.14
-
-      # `bunx changeset` runs the CLI's `bin.js` under its `#!/usr/bin/env node` shebang, and
-      # `@changesets/cli` 3 calls `module.enableCompileCache()`, which Node only has from 22.1. The
-      # runner's own Node is 20, where that is `TypeError: enableCompileCache is not a function`.
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 24
-
-      - run: bun install --frozen-lockfile
-
-      # Version half only — no `publish-script`, so this job can never publish. The action resets
-      # `changeset-release/develop` to this commit, runs the version script and force-pushes, which
-      # is also what keeps the pull request up to date with `develop` for `develop-protected`.
-      #
-      # v2, not v1: `@changesets/cli` 3 moves the changesets a pre-mode `changeset version`
-      # consumes into `.changeset/pre/`, and v1 read that directory as a Changesets-v1 changeset
-      # and died on `.changeset/pre/changes.md`.
-      #
-      # `pr-title` and `commit-message` are `RELEASE_TITLE` in `.github/changeset-plan.ts`, which is how the
-      # merge is recognised afterwards. Change one and change the other. The token has to arrive
-      # through `github-token`; the action hands it to the version script as `GITHUB_TOKEN`, which
-      # `@changesets/changelog-github` needs.
-      - name: Version packages into the release pull request
-        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          version-script: bun .github/changeset-version.ts
-          pr-title: "🔖 chore(release): version packages"
-          commit-message: "🔖 chore(release): version packages"
-
-  release:
-    name: Release
-    needs: plan
-    if: needs.plan.outputs.mode == 'publish'
-    # The one job that is not on a Namespace runner, and it cannot be: trusted
-    # publishing generates a sigstore provenance attestation, and npm verifies
-    # it against the runner environment. A self-hosted runner — which is what a
-    # Namespace profile is to GitHub — is refused with `E422 Unsupported GitHub
-    # Actions runner environment: "self-hosted"`. The alternative was
-    # `--provenance=false`, which keeps OIDC but throws away the attestation
-    # that is the point of having no npm token.
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      contents: write
-      id-token: write
-
-    # Never let two releases interleave; a cancelled publish is worse than a slow one.
-    concurrency:
-      group: release
-      cancel-in-progress: false
-
-    env:
-      TURBO_TELEMETRY_DISABLED: 1
-      # The commit, not the tag: `changesets/action` builds before it tags, so a tag-derived ref
-      # would name something that does not exist yet, and a publish that succeeded before a failed
-      # tag push would ship a CLI pointing at a ref that never appears. A SHA is immutable and
-      # already resolvable, and raw.githubusercontent.com serves it.
-      #
-      # Job level so every step sees it, including the CLI's `prepublishOnly` rebuild inside
-      # `npm stage publish` — unset there, it would silently bake "main" over the right value.
+      # `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
+      # with only `read:packages`. Never reaches the publish job.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # The CLI serves components straight out of `registry/` at this ref. The commit, not the tag:
+      # a SHA is immutable, and raw.githubusercontent.com serves it.
       DELACOUR_REGISTRY_REF: ${{ github.sha }}
-
     steps:
-      # The release app's token, so the credentials checkout persists are the ones the
-      # fast-forward of `main` uses: `main-protected` restricts updates to its bypass list, and the
-      # app is on it. `GITHUB_TOKEN` cannot make that push, so there is no fallback to it — a
-      # missing variable or key fails here, by name, before anything is built.
-      - name: Mint the release app's token
-        id: app-token
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-        with:
-          app-id: ${{ vars.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-
+      # fetch-depth 0: the ancestry check below needs origin/main, not just the tagged commit.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
+
+      # promote.yml pushes main before the tag, so a legitimate release tag is always already
+      # reachable from main. Fails first, before any dependency code runs.
+      - name: Tag commit must be on main
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "tag $GITHUB_REF_NAME ($GITHUB_SHA) is not an ancestor of origin/main: refusing to publish" >&2
+            exit 1
+          fi
+
+      - name: Tag must match every published package's version
+        run: |
+          for dir in packages/cli packages/react-native-ui packages/react-native-charts packages/react-native-bottom-sheet; do
+            version=$(jq -r .version "$dir/package.json")
+            if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+              echo "tag $GITHUB_REF_NAME does not match $dir/package.json version $version" >&2
+              exit 1
+            fi
+          done
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.3.14
 
+      # tsdown's bin runs under Node and needs one with native TypeScript to load its config.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
-          registry-url: "https://registry.npmjs.org"
-
-      # Trusted publishing needs npm >= 11.5.1 and `npm stage` >= 11.15.0; the
-      # runner's bundled npm is older than both.
-      - name: Update npm for OIDC and staged publishing
-        run: npm install -g npm@latest
 
       - run: bun install --frozen-lockfile
 
-      # The CLI serves components straight out of `registry/` at the commit it
-      # was built from, so a stale registry ships an `add` that hands over
-      # components which no longer match their source. CI checks this on every
-      # pull request; check it again here, because this is the copy that ships.
+      - run: bun run typecheck
+      - run: bun run check
+      - run: bun run test
+
+      # The CLI serves components straight out of `registry/` at the commit it was built from, so a
+      # stale registry ships an `add` that hands over components which no longer match their source.
+      # Signoff checks this on every pull request; check it again here, because this is the copy that ships.
       - name: Rebuild the registry
         working-directory: packages/cli
         run: bun run registry:build
@@ -221,34 +109,86 @@ jobs:
             exit 1
           fi
 
-      # Before `main` moves and before anything is staged, so a broken bundle fails the run with
-      # nothing changed, rather than surfacing halfway through `prepublishOnly` with a package
-      # already up.
       - name: Build the CLI
         working-directory: packages/cli
         run: bun run build && bun run build:check
 
-      # Before staging, so a `main` that cannot take the release stops the run with npm untouched.
-      # Not `--force`, and it must never be. `develop` squash-merges and `main` moves only here, so
-      # `main` is always an ancestor of the released commit and this is a fast-forward. If it is
-      # not, someone pushed to `main` by hand: the push is refused, and `non_fast_forward` in
-      # `main-protected` backs that up — reconcile `main` and re-run. On a re-run after a later
-      # failure `main` is already here and the push is a no-op.
-      - name: Fast-forward main to the release commit
-        run: git push origin "$DELACOUR_REGISTRY_REF:refs/heads/main"
+      # npm, not bun: these are the tarballs `publish` uploads byte for byte. --ignore-scripts so the
+      # CLI's `prepublishOnly` rebuild cannot run here with a different environment than the build above.
+      - name: Pack npm tarballs
+        run: |
+          mkdir -p dist
+          for dir in packages/react-native-charts packages/react-native-bottom-sheet packages/react-native-ui packages/cli; do
+            npm pack "./$dir" --pack-destination dist --ignore-scripts
+          done
+          ls -l dist
 
-      # Publish half only. The release commit consumed every changeset, so the action finds none
-      # and goes straight to `publish-script`, then pushes the tags it wrote and cuts the GitHub
-      # Releases. The token has to arrive through `github-token`.
-      - name: Stage on npm, tag and cut GitHub Releases
-        id: changesets
-        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          # Not `changeset publish`: it would run `npm publish`, which the
-          # trusted publisher refuses. The script stages every unpublished
-          # package, writes the stage ids to the step summary, then runs
-          # `changeset git-tag` so the action still pushes tags and opens the
-          # GitHub Releases. Nothing reaches a dist-tag until someone runs
-          # `npm stage approve <id>`.
-          publish-script: bun .github/changeset-stage.ts
+          name: dist
+          path: dist/*.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # No required reviewer: merging the version PR is the approval. The environment stays because
+    # npm's trusted publisher is bound to this workflow file + environment name, and its deployment
+    # branch policy (tags `v*`) still limits where a publish can start.
+    environment: release
+    permissions:
+      contents: write # GitHub release
+      id-token: write # npm trusted publishing + provenance
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm >= 11.5.1; the runner's bundled npm is older.
+      - name: Update npm for OIDC
+        run: npm install -g npm@latest
+
+      # A rerun after a failed npm publish finds the release already created: replace its assets
+      # instead of failing on create, so `gh run rerun --failed` can finish the publish.
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          assets=(dist/*.tgz)
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "release $GITHUB_REF_NAME already exists, replacing assets"
+            gh release upload "$GITHUB_REF_NAME" "${assets[@]}" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "${assets[@]}" --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes
+          fi
+
+      # Engines first so @delacour/react-native-ui's peers resolve the moment it lands; the CLI last,
+      # since it installs the libraries at its own version line.
+      # Already-published versions are skipped, so a re-run finishes a partial publish.
+      # Auth is OIDC trusted publishing (npm >= 11.5.1) only. Never pass NPM_TOKEN here: it is the
+      # GitHub Packages read token for `bun install`, and npm would send it to registry.npmjs.org.
+      # --ignore-scripts: nothing in the tarballs runs here.
+      - name: Publish to npm
+        env:
+          REPO_PRIVATE: ${{ github.event.repository.private }}
+        run: |
+          provenance=""
+          if [ "$REPO_PRIVATE" = "false" ]; then provenance="--provenance"; fi
+          for tgz in dist/delacour-react-native-charts-*.tgz dist/delacour-react-native-bottom-sheet-*.tgz dist/delacour-react-native-ui-*.tgz dist/delacour-[0-9]*.tgz; do
+            manifest=$(tar -xOzf "$tgz" package/package.json)
+            name=$(echo "$manifest" | jq -r .name)
+            version=$(echo "$manifest" | jq -r .version)
+            if npm view "$name@$version" version > /dev/null 2>&1; then
+              echo "$name@$version already published, skipping"
+              continue
+            fi
+            npm publish "./$tgz" --access public --tag latest --ignore-scripts $provenance
+          done

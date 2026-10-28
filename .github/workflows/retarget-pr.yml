@@ -3,7 +3,7 @@ name: Retarget PR
 # `main` is the default branch so that the repository's front page shows the last release, and
 # GitHub offers the default branch as the base of every new pull request. It has no separate setting
 # for "base new PRs on X", so this does it after the fact: a pull request opened against `main` is
-# moved to `develop`, where work lands. `main` only moves when `release.yml` fast-forwards it.
+# moved to `develop`, where work lands. `main` only moves when `promote.yml` fast-forwards it.
 #
 # Same-repo pull requests only; a fork pull request opened against `main` is retargeted by hand.
 # `pull_request`, never `pull_request_target`: the target event is the one the fork approval setting

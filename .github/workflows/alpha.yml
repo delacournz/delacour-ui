@@ -5,11 +5,10 @@ name: Alpha
 # only `release.yml` moves it. See `.github/changeset-alpha.ts` for the steps.
 #
 # This file has its own trusted publisher on npmjs.com, one per package, that allows a direct
-# `npm publish`: an alpha on every merge cannot wait for a maintainer's 2FA. `release.yml` keeps the
-# stage-only publisher, so a stable version still does. The publisher binds to this filename —
+# `npm publish`, beside `release.yml`'s (bound to its `release` environment). The publisher binds to this filename —
 # rename the file and every publish is refused until the publisher is recreated.
 #
-# A push with nothing pending — the release pull request's merge, a docs-only merge —
+# A push with nothing pending — the version pull request's merge, a docs-only merge —
 # publishes nothing and exits green.
 on:
   push:

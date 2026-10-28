@@ -1,4 +1,5 @@
 import { ANALYTICS, isCountedHost, type PosthogConfig } from "./config";
+import { SUPER_PROPERTIES } from "./posthog";
 
 /**
  * Server-side events, for the readers the browser SDK can never see.
@@ -56,6 +57,8 @@ export function serverEventBody(posthog: OnConfig, request: Request, kind: Agent
 		properties: {
 			path: url.pathname,
 			kind,
+			site: SUPER_PROPERTIES.site,
+			surface: "server",
 			agent,
 			$current_url: `${url.origin}${url.pathname}`,
 			$host: url.host,

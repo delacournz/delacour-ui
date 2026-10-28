@@ -45,6 +45,8 @@ describe("serverEventBody", () => {
 			properties: {
 				path: "/llms.txt",
 				kind: "llms",
+				site: "ui",
+				surface: "server",
 				agent: "ClaudeBot/1.0",
 				$current_url: "https://ui.delacour.co.nz/llms.txt",
 				$host: "ui.delacour.co.nz",

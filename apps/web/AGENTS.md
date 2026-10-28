@@ -143,7 +143,8 @@ Open Graph / Twitter tags. Two things there are deliberate:
   under `src/og/` (OFL, the same files the playground embeds), imported `?inline` and written to the temp
   directory once per process — the built server has no `node_modules/@expo-google-fonts` beside
   it. `@resvg/resvg-js` is therefore a runtime dependency, and Nitro traces its native binary into
-  `.output`; the builder's OS and architecture have to match the runtime's, which on Railway they do.
+  `.output`; the builder's OS and architecture have to match the runtime's, which in the Docker image
+  (Debian build and runtime stages) they do.
 - **Each engine is its own product in every head tag.** `@delacour/react-native-charts` and
   `@delacour/react-native-bottom-sheet` carry no Tailwind, no Uniwind and no tokens, so a link to
   `/docs/charts/*` or `/docs/bottom-sheet/*` must not preview as the library's "painted from your
@@ -590,10 +591,11 @@ Two providers, PostHog and Google Analytics, each optional and off unless its en
 **build** time — they are `VITE_*`, so Vite inlines them into the client and server bundles alike.
 Dev and CI set none and render no analytics at all. (Umami was removed; PostHog replaced it.)
 
-Railway builds with `bun run build --filter=@delacour/web`, which is `turbo build`, and turbo 2's
-strict env mode strips every variable a task does not list. `turbo.jsonc` therefore lists `VITE_*`
-on `build`; without it the ids inline as `undefined` and production ships with no analytics and no
-error. `config.test.ts` holds `turbo.jsonc` to it.
+Railway builds `apps/web/Dockerfile`, which sees a service variable only when it is an `ARG` —
+so every `VITE_*` below is declared there, and a new one needs its `ARG` too or it inlines as
+`undefined`. `turbo build` runs under turbo 2's strict env mode, which strips every variable a task
+does not list, so `turbo.jsonc` also lists `VITE_*` on `build`. `config.test.ts` holds `turbo.jsonc`
+to it.
 
 | Var | Production | Staging | Turns on |
 | --- | --- | --- | --- |
@@ -909,8 +911,10 @@ reference; warden's docs site consumes it the same way.
   `OTEL_EXPORTER_OTLP_ENDPOINT`, or `DASH0_OTLP_ENDPOINT` — and never under `NODE_ENV=test`, a
   `build` lifecycle or the vite CLI, so dev, CI and `bun test` are untouched. With Railway alone
   there is no metric reader or log exporter, so nothing reaches its traces-only receiver.
-- **The start command must run from `apps/web`.** `--preload` resolves the package specifier from
-  the cwd; Railway's `bun run --filter=@delacour/web start` does.
+- **The start command must run where `@delacournz/otel-start` resolves.** `--preload` resolves the
+  package specifier from the cwd. The Docker image runs the `start` command from `/app`, beside a
+  vendored, self-contained bundle of the package in `/app/node_modules` (see `Dockerfile`); locally,
+  run it from `apps/web`.
 
 ## Gotchas
 

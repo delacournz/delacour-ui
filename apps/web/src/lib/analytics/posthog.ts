@@ -20,6 +20,13 @@ import type { EventData } from "./events";
 const UI_HOST = "https://us.posthog.com";
 
 /**
+ * Sent with every event. The token is shared by every Delacour site, so these
+ * are what tell this site's events apart in the one PostHog project. The server
+ * twin (`server.ts`) sends the same `site` with `surface: "server"`.
+ */
+export const SUPER_PROPERTIES = { site: "ui", surface: "web" } as const;
+
+/**
  * The init options. Everything the privacy policy does not describe is off, in
  * code rather than in the PostHog project, so that a switch flipped there —
  * session replay, surveys, heatmaps — cannot reach a visitor unannounced.
@@ -83,6 +90,7 @@ export function startPosthog(posthog: PosthogConfig = ANALYTICS.posthog): void {
 	void import("posthog-js").then(({ default: instance }) => {
 		if (client) return;
 		instance.init(posthog.token, posthogOptions(posthog));
+		instance.register(SUPER_PROPERTIES);
 		client = instance;
 
 		const replay = consentReplay(readConsent(), instance.get_explicit_consent_status());

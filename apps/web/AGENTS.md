@@ -599,9 +599,14 @@ to it.
 
 | Var | Production | Staging | Turns on |
 | --- | --- | --- | --- |
-| `VITE_POSTHOG_TOKEN` | the prod project's `phc_…` | the staging project's `phc_…` | PostHog, with the host below |
+| `VITE_POSTHOG_TOKEN` | the shared prod `phc_…` | the shared staging `phc_…` | PostHog, with the host below |
 | `VITE_POSTHOG_HOST` | `https://i.delacour.co.nz` | `https://i.delacour.co.nz` | — |
 | `VITE_GA_ID` | `G-2REDJ2XPJZ` | unset | GA4, loaded as `gtag.js` behind the consent banner |
+
+Railway injects the PostHog token and host; the token comes from Railway shared variables, so it is
+the same project as every other Delacour site. Events are told apart by the `site: "ui"` property
+(`SUPER_PROPERTIES` in `posthog.ts`, registered right after `init`; server events add
+`surface: "server"`, the browser's is `"web"`). Filter on `site` in PostHog.
 
 None is a secret — each ends up in the page's JavaScript or HTML — but the tokens live in Railway,
 not here. `src/lib/analytics/config.ts` validates each and returns `off` for anything malformed

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { consentReplay, isAutomatedBrowser, posthogOptions } from "./posthog";
+import { consentReplay, isAutomatedBrowser, posthogOptions, SUPER_PROPERTIES } from "./posthog";
 
 const posthog = { kind: "on", token: "phc_test", host: "https://i.delacour.co.nz" } as const;
 
@@ -72,5 +72,11 @@ describe("isAutomatedBrowser", () => {
 	test("is false for a person's browser, and where there is no navigator", () => {
 		expect(isAutomatedBrowser({ webdriver: false })).toBe(false);
 		expect(isAutomatedBrowser(undefined)).toBe(false);
+	});
+});
+
+describe("SUPER_PROPERTIES", () => {
+	test("tells this site's events from every other Delacour site's in the shared project", () => {
+		expect(SUPER_PROPERTIES).toEqual({ site: "ui", surface: "web" });
 	});
 });

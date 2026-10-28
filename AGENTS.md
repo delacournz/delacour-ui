@@ -376,8 +376,8 @@ flowchart TD
 
 | Workflow | Trigger | Does |
 | --- | --- | --- |
-| `version.yml` | push to `develop` | With pending changesets, runs `bun run version` (`changeset version` + `bun install --lockfile-only`) on `changeset-release/develop` and opens or updates the version pull request. Skips the version commit itself |
-| `promote.yml` | push to `develop` | When the push is the version commit, fast-forwards `main` to it and pushes the annotated tag `vX.Y.Z`. Runs no repo code |
+| `version.yml` | push to `develop` | With pending changesets, runs `bun run version` (`changeset version` + `bun install --lockfile-only`) on `changeset-release/develop` and opens or updates the version pull request. Skips the version commit itself, and any commit that is no longer `develop`'s tip |
+| `promote.yml` | push to `develop` | Finds the newest unreleased version commit in history, fast-forwards `main` to it and pushes the annotated tag `vX.Y.Z`. Runs no repo code |
 | `release.yml` | push of a `v*` tag | `build` refuses a tag not on `main` or not matching every published `package.json`, runs typecheck/check/test, checks the registry, builds the CLI and `npm pack`s all four. `publish` cuts the GitHub Release and `npm publish`es each tarball not already on npm |
 
 ### Alpha: every merge
@@ -410,14 +410,22 @@ new tip, so it always describes the release that merging it would cut. It is an 
 request, except that `ci.yml` signs it off rather than a person: the app's push starts `ci.yml` on
 `pull_request`, the checks plus `verify-expo` run, and its `signoff` job writes the statuses.
 
-**Merging it is the release.** `promote.yml` recognises the version commit by three facts, not by its
-subject: `packages/cli/package.json`'s version differs from the pre-push tip, no changeset is
-pending, and tag `vX.Y.Z` does not exist yet. It fast-forwards `main` (never forced — if `main` is not
-an ancestor it fails, because a force would rewind what Railway serves) and pushes the tag. The tag
-starts `release.yml`.
+**Merging it is the release.** `promote.yml` does not trust the push it was started for to be the
+version commit: a concurrency group keeps one pending run, so a later push to `develop` can evict the
+version commit's queued run. Every run instead walks history for the newest commit that changed
+`packages/cli/package.json`'s version, and promotes it when all four published packages agree on that
+version there, no changeset was left at that commit, and tag `vX.Y.Z` does not exist yet. It
+fast-forwards `main` to that commit — never forced; if `main` is not an ancestor it fails, because a
+force would rewind what Railway serves — and pushes the tag, which starts `release.yml`. Anything
+`develop` gained after the version commit waits for the next release.
 
-**Every step is safe to re-run.** `promote.yml` skips a version whose tag exists and its `main` push
-is a no-op once `main` is there. `release.yml`'s GitHub Release step replaces assets on a release that
+`version.yml` has the matching guard the other way round: changesets/action force-pushes
+`changeset-release/develop` from the commit its run started on, so a re-run of an old run would put
+an older release plan back. It only versions from `develop`'s tip.
+`.github/release-detect.test.ts` runs both `detect` scripts against throwaway repositories.
+
+**Every step is safe to re-run.** `promote.yml` skips a version whose tag exists, finishes a run that
+moved `main` but never pushed the tag, and its `main` push is a no-op once `main` is there. `release.yml`'s GitHub Release step replaces assets on a release that
 already exists, and its npm step skips any `name@version` npm already serves, so
 `gh run rerun --failed` finishes a partial publish.
 

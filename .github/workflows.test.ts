@@ -68,7 +68,7 @@ describe("pipeline wiring", () => {
 	test("promote.yml never forces main", async () => {
 		const { text } = await load("promote.yml");
 		expect(text).not.toMatch(/push\s+(?:-f|--force)/);
-		expect(text).toContain("git push origin HEAD:refs/heads/main");
+		expect(text).toContain('git push origin "$SHA:refs/heads/main"');
 	});
 
 	test("version.yml names the next version in the PR title and squash commit", async () => {

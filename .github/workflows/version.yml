@@ -54,13 +54,23 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      # Stale guard: changesets/action resets `changeset-release/develop` to the commit this run was
+      # started for and force-pushes it, so a re-run of an old run after develop moved on would replace
+      # the newer version PR with an older release plan. Only develop's tip versions; the newer push has
+      # its own run. The checkout fetched origin/develop as it is now, re-runs included.
+      #
       # Loop guard 2: HEAD is itself the merged version PR (changesets consumed, version bumped by this
-      # push). Running changesets/action there finds nothing to do, so skip it. promote.yml uses the
-      # same test to decide whether to release. Reads git objects only, runs no repo code.
+      # push). Running changesets/action there finds nothing to do, so skip it.
+      # Both read git objects only and run no repo code. .github/release-detect.test.ts runs this script.
       - id: detect
         env:
           BEFORE: ${{ github.event.before }}
         run: |
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/develop)" ]; then
+            echo "$(git rev-parse HEAD) is no longer develop's tip ($(git rev-parse origin/develop)): the newer push versions"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           base="$BEFORE"
           if ! echo "$base" | grep -Eq '^[0-9a-f]{40}$' || echo "$base" | grep -Eq '^0{40}$' || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
             base="HEAD^"

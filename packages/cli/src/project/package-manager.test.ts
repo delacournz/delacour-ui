@@ -1,10 +1,12 @@
 import { describe, expect, test } from "bun:test";
+import libraryPackage from "../../../react-native-ui/package.json";
 import {
 	commandLine,
 	expoCommand,
 	type InstallGroup,
 	installCommands,
 	missingPackages,
+	PINNED_RANGES,
 	peerRange,
 	planDependencies,
 } from "./package-manager";
@@ -205,5 +207,37 @@ describe("expoCommand", () => {
 		const [group] = installCommands({ ...NONE, packageManager: "pnpm", expoDependencies: ["uniwind"] });
 
 		expect(expoCommand("pnpm", ["install", "uniwind"])).toBe(commandLine(group as InstallGroup));
+	});
+});
+
+describe("pinned ranges", () => {
+	// tailwind-variants 4 throws on `createTV({ twMergeConfig })` from its root
+	// entry, which every copied `tv.ts` calls. An unversioned add fetched it.
+	test("installs tailwind-variants at the range the library is built against", () => {
+		const [group] = installCommands({ ...NONE, packageManager: "bun", dependencies: ["clsx", "tailwind-variants"] });
+
+		expect(commandLine(group as InstallGroup)).toBe(
+			`bun add clsx tailwind-variants@${PINNED_RANGES["tailwind-variants"]}`
+		);
+	});
+
+	test("peers a pinned package at its range", () => {
+		expect(peerRange("tailwind-variants")).toBe(PINNED_RANGES["tailwind-variants"]);
+	});
+
+	test("every pin matches the library's own dependency", () => {
+		const declared: Record<string, string> = libraryPackage.dependencies;
+		for (const [name, range] of Object.entries(PINNED_RANGES)) {
+			expect(declared[name]).toBe(range);
+		}
+	});
+
+	test("a pinned package is still compared by its bare name", () => {
+		const plan = planDependencies(
+			{ ...NONE, packageManager: "bun", dependencies: ["tailwind-variants"] },
+			{ dependencies: { "tailwind-variants": "^3.3.1" } }
+		);
+
+		expect(plan.missing).toEqual([]);
 	});
 });

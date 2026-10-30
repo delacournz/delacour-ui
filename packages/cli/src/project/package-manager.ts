@@ -83,9 +83,24 @@ const DELACOUR_PACKAGES: ReadonlySet<string> = new Set([
 	"@delacour/react-native-ui",
 ]);
 
-/** A package name with the dist-tag its channel pins, where it has one. */
+/**
+ * Plain npm packages installed at a range rather than at `latest`, because a
+ * new major breaks the copied source. tailwind-variants 4 throws on
+ * `createTV({ twMergeConfig })` from its root entry, which every copied `tv.ts`
+ * calls — an unversioned add fetched it and broke every component at import.
+ *
+ * Each range is the library's own, held to `packages/react-native-ui/package.json`
+ * by a test. Like the dist-tag, it is applied to the command's args only.
+ */
+export const PINNED_RANGES: Readonly<Record<string, string>> = {
+	"tailwind-variants": "^3.3.1",
+};
+
+/** A package name with the dist-tag its channel pins or the range it is held to, where it has one. */
 function toSpec(name: string, channel: Channel): string {
-	return channel === "alpha" && DELACOUR_PACKAGES.has(name) ? `${name}@alpha` : name;
+	if (channel === "alpha" && DELACOUR_PACKAGES.has(name)) return `${name}@alpha`;
+	const range = PINNED_RANGES[name];
+	return range === undefined ? name : `${name}@${range}`;
 }
 
 /**
@@ -100,7 +115,8 @@ function toSpec(name: string, channel: Channel): string {
  * stable version, so it holds on either channel.
  */
 export function peerRange(name: string): string {
-	return DELACOUR_PACKAGES.has(name) ? ">=0.0.0-0" : "*";
+	if (DELACOUR_PACKAGES.has(name)) return ">=0.0.0-0";
+	return PINNED_RANGES[name] ?? "*";
 }
 
 export function installCommands(request: InstallRequest): InstallGroup[] {

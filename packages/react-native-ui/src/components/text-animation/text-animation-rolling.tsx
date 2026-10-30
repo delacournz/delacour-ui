@@ -14,10 +14,11 @@ import type { TextAnimationBase } from "./text-animation.types";
 import {
 	formatNumber,
 	type RollDirection,
+	resolveNumberCells,
+	resolveNumberFormat,
 	resolveRollDirection,
 	resolveRollTarget,
 	resolveWheelOffset,
-	splitNumberCells,
 	TEXT_ANIMATION_ROLL_DURATION_MS,
 	TEXT_ANIMATION_ROLL_STAGGER,
 	type TextAnimationNumberFormat,
@@ -30,6 +31,10 @@ export type TextAnimationRollingProps = TextAnimationBase & {
 	value: number;
 	/** Grouping, decimals, prefix and suffix. Separators render static; only digits roll. */
 	format?: TextAnimationNumberFormat;
+	/** Text before the number, after any sign — `−$5`. Never rolls or tweens. Wins over `format.prefix`. */
+	prefix?: string;
+	/** Text after the number — `%`, ` kg`, `/100`. Never rolls or tweens. Wins over `format.suffix`. */
+	suffix?: string;
 	/** One wheel's roll, ms. Default 600. */
 	durationMs?: number;
 	/** Delay between wheels, least significant first, ms. Default 40. */
@@ -134,14 +139,17 @@ TextAnimationWheel.displayName = "DelacourUI.TextAnimation.Wheel";
  * An odometer: each digit is a wheel that rolls to its new digit.
  *
  * Wheels are keyed by their place from the right, so 999 → 1000 keeps the
- * three wheels it had and mounts a fourth, which rolls up from 0. Separators,
- * the sign, the prefix and the suffix are static cells. Every glyph is set in
+ * three wheels it had and mounts a fourth, which rolls up from 0. Separators
+ * and the sign are static cells; the prefix and the suffix are one static cell
+ * each, so a digit inside one never rolls. Every glyph is set in
  * tabular figures, so no digit is wider than another and nothing jitters
  * sideways mid-roll. Under calm motion each wheel lands at once.
  */
 export function TextAnimationRolling({
 	value,
 	format,
+	prefix,
+	suffix,
 	durationMs = TEXT_ANIMATION_ROLL_DURATION_MS,
 	stagger = TEXT_ANIMATION_ROLL_STAGGER,
 	variant,
@@ -163,8 +171,12 @@ export function TextAnimationRolling({
 		"tabular-nums"
 	);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: the format's fields are its identity
-	const formatted = useMemo(() => formatNumber(value, format ?? {}), [value, JSON.stringify(format ?? {})]);
-	const cells = useMemo(() => splitNumberCells(formatted), [formatted]);
+	const resolvedFormat = useMemo(
+		() => resolveNumberFormat(format, prefix, suffix),
+		[JSON.stringify(format ?? {}), prefix, suffix]
+	);
+	const formatted = useMemo(() => formatNumber(value, resolvedFormat), [value, resolvedFormat]);
+	const cells = useMemo(() => resolveNumberCells(value, resolvedFormat), [value, resolvedFormat]);
 
 	const [direction, setDirection] = useState<{ value: number; direction: RollDirection }>({
 		value,

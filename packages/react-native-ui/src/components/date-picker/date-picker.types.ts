@@ -71,6 +71,12 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		/** Starting open state while uncontrolled. */
 		defaultOpen?: boolean;
 		onOpenChange?: (isOpen: boolean) => void;
+		/**
+		 * The sheet has finished closing, by any path. `onOpenChange(false)` fires as the close
+		 * starts; this fires once the sheet is all the way down, so focus can move on without
+		 * racing the slide. Never called inline.
+		 */
+		onClose?: () => void;
 		/** Inert and faded; never opens. Inherited from an enclosing `Field`. */
 		isDisabled?: boolean;
 		/** Shows the value and never opens. */

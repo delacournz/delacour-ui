@@ -216,6 +216,7 @@ small field never shrinks the day targets.
     isOpen: { type: "boolean", description: "Controlled open state." },
     defaultOpen: { type: "boolean", default: "false" },
     onOpenChange: { type: "(isOpen: boolean) => void" },
+    onClose: { type: "() => void", description: "The sheet finished closing, by any path. Fires after onOpenChange(false), once the slide lands. Move focus on here. Never called inline." },
     isDisabled: { type: "boolean", description: "Inert and faded. Inherited from an enclosing Field." },
     isInvalid: { type: "boolean", description: "Destructive border and glyph. Inherited from an enclosing Field." },
     isReadOnly: { type: "boolean", description: "Shows the value; never opens." },

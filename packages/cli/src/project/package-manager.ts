@@ -83,9 +83,28 @@ const DELACOUR_PACKAGES: ReadonlySet<string> = new Set([
 	"@delacour/react-native-ui",
 ]);
 
-/** A package name with the dist-tag its channel pins, where it has one. */
+/**
+ * The range each plain npm package the library depends on installs at — the
+ * one `@delacour/react-native-ui`'s own `package.json` declares.
+ *
+ * Untagged, `add` took npm's newest major: tailwind-variants 4.0.0 moved
+ * `twMergeConfig` to another entry point and every copied `*.variants.ts`
+ * broke in someone else's app. Applied to the args only, like the alpha tag.
+ * `package-manager.test.ts` fails when one drifts from the library's range.
+ */
+export const NPM_RANGES: Readonly<Record<string, string>> = {
+	"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
+	cn: "^0.5.0",
+	tailwindcss: "^4",
+	"tailwind-merge": "^3.6.0",
+	"tailwind-variants": "^3.3.1",
+};
+
+/** A package name with the dist-tag its channel pins, or the range the library declares. */
 function toSpec(name: string, channel: Channel): string {
-	return channel === "alpha" && DELACOUR_PACKAGES.has(name) ? `${name}@alpha` : name;
+	if (channel === "alpha" && DELACOUR_PACKAGES.has(name)) return `${name}@alpha`;
+	const range = NPM_RANGES[name];
+	return range ? `${name}@${range}` : name;
 }
 
 /**
@@ -97,10 +116,12 @@ function toSpec(name: string, channel: Channel): string {
  * treats the peer as unmet and goes to the registry for a version that does
  * not exist — which is how `add` failed inside `expo install`, a step that
  * never named the package. `>=0.0.0-0` admits every prerelease and every
- * stable version, so it holds on either channel.
+ * stable version, so it holds on either channel. A package `NPM_RANGES` pins
+ * declares that range, so the peer does not admit the major the install avoids.
  */
 export function peerRange(name: string): string {
-	return DELACOUR_PACKAGES.has(name) ? ">=0.0.0-0" : "*";
+	if (DELACOUR_PACKAGES.has(name)) return ">=0.0.0-0";
+	return NPM_RANGES[name] ?? "*";
 }
 
 export function installCommands(request: InstallRequest): InstallGroup[] {

@@ -51,7 +51,7 @@ src/
 │   ├── aliases.ts        tsconfig paths → an import prefix per namespace
 │   ├── css.ts            the managed @source block, and reading it back for doctor
 │   ├── metro.ts          wrapping the export with withUniwindConfig
-│   ├── package-manager.ts  the expo install / pm add split
+│   ├── package-manager.ts  the expo install / pm add split, and NPM_RANGES (plain packages at the library's range)
 │   ├── jsonc.ts          tsconfig.json is JSONC and usually has comments
 │   ├── css-entry.ts      the Tailwind entry an app already has
 │   ├── root-layout.ts    where the app mounts everything, and what to put there

@@ -550,7 +550,7 @@ export const install = {
 	"pressable": {
 		name: "pressable",
 		title: "Pressable",
-		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",
+		description: "The gesture-hook press primitive: scale and fade feedback, haptics, disabled and busy states.",
 		importPath: "@delacour/react-native-ui/pressable",
 		exportName: "Pressable",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],

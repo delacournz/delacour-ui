@@ -414,7 +414,7 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	},
 	pressable: {
 		title: "Pressable",
-		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",
+		description: "The gesture-hook press primitive: scale and fade feedback, haptics, disabled and busy states.",
 		categories: ["primitives"],
 	},
 	provider: {

@@ -1,6 +1,7 @@
 ---
 "@delacour/react-native-ui": minor
 "@delacour/react-native-charts": minor
+"@delacour/react-native-bottom-sheet": minor
 ---
 
 Move every gesture to Gesture Handler 3's hooks, on Expo SDK 58

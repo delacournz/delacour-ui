@@ -1,6 +1,6 @@
 import { type ReactElement, useCallback, useMemo, useState } from "react";
 import { type AccessibilityActionEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture, useSimultaneousGestures, useTapGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { playHaptic } from "../pressable";
@@ -107,90 +107,70 @@ export function SplitterHandle({
 	const isHeld = useSharedValue(false);
 	const [isActive, setActive] = useState(false);
 
-	const gesture = useMemo(() => {
-		const paneCount = constraints.length;
+	const paneCount = constraints.length;
 
-		const pan = Gesture.Pan()
-			.enabled(!isDisabled)
-			.minDistance(0)
-			.shouldCancelWhenOutside(false)
-			.hitSlop(isVertical ? { bottom: hitSlop, top: hitSlop } : { left: hitSlop, right: hitSlop })
-			.onBegin(() => {
-				"worklet";
-				interrupt();
-				start.value = [...sizes.value];
-				delta.value = 0;
-				wasHeld.value = false;
-				wasCollapsed.value = false;
-				isHeld.value = true;
-				scheduleOnRN(setActive, true);
-			})
-			.onUpdate((event) => {
-				"worklet";
-				const available = extent.value - gap * (paneCount - 1);
-				if (available <= 0) return;
-				const moved = ((isVertical ? event.translationY : event.translationX) / available) * 100;
-				delta.value = moved;
-				const next = resolveDrag({ constraints, delta: moved, handleIndex: index, start: start.value });
-				sizes.value = next;
+	const pan = usePanGesture({
+		enabled: !isDisabled,
+		minDistance: 0,
+		shouldCancelWhenOutside: false,
+		hitSlop: isVertical ? { bottom: hitSlop, top: hitSlop } : { left: hitSlop, right: hitSlop },
+		onBegin: () => {
+			"worklet";
+			interrupt();
+			start.value = [...sizes.value];
+			delta.value = 0;
+			wasHeld.value = false;
+			wasCollapsed.value = false;
+			isHeld.value = true;
+			scheduleOnRN(setActive, true);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const available = extent.value - gap * (paneCount - 1);
+			if (available <= 0) return;
+			const moved = ((isVertical ? event.translationY : event.translationX) / available) * 100;
+			delta.value = moved;
+			const next = resolveDrag({ constraints, delta: moved, handleIndex: index, start: start.value });
+			sizes.value = next;
 
-				const held = isSeamHeld({ delta: moved, handleIndex: index, layout: next, start: start.value });
-				const collapsed = isPaneCollapsed(next, index, constraints) || isPaneCollapsed(next, index + 1, constraints);
-				if (haptic !== false && ((held && !wasHeld.value) || (collapsed && !wasCollapsed.value))) {
-					playHaptic(haptic);
-				}
-				wasHeld.value = held;
-				wasCollapsed.value = collapsed;
-			})
-			.onFinalize(() => {
-				"worklet";
-				isHeld.value = false;
-				scheduleOnRN(setActive, false);
-				// A tap never moved, so it settles nothing — otherwise every tap on an
-				// off-grid seam would round it, and the reset tap would move it twice.
-				if (delta.value === 0) return;
-				const settled = resolveDragEnd({
-					constraints,
-					delta: delta.value,
-					handleIndex: index,
-					start: start.value,
-					step,
-				});
-				delta.value = 0;
-				settle(settled);
-				scheduleOnRN(commitDrag, settled);
+			const held = isSeamHeld({ delta: moved, handleIndex: index, layout: next, start: start.value });
+			const collapsed = isPaneCollapsed(next, index, constraints) || isPaneCollapsed(next, index + 1, constraints);
+			if (haptic !== false && ((held && !wasHeld.value) || (collapsed && !wasCollapsed.value))) {
+				playHaptic(haptic);
+			}
+			wasHeld.value = held;
+			wasCollapsed.value = collapsed;
+		},
+		onFinalize: () => {
+			"worklet";
+			isHeld.value = false;
+			scheduleOnRN(setActive, false);
+			// A tap never moved, so it settles nothing — otherwise every tap on an
+			// off-grid seam would round it, and the reset tap would move it twice.
+			if (delta.value === 0) return;
+			const settled = resolveDragEnd({
+				constraints,
+				delta: delta.value,
+				handleIndex: index,
+				start: start.value,
+				step,
 			});
+			delta.value = 0;
+			settle(settled);
+			scheduleOnRN(commitDrag, settled);
+		},
+	});
 
-		const doubleTap = Gesture.Tap()
-			.enabled(!isDisabled)
-			.numberOfTaps(2)
-			.onEnd(() => {
-				"worklet";
-				scheduleOnRN(reset);
-			});
+	const doubleTap = useTapGesture({
+		enabled: !isDisabled,
+		numberOfTaps: 2,
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(reset);
+		},
+	});
 
-		return Gesture.Simultaneous(pan, doubleTap);
-	}, [
-		commitDrag,
-		constraints,
-		delta,
-		extent,
-		gap,
-		haptic,
-		hitSlop,
-		index,
-		interrupt,
-		isDisabled,
-		isHeld,
-		isVertical,
-		reset,
-		settle,
-		sizes,
-		start,
-		step,
-		wasCollapsed,
-		wasHeld,
-	]);
+	const gesture = useSimultaneousGestures(pan, doubleTap);
 
 	const positionStyle = useAnimatedStyle(() => {
 		const offset = seamOffset({ extent: extent.value, gap, index, sizes: sizes.value }) - SPLITTER_HANDLE_SIZE / 2;

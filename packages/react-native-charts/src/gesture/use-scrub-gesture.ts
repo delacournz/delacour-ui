@@ -1,11 +1,5 @@
 import { useMemo } from "react";
-import {
-	type ComposedGesture,
-	type PanGesture,
-	type PanGestureConfig,
-	type SingleGesture,
-	usePanGesture,
-} from "react-native-gesture-handler";
+import { type ComposedGesture, type PanGesture, type SingleGesture, usePanGesture } from "react-native-gesture-handler";
 import type { SharedValue } from "react-native-reanimated";
 import { closestIndex } from "../core/interaction/closest-index";
 import { getYForX } from "../core/interaction/y-for-x";
@@ -58,21 +52,18 @@ export function useScrubGesture(options: UseScrubGestureOptions): PanGesture | n
 	const apply = useScrubApply(state, model);
 
 	// Only the options the behaviour names. `activateAfterLongPress`, the offsets
-	// and `block` each change how the pan activates just by being present.
-	const activation = useMemo((): PanGestureConfig => {
-		if (behaviour === "hold") return { activateAfterLongPress: holdDuration };
-		if (behaviour === "claim") {
-			return {
-				activeOffsetX: [-activationDistance, activationDistance],
-				failOffsetY: [-activationDistance, activationDistance],
-			};
-		}
-		if (behaviour === "block" && blocks !== undefined) return { block: blocks };
-		return {};
-	}, [behaviour, holdDuration, activationDistance, blocks]);
+	// and `block` each change how the pan activates, so the others are left
+	// `undefined`, which Gesture Handler drops before the config reaches native.
+	// One literal rather than a spread: the Worklets plugin rejects a spread in a
+	// gesture hook's config.
+	const claimOffset: [number, number] = [-activationDistance, activationDistance];
+	const isClaim = behaviour === "claim";
 
 	const pan = usePanGesture({
-		...activation,
+		activateAfterLongPress: behaviour === "hold" ? holdDuration : undefined,
+		activeOffsetX: isClaim ? claimOffset : undefined,
+		failOffsetY: isClaim ? claimOffset : undefined,
+		block: behaviour === "block" ? blocks : undefined,
 		enabled: enabled && apply !== null,
 		averageTouches: true,
 		// A finger dragged above or below the plot keeps scrubbing. Cancelling

@@ -100,8 +100,8 @@ no context.
   text reads from 12 o'clock. The spin is decoration; holding it still makes the words legible and
   costs nothing. A `controlled` spin still follows its caller, who owns that motion.
 - **Press-to-pause is a `LongPress` with `minDuration(0)` on the ring.** It sets the pressed flag in
-  both `onBegin` and `onStart` — on the iOS simulator `onBegin` never fired for it, and the ring
-  kept turning under the finger until `onStart` set it too — and clears it in `onFinalize`, so a scroll that takes the touch over still resumes the ring. It is a hold, not a
+  both `onBegin` and `onActivate` — on the iOS simulator `onBegin` never fired for it, and the ring
+  kept turning under the finger until `onActivate` set it too — and clears it in `onFinalize`, so a scroll that takes the touch over still resumes the ring. It is a hold, not a
   press action, which is why it is a raw gesture rather than a `Pressable`. `centerContent` sits
   above the ring with `pointerEvents="box-none"`: a button there keeps its own tap, and a touch on
   empty middle reaches the ring.

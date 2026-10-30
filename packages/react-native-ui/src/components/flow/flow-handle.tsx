@@ -1,6 +1,6 @@
-import { type ReactElement, useCallback, useLayoutEffect, useMemo } from "react";
+import { type ReactElement, useCallback, useLayoutEffect } from "react";
 import { View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import { useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useFlowNode, useFlowPart } from "./flow.context";
@@ -98,32 +98,33 @@ export function FlowHandle({
 	const { position, size } = entry;
 	const origin = useSharedValue<FlowPoint>({ x: 0, y: 0 });
 
-	const gesture = useMemo(
-		() =>
-			Gesture.Pan()
-				.enabled(!isLocked)
-				.maxPointers(1)
-				.hitSlop(FLOW_HANDLE_HIT_SLOP)
-				.onStart(() => {
-					const rect = { ...position.value, ...size.value };
-					const from = flowGeometry().resolveHandlePoint(rect, side, offset);
-					origin.value = from;
-					preview.value = { from, fromSide: side, isActive: true, to: from };
-				})
-				.onUpdate((event) => {
-					const zoom = viewport.value.zoom;
-					const to = { x: origin.value.x + event.translationX / zoom, y: origin.value.y + event.translationY / zoom };
-					preview.value = { ...preview.value, to };
-				})
-				.onEnd((_event, success) => {
-					if (success) scheduleOnRN(release, preview.value.to);
-				})
-				.onFinalize(() => {
-					preview.value = { ...preview.value, isActive: false };
-				})
-				.blocksExternalGesture(nodeGesture, ...canvasGestures),
-		[canvasGestures, isLocked, nodeGesture, offset, origin, position, preview, release, side, size, viewport]
-	);
+	const gesture = usePanGesture({
+		enabled: !isLocked,
+		maxPointers: 1,
+		hitSlop: FLOW_HANDLE_HIT_SLOP,
+		block: [nodeGesture, ...canvasGestures],
+		onActivate: () => {
+			"worklet";
+			const rect = { ...position.value, ...size.value };
+			const from = flowGeometry().resolveHandlePoint(rect, side, offset);
+			origin.value = from;
+			preview.value = { from, fromSide: side, isActive: true, to: from };
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const zoom = viewport.value.zoom;
+			const to = { x: origin.value.x + event.translationX / zoom, y: origin.value.y + event.translationY / zoom };
+			preview.value = { ...preview.value, to };
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(release, preview.value.to);
+		},
+		onFinalize: () => {
+			"worklet";
+			preview.value = { ...preview.value, isActive: false };
+		},
+	});
 
 	return (
 		<GestureDetector gesture={gesture}>

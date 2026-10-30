@@ -44,7 +44,7 @@ the back, a profile with details behind it. A compound root plus `FlipCard.Front
   the rotation 1:1 (`rotationFromDrag`), rubber-bands past either rest (`resolveRubberBand`,
   never more than 40° beyond) and settles on release by `resolveFlipTarget` — a flick past
   500°/s goes the way it was going, anything slower settles on the nearer face, and an undecided
-  release on exactly 90 stays where it started. `"manual"` mounts no gesture at all.
+  release on exactly 90 stays where it started. `"manual"` leaves both the tap and the pan mounted with `enabled: false` (hooks run every render).
 - **A swipe activates along its axis and fails across it.** `axis="y"` is a horizontal pan
   (`activeOffsetX ±10`, `failOffsetY ±14`), so a card in a vertical `ScrollView` still lets the
   page scroll; `axis="x"` swaps both.
@@ -106,8 +106,8 @@ the expectation was that Gesture Handler's default arbitration hands the touch t
 recogniser.
 
 **Outcome (iOS, 2026-10-05):** holds with no extra wiring. On `flip-card/interactive-back`, pressing
-the back's `Button` counted a copy and the card stayed on its back. No `Gesture.Exclusive` or
-`requireExternalGestureToFail` was needed. Android is unchecked — see below.
+the back's `Button` counted a copy and the card stayed on its back. No `useExclusiveGestures` or
+`requireToFail` was needed. Android is unchecked — see below.
 
 ## Verification
 

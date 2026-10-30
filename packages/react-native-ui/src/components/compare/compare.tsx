@@ -1,6 +1,14 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { I18nManager, type LayoutChangeEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+	GestureDetector,
+	GestureStateManager,
+	type GestureTouchEvent,
+	type PanGestureEvent,
+	useCompetingGestures,
+	usePanGesture,
+	useTapGesture,
+} from "react-native-gesture-handler";
 import { useAnimatedReaction, useSharedValue, withSpring } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
@@ -201,137 +209,140 @@ function CompareRoot({
 		[frameSize, isVertical, onLayout]
 	);
 
-	const gesture = useMemo(() => {
-		// Declared beside their callers rather than at module scope: a worklet bound
-		// at import time is how a helper ends up `undefined` on the UI thread.
-		const seamAlong = () => {
-			"worklet";
-			return resolveRevealTransforms(position.value, frameSize.value, orientation, isRtl).handleOffset;
-		};
+	// Declared beside their callers rather than at module scope: a worklet bound
+	// at import time is how a helper ends up `undefined` on the UI thread.
+	const seamAlong = () => {
+		"worklet";
+		return resolveRevealTransforms(position.value, frameSize.value, orientation, isRtl).handleOffset;
+	};
 
-		const tick = (previous: number, next: number) => {
-			"worklet";
-			if (haptic !== false && shouldTickCompareHaptic(previous, next, points, minPosition, maxPosition)) {
-				playHaptic(haptic);
-			}
-		};
+	const tick = (previous: number, next: number) => {
+		"worklet";
+		if (haptic !== false && shouldTickCompareHaptic(previous, next, points, minPosition, maxPosition)) {
+			playHaptic(haptic);
+		}
+	};
 
-		const moveTo = (along: number) => {
-			"worklet";
-			const raw = resolvePositionFromGesture({ along, size: frameSize.value, orientation, isRtl });
-			const next = clampPosition(raw, minPosition, maxPosition);
-			const previous = position.value;
-			if (next === previous) return;
-			position.value = next;
-			tick(previous, next);
-		};
+	const moveTo = (along: number) => {
+		"worklet";
+		const raw = resolvePositionFromGesture({ along, size: frameSize.value, orientation, isRtl });
+		const next = clampPosition(raw, minPosition, maxPosition);
+		const previous = position.value;
+		if (next === previous) return;
+		position.value = next;
+		tick(previous, next);
+	};
 
-		const begin = (offset: number) => {
-			"worklet";
-			tracking.value = 1;
-			grabOffset.value = offset;
-			grabbed.value = 1;
-			scheduleOnRN(setDragging, true);
-			if (haptic !== false) playHaptic(haptic);
-		};
+	const begin = (offset: number) => {
+		"worklet";
+		tracking.value = 1;
+		grabOffset.value = offset;
+		grabbed.value = 1;
+		scheduleOnRN(setDragging, true);
+		if (haptic !== false) playHaptic(haptic);
+	};
 
-		const release = (velocity: number) => {
+	const release = (velocity: number) => {
+		"worklet";
+		if (tracking.value !== 1) return;
+		tracking.value = 0;
+		grabbed.value = 0;
+		const from = position.value;
+		const target = clampPosition(snapPosition(from, points, snapThreshold), minPosition, maxPosition);
+		if (target !== from) {
+			tick(from, target);
+			const spring = {
+				...COMPARE_HANDLE_SPRING,
+				velocity: resolveReleaseVelocity(velocity, frameSize.value, orientation, isRtl),
+			};
+			position.value = isCalm ? target : withSpring(target, spring);
+		}
+		// Order matters: the root must stop treating this as a live drag before
+		// `commitEnd` re-syncs. `scheduleOnRN` keeps them in queue order.
+		scheduleOnRN(setDragging, false);
+		scheduleOnRN(commitEnd, target);
+	};
+
+	const isHandleGrab = grab === "handle";
+	const axis: [number, number] = [-COMPARE_ANYWHERE_ACTIVE_OFFSET, COMPARE_ANYWHERE_ACTIVE_OFFSET];
+	const cross: [number, number] = [-COMPARE_ANYWHERE_FAIL_OFFSET, COMPARE_ANYWHERE_FAIL_OFFSET];
+
+	// `grab="handle"` claims a touch on the band at once (`minDistance: 0`) and
+	// fails the pan from `onTouchesDown` when the touch is outside it;
+	// `grab="anywhere"` waits for an axis-aware activation instead. The velocity
+	// the release springs with only exists on `onDeactivate`'s event, so the
+	// release runs there, and again from `onFinalize` for the path where the pan
+	// began on the band but never activated — `tracking` makes the second a no-op.
+	// Handle-grab's touch-down and begin, and anywhere-grab's activation, as
+	// hook-scope worklets the config names per mode. The config itself stays one
+	// literal: the Worklets plugin rejects a spread in a gesture hook's config.
+	const failOutsideBand = (event: GestureTouchEvent) => {
+		"worklet";
+		const touch = event.allTouches[0];
+		if (!touch) return;
+		const along = isVertical ? touch.y : touch.x;
+		if (!isWithinGrabBand(along, seamAlong(), COMPARE_HANDLE_BAND)) {
+			GestureStateManager.fail(event.handlerTag);
+		}
+	};
+
+	const beginOnBand = (event: PanGestureEvent) => {
+		"worklet";
+		const along = isVertical ? event.y : event.x;
+		const seam = seamAlong();
+		if (!isWithinGrabBand(along, seam, COMPARE_HANDLE_BAND)) return;
+		begin(along - seam);
+	};
+
+	const beginAnywhere = (event: PanGestureEvent) => {
+		"worklet";
+		const along = isVertical ? event.y : event.x;
+		begin(0);
+		moveTo(along);
+	};
+
+	const drag = usePanGesture({
+		enabled: !isDisabled,
+		shouldCancelWhenOutside: false,
+		minDistance: isHandleGrab ? 0 : undefined,
+		activeOffsetX: isHandleGrab || isVertical ? undefined : axis,
+		activeOffsetY: !isHandleGrab && isVertical ? axis : undefined,
+		failOffsetX: !isHandleGrab && isVertical ? cross : undefined,
+		failOffsetY: isHandleGrab || isVertical ? undefined : cross,
+		onTouchesDown: isHandleGrab ? failOutsideBand : undefined,
+		onBegin: isHandleGrab ? beginOnBand : undefined,
+		onActivate: isHandleGrab ? undefined : beginAnywhere,
+		onUpdate: (event) => {
 			"worklet";
 			if (tracking.value !== 1) return;
-			tracking.value = 0;
-			grabbed.value = 0;
-			const from = position.value;
-			const target = clampPosition(snapPosition(from, points, snapThreshold), minPosition, maxPosition);
-			if (target !== from) {
-				tick(from, target);
-				const spring = {
-					...COMPARE_HANDLE_SPRING,
-					velocity: resolveReleaseVelocity(velocity, frameSize.value, orientation, isRtl),
-				};
-				position.value = isCalm ? target : withSpring(target, spring);
-			}
-			// Order matters: the root must stop treating this as a live drag before
-			// `commitEnd` re-syncs. `scheduleOnRN` keeps them in queue order.
-			scheduleOnRN(setDragging, false);
-			scheduleOnRN(commitEnd, target);
-		};
-
-		const pan = Gesture.Pan()
-			.enabled(!isDisabled)
-			.shouldCancelWhenOutside(false)
-			.onUpdate((event) => {
-				"worklet";
-				if (tracking.value !== 1) return;
-				moveTo((isVertical ? event.y : event.x) - grabOffset.value);
-			})
-			.onFinalize((event) => {
-				"worklet";
-				release(isVertical ? event.velocityY : event.velocityX);
-			});
-
-		if (grab === "handle") {
-			return pan
-				.minDistance(0)
-				.onTouchesDown((event, manager) => {
-					"worklet";
-					const touch = event.allTouches[0];
-					if (!touch) return;
-					const along = isVertical ? touch.y : touch.x;
-					if (!isWithinGrabBand(along, seamAlong(), COMPARE_HANDLE_BAND)) manager.fail();
-				})
-				.onBegin((event) => {
-					"worklet";
-					const along = isVertical ? event.y : event.x;
-					const seam = seamAlong();
-					if (!isWithinGrabBand(along, seam, COMPARE_HANDLE_BAND)) return;
-					begin(along - seam);
-				});
-		}
-
-		const axis: [number, number] = [-COMPARE_ANYWHERE_ACTIVE_OFFSET, COMPARE_ANYWHERE_ACTIVE_OFFSET];
-		const cross: [number, number] = [-COMPARE_ANYWHERE_FAIL_OFFSET, COMPARE_ANYWHERE_FAIL_OFFSET];
-		const drag = (
-			isVertical ? pan.activeOffsetY(axis).failOffsetX(cross) : pan.activeOffsetX(axis).failOffsetY(cross)
-		).onStart((event) => {
+			moveTo((isVertical ? event.y : event.x) - grabOffset.value);
+		},
+		onDeactivate: (event) => {
 			"worklet";
-			const along = isVertical ? event.y : event.x;
+			release(isVertical ? event.velocityY : event.velocityX);
+		},
+		onFinalize: () => {
+			"worklet";
+			release(0);
+		},
+	});
+
+	// A tap jumps the seam to the finger. It is its own recogniser rather than a
+	// write in the pan's `onBegin`, which would also fire at the start of a
+	// vertical flick the scroll view goes on to win. In `grab="handle"` mode it
+	// is disabled — the old code returned the pan alone.
+	const tap = useTapGesture({
+		enabled: !isDisabled && !isHandleGrab,
+		onDeactivate: (event) => {
+			"worklet";
+			if (event.canceled) return;
 			begin(0);
-			moveTo(along);
-		});
+			moveTo(isVertical ? event.y : event.x);
+			release(0);
+		},
+	});
 
-		// A tap jumps the seam to the finger. It is its own recogniser rather than a
-		// write in the pan's `onBegin`, which would also fire at the start of a
-		// vertical flick the scroll view goes on to win.
-		const tap = Gesture.Tap()
-			.enabled(!isDisabled)
-			.onEnd((event, success) => {
-				"worklet";
-				if (!success) return;
-				begin(0);
-				moveTo(isVertical ? event.y : event.x);
-				release(0);
-			});
-
-		return Gesture.Race(drag, tap);
-	}, [
-		commitEnd,
-		frameSize,
-		grab,
-		grabOffset,
-		grabbed,
-		haptic,
-		isCalm,
-		isDisabled,
-		isVertical,
-		maxPosition,
-		minPosition,
-		orientation,
-		points,
-		position,
-		setDragging,
-		snapThreshold,
-		tracking,
-	]);
+	const gesture = useCompetingGestures(drag, tap);
 
 	// The one hop back to React during a drag, at percent resolution, so a
 	// full-frame drag is a hundred commits at most rather than one per frame. Off

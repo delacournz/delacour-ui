@@ -1,6 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
 import { type AccessibilityActionEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture, useSimultaneousGestures, useTapGesture } from "react-native-gesture-handler";
 import Animated, { useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { playHaptic } from "../pressable";
@@ -84,87 +84,72 @@ export function SplitViewDragArea({
 	const moved = useSharedValue(false);
 	const projected = useSharedValue(-1);
 
-	const gesture = useMemo(() => {
-		const pan = Gesture.Pan()
-			.enabled(!isDisabled)
-			.minDistance(0)
-			.shouldCancelWhenOutside(false)
-			.onBegin(() => {
-				"worklet";
-				interrupt();
-				start.value = top.value;
-				moved.value = false;
-				projected.value = snapIndex;
-				scheduleOnRN(setActive, true);
-			})
-			.onUpdate((event) => {
-				"worklet";
-				if (extent.value <= 0) return;
-				if (Math.abs(event.translationY) > SPLIT_VIEW_TAP_SLOP) moved.value = true;
-				const height = resolveDragHeight({
-					extent: extent.value,
-					heights,
-					start: start.value,
-					translation: event.translationY,
-				});
-				top.value = height;
-				if (!moved.value) return;
-				const target = projectSnap({
-					decelerationRate: SPLIT_VIEW_DECELERATION_RATE,
-					points: heights,
-					position: height,
-					velocity: event.velocityY,
-				});
-				if (target !== projected.value && haptic !== false) playHaptic(haptic);
-				projected.value = target;
-			})
-			.onEnd((event) => {
-				"worklet";
-				if (!moved.value) return;
-				const target = projectSnap({
-					decelerationRate: SPLIT_VIEW_DECELERATION_RATE,
-					points: heights,
-					position: top.value,
-					velocity: event.velocityY,
-				});
-				if (target < 0) return;
-				if (target !== projected.value && haptic !== false) playHaptic(haptic);
-				projected.value = target;
-				settle(target, event.velocityY);
-				scheduleOnRN(commitDrag, target);
-			})
-			.onFinalize(() => {
-				"worklet";
-				scheduleOnRN(setActive, false);
-				if (!moved.value) settle(snapIndex, 0);
-				moved.value = false;
+	const pan = usePanGesture({
+		enabled: !isDisabled,
+		minDistance: 0,
+		shouldCancelWhenOutside: false,
+		onBegin: () => {
+			"worklet";
+			interrupt();
+			start.value = top.value;
+			moved.value = false;
+			projected.value = snapIndex;
+			scheduleOnRN(setActive, true);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			if (extent.value <= 0) return;
+			if (Math.abs(event.translationY) > SPLIT_VIEW_TAP_SLOP) moved.value = true;
+			const height = resolveDragHeight({
+				extent: extent.value,
+				heights,
+				start: start.value,
+				translation: event.translationY,
 			});
-
-		const tap = Gesture.Tap()
-			.enabled(!isDisabled)
-			.maxDistance(SPLIT_VIEW_TAP_SLOP)
-			.onEnd((_event, success) => {
-				"worklet";
-				if (success) scheduleOnRN(cycle, false);
+			top.value = height;
+			if (!moved.value) return;
+			const target = projectSnap({
+				decelerationRate: SPLIT_VIEW_DECELERATION_RATE,
+				points: heights,
+				position: height,
+				velocity: event.velocityY,
 			});
+			if (target !== projected.value && haptic !== false) playHaptic(haptic);
+			projected.value = target;
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (!moved.value) return;
+			const target = projectSnap({
+				decelerationRate: SPLIT_VIEW_DECELERATION_RATE,
+				points: heights,
+				position: top.value,
+				velocity: event.velocityY,
+			});
+			if (target < 0) return;
+			if (target !== projected.value && haptic !== false) playHaptic(haptic);
+			projected.value = target;
+			settle(target, event.velocityY);
+			scheduleOnRN(commitDrag, target);
+		},
+		onFinalize: () => {
+			"worklet";
+			scheduleOnRN(setActive, false);
+			if (!moved.value) settle(snapIndex, 0);
+			moved.value = false;
+		},
+	});
 
-		return Gesture.Simultaneous(pan, tap);
-	}, [
-		commitDrag,
-		cycle,
-		extent,
-		haptic,
-		heights,
-		interrupt,
-		isDisabled,
-		moved,
-		projected,
-		setActive,
-		settle,
-		snapIndex,
-		start,
-		top,
-	]);
+	const tap = useTapGesture({
+		enabled: !isDisabled,
+		maxDistance: SPLIT_VIEW_TAP_SLOP,
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(cycle, false);
+		},
+	});
+
+	const gesture = useSimultaneousGestures(pan, tap);
 
 	const a11y = resolveSnapAccessibility({ count: snapCount, index: snapIndex });
 	const actions = useMemo(

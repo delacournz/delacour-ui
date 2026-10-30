@@ -1,6 +1,6 @@
 import { type ReactElement, useCallback, useEffect, useMemo } from "react";
 import type { AccessibilityActionEvent } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, useLongPressGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { Icon, type IconComponent, IconDefaultsProvider } from "../icon";
@@ -83,24 +83,23 @@ export function NumberInputStepper({
 	const pressed = useSharedValue(0);
 	const hitSlop = resolveStepperHitSlop(size);
 
-	const gesture = useMemo(() => {
-		const hold = Gesture.LongPress()
-			.minDuration(0)
-			.maxDistance(STEPPER_MAX_DRIFT)
-			.shouldCancelWhenOutside(true)
-			.enabled(canStep)
-			.onStart(() => {
-				"worklet";
-				pressed.value = withTiming(1, PRESS_FADE);
-				scheduleOnRN(start);
-			})
-			.onFinalize(() => {
-				"worklet";
-				pressed.value = withTiming(0, PRESS_FADE);
-				scheduleOnRN(stop);
-			});
-		return hitSlop > 0 ? hold.hitSlop(hitSlop) : hold;
-	}, [canStep, hitSlop, pressed, start, stop]);
+	const gesture = useLongPressGesture({
+		enabled: canStep,
+		minDuration: 0,
+		maxDistance: STEPPER_MAX_DRIFT,
+		shouldCancelWhenOutside: true,
+		hitSlop: hitSlop > 0 ? hitSlop : undefined,
+		onActivate: () => {
+			"worklet";
+			pressed.value = withTiming(1, PRESS_FADE);
+			scheduleOnRN(start);
+		},
+		onFinalize: () => {
+			"worklet";
+			pressed.value = withTiming(0, PRESS_FADE);
+			scheduleOnRN(stop);
+		},
+	});
 
 	const pressStyle = useAnimatedStyle(() => ({
 		opacity: 1 - pressed.value * (1 - NUMBER_INPUT_STEPPER_PRESSED_OPACITY),

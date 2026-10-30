@@ -1,6 +1,6 @@
-import { type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
+import { type ReactElement, type ReactNode, useCallback, useRef } from "react";
 import { type AccessibilityState, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, useTapGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { Icon } from "../icon";
@@ -78,27 +78,24 @@ export function MenuRow({
 	const outMs = isReducedMotion ? 0 : MENU_PRESS.outMs;
 	const pressedScale = isReducedMotion ? 1 : MENU_PRESS.scale;
 
-	const gesture = useMemo(
-		() =>
-			Gesture.Tap()
-				.enabled(!isDisabled)
-				.maxDistance(MENU_TAP_MAX_DISTANCE)
-				.shouldCancelWhenOutside(true)
-				.onBegin(() => {
-					"worklet";
-					pressed.value = withTiming(1, { duration: inMs });
-				})
-				.onEnd(() => {
-					"worklet";
-					if (haptic) playHaptic(haptic);
-					scheduleOnRN(handleSelect);
-				})
-				.onFinalize(() => {
-					"worklet";
-					pressed.value = withTiming(0, { duration: outMs });
-				}),
-		[handleSelect, haptic, inMs, isDisabled, outMs, pressed]
-	);
+	const gesture = useTapGesture({
+		enabled: !isDisabled,
+		maxDistance: MENU_TAP_MAX_DISTANCE,
+		shouldCancelWhenOutside: true,
+		onBegin: () => {
+			"worklet";
+			pressed.value = withTiming(1, { duration: inMs });
+		},
+		onDeactivate: () => {
+			"worklet";
+			if (haptic) playHaptic(haptic);
+			scheduleOnRN(handleSelect);
+		},
+		onFinalize: () => {
+			"worklet";
+			pressed.value = withTiming(0, { duration: outMs });
+		},
+	});
 
 	const rowStyle = useAnimatedStyle(() => ({
 		transform: [{ scale: 1 - pressed.value * (1 - pressedScale) }],

@@ -1,6 +1,6 @@
-import { type ReactElement, useEffect, useMemo, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import { type LayoutChangeEvent, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, GestureStateManager, useManualGesture } from "react-native-gesture-handler";
 import Animated, {
 	Easing,
 	ReduceMotion,
@@ -112,28 +112,25 @@ export function MarqueeTrack({
 	// a child `Pressable`'s tap the moment the finger landed, and nothing at this
 	// level can name a child's gesture to run alongside it.
 	const isPressPause = pause.kind === "press";
-	const gesture = useMemo(
-		() =>
-			Gesture.Manual()
-				.enabled(isPressPause)
-				.onTouchesDown(() => {
-					"worklet";
-					isPressed.value = true;
-				})
-				.onTouchesUp((_event, manager) => {
-					"worklet";
-					manager.fail();
-				})
-				.onTouchesCancelled((_event, manager) => {
-					"worklet";
-					manager.fail();
-				})
-				.onFinalize(() => {
-					"worklet";
-					isPressed.value = false;
-				}),
-		[isPressPause, isPressed]
-	);
+	const gesture = useManualGesture({
+		enabled: isPressPause,
+		onTouchesDown: () => {
+			"worklet";
+			isPressed.value = true;
+		},
+		onTouchesUp: (event) => {
+			"worklet";
+			GestureStateManager.fail(event.handlerTag);
+		},
+		onTouchesCancel: (event) => {
+			"worklet";
+			GestureStateManager.fail(event.handlerTag);
+		},
+		onFinalize: () => {
+			"worklet";
+			isPressed.value = false;
+		},
+	});
 
 	const onCopyLayout = (event: LayoutChangeEvent): void => {
 		const { width, height } = event.nativeEvent.layout;

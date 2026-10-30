@@ -9,7 +9,7 @@ import {
 	useState,
 } from "react";
 import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { cancelAnimation, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { cn } from "../../lib/cn";
@@ -124,85 +124,79 @@ export function CarouselContent({
 	// retarget a spring it never disturbed.
 	const isDragging = useSharedValue(false);
 
-	const panGesture = useMemo(() => {
-		const activate = [-CAROUSEL_PAN.activate, CAROUSEL_PAN.activate] as [number, number];
-		const fail = [-CAROUSEL_PAN.fail, CAROUSEL_PAN.fail] as [number, number];
-		const translationKey = isHorizontal ? "translationX" : "translationY";
-		const velocityKey = isHorizontal ? "velocityX" : "velocityY";
-		const pan = Gesture.Pan().enabled(!isDisabled && isScrollEnabled && count > 1);
-		const axis = isHorizontal
-			? pan.activeOffsetX(activate).failOffsetY(fail)
-			: pan.activeOffsetY(activate).failOffsetX(fail);
+	// The release velocity, captured in `onDeactivate`: `onFinalize`'s event
+	// carries no velocity, and it is the callback that has to settle.
+	const releaseVelocity = useSharedValue(0);
 
-		return (
-			axis
-				// Autoplay stops for good on the first touch, activated or not.
-				.onBegin(() => {
-					"worklet";
-					scheduleOnRN(stopAutoplay);
-				})
-				// The spring is cancelled on ACTIVATION, never on touch-down: most
-				// touches go on to fail against the cross axis, and cancelling for one
-				// of those would freeze the run between two slides with nothing to
-				// restart it. `Tabs` found that by dragging, then scrolling the page.
-				.onStart((event) => {
-					"worklet";
-					cancelAnimation(position);
-					isDragging.value = true;
-					panStart.value = resolvePanOrigin(position.value, event[translationKey], geometry.value.pitch);
-				})
-				.onUpdate((event) => {
-					"worklet";
-					position.value = resolvePanPosition({
-						count,
-						loop,
-						pitch: geometry.value.pitch,
-						start: panStart.value,
-						translation: event[translationKey],
-					});
-				})
-				// `onFinalize`, the one callback on every path out — END, FAILED and
-				// CANCELLED — so a drag the OS cancels still settles.
-				.onFinalize((event, success) => {
-					"worklet";
-					if (!isDragging.value) return;
-					isDragging.value = false;
+	const translationKey = isHorizontal ? "translationX" : "translationY";
+	const velocityKey = isHorizontal ? "velocityX" : "velocityY";
+	const activate: [number, number] = [-CAROUSEL_PAN.activate, CAROUSEL_PAN.activate];
+	const fail: [number, number] = [-CAROUSEL_PAN.fail, CAROUSEL_PAN.fail];
 
-					const pitch = geometry.value.pitch;
-					const velocity = success ? event[velocityKey] : 0;
-					const destination = resolveSettleTarget({
-						count,
-						loop,
-						pitch,
-						position: position.value,
-						startIndex: Math.round(panStart.value),
-						velocity,
-					});
+	const panGesture = usePanGesture({
+		enabled: !isDisabled && isScrollEnabled && count > 1,
+		activeOffsetX: isHorizontal ? activate : undefined,
+		failOffsetY: isHorizontal ? fail : undefined,
+		activeOffsetY: isHorizontal ? undefined : activate,
+		failOffsetX: isHorizontal ? undefined : fail,
+		// Autoplay stops for good on the first touch, activated or not.
+		onBegin: () => {
+			"worklet";
+			scheduleOnRN(stopAutoplay);
+		},
+		// The spring is cancelled on ACTIVATION, never on touch-down: most
+		// touches go on to fail against the cross axis, and cancelling for one
+		// of those would freeze the run between two slides with nothing to
+		// restart it. `Tabs` found that by dragging, then scrolling the page.
+		onActivate: (event) => {
+			"worklet";
+			cancelAnimation(position);
+			isDragging.value = true;
+			releaseVelocity.value = 0;
+			panStart.value = resolvePanOrigin(position.value, event[translationKey], geometry.value.pitch);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			position.value = resolvePanPosition({
+				count,
+				loop,
+				pitch: geometry.value.pitch,
+				start: panStart.value,
+				translation: event[translationKey],
+			});
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			releaseVelocity.value = event.canceled ? 0 : event[velocityKey];
+		},
+		// `onFinalize`, the one callback on every path out — END, FAILED and
+		// CANCELLED — so a drag the OS cancels still settles.
+		onFinalize: () => {
+			"worklet";
+			if (!isDragging.value) return;
+			isDragging.value = false;
 
-					if (isCalm) {
-						position.value = withTiming(destination, { duration: CAROUSEL_CALM_DURATION_MS });
-					} else {
-						const slidesPerSecond = pitch > 0 ? -velocity / pitch : 0;
-						position.value = withSpring(destination, { ...CAROUSEL_SPRING, velocity: slidesPerSecond });
-					}
+			const pitch = geometry.value.pitch;
+			const velocity = releaseVelocity.value;
+			const destination = resolveSettleTarget({
+				count,
+				loop,
+				pitch,
+				position: position.value,
+				startIndex: Math.round(panStart.value),
+				velocity,
+			});
 
-					scheduleOnRN(commitFromPan, destination);
-				})
-		);
-	}, [
-		commitFromPan,
-		count,
-		geometry,
-		isCalm,
-		isDisabled,
-		isDragging,
-		isHorizontal,
-		isScrollEnabled,
-		loop,
-		panStart,
-		position,
-		stopAutoplay,
-	]);
+			if (isCalm) {
+				position.value = withTiming(destination, { duration: CAROUSEL_CALM_DURATION_MS });
+			} else {
+				const slidesPerSecond = pitch > 0 ? -velocity / pitch : 0;
+				position.value = withSpring(destination, { ...CAROUSEL_SPRING, velocity: slidesPerSecond });
+			}
+
+			scheduleOnRN(commitFromPan, destination);
+		},
+	});
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {

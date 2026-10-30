@@ -1,6 +1,11 @@
-import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef } from "react";
+import { type ReactElement, type ReactNode, useCallback, useEffect, useRef } from "react";
 import { type AccessibilityActionEvent, View, type ViewInstance, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+	GestureDetector,
+	useExclusiveGestures,
+	useLongPressGesture,
+	useTapGesture,
+} from "react-native-gesture-handler";
 import { scheduleOnRN } from "react-native-worklets";
 import { type MenuMeasurable, useMenuPart } from "../menu/menu.context";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
@@ -38,7 +43,7 @@ export type ContextMenuTriggerProps = Omit<ViewProps, "children"> & {
 /**
  * The content that is held: a message bubble, a card, a row.
  *
- * **One recogniser decides up front.** `Gesture.Exclusive(longPress, tap)`: the
+ * **One recogniser decides up front.** `useExclusiveGestures(longPress, tap)`: the
  * tap waits for the hold to fail, so a hold that opens the menu never also
  * counts as a tap. That is why `onPress` belongs here, on the trigger, and not
  * on a pressable inside it — an inner press would race the hold instead.
@@ -46,7 +51,7 @@ export type ContextMenuTriggerProps = Omit<ViewProps, "children"> & {
  * **A scroll that starts here still scrolls.** The hold fails once the finger
  * drifts past `slop`, and the scroller takes the touch.
  *
- * The haptic plays on the UI thread in the hold's `onStart`; the open crosses
+ * The haptic plays on the UI thread in the hold's `onActivate`; the open crosses
  * to JS, measures the wrapper with `measureInWindow`, and anchors the panel at
  * the press point or against that rect.
  *
@@ -104,31 +109,31 @@ export function ContextMenuTrigger({
 	pressRef.current = onPress;
 	const handlePress = useCallback(() => pressRef.current?.(), []);
 
-	const gesture = useMemo(() => {
-		const longPress = Gesture.LongPress()
-			.enabled(!isDisabled)
-			.minDuration(hold.delay)
-			.maxDistance(hold.slop)
-			.onStart((event) => {
-				"worklet";
-				if (haptic) playHaptic(haptic);
-				scheduleOnRN(openAtPoint, event.absoluteX, event.absoluteY);
-			});
+	// Both hooks run every render, so a trigger with no `onPress` keeps the tap
+	// but disables it; the hold then wins alone, as it did before there was a tap.
+	const longPress = useLongPressGesture({
+		enabled: !isDisabled,
+		minDuration: hold.delay,
+		maxDistance: hold.slop,
+		onActivate: (event) => {
+			"worklet";
+			if (haptic) playHaptic(haptic);
+			scheduleOnRN(openAtPoint, event.absoluteX, event.absoluteY);
+		},
+	});
 
-		if (!hasPress) return longPress;
+	const tap = useTapGesture({
+		enabled: !isDisabled && hasPress,
+		maxDistance: hold.slop,
+		maxDuration: Math.max(500, hold.delay),
+		shouldCancelWhenOutside: true,
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(handlePress);
+		},
+	});
 
-		const tap = Gesture.Tap()
-			.enabled(!isDisabled)
-			.maxDistance(hold.slop)
-			.maxDuration(Math.max(500, hold.delay))
-			.shouldCancelWhenOutside(true)
-			.onEnd((_event, isSuccess) => {
-				"worklet";
-				if (isSuccess) scheduleOnRN(handlePress);
-			});
-
-		return Gesture.Exclusive(longPress, tap);
-	}, [handlePress, hasPress, haptic, hold.delay, hold.slop, isDisabled, openAtPoint]);
+	const gesture = useExclusiveGestures(longPress, tap);
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {

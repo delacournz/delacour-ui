@@ -12,7 +12,7 @@ import {
 	useState,
 } from "react";
 import { type LayoutChangeEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useReducedMotion, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
@@ -324,85 +324,70 @@ function StackCardRoot({
 	const isVerticalOnly = directions.every((direction) => direction === "up" || direction === "down");
 	const isGestureEnabled = !isDisabled && index < count;
 
-	const gesture = useMemo(() => {
-		const pan = Gesture.Pan().enabled(isGestureEnabled);
-		// A horizontal deck lets a vertical drag fall through to the scroll view
-		// around it. A deck that throws both ways claims both axes, so it cannot
-		// sit inside a scroller.
-		if (isHorizontalOnly) pan.activeOffsetX([-10, 10]).failOffsetY([-10, 10]);
-		else if (isVerticalOnly) pan.activeOffsetY([-10, 10]).failOffsetX([-10, 10]);
-		else pan.minDistance(10);
-
-		return pan
-			.onUpdate((event) => {
-				"worklet";
-				if (isBusy.value) return;
-				const offset = resolveDragOffset({
-					directions,
-					translationX: event.translationX,
-					translationY: event.translationY,
-				});
-				x.value = offset.x;
-				y.value = offset.y;
-				const isPast =
-					resolveStackRelease({
-						directions,
-						height: height.value,
-						threshold,
-						vx: 0,
-						vy: 0,
-						width: width.value,
-						x: offset.x,
-						y: offset.y,
-					}) !== null;
-				if (isPast && !isArmed.value) {
-					isArmed.value = true;
-					if (haptic !== false) playHaptic(haptic);
-				} else if (!isPast && isArmed.value) {
-					isArmed.value = false;
-				}
-			})
-			.onEnd((event) => {
-				"worklet";
-				if (isBusy.value) return;
-				isArmed.value = false;
-				const direction = resolveStackRelease({
+	// A horizontal deck lets a vertical drag fall through to the scroll view
+	// around it. A deck that throws both ways claims both axes, so it cannot
+	// sit inside a scroller.
+	const gesture = usePanGesture({
+		enabled: isGestureEnabled,
+		activeOffsetX: isHorizontalOnly ? [-10, 10] : undefined,
+		failOffsetY: isHorizontalOnly ? [-10, 10] : undefined,
+		activeOffsetY: !isHorizontalOnly && isVerticalOnly ? [-10, 10] : undefined,
+		failOffsetX: !isHorizontalOnly && isVerticalOnly ? [-10, 10] : undefined,
+		minDistance: isHorizontalOnly || isVerticalOnly ? undefined : 10,
+		onUpdate: (event) => {
+			"worklet";
+			if (isBusy.value) return;
+			const offset = resolveDragOffset({
+				directions,
+				translationX: event.translationX,
+				translationY: event.translationY,
+			});
+			x.value = offset.x;
+			y.value = offset.y;
+			const isPast =
+				resolveStackRelease({
 					directions,
 					height: height.value,
 					threshold,
-					vx: event.velocityX,
-					vy: event.velocityY,
+					vx: 0,
+					vy: 0,
 					width: width.value,
-					x: x.value,
-					y: y.value,
-				});
-				if (direction !== null) {
-					fling(direction, event.velocityX, event.velocityY);
-					return;
-				}
-				settle(x.value, y.value, false);
-			})
-			.onFinalize(() => {
-				"worklet";
-				if (isBusy.value || (x.value === 0 && y.value === 0)) return;
-				settle(x.value, y.value, false);
+					x: offset.x,
+					y: offset.y,
+				}) !== null;
+			if (isPast && !isArmed.value) {
+				isArmed.value = true;
+				if (haptic !== false) playHaptic(haptic);
+			} else if (!isPast && isArmed.value) {
+				isArmed.value = false;
+			}
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (event.canceled || isBusy.value) return;
+			isArmed.value = false;
+			const direction = resolveStackRelease({
+				directions,
+				height: height.value,
+				threshold,
+				vx: event.velocityX,
+				vy: event.velocityY,
+				width: width.value,
+				x: x.value,
+				y: y.value,
 			});
-	}, [
-		directions,
-		fling,
-		haptic,
-		height,
-		isArmed,
-		isBusy,
-		isGestureEnabled,
-		isHorizontalOnly,
-		isVerticalOnly,
-		settle,
-		threshold,
-		width,
-		x,
-		y,
-	]);
+			if (direction !== null) {
+				fling(direction, event.velocityX, event.velocityY);
+				return;
+			}
+			settle(x.value, y.value, false);
+		},
+		onFinalize: () => {
+			"worklet";
+			if (isBusy.value || (x.value === 0 && y.value === 0)) return;
+			settle(x.value, y.value, false);
+		},
+	});
 
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {

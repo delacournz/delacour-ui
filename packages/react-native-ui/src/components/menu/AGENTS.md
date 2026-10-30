@@ -85,7 +85,7 @@ rows run actions, they never become the trigger's value. Compound root plus
 - **The press fill is the row's background.** An absolute `bg-accent` layer
   (`bg-destructive-soft` on a destructive row) fades in over 90ms and out over
   160ms while the row dips to 0.98 — one shared value for both. There is no
-  wash or ripple on top. A row is built on its own Gesture Handler tap rather
+  wash or ripple on top. A row is built on its own Gesture Handler tap (`useTapGesture`) rather
   than `Pressable`, because `Pressable` owns its `pressed` value privately and
   the fill has to read it.
 - **Under reduced motion the fill snaps and the scale does not run.** The

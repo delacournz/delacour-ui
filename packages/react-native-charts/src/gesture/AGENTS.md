@@ -89,8 +89,11 @@ under the touch on either.
   state, so it is mounted disabled and `useScrubGesture` returns `null` in its
   place — the root mounts no overlay for `null`, exactly as before. The
   behaviour's activation options (`activateAfterLongPress` for `hold`, the
-  offsets for `claim`, `block` for `block`) are spread in only when named,
-  because each changes how the pan activates just by being present.
+  offsets for `claim`, `block` for `block`) are set only when named and left
+  `undefined` otherwise, because each changes how the pan activates; Gesture
+  Handler drops an `undefined` key before the config reaches native. They are
+  conditional keys, never a spread: the Worklets Babel plugin throws on a
+  spread in a gesture hook's config, and only Metro sees it — `tsc` does not.
 
 - **`blocks` is a Gesture Handler 3 gesture.** A scrollable's own gesture —
   `useNativeGesture()` on the list the chart sits in — which the pan is then

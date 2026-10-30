@@ -1,5 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, useContext } from "react";
-import type { GestureType } from "react-native-gesture-handler";
+import type { PanGesture, PinchGesture } from "react-native-gesture-handler";
 import type { SharedValue } from "react-native-reanimated";
 import type { FlowHandleRef } from "./flow.variants";
 import type { FlowConnection, FlowPoint, FlowRect, FlowSide, FlowSize, FlowViewport } from "./flow-geometry";
@@ -24,7 +24,7 @@ export type FlowContextValue = {
 	isLocked: boolean;
 	setLocked: (isLocked: boolean) => void;
 	/** The canvas's own gestures, which every node and handle gesture blocks. */
-	canvasGestures: readonly GestureType[];
+	canvasGestures: (PanGesture | PinchGesture)[];
 	fitView: (options?: { isAnimated?: boolean }) => void;
 	zoomBy: (factor: number) => void;
 	getNodeRect: (id: string) => FlowRect | null;
@@ -133,7 +133,7 @@ export type FlowNodeContextValue = {
 	id: string;
 	entry: FlowRegistryEntry;
 	/** The node's drag, which a handle's gesture blocks so a connection drag never moves the node. */
-	nodeGesture: GestureType;
+	nodeGesture: PanGesture;
 	/** Re-reads the node's handles into the canvas. */
 	notifyHandles: () => void;
 };

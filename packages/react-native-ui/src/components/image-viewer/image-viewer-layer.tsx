@@ -16,7 +16,16 @@ import {
 	useWindowDimensions,
 	View,
 } from "react-native";
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+	GestureDetector,
+	GestureHandlerRootView,
+	useCompetingGestures,
+	useExclusiveGestures,
+	usePanGesture,
+	usePinchGesture,
+	useSimultaneousGestures,
+	useTapGesture,
+} from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
 	Easing,
@@ -287,211 +296,195 @@ export function ImageViewerLayer({
 	const panStart = useSharedValue({ position: 0, x: 0, y: 0 });
 	const pinchStart = useSharedValue({ focalX: 0, focalY: 0, scale: 1, x: 0, y: 0 });
 
-	const gesture = useMemo(() => {
-		const window = { height: windowHeight, width: windowWidth };
-		const settle = isCalm
-			? (value: number) => {
-					"worklet";
-					return withTiming(value, { duration: VIEWER_FADE_DURATION_MS });
-				}
-			: (value: number) => {
-					"worklet";
-					return withSpring(value, VIEWER_SPRING);
-				};
-
-		const releaseZoom = () => {
-			"worklet";
-			const bounds = resolveTranslateBounds(scale.value, activeFitted.value, window);
-			const rest = resolveClampedTranslation({ x: translateX.value, y: translateY.value }, bounds);
-			translateX.value = settle(rest.x);
-			translateY.value = settle(rest.y);
-		};
-
-		const releasePage = (velocity: number) => {
-			"worklet";
-			const destination = resolveSettleTarget({
-				count,
-				loop: false,
-				pitch,
-				position: position.value,
-				startIndex: Math.round(panStart.value.position),
-				velocity,
-			});
-			position.value = isCalm
-				? withTiming(destination, { duration: VIEWER_FADE_DURATION_MS })
-				: withSpring(destination, { ...VIEWER_SPRING, velocity: pitch > 0 ? -velocity / pitch : 0 });
-			scheduleOnRN(commitFromPan, destination);
-		};
-
-		const releaseDismiss = (velocity: number) => {
-			"worklet";
-			if (resolveDismissDecision(dismissY.value, velocity, windowHeight) === "dismiss") scheduleOnRN(onClose);
-			else dismissY.value = settle(0);
-		};
-
-		const release = (current: number, velocityX: number, velocityY: number) => {
-			"worklet";
-			if (current === MODE_ZOOM) releaseZoom();
-			else if (current === MODE_PAGE) releasePage(velocityX);
-			else if (current === MODE_DISMISS) releaseDismiss(velocityY);
-		};
-
-		const pan = Gesture.Pan()
-			.maxPointers(1)
-			.minDistance(VIEWER_PAN_ACTIVATE)
-			.onStart((event) => {
+	const window = { height: windowHeight, width: windowWidth };
+	const settle = isCalm
+		? (value: number) => {
 				"worklet";
-				if (scale.value > VIEWER_ZOOMED_THRESHOLD) {
-					mode.value = MODE_ZOOM;
-					cancelAnimation(translateX);
-					cancelAnimation(translateY);
-					panStart.value = {
-						position: position.value,
-						x: translateX.value - event.translationX,
-						y: translateY.value - event.translationY,
-					};
-					return;
-				}
+				return withTiming(value, { duration: VIEWER_FADE_DURATION_MS });
+			}
+		: (value: number) => {
+				"worklet";
+				return withSpring(value, VIEWER_SPRING);
+			};
 
-				const axis = resolveDragAxis({
-					activateAt: VIEWER_PAN_ACTIVATE / 2,
-					translationX: event.translationX,
-					translationY: event.translationY,
-				});
-				if (axis === "horizontal" && count > 0) {
-					mode.value = MODE_PAGE;
-					cancelAnimation(position);
-					panStart.value = {
-						position: resolvePanOrigin(position.value, event.translationX, pitch),
-						x: 0,
-						y: 0,
-					};
-				} else if (axis === "vertical" && isDismissible) {
-					mode.value = MODE_DISMISS;
-					cancelAnimation(dismissY);
-					panStart.value = { position: position.value, x: 0, y: dismissY.value - event.translationY };
-				} else {
-					mode.value = MODE_NONE;
-				}
-			})
-			.onUpdate((event) => {
-				"worklet";
-				if (mode.value === MODE_ZOOM) {
-					const bounds = resolveTranslateBounds(scale.value, activeFitted.value, window);
-					const next = resolveClampedTranslation(
-						{ x: panStart.value.x + event.translationX, y: panStart.value.y + event.translationY },
-						bounds,
-						true
-					);
-					translateX.value = next.x;
-					translateY.value = next.y;
-				} else if (mode.value === MODE_PAGE) {
-					position.value = resolvePanPosition({
-						count,
-						loop: false,
-						pitch,
-						start: panStart.value.position,
-						translation: event.translationX,
-					});
-				} else if (mode.value === MODE_DISMISS) {
-					dismissY.value = panStart.value.y + event.translationY;
-				}
-			})
-			// `onFinalize`, the one callback on every path out, so a drag the OS
-			// cancels still settles. Each mode's release is its own worklet.
-			.onFinalize((event, success) => {
-				"worklet";
-				const current = mode.value;
-				mode.value = MODE_NONE;
-				release(current, success ? event.velocityX : 0, success ? event.velocityY : 0);
-			});
+	const releaseZoom = () => {
+		"worklet";
+		const bounds = resolveTranslateBounds(scale.value, activeFitted.value, window);
+		const rest = resolveClampedTranslation({ x: translateX.value, y: translateY.value }, bounds);
+		translateX.value = settle(rest.x);
+		translateY.value = settle(rest.y);
+	};
 
-		const pinch = Gesture.Pinch()
-			.onStart((event) => {
-				"worklet";
-				cancelAnimation(scale);
+	const releasePage = (velocity: number) => {
+		"worklet";
+		const destination = resolveSettleTarget({
+			count,
+			loop: false,
+			pitch,
+			position: position.value,
+			startIndex: Math.round(panStart.value.position),
+			velocity,
+		});
+		position.value = isCalm
+			? withTiming(destination, { duration: VIEWER_FADE_DURATION_MS })
+			: withSpring(destination, { ...VIEWER_SPRING, velocity: pitch > 0 ? -velocity / pitch : 0 });
+		scheduleOnRN(commitFromPan, destination);
+	};
+
+	const releaseDismiss = (velocity: number) => {
+		"worklet";
+		if (resolveDismissDecision(dismissY.value, velocity, windowHeight) === "dismiss") scheduleOnRN(onClose);
+		else dismissY.value = settle(0);
+	};
+
+	const release = (current: number, velocityX: number, velocityY: number) => {
+		"worklet";
+		if (current === MODE_ZOOM) releaseZoom();
+		else if (current === MODE_PAGE) releasePage(velocityX);
+		else if (current === MODE_DISMISS) releaseDismiss(velocityY);
+	};
+
+	// The pan, the pinch and the two taps all run every render; the layer is only
+	// mounted while the viewer is open, so none is ever absent. `release` settles a
+	// pan from `onDeactivate`, which carries the velocity `onFinalize` does not.
+	const pan = usePanGesture({
+		maxPointers: 1,
+		minDistance: VIEWER_PAN_ACTIVATE,
+		onActivate: (event) => {
+			"worklet";
+			if (scale.value > VIEWER_ZOOMED_THRESHOLD) {
+				mode.value = MODE_ZOOM;
 				cancelAnimation(translateX);
 				cancelAnimation(translateY);
-				pinchStart.value = {
-					focalX: event.focalX,
-					focalY: event.focalY,
-					scale: scale.value,
-					x: translateX.value,
-					y: translateY.value,
+				panStart.value = {
+					position: position.value,
+					x: translateX.value - event.translationX,
+					y: translateY.value - event.translationY,
 				};
-			})
-			.onUpdate((event) => {
-				"worklet";
-				const fitted = activeFitted.value;
-				const start = pinchStart.value;
-				const next = resolvePinchTransform({
-					center: { x: fitted.x + fitted.width / 2, y: fitted.y + fitted.height / 2 },
-					focal: { x: start.focalX, y: start.focalY },
-					focalDelta: { x: event.focalX - start.focalX, y: event.focalY - start.focalY },
-					maxScale,
-					pinchScale: event.scale,
-					startScale: start.scale,
-					startTranslation: { x: start.x, y: start.y },
-				});
-				scale.value = next.scale;
-				translateX.value = next.translation.x;
-				translateY.value = next.translation.y;
-			})
-			.onFinalize(() => {
-				"worklet";
-				const target = scale.value < 1 ? 1 : scale.value > maxScale ? maxScale : scale.value;
-				const bounds = resolveTranslateBounds(target, activeFitted.value, window);
-				const rest = resolveClampedTranslation({ x: translateX.value, y: translateY.value }, bounds);
-				scale.value = settle(target);
-				translateX.value = settle(rest.x);
-				translateY.value = settle(rest.y);
-			});
+				return;
+			}
 
-		const doubleTap = Gesture.Tap()
-			.numberOfTaps(2)
-			.onEnd((event) => {
-				"worklet";
-				const fitted = activeFitted.value;
-				const target = resolveDoubleTapTarget({
-					bounds: resolveTranslateBounds(doubleTapScale, fitted, window),
-					center: { x: fitted.x + fitted.width / 2, y: fitted.y + fitted.height / 2 },
-					doubleTapScale,
-					scale: scale.value,
-					tap: { x: event.x, y: event.y },
-				});
-				scale.value = settle(target.scale);
-				translateX.value = settle(target.translation.x);
-				translateY.value = settle(target.translation.y);
+			const axis = resolveDragAxis({
+				activateAt: VIEWER_PAN_ACTIVATE / 2,
+				translationX: event.translationX,
+				translationY: event.translationY,
 			});
-
-		const singleTap = Gesture.Tap().onEnd(() => {
+			if (axis === "horizontal" && count > 0) {
+				mode.value = MODE_PAGE;
+				cancelAnimation(position);
+				panStart.value = {
+					position: resolvePanOrigin(position.value, event.translationX, pitch),
+					x: 0,
+					y: 0,
+				};
+			} else if (axis === "vertical" && isDismissible) {
+				mode.value = MODE_DISMISS;
+				cancelAnimation(dismissY);
+				panStart.value = { position: position.value, x: 0, y: dismissY.value - event.translationY };
+			} else {
+				mode.value = MODE_NONE;
+			}
+		},
+		onUpdate: (event) => {
 			"worklet";
-			scheduleOnRN(toggleChrome);
-		});
+			if (mode.value === MODE_ZOOM) {
+				const bounds = resolveTranslateBounds(scale.value, activeFitted.value, window);
+				const next = resolveClampedTranslation(
+					{ x: panStart.value.x + event.translationX, y: panStart.value.y + event.translationY },
+					bounds,
+					true
+				);
+				translateX.value = next.x;
+				translateY.value = next.y;
+			} else if (mode.value === MODE_PAGE) {
+				position.value = resolvePanPosition({
+					count,
+					loop: false,
+					pitch,
+					start: panStart.value.position,
+					translation: event.translationX,
+				});
+			} else if (mode.value === MODE_DISMISS) {
+				dismissY.value = panStart.value.y + event.translationY;
+			}
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			const current = mode.value;
+			mode.value = MODE_NONE;
+			release(current, event.canceled ? 0 : event.velocityX, event.canceled ? 0 : event.velocityY);
+		},
+	});
 
-		return Gesture.Race(Gesture.Simultaneous(pinch, pan), Gesture.Exclusive(doubleTap, singleTap));
-	}, [
-		activeFitted,
-		commitFromPan,
-		count,
-		dismissY,
-		doubleTapScale,
-		isCalm,
-		isDismissible,
-		maxScale,
-		mode,
-		onClose,
-		panStart,
-		pinchStart,
-		pitch,
-		position,
-		scale,
-		toggleChrome,
-		translateX,
-		translateY,
-		windowHeight,
-		windowWidth,
-	]);
+	const pinch = usePinchGesture({
+		onActivate: (event) => {
+			"worklet";
+			cancelAnimation(scale);
+			cancelAnimation(translateX);
+			cancelAnimation(translateY);
+			pinchStart.value = {
+				focalX: event.focalX,
+				focalY: event.focalY,
+				scale: scale.value,
+				x: translateX.value,
+				y: translateY.value,
+			};
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const fitted = activeFitted.value;
+			const start = pinchStart.value;
+			const next = resolvePinchTransform({
+				center: { x: fitted.x + fitted.width / 2, y: fitted.y + fitted.height / 2 },
+				focal: { x: start.focalX, y: start.focalY },
+				focalDelta: { x: event.focalX - start.focalX, y: event.focalY - start.focalY },
+				maxScale,
+				pinchScale: event.scale,
+				startScale: start.scale,
+				startTranslation: { x: start.x, y: start.y },
+			});
+			scale.value = next.scale;
+			translateX.value = next.translation.x;
+			translateY.value = next.translation.y;
+		},
+		onFinalize: () => {
+			"worklet";
+			const target = scale.value < 1 ? 1 : scale.value > maxScale ? maxScale : scale.value;
+			const bounds = resolveTranslateBounds(target, activeFitted.value, window);
+			const rest = resolveClampedTranslation({ x: translateX.value, y: translateY.value }, bounds);
+			scale.value = settle(target);
+			translateX.value = settle(rest.x);
+			translateY.value = settle(rest.y);
+		},
+	});
+
+	const doubleTap = useTapGesture({
+		numberOfTaps: 2,
+		onDeactivate: (event) => {
+			"worklet";
+			if (event.canceled) return;
+			const fitted = activeFitted.value;
+			const target = resolveDoubleTapTarget({
+				bounds: resolveTranslateBounds(doubleTapScale, fitted, window),
+				center: { x: fitted.x + fitted.width / 2, y: fitted.y + fitted.height / 2 },
+				doubleTapScale,
+				scale: scale.value,
+				tap: { x: event.x, y: event.y },
+			});
+			scale.value = settle(target.scale);
+			translateX.value = settle(target.translation.x);
+			translateY.value = settle(target.translation.y);
+		},
+	});
+
+	const singleTap = useTapGesture({
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(toggleChrome);
+		},
+	});
+
+	const gesture = useCompetingGestures(useSimultaneousGestures(pinch, pan), useExclusiveGestures(doubleTap, singleTap));
 
 	const backdropStyle = useAnimatedStyle(() => ({
 		opacity:

@@ -66,10 +66,10 @@ root plus `Swipe.Start`, `Swipe.End`, `Swipe.Action` and `Swipe.Group`, with `us
 
 ## Gesture
 
-- **`activeOffsetX([-10, 10])` under `failOffsetY([-8, 8])`**, [Tabs](../tabs/AGENTS.md)' pairing.
+- **`activeOffsetX: [-10, 10]` under `failOffsetY: [-8, 8]`**, [Tabs](../tabs/AGENTS.md)' pairing.
   The pan waits for clearly sideways intent and fails the moment the finger commits vertically, so
   a list of rows scrolls normally. This is the opposite of [Slider](../slider/AGENTS.md)'s
-  `minDistance(0)`: a slider owns every touch on its track, a row owns only the sideways ones.
+  `minDistance: 0`: a slider owns every touch on its track, a row owns only the sideways ones.
 - **A side with no panel rubber-bands at 0.2 and returns.** The row still answers the finger, so
   the touch does not feel dead, but it never promises an action that is not there.
 - **The release is judged on a projection**: `offset + velocity × 0.1` against half the panel. A
@@ -85,11 +85,12 @@ root plus `Swipe.Start`, `Swipe.End`, `Swipe.Action` and `Swipe.Group`, with `us
   that removes the row from state unmounts it during that beat, so it never visibly slides back
   in; one that does not (Done, Archive into the same list) sees its row return closed.
 - **Tapping the open row closes it and swallows the tap.** A transparent shield covers the row
-  only while a side is open, behind its own `Gesture.Tap()`, so the row's own `Pressable`s never
+  only while a side is open, behind its own `useTapGesture` (`onDeactivate`, skipped when `canceled`), so the row's own `Pressable`s never
   see that tap.
-- **The release runs in `onFinalize`, gated on the pan having started.** `onFinalize` also fires
-  for a touch that never activated; without the gate a stray tap would re-judge, and stomp on, an
-  imperative `open()` still springing.
+- **The release runs in `onDeactivate`, gated on the pan having started.** Gesture Handler 3's
+  `onFinalize` carries no velocity, and `onDeactivate` runs on every path out of ACTIVE, cancelled
+  included, so the old `onFinalize` release is preserved. The `isActive` gate stays so a pan that
+  never activated cannot re-judge, and stomp on, an imperative `open()` still springing.
 - **Nothing re-renders during a drag.** The offset, the grab, the full-swipe latch and the measured
   width are shared values; React state changes only when a release settles a side.
 - **Every worklet body is self-contained.** `resolveSwipeRelease`, `resolveSwipeDrag` and

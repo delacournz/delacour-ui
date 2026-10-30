@@ -63,9 +63,9 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
 
 ## Gesture
 
-- **One `Gesture.Pan()` on the canvas, `minDistance(0)`, `maxPointers(1)`.**
+- **One `usePanGesture` on the canvas, `minDistance: 0`, `maxPointers: 1`.**
   `onBegin` starts the stroke — a pan activates on movement, so a tap never
-  reaches `onStart`, and a pen tap must leave a dot. `onFinalize` commits, because
+  reaches `onActivate`, and a pen tap must leave a dot. `onFinalize` commits, because
   it is the one callback every path reaches. Nothing runs on the JS thread during
   a stroke.
 - **The tool is snapshotted at touch-down.** Tool, shape, ink and width live in

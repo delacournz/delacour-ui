@@ -67,7 +67,7 @@ standalone SVG document, or as a PNG.
   first point to the commit of the one before. The pad keys each stroke with an
   id on the UI thread and the clear compares it there, so nothing reads a shared
   value from the JS thread (the bug that kept `Accordion` shut in Release builds).
-- **A tap is a dot.** `minDistance(0)` and the stroke starting in `onBegin` mean a
+- **A tap is a dot.** `minDistance: 0` and the stroke starting in `onBegin` mean a
   touch that never moves still commits a one-point stroke, which `smoothStroke`
   writes as a zero-length segment and the round cap draws as a dot. Without it,
   the dot on an i and the full stop after an initial silently vanish.

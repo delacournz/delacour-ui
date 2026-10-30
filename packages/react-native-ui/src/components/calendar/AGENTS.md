@@ -103,7 +103,7 @@ sheets.
 
 ## Paging
 
-- **A Gesture Handler pan on `Calendar.Grid`**, `activeOffsetX` ±12 and `failOffsetY` ±12: it
+- **A Gesture Handler `usePanGesture` on `Calendar.Grid`**, `activeOffsetX` ±12 and `failOffsetY` ±12: it
   claims a sideways drag and gives up a vertical one, so the calendar lives inside a `ScrollView`
   or a sheet without stealing its scroll.
 - **`resolvePageDirection` is pure and tested.** A quarter of the width, or a release faster than

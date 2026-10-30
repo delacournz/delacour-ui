@@ -92,13 +92,15 @@ never copied, and nothing here imports `../carousel`.
   beneath it shows the `error` slot.
 - **One `GestureDetector` and one set of zoom values, for the active page.**
   Paging needs scale 1, so only one page is ever zoomed; the zoom resets on every
-  page change. `Race(Simultaneous(pinch, pan), Exclusive(doubleTap, singleTap))`.
+  page change. `useCompetingGestures(useSimultaneousGestures(pinch, pan), useExclusiveGestures(doubleTap, singleTap))`.
+  The pan settles from `onDeactivate`, not `onFinalize`: only the former carries the release
+  velocity, and a pan that never activated has nothing to settle (`event.canceled` zeroes the velocity).
 - **The pan decides its job once, at activation.** Zoomed past
   `VIEWER_ZOOMED_THRESHOLD`, it pans the image (rubber band past the bounds,
   settle back inside). Otherwise `resolveDragAxis`: horizontal pages through
   `lib/paging`, vertical drags away. A drag that started paging never becomes a
   dismiss, and with `isDismissible={false}` a vertical drag does nothing.
-- **The pan takes one finger (`maxPointers(1)`); the pinch carries two-finger
+- **The pan takes one finger (`maxPointers: 1`); the pinch carries two-finger
   panning itself** through `focalDelta`, so the point under the fingers stays
   under them while they move.
 - **Zoom-to-pager hand-off at the image's edge is not done.** RNGH cannot cleanly

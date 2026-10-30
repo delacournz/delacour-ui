@@ -1,5 +1,5 @@
 import { type ReactElement, type ReactNode, useCallback, useLayoutEffect, useMemo } from "react";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { Surface } from "../surface";
@@ -100,38 +100,44 @@ export function FlowGroup({
 	const start = useSharedValue<FlowPoint>({ x: 0, y: 0 });
 	const riderStarts = useSharedValue<FlowPoint[]>([]);
 
-	const gesture = useMemo(
-		() =>
-			Gesture.Pan()
-				.enabled(isDraggable && !isLocked)
-				.minDistance(FLOW_DEFAULTS.dragMinDistance)
-				.maxPointers(1)
-				.onStart(() => {
-					start.value = positionValue.value;
-					riderStarts.value = riderPositions.map((rider) => rider.value);
-				})
-				.onUpdate((event) => {
-					const zoom = viewport.value.zoom;
-					const dx = event.translationX / zoom;
-					const dy = event.translationY / zoom;
-					positionValue.value = { x: start.value.x + dx, y: start.value.y + dy };
-					const starts = riderStarts.value;
-					riderPositions.forEach((rider, index) => {
-						const from = starts[index];
-						if (from) rider.value = { x: from.x + dx, y: from.y + dy };
-					});
-				})
-				.onEnd((_event, success) => {
-					if (!success) return;
-					scheduleOnRN(
-						report,
-						positionValue.value,
-						riderPositions.map((rider) => rider.value)
-					);
-				})
-				.blocksExternalGesture(...canvasGestures),
-		[canvasGestures, isDraggable, isLocked, positionValue, report, riderPositions, riderStarts, start, viewport]
-	);
+	// A loop, not `.map((rider) => rider.value)`: a capture-free arrow in a
+	// component is hoisted by the React Compiler to a module function the UI
+	// thread cannot call.
+	const readRiders = (): FlowPoint[] => {
+		"worklet";
+		const points: FlowPoint[] = [];
+		for (const rider of riderPositions) points.push(rider.value);
+		return points;
+	};
+
+	const gesture = usePanGesture({
+		enabled: isDraggable && !isLocked,
+		minDistance: FLOW_DEFAULTS.dragMinDistance,
+		maxPointers: 1,
+		block: canvasGestures,
+		onActivate: () => {
+			"worklet";
+			start.value = positionValue.value;
+			riderStarts.value = readRiders();
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const zoom = viewport.value.zoom;
+			const dx = event.translationX / zoom;
+			const dy = event.translationY / zoom;
+			positionValue.value = { x: start.value.x + dx, y: start.value.y + dy };
+			const starts = riderStarts.value;
+			riderPositions.forEach((rider, index) => {
+				const from = starts[index];
+				if (from) rider.value = { x: from.x + dx, y: from.y + dy };
+			});
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (event.canceled) return;
+			scheduleOnRN(report, positionValue.value, readRiders());
+		},
+	});
 
 	const boxStyle = useAnimatedStyle(() => ({
 		height: sizeValue.value.height,

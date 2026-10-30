@@ -514,21 +514,12 @@ function groupDigits(whole: string, separator: string): string {
 }
 
 /**
- * Writes a number with grouping, fixed decimals, a prefix and a suffix.
+ * {@link formatNumber}, unjoined. A value with no number is the dash alone, affixes dropped.
  *
- * A worklet: `Counting` calls it on the UI thread every frame, where Hermes
- * has no `Intl`, so grouping is done by hand. Rounding is `toFixed`'s, half
- * cases included. A negative takes a true minus sign ahead of the prefix
- * (`−$5`); one that rounds to zero takes none. `NaN` and the infinities are
- * written {@link TEXT_ANIMATION_NO_VALUE}.
+ * Declared above `formatNumber` on purpose: the worklets plugin turns a
+ * worklet into a value that captures what it calls when it is defined, so a
+ * worklet declared below its caller is captured as `undefined`.
  */
-export function formatNumber(value: number, format: TextAnimationNumberFormat): string {
-	"worklet";
-	const parts = formatNumberParts(value, format);
-	return `${parts.sign}${parts.prefix}${parts.body}${parts.suffix}`;
-}
-
-/** {@link formatNumber}, unjoined. A value with no number is the dash alone, affixes dropped. */
 export function formatNumberParts(value: number, format: TextAnimationNumberFormat): NumberParts {
 	"worklet";
 	if (!Number.isFinite(value)) return { sign: "", prefix: "", body: TEXT_ANIMATION_NO_VALUE, suffix: "" };
@@ -548,6 +539,21 @@ export function formatNumberParts(value: number, format: TextAnimationNumberForm
 	const sign = value < 0 && !isZero ? "\u2212" : "";
 	const body = fraction === "" ? grouped : `${grouped}${decimalSeparator}${fraction}`;
 	return { sign, prefix: format.prefix ?? "", body, suffix: format.suffix ?? "" };
+}
+
+/**
+ * Writes a number with grouping, fixed decimals, a prefix and a suffix.
+ *
+ * A worklet: `Counting` calls it on the UI thread every frame, where Hermes
+ * has no `Intl`, so grouping is done by hand. Rounding is `toFixed`'s, half
+ * cases included. A negative takes a true minus sign ahead of the prefix
+ * (`−$5`); one that rounds to zero takes none. `NaN` and the infinities are
+ * written {@link TEXT_ANIMATION_NO_VALUE}.
+ */
+export function formatNumber(value: number, format: TextAnimationNumberFormat): string {
+	"worklet";
+	const parts = formatNumberParts(value, format);
+	return `${parts.sign}${parts.prefix}${parts.body}${parts.suffix}`;
 }
 
 /** The `prefix` / `suffix` props folded into `format` — a prop wins over the format's own. */

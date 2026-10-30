@@ -15,7 +15,7 @@ import { kpiVariants } from "./kpi.variants";
  */
 export function KpiIcon({ className, children, ...props }: KpiSlotProps): ReactElement {
 	const { size, colorIndex } = useKpiPart("Kpi.Icon");
-	const slots = kpiVariants({ colorIndex, size });
+	const slots = kpiVariants({ colorIndex: `${colorIndex}`, size });
 	const glyph = slots.iconGlyph();
 	const defaults = useMemo(() => ({ className: glyph, color: `chart-${colorIndex}` }), [glyph, colorIndex]);
 

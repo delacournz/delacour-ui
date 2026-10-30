@@ -127,11 +127,11 @@ export const plannerVariants = tv({
 			false: {},
 		},
 		colorIndex: {
-			1: { swatch: "bg-chart-1", tint: "bg-chart-1/15" },
-			2: { swatch: "bg-chart-2", tint: "bg-chart-2/15" },
-			3: { swatch: "bg-chart-3", tint: "bg-chart-3/15" },
-			4: { swatch: "bg-chart-4", tint: "bg-chart-4/15" },
-			5: { swatch: "bg-chart-5", tint: "bg-chart-5/15" },
+			"1": { swatch: "bg-chart-1", tint: "bg-chart-1/15" },
+			"2": { swatch: "bg-chart-2", tint: "bg-chart-2/15" },
+			"3": { swatch: "bg-chart-3", tint: "bg-chart-3/15" },
+			"4": { swatch: "bg-chart-4", tint: "bg-chart-4/15" },
+			"5": { swatch: "bg-chart-5", tint: "bg-chart-5/15" },
 		},
 	},
 	compoundVariants: [

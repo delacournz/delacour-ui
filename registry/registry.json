@@ -5137,7 +5137,6 @@
 				"styles"
 			],
 			"dependencies": [
-				"tailwind-merge",
 				"tailwind-variants"
 			],
 			"expoDependencies": [],

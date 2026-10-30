@@ -25,7 +25,7 @@ function everyCombination(): ReturnType<typeof kpiVariants>[] {
 		KPI_LAYOUTS.flatMap((layout) =>
 			KPI_TONES.flatMap((tone) =>
 				KPI_COLOR_INDEXES.flatMap((colorIndex) =>
-					CARD_PLANES.map((plane) => kpiVariants({ colorIndex, layout, plane, size, tone }))
+					CARD_PLANES.map((plane) => kpiVariants({ colorIndex: `${colorIndex}`, layout, plane, size, tone }))
 				)
 			)
 		)
@@ -344,7 +344,7 @@ describe("kpiVariants trend", () => {
 describe("kpiVariants icon", () => {
 	test("tints the icon square from the series ramp, one token per colour index", () => {
 		for (const colorIndex of KPI_COLOR_INDEXES) {
-			expect(kpiVariants({ colorIndex }).icon()).toContain(`bg-chart-${colorIndex}/15`);
+			expect(kpiVariants({ colorIndex: `${colorIndex}` }).icon()).toContain(`bg-chart-${colorIndex}/15`);
 		}
 	});
 

@@ -455,10 +455,10 @@ describe("leaderboardVariants", () => {
 	});
 
 	test("the three bar tones are primary at 100 / 70 / 45 percent — never a metal", () => {
-		expect(leaderboardVariants({ place: 1 }).podiumBar()).toMatch(/\bbg-primary(\s|$)/);
-		expect(leaderboardVariants({ place: 2 }).podiumBar()).toContain("bg-primary/70");
-		expect(leaderboardVariants({ place: 3 }).podiumBar()).toContain("bg-primary/45");
-		for (const place of [1, 2, 3] as const) {
+		expect(leaderboardVariants({ place: "1" }).podiumBar()).toMatch(/\bbg-primary(\s|$)/);
+		expect(leaderboardVariants({ place: "2" }).podiumBar()).toContain("bg-primary/70");
+		expect(leaderboardVariants({ place: "3" }).podiumBar()).toContain("bg-primary/45");
+		for (const place of ["1", "2", "3"] as const) {
 			expect(leaderboardVariants({ place }).podiumBar()).not.toMatch(/gold|silver|bronze|amber|yellow|orange/);
 		}
 	});
@@ -478,8 +478,8 @@ describe("leaderboardVariants", () => {
 	});
 
 	test("the cards podium raises the leader by 12pt", () => {
-		expect(leaderboardVariants({ place: 1 }).podiumCard()).toContain("mb-3");
-		expect(leaderboardVariants({ place: 2 }).podiumCard()).not.toContain("mb-3");
+		expect(leaderboardVariants({ place: "1" }).podiumCard()).toContain("mb-3");
+		expect(leaderboardVariants({ place: "2" }).podiumCard()).not.toContain("mb-3");
 	});
 
 	test("no view slot carries a text colour or size (rule 1)", () => {
@@ -499,7 +499,7 @@ describe("leaderboardVariants", () => {
 		] as const;
 		for (const isHighlighted of [true, false]) {
 			for (const place of [1, 2, 3] as const) {
-				const variant = leaderboardVariants({ isHighlighted, place });
+				const variant = leaderboardVariants({ isHighlighted, place: `${place}` });
 				for (const slot of viewSlots) {
 					expect(variant[slot]()).not.toMatch(/\btext-(?!center|left|right)/);
 				}

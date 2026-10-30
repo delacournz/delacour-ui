@@ -80,9 +80,9 @@ export const leaderboardVariants = tv({
 	},
 	variants: {
 		place: {
-			1: { podiumBar: "bg-primary", podiumCard: "mb-3", podiumCardRank: "bg-primary" },
-			2: { podiumBar: "bg-primary/70", podiumCardRank: "bg-primary/70" },
-			3: { podiumBar: "bg-primary/45", podiumCardRank: "bg-primary/45" },
+			"1": { podiumBar: "bg-primary", podiumCard: "mb-3", podiumCardRank: "bg-primary" },
+			"2": { podiumBar: "bg-primary/70", podiumCardRank: "bg-primary/70" },
+			"3": { podiumBar: "bg-primary/45", podiumCardRank: "bg-primary/45" },
 		},
 		isHighlighted: {
 			true: { row: "bg-primary/10", podiumCard: "border-primary" },

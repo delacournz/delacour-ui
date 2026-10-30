@@ -110,6 +110,13 @@ never move. Use `reserve="current"` for a word that ends a line.
 `decimalSeparator`, `prefix` and `suffix`. A negative takes a true minus ahead of the prefix —
 `−$5`. `NaN` and the infinities are an em dash.
 
+`prefix` and `suffix` are also props of their own, and win over the format's:
+
+```tsx
+<TextAnimation.Counting prefix="$" suffix=" NZD" value={balance} />
+<TextAnimation.Rolling suffix="/100" value={score} />
+```
+
 A new `value` tweens from whatever is on screen — not from `from`, which is only the first mount's
 start. `animateOnMount={false}` shows the value at once and tweens only later changes.
 
@@ -124,7 +131,8 @@ start. `animateOnMount={false}` shows the value at once and tweens only later ch
 Each digit rolls the short way to its new digit, in the direction the value moved: 9 → 0 on the way
 up rolls forward through the wrap, not back through 8…1. When the number grows a digit — 999 to
 1,000 — the new wheel rolls up from 0. Wheels start least-significant first, `stagger` ms apart.
-Separators, the sign, the prefix and the suffix stay put.
+Separators, the sign, the prefix and the suffix stay put — an affix is one static cell, so the
+digits in `suffix="/100"` never roll.
 
 ## Why nothing reflows
 
@@ -224,6 +232,8 @@ Every part also takes `variant`, `size`, `weight`, `color`, `align`, `transform`
       type: "{ decimals?: number; groupSeparator?: string; decimalSeparator?: string; prefix?: string; suffix?: string }",
       description: 'Defaults: 0 decimals, "," grouping, "." decimal.',
     },
+    prefix: { type: "string", description: "Before the number, after any sign. Wins over `format.prefix`." },
+    suffix: { type: "string", description: "After the number. Wins over `format.suffix`." },
     durationMs: { type: "number", default: "900", description: "The tween." },
     easing: { type: '"linear" | "out" | "inOut"', default: '"out"' },
     animateOnMount: { type: "boolean", default: "true", description: "`false` shows `value` at once on mount." },
@@ -236,6 +246,8 @@ Every part also takes `variant`, `size`, `weight`, `color`, `align`, `transform`
   type={{
     value: { type: "number", required: true, description: "The number to show." },
     format: { type: "TextAnimationNumberFormat", description: "The same shape as Counting's. Separators render static." },
+    prefix: { type: "string", description: "Before the number, after any sign. Wins over `format.prefix`." },
+    suffix: { type: "string", description: "After the number. Wins over `format.suffix`." },
     durationMs: { type: "number", default: "600", description: "One wheel's roll." },
     stagger: { type: "number", default: "40", description: "Delay between wheels, least significant first." },
   }}

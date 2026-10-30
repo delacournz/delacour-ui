@@ -110,7 +110,12 @@ scope — it is an input, not a text effect.
   `0`, which is what a position of 9.5 shows half of.
 - **Wheels are keyed by their place from the right.** 999 → 1000 keeps three
   wheels and mounts a fourth, which rolls up from 0. Least-significant first,
-  `stagger` ms apart. Separators, sign, prefix and suffix are static cells.
+  `stagger` ms apart. Separators and the sign are static cells.
+- **An affix is one static cell, digits and all.** `resolveNumberCells` splits
+  the reading through `formatNumberParts`, so only the body is cut into wheels —
+  `suffix="/100"` and `prefix="Q3 "` never roll. `prefix` / `suffix` are props on
+  both numeric parts as well as `format` fields; `resolveNumberFormat` folds
+  them in, a prop winning.
 - **The wheel height is measured, never fixed.** One hidden digit reports the line
   height every wheel offsets by, so the odometer follows font scaling. Until it
   has, the strips are hidden.

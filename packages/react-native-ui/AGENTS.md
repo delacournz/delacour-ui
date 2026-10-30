@@ -306,10 +306,14 @@ its slot set, so a sibling would buy nothing but a second file to open.
    **two** mergers here and both need the semantic size tokens: `cn()` merges a
    caller's className through the `cn` package (shadcn-ui/cn — `createCn` from
    `cn/config`, tailwind-merge's semantics and output, no `clsx`), and `tv()`
-   merges slots and variants through a tailwind-merge instance of its own —
-   tailwind-variants v3 bundles it, which is why `tailwind-merge` stays a
-   dependency. `cn.parity.test.ts` holds `cn()` to tailwind-merge's output on
-   every class literal in a `*.variants.ts`. Never import `tv` from
+   merges slots and variants through the compiled merge tables tailwind-variants
+   v4 ships — no `tailwind-merge` at runtime, and `lib/tv` imports `createTV`
+   from `tailwind-variants/config`, the only entry that takes `twMergeConfig`.
+   `tailwind-merge` stays a dev dependency only: `cn.parity.test.ts` holds
+   `cn()` to its output on every class literal in a `*.variants.ts`. A
+   numeric variant key is written quoted (`"1": {…}`) and passed as
+   `` `${n}` ``: v4's types drop numeric keys, leaving the axis typed
+   `undefined`. Never import `tv` from
    `tailwind-variants` directly — a bare `tv` does not know what `button-md`
    is, drops `text-button-md` into tailwind-merge's text *colour* group, and
    silently strips the label's colour. `src/styles/tokens.ts` holds the one

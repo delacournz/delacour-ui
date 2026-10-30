@@ -2,11 +2,14 @@ import { describe, expect, test } from "bun:test";
 import {
 	buildTypingTimeline,
 	formatNumber,
+	formatNumberParts,
 	hashText,
 	resolveCaretClass,
 	resolveCaretOpacity,
 	resolveEffectFrame,
 	resolveNextPhrase,
+	resolveNumberCells,
+	resolveNumberFormat,
 	resolveRollDirection,
 	resolveRollTarget,
 	resolveRowJustify,
@@ -475,6 +478,65 @@ describe("splitNumberCells", () => {
 
 	test("an empty string is no cells", () => {
 		expect(splitNumberCells("")).toEqual([]);
+	});
+});
+
+describe("formatNumberParts", () => {
+	test("splits a reading into sign, prefix, body and suffix", () => {
+		expect(formatNumberParts(-1234.5, { decimals: 1, prefix: "$", suffix: " NZD" })).toEqual({
+			sign: "−",
+			prefix: "$",
+			body: "1,234.5",
+			suffix: " NZD",
+		});
+	});
+
+	test("joined, the parts are formatNumber", () => {
+		const format = { decimals: 2, prefix: "~", suffix: "%" };
+		const parts = formatNumberParts(-42.125, format);
+		expect(`${parts.sign}${parts.prefix}${parts.body}${parts.suffix}`).toBe(formatNumber(-42.125, format));
+	});
+
+	test("a value with no number keeps its affixes off the dash", () => {
+		expect(formatNumberParts(Number.NaN, { prefix: "$" })).toEqual({ sign: "", prefix: "", body: "—", suffix: "" });
+	});
+});
+
+describe("resolveNumberFormat", () => {
+	test("a prop affix wins over the format's", () => {
+		expect(resolveNumberFormat({ prefix: "$", suffix: "%", decimals: 1 }, "€", undefined)).toEqual({
+			prefix: "€",
+			suffix: "%",
+			decimals: 1,
+		});
+	});
+
+	test("no format and no affix is an empty format", () => {
+		expect(resolveNumberFormat(undefined, undefined, undefined)).toEqual({});
+	});
+});
+
+describe("resolveNumberCells", () => {
+	// "/100" rolled as three wheels before: an affix is text, not a reading.
+	test("an affix is one static cell, digits and all", () => {
+		expect(resolveNumberCells(72, { prefix: "Q3 ", suffix: "/100" })).toEqual([
+			{ kind: "static", text: "Q3 " },
+			{ kind: "digit", digit: 7 },
+			{ kind: "digit", digit: 2 },
+			{ kind: "static", text: "/100" },
+		]);
+	});
+
+	test("the sign sits ahead of the prefix", () => {
+		expect(resolveNumberCells(-5, { prefix: "$" })).toEqual([
+			{ kind: "static", text: "−" },
+			{ kind: "static", text: "$" },
+			{ kind: "digit", digit: 5 },
+		]);
+	});
+
+	test("no affix is the body's cells alone", () => {
+		expect(resolveNumberCells(1248, {})).toEqual(splitNumberCells("1,248"));
 	});
 });
 

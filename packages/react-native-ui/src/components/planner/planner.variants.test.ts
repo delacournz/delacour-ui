@@ -291,7 +291,7 @@ describe("plannerVariants", () => {
 	test("every colour token named by a slot exists in both themes", () => {
 		const used = new Set<string>();
 		for (const colorIndex of PLANNER_COLOR_INDEXES) {
-			for (const slots of [...everyCombination(), plannerVariants({ colorIndex })]) {
+			for (const slots of [...everyCombination(), plannerVariants({ colorIndex: `${colorIndex}` })]) {
 				for (const fn of Object.values(slots)) {
 					for (const match of (fn() ?? "").matchAll(
 						/(?:^|\s)(?:bg|text|border)-([a-z][a-z0-9-]*?)(?:\/\d+)?(?=\s|$)/g
@@ -347,8 +347,8 @@ describe("plannerVariants", () => {
 
 	test("a chart tint class exists for every colour slot", () => {
 		for (const colorIndex of PLANNER_COLOR_INDEXES) {
-			expect(plannerVariants({ colorIndex }).swatch()).toContain(`bg-chart-${colorIndex}`);
-			expect(plannerVariants({ colorIndex }).tint()).toContain(`bg-chart-${colorIndex}/15`);
+			expect(plannerVariants({ colorIndex: `${colorIndex}` }).swatch()).toContain(`bg-chart-${colorIndex}`);
+			expect(plannerVariants({ colorIndex: `${colorIndex}` }).tint()).toContain(`bg-chart-${colorIndex}/15`);
 		}
 	});
 });

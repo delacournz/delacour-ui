@@ -89,7 +89,9 @@ const DELACOUR_PACKAGES: ReadonlySet<string> = new Set([
  *
  * Untagged, `add` took npm's newest major: tailwind-variants 4.0.0 moved
  * `twMergeConfig` to another entry point and every copied `*.variants.ts`
- * broke in someone else's app. Applied to the args only, like the alpha tag.
+ * broke in someone else's app. The library has since moved to 4, and the
+ * pin stays so the next major cannot do the same. Applied to the args only,
+ * like the alpha tag.
  * `package-manager.test.ts` fails when one drifts from the library's range.
  */
 export const NPM_RANGES: Readonly<Record<string, string>> = {
@@ -97,7 +99,7 @@ export const NPM_RANGES: Readonly<Record<string, string>> = {
 	cn: "^0.5.0",
 	tailwindcss: "^4",
 	"tailwind-merge": "^3.6.0",
-	"tailwind-variants": "^3.3.1",
+	"tailwind-variants": "^4.0.0",
 };
 
 /** A package name with the dist-tag its channel pins, or the range the library declares. */

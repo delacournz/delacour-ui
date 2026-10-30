@@ -76,7 +76,7 @@ function LeaderboardPodiumBar({
 	}, [delay, grown, height, isReducedMotion]);
 
 	const style = useAnimatedStyle(() => ({ height: grown.value }));
-	const slots = leaderboardVariants({ place });
+	const slots = leaderboardVariants({ place: `${place}` });
 
 	return (
 		<Animated.View className={slots.podiumBar()} style={style}>
@@ -103,7 +103,7 @@ export function LeaderboardPodiumPlace(props: LeaderboardPodiumPlaceProps): Reac
 	const { entry, rank } = ranked;
 	const place = resolvePodiumPlace(rank);
 	const isHighlighted = entry.id === highlightId;
-	const slots = leaderboardVariants({ isHighlighted, place });
+	const slots = leaderboardVariants({ isHighlighted, place: `${place}` });
 	const formattedValue = formatValue(entry.value);
 	const accessibilityLabel = resolveLeaderboardAccessibilityLabel({ formattedValue, ranked, unit });
 	const media = renderMedia?.(entry, rank);

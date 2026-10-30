@@ -214,13 +214,13 @@ function distinctColors(
 
 /** The class that paints a colour as a fill, or `undefined` for a literal, which is painted by style. */
 function swatchClass(color: PlannerEntryColor): string | undefined {
-	if (color.kind === "chart") return plannerVariants({ colorIndex: color.index }).swatch();
+	if (color.kind === "chart") return plannerVariants({ colorIndex: `${color.index}` }).swatch();
 	return color.kind === "default" ? "bg-primary" : undefined;
 }
 
 /** The same colour at 15%, for a block or tile behind text — `undefined` for a literal. */
 function tintClass(color: PlannerEntryColor): string | undefined {
-	if (color.kind === "chart") return plannerVariants({ colorIndex: color.index }).tint();
+	if (color.kind === "chart") return plannerVariants({ colorIndex: `${color.index}` }).tint();
 	return color.kind === "default" ? "bg-primary/15" : undefined;
 }
 

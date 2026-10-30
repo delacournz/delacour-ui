@@ -760,10 +760,6 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	tv: {
 		title: "tv",
 		description: "tailwind-variants, taught the library's semantic size tokens.",
-		// tailwind-variants peer-depends on tailwind-merge for its own merger. `cn`
-		// replaced it behind `cn()`, so no file imports it any more and the scan
-		// cannot see it — but Yarn does not install peers, and `tv()` needs it.
-		dependencies: ["tailwind-merge"],
 	},
 	"wrap-text-children": {
 		title: "wrapTextChildren",

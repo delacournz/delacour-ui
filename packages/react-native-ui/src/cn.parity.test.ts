@@ -11,8 +11,8 @@ import { type CustomClassGroupId, TW_MERGE_CONFIG } from "./styles/tokens";
  * `cn` promises tailwind-merge's output for every input; this holds it to that
  * on the strings that matter here — every class literal in a `*.variants.ts`,
  * merged pairwise with a caller-style override, through the same
- * `TW_MERGE_CONFIG`. tailwind-merge stays installed as `tailwind-variants`'
- * peer, which is what makes the reference available.
+ * `TW_MERGE_CONFIG`. tailwind-merge is a dev dependency for this alone:
+ * tailwind-variants v4 compiles its own tables and no longer peers on it.
  */
 const reference = extendTailwindMerge<CustomClassGroupId>(TW_MERGE_CONFIG);
 

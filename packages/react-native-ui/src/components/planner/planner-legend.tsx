@@ -39,7 +39,7 @@ export function PlannerLegend({ counts = false, className, children, ...props }:
 						<View
 							className={cn(
 								slots.legendDot(),
-								color.kind === "chart" ? plannerVariants({ colorIndex: color.index }).swatch() : undefined,
+								color.kind === "chart" ? plannerVariants({ colorIndex: `${color.index}` }).swatch() : undefined,
 								color.kind === "default" ? "bg-primary" : undefined
 							)}
 							style={color.kind === "literal" ? { backgroundColor: color.color } : undefined}

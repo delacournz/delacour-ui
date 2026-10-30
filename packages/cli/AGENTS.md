@@ -535,6 +535,16 @@ anything else — a stable version, or `0.0.0-dev` from an unbuilt tree — inst
 to install those; a stable CLI must never pull a prerelease into an app. Nothing is baked in beyond
 the version, so the snapshot bump in `alpha.yml` is what switches it.
 
+### A plain npm package can be pinned to the library's range
+
+`PINNED_RANGES` in `project/package-manager.ts` installs a package at a range instead of `latest`,
+for a dependency whose next major breaks the copied source. `tailwind-variants` is the one today: 4.0
+throws on `createTV({ twMergeConfig })` from its root entry, which every copied `tv.ts` calls, and an
+unversioned `add` fetched it the day it shipped. Each range must equal the one in
+`packages/react-native-ui/package.json` — a test holds them together — so bumping the library's
+range means bumping the pin in the same change. Like the alpha dist-tag, the range goes on the
+command's args only; `missingPackages` still compares bare names.
+
 ### The CLI version is baked in too
 
 `__CLI_VERSION__` comes from `package.json` through the same `define` block. It used to read

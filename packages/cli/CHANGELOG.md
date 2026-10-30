@@ -1,5 +1,17 @@
 # delacour
 
+## 0.6.0
+
+### Minor Changes
+
+- [#289](https://github.com/delacournz/delacour-ui/pull/289) [`53c7d47`](https://github.com/delacournz/delacour-ui/commit/53c7d47e0be61b43158085524687b1f885806dd9) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `prefix` to `native-components.json`: `add` and `update` rename every `DelacourUI` display name and thrown-message tag to it, and `DelacourProvider` to `<prefix>Provider` — `"prefix": "UI"` gives `UI.Flow.Provider` and `UIProvider`. `init` and `doctor` name the provider the same way.
+
+  `add` now installs the plain npm packages the components use (tailwind-variants, tailwind-merge, cn, tailwindcss, the icon set) at the ranges `@delacour/react-native-ui` declares, instead of npm's latest. tailwind-variants 4.0.0 broke every copied `*.variants.ts`.
+
+- [#291](https://github.com/delacournz/delacour-ui/pull/291) [`703b1cd`](https://github.com/delacournz/delacour-ui/commit/703b1cd3e9d252cef78753bf6cbd4b38c1c44536) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Upgrade `tailwind-variants` to v4. `lib/tv` now builds `tv` with `createTV` from `tailwind-variants/config`, the only v4 entry that accepts `twMergeConfig` — the default entry throws on it, so a `tv.ts` copied by an earlier CLI breaks as soon as v4 is installed. `tailwind-merge` is no longer a dependency: v4 ships its own compiled merge tables. `delacour add` stops installing it.
+
+  v4's types drop numeric variant keys, so `KpiVariantProps["colorIndex"]`, `PlannerVariantProps["colorIndex"]` and `LeaderboardVariantProps["place"]` are now string unions (`"1" | "2" | …`). The component props — `KpiColorIndex`, `PlannerColorIndex`, `LeaderboardPlace` — stay numeric.
+
 ## 0.5.1
 
 ### Patch Changes

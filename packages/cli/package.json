@@ -1,6 +1,6 @@
 {
 	"name": "delacour",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"description": "Add React Native components to your Expo app. You own the code.",
 	"type": "module",
 	"license": "MIT",

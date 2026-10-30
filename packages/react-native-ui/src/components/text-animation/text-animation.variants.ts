@@ -77,6 +77,9 @@ export type TypingSample = { phraseIndex: number; visibleCount: number; phase: T
 
 export type EffectFrame = { opacity: number; translateX: number; translateY: number; scale: number };
 
+/** A formatted reading in its four pieces, so a part can treat the affixes as text rather than digits. */
+export type NumberParts = { sign: string; prefix: string; body: string; suffix: string };
+
 export type NumberCell = { kind: "digit"; digit: number } | { kind: "static"; text: string };
 
 export type RollDirection = "up" | "down";
@@ -521,7 +524,14 @@ function groupDigits(whole: string, separator: string): string {
  */
 export function formatNumber(value: number, format: TextAnimationNumberFormat): string {
 	"worklet";
-	if (!Number.isFinite(value)) return "\u2014";
+	const parts = formatNumberParts(value, format);
+	return `${parts.sign}${parts.prefix}${parts.body}${parts.suffix}`;
+}
+
+/** {@link formatNumber}, unjoined. A value with no number is the dash alone, affixes dropped. */
+export function formatNumberParts(value: number, format: TextAnimationNumberFormat): NumberParts {
+	"worklet";
+	if (!Number.isFinite(value)) return { sign: "", prefix: "", body: TEXT_ANIMATION_NO_VALUE, suffix: "" };
 	const decimals = Math.max(0, Math.min(20, Math.floor(format.decimals ?? 0)));
 	const groupSeparator = format.groupSeparator ?? ",";
 	const decimalSeparator = format.decimalSeparator ?? ".";
@@ -537,7 +547,19 @@ export function formatNumber(value: number, format: TextAnimationNumberFormat): 
 	// U+2212, a true minus — the width of a plus and of a tabular digit — rather than a hyphen.
 	const sign = value < 0 && !isZero ? "\u2212" : "";
 	const body = fraction === "" ? grouped : `${grouped}${decimalSeparator}${fraction}`;
-	return `${sign}${format.prefix ?? ""}${body}${format.suffix ?? ""}`;
+	return { sign, prefix: format.prefix ?? "", body, suffix: format.suffix ?? "" };
+}
+
+/** The `prefix` / `suffix` props folded into `format` — a prop wins over the format's own. */
+export function resolveNumberFormat(
+	format: TextAnimationNumberFormat | undefined,
+	prefix: string | undefined,
+	suffix: string | undefined
+): TextAnimationNumberFormat {
+	const resolved: TextAnimationNumberFormat = { ...format };
+	if (prefix !== undefined) resolved.prefix = prefix;
+	if (suffix !== undefined) resolved.suffix = suffix;
+	return resolved;
 }
 
 /**
@@ -575,5 +597,19 @@ export function splitNumberCells(formatted: string): readonly NumberCell[] {
 		if (code >= 48 && code <= 57) cells.push({ kind: "digit", digit: code - 48 });
 		else cells.push({ kind: "static", text: char });
 	}
+	return cells;
+}
+
+/**
+ * A reading as `Rolling`'s cells. The sign, the prefix and the suffix are one
+ * static cell each, so a digit in an affix — `/100`, `Q3 ` — never rolls.
+ */
+export function resolveNumberCells(value: number, format: TextAnimationNumberFormat): readonly NumberCell[] {
+	const parts = formatNumberParts(value, format);
+	const cells: NumberCell[] = [];
+	if (parts.sign !== "") cells.push({ kind: "static", text: parts.sign });
+	if (parts.prefix !== "") cells.push({ kind: "static", text: parts.prefix });
+	cells.push(...splitNumberCells(parts.body));
+	if (parts.suffix !== "") cells.push({ kind: "static", text: parts.suffix });
 	return cells;
 }

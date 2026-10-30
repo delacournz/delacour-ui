@@ -13,6 +13,7 @@ import { cn } from "../../lib/cn";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	formatNumber,
+	resolveNumberFormat,
 	TEXT_ANIMATION_COUNT_DURATION_MS,
 	type TextAnimationNumberFormat,
 	textAnimationVariants,
@@ -28,6 +29,10 @@ export type TextAnimationCountingProps = TextAnimationBase & {
 	from?: number;
 	/** Grouping, decimals, prefix and suffix. */
 	format?: TextAnimationNumberFormat;
+	/** Text before the number, after any sign — `−$5`. Never rolls or tweens. Wins over `format.prefix`. */
+	prefix?: string;
+	/** Text after the number — `%`, ` kg`, `/100`. Never rolls or tweens. Wins over `format.suffix`. */
+	suffix?: string;
 	/** The tween, ms. Default 900. */
 	durationMs?: number;
 	/** Default `out`. */
@@ -82,6 +87,8 @@ export function TextAnimationCounting({
 	value,
 	from = 0,
 	format,
+	prefix,
+	suffix,
 	durationMs = TEXT_ANIMATION_COUNT_DURATION_MS,
 	easing = "out",
 	animateOnMount = true,
@@ -104,7 +111,10 @@ export function TextAnimationCounting({
 		"tabular-nums"
 	);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: the format's fields are its identity
-	const stableFormat = useMemo<TextAnimationNumberFormat>(() => format ?? {}, [JSON.stringify(format ?? {})]);
+	const stableFormat = useMemo<TextAnimationNumberFormat>(
+		() => resolveNumberFormat(format, prefix, suffix),
+		[JSON.stringify(format ?? {}), prefix, suffix]
+	);
 	const start = animateOnMount && !isCalm ? from : value;
 	const shown = useSharedValue(start);
 	const target = formatNumber(value, stableFormat);

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { NAMESPACES } from "../registry/namespaces";
+import { PREFIX_PATTERN } from "../registry/prefix";
 import { TEST_RUNNERS } from "../registry/test-runner";
 
 /**
@@ -82,6 +83,12 @@ export const configSchema = z.object({
 	package: packageSchema.optional(),
 	app: appSchema.prefault({}),
 	tests: testsSchema.optional(),
+	/**
+	 * What copied components call the library, in place of `DelacourUI`: the head
+	 * of every `displayName` and thrown-message tag, and the provider's name —
+	 * `"UI"` gives `UI.Flow.Provider` and `UIProvider`. Read by `add` and `update`.
+	 */
+	prefix: z.string().regex(PREFIX_PATTERN, "must be a PascalCase identifier, like UI or Acme").optional(),
 });
 
 export type Config = z.infer<typeof configSchema>;

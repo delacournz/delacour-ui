@@ -69,6 +69,7 @@ src/
 │   ├── rewrite.ts        the specifier list an item ships, and applying it
 │   ├── ship.ts           what a copy leaves out, and the guard on what it keeps (both halves)
 │   ├── transform.ts      @registry/* → the consumer's aliases  (add time)
+│   ├── prefix.ts         DelacourUI / DelacourProvider → the config's `prefix` (add time)
 │   ├── client.ts         fetch + ETag cache + zod validation   (add time)
 │   │                     also holds the file-fetch concurrency cap
 │   ├── resolve.ts        the dependency closure

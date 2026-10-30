@@ -151,6 +151,31 @@ Covered in [The registry](/docs/native/cli/registry).
 Covered in [Tests, if you want them](/docs/native/cli/commands#tests-if-you-want-them). Changing it
 rewrites each copied suite on the next `update`.
 
+## `prefix`
+
+```json
+{
+  "prefix": "UI"
+}
+```
+
+<TypeTable
+  type={{
+    prefix: { type: "string", description: "What copied components call the library, in place of `DelacourUI`. A PascalCase identifier — `UI`, `Acme`." },
+  }}
+/>
+
+The library brands what you see at runtime: every `displayName` (`DelacourUI.Flow.Provider`, what
+React DevTools and a warning print), the tag on a thrown message (`[DelacourUI] …`) and the root
+provider, `DelacourProvider`. A copy is your code, so `add` and `update` swap all three as they write —
+with `"prefix": "UI"`, `UI.Flow.Provider`, `[UI] …` and `UIProvider`. `init` and `doctor` name the
+provider the same way.
+
+Set it before the first `add`. The lock hashes the text as it was written, so changing it later makes
+every copied file look edited to `update`; re-run `add --all --overwrite` (or `add <item> --overwrite`
+for what you have) to rewrite them under the new name, then rename the provider where your root layout
+mounts it.
+
 ## The lock file
 
 `native-components.lock.json` sits beside the config and is written by `add` and `update`, never by

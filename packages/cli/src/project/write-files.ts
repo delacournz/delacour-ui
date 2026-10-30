@@ -4,6 +4,7 @@ import type { ResolvedConfig } from "../config/resolve";
 import { fileKey } from "../lock/lock";
 import { isTest } from "../registry/classify";
 import type { Namespace } from "../registry/namespaces";
+import { applyPrefix } from "../registry/prefix";
 import type { LoadedFile, LoadedItem } from "../registry/schema";
 import { adaptTest } from "../registry/test-runner";
 import { transformContent } from "../registry/transform";
@@ -69,10 +70,11 @@ export function destination(
 
 /**
  * A fetched file's text as this project would hold it at `path`: placeholders
- * resolved to its aliases, and a test written for the runner it tests with.
+ * resolved to its aliases, the library's name swapped for the project's `prefix`,
+ * and a test written for the runner it tests with.
  */
 export function transformFile(content: string, path: string, config: ResolvedConfig): string {
-	const transformed = transformContent(content, {
+	const transformed = transformContent(applyPrefix(content, config.prefix), {
 		fileDirectory: dirname(path),
 		directories: config.directories,
 		aliases: config.aliases,

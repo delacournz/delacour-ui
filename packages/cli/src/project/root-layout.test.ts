@@ -83,4 +83,17 @@ describe("renderRootLayout", () => {
 		expect(file).toContain('import "@/styles/global.css";');
 		expect(file).toContain('from "@/components/ui/provider"');
 	});
+
+	test("names the provider the project's prefix renamed", () => {
+		const file = renderRootLayout(
+			layout,
+			{ css: "../global.css", provider: "../components/ui/provider" },
+			"UIProvider"
+		);
+
+		expect(file).toContain('import { UIProvider } from "../components/ui/provider";');
+		expect(file).toContain("<UIProvider>");
+		expect(file).toContain("</UIProvider>");
+		expect(file).not.toContain("DelacourProvider");
+	});
 });

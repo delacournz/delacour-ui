@@ -84,23 +84,29 @@ const DELACOUR_PACKAGES: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Plain npm packages installed at a range rather than at `latest`, because a
- * new major breaks the copied source. tailwind-variants 4 throws on
- * `createTV({ twMergeConfig })` from its root entry, which every copied `tv.ts`
- * calls — an unversioned add fetched it and broke every component at import.
+ * The range each plain npm package the library depends on installs at — the
+ * one `@delacour/react-native-ui`'s own `package.json` declares.
  *
- * Each range is the library's own, held to `packages/react-native-ui/package.json`
- * by a test. Like the dist-tag, it is applied to the command's args only.
+ * Untagged, `add` took npm's newest major: tailwind-variants 4.0.0 moved
+ * `twMergeConfig` to another entry point and every copied `*.variants.ts`
+ * broke in someone else's app. The library has since moved to 4, and the
+ * pin stays so the next major cannot do the same. Applied to the args only,
+ * like the alpha tag.
+ * `package-manager.test.ts` fails when one drifts from the library's range.
  */
-export const PINNED_RANGES: Readonly<Record<string, string>> = {
-	"tailwind-variants": "^3.3.1",
+export const NPM_RANGES: Readonly<Record<string, string>> = {
+	"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
+	cn: "^0.5.0",
+	tailwindcss: "^4",
+	"tailwind-merge": "^3.6.0",
+	"tailwind-variants": "^4.0.0",
 };
 
-/** A package name with the dist-tag its channel pins or the range it is held to, where it has one. */
+/** A package name with the dist-tag its channel pins, or the range the library declares. */
 function toSpec(name: string, channel: Channel): string {
 	if (channel === "alpha" && DELACOUR_PACKAGES.has(name)) return `${name}@alpha`;
-	const range = PINNED_RANGES[name];
-	return range === undefined ? name : `${name}@${range}`;
+	const range = NPM_RANGES[name];
+	return range ? `${name}@${range}` : name;
 }
 
 /**
@@ -112,11 +118,12 @@ function toSpec(name: string, channel: Channel): string {
  * treats the peer as unmet and goes to the registry for a version that does
  * not exist — which is how `add` failed inside `expo install`, a step that
  * never named the package. `>=0.0.0-0` admits every prerelease and every
- * stable version, so it holds on either channel.
+ * stable version, so it holds on either channel. A package `NPM_RANGES` pins
+ * declares that range, so the peer does not admit the major the install avoids.
  */
 export function peerRange(name: string): string {
 	if (DELACOUR_PACKAGES.has(name)) return ">=0.0.0-0";
-	return PINNED_RANGES[name] ?? "*";
+	return NPM_RANGES[name] ?? "*";
 }
 
 export function installCommands(request: InstallRequest): InstallGroup[] {

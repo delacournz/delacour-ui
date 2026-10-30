@@ -51,7 +51,7 @@ src/
 │   ├── aliases.ts        tsconfig paths → an import prefix per namespace
 │   ├── css.ts            the managed @source block, and reading it back for doctor
 │   ├── metro.ts          wrapping the export with withUniwindConfig
-│   ├── package-manager.ts  the expo install / pm add split
+│   ├── package-manager.ts  the expo install / pm add split, and NPM_RANGES (plain packages at the library's range)
 │   ├── jsonc.ts          tsconfig.json is JSONC and usually has comments
 │   ├── css-entry.ts      the Tailwind entry an app already has
 │   ├── root-layout.ts    where the app mounts everything, and what to put there
@@ -69,6 +69,7 @@ src/
 │   ├── rewrite.ts        the specifier list an item ships, and applying it
 │   ├── ship.ts           what a copy leaves out, and the guard on what it keeps (both halves)
 │   ├── transform.ts      @registry/* → the consumer's aliases  (add time)
+│   ├── prefix.ts         DelacourUI / DelacourProvider → the config's `prefix` (add time)
 │   ├── client.ts         fetch + ETag cache + zod validation   (add time)
 │   │                     also holds the file-fetch concurrency cap
 │   ├── resolve.ts        the dependency closure
@@ -537,13 +538,14 @@ the version, so the snapshot bump in `alpha.yml` is what switches it.
 
 ### A plain npm package can be pinned to the library's range
 
-`PINNED_RANGES` in `project/package-manager.ts` installs a package at a range instead of `latest`,
-for a dependency whose next major breaks the copied source. `tailwind-variants` is the one today: 4.0
-throws on `createTV({ twMergeConfig })` from its root entry, which every copied `tv.ts` calls, and an
-unversioned `add` fetched it the day it shipped. Each range must equal the one in
-`packages/react-native-ui/package.json` — a test holds them together — so bumping the library's
-range means bumping the pin in the same change. Like the alpha dist-tag, the range goes on the
-command's args only; `missingPackages` still compares bare names.
+`NPM_RANGES` in `project/package-manager.ts` installs each plain npm package the components use —
+`tailwind-variants`, `tailwind-merge`, `cn`, `tailwindcss`, the icon set — at the range
+`packages/react-native-ui/package.json` declares, instead of `latest`. An untagged `add` once fetched
+`tailwind-variants` 4.0 the day it shipped, and its root entry throws on the
+`createTV({ twMergeConfig })` every copied `tv.ts` then made. A test holds each range to the library's,
+so bumping the library's range means bumping `NPM_RANGES` in the same change. Like the alpha
+dist-tag, the range goes on the command's args only; `missingPackages` still compares bare names,
+and `peerRange` declares a pinned package's peer at the same range rather than `*`.
 
 ### The CLI version is baked in too
 

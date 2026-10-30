@@ -12,6 +12,7 @@ import { patchMetroConfig, readUniwindPaths, type UniwindPaths } from "../projec
 import { findRootLayout, renderRootLayout } from "../project/root-layout";
 import { UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
+import { providerName } from "../registry/prefix";
 import { CancelledError, createOutput, type Output, style } from "../ui/output";
 import { type AddResult, add } from "./add";
 import { checkGestureHandlerRoot, checkStylingConflict, filesImporting, layoutSpecifiers } from "./doctor";
@@ -438,7 +439,7 @@ function rootLayoutBlock(config: ResolvedConfig): string[] | null {
 	const layout = findRootLayout(config.app.resolved.root);
 	if (!layout) return null;
 
-	const file = renderRootLayout(layout, layoutSpecifiers(config));
+	const file = renderRootLayout(layout, layoutSpecifiers(config), providerName(config.prefix));
 
 	return [
 		style.path(layout.path),
@@ -491,7 +492,7 @@ export function followUps(config: ResolvedConfig, done: FollowUpsDone = {}): str
 	const providerImport = layoutSpecifiers(config).provider;
 	if (!done.providerMounted) {
 		items.push(
-			`Wrap the app root in ${style.code("<DelacourProvider>")} from ${style.code(`"${providerImport}"`)} — presses do nothing without it.`
+			`Wrap the app root in ${style.code(`<${providerName(config.prefix)}>`)} from ${style.code(`"${providerImport}"`)} — presses do nothing without it.`
 		);
 	}
 	items.push(

@@ -38,8 +38,9 @@ async function app(files: Record<string, string>): Promise<string> {
 	return root;
 }
 
-function config(root: string) {
+function config(root: string, prefix?: string) {
 	const parsed = configSchema.parse({
+		prefix,
 		paths: {
 			ui: "src/components/ui",
 			lib: "src/lib",
@@ -93,6 +94,27 @@ describe("checkGestureHandlerRoot", () => {
 		});
 
 		expect((await checkGestureHandlerRoot(config(root))).status).toBe("warn");
+	});
+
+	test("looks for the provider under the name the config's prefix gave it", async () => {
+		const root = await app({
+			"app/_layout.tsx": 'import { UIProvider } from "@/components/ui/provider";\nexport default () => <UIProvider />;',
+		});
+
+		const check = await checkGestureHandlerRoot(config(root, "UI"));
+
+		expect(check.status).toBe("pass");
+		expect(check.detail).toContain("UIProvider");
+	});
+
+	test("warns naming the renamed provider when it is not mounted", async () => {
+		const root = await app({ "app/_layout.tsx": "export default () => null;" });
+
+		const check = await checkGestureHandlerRoot(config(root, "UI"));
+
+		expect(check.status).toBe("warn");
+		expect(check.fix).toContain("<UIProvider>");
+		expect(check.fix).not.toContain("DelacourProvider");
 	});
 
 	test("warns, naming DelacourProvider first, when neither is mounted", async () => {

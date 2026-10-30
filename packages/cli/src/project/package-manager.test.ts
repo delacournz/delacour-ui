@@ -1,12 +1,14 @@
 import { describe, expect, test } from "bun:test";
-import libraryPackage from "../../../react-native-ui/package.json";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { PACKAGE_INSTALL } from "../registry/config";
 import {
 	commandLine,
 	expoCommand,
 	type InstallGroup,
 	installCommands,
 	missingPackages,
-	PINNED_RANGES,
+	NPM_RANGES,
 	peerRange,
 	planDependencies,
 } from "./package-manager";
@@ -210,34 +212,36 @@ describe("expoCommand", () => {
 	});
 });
 
-describe("pinned ranges", () => {
-	// tailwind-variants 4 throws on `createTV({ twMergeConfig })` from its root
-	// entry, which every copied `tv.ts` calls. An unversioned add fetched it.
-	test("installs tailwind-variants at the range the library is built against", () => {
-		const [group] = installCommands({ ...NONE, packageManager: "bun", dependencies: ["clsx", "tailwind-variants"] });
+/**
+ * A plain package installed untagged takes npm's newest major. tailwind-variants
+ * 4.0.0 landed and every copied component that used `twMergeConfig` broke in
+ * someone else's app, so the npm packages the library depends on install at
+ * the range the library itself declares.
+ */
+describe("NPM_RANGES", () => {
+	const library = JSON.parse(
+		readFileSync(join(import.meta.dir, "../../../react-native-ui/package.json"), "utf-8")
+	) as Record<string, Record<string, string> | undefined>;
+	const declared = { ...library.devDependencies, ...library.peerDependencies, ...library.dependencies };
 
-		expect(commandLine(group as InstallGroup)).toBe(
-			`bun add clsx tailwind-variants@${PINNED_RANGES["tailwind-variants"]}`
-		);
+	test("pins every plain npm package the library declares, at the library's range", () => {
+		const npm = Object.entries(PACKAGE_INSTALL)
+			.filter(([name, install]) => install === "npm" && !name.startsWith("@delacour/") && declared[name])
+			.map(([name]) => name);
+
+		expect(npm.length).toBeGreaterThan(0);
+		for (const name of npm) expect([name, NPM_RANGES[name]]).toEqual([name, declared[name]]);
 	});
 
-	test("peers a pinned package at its range", () => {
-		expect(peerRange("tailwind-variants")).toBe(PINNED_RANGES["tailwind-variants"]);
+	test("installs a pinned package at its range, and reports it by bare name", () => {
+		const groups = installCommands({ ...NONE, packageManager: "bun", dependencies: ["tailwind-variants", "clsx"] });
+
+		expect(groups[0]?.args).toEqual(["add", `tailwind-variants@${NPM_RANGES["tailwind-variants"]}`, "clsx"]);
+		expect(groups[0]?.packages).toEqual(["tailwind-variants", "clsx"]);
 	});
 
-	test("every pin matches the library's own dependency", () => {
-		const declared: Record<string, string> = libraryPackage.dependencies;
-		for (const [name, range] of Object.entries(PINNED_RANGES)) {
-			expect(declared[name]).toBe(range);
-		}
-	});
-
-	test("a pinned package is still compared by its bare name", () => {
-		const plan = planDependencies(
-			{ ...NONE, packageManager: "bun", dependencies: ["tailwind-variants"] },
-			{ dependencies: { "tailwind-variants": "^3.3.1" } }
-		);
-
-		expect(plan.missing).toEqual([]);
+	test("declares a shared package's peer at the pinned range rather than *", () => {
+		expect(peerRange("tailwind-variants")).toBe(NPM_RANGES["tailwind-variants"]);
+		expect(peerRange("clsx")).toBe("*");
 	});
 });

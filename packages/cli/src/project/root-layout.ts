@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { LIBRARY_PROVIDER } from "../registry/prefix";
 
 /**
  * Where an app mounts everything else, and what to put there.
@@ -58,20 +59,22 @@ export type LayoutSpecifiers = {
  * `<Slot />` is Expo Router's minimal root. A layout already rendering a
  * `<Stack>` keeps it; the provider goes around whatever is there, which is
  * what the line printed beside this says.
+ *
+ * `name` is the provider as the project's `prefix` renamed it.
  */
-export function renderRootLayout(layout: RootLayout, specifiers: LayoutSpecifiers): string {
+export function renderRootLayout(layout: RootLayout, specifiers: LayoutSpecifiers, name = LIBRARY_PROVIDER): string {
 	const { css, provider } = specifiers;
 
 	if (!layout.router) {
 		return [
 			`import "${css}";`,
-			`import { DelacourProvider } from "${provider}";`,
+			`import { ${name} } from "${provider}";`,
 			"",
 			"export default function App() {",
 			"\treturn (",
-			"\t\t<DelacourProvider>",
+			`\t\t<${name}>`,
 			"\t\t\t<YourApp />",
-			"\t\t</DelacourProvider>",
+			`\t\t</${name}>`,
 			"\t);",
 			"}",
 		].join("\n");
@@ -79,14 +82,14 @@ export function renderRootLayout(layout: RootLayout, specifiers: LayoutSpecifier
 
 	return [
 		`import "${css}";`,
-		`import { DelacourProvider } from "${provider}";`,
+		`import { ${name} } from "${provider}";`,
 		'import { Slot } from "expo-router";',
 		"",
 		"export default function RootLayout() {",
 		"\treturn (",
-		"\t\t<DelacourProvider>",
+		`\t\t<${name}>`,
 		"\t\t\t<Slot />",
-		"\t\t</DelacourProvider>",
+		`\t\t</${name}>`,
 		"\t);",
 		"}",
 	].join("\n");

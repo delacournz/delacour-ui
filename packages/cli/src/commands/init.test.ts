@@ -8,7 +8,7 @@ import { followUps, outro } from "./init";
  * first because forgetting it produces no error at all, the provider next
  * because nothing responds without it, the theme last because it is optional.
  */
-function config(aliases: Record<string, string>) {
+function config(aliases: Record<string, string>, prefix?: string) {
 	const parsed = configSchema.parse({
 		paths: {
 			ui: "src/components/ui",
@@ -18,6 +18,7 @@ function config(aliases: Record<string, string>) {
 			icons: "src/lib/icons",
 		},
 		aliases,
+		prefix,
 	});
 	return resolveConfig(parsed, "/repo/app", "/repo/app/native-components.json");
 }
@@ -43,6 +44,13 @@ describe("followUps", () => {
 		const provider = plain.find((line) => line.includes("<DelacourProvider>"));
 
 		expect(provider).toContain('"./src/components/ui/provider"');
+	});
+
+	test("names the provider the config's prefix renamed", () => {
+		const plain = followUps(config({}, "UI")).map(stripAnsi).join("\n");
+
+		expect(plain).toContain("<UIProvider>");
+		expect(plain).not.toContain("DelacourProvider");
 	});
 
 	// `"./global.css"` was the old fallback — the file is under `styles/`.

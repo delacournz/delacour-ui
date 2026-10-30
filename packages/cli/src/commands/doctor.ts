@@ -15,6 +15,7 @@ import { findRootLayout } from "../project/root-layout";
 import { checkTestRunner, readTestSetup, type TestSetup } from "../project/test-setup";
 import { UNIWIND_ENV_FILENAME, UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
+import { providerName } from "../registry/prefix";
 import type { TestRunner } from "../registry/test-runner";
 import { createOutput, type Output, style } from "../ui/output";
 
@@ -725,8 +726,8 @@ function matchesEntry(imported: string, target: string): boolean {
  * outside a `GestureHandlerRootView` never receives a touch. Nothing throws;
  * the button simply does not respond.
  *
- * `DelacourProvider` is that root, plus the other layers, so mounting it
- * counts. The copied components are skipped on purpose: `provider.tsx` itself
+ * `DelacourProvider` — or `<prefix>Provider`, when the config renames it — is
+ * that root, plus the other layers, so mounting it counts. The copied components are skipped on purpose: `provider.tsx` itself
  * names both, and `init` copies it into every project, so a walk that read it
  * would pass an app that never mounted anything. The app root is read one level
  * deep as well as the usual `app/` and `src/` walks, because a blank Expo
@@ -739,7 +740,9 @@ export async function checkGestureHandlerRoot(config: ResolvedConfig): Promise<C
 	const skip = Object.values(config.directories);
 	const roots = ["src/app", "app", "src"].map((path) => join(appRoot, path));
 
-	for (const needle of ["DelacourProvider", "GestureHandlerRootView"]) {
+	const provider = providerName(config.prefix);
+
+	for (const needle of [provider, "GestureHandlerRootView"]) {
 		const walked = await Promise.all(roots.map((root) => containsText(root, needle, { skip })));
 		const top = await containsText(appRoot, needle, { skip, recursive: false });
 
@@ -751,8 +754,8 @@ export async function checkGestureHandlerRoot(config: ResolvedConfig): Promise<C
 	return {
 		name: "Gesture Handler",
 		status: "warn",
-		detail: "no DelacourProvider or GestureHandlerRootView found",
-		fix: "Wrap your root layout in <DelacourProvider> from your ui directory — or, by hand, <GestureHandlerRootView style={{ flex: 1 }}>. Presses do nothing without one of them.",
+		detail: `no ${provider} or GestureHandlerRootView found`,
+		fix: `Wrap your root layout in <${provider}> from your ui directory — or, by hand, <GestureHandlerRootView style={{ flex: 1 }}>. Presses do nothing without one of them.`,
 	};
 }
 

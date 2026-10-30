@@ -23,6 +23,7 @@ While the axes lived under `apps/playground/src/`, only one of them could.
 | `convert.ts` | `…/convert` | a web `globals.css` into this library's `theme.css` — what `delacour theme` runs |
 | `house.ts` | `…/house` | `HOUSE_CONFIG` and `HOUSE_PRESET_CODE` — the studio's own preset, plus `PRESET_SHORTCUTS` both customisers offer |
 | `contrast.ts` | `…/contrast` | `contrastRatio` — WCAG 2 contrast between two `oklch()` literals, dependency-free, for the ramp tests |
+| `quality.ts` | `…/quality` | `auditTheme` and `formatThemeQualityReport` — shared contrast results and a text report for both customizers |
 
 No `"."` barrel, deliberately. `apps/playground/app.config.ts` reads only
 `FONTS`, and Expo loads that file through Node's CJS resolver — a barrel would
@@ -212,6 +213,18 @@ series — and no amber lighter than about `L 0.67` clears WCAG's 3:1 non-text m
 light ramp starts at amber-600, the light `primary`, and walks Tailwind's steps down to amber-950.
 `contrast.test.ts` holds `chart-1` at 3:1 against both the page and the card and the ramp in
 descending lightness; `contrast.ts` is the pure oklch → sRGB → WCAG helper it reads through.
+
+## Theme quality
+
+`auditTheme` checks 14 token pairs in both modes. Text uses a 4.5:1 target.
+Focus and chart indicators use a 3:1 target. The check compares the computed
+ratio before display rounding. It reuses the existing sRGB contrast estimate.
+Missing, invalid, translucent, and unsupported colors return `unknown`.
+
+Both customizers read this report. The web export adds the preset code and the
+exact token values. It does not change the CSS or preset format. Disabled
+states, opacity, gradients, custom overrides, and text size need visual review.
+The report does not certify accessibility.
 
 ## Commands
 

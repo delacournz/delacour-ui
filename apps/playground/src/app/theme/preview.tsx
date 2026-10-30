@@ -108,6 +108,9 @@ function ButtonsPreview(): ReactElement {
 			<Button isLoading size="sm" variant="secondary">
 				Deploying
 			</Button>
+			<Button isDisabled size="sm">
+				Disabled
+			</Button>
 		</PreviewSection>
 	);
 }
@@ -229,7 +232,7 @@ ChoicesPreview.displayName = "Playground.Theme.ChoicesPreview";
  */
 function FormPreview(): ReactElement {
 	const [project, setProject] = useState("aurora");
-	const [domain, setDomain] = useState("aurora.example");
+	const [domain, setDomain] = useState("aurora");
 
 	const isDomainInvalid = domain.trim().length > 0 && !domain.includes(".");
 

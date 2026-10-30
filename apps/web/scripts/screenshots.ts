@@ -250,6 +250,9 @@ const SHOTS: Shot[] = [
 	},
 	{ id: "67-cli-mcp-wiring-desktop-dark", path: "/docs/native/cli/mcp#wiring-it-up", frame: "desktop", theme: "dark" },
 	{ id: "68-cli-troubleshooting-mobile-dark", path: "/docs/native/cli/troubleshooting", frame: "phone", theme: "dark" },
+	{ id: "69-theme-quality-desktop-dark", path: "/theme#theme-quality", frame: "desktop", theme: "dark" },
+	{ id: "70-theme-quality-desktop-light", path: "/theme#theme-quality", frame: "desktop", theme: "light" },
+	{ id: "71-theme-quality-mobile-dark", path: "/theme#theme-quality", frame: "phone", theme: "dark" },
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

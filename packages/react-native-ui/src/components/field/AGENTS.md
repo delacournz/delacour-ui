@@ -94,6 +94,15 @@ A form field's layout, and the one place its state is written down. Root plus
   absence is unexplainable from the call site. shadcn's `errors` array prop is
   not ported — it exists to accept react-hook-form and Standard Schema shapes,
   and this package takes no form dependency.
+- **`reserveError` holds the error's line open, and is opt-in.** An error that
+  collapses moves everything below it — the submit button under a signature pad
+  jumps the moment the message appears, and in a vertically centred form the
+  whole field slides by half a line. With `<Field reserveError>`, an empty
+  `Field.Error` renders one caption line of a non-breaking space, hidden from
+  assistive technology and with no `alert` role, so nothing is announced and the
+  height is already there. Off by default, because a long form where every field
+  carried a blank line would be one long gap. A message wrapping to a second line
+  still grows the field; the reservation is one line, not a fixed box.
 - **`Field.Separator` draws two rules, not one with a label on top.** The web
   version absolutely-positions a single rule and punches a hole in it with an
   opaque `bg-background` label, which is invisible only while the separator sits

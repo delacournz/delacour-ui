@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "In a field",
 	caption:
-		"Inside a `Field` the pad takes its label as its name and its invalid state as a destructive border. Submit with nothing drawn to see it; the error clears with the first stroke.",
+		"Inside a `Field` the pad takes its label as its name and its invalid state as a destructive border. Submit with nothing drawn to see it; the error clears with the first stroke, and `reserveError` keeps its line so nothing moves.",
 	capture: { align: "stretch", flow: true },
 };
 
@@ -19,7 +19,7 @@ export function Demo(): ReactElement {
 
 	return (
 		<View className="gap-4">
-			<Field isInvalid={isInvalid}>
+			<Field isInvalid={isInvalid} reserveError>
 				<Field.Label>Signature</Field.Label>
 				<Signature onValueChange={setSignature}>
 					<Signature.Pad testID="signature-field-pad" />

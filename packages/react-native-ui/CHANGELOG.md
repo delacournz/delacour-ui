@@ -1,5 +1,21 @@
 # @delacour/react-native-ui
 
+## 0.6.0
+
+### Minor Changes
+
+- [#291](https://github.com/delacournz/delacour-ui/pull/291) [`703b1cd`](https://github.com/delacournz/delacour-ui/commit/703b1cd3e9d252cef78753bf6cbd4b38c1c44536) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Upgrade `tailwind-variants` to v4. `lib/tv` now builds `tv` with `createTV` from `tailwind-variants/config`, the only v4 entry that accepts `twMergeConfig` — the default entry throws on it, so a `tv.ts` copied by an earlier CLI breaks as soon as v4 is installed. `tailwind-merge` is no longer a dependency: v4 ships its own compiled merge tables. `delacour add` stops installing it.
+
+  v4's types drop numeric variant keys, so `KpiVariantProps["colorIndex"]`, `PlannerVariantProps["colorIndex"]` and `LeaderboardVariantProps["place"]` are now string unions (`"1" | "2" | …`). The component props — `KpiColorIndex`, `PlannerColorIndex`, `LeaderboardPlace` — stay numeric.
+
+- [#290](https://github.com/delacournz/delacour-ui/pull/290) [`a57aec9`](https://github.com/delacournz/delacour-ui/commit/a57aec927951052e4696152edb560d7195368883) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `TextAnimation.Counting` and `TextAnimation.Rolling` take `prefix` and `suffix` props, which win over `format`'s. `Rolling` keeps each affix as one static cell, so a digit inside one (`/100`, `Q3 `) no longer rolls as a wheel.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @delacour/react-native-bottom-sheet@0.6.0
+  - @delacour/react-native-charts@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

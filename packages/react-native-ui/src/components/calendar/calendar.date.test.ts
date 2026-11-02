@@ -375,6 +375,12 @@ describe("labels", () => {
 		expect(weekdayLabels("en-US", 1, "narrow")[0]).toBe("M");
 	});
 
+	test("keeps the Gregorian calendar whatever calendar the locale prefers", () => {
+		expect(formatMonthYear(d(2026, 10, 5), "en-US-u-ca-persian")).toBe("October 2026");
+		expect(monthNames("en-US-u-ca-islamic")[0]).toBe("January");
+		expect(formatDate(d(2026, 10, 5), { locale: "en-US-u-ca-buddhist", style: "long" })).toBe("October 5, 2026");
+	});
+
 	test("monthNames lists twelve months from January", () => {
 		const names = monthNames("en-NZ");
 		expect(names).toHaveLength(12);

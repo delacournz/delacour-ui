@@ -480,6 +480,9 @@ const formatterCache = new Map<string, Intl.DateTimeFormat>();
  *
  * The date is handed over as a UTC instant and formatted in UTC, so no offset can move it across
  * midnight. A locale `Intl` rejects falls back to `en` rather than throwing.
+ *
+ * The calendar is always Gregorian, the one the grid is. A locale such as `fa-IR` changes the
+ * language and digits, never the calendar: 5 October 2026 is never labelled 13 Mehr 1405.
  */
 function formatter(locale: string | undefined, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
 	const key = `${locale ?? ""}|${JSON.stringify(options)}`;
@@ -488,9 +491,9 @@ function formatter(locale: string | undefined, options: Intl.DateTimeFormatOptio
 
 	let built: Intl.DateTimeFormat;
 	try {
-		built = new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC" });
+		built = new Intl.DateTimeFormat(locale, { ...options, calendar: "gregory", timeZone: "UTC" });
 	} catch {
-		built = new Intl.DateTimeFormat(FALLBACK_LOCALE, { ...options, timeZone: "UTC" });
+		built = new Intl.DateTimeFormat(FALLBACK_LOCALE, { ...options, calendar: "gregory", timeZone: "UTC" });
 	}
 	formatterCache.set(key, built);
 	return built;

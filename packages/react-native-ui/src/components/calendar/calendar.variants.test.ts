@@ -13,6 +13,7 @@ import {
 	isDateSelected,
 	reconcileVisibleMonth,
 	resolveCalendarAxes,
+	resolveCaptionPage,
 	resolveDayState,
 	resolveDayTone,
 	resolveMonthBounds,
@@ -406,6 +407,30 @@ describe("resolvePageDirection", () => {
 
 	test("an unmeasured grid never pages", () => {
 		expect(resolvePageDirection({ ...base, width: 0, translationX: -200, velocityX: 0 })).toBe(0);
+	});
+});
+
+describe("resolveCaptionPage", () => {
+	const open = { canGoNext: true, canGoPrev: true, isDisabled: false, view: "days" } as const;
+
+	test("increment pages forward and decrement back", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment" })).toBe(1);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement" })).toBe(-1);
+		expect(resolveCaptionPage({ ...open, actionName: "increment", view: "months" })).toBe(1);
+	});
+
+	test("stops at a bound", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment", canGoNext: false })).toBe(0);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement", canGoPrev: false })).toBe(0);
+	});
+
+	test("never pages a disabled calendar or the years view, as the arrows do not", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment", isDisabled: true })).toBe(0);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement", view: "years" })).toBe(0);
+	});
+
+	test("ignores any other action", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "activate" })).toBe(0);
 	});
 });
 

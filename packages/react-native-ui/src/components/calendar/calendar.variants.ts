@@ -384,6 +384,29 @@ export function resolveSelectionPage(
 }
 
 /**
+ * Which way a screen reader's increment or decrement on the caption pages: `0` at a bound, on a
+ * disabled calendar, or in the years view. These are the same limits that the arrows have.
+ */
+export function resolveCaptionPage({
+	actionName,
+	canGoNext,
+	canGoPrev,
+	isDisabled,
+	view,
+}: {
+	actionName: string;
+	canGoNext: boolean;
+	canGoPrev: boolean;
+	isDisabled: boolean;
+	view: CalendarView;
+}): -1 | 0 | 1 {
+	if (isDisabled || view === "years") return 0;
+	if (actionName === "increment" && canGoNext) return 1;
+	if (actionName === "decrement" && canGoPrev) return -1;
+	return 0;
+}
+
+/**
  * Which way a released swipe pages: `1` forward, `-1` back, `0` settle where it was.
  *
  * A swipe pages when it travelled past {@link CALENDAR_PAGE_THRESHOLD} of the width, or was

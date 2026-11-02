@@ -33,6 +33,7 @@ full-screen or in a sheet is the caller's composition).
 | `sketch.paths.test.ts` | Including text-level assertions that the leaf has no `import` and the canvas is Skia, not SVG |
 | `sketch.variants.ts` | The slotted `tv()`, the label record, colour/size/label/export resolvers |
 | `sketch.variants.test.ts` | |
+| `sketch.render.test.tsx` | Mounted under Jest — tools, shapes, swatches, size, undo and the handle, disabled, strokes driven through the pan's `sketch-pan` test id, the part-outside-root errors. Skia is stubbed, so it asserts the React side, not pixels |
 
 DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
 `.Swatches`, `.Size`, `.Undo`, and the internal `.Sketch.Provider` and
@@ -89,6 +90,7 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
   outside it.** So the eraser cuts committed ink as it moves, and the stroke
   being drawn is never erased by itself. Both paths are always mounted, empty
   between strokes.
+- **The pan carries `.withTestId(SKETCH_PAN_TEST_ID)` (`"sketch-pan"`)**, exported from `sketch-canvas.tsx`, so a render test can drive a stroke with Gesture Handler's `fireGestureHandler`. No behaviour change.
 - **A shape drag under 4pt on both axes commits nothing**; a tap with a shape tool
   is not a shape. Line and arrow follow the drag; the rest use its normalised
   bounds, so dragging up-left draws the same rectangle as down-right.

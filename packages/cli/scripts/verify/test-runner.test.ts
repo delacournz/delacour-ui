@@ -1,5 +1,15 @@
 import { describe, expect, test } from "bun:test";
-import { parseBunSummary, parseJsonReport, runnerManifest, vitestConfig } from "./test-runner";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import {
+	copiedRenderTests,
+	copiedSuites,
+	parseBunSummary,
+	parseJsonReport,
+	runnerManifest,
+	vitestConfig,
+} from "./test-runner";
 
 describe("parseJsonReport", () => {
 	test("reads Jest's and Vitest's shared --json shape, counting files rather than describe blocks", () => {
@@ -58,12 +68,12 @@ describe("parseBunSummary", () => {
 });
 
 describe("runnerManifest", () => {
-	test("Jest runs through jest-expo at the app's SDK, and lets the engines through", () => {
+	test("Jest runs through jest-expo at the app's SDK, and carries nothing the CLI writes", () => {
 		const manifest = runnerManifest("jest", "~58.0.16");
 
 		expect(manifest.scripts.test).toBe("jest");
 		expect(manifest.devDependencies["jest-expo"]).toBe("~58.0.0");
-		expect(JSON.stringify(manifest.jest)).toContain("@delacour/.*|d3-.*|internmap");
+		expect(manifest.jest).toEqual({ preset: "jest-expo" });
 	});
 
 	test("Vitest runs once, with nothing but itself installed", () => {
@@ -88,5 +98,46 @@ describe("vitestConfig", () => {
 
 	test("keeps Vite from reading a tsconfig whose extends it cannot resolve", () => {
 		expect(vitestConfig({})).toContain('esbuild: { tsconfigRaw: "{}" }');
+	});
+});
+
+describe("copiedSuites", () => {
+	const KEYS = [
+		"ui/button/button.tsx",
+		"ui/button/button.variants.test.ts",
+		"ui/button/button.render.test.tsx",
+		"lib/test/setup.ts",
+	];
+
+	async function lockedProject(): Promise<string> {
+		const root = await mkdtemp(join(tmpdir(), "copied-suites-"));
+		await mkdir(root, { recursive: true });
+		const files = Object.fromEntries(KEYS.map((key) => [key, { hash: "x", ref: "r" }]));
+		await writeFile(join(root, "native-components.lock.json"), JSON.stringify({ items: { button: { files } } }));
+		return root;
+	}
+
+	test("Jest expects the render tests as well as the logic suites", async () => {
+		const root = await lockedProject();
+		try {
+			expect(await copiedSuites(root, "jest")).toEqual([
+				"ui/button/button.render.test.tsx",
+				"ui/button/button.variants.test.ts",
+			]);
+		} finally {
+			await rm(root, { recursive: true, force: true });
+		}
+	});
+
+	test("Bun and Vitest expect the logic suites alone", async () => {
+		const root = await lockedProject();
+		try {
+			for (const runner of ["bun", "vitest"] as const) {
+				expect(await copiedSuites(root, runner)).toEqual(["ui/button/button.variants.test.ts"]);
+			}
+			expect(await copiedRenderTests(root)).toEqual(["ui/button/button.render.test.tsx"]);
+		} finally {
+			await rm(root, { recursive: true, force: true });
+		}
 	});
 });

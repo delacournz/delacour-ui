@@ -214,10 +214,14 @@ holds on either line.
 | `--tests <runner>` | Every copied suite passes under `bun`, `jest` or `vitest`, set up the way the docs say. Combines with any level. |
 
 `--tests` sets the package the tests land in up on the runner before `add` reads it — `jest-expo` at
-the scaffold's SDK with the engines in `transformIgnorePatterns`, or a `vitest.config.ts` mapping the
-project's `tsconfig` paths — then runs `add --all --tests`, runs the suites, and fails unless every
-suite the lock records ran and none failed. A runner that matched no files passes everything it
-found, which is why the count is checked as well. Under it `doctor`'s **Test runner** and **Jest
+the scaffold's SDK and nothing else, or a `vitest.config.ts` mapping the project's `tsconfig` paths —
+then runs `add --all --tests`, runs the suites, and fails unless every suite the lock records ran and
+none failed. A runner that matched no files passes everything it found, which is why the count is
+checked as well. The expected suites are runner-aware (`copiedSuites(root, runner)`): the Jest leg
+expects the `*.render.test.tsx` suites too, and fails if none were copied; the Bun and Vitest legs
+expect none and fail if any were. The Jest leg's manifest deliberately carries **no** `setupFiles`,
+`resolver` or `transformIgnorePatterns` — the CLI's Jest config writer (see
+[Render tests](#render-tests-are-jests-alone)) has to add them, and that is what the leg proves. Under it `doctor`'s **Test runner** and **Jest
 transforms** must pass, not merely warn. `signoff/tests` runs all three runners on every change but markdown.
 
 `--layout monorepo` runs the whole thing again with the components in a shared package the app
@@ -597,11 +601,12 @@ test through `adaptTest` after the alias transform, and `withTests(item, runner)
 - **It happens in `transformFile`, so the lock agrees.** The lock hashes the text after the
   transform, and `add`, `update` and `diff` all go through `transformFile`, so the hash is of the
   runner's text. Switching runners reads as an upstream change on the next `update`, not an edit.
-- **The runner's own setup is checked, never written.** Vitest needs the project's `@/` alias in its own
+- **The runner's own setup is checked, and written only for render tests.** Vitest needs the project's `@/` alias in its own
   config, and on SDK 58 `esbuild: { tsconfigRaw: "{}" }` too, because `expo`'s `exports` map hides
   `tsconfig.base` from Vite's tsconfig loader (and from `vite-tsconfig-paths`), and Jest needs `@delacour/.*`, `d3-.*` and `internmap` in `transformIgnorePatterns` for
-  `chart` and `bottom-sheet`. The CLI does not write a runner's config — that file is the project's —
-  so `project/test-setup.ts` checks it instead: `checkTestRunner` (packages installed, the `test`
+  `chart` and `bottom-sheet`. The CLI does not write Vitest's config or a plain Jest suite's — that file is the
+  project's; the one exception is the keys the render tests need, below — so `project/test-setup.ts`
+  checks it instead: `checkTestRunner` (packages installed, the `test`
   script on the same runner, a Jest config with `jest-expo` or a `moduleNameMapper` for the alias,
   a Vitest alias and `tsconfigRaw`) and `checkJestTransform`. `doctor` runs both as `testChecks`, and
   `add --tests` runs them after its install, warns, and returns them as `AddResult.testSetup` for
@@ -621,3 +626,52 @@ doc cites the consumer's paths rather than a package they never installed.
 Its rewrites are the reason `applyRewrites` has two modes. A package subpath is cited in prose as
 often as it is imported, so it is replaced everywhere; a relative specifier is anchored on its
 surrounding quote, because `../icon` is a prefix of `../icon-set`.
+
+### Render tests are Jest's alone
+
+A `*.render.test.tsx` mounts the component under `@testing-library/react-native` (v14, where `render`
+and `fireEvent` are async). Bun cannot load React Native's Flow source and Vitest has no preset for
+it, so these are **Jest-only** and ship apart from the logic suites:
+
+- **Own list, not a flag on the file.** `classifySource` marks them `renderTest: true` (still
+  `test: true`), and the builder puts them in the item's `renderTests`, with
+  `renderTestRegistryDependencies` (always `test-kit`, plus any item the suite renders) and
+  `renderTestDependencies` (`@jest/globals`). A CLI from before the list existed ignores it and
+  copies what it always did, instead of copying suites its runner cannot load. All three are omitted
+  from an item's JSON when empty, like the `tests` fields.
+- **`withTests(item, runner)` folds them in only for `jest`.** `bun` and `vitest` get the logic
+  suites and none of the render tests, test kit or packages. `skipsRenderTests(item, runner)` says
+  when something was left out, so `add` and `update` print **one** notice per run
+  (`render-tests.ts`: "Render tests need Jest — set tests.runner to \"jest\" …") and `AddResult.renderTests.skipped`
+  carries it for the MCP server.
+- **A jest-only suite may use `jest.fn` / `jest.mock` and `@jest/globals`.** `jestOnlyViolations`
+  holds it to the rest: no `bun:test` import, no Bun-only matcher, no `expect(…, message)`, and the
+  same "reads stay local" rule. `adaptTest` leaves it as written — it already imports from
+  `@jest/globals`.
+- **The test kit is an item: `test-kit`.** `src/test/setup.ts` and `src/test/render.tsx` classify to
+  it, land in the `lib` namespace under `test/`, and depend on `provider`. Its devDependencies are
+  `@jest/globals`, `@testing-library/react-native`, `test-renderer` and `jest-expo`; the native
+  modules its `require()`s name come as `expoDependencies`. `src/test/AGENTS.md` is the library's
+  own testing guide and is not shipped.
+- **The CLI writes the Jest config.** `project/jest-config.ts` (`ensureJestConfig`) adds
+  `setupFiles` (the kit's `setup.ts` as a `<rootDir>/…` path from the config's directory), the
+  Reanimated `resolver`, and the engines and ESM-only packages to `transformIgnorePatterns`, in
+  `package.json#jest` or an object-literal `jest.config.{js,ts,cjs,mjs}`. It is idempotent, keeps
+  every existing entry, widens the project's own `node_modules/(?!…)` pattern rather than replacing
+  it, and creates `package.json#jest` with the `jest-expo` preset when there is none. What it
+  cannot edit safely — a config built by a function, a `resolver` already set to something else —
+  is left alone and returned as `{ status: "manual", snippet, reasons }`, which `add` prints.
+  It runs after the install whenever `test-kit` is in the run (`settleRenderTests`).
+- **`doctor` checks it.** `checkTestRunner` asks for `@testing-library/react-native`,
+  `test-renderer` and `jest-expo` once the lock records a render test, and warns, with the snippet,
+  when the config lacks the setup file, the resolver or a transform (`renderSetupIssues`).
+
+### `tests.enabled` is remembered
+
+`native-components.json` carries `tests.enabled` beside `tests.runner`: the project's standing answer
+to "Also install component tests?". `init` asks it on a TTY (`--tests` / `--no-tests` answer it
+without asking; with no terminal and no flag nothing is written) and `add` and `update` follow it
+when no flag is passed. `--tests` / `--no-tests` override it for the run **and** persist it
+(`chooseTests` → `persistTestsEnabled`; an `update --dry-run` persists nothing). The MCP `add_components` and
+`update_components` tools pass `tests` through unset, so they honour the config the same way.
+Unset reads as `false`: a project that never answered gets no tests, as before.

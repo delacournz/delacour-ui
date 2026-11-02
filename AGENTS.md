@@ -152,7 +152,7 @@ The checks are defined once, in `scripts/signoff-checks.ts`:
 | --- | --- | --- | --- |
 | `signoff/typecheck` | yes | always | `turbo typecheck` |
 | `signoff/check` | yes | always | `turbo check` |
-| `signoff/test` | yes | always | `turbo test test:release test:scripts` |
+| `signoff/test` | yes | always | `turbo test test:render test:release test:scripts` |
 | `signoff/build` | yes | always | `turbo build --filter=@delacour/web` |
 | `signoff/registry` | no | the library, CLI, skills, registry or a manifest changed | `turbo registry:build gen-install gen-skill`, `git diff --exit-code`, `turbo verify:expo -- --no-install` (both layouts) |
 | `signoff/tests` | no | anything but markdown changed | `verify:expo --tests <runner> --dir .verify/tests-<runner>` for `bun`, `jest` and `vitest`, at once — every component's suites copied into an installed app and run by that runner |
@@ -590,9 +590,11 @@ shapes; `@delacour/types`' `Result` is the house example.
 
 **Tests.** Write them first. Colocate as `{name}.test.ts` beside the source. Run
 `bun test <path>` after each change and the related suites before committing.
-`react-native-ui` can only test pure logic — React Native ships Flow-typed source Bun's
-transpiler cannot parse — so behaviour that needs a renderer is verified in the
-playground on a simulator instead.
+`react-native-ui` has two kinds: `*.test.ts` pure-logic suites under `bun test`, and a
+`{name}.render.test.tsx` per component under Jest (`bun run test:render`) — React Native ships
+Flow-typed source Bun's transpiler cannot parse, so mounting a component needs jest-expo. See
+`packages/react-native-ui/src/test/AGENTS.md`. Layout, animation and real gestures are still
+verified in the playground on a simulator.
 
 **Files.** Kebab-case, enforced by Biome. The exception is `apps/playground/src/app`,
 where Expo Router derives route names from filenames.

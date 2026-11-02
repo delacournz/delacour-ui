@@ -17,7 +17,7 @@ import {
 	verifyPaths,
 } from "./verify/harness";
 import { bootOnSimulator, bundleWithMetro, writeVerifyScreen } from "./verify/render";
-import { copiedSuites, prepareTestRunner, runCopiedTests } from "./verify/test-runner";
+import { copiedRenderTests, copiedSuites, prepareTestRunner, runCopiedTests } from "./verify/test-runner";
 
 /**
  * Proves the CLI works against a real Expo app, for every component at once.
@@ -274,8 +274,21 @@ try {
 
 	if (options.tests && options.install) {
 		reporter.step(`Every copied suite passes under ${options.tests}`);
-		const expected = await copiedSuites(workspace.configRoot);
+		const expected = await copiedSuites(workspace.configRoot, options.tests);
 		const result = await runCopiedTests(workspace.configRoot, options.tests, reporter);
+
+		// Render tests are Jest's alone: the Jest leg has to have been given some, and
+		// the other two none, or the CLI's runner gate is not holding.
+		const render = await copiedRenderTests(workspace.configRoot);
+		if (options.tests === "jest" ? render.length === 0 : render.length > 0) {
+			failures += 1;
+			reporter.fail(
+				options.tests === "jest"
+					? "no render tests were copied under jest"
+					: `${render.length} render test(s) were copied under ${options.tests}, which cannot run them`
+			);
+			for (const key of render.slice(0, 10)) reporter.detail(key);
+		}
 
 		// The count matters as much as the failures: a runner that matched no
 		// files, or skipped a folder, passes everything it found.

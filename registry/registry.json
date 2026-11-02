@@ -429,6 +429,12 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -1264,6 +1270,13 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"button",
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -4506,6 +4519,12 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -4653,6 +4672,36 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			]
+		},
+		{
+			"name": "test-kit",
+			"type": "registry:lib",
+			"title": "Test kit",
+			"description": "The Jest setup and render helper the render tests share: stands in for every native module and renders inside the provider.",
+			"categories": [
+				"testing"
+			],
+			"registryDependencies": [
+				"provider"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-teleport"
+			],
+			"devDependencies": [
+				"@jest/globals",
+				"@testing-library/react-native",
+				"jest-expo",
+				"test-renderer"
+			],
+			"files": [
+				"lib/test/render.tsx",
+				"lib/test/setup.ts"
 			]
 		},
 		{

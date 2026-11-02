@@ -90,8 +90,8 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		paths: [],
 		workflow: "ci.yml",
 		// `test:release` and `test:scripts` are root-package tasks: `.github/*.test.ts` and
-		// `scripts/*.test.ts` belong to no workspace.
-		run: [{ argv: ["bunx", "turbo", "test", "test:release", "test:scripts"] }],
+		// `scripts/*.test.ts` belong to no workspace. `test:render` is react-native-ui's Jest run.
+		run: [{ argv: ["bunx", "turbo", "test", "test:render", "test:release", "test:scripts"] }],
 	},
 	{
 		context: "build",

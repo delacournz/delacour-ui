@@ -131,6 +131,9 @@
 						"jest",
 						"vitest"
 					]
+				},
+				"enabled": {
+					"type": "boolean"
 				}
 			}
 		},

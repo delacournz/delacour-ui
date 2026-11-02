@@ -28,6 +28,7 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
 | `dialog-footer.tsx` | `Dialog.Footer` — `plain` or `panel`, row or stacked by size |
 | `dialog.variants.ts` | The slotted `tv()`, the size classes, the motion and slop constants, and three pure resolvers — no RN imports |
 | `dialog.variants.test.ts` | Slots per size and footer variant, tokens in both themes, the resolvers |
+| `dialog.render.test.tsx` | Mounted under Jest — closed until opened, trigger and close, controlled open, `defaultOpen` |
 
 ## Design
 

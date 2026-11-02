@@ -109,7 +109,7 @@ export async function mcp(options: McpOptions): Promise<void> {
 					.boolean()
 					.optional()
 					.describe(
-						"Copy each component's unit tests beside it too, written for the project's test runner (Bun, Jest or Vitest). They are recorded in the lock and kept current by updates."
+						"Copy each component's tests beside it too, written for the project's test runner (Bun, Jest or Vitest); render tests (`*.render.test.tsx`) come only on Jest, with the test kit and the Jest config set up for them. Omit it to follow `tests.enabled` in native-components.json; true or false overrides that and is saved there. Tests are recorded in the lock and kept current by updates."
 					),
 				install: z
 					.boolean()
@@ -174,7 +174,9 @@ export async function mcp(options: McpOptions): Promise<void> {
 				tests: z
 					.boolean()
 					.optional()
-					.describe("Bring every component's tests along. Tests the project already copied are updated either way."),
+					.describe(
+						"Bring every component's tests along. Omit it to follow `tests.enabled` in native-components.json; true or false overrides that and is saved there. Tests the project already copied are updated either way."
+					),
 				install: z
 					.boolean()
 					.optional()
@@ -338,6 +340,18 @@ function describeAdd(result: AddResult): string[] {
 
 	if (dependencies.groups.some((group) => group.label === "expo install")) {
 		lines.push("A native module changed — rebuild the dev client; a JS reload will not pick it up.");
+	}
+
+	const { renderTests } = result;
+	if (renderTests?.skipped) lines.push(renderTests.skipped);
+	if (renderTests?.jestConfig?.status === "patched") {
+		lines.push(`Set ${renderTests.jestConfig.file} up for the render tests (setup file, resolver, transforms).`);
+	}
+	if (renderTests?.jestConfig?.status === "manual") {
+		lines.push(
+			`Could not set the Jest config up for the render tests: ${renderTests.jestConfig.reasons.join(" ")} Merge this in:`,
+			renderTests.jestConfig.snippet
+		);
 	}
 
 	for (const check of result.testSetup.filter((entry) => entry.status === "warn" || entry.status === "fail")) {

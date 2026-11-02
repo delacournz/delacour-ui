@@ -74,6 +74,12 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"tailwind-variants": "npm",
 	// Only ever a test's: the types for `bun:test`, which a copied suite imports.
 	"@types/bun": "dev",
+	// Only ever a render test's, or the test kit's: Jest's own globals, the
+	// renderer the suites mount through, and the renderer RNTL 14 needs beside it.
+	"@jest/globals": "dev",
+	"@testing-library/react-native": "dev",
+	"test-renderer": "dev",
+	"jest-expo": "dev",
 };
 
 export type ItemMeta = {
@@ -648,6 +654,15 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "TextAnimation",
 		description: "Five ways a piece of text or a number arrives — reveal, typing, rotating, counting, rolling.",
 		categories: ["media"],
+	},
+	"test-kit": {
+		title: "Test kit",
+		description:
+			"The Jest setup and render helper the render tests share: stands in for every native module and renders inside the provider.",
+		categories: ["testing"],
+		// RNTL 14 renders through `test-renderer` without importing it, and the
+		// preset is what the setup file's mocks and the config's transforms lean on.
+		dependencies: ["test-renderer", "jest-expo"],
 	},
 	textarea: {
 		title: "Textarea",

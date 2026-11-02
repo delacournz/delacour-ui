@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { classifySource, resolveModuleId } from "./classify";
+import { classifySource, isRenderTest, resolveModuleId } from "./classify";
 
 describe("classifySource", () => {
 	test("a component folder becomes one ui item named for the folder", () => {
@@ -10,6 +10,7 @@ describe("classifySource", () => {
 			target: "button/button.tsx",
 			moduleId: "button/button.tsx".replace(/\.tsx$/, ""),
 			test: false,
+			renderTest: false,
 		});
 	});
 
@@ -32,6 +33,7 @@ describe("classifySource", () => {
 			target: "cn.ts",
 			moduleId: "cn",
 			test: false,
+			renderTest: false,
 		});
 		expect(classifySource("lib/slot.tsx")?.item).toBe("slot");
 	});
@@ -44,6 +46,7 @@ describe("classifySource", () => {
 			target: "use-theme-color.ts",
 			moduleId: "use-theme-color",
 			test: false,
+			renderTest: false,
 		});
 	});
 
@@ -56,6 +59,7 @@ describe("classifySource", () => {
 			target: "theme.css",
 			moduleId: null,
 			test: false,
+			renderTest: false,
 		});
 	});
 
@@ -72,6 +76,7 @@ describe("classifySource", () => {
 			target: "central.ts",
 			moduleId: "central",
 			test: false,
+			renderTest: false,
 		});
 	});
 
@@ -83,6 +88,7 @@ describe("classifySource", () => {
 			target: "expo/navigation-theme.tsx",
 			moduleId: "expo/navigation-theme",
 			test: false,
+			renderTest: false,
 		});
 	});
 
@@ -97,6 +103,7 @@ describe("classifySource", () => {
 			target: "expo/blur-layer.tsx",
 			moduleId: "expo/blur-layer",
 			test: false,
+			renderTest: false,
 		});
 	});
 
@@ -108,6 +115,7 @@ describe("classifySource", () => {
 			target: "button/button.variants.test.ts",
 			moduleId: "button/button.variants.test",
 			test: true,
+			renderTest: false,
 		});
 	});
 
@@ -125,6 +133,7 @@ describe("classifySource", () => {
 			target: "cn.test.ts",
 			moduleId: "cn.test",
 			test: true,
+			renderTest: false,
 		});
 		expect(classifySource("lib/scroll-maths.test.ts")?.item).toBe("scroll-maths");
 	});
@@ -135,6 +144,7 @@ describe("classifySource", () => {
 			target: "theme-tokens.test.ts",
 			moduleId: "theme-tokens.test",
 			test: true,
+			renderTest: false,
 		});
 	});
 
@@ -170,5 +180,38 @@ describe("resolveModuleId", () => {
 
 	test("returns null for a specifier that resolves to nothing", () => {
 		expect(resolveModuleId("lib/cn.ts", "./missing", files)).toBeNull();
+	});
+});
+
+describe("render tests and the test kit", () => {
+	test("a *.render.test.tsx is a test and a render test", () => {
+		expect(classifySource("components/button/button.render.test.tsx")).toMatchObject({
+			item: "button",
+			target: "button/button.render.test.tsx",
+			test: true,
+			renderTest: true,
+		});
+	});
+
+	test("a logic suite is a test and not a render test", () => {
+		expect(classifySource("components/button/button.variants.test.ts")).toMatchObject({
+			test: true,
+			renderTest: false,
+		});
+		expect(isRenderTest("components/button/button.test.tsx")).toBe(false);
+	});
+
+	test("src/test/ is the test-kit item, under lib/test/ and not a test itself", () => {
+		expect(classifySource("test/setup.ts")).toEqual({
+			item: "test-kit",
+			type: "registry:lib",
+			namespace: "lib",
+			target: "test/setup.ts",
+			moduleId: "test/setup",
+			test: false,
+			renderTest: false,
+		});
+		expect(classifySource("test/render.tsx")).toMatchObject({ item: "test-kit", target: "test/render.tsx" });
+		expect(classifySource("test/AGENTS.md")).toBeNull();
 	});
 });

@@ -1,6 +1,6 @@
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { isTest } from "../../src/registry/classify";
+import { isRenderTest, isTest } from "../../src/registry/classify";
 import type { TestRunner } from "../../src/registry/test-runner";
 import { type Reporter, run, type Workspace } from "./harness";
 
@@ -24,9 +24,11 @@ export type RunnerSetup = {
 /**
  * What a project on `runner` carries in its `package.json`.
  *
- * Jest's preset follows the app's SDK, and its `transformIgnorePatterns` is
- * jest-expo's own with the engines added — the setting the docs and `doctor`
- * both ask for. Vitest gets a `vitest.config.ts` (see `vitestConfig`).
+ * Jest's preset follows the app's SDK and that is all it carries: the setup
+ * file, Reanimated's resolver and the engines in `transformIgnorePatterns` are
+ * what `add --tests` writes into the config for the render tests, and the Jest
+ * leg is what proves it does — a manifest that pre-added them would pass with
+ * the writer broken. Vitest gets a `vitest.config.ts` (see `vitestConfig`).
  */
 export function runnerManifest(runner: TestRunner, expoSdk: string): RunnerSetup {
 	if (runner === "bun") return { scripts: { test: "bun test" }, devDependencies: {} };
@@ -39,12 +41,7 @@ export function runnerManifest(runner: TestRunner, expoSdk: string): RunnerSetup
 	return {
 		scripts: { test: "jest" },
 		devDependencies: { jest: "^30.0.0", "jest-expo": `~${major}.0.0` },
-		jest: {
-			preset: "jest-expo",
-			transformIgnorePatterns: [
-				"node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|@delacour/.*|d3-.*|internmap)",
-			],
-		},
+		jest: { preset: "jest-expo" },
 	};
 }
 
@@ -184,14 +181,30 @@ export async function runCopiedTests(cwd: string, runner: TestRunner, reporter: 
 	}
 }
 
-/** The suites the lock says were copied — what the runner has to have found and run. */
-export async function copiedSuites(configRoot: string): Promise<string[]> {
+async function copiedTestKeys(configRoot: string): Promise<string[]> {
 	const lock = JSON.parse(await readFile(join(configRoot, "native-components.lock.json"), "utf-8")) as {
 		items: Record<string, { files: Record<string, unknown> }>;
 	};
 
 	return Object.values(lock.items)
 		.flatMap((item) => Object.keys(item.files))
-		.filter((key) => isTest(key) && key.endsWith(".test.ts"))
+		.filter(isTest)
 		.sort();
+}
+
+/**
+ * The suites the lock says were copied — what the runner has to have found and run.
+ *
+ * Render tests (`*.render.test.tsx`) count only under Jest, the one runner they
+ * are written for; Bun and Vitest are expected to have been given none.
+ */
+export async function copiedSuites(configRoot: string, runner: TestRunner): Promise<string[]> {
+	return (await copiedTestKeys(configRoot)).filter(
+		(key) => key.endsWith(".test.ts") || (runner === "jest" && isRenderTest(key))
+	);
+}
+
+/** The render tests the lock says were copied. Jest's leg needs some; the others' must have none. */
+export async function copiedRenderTests(configRoot: string): Promise<string[]> {
+	return (await copiedTestKeys(configRoot)).filter(isRenderTest);
 }

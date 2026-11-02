@@ -115,7 +115,7 @@ export const CHECKS: Check[] = [
 					JSON.parse(await readFile(join(registryDir, "r", `${entry.name}.json`), "utf-8"))
 				);
 				// A test is named in `tests`, not `files` — still named, so not dropped.
-				for (const file of [...item.files, ...item.tests]) referenced.add(file.path);
+				for (const file of [...item.files, ...item.tests, ...item.renderTests]) referenced.add(file.path);
 			}
 
 			// The registry serves the library itself, so `files[].path` resolves
@@ -182,6 +182,8 @@ export const CHECKS: Check[] = [
 					problems.push(`${display}: still cites @delacour/react-native-ui`);
 				const test = path.endsWith(".test.ts") || path.endsWith(".test.tsx");
 				if (test && !context.tests) problems.push(`${display}: a test was copied`);
+				if (path.endsWith(".render.test.tsx") && context.tests !== "jest")
+					problems.push(`${display}: a render test was copied under ${context.tests ?? "no runner"}`);
 				if (test && context.tests !== "bun" && content.includes("bun:test"))
 					problems.push(`${display}: still imports bun:test under ${context.tests}`);
 			}

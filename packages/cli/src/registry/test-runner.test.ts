@@ -76,3 +76,11 @@ describe("testRunnerPackages", () => {
 		expect(testRunnerPackages("jest")).toEqual(["@jest/globals", "@types/node"]);
 	});
 });
+
+describe("adaptTest on a render test", () => {
+	const RENDER = 'import { describe, expect, jest, test } from "@jest/globals";\nimport { Button } from "./button";\n';
+
+	test("is already Jest's, so it is copied as written under every runner", () => {
+		for (const runner of ["bun", "jest", "vitest"] as const) expect(adaptTest(RENDER, runner)).toBe(RENDER);
+	});
+});

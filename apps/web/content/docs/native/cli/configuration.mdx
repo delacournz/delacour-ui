@@ -138,12 +138,13 @@ Covered in [The registry](/docs/native/cli/registry).
 
 ```json
 {
-  "tests": { "runner": "vitest" }
+  "tests": { "enabled": true, "runner": "jest" }
 }
 ```
 
 <TypeTable
   type={{
+    "tests.enabled": { type: "boolean", description: "Whether add and update copy each component's tests. init asks; --tests and --no-tests on init, add or update change it. Unset means no tests unless --tests is passed." },
     "tests.runner": { type: '"bun" | "jest" | "vitest"', description: "What `add --tests` writes copied suites for. Read from package.json when unset — the test script, then a vitest, jest or jest-expo dependency — and Bun when it names none." },
   }}
 />

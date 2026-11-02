@@ -170,7 +170,8 @@
 	"scripts": {
 		"check": "biome check ./src",
 		"typecheck": "tsc --noEmit",
-		"test": "bun test",
+		"test": "bun test --path-ignore-patterns='**/*.render.test.tsx'",
+		"test:render": "jest",
 		"gen-exports": "bun scripts/gen-exports.ts"
 	},
 	"dependencies": {
@@ -231,18 +232,23 @@
 		}
 	},
 	"devDependencies": {
-		"expo-blur": "~58.0.5",
-		"@maplibre/maplibre-react-native": "^11.5.0",
 		"@delacour/biome-config": "workspace:*",
 		"@delacour/react-native-bottom-sheet": "workspace:*",
 		"@delacour/react-native-charts": "workspace:*",
 		"@delacour/tsconfig": "workspace:*",
-		"react-native-skia": "catalog:",
+		"@jest/globals": "^30",
+		"@maplibre/maplibre-react-native": "^11.5.0",
+		"@testing-library/react-native": "^14.1.0",
 		"@types/bun": "^1.3.8",
 		"@types/react": "catalog:",
+		"expo-blur": "~58.0.5",
 		"expo-router": "~58.0.24",
+		"jest": "^30",
+		"jest-expo": "~58.0.0",
+		"react-native-skia": "catalog:",
 		"react-native-teleport": "^1.2.2",
 		"tailwind-merge": "^3.6.0",
+		"test-renderer": "^1",
 		"typescript": "~6.0.3"
 	}
 }

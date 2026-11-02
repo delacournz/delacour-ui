@@ -24,6 +24,8 @@ import { type Check, testChecks } from "./doctor";
 // A cycle — `init` ends in an `add`. Safe, because neither module touches the
 // other at load time, only inside a call.
 import { init } from "./init";
+import { type RenderTestsOutcome, settleRenderTests } from "./render-tests";
+import { chooseTests } from "./tests-choice";
 
 /**
  * Copies components into the project, with everything they need.
@@ -56,7 +58,10 @@ export type AddOptions = {
 	offline?: boolean;
 	ref?: string;
 	registry?: string;
-	/** Copy each item's tests too, and install what they need. */
+	/**
+	 * Copy each item's tests too, and install what they need. Unset follows
+	 * `tests.enabled` in the config; `true` and `false` override it and are saved there.
+	 */
 	tests?: boolean;
 };
 
@@ -78,6 +83,8 @@ export type AddResult = {
 	installed: boolean;
 	/** Under `--tests`, whether the project's runner can run what was copied; empty otherwise. */
 	testSetup: Check[];
+	/** Under `--tests`, what became of the render tests: skipped for a runner that cannot run them, or the Jest config set up for them. */
+	renderTests: RenderTestsOutcome | null;
 };
 
 export async function add(names: string[], options: AddOptions): Promise<AddResult | null> {
@@ -97,6 +104,7 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 
 	const config = await loadConfig(options.cwd);
 	const project = await detectProject(config.app.resolved.root);
+	const tests = await chooseTests(config, options.tests);
 
 	const client = createRegistryClient({
 		cwd: options.cwd,
@@ -116,7 +124,7 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	// With tests, an item is its tests too — files, the items they import, what
 	// the project's runner needs — so everything after this treats them as source.
 	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T =>
-		options.tests ? withTests(item, config.testRunner) : item;
+		tests ? withTests(item, config.testRunner) : item;
 	const byName = new Map(index.items.map((item) => [item.name, item]));
 	const order = resolveItemGraph(requested, (name) => {
 		const entry = byName.get(name);
@@ -138,17 +146,20 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	report(toWrite, planned, requested, output);
 
 	const settled = await settleDependencies(items, config, project, options, output);
-	const testSetup = options.tests ? await checkTestSetup(config, project, output) : [];
-	return { items: items.map((item) => item.name), written: toWrite.length, ...settled, testSetup };
+	// After the install, so the config can be checked against what is now there.
+	const renderTests = tests ? await settleRenderTests(config, items, output) : null;
+	const testSetup = tests ? await checkTestSetup(config, project, output) : [];
+	return { items: items.map((item) => item.name), written: toWrite.length, ...settled, testSetup, renderTests };
 }
 
 /**
  * Says what the runner still needs before the copied tests will run.
  *
  * After the install, so a package it just added is not reported missing. The
- * CLI writes no runner config — that file is the project's — so a suite that
- * cannot load is said here, where it was copied, rather than found at the first
- * test run with an error naming neither the cause nor the fix.
+ * CLI writes a runner's config only for render tests, and only the keys they
+ * need (`settleRenderTests`); everything else in that file is the project's, so
+ * a suite that cannot load is said here, where it was copied, rather than found
+ * at the first test run with an error naming neither the cause nor the fix.
  */
 async function checkTestSetup(config: ResolvedConfig, project: ProjectInfo, output: Output): Promise<Check[]> {
 	const checks = testChecks(await readTestSetup(config, project));

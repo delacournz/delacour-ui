@@ -61,6 +61,9 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   sheet says what the next tap does.
 - **Clear empties and stays open.** `null`, `{ start: null, end: null }` or `[]`, reported. A
   clear that also closed would make "pick a different range" two openings.
+- **`onOpenChange(false)` is the start of a close, `onClose` the end.** The sheet's own `onClose`
+  fires once it has slid all the way down, by any path. Move focus to the next field there, not
+  in `onOpenChange`, or the keyboard rises under a sheet that is still leaving.
 - **Auto-close plays `impactLight`** through `pressable`'s `playHaptic` — the calendar already
   ticked on the tap — and announces "Selected …" with the long date.
 

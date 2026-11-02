@@ -85,6 +85,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		isOpen: isOpenProp,
 		defaultOpen = false,
 		onOpenChange,
+		onClose,
 		isDisabled,
 		isReadOnly,
 		isInvalid,
@@ -300,7 +301,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 
 	return (
 		<DatePickerProvider value={context}>
-			<BottomSheet isOpen={isOpen} onOpenChange={handleSheetOpenChange}>
+			<BottomSheet isOpen={isOpen} onOpenChange={handleSheetOpenChange} onClose={onClose}>
 				<View className={className} testID={testID} {...viewProps}>
 					{children ?? (
 						<>

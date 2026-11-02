@@ -25,6 +25,7 @@ engine. An app that imports no picker still never resolves it.
 | `select.context.tsx` | `SelectProvider`, `useSelect()`, `useSelectContext()`, `useSelectPart()` |
 | `select.types.ts` | `SelectOption`, `SelectOptionGroup`, `SelectRowOption`, `SelectEntry`, `SelectListRow`, `SelectHighlightRange` |
 | `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports — the sheet cap and the searchable list's floor among them |
+| `select.render.test.tsx` | Mounted under Jest inside `BottomSheetProvider` — trigger role, expanded and value, single and multiple picks, controlled and uncontrolled, limit, search, `Field` inheritance, parts outside a root |
 | `select.variants.test.ts` | |
 | `select.collect.test.ts` | |
 

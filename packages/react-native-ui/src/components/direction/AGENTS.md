@@ -15,6 +15,7 @@ which way is start.
 | `direction.context.tsx` | `DirectionProvider` (`DelacourUI.Direction.Provider`), `useDirection`, `useDirectionSign`, `useDirectionContext`, `directionContextValue` |
 | `direction.variants.ts` | `DIRECTIONS` and the pure, `"worklet"`-tagged resolvers: `resolveDirection`, `directionSign`, `physicalSide`, `mirrorX`, `logicalDelta` |
 | `direction.variants.test.ts` | The resolvers, pinned |
+| `direction.render.test.tsx` | Mounted under Jest — context published per `dir`, inheritance, nesting, in-place change, `I18nManager.isRTL` fallback outside a `Direction` |
 
 There is no `tv()`: Direction has no tokens and no styled parts. The `*.variants.ts` file exists
 only because a component's pure resolvers live in a leaf with no React Native imports, so

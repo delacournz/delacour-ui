@@ -112,6 +112,7 @@ export function SplitterHandle({
 
 		const pan = Gesture.Pan()
 			.enabled(!isDisabled)
+			.withTestId(`splitter-handle-${index}-pan`)
 			.minDistance(0)
 			.shouldCancelWhenOutside(false)
 			.hitSlop(isVertical ? { bottom: hitSlop, top: hitSlop } : { left: hitSlop, right: hitSlop })
@@ -163,6 +164,7 @@ export function SplitterHandle({
 
 		const doubleTap = Gesture.Tap()
 			.enabled(!isDisabled)
+			.withTestId(`splitter-handle-${index}-reset`)
 			.numberOfTaps(2)
 			.onEnd(() => {
 				"worklet";

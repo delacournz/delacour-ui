@@ -28,6 +28,7 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 | `date-time-picker-clear.tsx` | `DateTimePicker.Clear` — `null`, reported, stays open |
 | `date-time-picker.context.tsx` | `DateTimePickerProvider`, `useDateTimePicker()`, `useDateTimePickerContext()`, `useDateTimePickerPart()` |
 | `date-time-picker.types.ts` | `DateTimePickerProps` |
+| `date-time-picker.render.test.tsx` | Mounted under Jest — trigger name/value/expanded, open and close (controlled and uncontrolled), value callbacks, auto-advance to Time, stacked time row, Done announcement, Clear, parts outside the root throwing |
 | `date-time-picker.value.ts` | **Pure** `DateTimeValue` helpers: order, window, either-order completion, native `Date`, format, ISO |
 | `date-time-picker.value.test.ts` | |
 | `date-time-picker.variants.ts` | Slotted `tv()` for the panel, the layout constants, and the pure display, a11y and auto-advance rules |

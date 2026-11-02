@@ -18,6 +18,7 @@ be too much ceremony. Compound root plus `SlideButton.Label` and
 | `slide-button.context.tsx` | `SlideButtonContext`, `useSlideButton` |
 | `slide-button.variants.ts` | The slotted `tv()`, the motion constants and the pure resolvers |
 | `slide-button.variants.test.ts` | |
+| `slide-button.render.test.tsx` | Mounted under Jest — accessible name, state and activate action, the drag through `fireGestureHandler`, controlled and uncontrolled, auto-reset, disabled and loading refusals, parts outside the root |
 
 There is no `slide-button.types.ts`: every prop type has exactly one consumer.
 
@@ -106,6 +107,7 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
   running, where dimming says the control is unavailable. The control does not
   infer it from a pending `onComplete` promise — the caller owns the request, so
   the caller says when it is running, the same way `Button` never guesses.
+- **The pan carries `.withTestId(SLIDE_BUTTON_GESTURE_TEST_ID)`** (exported from `slide-button.tsx`, not the barrel) so a render test can drive it with `fireGestureHandler`. No pixel change.
 - **One `Gesture.Pan()` on the rail, `activeOffsetX ±8`, `failOffsetY ±12`.** A
   vertical scroll that starts on the rail fails the pan first, so the control
   survives inside a vertical `ScrollView`. A cancelled pan returns home.

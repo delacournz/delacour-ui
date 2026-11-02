@@ -75,14 +75,14 @@ describe("PageHeader", () => {
 	test("a described Cover is an image; a decorative one is hidden", async () => {
 		await renderWithProviders(
 			<PageHeader>
-				<PageHeader.Cover accessibilityLabel="Harbour at dusk" gradient={["#000000", "#ffffff"]} />
+				<PageHeader.Cover accessibilityLabel="Harbour at dusk" colors={["#000000", "#ffffff"]} />
 			</PageHeader>
 		);
 		expect(screen.getByRole("image", { name: "Harbour at dusk" })).toBeOnTheScreen();
 
 		await screen.rerender(
 			<PageHeader>
-				<PageHeader.Cover gradient={["#000000", "#ffffff"]} />
+				<PageHeader.Cover colors={["#000000", "#ffffff"]} />
 			</PageHeader>
 		);
 		expect(screen.queryByRole("image")).not.toBeOnTheScreen();
@@ -92,7 +92,7 @@ describe("PageHeader", () => {
 		const onPress = jest.fn();
 		await renderWithProviders(
 			<PageHeader>
-				<PageHeader.Cover gradient={["#000000", "#ffffff"]}>
+				<PageHeader.Cover colors={["#000000", "#ffffff"]}>
 					<Button accessibilityLabel="Back" onPress={onPress} />
 				</PageHeader.Cover>
 			</PageHeader>

@@ -204,14 +204,24 @@ describe("useOverlayPresence", () => {
 });
 
 describe("useOverlayBackHandler", () => {
-	function captureBackHandlers(): Array<() => boolean | null | undefined> {
-		const handlers: Array<() => boolean | null | undefined> = [];
+	type BackPress = Parameters<typeof BackHandler.addEventListener>[1];
+	const backEvent = { type: "hardwareBackPress", timeStamp: 0 };
+
+	/** Every subscribed back handler, each callable with no argument. */
+	function captureBackHandlers(): Array<() => boolean | undefined> {
+		const subscribed: BackPress[] = [];
+		const handlers: Array<() => boolean | undefined> = [];
 		jest.spyOn(BackHandler, "addEventListener").mockImplementation((_event, handler) => {
-			handlers.push(handler);
+			const call = () => handler(backEvent);
+			subscribed.push(handler);
+			handlers.push(call);
 			return {
 				remove: () => {
-					const at = handlers.indexOf(handler);
-					if (at >= 0) handlers.splice(at, 1);
+					const at = subscribed.indexOf(handler);
+					if (at >= 0) {
+						subscribed.splice(at, 1);
+						handlers.splice(at, 1);
+					}
 				},
 			};
 		});
@@ -224,7 +234,7 @@ describe("useOverlayBackHandler", () => {
 		await renderWithProviders(<Demo name="one" onBack={onBack} />, { wrapper: Provider });
 		expect(handlers).toHaveLength(1);
 
-		let consumed: boolean | null | undefined;
+		let consumed: boolean | undefined;
 		await act(async () => {
 			consumed = handlers[0]?.();
 		});

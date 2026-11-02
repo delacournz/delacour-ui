@@ -24,6 +24,7 @@ parts.
 | `markdown-editor-preview.tsx` | `MarkdownEditor.Preview` — the preview pane |
 | `markdown-editor-render.tsx` | Internal: parsed blocks → `Text` presets |
 | `*.test.ts` | Commands, parser, variants |
+| `markdown-editor.render.test.tsx` | Mounted under Jest — toolbar actions through `accessibilityTap`, the caret lighting a toggle (`accessibilityState.checked`), controlled and uncontrolled value and mode, preview output, link allow-list, disabled / read-only / `Field` cascade, the handle, `useMarkdownEditor`, parts outside the root throwing. The `activate` action is Android-only and not driven (Jest reports iOS) |
 
 ## Design
 

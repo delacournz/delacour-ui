@@ -1,4 +1,4 @@
-import { type ReactElement, type ReactNode, useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import { type ReactElement, type ReactNode, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { type LayoutChangeEvent, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -84,6 +84,18 @@ export function CalendarGrid({ className, renderDay, ...props }: CalendarGridPro
 
 	const page = useCallback((direction: -1 | 1) => (direction === 1 ? goNext() : goPrev()), [goNext, goPrev]);
 
+	// A swipe that slid the grid off-screen, and the month it left. Held in state so the check below
+	// runs after the render that shows whether the month really changed.
+	const monthKey = serialiseDate(visibleMonth);
+	const [swipe, setSwipe] = useState<{ fromKey: string } | null>(null);
+	const finishSwipe = useCallback(
+		(direction: -1 | 1) => {
+			setSwipe({ fromKey: monthKey });
+			page(direction);
+		},
+		[monthKey, page]
+	);
+
 	const pan = useMemo(
 		() =>
 			Gesture.Pan()
@@ -120,19 +132,18 @@ export function CalendarGrid({ className, renderDay, ...props }: CalendarGridPro
 					}
 					translateX.value = withTiming(-direction * width.value, SLIDE, (finished) => {
 						"worklet";
-						if (finished) scheduleOnRN(page, direction);
+						if (finished) scheduleOnRN(finishSwipe, direction);
 					});
 				})
 				.onFinalize((_event, success) => {
 					"worklet";
 					if (!success) translateX.value = withSpring(0, SETTLE_SPRING);
 				}),
-		[canGoNext, canGoPrev, isCalm, isDisabled, page, swipeToPage, translateX, view, width]
+		[canGoNext, canGoPrev, finishSwipe, isCalm, isDisabled, page, swipeToPage, translateX, view, width]
 	);
 
 	// The new month slides in from the side the old one left by. Skipped on the first render — a
 	// calendar does not animate onto the screen — and for a jump, which has no side.
-	const monthKey = serialiseDate(visibleMonth);
 	const previousKey = useRef(monthKey);
 	useLayoutEffect(() => {
 		if (previousKey.current === monthKey) return;
@@ -143,6 +154,14 @@ export function CalendarGrid({ className, renderDay, ...props }: CalendarGridPro
 		}
 		translateX.value = withSequence(withTiming(pageDirection * width.value, { duration: 0 }), withTiming(0, SLIDE));
 	}, [isCalm, monthKey, pageDirection, translateX, width]);
+
+	// A parent that holds `month` still, or a controlled calendar with no `onMonthChange`, leaves
+	// the month unchanged after a swipe. Then the entrance above never runs, so the same grid slides
+	// back from the side it left by.
+	useLayoutEffect(() => {
+		if (!swipe || previousKey.current !== swipe.fromKey) return;
+		translateX.value = withTiming(0, SLIDE);
+	}, [swipe, translateX]);
 
 	const slideStyle = useAnimatedStyle(() => ({ transform: [{ translateX: translateX.value }] }));
 

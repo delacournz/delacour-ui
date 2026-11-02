@@ -179,8 +179,11 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		[cancelPendingClose, isCalm, locale, presentation, setOpen]
 	);
 
+	// Every tap cancels the last selection's pending close. `finish()` schedules a new one only
+	// when this selection is complete, so a new range start or a deselect keeps the sheet open.
 	const select = useCallback(
 		(next: CalendarSelectionState) => {
+			cancelPendingClose();
 			if (next.mode === "range" && !resolveShouldClose(next)) {
 				setRangeDraft(next.value);
 				return;
@@ -189,7 +192,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			setValue(next);
 			if (resolveShouldClose(next)) finish(next);
 		},
-		[finish, setValue]
+		[cancelPendingClose, finish, setValue]
 	);
 
 	const clear = useCallback(() => {

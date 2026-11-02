@@ -17,6 +17,7 @@ digits, or one inline run of text.
 | `use-countdown-clock.ts` | The tick: wall-clock reads, second-aligned timeout, `AppState` re-read, `onTick` / `onComplete` |
 | `countdown.variants.ts` | Slotted `tv()` + every pure resolver — split, trim, format, label, tick alignment, urgency |
 | `countdown.variants.test.ts` | |
+| `countdown.render.test.tsx` | Mounted under Jest — timer role and coarse label, units/trim/inline text, fake-timer ticks, `onTick`, `onComplete` once per target, re-arming on a new `to` |
 
 No context and no `countdown.types.ts`: the parts are internal, take their
 values as props, and share no type that `countdown.variants.ts` does not already

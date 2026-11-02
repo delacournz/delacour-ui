@@ -353,6 +353,22 @@ export function isMonthInBounds(
 }
 
 /**
+ * Where the visible month has to move when the bounds change under it: the nearest bound's month,
+ * or `null` when it is still inside them. Without this, moving `minDate` past the visible month
+ * would disable both arrows and the swipe, with no way back to a day that can be picked.
+ */
+export function reconcileVisibleMonth(
+	visibleMonth: CalendarDate,
+	bounds: { first: CalendarDate | null; last: CalendarDate | null }
+): CalendarDate | null {
+	if (isMonthInBounds(visibleMonth, bounds)) return null;
+	// Inverted bounds hold no month at all; moving to either one would only bounce to the other.
+	if (bounds.first && bounds.last && compareMonths(bounds.first, bounds.last) > 0) return null;
+	if (bounds.first && compareMonths(visibleMonth, bounds.first) < 0) return bounds.first;
+	return bounds.last;
+}
+
+/**
  * Which way selecting `date` pages the grid: towards an outside day's month, or `0` to stay.
  *
  * It never pages past a bound — an outside day beyond `endMonth` is still selected, but the grid

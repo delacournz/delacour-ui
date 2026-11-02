@@ -26,6 +26,7 @@ import {
 	calendarVariants,
 	isDateSelected,
 	isMonthInBounds,
+	reconcileVisibleMonth,
 	resolveCalendarAxes,
 	resolveMonthBounds,
 	resolveRangeRole,
@@ -166,6 +167,15 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 
 	const [view, setView] = useState<CalendarView>("days");
 	const [pageDirection, setPageDirection] = useState<-1 | 0 | 1>(0);
+
+	// New bounds can leave the visible month outside them. Move it to the nearest bound and report
+	// the change, so the arrows and the swipe always have somewhere to go.
+	useEffect(() => {
+		const held = reconcileVisibleMonth(visibleMonth, monthBounds);
+		if (!held) return;
+		setPageDirection(0);
+		setVisibleMonth(held);
+	}, [monthBounds, setVisibleMonth, visibleMonth]);
 
 	const goToMonth = useCallback(
 		(date: CalendarDate) => {

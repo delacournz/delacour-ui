@@ -11,6 +11,7 @@ import {
 	type CalendarRangeRole,
 	calendarVariants,
 	isDateSelected,
+	reconcileVisibleMonth,
 	resolveCalendarAxes,
 	resolveDayState,
 	resolveDayTone,
@@ -323,6 +324,22 @@ describe("resolveMonthBounds", () => {
 		expect(resolveMonthBounds({ minDate: d(2026, 5, 20) }).first).toEqual(d(2026, 5, 1));
 		expect(resolveMonthBounds({ maxDate: d(2026, 12, 20) }).last).toEqual(d(2026, 12, 1));
 		expect(resolveMonthBounds({})).toEqual({ first: null, last: null });
+	});
+});
+
+describe("reconcileVisibleMonth", () => {
+	test("leaves a month inside the bounds alone", () => {
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: d(2026, 1, 1), last: d(2026, 12, 1) })).toBeNull();
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: null, last: null })).toBeNull();
+	});
+
+	test("moves a month the bounds left behind to the nearest bound", () => {
+		expect(reconcileVisibleMonth(d(2026, 1, 1), { first: d(2026, 6, 1), last: null })).toEqual(d(2026, 6, 1));
+		expect(reconcileVisibleMonth(d(2026, 12, 1), { first: null, last: d(2026, 6, 1) })).toEqual(d(2026, 6, 1));
+	});
+
+	test("holds still under inverted bounds, which no month satisfies", () => {
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: d(2026, 9, 1), last: d(2026, 6, 1) })).toBeNull();
 	});
 });
 

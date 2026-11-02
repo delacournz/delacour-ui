@@ -482,6 +482,34 @@ describe("drift guard", () => {
 		}
 	});
 
+	test("ci.yml's dispatch picks report or signoff from a dropdown, with an optional PR and SHA", async () => {
+		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
+			on: { workflow_dispatch: { inputs: Record<string, { type: string; required?: boolean; options?: string[] }> } };
+		};
+		const inputs = workflow.on.workflow_dispatch.inputs;
+		expect(inputs.mode?.type).toBe("choice");
+		expect(inputs.mode?.options).toEqual(["report", "signoff"]);
+		expect(inputs.pr).toMatchObject({ type: "string", required: false });
+		expect(inputs["signoff-sha"]).toMatchObject({ type: "string", required: false });
+	});
+
+	const RESOLVED_SHA = ["$", "{{ needs.resolve.outputs.sha }}"].join("");
+
+	test("every ci.yml job tests the commit resolve picked, so a signoff covers the tree it ran", async () => {
+		// A dispatch for a PR or SHA runs on the dispatched ref's workflow file. Without an explicit
+		// checkout of the resolved SHA, the jobs would test that ref and sign a commit they never saw.
+		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
+			jobs: Record<string, { needs?: string | string[]; steps?: { uses?: string; with?: { ref?: string } }[] }>;
+		};
+		for (const [name, job] of Object.entries(workflow.jobs)) {
+			if (name === "resolve") continue;
+			const needs = [job.needs ?? []].flat();
+			expect({ name, needsResolve: needs.includes("resolve") }).toEqual({ name, needsResolve: true });
+			const checkout = job.steps?.find((step) => step.uses?.startsWith("actions/checkout@"));
+			if (checkout) expect({ name, ref: checkout.with?.ref }).toEqual({ name, ref: RESOLVED_SHA });
+		}
+	});
+
 	test("no check declares an empty command", () => {
 		for (const check of SIGNOFF_CHECKS) {
 			expect(check.run.length).toBeGreaterThan(0);

@@ -149,6 +149,9 @@ export function CalendarGrid({ className, renderDay, ...props }: CalendarGridPro
 	const weeks = useMemo(() => monthGrid(visibleMonth, weekStartsOn), [visibleMonth, weekStartsOn]);
 	const isPicking = view !== "days";
 
+	// The picker is keyed by its view, so reopening the years view from the months view mounts a
+	// new list that scrolls to the visible year again, instead of a reused one that already did.
+
 	return (
 		<View className={slots.grid({ className })} onLayout={handleLayout} {...props}>
 			<GestureDetector gesture={pan}>
@@ -176,7 +179,7 @@ export function CalendarGrid({ className, renderDay, ...props }: CalendarGridPro
 					))}
 				</Animated.View>
 			</GestureDetector>
-			{isPicking ? <CalendarPicker /> : null}
+			{isPicking ? <CalendarPicker key={view} /> : null}
 		</View>
 	);
 }

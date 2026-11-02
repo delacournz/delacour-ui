@@ -87,23 +87,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"tooltip",
 	"tour",
 
-	// RNTL P6 — navigation & layout
-	"accordion",
-	"breadcrumb",
-	"collapsible",
-	"grid-item",
-	"item",
-	"list-group",
-	"pagination",
-	"section-progress",
-	"section-rail",
-	"split-view",
-	"splitter",
-	"steps",
-	"table",
-	"tabs",
-	"tree",
-
 	// RNTL P7 — scroll & motion
 	"carousel",
 	"circular-text",

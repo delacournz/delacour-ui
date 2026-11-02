@@ -26,6 +26,7 @@ sheets.
 | `calendar.date.test.ts` | |
 | `calendar.variants.ts` | Slotted `tv()`, the day-state, range-role, bounds, axes and page-direction resolvers |
 | `calendar.variants.test.ts` | |
+| `calendar.render.test.tsx` | Mounted under Jest — single/multiple/range selection, disabled matchers and bounds, month paging (arrows, caption actions, controlled month), part errors outside a root; clock fixed with fake timers |
 
 ## The date leaf
 

@@ -153,10 +153,11 @@ export function SliderThumb({
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
+			if (isDisabled) return;
 			const direction = event.nativeEvent.actionName === "increment" ? 1 : -1;
 			updateValue(index, value + direction * nudge);
 		},
-		[index, nudge, updateValue, value]
+		[index, isDisabled, nudge, updateValue, value]
 	);
 
 	return (

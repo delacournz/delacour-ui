@@ -61,18 +61,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"tag-input",
 	"textarea",
 
-	// RNTL P4 — date/time & pickers
-	"calendar",
-	"color-picker",
-	"countdown",
-	"date-picker",
-	"date-time-picker",
-	"planner",
-	"questionnaire",
-	"selection-mode",
-	"time-picker",
-	"timeline",
-
 	// RNTL P5 — overlays
 	"bottom-sheet",
 	"context-menu",

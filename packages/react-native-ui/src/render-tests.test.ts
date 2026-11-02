@@ -47,20 +47,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"support",
 	"toggle-button",
 
-	// RNTL P3 — form controls
-	"checkbox",
-	"combobox",
-	"field",
-	"input",
-	"number-input",
-	"otp-input",
-	"radio",
-	"search-bar",
-	"select",
-	"slider",
-	"tag-input",
-	"textarea",
-
 	// RNTL P4 — date/time & pickers
 	"calendar",
 	"color-picker",

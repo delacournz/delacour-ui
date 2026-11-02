@@ -186,5 +186,33 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback.render.test.tsx",
+			"target": "feedback/feedback.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"overlay",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

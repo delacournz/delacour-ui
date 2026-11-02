@@ -27,6 +27,7 @@ and `GridItem.Actions`.
 | `grid-item.layout.test.ts` | |
 | `grid-item.variants.ts` | The slotted `tv()`, the variant/size/render resolvers, the label joiner and the background-first ordering — no RN imports |
 | `grid-item.variants.test.ts` | |
+| `grid-item.render.test.tsx` | Mounted under Jest — joined/overridden accessibility label, press/long-press/disabled/busy gating, static tile state, parts and their outside-root errors, group list role, order and inherited variant/size |
 
 ## Design
 

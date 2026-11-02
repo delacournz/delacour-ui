@@ -21,6 +21,7 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
 | `tour.types.ts` | `TourStepEntry` and `TourGeometryProps`, shared by the root, the step and the overlay |
 | `tour.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `tour.variants.test.ts` | |
+| `tour.render.test.tsx` | Mounted under Jest — start/next/back/skip/finish flows and callbacks, announcement and progress, controlled vs uncontrolled open and step, a11y hiding of the app, parts outside a Tour throwing. Hole geometry is not covered: `measureInWindow` never resolves under Jest |
 
 ## Design
 

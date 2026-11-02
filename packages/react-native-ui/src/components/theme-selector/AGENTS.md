@@ -19,6 +19,7 @@ hook for the live theme with no selector mounted.
 | `theme-selector.logic.test.ts` | |
 | `theme-selector.variants.ts` | The slotted `tv()` and the group/hit-slop resolvers |
 | `theme-selector.variants.test.ts` | |
+| `theme-selector.render.test.tsx` | Mounted under Jest — radio semantics, press order (setTheme then onValueChange), value/applyTheme, disabled and Field, Option outside root |
 | `use-theme-selection.ts` | `useThemeSelection()` — the only file importing `uniwind` |
 
 ## Design

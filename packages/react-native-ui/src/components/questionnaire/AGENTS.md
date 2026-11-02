@@ -18,6 +18,7 @@ Compound root plus `Questionnaire.Title`, `.Progress`, `.Question`, `.Footer`, `
 | `questionnaire.logic.test.ts` | |
 | `questionnaire.variants.ts` | Pure slotted `tv()`, the axes table and the footer-button resolver |
 | `questionnaire.variants.test.ts` | |
+| `questionnaire.render.test.tsx` | Mounted under Jest — every control kind, answering, footer enablement and errors, Submit and its pending promise, progress values, controlled and uncontrolled state, parts outside the root |
 | `questionnaire-title.tsx` | `Questionnaire.Title` |
 | `questionnaire-progress.tsx` | `Questionnaire.Progress` — `bar` (`Progress`), `steps` (`Steps`), `count` (text) |
 | `questionnaire-question.tsx` | `Questionnaire.Question` — `Field`, heading, transition, announcements |

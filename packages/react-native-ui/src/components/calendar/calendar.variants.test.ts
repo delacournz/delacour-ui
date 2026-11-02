@@ -18,6 +18,7 @@ import {
 	resolvePageDirection,
 	resolvePartTestID,
 	resolveRangeRole,
+	resolveSelectionPage,
 } from "./calendar.variants";
 
 function d(year: number, month: number, day: number): CalendarDate {
@@ -322,6 +323,25 @@ describe("resolveMonthBounds", () => {
 		expect(resolveMonthBounds({ minDate: d(2026, 5, 20) }).first).toEqual(d(2026, 5, 1));
 		expect(resolveMonthBounds({ maxDate: d(2026, 12, 20) }).last).toEqual(d(2026, 12, 1));
 		expect(resolveMonthBounds({})).toEqual({ first: null, last: null });
+	});
+});
+
+describe("resolveSelectionPage", () => {
+	const visible = d(2026, 10, 1);
+	const bounds = { first: d(2026, 1, 1), last: d(2026, 10, 1) };
+
+	test("a day in the visible month stays put", () => {
+		expect(resolveSelectionPage(d(2026, 10, 31), visible, bounds)).toBe(0);
+	});
+
+	test("an outside day in bounds pages towards its month", () => {
+		expect(resolveSelectionPage(d(2026, 9, 28), visible, bounds)).toBe(-1);
+		expect(resolveSelectionPage(d(2026, 11, 2), visible, { first: null, last: null })).toBe(1);
+	});
+
+	test("an outside day past a bound never pages", () => {
+		expect(resolveSelectionPage(d(2026, 11, 2), visible, bounds)).toBe(0);
+		expect(resolveSelectionPage(d(2025, 12, 29), d(2026, 1, 1), bounds)).toBe(0);
 	});
 });
 

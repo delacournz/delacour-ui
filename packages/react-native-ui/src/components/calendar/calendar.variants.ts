@@ -6,8 +6,10 @@ import {
 	type CalendarDateRange,
 	type CalendarSelectionState,
 	compareDates,
+	compareMonths,
 	isBetween,
 	isSameDay,
+	isSameMonth,
 	startOfMonth,
 } from "./calendar.date";
 
@@ -348,6 +350,21 @@ export function isMonthInBounds(
 	if (first && compareDates(start, first) < 0) return false;
 	if (last && compareDates(start, last) > 0) return false;
 	return true;
+}
+
+/**
+ * Which way selecting `date` pages the grid: towards an outside day's month, or `0` to stay.
+ *
+ * It never pages past a bound — an outside day beyond `endMonth` is still selected, but the grid
+ * stays on the last month, the same limit the arrows and the swipe keep.
+ */
+export function resolveSelectionPage(
+	date: CalendarDate,
+	visibleMonth: CalendarDate,
+	bounds: { first: CalendarDate | null; last: CalendarDate | null }
+): -1 | 0 | 1 {
+	if (isSameMonth(date, visibleMonth) || !isMonthInBounds(date, bounds)) return 0;
+	return compareMonths(date, visibleMonth) > 0 ? 1 : -1;
 }
 
 /**

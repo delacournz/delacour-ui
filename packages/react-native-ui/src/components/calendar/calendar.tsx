@@ -29,6 +29,7 @@ import {
 	resolveCalendarAxes,
 	resolveMonthBounds,
 	resolveRangeRole,
+	resolveSelectionPage,
 } from "./calendar.variants";
 import { CalendarCaption } from "./calendar-caption";
 import { CalendarDay } from "./calendar-day";
@@ -210,12 +211,21 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		(date: CalendarDate) => {
 			if (axes.isDisabled || axes.isReadOnly || isDateDisabled(date)) return;
 			setSelection(nextSelection(selection, date, isDateDisabled));
-			if (!isSameMonth(date, visibleMonth)) {
-				setPageDirection(compareMonths(date, visibleMonth) > 0 ? 1 : -1);
-				setVisibleMonth(startOfMonth(date));
-			}
+			const direction = resolveSelectionPage(date, visibleMonth, monthBounds);
+			if (direction === 0) return;
+			setPageDirection(direction);
+			setVisibleMonth(startOfMonth(date));
 		},
-		[axes.isDisabled, axes.isReadOnly, isDateDisabled, selection, setSelection, setVisibleMonth, visibleMonth]
+		[
+			axes.isDisabled,
+			axes.isReadOnly,
+			isDateDisabled,
+			monthBounds,
+			selection,
+			setSelection,
+			setVisibleMonth,
+			visibleMonth,
+		]
 	);
 
 	// The month is announced when it changes, never on mount — the caption already says it.

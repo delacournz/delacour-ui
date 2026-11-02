@@ -20,6 +20,7 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
 | `slider.types.ts` | Prop types shared by two or more parts |
 | `slider.variants.ts` | Pure `tv()` slots + the geometry worklets, no RN imports |
 | `slider.variants.test.ts` | |
+| `slider.render.test.tsx` | Mounted under Jest — adjustable thumb value and name, increment/decrement actions with step and clamp, callbacks, controlled/uncontrolled, range, disabled, parts outside a Slider. The drag is not reachable in Jest |
 
 ## Design
 
@@ -272,3 +273,14 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   acquire a paint axis by accident. The slider does **not** register
   `field.registerPress` the way a `Checkbox` does — a row-wide press has no
   meaning for a control whose value is a position.
+
+## Render-test fixes
+
+- **A disabled slider ignored `isDisabled` on the assistive path.** The pan was `.enabled(!isDisabled)`
+  but the thumb's increment/decrement handler was not gated, so VoiceOver could still move a disabled
+  slider. The handler now returns early.
+- **`onChange` fired on mount.** `Slider.Track`'s `useAnimatedReaction` treated its first run
+  (`previous === null`) as a change and mirrored the seed back. It now returns on the seed.
+- **An assistive step reported `onChange` twice.** `updateValue` calls `setCurrent`, then writing
+  `positions` made the reaction mirror the same values through `commitValues`. The root remembers what
+  `updateValue` reported (`reportedRef`) and `commitValues` skips that one echo.

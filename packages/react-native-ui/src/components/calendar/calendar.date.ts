@@ -238,6 +238,9 @@ export function monthGrid(month: CalendarDate, weekStartsOn: Weekday): CalendarC
  *
  * A century rather than a decade because the commonest unbounded use is a birth date, and a
  * person born sixty years ago should not have to page to find their year.
+ *
+ * An open side reaches from whichever is further out, the visible year or the opposite bound, so
+ * the span is never empty: an end month in 1900 seen from 2026 lists 1800–1900, not 1926–1900.
  */
 export function resolveYearSpan({
 	visible,
@@ -249,8 +252,8 @@ export function resolveYearSpan({
 	endMonth?: CalendarDate | null;
 }): { from: number; to: number } {
 	return {
-		from: startMonth?.year ?? visible.year - CALENDAR_YEAR_REACH,
-		to: endMonth?.year ?? visible.year + CALENDAR_YEAR_REACH,
+		from: startMonth?.year ?? Math.min(visible.year, endMonth?.year ?? visible.year) - CALENDAR_YEAR_REACH,
+		to: endMonth?.year ?? Math.max(visible.year, startMonth?.year ?? visible.year) + CALENDAR_YEAR_REACH,
 	};
 }
 

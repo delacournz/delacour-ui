@@ -230,9 +230,17 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		() => (weekStartsOn === "auto" ? resolveWeekStart(locale) : weekStartsOn),
 		[locale, weekStartsOn]
 	);
+	// Anchored to the visible month, not today, so a calendar that opens far in the past or future
+	// still lists its own year.
+	const visibleYear = visibleMonth.year;
 	const yearSpan = useMemo(
-		() => resolveYearSpan({ endMonth: monthBounds.last, startMonth: monthBounds.first, visible: today }),
-		[monthBounds.first, monthBounds.last, today]
+		() =>
+			resolveYearSpan({
+				endMonth: monthBounds.last,
+				startMonth: monthBounds.first,
+				visible: { day: 1, month: 1, year: visibleYear },
+			}),
+		[monthBounds.first, monthBounds.last, visibleYear]
 	);
 
 	const context = useMemo<CalendarContextValue>(

@@ -453,4 +453,12 @@ describe("resolveYearSpan", () => {
 	test("reaches a century either side when unbounded", () => {
 		expect(resolveYearSpan({ visible: d(2026, 10, 1) })).toEqual({ from: 1926, to: 2126 });
 	});
+
+	test("reaches back from an end month earlier than the visible year, never leaving the span empty", () => {
+		expect(resolveYearSpan({ visible: d(2026, 10, 1), endMonth: d(1900, 1, 1) })).toEqual({ from: 1800, to: 1900 });
+	});
+
+	test("reaches forward from a start month later than the visible year", () => {
+		expect(resolveYearSpan({ visible: d(2026, 10, 1), startMonth: d(2200, 1, 1) })).toEqual({ from: 2200, to: 2300 });
+	});
 });

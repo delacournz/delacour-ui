@@ -48,6 +48,7 @@ primitive, swap the Modal inside `ImageViewerLayer` only — no public API moves
 | `image-viewer.context.tsx` | The public context and the Trigger plumbing, with their hooks |
 | `image-viewer.types.ts` | `ImageViewerImage` and the `renderImage` contract |
 | `image-viewer.variants.ts` | Pure `tv()` slots, constants and every gesture, frame and dismiss resolver |
+| `image-viewer.render.test.tsx` | Mounted under Jest — Trigger opening, paging via accessibility actions, controlled/uncontrolled open and index, data mode, chrome, Close, parts outside the root throwing. Stubs `View.prototype.measureInWindow` (the RN mock never calls back); gestures are not driven |
 | `image-viewer.variants.test.ts` | Including the `media` token pair against `theme.css` |
 
 Paging — the pan's position, the settle target, the mounted window — is
@@ -112,6 +113,10 @@ never copied, and nothing here imports `../carousel`.
   starts the close animation, and the layer unmounts only from `onExited` at its
   end. Re-opening mid-close retargets the same values and the interrupted close
   never fires `onExited`.
+- **Composed mode waits for its Triggers before opening.** On the first commit no
+  Trigger has registered yet, so `count` is 0; closing then would make
+  `defaultOpen` (or a controlled `open`) shut itself on mount. Only data mode with
+  an empty `images` closes for want of an image.
 - **Status bar:** a `StatusBar barStyle="light-content"` inside the Modal. The
   stage is dark in both themes, and React Native's StatusBar stack restores the
   app's own style when it unmounts.

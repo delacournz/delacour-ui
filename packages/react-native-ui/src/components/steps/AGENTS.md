@@ -22,6 +22,7 @@ internal and drawn by the items themselves.
 | `steps.context.tsx` | The stepper's and the step's contexts, with their hooks |
 | `steps.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `steps.variants.test.ts` | |
+| `steps.render.test.tsx` | Mounted under Jest — step role/name/value/selected, press and onValueChange, controlled vs uncontrolled, read-only, disabled/busy/isLinear, panel, parts outside their root |
 
 ## Design
 

@@ -129,7 +129,9 @@ export function CarouselContent({
 		const fail = [-CAROUSEL_PAN.fail, CAROUSEL_PAN.fail] as [number, number];
 		const translationKey = isHorizontal ? "translationX" : "translationY";
 		const velocityKey = isHorizontal ? "velocityX" : "velocityY";
-		const pan = Gesture.Pan().enabled(!isDisabled && isScrollEnabled && count > 1);
+		const pan = Gesture.Pan()
+			.withTestId("carousel-pan")
+			.enabled(!isDisabled && isScrollEnabled && count > 1);
 		const axis = isHorizontal
 			? pan.activeOffsetX(activate).failOffsetY(fail)
 			: pan.activeOffsetY(activate).failOffsetX(fail);

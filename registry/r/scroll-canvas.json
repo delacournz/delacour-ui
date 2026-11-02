@@ -101,5 +101,34 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas.render.test.tsx",
+			"target": "scroll-canvas/scroll-canvas.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				},
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../provider",
+					"to": "@registry/ui/provider"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"provider",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals",
+		"@testing-library/react-native"
 	]
 }

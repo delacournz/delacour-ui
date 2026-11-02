@@ -34,6 +34,7 @@ asks for it.
 | `time-picker.time.test.ts` | The helpers, including every hour's 12↔24 round trip |
 | `time-picker.variants.ts` | The slotted `tv()`, the trigger resolver, the row heights, the scroll-index worklets, the column models |
 | `time-picker.variants.test.ts` | Tokens in both themes, rule 1, Input parity, the wheel maths, the column models |
+| `time-picker.render.test.tsx` | Mounted under Jest — trigger semantics, sheet open/close, Done/Clear, controlled and uncontrolled, the wheel columns stepped through accessibility increment/decrement, 12/24-hour, seconds, bounds, inline, parts outside a root |
 
 ## Anatomy
 

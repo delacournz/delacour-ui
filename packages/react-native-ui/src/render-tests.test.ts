@@ -33,20 +33,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"text",
 	"theme-selector",
 
-	// RNTL P2 — press & actions
-	"alert",
-	"chip",
-	"empty-state",
-	"fab",
-	"feedback",
-	"kpi",
-	"pressable",
-	"progress-button",
-	"rating",
-	"slide-button",
-	"support",
-	"toggle-button",
-
 	// RNTL P3 — form controls
 	"checkbox",
 	"combobox",

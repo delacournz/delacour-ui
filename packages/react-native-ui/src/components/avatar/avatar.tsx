@@ -14,6 +14,7 @@ import {
 } from "./avatar.utils";
 import {
 	AVATAR_FOREGROUND_TOKEN,
+	AVATAR_SIZE_POINTS,
 	type AvatarColor,
 	type AvatarSize,
 	type AvatarVariant,
@@ -72,8 +73,9 @@ function AvatarRoot({
 	);
 
 	// Remembered by key, not by object: an inline `source={{ uri }}` is a new
-	// object every render, and a new URI has to retry on its own.
-	const sourceKey = resolveAvatarSourceKey(source);
+	// object every render, and a new URI has to retry on its own. The edge is in
+	// the key because a list of resolutions picks its entry by the face's size.
+	const sourceKey = resolveAvatarSourceKey(source, { edge: AVATAR_SIZE_POINTS[size] });
 	const [failedKey, setFailedKey] = useState<string | null>(null);
 	const showsImage = resolveAvatarShowsImage({ sourceKey, failedKey });
 	const slots = avatarVariants({ size, variant, color, isDisabled, hasImage: showsImage });

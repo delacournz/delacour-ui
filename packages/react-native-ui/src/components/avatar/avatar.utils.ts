@@ -96,11 +96,15 @@ function entryKey(entry: AvatarSourceEntry): unknown {
  *
  * `null` means there is nothing to load.
  */
-export function resolveAvatarSourceKey(source: AvatarSource | null | undefined): string | null {
+export function resolveAvatarSourceKey(
+	source: AvatarSource | null | undefined,
+	{ edge }: { edge?: number } = {}
+): string | null {
 	if (source === null || source === undefined) return null;
 	const entries: readonly AvatarSourceEntry[] = Array.isArray(source) ? source : [source as AvatarSourceEntry];
 	const keys = entries.map(entryKey).filter((key) => key !== null);
-	return keys.length === 0 ? null : JSON.stringify(keys);
+	if (keys.length === 0) return null;
+	return JSON.stringify(keys.length > 1 && edge !== undefined ? [...keys, ["edge", edge]] : keys);
 }
 
 /**

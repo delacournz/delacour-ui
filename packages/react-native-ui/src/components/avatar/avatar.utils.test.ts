@@ -110,6 +110,17 @@ describe("resolveAvatarSourceKey", () => {
 		);
 	});
 
+	test("changes with the face's edge for a list, so a failure at one size does not block another resolution", () => {
+		const list = [{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/3x.png" }];
+		expect(resolveAvatarSourceKey(list, { edge: 32 })).not.toBe(resolveAvatarSourceKey(list, { edge: 96 }));
+	});
+
+	test("ignores the edge for a single source, which loads the same image at every size", () => {
+		const one = { uri: "https://a.test/1.png" };
+		expect(resolveAvatarSourceKey(one, { edge: 32 })).toBe(resolveAvatarSourceKey(one, { edge: 96 }));
+		expect(resolveAvatarSourceKey([one], { edge: 32 })).toBe(resolveAvatarSourceKey([one], { edge: 96 }));
+	});
+
 	test("changes when the uri changes", () => {
 		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png" })).not.toBe(
 			resolveAvatarSourceKey({ uri: "https://a.test/2.png" })

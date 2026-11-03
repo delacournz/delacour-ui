@@ -151,7 +151,9 @@ function TextAnimationReveal({
 	const isCalm = useCalmMotion();
 	const textClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
 	const step = stagger ?? TEXT_ANIMATION_STAGGER[split];
-	const [lines, setLines] = useState<readonly string[] | null>(null);
+	// Lines belong to the text they were measured from; a new text waits for its own.
+	const [measured, setMeasured] = useState<{ text: string; lines: readonly string[] } | null>(null);
+	const lines = measured?.text === children ? measured.lines : null;
 
 	const { pieces, count: pieceCount } = useMemo(
 		() => (split === "line" ? { pieces: [], count: 0 } : buildPieces(children, split)),
@@ -169,14 +171,19 @@ function TextAnimationReveal({
 	// One guard per run, shared by the clock and the calm path, so toggling calm
 	// motion during or after a run never reports the same run twice.
 	const reportedRunRef = useRef<string | null>(null);
+	const [finishedRun, setFinishedRun] = useState<string | null>(null);
 	const finish = () => {
 		if (reportedRunRef.current === runKey) return;
 		reportedRunRef.current = runKey;
+		setFinishedRun(runKey);
 		onFinished?.();
 	};
 
+	// A `line` split has no units until the paragraph is measured, so its clock
+	// waits for them rather than reaching a zero limit on an empty reveal.
+	const isMeasured = split !== "line" || lines !== null;
 	const elapsed = useTextAnimationClock({
-		isRunning: isActive && !isCalm,
+		isRunning: isActive && !isCalm && isMeasured,
 		runKey,
 		limitMs: total,
 		onLimit: finish,
@@ -194,7 +201,9 @@ function TextAnimationReveal({
 		delayMs,
 		durationMs,
 		effect,
-		isAtRest: isCalm,
+		// After the finish a remeasure — new line breaks — shows its lines whole
+		// instead of partly revealed on a clock that has stopped.
+		isAtRest: isCalm || finishedRun === runKey,
 		delays,
 		allowFontScaling,
 		maxFontSizeMultiplier,
@@ -202,10 +211,13 @@ function TextAnimationReveal({
 
 	const onTextLayout = (event: TextLayoutEvent) => {
 		const next = event.nativeEvent.lines.map((line) => line.text.replace(/\s+$/, ""));
-		setLines((previous) =>
-			previous !== null && previous.length === next.length && previous.every((line, i) => line === next[i])
+		setMeasured((previous) =>
+			previous !== null &&
+			previous.text === children &&
+			previous.lines.length === next.length &&
+			previous.lines.every((line, i) => line === next[i])
 				? previous
-				: next
+				: { text: children, lines: next }
 		);
 	};
 

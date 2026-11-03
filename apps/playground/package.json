@@ -106,6 +106,14 @@
 		"@types/culori": "^4.0.1",
 		"@types/react": "catalog:",
 		"dotenv-cli": "^11.0.0",
-		"typescript": "~6.0.3"
+		"typescript": "catalog:",
+		"typescript-6": "catalog:"
+	},
+	"expo": {
+		"install": {
+			"exclude": [
+				"typescript"
+			]
+		}
 	}
 }

@@ -243,6 +243,6 @@
 		"expo-router": "~58.0.24",
 		"react-native-teleport": "^1.2.2",
 		"tailwind-merge": "^3.6.0",
-		"typescript": "~6.0.3"
+		"typescript": "catalog:"
 	}
 }

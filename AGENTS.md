@@ -246,6 +246,7 @@ Shared native and React versions are pinned once, in the root `package.json`
 react-native-gesture-handler ~3.3.0  react-native-keyboard-controller 1.22.7  react-native-reanimated 4.7.1
 react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.9.0
 react-native-svg 15.16.0  react-native-worklets 0.13.0
+typescript ^7.0.2  typescript-6 npm:typescript@~6.0.3
 ```
 
 Every version here is the one Expo SDK 58 bundles. That is the rule, not a coincidence: `expo
@@ -268,6 +269,33 @@ copies were always installed and only bun's hoisting order decided which one lan
 Rename a package and that order changes — `packages/react-native-ui` then compiled against a different
 `@types/react` from the app, every `ComponentRef<typeof Animated.View>` collapsed to `never`, and
 `tsc` blamed `pressable.tsx`.
+
+`typescript` is catalogued for `@types/react`'s reason — eleven workspaces each pinned it — and is
+the second exception to the SDK rule. It is the native **TypeScript 7** compiler,
+so every `tsc` and `turbo typecheck` is the Go one — a forced `turbo typecheck` spends about 16s in
+`tsc` across the workspaces where TypeScript 6 spent about 40s (the turbo wall time barely moves,
+because `@delacour/web#codegen`'s `vite build` is its critical path). Expo SDK 58 expects `~6.0.3`, so
+`apps/playground` lists `typescript` under `expo.install.exclude` — without it `expo install --check`
+flags it and `--fix` would put 6 back.
+
+TypeScript 7's npm package no longer exports the classic compiler API: `exports["."]` is only
+`lib/version.cjs`, and `typescript/unstable/*` has no in-process parser — a `SourceFile` comes from a
+`Program` on the Go server, over IPC. Three build-time scripts need `preProcessFile` and
+`createSourceFile`, so they import **`typescript-6`**, an npm alias of `typescript@~6.0.3`, declared
+only where they live:
+
+| File | Uses |
+| --- | --- |
+| `packages/cli/src/registry/scan-imports.ts` | `preProcessFile` — type-only imports and `export type … from`, which `Bun.Transpiler` drops (cli rule 2) |
+| `apps/playground/scripts/previews/demo-source.ts` | `createSourceFile` and the node guards, to read a demo's `meta` and imports |
+| `apps/playground/scripts/previews/spec-source.ts` | the same, to read a spec's `capture` calls |
+
+Write `from "typescript-6"` for the compiler API; `from "typescript"` type-checks as nothing but a
+version string. Drop the alias when `typescript/unstable/ast` grows a synchronous parser.
+
+The one TypeScript that does **not** follow the catalog is the `verify:expo` scaffold's
+(`packages/cli/scripts/verify/harness.ts`): it models a consumer's freshly created Expo app, so it
+pins whatever Expo's template ships.
 
 **Bump a version in the catalog, never in a package.** Two versions of a native
 module register twice and break at runtime — which is also why `react-native-ui`

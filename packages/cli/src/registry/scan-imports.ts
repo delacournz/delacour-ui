@@ -1,4 +1,4 @@
-import ts from "typescript";
+import ts from "typescript-6";
 
 /**
  * Every module specifier in a TypeScript source file, with the span it occupies.
@@ -15,6 +15,10 @@ import ts from "typescript";
  * imports and `export … from` while still ignoring a specifier-shaped string in
  * a comment or a literal. It runs at build time only and never reaches the
  * published CLI bundle.
+ *
+ * `typescript-6` is an npm alias of `typescript@~6.0.3`. The repository's
+ * `typescript` is 7, the native compiler, whose package exports no compiler
+ * API and no in-process parser — so this keeps the last one that does.
  */
 
 export type ScannedImport = {

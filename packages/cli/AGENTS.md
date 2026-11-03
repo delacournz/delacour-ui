@@ -90,7 +90,7 @@ scripts/
 
 ## The eight rules
 
-1. **`src/index.ts` must never reach `scan-imports.ts`.** It imports the whole of `typescript` —
+1. **`src/index.ts` must never reach `scan-imports.ts`.** It imports the whole of `typescript-6` (the TypeScript 6 compiler API, aliased because TypeScript 7 does not export one — see the root `AGENTS.md`, Dependency versions) —
    about ten megabytes — to read type-only imports out of the library's source. That runs at
    *registry build* time, in this repository. If an entry-point module ever imports it, every
    `bunx delacour` pays for it. `scripts/check-bundle.ts` asserts the compiler is absent from the

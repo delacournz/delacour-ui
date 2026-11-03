@@ -336,7 +336,9 @@ jobs:
     name: copied tests (${{ matrix.runner }})
     needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-small
+    # The Jest and Vitest legs tsc the app with a render suite per component copied in, which ran
+    # out of heap on the small profile ("Ineffective mark-compacts near heap limit") — as typecheck did.
+    runs-on: namespace-profile-linux-medium
     timeout-minutes: 20
 
     strategy:

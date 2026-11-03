@@ -384,6 +384,10 @@ export const CHECKS: Check[] = [
  * Items `--all` does not reach: everything that is not a component and that no
  * component depends on. Named explicitly so a verification run covers the whole
  * registry rather than most of it.
+ *
+ * An item a component's tests depend on (`test-kit`) counts as reached: `--tests`
+ * brings it with the suites, and naming it in a plain run would install Jest into
+ * an app that asked for no tests, which `doctor` then reads as a Jest project.
  */
 export async function standaloneItems(registryDir: string, _appDir: string): Promise<string[]> {
 	const index = registryIndexSchema.parse(JSON.parse(await readFile(join(registryDir, "registry.json"), "utf-8")));
@@ -393,7 +397,12 @@ export async function standaloneItems(registryDir: string, _appDir: string): Pro
 		if (reached.has(name)) return;
 		reached.add(name);
 		const item = index.items.find((entry) => entry.name === name);
-		for (const dependency of item?.registryDependencies ?? []) visit(dependency);
+		const edges = [
+			...(item?.registryDependencies ?? []),
+			...(item?.testRegistryDependencies ?? []),
+			...(item?.renderTestRegistryDependencies ?? []),
+		];
+		for (const dependency of edges) visit(dependency);
 	};
 
 	for (const item of index.items) {

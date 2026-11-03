@@ -15,19 +15,7 @@ const COMPONENTS = join(import.meta.dirname, "components");
  * touching another's. A folder listed here that already has its test fails too,
  * so the list can only shrink. When it is empty, delete it.
  */
-const PENDING: ReadonlySet<string> = new Set([
-	// RNTL P4 — date/time & pickers
-	"calendar",
-	"color-picker",
-	"countdown",
-	"date-picker",
-	"date-time-picker",
-	"planner",
-	"questionnaire",
-	"selection-mode",
-	"time-picker",
-	"timeline",
-]);
+const PENDING: ReadonlySet<string> = new Set([]);
 
 function componentFolders(): string[] {
 	return readdirSync(COMPONENTS, { withFileTypes: true })

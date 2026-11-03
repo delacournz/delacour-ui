@@ -287,5 +287,34 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker.render.test.tsx",
+			"target": "color-picker/color-picker.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
+				},
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"overlay",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@delacour/react-native-bottom-sheet",
+		"@jest/globals"
 	]
 }

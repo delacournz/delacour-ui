@@ -90,6 +90,15 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
  * publish TypeScript source; the charts engine also imports d3, whose packages
  * ship ES modules only.
  */
+/** The `transform` key that compiles `.mjs`, which `jest-expo`'s `\\.[jt]sx?$` does not match. */
+export const MJS_TRANSFORM_PATTERN = "^.+\\.mjs$";
+export const MJS_TRANSFORMER = "babel-jest";
+
+/** Whether a Jest config's text names a transform for `.mjs` — d3-shape 3.2.1 ships nothing else. */
+export function compilesMjs(text: string): boolean {
+	return /\btransform\b["']?\s*:\s*\{[^}]*mjs/.test(text);
+}
+
 const ENGINE_TRANSFORMS: Record<string, readonly string[]> = {
 	"@delacour/react-native-bottom-sheet": ["@delacour/.*"],
 	"@delacour/react-native-charts": ["@delacour/.*", "d3-.*", "internmap"],
@@ -129,7 +138,18 @@ export function checkJestTransform(setup: JestSetup): Check {
 	const needed = [...new Set(engines.flatMap((engine) => ENGINE_TRANSFORMS[engine] ?? []))];
 	const missing = needed.filter((pattern) => !patterns.includes(pattern.replace(".*", "")));
 
-	if (missing.length === 0) return { name, status: "pass", detail: `${engines.join(", ")} transformed` };
+	const needsMjs = needed.some((pattern) => pattern.startsWith("d3-")) && !compilesMjs(setup.jestConfig ?? "");
+
+	if (missing.length === 0 && !needsMjs) return { name, status: "pass", detail: `${engines.join(", ")} transformed` };
+
+	if (missing.length === 0) {
+		return {
+			name,
+			status: "warn",
+			detail: "d3-shape ships only .mjs, and no transform compiles .mjs — jest-expo's matches .js and .ts alone",
+			fix: `Add \`transform: { ${JSON.stringify(MJS_TRANSFORM_PATTERN)}: "${MJS_TRANSFORMER}" }\` to the Jest config.`,
+		};
+	}
 
 	return {
 		name,

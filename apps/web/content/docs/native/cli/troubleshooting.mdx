@@ -195,8 +195,9 @@ linker = "hoisted"
 
 A suite reached `chart` or `bottom-sheet`, whose engines ship TypeScript source that Jest leaves
 untransformed by default. Add `@delacour/.*` — and for `chart`, `d3-.*` and `internmap` — to the
-packages `transformIgnorePatterns` lets through, beside `jest-expo`'s own. `delacour doctor` warns
-about this under **Jest transforms**.
+packages `transformIgnorePatterns` lets through, beside `jest-expo`'s own. If the path ends in
+`.mjs` (`d3-shape/dist/d3-shape.mjs`), the package is let through but nothing compiles `.mjs`: add
+`transform: { "^.+\\.mjs$": "babel-jest" }`. `delacour doctor` warns about both under **Jest transforms**.
 
 ### Copied tests fail to load under Vitest or Jest
 

@@ -140,7 +140,8 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
   to the canvas times `scale` (default the screen's pixel ratio), by the same
   `drawSketchItems` the picture records — not a snapshot of the visible canvas,
   which would need the view mounted and would capture nothing of the background
-  option. It is synchronous and returns base64 without a `data:` prefix; `""`
+  option. It resolves to base64 without a `data:` prefix — asynchronous, because
+  react-native-skia 3.9 made `encodeToBase64` return a promise; `""`
   before the canvas is measured. Saving or sharing it is the app's job.
 
 ## Layout

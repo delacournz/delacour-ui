@@ -38,6 +38,10 @@ describe("resolveAvatarInitials", () => {
 		expect(resolveAvatarInitials("𝒜ria 𝒲hitlock")).toBe("𝒜𝒲");
 	});
 
+	test("keeps an accent from a decomposed (NFD) name", () => {
+		expect(resolveAvatarInitials("E\u0301mile Zola")).toBe("\u00C9Z");
+	});
+
 	test("keeps letters in scripts with no case", () => {
 		expect(resolveAvatarInitials("森山 健二")).toBe("森健");
 	});

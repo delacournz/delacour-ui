@@ -47,10 +47,12 @@ function initialOf(word: string): string {
  *
  * Walks code points rather than UTF-16 units, so a letter outside the basic
  * plane is kept whole instead of drawn as a replacement box, and skips leading
- * punctuation so a quoted nickname still gives a letter.
+ * punctuation so a quoted nickname still gives a letter. The name is put in
+ * NFC form first: in NFD form, as servers and macOS input often send it,
+ * `É` is `E` plus a combining accent, and only the `E` would be kept.
  */
 export function resolveAvatarInitials(name: string | undefined): string {
-	const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+	const words = (name ?? "").normalize("NFC").trim().split(/\s+/).filter(Boolean);
 	if (words.length === 0) return "";
 	const first = initialOf(words[0] ?? "");
 	const last = words.length > 1 ? initialOf(words[words.length - 1] ?? "") : "";

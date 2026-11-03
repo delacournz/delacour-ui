@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
+	hasModalOverlay,
 	INITIAL_OVERLAY_REGISTRY,
 	isTopOverlay,
 	OVERLAY_LAYER_BASE,
@@ -92,5 +93,28 @@ describe("topOverlay / isTopOverlay", () => {
 			{ type: "close", id: "b" }
 		);
 		expect(isTopOverlay(state, "a")).toBe(true);
+	});
+});
+
+describe("hasModalOverlay", () => {
+	test("is false when nothing is presented", () => {
+		expect(hasModalOverlay(INITIAL_OVERLAY_REGISTRY)).toBe(false);
+	});
+
+	test("is true while a modal overlay is presented", () => {
+		const state = reduceOverlayRegistry(INITIAL_OVERLAY_REGISTRY, { type: "open", id: "dialog", layer: "modal" });
+		expect(hasModalOverlay(state)).toBe(true);
+	});
+
+	test("ignores anchored overlays and toasts", () => {
+		let state = reduceOverlayRegistry(INITIAL_OVERLAY_REGISTRY, { type: "open", id: "popover", layer: "anchored" });
+		state = reduceOverlayRegistry(state, { type: "open", id: "toast", layer: "toast" });
+		expect(hasModalOverlay(state)).toBe(false);
+	});
+
+	test("is false again once the last modal overlay closes", () => {
+		let state = reduceOverlayRegistry(INITIAL_OVERLAY_REGISTRY, { type: "open", id: "dialog", layer: "modal" });
+		state = reduceOverlayRegistry(state, { type: "close", id: "dialog" });
+		expect(hasModalOverlay(state)).toBe(false);
 	});
 });

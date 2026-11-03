@@ -59,23 +59,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"tabs",
 	"tree",
 
-	// RNTL P7 — scroll & motion
-	"carousel",
-	"circular-text",
-	"compare",
-	"flip-card",
-	"marquee",
-	"message-scroller",
-	"scroll-blur",
-	"scroll-canvas",
-	"scroll-fade",
-	"scroll-header",
-	"scroll-text",
-	"sortable",
-	"stack-card",
-	"swipe",
-	"text-animation",
-
 	// RNTL P8 — rich & media
 	"attachment",
 	"chart",

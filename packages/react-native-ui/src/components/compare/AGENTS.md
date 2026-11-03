@@ -20,6 +20,7 @@ in two themes, a redesign against the original. Compound root plus `Compare.Befo
 | `compare.types.ts` | `CompareLayerProps`, shared by Before and After |
 | `compare.variants.ts` | The slotted `tv()` and every pure geometry, snap, haptic and a11y resolver; no RN imports |
 | `compare.variants.test.ts` | |
+| `compare.render.test.tsx` | Mounted under Jest — adjustable role/name/value, increment/decrement stepping (step, bounds, snap points, both callbacks), controlled vs uncontrolled, covered-layer hiding, disabled (own and from `Field`), labels in the value text, parts outside a `Compare` throwing. The drag itself is not reached |
 
 ## Design
 

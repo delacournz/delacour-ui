@@ -23,6 +23,7 @@ no context.
 | `circular-text.types.ts` | `CircularTextProps`, `CircularTextSpin`, `CircularTextPause` |
 | `circular-text.variants.ts` | Geometry and resolvers, no RN imports |
 | `circular-text.variants.test.ts` | |
+| `circular-text.render.test.tsx` | Mounted under Jest — the ring announced once (repeat, fill, arc, label override), glyphs hidden, `centerContent` reachable, invalid radius/text renders nothing |
 
 ## Axes
 

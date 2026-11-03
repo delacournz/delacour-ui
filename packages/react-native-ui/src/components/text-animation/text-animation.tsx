@@ -3,6 +3,7 @@ import { Text as NativeText, type TextLayoutEvent, View } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	hashText,
@@ -151,6 +152,9 @@ function TextAnimationReveal({
 	const isCalm = useCalmMotion();
 	const textClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
 	const step = stagger ?? TEXT_ANIMATION_STAGGER[split];
+	// One cap for the units, the whitespace between them and the measuring copy,
+	// so line breaks and spaces match the animated text at any system size.
+	const fontCap = maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER;
 	// Lines belong to the text they were measured from; a new text waits for its own.
 	const [measured, setMeasured] = useState<{ text: string; lines: readonly string[] } | null>(null);
 	const lines = measured?.text === children ? measured.lines : null;
@@ -206,7 +210,7 @@ function TextAnimationReveal({
 		isAtRest: isCalm || finishedRun === runKey,
 		delays,
 		allowFontScaling,
-		maxFontSizeMultiplier,
+		maxFontSizeMultiplier: fontCap,
 	};
 
 	const onTextLayout = (event: TextLayoutEvent) => {
@@ -230,7 +234,7 @@ function TextAnimationReveal({
 				<NativeText
 					allowFontScaling={allowFontScaling}
 					className={cn(textClass, lines === null ? "opacity-0" : slots.measure())}
-					maxFontSizeMultiplier={maxFontSizeMultiplier}
+					maxFontSizeMultiplier={fontCap}
 					onTextLayout={onTextLayout}
 				>
 					{children}
@@ -243,7 +247,12 @@ function TextAnimationReveal({
 					if (piece.kind === "break") return <View className="w-full" key={piece.key} />;
 					if (piece.kind === "space") {
 						return (
-							<NativeText className={textClass} key={piece.key}>
+							<NativeText
+								allowFontScaling={allowFontScaling}
+								className={textClass}
+								key={piece.key}
+								maxFontSizeMultiplier={fontCap}
+							>
 								{piece.text}
 							</NativeText>
 						);

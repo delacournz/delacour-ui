@@ -46,6 +46,13 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   asserts the trigger's class is a superset. A picker beside an `Input` is the same box by
   construction, invalid outranking focus included.
 
+## Controlled or not
+
+- **Passing `value` controls the picker, even as `undefined`.** `controlledValue` checks
+  `"value" in props`, not `value === undefined`, and reads `undefined` as empty. A form field
+  starts `undefined` and resets to it; a value test would flip the picker to its own state and keep
+  showing a day the form no longer holds. Use `null` (or an empty range or list) for "none".
+
 ## The finish rule
 
 - **The sheet closes when the selection is finished, not when it changes.**

@@ -30,15 +30,22 @@ import { DatePickerIcon } from "./date-picker-icon";
 import { DatePickerTrigger } from "./date-picker-trigger";
 import { DatePickerValue } from "./date-picker-value";
 
-/** The controlled value, as selection state — `undefined` while the caller leaves it uncontrolled. */
+/**
+ * The controlled value, as selection state — `undefined` while the caller leaves it uncontrolled.
+ *
+ * Passing `value` at all makes the picker controlled, even as `undefined`, which reads as empty. A
+ * form field starts `undefined` and goes back to it on reset, so a `value === undefined` test would
+ * flip the picker to its own state and keep showing a day the form no longer holds.
+ */
 function controlledValue(props: DatePickerSelectionProps): CalendarSelectionState | undefined {
+	if (!("value" in props)) return undefined;
 	switch (props.mode) {
 		case "range":
-			return props.value === undefined ? undefined : { mode: "range", value: props.value };
+			return { mode: "range", value: props.value ?? { start: null, end: null } };
 		case "multiple":
-			return props.value === undefined ? undefined : { mode: "multiple", value: props.value };
+			return { mode: "multiple", value: props.value ?? [] };
 		default:
-			return props.value === undefined ? undefined : { mode: "single", value: props.value };
+			return { mode: "single", value: props.value ?? null };
 	}
 }
 

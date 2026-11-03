@@ -197,6 +197,19 @@ describe("DatePicker single mode", () => {
 		expect(day("2026-10-12")).not.toBeSelected();
 	});
 
+	test("passing value keeps it controlled when a form resets it to undefined", async () => {
+		const { rerender } = await renderWithProviders(<Picker isOpen value={undefined} />, { wrapper: Providers });
+		await tap(day("2026-10-12"));
+		expect(day("2026-10-12")).not.toBeSelected();
+
+		await rerender(<Picker isOpen value={OCT_12} />);
+		expect(day("2026-10-12")).toBeSelected();
+
+		await rerender(<Picker isOpen value={undefined} />);
+		expect(day("2026-10-12")).not.toBeSelected();
+		expect(trigger()).toHaveAccessibilityValue({ text: "not set" });
+	});
+
 	test("is not clearable by default; isClearable adds Clear, which empties, reports and stays open", async () => {
 		const onValueChange = jest.fn();
 		const onOpenChange = jest.fn();

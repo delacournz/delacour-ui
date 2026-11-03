@@ -15,7 +15,10 @@ import type { DatePickerFormat, DatePickerFormatRange, DatePickerPresentation } 
 export type DatePickerSelectionProps =
 	| {
 			mode?: "single";
-			/** Controlled day. `null` is none. */
+			/**
+			 * Controlled day. `null` is none. Passing the prop at all controls the picker, so a form
+			 * value that starts or resets to `undefined` reads as none too.
+			 */
 			value?: CalendarDate | null;
 			/** Starting day while uncontrolled. */
 			defaultValue?: CalendarDate | null;

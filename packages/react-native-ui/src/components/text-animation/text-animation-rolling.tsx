@@ -99,15 +99,19 @@ function TextAnimationWheel({
 	const targetRef = useRef(initial);
 
 	useEffect(() => {
+		// Calm motion lands first: assigning the position also cancels a roll in
+		// flight, even one whose target is already stored.
+		if (isCalm) {
+			const settled = resolveRollTarget(targetRef.current, digit, direction);
+			targetRef.current = settled;
+			position.value = settled;
+			return;
+		}
 		if (resolveWheelOffset(targetRef.current) === digit) return;
 		// Retarget from where the wheel is now, not from the last destination, so
 		// an interrupted roll still turns the way the new value asks.
 		const target = resolveRollTarget(position.value, digit, direction);
 		targetRef.current = target;
-		if (isCalm) {
-			position.value = target;
-			return;
-		}
 		position.value = withDelay(
 			rank * stagger,
 			withTiming(target, { duration: durationMs, easing: Easing.out(Easing.cubic) })

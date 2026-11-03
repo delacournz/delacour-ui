@@ -63,6 +63,28 @@ describe("reduceOverlayRegistry", () => {
 		expect(reduceOverlayRegistry(state, { type: "close", id: "nope" })).toBe(state);
 	});
 
+	test("an exiting overlay keeps its place in the z-order", () => {
+		const open = apply({ type: "open", id: "a", layer: "modal" }, { type: "open", id: "b", layer: "modal" });
+		const state = reduceOverlayRegistry(open, { type: "exiting", id: "a", isExiting: true });
+		expect(zIndexOfOverlay(state, "a")).toBe(zIndexOfOverlay(open, "a"));
+		expect(state.nextSeq).toBe(open.nextSeq);
+	});
+
+	test("re-stamping an exiting overlay keeps it exiting", () => {
+		const state = apply(
+			{ type: "open", id: "a", layer: "modal" },
+			{ type: "exiting", id: "a", isExiting: true },
+			{ type: "open", id: "a", layer: "anchored" }
+		);
+		expect(state.open).toEqual([expect.objectContaining({ id: "a", layer: "anchored", isExiting: true })]);
+	});
+
+	test("an exiting that changes nothing returns the same state", () => {
+		const state = apply({ type: "open", id: "a", layer: "modal" });
+		expect(reduceOverlayRegistry(state, { type: "exiting", id: "a", isExiting: false })).toBe(state);
+		expect(reduceOverlayRegistry(state, { type: "exiting", id: "nope", isExiting: true })).toBe(state);
+	});
+
 	test("a closed overlay has no z", () => {
 		const state = apply({ type: "open", id: "a", layer: "modal" }, { type: "close", id: "a" });
 		expect(zIndexOfOverlay(state, "a")).toBe(0);
@@ -110,6 +132,32 @@ describe("hasModalOverlay", () => {
 		let state = reduceOverlayRegistry(INITIAL_OVERLAY_REGISTRY, { type: "open", id: "popover", layer: "anchored" });
 		state = reduceOverlayRegistry(state, { type: "open", id: "toast", layer: "toast" });
 		expect(hasModalOverlay(state)).toBe(false);
+	});
+
+	test("is false while the only modal overlay is exiting, so focus can return to its trigger", () => {
+		const state = apply(
+			{ type: "open", id: "dialog", layer: "modal" },
+			{ type: "exiting", id: "dialog", isExiting: true }
+		);
+		expect(hasModalOverlay(state)).toBe(false);
+	});
+
+	test("is true again when an exiting modal reopens", () => {
+		const state = apply(
+			{ type: "open", id: "dialog", layer: "modal" },
+			{ type: "exiting", id: "dialog", isExiting: true },
+			{ type: "exiting", id: "dialog", isExiting: false }
+		);
+		expect(hasModalOverlay(state)).toBe(true);
+	});
+
+	test("stays true while another modal overlay is still open", () => {
+		const state = apply(
+			{ type: "open", id: "lower", layer: "modal" },
+			{ type: "open", id: "upper", layer: "modal" },
+			{ type: "exiting", id: "upper", isExiting: true }
+		);
+		expect(hasModalOverlay(state)).toBe(true);
 	});
 
 	test("is false again once the last modal overlay closes", () => {

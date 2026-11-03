@@ -16,7 +16,7 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/overlay` |
 | `overlay.tsx` | `Overlay` — the root is the provider: teleport's `PortalProvider` (skipped when one is already above), the registry and the touch-start fan-out; the `Object.assign` names `Portal` and `Scrim`. `OverlayProvider` is the same component, under the name a root layout reads best with |
-| `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
+| `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, reports `isExiting`, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `bg-overlay`, opacity follows presence, hidden from assistive technology |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext` and their hooks. `bottom-sheet/` imports it |
 | `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `OVERLAY_LAYER_BASE` |
@@ -75,7 +75,10 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   the host, and VoiceOver or TalkBack could still reach the app behind a dialog. While
   `hasModalOverlay` is true the provider sets `accessibilityElementsHidden` and
   `importantForAccessibility="no-hide-descendants"` on that `View`. Overlays and sheets draw in the
-  host, outside it, and stay reachable. **Not when teleport draws inline.** `react-native-teleport`'s
+  host, outside it, and stay reachable. **An exiting modal does not count.** Pass
+  `isExiting={phase === "exiting"}` to `Overlay.Portal`, as Dialog and Drawer do: the registry keeps
+  the entry, and its place in the z-order, until the portal unmounts, but the app is reachable again
+  from the start of the exit, so `onExited` can move focus back to the trigger. **Not when teleport draws inline.** `react-native-teleport`'s
   Jest mock renders a portal in place, inside that `View`, so hiding it would hide the dialog too
   and every query for it would fail. The test kit sets the global `TELEPORT_INLINE` symbol to say
   so, and the provider then leaves the app visible. It is a symbol on `globalThis`, not an import, so

@@ -7,6 +7,8 @@ export type OverlayContextValue = {
 	state: OverlayRegistryState;
 	/** A portal reports that its overlay is presented, and in which layer. */
 	present: (id: string, layer: OverlayLayer) => void;
+	/** A portal reports that its overlay started, or stopped, animating closed. */
+	exiting: (id: string, isExiting: boolean) => void;
 	/** The overlay's portal unmounted. */
 	dismissed: (id: string) => void;
 	/**

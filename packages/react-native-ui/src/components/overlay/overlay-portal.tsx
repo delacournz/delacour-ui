@@ -14,6 +14,13 @@ export type OverlayPortalProps = {
 	 * `useId()` of the portal's own.
 	 */
 	id?: string;
+	/**
+	 * The overlay is playing its exit animation — pass
+	 * `useOverlayPresence().phase === "exiting"`. An exiting modal stops hiding
+	 * the app from screen readers, so `onExited` can move focus back to the
+	 * trigger. Default false.
+	 */
+	isExiting?: boolean;
 	/** Render where it is written instead of teleporting. Default false. */
 	isInline?: boolean;
 	/** The teleport host. Default `"root"` — the one `OverlayProvider`'s teleport provider fills the app with. */
@@ -43,6 +50,7 @@ export function OverlayPortal({
 	layer,
 	children,
 	id,
+	isExiting = false,
 	isInline = false,
 	hostName = "root",
 }: OverlayPortalProps): ReactElement {
@@ -57,6 +65,11 @@ export function OverlayPortal({
 		present(overlayId, layer);
 		return () => dismissed(overlayId);
 	}, [present, dismissed, overlayId, layer]);
+
+	const exiting = registry?.exiting;
+	useEffect(() => {
+		exiting?.(overlayId, isExiting);
+	}, [exiting, overlayId, isExiting]);
 
 	useEffect(() => {
 		if (!__DEV__ || registry !== null || isInline || hasWarnedMissingProvider) return;

@@ -28,7 +28,7 @@ function Demo({
 	onExited,
 }: DemoProps): ReactElement | null {
 	const [isOpen, setIsOpen] = useState(defaultOpen);
-	const { isPresent, progress } = useOverlayPresence({ isOpen, enterMs: 1, exitMs: 1, onExited });
+	const { isPresent, phase, progress } = useOverlayPresence({ isOpen, enterMs: 1, exitMs: 1, onExited });
 	const close = () => {
 		onDismiss?.();
 		setIsOpen(false);
@@ -46,7 +46,7 @@ function Demo({
 		<>
 			<Text onPress={() => setIsOpen(true)}>{`open ${name}`}</Text>
 			{isPresent ? (
-				<Overlay.Portal id={name} layer={layer}>
+				<Overlay.Portal id={name} isExiting={phase === "exiting"} layer={layer}>
 					<Overlay.Scrim onDismiss={close} progress={progress} testID={`${name}-scrim`} />
 					<View testID={`${name}-panel`}>
 						<Text>{`${name} panel`}</Text>
@@ -185,6 +185,21 @@ describe("OverlayProvider and screen readers", () => {
 		await withTeleportOutOfTree(async () => {
 			await renderWithProviders(<Demo name="closed" defaultOpen={false} />, { wrapper: Provider });
 			expect(screen.getByText("open closed")).toBeOnTheScreen();
+		});
+	});
+
+	test("the app content is reachable again when onExited fires, so focus can return to the trigger", async () => {
+		await withTeleportOutOfTree(async () => {
+			const reachableAtExit: boolean[] = [];
+			await renderWithProviders(
+				<Demo name="exit" onExited={() => reachableAtExit.push(screen.queryByText("open exit") !== null)} />,
+				{ wrapper: Provider }
+			);
+			expect(screen.queryByText("open exit")).toBeNull();
+
+			await fireEvent.press(scrim("exit"));
+			expect(screen.getByText("open exit")).toBeOnTheScreen();
+			await waitFor(() => expect(reachableAtExit).toEqual([true]));
 		});
 	});
 

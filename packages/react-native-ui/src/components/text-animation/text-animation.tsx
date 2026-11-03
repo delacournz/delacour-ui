@@ -1,4 +1,4 @@
-import { Fragment, type ReactElement, type ReactNode, useEffect, useMemo, useState } from "react";
+import { Fragment, type ReactElement, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Text as NativeText, type TextLayoutEvent, View } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
@@ -165,17 +165,27 @@ function TextAnimationReveal({
 	const total = resolveTotalDuration(count, step, durationMs, delayMs, order);
 
 	const runKey = `${children}|${split}|${order}|${step}|${durationMs}|${delayMs}|${JSON.stringify(effect)}|${isActive}`;
+
+	// One guard per run, shared by the clock and the calm path, so toggling calm
+	// motion during or after a run never reports the same run twice.
+	const reportedRunRef = useRef<string | null>(null);
+	const finish = () => {
+		if (reportedRunRef.current === runKey) return;
+		reportedRunRef.current = runKey;
+		onFinished?.();
+	};
+
 	const elapsed = useTextAnimationClock({
 		isRunning: isActive && !isCalm,
 		runKey,
 		limitMs: total,
-		onLimit: onFinished,
+		onLimit: finish,
 	});
 
-	// Calm motion skips the clock, so it reports the finish itself — once per text.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: onFinished is read, not a trigger
+	// Calm motion skips the clock, so it reports the finish itself.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: finish is read, not a trigger
 	useEffect(() => {
-		if (isCalm && isActive) onFinished?.();
+		if (isCalm && isActive) finish();
 	}, [isCalm, isActive, runKey]);
 
 	const shared: UnitShared = {

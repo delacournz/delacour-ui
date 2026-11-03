@@ -417,6 +417,13 @@ describe("formatNumber", () => {
 });
 
 describe("resolveRollTarget", () => {
+	test("keeps an interrupted roll moving in its direction", () => {
+		expect(resolveRollTarget(0.2, 0, "up")).toBe(10);
+		expect(resolveRollTarget(3.4, 8, "up")).toBe(8);
+		expect(resolveRollTarget(8.8, 9, "down")).toBe(-1);
+		expect(resolveRollTarget(3.4, 2, "down")).toBe(2);
+	});
+
 	test("rolls forward through the wrap on the way up", () => {
 		expect(resolveRollTarget(9, 0, "up")).toBe(10);
 		expect(resolveRollTarget(19, 3, "up")).toBe(23);

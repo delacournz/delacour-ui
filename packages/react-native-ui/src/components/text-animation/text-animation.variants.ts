@@ -620,7 +620,9 @@ export function resolveNumberFormat(
  * forward through the wrap rather than back through 8…1. Never a full turn.
  */
 export function resolveRollTarget(currentPos: number, digit: number, direction: RollDirection): number {
-	const base = Math.round(currentPos);
+	// A wheel caught mid-roll starts from the next whole digit in the direction
+	// it is asked to go, so rounding never turns an upward roll back down.
+	const base = direction === "up" ? Math.ceil(currentPos) : Math.floor(currentPos);
 	const current = ((base % 10) + 10) % 10;
 	const delta = direction === "up" ? (digit - current + 10) % 10 : -((current - digit + 10) % 10);
 	return base + delta;

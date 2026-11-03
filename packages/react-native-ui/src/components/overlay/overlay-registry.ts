@@ -97,3 +97,15 @@ export function topOverlay(state: OverlayRegistryState): string | null {
 export function isTopOverlay(state: OverlayRegistryState, id: string): boolean {
 	return topOverlay(state) === id;
 }
+
+/**
+ * Whether a modal overlay is presented — open, or animating closed.
+ *
+ * Every overlay teleports into the `"root"` host, which sits beside the app
+ * content, not above it in the view tree. A panel's `accessibilityViewIsModal`
+ * hides only its own siblings in that host, so `OverlayProvider` uses this to
+ * hide the app content from screen readers while a dialog or drawer is up.
+ */
+export function hasModalOverlay(state: OverlayRegistryState): boolean {
+	return state.open.some((entry) => entry.layer === "modal");
+}

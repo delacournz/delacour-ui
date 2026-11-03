@@ -57,27 +57,38 @@ type RevealPiece =
 	| { kind: "unit"; key: string; text: string; index: number }
 	| { kind: "word"; key: string; graphemes: readonly { text: string; index: number }[] }
 	| { kind: "space"; key: string; text: string }
-	| { kind: "break"; key: string };
+	| { kind: "break"; key: string }
+	| { kind: "blank"; key: string };
 
 /**
  * The pieces a word or character split renders, with each animated unit's
- * index in entry order. Whitespace stays static — it is where the row wraps —
- * and a newline becomes a full-width break, since a wrapping row has no line
- * feed of its own.
+ * index in entry order. Whitespace stays static — it is where the row wraps.
+ * A wrapping row has no line feed of its own, so a newline that ends a line
+ * becomes a full-width break, and one that ends an empty line becomes a blank
+ * line one text line tall, so `A\n\nB` keeps its gap and a leading newline
+ * keeps its line.
  */
 function buildPieces(text: string, split: "word" | "character"): { pieces: RevealPiece[]; count: number } {
 	const pieces: RevealPiece[] = [];
 	let count = 0;
+	let isLineEmpty = true;
 	splitText(text, "word").forEach((unit, i) => {
 		const key = `${i}`;
 		if (unit.isSpace) {
 			const lines = unit.text.split("\n");
 			lines.forEach((run, j) => {
-				if (j > 0) pieces.push({ kind: "break", key: `${key}-b${j}` });
-				if (run !== "") pieces.push({ kind: "space", key: `${key}-s${j}`, text: run });
+				if (j > 0) {
+					pieces.push({ kind: isLineEmpty ? "blank" : "break", key: `${key}-b${j}` });
+					isLineEmpty = true;
+				}
+				if (run !== "") {
+					pieces.push({ kind: "space", key: `${key}-s${j}`, text: run });
+					isLineEmpty = false;
+				}
 			});
 			return;
 		}
+		isLineEmpty = false;
 		if (split === "word") {
 			pieces.push({ kind: "unit", key, text: unit.text, index: count });
 			count += 1;
@@ -260,6 +271,18 @@ function TextAnimationReveal({
 			<View className={cn(slots.row(), resolveRowJustify(textClass))}>
 				{pieces.map((piece) => {
 					if (piece.kind === "break") return <View className="w-full" key={piece.key} />;
+					if (piece.kind === "blank") {
+						return (
+							<NativeText
+								allowFontScaling={allowFontScaling}
+								className={cn(textClass, "w-full")}
+								key={piece.key}
+								maxFontSizeMultiplier={fontCap}
+							>
+								{"\u200b"}
+							</NativeText>
+						);
+					}
 					if (piece.kind === "space") {
 						return (
 							<NativeText

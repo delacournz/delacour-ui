@@ -433,6 +433,15 @@ type LocaleWithWeekInfo = Intl.Locale & {
 	weekInfo?: { firstDay: number };
 };
 
+/** The device's locale as `Intl.DateTimeFormat` resolves it, or `undefined` when it cannot. */
+function deviceLocale(): string | undefined {
+	try {
+		return new Intl.DateTimeFormat().resolvedOptions().locale;
+	} catch {
+		return undefined;
+	}
+}
+
 /**
  * The first day of the week in a locale.
  *
@@ -442,14 +451,19 @@ type LocaleWithWeekInfo = Intl.Locale & {
  * A tag nothing can read is Monday.
  */
 export function resolveWeekStart(locale: string | undefined): Weekday {
+	// The tag is resolved once, before `Intl.Locale` is touched, so the fallback below reads the
+	// device locale too. Without that, an en-US phone on an engine with no `Intl.Locale` started
+	// the week on Monday.
+	const raw = locale ?? deviceLocale();
+	if (!raw) return DEFAULT_WEEK_START;
 	try {
-		const tag = new Intl.Locale(locale ?? new Intl.DateTimeFormat().resolvedOptions().locale) as LocaleWithWeekInfo;
+		const tag = new Intl.Locale(raw) as LocaleWithWeekInfo;
 		const info = typeof tag.getWeekInfo === "function" ? tag.getWeekInfo() : tag.weekInfo;
 		if (info && Number.isInteger(info.firstDay)) return (info.firstDay % 7) as Weekday;
 		const region = tag.region ?? (typeof tag.maximize === "function" ? tag.maximize().region : undefined);
 		return weekStartFromRegion(region ?? LIKELY_REGION[tag.language]);
 	} catch {
-		const match = locale?.match(/^([a-z]{2,3})(?:[-_][A-Za-z]{4})?(?:[-_]([A-Za-z]{2}))?(?:[-_]|$)/);
+		const match = raw.match(/^([a-z]{2,3})(?:[-_][A-Za-z]{4})?(?:[-_]([A-Za-z]{2}))?(?:[-_]|$)/);
 		if (!match) return DEFAULT_WEEK_START;
 		return weekStartFromRegion(match[2] ?? LIKELY_REGION[match[1] ?? ""]);
 	}

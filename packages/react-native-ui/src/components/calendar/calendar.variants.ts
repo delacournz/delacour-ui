@@ -319,6 +319,22 @@ export function resolveDayState({
 }
 
 /**
+ * What a screen reader says for a day: the full date, then "Today" and the range end it is —
+ * "Monday 5 October 2026, Today, Range start". The state words sit in the label, not the hint,
+ * because many VoiceOver users turn hints off and would hear only the date.
+ */
+export function resolveDayAccessibilityLabel(
+	dateLabel: string,
+	{ isToday, rangeRole }: Pick<CalendarDayState, "isToday" | "rangeRole">
+): string {
+	const parts = [dateLabel];
+	if (isToday) parts.push("Today");
+	if (rangeRole === "start") parts.push("Range start");
+	if (rangeRole === "end") parts.push("Range end");
+	return parts.join(", ");
+}
+
+/**
  * The first and last months the arrows and the swipe can reach.
  *
  * `startMonth`/`endMonth` when the caller names them, otherwise the months `minDate`/`maxDate`

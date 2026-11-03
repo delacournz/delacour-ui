@@ -15,6 +15,7 @@ import {
 	resolveCalendarAxes,
 	resolveCaptionPage,
 	resolveCommittedPageDirection,
+	resolveDayAccessibilityLabel,
 	resolveDayState,
 	resolveDayTone,
 	resolveMonthBounds,
@@ -317,6 +318,32 @@ describe("resolveDayState", () => {
 			isPressable: false,
 		});
 		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true }).isPressable).toBe(false);
+	});
+});
+
+describe("resolveDayAccessibilityLabel", () => {
+	const plain = { isToday: false, rangeRole: null };
+
+	test("a plain day reads as just its date", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", plain)).toBe("Monday 5 October 2026");
+	});
+
+	test("today and the range ends are in the label, so they read with hints off", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { isToday: true, rangeRole: "start" })).toBe(
+			"Monday 5 October 2026, Today, Range start"
+		);
+		expect(resolveDayAccessibilityLabel("Friday 9 October 2026", { ...plain, rangeRole: "end" })).toBe(
+			"Friday 9 October 2026, Range end"
+		);
+	});
+
+	test("a lone or middle range day adds nothing", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { ...plain, rangeRole: "only" })).toBe(
+			"Monday 5 October 2026"
+		);
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { ...plain, rangeRole: "middle" })).toBe(
+			"Monday 5 October 2026"
+		);
 	});
 });
 

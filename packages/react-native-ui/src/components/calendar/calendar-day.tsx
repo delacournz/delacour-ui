@@ -4,7 +4,13 @@ import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useCalendarPart } from "./calendar.context";
 import { type CalendarDate, formatDate, isSameMonth, serialiseDate } from "./calendar.date";
-import { type CalendarDayState, calendarVariants, resolveDayState, resolvePartTestID } from "./calendar.variants";
+import {
+	type CalendarDayState,
+	calendarVariants,
+	resolveDayAccessibilityLabel,
+	resolveDayState,
+	resolvePartTestID,
+} from "./calendar.variants";
 
 /** What a function child of `Calendar.Day` is handed. */
 export type CalendarDayRenderProps = CalendarDayState & {
@@ -24,15 +30,6 @@ export type CalendarDayProps = {
 	className?: string;
 };
 
-/** The state words a screen reader adds after the date. */
-function describeState(state: CalendarDayState): string | undefined {
-	const parts: string[] = [];
-	if (state.isToday) parts.push("Today");
-	if (state.rangeRole === "start") parts.push("Range start");
-	if (state.rangeRole === "end") parts.push("Range end");
-	return parts.length > 0 ? parts.join(", ") : undefined;
-}
-
 /**
  * One day: its column share, the range band behind it, and the circle with the number.
  *
@@ -43,8 +40,9 @@ function describeState(state: CalendarDayState): string | undefined {
  * circle with nothing to join. An outside day with `showOutsideDays` off is an empty cell of the
  * same height, so the grid's rows never move.
  *
- * Announced as a button with the full date — "Monday 5 October 2026" — plus today and the range
- * end it is, and `selected` and `disabled` as accessibility state.
+ * Announced as a button labelled with the full date plus today and the range end it is —
+ * "Monday 5 October 2026, Today, Range start" — and `selected` and `disabled` as accessibility
+ * state.
  */
 export function CalendarDay({ date, children, className }: CalendarDayProps): ReactElement {
 	const calendar = useCalendarPart("Calendar.Day");
@@ -85,8 +83,10 @@ export function CalendarDay({ date, children, className }: CalendarDayProps): Re
 
 	return (
 		<Pressable
-			accessibilityHint={describeState(state)}
-			accessibilityLabel={formatDate(date, { locale: calendar.locale, style: "full" })}
+			accessibilityLabel={resolveDayAccessibilityLabel(
+				formatDate(date, { locale: calendar.locale, style: "full" }),
+				state
+			)}
 			accessibilityState={{ selected: state.isSelected }}
 			className={slots.cell({ className })}
 			disabled={!state.isPressable}

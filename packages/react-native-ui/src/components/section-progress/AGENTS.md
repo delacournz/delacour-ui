@@ -35,6 +35,7 @@ const sections = useScrollSections({ readingLine: 96 });
 | `section-progress.context.tsx` | The root's context and `useSectionProgress` |
 | `section-progress.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `section-progress.variants.test.ts` | |
+| `section-progress.render.test.tsx` | Mounted under Jest — pill name/value/expanded, open state (controlled and not), item selection and picks, disabled item, part-outside-root error |
 
 There is no `section-progress.types.ts`: every prop type has exactly one consumer, and the house
 rule keeps such a type in its consumer's file.

@@ -28,23 +28,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"time-picker",
 	"timeline",
 
-	// RNTL P6 — navigation & layout
-	"accordion",
-	"breadcrumb",
-	"collapsible",
-	"grid-item",
-	"item",
-	"list-group",
-	"pagination",
-	"section-progress",
-	"section-rail",
-	"split-view",
-	"splitter",
-	"steps",
-	"table",
-	"tabs",
-	"tree",
-
 	// RNTL P8 — rich & media
 	"attachment",
 	"chart",

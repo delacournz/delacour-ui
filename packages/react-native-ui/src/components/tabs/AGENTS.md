@@ -24,6 +24,7 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
 | `tabs.types.ts` | Prop types shared by two or more parts |
 | `tabs.variants.ts` | Pure `tv()` slots + the gesture and geometry worklets, no RN imports |
 | `tabs.variants.test.ts` | |
+| `tabs.render.test.tsx` | Mounted under Jest — tablist/tab roles, selected and disabled state, `value`/`defaultValue`/`onValueChange`, panel exposure, render-prop children, part-outside-root errors |
 
 ## Design
 
@@ -50,6 +51,11 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
   real shape (a filter row driving a list elsewhere) and falls back to trigger
   registration, which is one commit late and therefore never preferred when
   panels exist.
+  Being one commit late is also why the initial seed sees an empty order there:
+  an uncontrolled bar with no `defaultValue` latches the first registered value
+  once (`seedRef` in `tabs.tsx`), so it opens on its first tab like a paneled one.
+  The latch fires once, so a trigger added later never takes the selection, and
+  a controlled `value={null}` or an explicit `defaultValue={null}` is left alone.
 - **The one mistake source cannot catch is caught in the measurements.** Triggers
   written in a different order from the panels put the indicator on the wrong
   tab, with nothing in the source to point at; `isTriggerOrderConsistent` checks

@@ -26,6 +26,7 @@ A row of media, text and actions, for lists and settings. Compound root plus
 | `item.types.ts` | Prop types shared by two or more parts |
 | `item.variants.ts` | Pure `tv()` slots and the four resolvers, no RN imports |
 | `item.variants.test.ts` | |
+| `item.render.test.tsx` | Mounted under Jest — role and state, press / long press (Android action), disabled / busy guards, selected, parts, `Item.Group` list role, `ListGroup` row, context errors |
 
 ## Design
 

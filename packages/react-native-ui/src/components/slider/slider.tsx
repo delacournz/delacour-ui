@@ -128,8 +128,18 @@ function SliderRoot({
 		isDragging.current = dragging;
 	}, []);
 
+	// What `updateValue` has already reported. Writing `positions` makes the track's
+	// reaction mirror the same values back through `commitValues`; without this the
+	// caller would hear every assistive step twice.
+	const reportedRef = useRef<number[] | null>(null);
+
 	const commitValues = useCallback(
 		(next: number[]) => {
+			const reported = reportedRef.current;
+			if (reported) {
+				reportedRef.current = null;
+				if (reported.length === next.length && reported.every((entry, index) => entry === next[index])) return;
+			}
 			setCurrent(fromValueArray(next, isRange));
 		},
 		[isRange, setCurrent]
@@ -159,6 +169,7 @@ function SliderRoot({
 			const updated = [...from];
 			updated[index] = settled;
 			positions.value = updated;
+			reportedRef.current = updated;
 			setCurrent(fromValueArray(updated, isRange));
 			onChangeEnd?.(fromValueArray(updated, isRange));
 		},

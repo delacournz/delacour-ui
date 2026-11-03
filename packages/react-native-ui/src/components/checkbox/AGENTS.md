@@ -18,6 +18,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
 | `checkbox.types.ts` | Prop types shared by two or more parts |
 | `checkbox.variants.ts` | Pure `tv()` slots + six resolvers, no RN imports |
 | `checkbox.variants.test.ts` | |
+| `checkbox.render.test.tsx` | Mounted under Jest — checked/mixed/disabled state, uncontrolled and controlled, Field row press, group list, context errors |
 
 ## Design
 
@@ -26,6 +27,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   **Alignment**: `start`, `end`. There is no `variant` axis: a checkbox has one
   shape, and a second way to paint it would be a second thing to keep in step
   with the [radio](../radio/AGENTS.md) that will sit beside it.
+- **`toggle` itself is gated on `isDisabled`.** The `Pressable` guard only covers direct activation; the `Field` row's press reaches `toggle` through `registerPress`, so a disabled box would otherwise flip from a label tap.
 - **The root draws the box itself**, which is what makes `<Checkbox />` a
   complete control with no children. Anything composed inside lands *beside* the
   box and shares its tap target — which is the entire reason `Checkbox.Label`

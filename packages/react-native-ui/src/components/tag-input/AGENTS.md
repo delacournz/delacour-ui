@@ -20,6 +20,7 @@ list.
 | `tag-input.logic.test.ts` | |
 | `tag-input.variants.ts` | Pure `tv()` slots + resolvers — box, field, chip, suffix — no RN imports |
 | `tag-input.variants.test.ts` | |
+| `tag-input.render.test.tsx` | Mounted under Jest — add (submit, delimiter, paste), rejections, remove button/action, Backspace arming, controlled/uncontrolled, disabled/read-only, parts outside root throwing |
 
 ## Design
 

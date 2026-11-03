@@ -99,8 +99,10 @@ function TextAnimationWheel({
 	const targetRef = useRef(initial);
 
 	useEffect(() => {
-		const target = resolveRollTarget(targetRef.current, digit, direction);
-		if (target === targetRef.current) return;
+		if (resolveWheelOffset(targetRef.current) === digit) return;
+		// Retarget from where the wheel is now, not from the last destination, so
+		// an interrupted roll still turns the way the new value asks.
+		const target = resolveRollTarget(position.value, digit, direction);
 		targetRef.current = target;
 		if (isCalm) {
 			position.value = target;

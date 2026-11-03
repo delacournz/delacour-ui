@@ -16,6 +16,7 @@ selection. Compound root plus `ToggleButton.Label` and `ToggleButton.Group`.
 | `toggle-button.context.tsx` | `ToggleButtonContext` and `ToggleButtonGroupContext`, with their hooks |
 | `toggle-button.variants.ts` | The appearance table, the group's `tv()` and three pure resolvers |
 | `toggle-button.variants.test.ts` | |
+| `toggle-button.render.test.tsx` | Mounted under Jest — roles and checked/selected state, standalone and grouped selection (controlled and uncontrolled), disabled/busy, render-function children, part errors outside the root |
 
 There is no `toggle-button.types.ts`: every prop type here has exactly one
 consumer, so each lives beside the component it types. See

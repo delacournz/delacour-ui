@@ -130,7 +130,8 @@ export const textAnimationVariants = tv({
 		measure: "absolute top-0 right-0 left-0 opacity-0",
 		caret: "absolute top-0 bottom-0",
 		slot: "relative",
-		layer: "absolute top-0 left-0",
+		// Both edges, so the layer spans the reserved slot and `textAlign` has room to act.
+		layer: "absolute top-0 right-0 left-0",
 		probe: "absolute top-0 left-0 w-[4096px] items-start opacity-0",
 		number: "flex-row items-end",
 		wheel: "relative overflow-hidden",

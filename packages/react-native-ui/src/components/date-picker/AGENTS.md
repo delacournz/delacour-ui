@@ -119,6 +119,27 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   which draws the calendar on a card in place and renders no trigger. There is no popover import
   here and must not be until that merges.
 
+## Month bounds
+
+- **`defaultMonth`, `startMonth` and `endMonth` pass through to the `Calendar`**, so the default
+  anatomy can open near a likely date and bound paging and the year list without a custom
+  `DatePicker.Calendar`. Omitted, the calendar derives `startMonth`/`endMonth` from
+  `minDate`/`maxDate`, and opens on the selection's month, else today's.
+- **A date of birth sets `maxDate`.** Without it the picker allows future days and the year list
+  runs a century ahead:
+
+  ```tsx
+  const now = today();
+  <DatePicker
+    defaultMonth={{ year: now.year - 30, month: 1, day: 1 }}
+    maxDate={addYears(now, -18)}
+    minDate={{ year: now.year - 120, month: 1, day: 1 }}
+    onValueChange={field.onChange}
+    title="Date of birth"
+    value={field.value ?? null}
+  />
+  ```
+
 ## Open questions
 
 - A half-picked range is discarded on dismiss. If product wants it kept, commit it from

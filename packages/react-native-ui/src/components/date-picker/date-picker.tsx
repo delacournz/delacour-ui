@@ -85,6 +85,9 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		captionLayout = "picker",
 		minDate,
 		maxDate,
+		defaultMonth,
+		startMonth,
+		endMonth,
 		disabledDates,
 		selectOutsideDays = false,
 		today,
@@ -242,11 +245,14 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			accessibilityValue: resolveSelectionAccessibilityValue(shown, locale),
 			calendar: {
 				captionLayout,
+				defaultMonth,
 				disabled: disabledDates,
+				endMonth,
 				maxDate,
 				minDate,
 				selectOutsideDays,
 				size: calendarSize,
+				startMonth,
 				today,
 				weekStartsOn,
 			},
@@ -288,10 +294,12 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			clear,
 			clearLabel,
 			close,
+			defaultMonth,
 			description,
 			disabledDates,
 			display,
 			doneLabel,
+			endMonth,
 			field?.label,
 			isClearable,
 			isOpen,
@@ -305,6 +313,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			select,
 			selectOutsideDays,
 			shown,
+			startMonth,
 			testID,
 			title,
 			today,
@@ -378,6 +387,16 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
  *
  * @example
  * <DatePicker disabledDates={[{ type: "weekday", days: [0, 6] }]} mode="multiple" />
+ *
+ * @example
+ * // A date of birth: no future days, opens near a likely year, the year list bounded.
+ * <DatePicker
+ *   defaultMonth={{ year: today().year - 30, month: 1, day: 1 }}
+ *   maxDate={addYears(today(), -18)}
+ *   minDate={{ year: today().year - 120, month: 1, day: 1 }}
+ *   onValueChange={setDob}
+ *   value={dob}
+ * />
  */
 export const DatePicker = Object.assign(DatePickerRoot, {
 	/** The `Input`-shaped control that opens the sheet. Holds the value and the icon unless given children. */

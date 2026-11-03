@@ -269,6 +269,19 @@ describe("DatePicker single mode", () => {
 	});
 });
 
+describe("DatePicker month bounds", () => {
+	test("defaultMonth, startMonth and endMonth reach the default calendar", async () => {
+		const june1990: CalendarDate = { year: 1990, month: 6, day: 1 };
+		await renderWithProviders(
+			<Picker defaultMonth={june1990} defaultOpen endMonth={june1990} startMonth={june1990} />,
+			{ wrapper: Providers }
+		);
+		expect(day("1990-06-15")).toBeOnTheScreen();
+		expect(screen.getByTestId("stay-calendar-prev")).toBeDisabled();
+		expect(screen.getByTestId("stay-calendar-next")).toBeDisabled();
+	});
+});
+
 describe("DatePicker range mode", () => {
 	test("the first tap is held, only the complete range is reported, then it closes", async () => {
 		const onValueChange = jest.fn();

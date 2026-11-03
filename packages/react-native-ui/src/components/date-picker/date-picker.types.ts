@@ -61,6 +61,12 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		minDate?: CalendarDate;
 		/** The latest day that can be picked, inclusive. */
 		maxDate?: CalendarDate;
+		/** The month the calendar opens on. Omitted, the selection's month, else today's. */
+		defaultMonth?: CalendarDate;
+		/** The earliest month paging and the year list reach. Omitted, `minDate`'s month. */
+		startMonth?: CalendarDate;
+		/** The latest month paging and the year list reach. Omitted, `maxDate`'s month. */
+		endMonth?: CalendarDate;
 		/** Further days that cannot be picked. */
 		disabledDates?: readonly DateMatcher[];
 		/** Lets a neighbouring month's day be picked. */

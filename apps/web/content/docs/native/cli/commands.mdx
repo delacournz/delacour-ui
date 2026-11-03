@@ -136,7 +136,8 @@ Vitest does not read `tsconfig` paths, so a project importing through `@/` needs
 to load until the config sets `esbuild: { tsconfigRaw: "{}" }`. Under Jest, `chart` and
 `bottom-sheet` import engines published as TypeScript source, so `transformIgnorePatterns` has to
 let `@delacour/.*` through, and for `chart` also `d3-.*` and `internmap`, which ship ES modules
-only. `add --tests` checks all of this as soon as it has copied the suites, and [`doctor`](#doctor)
+only — and `d3-shape` ships them as `.mjs`, which `jest-expo`'s Babel transform does not match, so
+`transform` needs `"^.+\\.mjs$": "babel-jest"` too. `add --tests` checks all of this as soon as it has copied the suites, and [`doctor`](#doctor)
 checks it again — each warning names the fix.
 </Callout>
 
@@ -153,13 +154,14 @@ Vitest, `add --tests` copies the other suites and says once that the render test
 With them comes the test kit, copied under your `lib` alias as `test/setup.ts` and `test/render.tsx`:
 a Jest setup that stands in for every native module the components use — Reanimated, Gesture
 Handler, Skia, the keyboard controller, the safe area and the rest — and a `renderWithProviders`
-helper that mounts a component inside `DelacourProvider`. `add` then adds three things to the Jest
+helper that mounts a component inside `DelacourProvider`. `add` then adds four things to the Jest
 config, in `package.json` or a `jest.config.*` that exports an object literal:
 
 ```js
 setupFiles: ["<rootDir>/src/lib/test/setup.ts"],
 resolver: "react-native-reanimated/jest/resolver",
 transformIgnorePatterns: [/* jest-expo's, plus the library's ES-module dependencies */],
+transform: { "^.+\\.mjs$": "babel-jest" },
 ```
 
 A config it cannot edit safely is left alone, and `add` prints that snippet with your paths for you

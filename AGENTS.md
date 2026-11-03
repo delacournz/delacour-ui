@@ -177,10 +177,17 @@ run, and never weaken a check to get one: bare `gh signoff` writes green without
 and is break-glass only, by a maintainer, said so in the pull request.
 
 When a check genuinely cannot run on a laptop, dispatch the workflow instead — it runs the real
-checks and, given a SHA, writes the same statuses from CI:
+checks and, with `mode: signoff`, writes the same statuses from CI. In the Actions tab, **Run
+workflow** shows a `mode` dropdown (`report` / `signoff`) and two optional fields: `pr` tests that
+pull request's head, `signoff-sha` tests that commit, both pins the pull request to that exact head
+(the run fails if it has moved), and neither tests the tip of the ref the workflow was dispatched
+from. Every job checks out the commit `resolve` picked, so the statuses land on the tree that ran.
+A fork's pull request is refused — the run carries secrets.
 
 ```bash
-gh workflow run ci.yml --ref "$(git branch --show-current)" -f signoff-sha="$(git rev-parse HEAD)"
+gh workflow run ci.yml --ref develop -f mode=signoff -f pr=123
+gh workflow run ci.yml --ref develop -f mode=signoff -f signoff-sha="$(git rev-parse HEAD)"
+gh workflow run ci.yml --ref "$(git branch --show-current)" -f mode=signoff
 ```
 
 The version pull request is the one pull request signed off in CI, automatically — see below.
@@ -194,7 +201,7 @@ three cases only:
 | Trigger | Why |
 | --- | --- |
 | `pull_request` from `changeset-release/develop` | No person authors the version pull request, so nobody is at a laptop to sign it off. Its final `signoff` job writes the five required statuses for the head SHA it tested. Every job is gated by `if:` to that head branch, so an ordinary pull request starts the workflow and bills nothing |
-| `workflow_dispatch` | The escape hatch above. With `signoff-sha`, a green run writes the statuses; blank is a report |
+| `workflow_dispatch` | The escape hatch above. `mode: signoff` makes a green run write the statuses for the optional `pr`'s head or `signoff-sha` (else the dispatched ref's tip); `mode: report` writes nothing |
 | push to `release/playground/*` | Advisory — see [apps/playground/AGENTS.md](apps/playground/AGENTS.md#eas) |
 
 It does not run on push to `develop` or `main`. A commit on `develop` is the squash of a pull request
@@ -237,7 +244,7 @@ Shared native and React versions are pinned once, in the root `package.json`
 ```
 @legendapp/list  react 19.3.0  react-native 0.88.0
 react-native-gesture-handler ~3.3.0  react-native-keyboard-controller 1.22.7  react-native-reanimated 4.7.1
-react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.7.3
+react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.9.0
 react-native-svg 15.16.0  react-native-worklets 0.13.0
 ```
 

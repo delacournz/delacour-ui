@@ -112,7 +112,8 @@ read those before touching behaviour, because behaviour is not here.
   The engine's press handler is donated to the pressable rather than wrapping
   it, because two tap gestures in an ancestor/descendant pair give the touch to
   the descendant and a wrapping trigger never fires. `Close` presses with
-  `fade` and an 8pt slop, for `Badge.CloseButton`'s and `Checkbox`'s reasons.
+  `fade` and a 12pt slop, for `Badge.CloseButton`'s and `Checkbox`'s reasons:
+  a 20pt icon plus 12pt on each side is the 44pt minimum.
 - **The root fills in three defaults.** `bottomInset` is `useSafeAreaInsets().bottom`,
   so the engine reserves the home-indicator band and nobody pads for it by
   hand. `onSnapPointHaptic` is `Presets.System.selection` and `onCloseHaptic` is

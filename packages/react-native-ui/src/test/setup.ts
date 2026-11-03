@@ -7,6 +7,7 @@
  * only when the library ships none of its own; prefer the library's.
  */
 import { jest } from "@jest/globals";
+import type { ReactNode } from "react";
 
 /**
  * A value every property read and call of which returns another such value:
@@ -49,7 +50,7 @@ jest.mock("uniwind", () => ({
 	useCSSVariable: (name: string | string[]) => (Array.isArray(name) ? name.map(() => undefined) : undefined),
 	useUniwind: () => ({ theme: "light", hasAdaptiveThemes: true }),
 	Uniwind: { setTheme: () => undefined, currentTheme: "light", hasAdaptiveThemes: true },
-	LayoutDirection: { LTR: "ltr", RTL: "rtl" },
+	LayoutDirection: ({ children }: { children?: ReactNode }) => children,
 }));
 
 /**

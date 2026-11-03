@@ -26,9 +26,11 @@ import {
 	calendarVariants,
 	isDateSelected,
 	isMonthInBounds,
+	reconcileVisibleMonth,
 	resolveCalendarAxes,
 	resolveMonthBounds,
 	resolveRangeRole,
+	resolveSelectionPage,
 } from "./calendar.variants";
 import { CalendarCaption } from "./calendar-caption";
 import { CalendarDay } from "./calendar-day";
@@ -166,6 +168,15 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 	const [view, setView] = useState<CalendarView>("days");
 	const [pageDirection, setPageDirection] = useState<-1 | 0 | 1>(0);
 
+	// New bounds can leave the visible month outside them. Move it to the nearest bound and report
+	// the change, so the arrows and the swipe always have somewhere to go.
+	useEffect(() => {
+		const held = reconcileVisibleMonth(visibleMonth, monthBounds);
+		if (!held) return;
+		setPageDirection(0);
+		setVisibleMonth(held);
+	}, [monthBounds, setVisibleMonth, visibleMonth]);
+
 	const goToMonth = useCallback(
 		(date: CalendarDate) => {
 			const target = startOfMonth(clampDate(startOfMonth(date), monthBounds.first, monthBounds.last));
@@ -210,12 +221,21 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		(date: CalendarDate) => {
 			if (axes.isDisabled || axes.isReadOnly || isDateDisabled(date)) return;
 			setSelection(nextSelection(selection, date, isDateDisabled));
-			if (!isSameMonth(date, visibleMonth)) {
-				setPageDirection(compareMonths(date, visibleMonth) > 0 ? 1 : -1);
-				setVisibleMonth(startOfMonth(date));
-			}
+			const direction = resolveSelectionPage(date, visibleMonth, monthBounds);
+			if (direction === 0) return;
+			setPageDirection(direction);
+			setVisibleMonth(startOfMonth(date));
 		},
-		[axes.isDisabled, axes.isReadOnly, isDateDisabled, selection, setSelection, setVisibleMonth, visibleMonth]
+		[
+			axes.isDisabled,
+			axes.isReadOnly,
+			isDateDisabled,
+			monthBounds,
+			selection,
+			setSelection,
+			setVisibleMonth,
+			visibleMonth,
+		]
 	);
 
 	// The month is announced when it changes, never on mount — the caption already says it.
@@ -230,9 +250,17 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		() => (weekStartsOn === "auto" ? resolveWeekStart(locale) : weekStartsOn),
 		[locale, weekStartsOn]
 	);
+	// Anchored to the visible month, not today, so a calendar that opens far in the past or future
+	// still lists its own year.
+	const visibleYear = visibleMonth.year;
 	const yearSpan = useMemo(
-		() => resolveYearSpan({ endMonth: monthBounds.last, startMonth: monthBounds.first, visible: today }),
-		[monthBounds.first, monthBounds.last, today]
+		() =>
+			resolveYearSpan({
+				endMonth: monthBounds.last,
+				startMonth: monthBounds.first,
+				visible: { day: 1, month: 1, year: visibleYear },
+			}),
+		[monthBounds.first, monthBounds.last, visibleYear]
 	);
 
 	const context = useMemo<CalendarContextValue>(

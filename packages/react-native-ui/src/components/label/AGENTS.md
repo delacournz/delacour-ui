@@ -13,6 +13,7 @@ component, no parts.
 | `label.tsx` | `Label` |
 | `label.variants.ts` | Pure `tv()` slots + resolvers, no RN imports |
 | `label.variants.test.ts` | |
+| `label.render.test.tsx` | Mounted under Jest — text, "Email, required" announcement, caller label wins, disabled state, forwarded props |
 
 ## Design
 

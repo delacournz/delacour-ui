@@ -15,6 +15,7 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
 | `avatar-badge.tsx` | `Avatar.Badge` — the corner overlay, a presence dot when empty |
 | `avatar-group.tsx` | `Avatar.Group`, plus its internal `Item` and `Overflow` leaves |
 | `avatar.context.tsx` | `AvatarProvider`, `AvatarGroupProvider`, `useAvatar()`, `useAvatarContext()`, `useAvatarGroupContext()`, `useAvatarPart()` |
+| `avatar.render.test.tsx` | Mounted under Jest — accessible name and role, fallback initials, image failure and retry, press and disabled, `Avatar.Badge`, `Avatar.Group` overflow and list semantics, context and out-of-root errors |
 | `avatar.variants.ts` | Pure `tv()` slots, `AVATAR_SIZE_POINTS`, `resolveAvatarSize`, `resolveAvatarOverlap`, `resolveAvatarInteractive` |
 | `avatar.variants.test.ts` | |
 | `avatar.utils.ts` | Pure non-styling logic — initials, the image-retry key, group overflow maths, the spoken label |

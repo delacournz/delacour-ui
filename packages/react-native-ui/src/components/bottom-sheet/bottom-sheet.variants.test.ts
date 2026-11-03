@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { resolveSheetBottomInset, resolveSheetScrollEndPadding } from "@delacour/react-native-bottom-sheet/core";
-import { declaredTokens, tokenValue } from "../../styles/theme-tokens.test";
+import { declaredTokens, THEME_CSS, tokenValue } from "../../styles/theme-tokens.test";
+import { ICON_FALLBACK_SIZE_CLASS } from "../icon/icon.variants";
 import {
 	BOTTOM_SHEET_BACKDROP_INDICES,
 	BOTTOM_SHEET_CLOSE_HIT_SLOP,
@@ -12,6 +13,17 @@ import {
 } from "./bottom-sheet.variants";
 
 const LIGHT = declaredTokens("light");
+
+/** The smallest touch target the library allows, in points. */
+const MIN_TOUCH_TARGET = 44;
+
+/** The pixel edge of the icon `BottomSheet.Close` renders when no size is passed. */
+function fallbackIconEdge(): number {
+	const token = ICON_FALLBACK_SIZE_CLASS.replace(/^size-/, "");
+	const match = THEME_CSS.match(new RegExp(`--spacing-${token}:\\s*(\\d+)px;`));
+	if (!match?.[1]) throw new Error(`no --spacing-${token} in theme.css`);
+	return Number(match[1]);
+}
 const DARK = declaredTokens("dark");
 
 /** `border-t` and friends set a width, not a colour, and name no token. */
@@ -242,6 +254,12 @@ describe("bottomSheetVariants slots", () => {
 	test("the close control is positioned out of the content flow", () => {
 		expect(SLOTS.close()).toContain("absolute");
 		expect(BOTTOM_SHEET_CLOSE_HIT_SLOP).toBeGreaterThan(0);
+	});
+
+	test("the close control's default icon plus its slop reaches the 44pt minimum", () => {
+		// The pressable has no padding or size of its own, so the icon and the
+		// slop are the whole target.
+		expect(fallbackIconEdge() + 2 * BOTTOM_SHEET_CLOSE_HIT_SLOP).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
 	});
 
 	test("the grabber is a pill with both dimensions set", () => {

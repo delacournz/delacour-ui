@@ -16,23 +16,6 @@ const COMPONENTS = join(import.meta.dirname, "components");
  * so the list can only shrink. When it is empty, delete it.
  */
 const PENDING: ReadonlySet<string> = new Set([
-	// RNTL P1 — primitives
-	"animated-badge",
-	"avatar",
-	"badge",
-	"card",
-	"direction",
-	"frame",
-	"icon",
-	"label",
-	"provider",
-	"separator",
-	"skeleton",
-	"spinner",
-	"surface",
-	"text",
-	"theme-selector",
-
 	// RNTL P3 — form controls
 	"checkbox",
 	"combobox",

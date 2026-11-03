@@ -65,21 +65,18 @@ const closeHaptic = Presets.System.impactLight;
  * `topInset` is left at the engine's zero, so a `%` snap point is a fraction of the
  * whole window — the same fraction it was before this rewrite.
  */
-function BottomSheetRoot({
-	bottomInset,
-	onSnapPointHaptic = snapPointHaptic,
-	onCloseHaptic = closeHaptic,
-	...props
-}: BottomSheetProps): ReactElement {
+function BottomSheetRoot({ bottomInset, ...props }: BottomSheetProps): ReactElement {
 	const insets = useSafeAreaInsets();
 	useKeyboardAnimationGuard();
 
+	// The haptics go before the spread, not into destructuring defaults: a
+	// default also replaces an explicit `undefined`, which is the opt-out.
 	return (
 		<Headless
-			bottomInset={bottomInset ?? insets.bottom}
-			onCloseHaptic={onCloseHaptic}
-			onSnapPointHaptic={onSnapPointHaptic}
+			onCloseHaptic={closeHaptic}
+			onSnapPointHaptic={snapPointHaptic}
 			{...props}
+			bottomInset={bottomInset ?? insets.bottom}
 		/>
 	);
 }

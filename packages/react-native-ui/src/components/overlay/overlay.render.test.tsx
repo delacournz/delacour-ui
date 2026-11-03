@@ -1,14 +1,22 @@
-import { afterEach, describe, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { BackHandler, Text, View } from "react-native";
-import { useSharedValue } from "react-native-reanimated";
-import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
+import { useSharedValue, withTiming } from "react-native-reanimated";
+import { act, fireEvent, renderHook, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Overlay, OverlayProvider } from "./overlay";
 import { useOptionalOverlay } from "./overlay.context";
+import { OVERLAY_MOTION } from "./overlay.variants";
 import { type OverlayLayer, zIndexOfOverlay } from "./overlay-registry";
 import { TELEPORT_INLINE } from "./overlay-teleport";
 import { useOverlayBackHandler } from "./use-overlay-back-handler";
 import { useOverlayPresence } from "./use-overlay-presence";
+
+jest.mock("react-native-reanimated", () => {
+	const actual = jest.requireActual<typeof import("react-native-reanimated")>("react-native-reanimated");
+	return { ...actual, withTiming: jest.fn(actual.withTiming) };
+});
+
+const timing = jest.mocked(withTiming);
 
 type DemoProps = {
 	name: string;
@@ -293,6 +301,81 @@ describe("useOverlayPresence", () => {
 
 		await fireEvent.press(screen.getByText("open one"));
 		expect(screen.getByText("one panel")).toBeOnTheScreen();
+	});
+});
+
+const FRAME_MS = 16;
+
+/**
+ * Re-renders the owner with a new inline callback every frame for most of the
+ * animation, then lets the rest of the original duration run. The timing must
+ * start once per transition, and the finish land once, on time, and call the
+ * latest callback.
+ */
+async function rerenderEveryFrame(durationMs: number, rerender: (tick: number) => Promise<void>): Promise<void> {
+	let elapsed = 0;
+	let tick = 0;
+	while (elapsed + FRAME_MS < durationMs) {
+		await act(() => jest.advanceTimersByTime(FRAME_MS));
+		elapsed += FRAME_MS;
+		tick += 1;
+		await rerender(tick);
+	}
+	await act(() => jest.advanceTimersByTime(durationMs - elapsed + FRAME_MS * 2));
+}
+
+describe("useOverlayPresence with an owner that re-renders every frame", () => {
+	beforeEach(() => {
+		jest.useFakeTimers();
+		timing.mockClear();
+	});
+	afterEach(() => {
+		jest.useRealTimers();
+	});
+
+	test("starts one entrance timing and enters on time with a new inline onEntered", async () => {
+		const entered: number[] = [];
+		const { result, rerender } = await renderHook(
+			({ tick }: { tick: number }) =>
+				useOverlayPresence({
+					isOpen: true,
+					onEntered: () => {
+						entered.push(tick);
+					},
+				}),
+			{ initialProps: { tick: 0 } }
+		);
+
+		await rerenderEveryFrame(OVERLAY_MOTION.enterMs, (tick) => rerender({ tick }));
+
+		expect(result.current.phase).toBe("open");
+		expect(timing).toHaveBeenCalledTimes(1);
+		expect(entered).toHaveLength(1);
+		expect(entered[0]).toBeGreaterThan(0);
+	});
+
+	test("starts one exit timing and exits on time with a new inline onExited", async () => {
+		const exited: number[] = [];
+		const { result, rerender } = await renderHook(
+			({ isOpen, tick }: { isOpen: boolean; tick: number }) =>
+				useOverlayPresence({
+					isOpen,
+					onExited: () => {
+						exited.push(tick);
+					},
+				}),
+			{ initialProps: { isOpen: true, tick: 0 } }
+		);
+		await act(() => jest.advanceTimersByTime(OVERLAY_MOTION.enterMs + FRAME_MS * 2));
+		timing.mockClear();
+		await rerender({ isOpen: false, tick: 0 });
+
+		await rerenderEveryFrame(OVERLAY_MOTION.exitMs, (tick) => rerender({ isOpen: false, tick }));
+
+		expect(result.current.phase).toBe("closed");
+		expect(timing).toHaveBeenCalledTimes(1);
+		expect(exited).toHaveLength(1);
+		expect(exited[0]).toBeGreaterThan(0);
 	});
 });
 

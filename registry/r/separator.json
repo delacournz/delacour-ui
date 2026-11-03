@@ -43,5 +43,24 @@
 				}
 			]
 		}
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/separator/separator.render.test.tsx",
+			"target": "separator/separator.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

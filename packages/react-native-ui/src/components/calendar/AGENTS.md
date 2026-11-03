@@ -123,6 +123,8 @@ sheets.
 - Each day is a button labelled with the full date (`formatDate(…, { style: "full" })`) plus
   "Today" / "Range start" / "Range end" (`resolveDayAccessibilityLabel`), with `selected` and
   `disabled` state. The state words are in the label, not a hint, so they read with hints off.
+- **A read-only day is not `disabled`** (`isUnavailable`): `select` ignores its tap and it skips
+  the fade and haptic, but a review screen's days never all read "dimmed".
 - The grid is `role="grid"`, named by an enclosing `Field.Label` or else the month.
 - **Paging for screen readers lives on the caption**, as increment/decrement actions. An
   adjustable grid would fold its child buttons into itself on both platforms and make the days

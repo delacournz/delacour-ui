@@ -319,6 +319,19 @@ describe("resolveDayState", () => {
 		});
 		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true }).isPressable).toBe(false);
 	});
+
+	test("only a day that cannot be picked is announced disabled; read-only alone is not", () => {
+		const cell = { date: d(2026, 10, 5), isOutside: false, weekIndex: 0, dayIndex: 0 };
+		expect(resolveDayState({ ...base, cell }).isUnavailable).toBe(false);
+		expect(resolveDayState({ ...base, cell, isReadOnly: true }).isUnavailable).toBe(false);
+		expect(resolveDayState({ ...base, cell, isDisabled: () => true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true, isReadOnly: true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell: { ...cell, isOutside: true } }).isUnavailable).toBe(true);
+		expect(
+			resolveDayState({ ...base, cell: { ...cell, isOutside: true }, selectOutsideDays: true }).isUnavailable
+		).toBe(false);
+	});
 });
 
 describe("resolveDayAccessibilityLabel", () => {

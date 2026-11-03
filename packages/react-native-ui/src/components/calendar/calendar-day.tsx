@@ -42,7 +42,8 @@ export type CalendarDayProps = {
  *
  * Announced as a button labelled with the full date plus today and the range end it is —
  * "Monday 5 October 2026, Today, Range start" — and `selected` and `disabled` as accessibility
- * state.
+ * state. A read-only day is not announced disabled — `select` ignores its tap, and it neither
+ * fades nor plays a haptic.
  */
 export function CalendarDay({ date, children, className }: CalendarDayProps): ReactElement {
 	const calendar = useCalendarPart("Calendar.Day");
@@ -89,9 +90,9 @@ export function CalendarDay({ date, children, className }: CalendarDayProps): Re
 			)}
 			accessibilityState={{ selected: state.isSelected }}
 			className={slots.cell({ className })}
-			disabled={!state.isPressable}
-			feedback="fade"
-			haptic="selection"
+			disabled={state.isUnavailable}
+			feedback={state.isPressable ? "fade" : "none"}
+			haptic={state.isPressable ? "selection" : false}
 			onPress={handlePress}
 			testID={resolvePartTestID(calendar.testID, `day-${serialiseDate(date)}`)}
 		>

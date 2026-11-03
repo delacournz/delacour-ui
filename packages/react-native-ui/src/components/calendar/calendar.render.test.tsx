@@ -252,6 +252,12 @@ describe("Calendar", () => {
 			expect(onSelect).not.toHaveBeenCalled();
 		});
 
+		test("isReadOnly days are not announced disabled, the selected one included", async () => {
+			await renderWithProviders(<Calendar isReadOnly locale="en" selected={day(2026, 10, 5)} testID="cal" />);
+			expect(screen.getByTestId("cal-day-2026-10-05")).not.toBeDisabled();
+			expect(screen.getByTestId("cal-day-2026-10-14")).not.toBeDisabled();
+		});
+
 		test("isReadOnly ignores day taps but paging still works", async () => {
 			const onSelect = jest.fn();
 			const onMonthChange = jest.fn();

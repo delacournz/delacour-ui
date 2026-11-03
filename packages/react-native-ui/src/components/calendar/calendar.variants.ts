@@ -270,6 +270,11 @@ export type CalendarDayState = {
 	isHidden: boolean;
 	/** Takes a tap. */
 	isPressable: boolean;
+	/**
+	 * Announced as disabled: it takes no tap for a reason other than `isReadOnly`. A read-only
+	 * calendar shows an answer, so its days must not all read "dimmed".
+	 */
+	isUnavailable: boolean;
 };
 
 /**
@@ -305,6 +310,7 @@ export function resolveDayState({
 	const isSelected = showsSelection && isDateSelected(selection, date);
 	const rangeRole = showsSelection && selection.mode === "range" ? resolveRangeRole(selection.value, date) : null;
 	const dayDisabled = isDisabled(date);
+	const isUnavailable = isHidden || dayDisabled || isCalendarDisabled || (isOutside && !selectOutsideDays);
 
 	return {
 		isSelected,
@@ -314,7 +320,8 @@ export function resolveDayState({
 		isOutside,
 		isDisabled: dayDisabled,
 		isHidden,
-		isPressable: !isHidden && !dayDisabled && !isCalendarDisabled && !isReadOnly && (!isOutside || selectOutsideDays),
+		isPressable: !isUnavailable && !isReadOnly,
+		isUnavailable,
 	};
 }
 

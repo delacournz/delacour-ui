@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	resolveNextPhrase,
@@ -190,7 +191,11 @@ export function TextAnimationRotating({
 	const leaving = previous >= 0 ? phrases[previous] : undefined;
 	const reserved = reserve === "widest" ? (phrases[widest] ?? shown) : shown;
 	const distance = transition.kind === "slide" ? (transition.distance ?? TEXT_ANIMATION_ROTATE_DISTANCE) : 0;
-	const textProps = { allowFontScaling, maxFontSizeMultiplier };
+	// The same default cap as the other parts, for the slot, the measures and the layers.
+	const textProps = {
+		allowFontScaling,
+		maxFontSizeMultiplier: maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER,
+	};
 
 	// The in-flow copy sizes the slot; the hidden measures settle which phrase
 	// really is widest once they have laid out; the layers draw over the slot.

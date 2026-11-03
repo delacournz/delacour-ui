@@ -2,6 +2,7 @@ import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { CalmMotionProvider } from "../../hooks/use-calm-motion";
 import { act, renderWithProviders, screen } from "../../test/render";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import { TextAnimation } from "./text-animation";
 
 function Calm({ children }: { children: ReactNode }): ReactElement {
@@ -130,6 +131,12 @@ describe("TextAnimation.Rotating", () => {
 		await renderWithProviders(<TextAnimation.Rotating phrases={["fast", "calm", "bold"]} />);
 		expect(screen.getByRole("text", { name: "fast" })).toBeOnTheScreen();
 		expect(screen.getAllByLabelText(/./)).toHaveLength(1);
+	});
+
+	test("caps font scaling at the default every other part uses", async () => {
+		await renderWithProviders(<TextAnimation.Rotating phrases={["fast", "calm"]} />);
+		const texts = screen.getAllByText(/./, { includeHiddenElements: true });
+		for (const text of texts) expect(text.props.maxFontSizeMultiplier).toBe(TEXT_MAX_FONT_SIZE_MULTIPLIER);
 	});
 
 	test("hides the layers and probes from assistive technology", async () => {
@@ -261,6 +268,12 @@ describe("TextAnimation.Rolling", () => {
 	test("announces prefix, suffix and decimals as part of the value", async () => {
 		await renderWithProviders(<TextAnimation.Rolling format={{ decimals: 1 }} prefix="$" suffix="k" value={12.5} />);
 		expect(screen.getByRole("text", { name: "$12.5k" })).toBeOnTheScreen();
+	});
+
+	test("caps font scaling at the default every other part uses", async () => {
+		await renderWithProviders(<TextAnimation.Rolling prefix="$" value={1284} />);
+		const texts = screen.getAllByText(/./, { includeHiddenElements: true });
+		for (const text of texts) expect(text.props.maxFontSizeMultiplier).toBe(TEXT_MAX_FONT_SIZE_MULTIPLIER);
 	});
 
 	test("hides every wheel digit from assistive technology", async () => {

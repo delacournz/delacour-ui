@@ -127,8 +127,9 @@ standalone SVG document, or as a PNG.
   `resolveSignatureExport`, so the same options give the same box, the same
   literal ink and the same background or none — a PNG is transparent unless
   `background` is set. It renders the cached stroke paths off screen on a CPU
-  surface (`Skia.Surface.MakeRaster`) at `scale` pixels per point (default the screen's ratio) and returns
-  base64 with no `data:` prefix, as `Sketch.toPNG` does. Off screen rather than a
+  surface (`Skia.Surface.MakeRaster`) at `scale` pixels per point (default the screen's ratio) and resolves to
+  base64 with no `data:` prefix, as `Sketch.toPNG` does — a promise, because
+  react-native-skia 3.9 made `encodeToBase64` asynchronous. Off screen rather than a
   snapshot of the pad, so the guideline, the placeholder and the pad's fill never
   reach the file. `""` before the pad is measured. The point's `t` is stored so
   a speed-eased stroke width can follow without a format change.

@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Export",
 	caption:
-		"The handle's `toPNG` renders the marks off screen at the screen's pixel ratio and hands back base64 — on the theme's background, or transparent with `background: null`.",
+		"The handle's `toPNG` renders the marks off screen at the screen's pixel ratio and resolves to base64 — on the theme's background, or transparent with `background: null`.",
 	align: "stretch",
 };
 
@@ -26,7 +26,11 @@ export function Demo(): ReactElement {
 					<Sketch.Undo testID="sketch-undo" />
 				</Sketch.Toolbar>
 			</Sketch>
-			<Button onPress={() => setPng(sketch.current?.toPNG() ?? null)} testID="sketch-export-png" variant="outline">
+			<Button
+				onPress={async () => setPng((await sketch.current?.toPNG()) ?? null)}
+				testID="sketch-export-png"
+				variant="outline"
+			>
 				<Button.Label>Export PNG</Button.Label>
 			</Button>
 			{png ? (

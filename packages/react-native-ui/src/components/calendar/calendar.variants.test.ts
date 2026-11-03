@@ -13,6 +13,7 @@ import {
 	isDateSelected,
 	reconcileVisibleMonth,
 	resolveCalendarAxes,
+	resolveCaptionLabel,
 	resolveCaptionPage,
 	resolveCommittedPageDirection,
 	resolveDayAccessibilityLabel,
@@ -331,6 +332,17 @@ describe("resolveDayState", () => {
 		expect(
 			resolveDayState({ ...base, cell: { ...cell, isOutside: true }, selectOutsideDays: true }).isUnavailable
 		).toBe(false);
+	});
+});
+
+describe("resolveCaptionLabel", () => {
+	test("the caption reads the field's name before the month, since the grid itself is never read", () => {
+		expect(resolveCaptionLabel("Date of birth", "October 2026")).toBe("Date of birth, October 2026");
+	});
+
+	test("with no field label it is just the month", () => {
+		expect(resolveCaptionLabel(null, "October 2026")).toBe("October 2026");
+		expect(resolveCaptionLabel("", "October 2026")).toBe("October 2026");
 	});
 });
 

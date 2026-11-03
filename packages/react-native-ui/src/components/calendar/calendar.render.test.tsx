@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { Field } from "../field";
 import { Calendar } from "./calendar";
 import type { CalendarDate } from "./calendar.date";
 
@@ -33,6 +34,16 @@ describe("Calendar", () => {
 			const today = screen.getByTestId("cal-day-2026-10-14");
 			expect(today.props.accessibilityLabel).toMatch(/, Today$/);
 			expect(screen.getByTestId("cal-day-2026-10-15").props.accessibilityLabel).not.toMatch(/Today/);
+		});
+
+		test("an enclosing Field.Label is read on the caption, before the month", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Date of birth</Field.Label>
+					<Calendar locale="en" testID="cal" />
+				</Field>
+			);
+			expect(screen.getByRole("button", { name: "Date of birth, October 2026" })).toBeOnTheScreen();
 		});
 
 		test("a day is a button named by its full date", async () => {

@@ -326,6 +326,16 @@ export function resolveDayState({
 }
 
 /**
+ * What a screen reader says for the caption: the enclosing `Field.Label`, then the caption text —
+ * "Date of birth, October 2026". The caption carries the field's name because it is the
+ * calendar's one accessible heading: the grid view is not `accessible`, and `role="grid"` maps to
+ * no iOS trait, so a label on the grid is never read.
+ */
+export function resolveCaptionLabel(fieldLabel: string | null, text: string): string {
+	return fieldLabel ? `${fieldLabel}, ${text}` : text;
+}
+
+/**
  * What a screen reader says for a day: the full date, then "Today" and the range end it is —
  * "Monday 5 October 2026, Today, Range start". The state words sit in the label, not the hint,
  * because many VoiceOver users turn hints off and would hear only the date.

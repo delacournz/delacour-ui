@@ -190,6 +190,7 @@ function SwipeRoot({
 	const pan = useMemo(
 		() =>
 			Gesture.Pan()
+				.withTestId("swipe-pan")
 				.enabled(!isDisabled)
 				.activeOffsetX([-10, 10])
 				.failOffsetY([-8, 8])
@@ -279,10 +280,12 @@ function SwipeRoot({
 
 	const shieldTap = useMemo(
 		() =>
-			Gesture.Tap().onEnd(() => {
-				"worklet";
-				scheduleOnRN(close);
-			}),
+			Gesture.Tap()
+				.withTestId("swipe-shield")
+				.onEnd(() => {
+					"worklet";
+					scheduleOnRN(close);
+				}),
 		[close]
 	);
 

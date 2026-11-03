@@ -23,6 +23,7 @@ optional Cancel action and debounced change reporting, over `Input.Group`. Root 
 | `search-bar.variants.test.ts` | |
 | `search-bar.debounce.ts` | `createDebouncer`, a debounce state machine with the clock injected |
 | `search-bar.debounce.test.ts` | |
+| `search-bar.render.test.tsx` | Mounted under Jest — search role and name, typing, debounce, clear, Cancel modes, disabled, tokens, handle, parts outside the root |
 
 ## Design
 

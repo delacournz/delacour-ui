@@ -7,6 +7,7 @@
  * only when the library ships none of its own; prefer the library's.
  */
 import { jest } from "@jest/globals";
+import type { ReactNode } from "react";
 
 /**
  * A value every property read and call of which returns another such value:
@@ -47,6 +48,13 @@ jest.mock("react-native-worklets", () => ({
 require("react-native-reanimated").setUpTests();
 require("react-native-gesture-handler/jestSetup");
 
+/**
+ * React Native's Jest mock leaves `AppState.currentState` a mock function, which
+ * reads as "not active": anything that pauses in the background (a toast's
+ * auto-dismiss clock) would never run. A test runs in the foreground.
+ */
+Object.defineProperty(require("react-native").AppState, "currentState", { configurable: true, value: "active" });
+
 jest.mock("react-native-safe-area-context", () => require("react-native-safe-area-context/jest/mock").default);
 jest.mock("react-native-keyboard-controller", () => require("react-native-keyboard-controller/jest"));
 jest.mock("react-native-teleport", () => require("react-native-teleport/jest"));
@@ -66,7 +74,7 @@ jest.mock("uniwind", () => ({
 	useCSSVariable: (name: string | string[]) => (Array.isArray(name) ? name.map(() => undefined) : undefined),
 	useUniwind: () => ({ theme: "light", hasAdaptiveThemes: true }),
 	Uniwind: { setTheme: () => undefined, currentTheme: "light", hasAdaptiveThemes: true },
-	LayoutDirection: { LTR: "ltr", RTL: "rtl" },
+	LayoutDirection: ({ children }: { children?: ReactNode }) => children,
 }));
 
 jest.mock("react-native-skia", () => {
@@ -93,7 +101,7 @@ jest.mock("react-native-skia", () => {
 		StrokeJoin: mockDeepStub(),
 		matchFont: (style?: { fontSize?: number }) => mockFont(style?.fontSize),
 		usePathInterpolation: () => mockDeepStub(),
-		vec: (x = 0, y = 0) => ({ x, y }),
+		vec: (x = 0, y = x) => ({ x, y }),
 	};
 });
 

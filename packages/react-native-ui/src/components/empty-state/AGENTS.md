@@ -20,6 +20,7 @@ five parts: `Header`, `Media`, `Title`, `Description`, `Content`.
 | `empty-state.types.ts` | Prop types shared by two or more parts |
 | `empty-state.variants.ts` | Pure `tv()` slots and the media colour map, no RN imports |
 | `empty-state.variants.test.ts` | |
+| `empty-state.render.test.tsx` | Mounted under Jest — title header role, media hidden by default and opt-in, actions reachable, context size/variant, part-outside-root errors |
 
 ## Anatomy
 

@@ -19,6 +19,7 @@ falls into; a two-second hold cannot be done by accident or by habit.
 | `progress-button.context.tsx` | `ProgressButtonContext`, the layer context, `useProgressButton()` |
 | `progress-button.variants.ts` | Pure `tv()` slots, colour tables, and the hold, playback, stepping and reset resolvers |
 | `progress-button.variants.test.ts` | |
+| `progress-button.render.test.tsx` | Mounted under Jest — role, hint, state, activate action completes, disabled, controlled and uncontrolled completion, auto-reset, hidden fill copy, parts outside the root. The hold itself is not reachable: `fireGestureHandler` runs BEGAN, ACTIVE, END in one call so the release rewinds the fill at once, and completion is a UI-thread timing callback |
 
 ## Design
 

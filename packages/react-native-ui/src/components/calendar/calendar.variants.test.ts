@@ -11,13 +11,16 @@ import {
 	type CalendarRangeRole,
 	calendarVariants,
 	isDateSelected,
+	reconcileVisibleMonth,
 	resolveCalendarAxes,
+	resolveCaptionPage,
 	resolveDayState,
 	resolveDayTone,
 	resolveMonthBounds,
 	resolvePageDirection,
 	resolvePartTestID,
 	resolveRangeRole,
+	resolveSelectionPage,
 } from "./calendar.variants";
 
 function d(year: number, month: number, day: number): CalendarDate {
@@ -325,6 +328,41 @@ describe("resolveMonthBounds", () => {
 	});
 });
 
+describe("reconcileVisibleMonth", () => {
+	test("leaves a month inside the bounds alone", () => {
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: d(2026, 1, 1), last: d(2026, 12, 1) })).toBeNull();
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: null, last: null })).toBeNull();
+	});
+
+	test("moves a month the bounds left behind to the nearest bound", () => {
+		expect(reconcileVisibleMonth(d(2026, 1, 1), { first: d(2026, 6, 1), last: null })).toEqual(d(2026, 6, 1));
+		expect(reconcileVisibleMonth(d(2026, 12, 1), { first: null, last: d(2026, 6, 1) })).toEqual(d(2026, 6, 1));
+	});
+
+	test("holds still under inverted bounds, which no month satisfies", () => {
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: d(2026, 9, 1), last: d(2026, 6, 1) })).toBeNull();
+	});
+});
+
+describe("resolveSelectionPage", () => {
+	const visible = d(2026, 10, 1);
+	const bounds = { first: d(2026, 1, 1), last: d(2026, 10, 1) };
+
+	test("a day in the visible month stays put", () => {
+		expect(resolveSelectionPage(d(2026, 10, 31), visible, bounds)).toBe(0);
+	});
+
+	test("an outside day in bounds pages towards its month", () => {
+		expect(resolveSelectionPage(d(2026, 9, 28), visible, bounds)).toBe(-1);
+		expect(resolveSelectionPage(d(2026, 11, 2), visible, { first: null, last: null })).toBe(1);
+	});
+
+	test("an outside day past a bound never pages", () => {
+		expect(resolveSelectionPage(d(2026, 11, 2), visible, bounds)).toBe(0);
+		expect(resolveSelectionPage(d(2025, 12, 29), d(2026, 1, 1), bounds)).toBe(0);
+	});
+});
+
 describe("resolveCalendarAxes", () => {
 	test("own props win, then the field, then the defaults", () => {
 		expect(resolveCalendarAxes({ own: {}, field: null })).toEqual({
@@ -369,6 +407,30 @@ describe("resolvePageDirection", () => {
 
 	test("an unmeasured grid never pages", () => {
 		expect(resolvePageDirection({ ...base, width: 0, translationX: -200, velocityX: 0 })).toBe(0);
+	});
+});
+
+describe("resolveCaptionPage", () => {
+	const open = { canGoNext: true, canGoPrev: true, isDisabled: false, view: "days" } as const;
+
+	test("increment pages forward and decrement back", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment" })).toBe(1);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement" })).toBe(-1);
+		expect(resolveCaptionPage({ ...open, actionName: "increment", view: "months" })).toBe(1);
+	});
+
+	test("stops at a bound", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment", canGoNext: false })).toBe(0);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement", canGoPrev: false })).toBe(0);
+	});
+
+	test("never pages a disabled calendar or the years view, as the arrows do not", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment", isDisabled: true })).toBe(0);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement", view: "years" })).toBe(0);
+	});
+
+	test("ignores any other action", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "activate" })).toBe(0);
 	});
 });
 

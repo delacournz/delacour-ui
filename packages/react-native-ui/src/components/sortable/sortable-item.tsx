@@ -122,10 +122,11 @@ export function SortableItem({
 
 	const onAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
+			if (!canDrag) return;
 			if (event.nativeEvent.actionName === MOVE_UP.name) moveUp();
 			else if (event.nativeEvent.actionName === MOVE_DOWN.name) moveDown();
 		},
-		[moveDown, moveUp]
+		[canDrag, moveDown, moveUp]
 	);
 
 	const positionText = resolveSortablePosition(index, count);

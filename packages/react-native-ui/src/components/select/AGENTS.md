@@ -25,6 +25,7 @@ engine. An app that imports no picker still never resolves it.
 | `select.context.tsx` | `SelectProvider`, `useSelect()`, `useSelectContext()`, `useSelectPart()` |
 | `select.types.ts` | `SelectOption`, `SelectOptionGroup`, `SelectRowOption`, `SelectEntry`, `SelectListRow`, `SelectHighlightRange` |
 | `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports — the sheet cap and the searchable list's floor among them |
+| `select.render.test.tsx` | Mounted under Jest inside `BottomSheetProvider` — trigger role, expanded and value, single and multiple picks, controlled and uncontrolled, limit, search, `Field` inheritance, parts outside a root |
 | `select.variants.test.ts` | |
 | `select.collect.test.ts` | |
 
@@ -71,6 +72,7 @@ engine. An app that imports no picker still never resolves it.
   disables a chosen row for `maxSelected`, or the selection could not be undone.
   A row disabled by the limit with no description of its own says "Limit
   reached" (`limitReachedText`).
+- **`onClose` is the sheet's, not the state's.** It is passed straight to `BottomSheet` and runs once the sheet has finished sliding down, later than `onValueChange` or the open state turning false. Move focus from here, never from the pick.
 - **Multiple never closes on a pick.** A sticky `Done` footer closes it; every
   close path — a pick, Done, a swipe, the overlay, the close button — runs
   through one `handleOpenChange`, which is where the query is cleared.

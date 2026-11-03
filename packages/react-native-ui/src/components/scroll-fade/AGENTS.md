@@ -27,6 +27,7 @@ Their rules and tests live with them. Nothing here keeps a copy.
 | `scroll-fade-edge.tsx` | One animated edge band, and its keyboard-aware wrapper — internal, memoised |
 | `scroll-fade.variants.ts` | Pure `tv()` slots, the defaults, and `SCROLL_FADE_EDGES` — `lib/scroll-edges`' union under ScrollFade's name |
 | `scroll-fade.variants.test.ts` | |
+| `scroll-fade.render.test.tsx` | Mounted under Jest — edge selection, `enabled`, unresolvable colour draws nothing, bands hidden from assistive tech, content reachable, forwarded root/scroll callbacks, missing-source error. Bands carry `testID` `scroll-fade-start` / `scroll-fade-end` for it; Jest's `uniwind` mock resolves no tokens, so the suite passes a literal `color` |
 
 ## Design
 

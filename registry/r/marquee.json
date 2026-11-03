@@ -115,5 +115,29 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee.render.test.tsx",
+			"target": "marquee/marquee.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../provider",
+					"to": "@registry/ui/provider"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"provider",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

@@ -203,7 +203,10 @@ export function SliderTrack({ children, className, ...props }: SliderTrackProps)
 	useAnimatedReaction(
 		() => positions.value,
 		(current, previous) => {
-			if (previous !== null && current.length === previous.length) {
+			// The first run is the seed, not a change: `positions` starts equal to the
+			// slider's value, and reporting it would call `onChange` on mount.
+			if (previous === null) return;
+			if (current.length === previous.length) {
 				let changed = false;
 				for (let index = 0; index < current.length; index++) {
 					if (current[index] !== previous[index]) {

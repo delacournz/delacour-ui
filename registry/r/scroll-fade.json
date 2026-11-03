@@ -113,5 +113,28 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-fade/scroll-fade.render.test.tsx",
+			"target": "scroll-fade/scroll-fade.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				},
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

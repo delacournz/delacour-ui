@@ -23,6 +23,7 @@ and `useSelectionMode()`.
 | `selection-mode.types.ts` | `SelectionModeState` — what the root builds and the context carries |
 | `selection-mode.variants.ts` | The slotted `tv()`, the motion constants, the tokens and every pure resolver |
 | `selection-mode.variants.test.ts` | |
+| `selection-mode.render.test.tsx` | Mounted under Jest — entering the mode through the `longpress` accessibility action, checkbox state, toggling, select-all and `max`, controlled and uncontrolled pairs, header and bar actions, disabled items, parts outside the root throwing |
 
 ## Design
 

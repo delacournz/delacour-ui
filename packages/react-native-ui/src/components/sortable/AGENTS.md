@@ -20,6 +20,7 @@ outside the gesture.
 | `sortable.types.ts` | `SortableReorderDetails` and `SortableDrag`, shared by root, context and gesture |
 | `sortable.variants.ts` | Pure `tv()` slots + every resolver, worklet-safe, no RN imports |
 | `sortable.variants.test.ts` | |
+| `sortable.render.test.tsx` | Mounted under Jest — handle and long-press modes, Move up / Move down actions and `onReorder` details, pinned and disabled rows, caller-owned order, parts outside their root. The drag itself is not driven (its result lands through a UI-thread animation callback) |
 
 ## Design
 
@@ -86,6 +87,7 @@ outside the gesture.
   mode, the row in `long-press` mode — publishes `accessibilityActions` Move up / Move down and
   `accessibilityValue.text` "Position 2 of 5". An action calls `onReorder` immediately and announces
   the new position with `AccessibilityInfo.announceForAccessibility`.
+- **A row ignores an action it did not advertise.** `onAccessibilityAction` returns early when the row cannot be dragged.
 - **Only the actions a row can perform.** None for a disabled or pinned row; no Move up at the top;
   a step skips pinned slots.
 - **The handle** is `accessibilityRole="button"`, labelled "Drag to reorder", 44pt (`size-11`). In

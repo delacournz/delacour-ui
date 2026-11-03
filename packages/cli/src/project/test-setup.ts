@@ -4,9 +4,10 @@ import { join } from "node:path";
 import type { Check } from "../commands/doctor";
 import type { ResolvedConfig } from "../config/resolve";
 import { readLock } from "../lock/lock";
-import { isTest } from "../registry/classify";
+import { isRenderTest, isTest } from "../registry/classify";
 import { detectTestRunner, type RunnerManifest, type TestRunner, testRunnerPackages } from "../registry/test-runner";
 import type { ProjectInfo } from "./detect";
+import { jestSnippet, renderSetupIssues, setupFileFor } from "./jest-config";
 import { parseJsonc } from "./jsonc";
 
 /**
@@ -27,6 +28,10 @@ export type TestSetup = {
 	scripted: TestRunner | null;
 	/** How many copied test files the lock records. */
 	copiedTests: number;
+	/** How many of those are render tests — `*.render.test.tsx`, which only Jest runs. */
+	renderTests: number;
+	/** Where the test kit's `setup.ts` is as a `<rootDir>/…` path, from each directory a Jest config could sit in. */
+	setupFiles: string[];
 	/** Every dependency the app and the config's package declare. */
 	dependencies: Record<string, string>;
 	/** The Jest config's text — a `jest.config.*` file, or `package.json`'s `jest` key — or `null`. */
@@ -41,6 +46,9 @@ export type TestSetup = {
 
 /** Expo's base config, which SDK 58's `exports` map hides from Vite's tsconfig loader. */
 const EXPO_TSCONFIG = "expo/tsconfig.base";
+
+/** What render tests import, which a project on Jest has to have installed. */
+export const RENDER_TEST_PACKAGES = ["@testing-library/react-native", "test-renderer", "jest-expo"] as const;
 
 export function checkTestRunner(setup: TestSetup): Check {
 	const name = "Test runner";
@@ -61,7 +69,11 @@ export function checkTestRunner(setup: TestSetup): Check {
 type Problem = { detail: string; fix: string };
 
 function missingPackages(setup: TestSetup): Problem[] {
-	const needed = [...(setup.runner === "jest" ? ["jest"] : []), ...testRunnerPackages(setup.runner)];
+	const needed = [
+		...(setup.runner === "jest" ? ["jest"] : []),
+		...testRunnerPackages(setup.runner),
+		...(setup.runner === "jest" && setup.renderTests > 0 ? RENDER_TEST_PACKAGES : []),
+	];
 	const missing = needed.filter((name) => !(name in setup.dependencies));
 	if (missing.length === 0) return [];
 
@@ -101,6 +113,29 @@ function runnerProblems(setup: TestSetup): Problem[] {
  * import through. Any other preset has to map them itself.
  */
 function jestProblems(setup: TestSetup): Problem[] {
+	return [...jestPresetProblems(setup), ...renderSetupProblems(setup)];
+}
+
+/**
+ * The render tests' own needs of the Jest config — the kit's setup file, the
+ * Reanimated resolver, the transforms. `add --tests` and `update` write these;
+ * this is what notices when a config was edited or replaced since.
+ */
+function renderSetupProblems(setup: TestSetup): Problem[] {
+	if (setup.renderTests === 0 || setup.jestConfig === null) return [];
+
+	const issues = renderSetupIssues(setup.jestConfig, setup.setupFiles);
+	if (issues.length === 0) return [];
+
+	return [
+		{
+			detail: `the Jest config is not set up for the render tests: ${issues.join("; ")}`,
+			fix: `Run \`delacour update --tests\` to set it up, or merge this into the Jest config: ${jestSnippet(setup.setupFiles[0] ?? "")}`,
+		},
+	];
+}
+
+function jestPresetProblems(setup: TestSetup): Problem[] {
 	if (setup.jestConfig === null) {
 		return [
 			{
@@ -199,7 +234,8 @@ export async function readTestSetup(config: ResolvedConfig, project: ProjectInfo
 	return {
 		runner: config.testRunner,
 		scripted: manifests.map((manifest) => (manifest ? detectTestRunner(manifest) : null)).find(Boolean) ?? null,
-		copiedTests: await countCopiedTests(config.root),
+		...(await countCopiedTests(config.root)),
+		setupFiles: roots.map((root) => setupFileFor(root, config)),
 		dependencies,
 		jestConfig: await readJestConfig(roots, manifests),
 		vitestConfig: await readFirst(roots, VITEST_CONFIG_FILES),
@@ -213,14 +249,15 @@ function aliasPrefixes(config: ResolvedConfig): string[] {
 	return [...new Set(prefixes)];
 }
 
-async function countCopiedTests(root: string): Promise<number> {
+async function countCopiedTests(root: string): Promise<{ copiedTests: number; renderTests: number }> {
 	try {
 		const lock = await readLock(root);
-		return Object.values(lock.items)
+		const tests = Object.values(lock.items)
 			.flatMap((item) => Object.keys(item.files))
-			.filter(isTest).length;
+			.filter(isTest);
+		return { copiedTests: tests.length, renderTests: tests.filter(isRenderTest).length };
 	} catch {
-		return 0;
+		return { copiedTests: 0, renderTests: 0 };
 	}
 }
 

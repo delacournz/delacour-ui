@@ -24,6 +24,7 @@ vertical, autoplaying. Compound root plus `Carousel.Content`, `Carousel.Item`,
 | `carousel.types.ts` | Prop types shared by two or more parts |
 | `carousel.variants.ts` | Pure `tv()` slots, constants and the geometry, coverflow, dot and a11y resolvers |
 | `carousel.variants.test.ts` | |
+| `carousel.render.test.tsx` | Mounted under Jest — adjustable role, "n of count" value, assistive increment/decrement, arrows and their disabled ends, controlled and uncontrolled index, clamping, loop, the mounted window, autoplay stopping, parts outside the root, and the pan driven through its `carousel-pan` test id |
 | `use-carousel-autoplay.ts` | The JS interval and every reason it does not run |
 
 The paging maths — wrapped offsets, rubber band, pan origin and position, settle
@@ -180,3 +181,5 @@ file stable: its functions are the contract both consume.
   `controls` are clips whose flows return to the first slide; `peek` and
   `vertical` are stills. The photos load from the network, so check every poster
   after a capture — the first `peek` poster caught its active slide still empty.
+
+- **The pan carries `.withTestId("carousel-pan")`.** A render test reaches the drag only through Gesture Handler's `fireGestureHandler`, which finds a gesture by that id. It changes nothing on screen.

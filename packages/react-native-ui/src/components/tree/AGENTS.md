@@ -25,6 +25,7 @@ are selected.
 | `tree.types.ts` | `TreeSlotProps`, shared by `Tree.Icon` and `Tree.Actions` |
 | `tree.variants.ts` | Pure `tv()` slots, the constants and every resolver — no RN imports |
 | `tree.variants.test.ts` | |
+| `tree.render.test.tsx` | Mounted under Jest — row role, name and level value, expanded and selected state, expand and selection callbacks (controlled and uncontrolled), disabled nodes, nesting, parts outside their root |
 
 ## Design
 

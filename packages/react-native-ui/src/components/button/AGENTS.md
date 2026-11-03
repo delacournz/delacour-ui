@@ -24,6 +24,7 @@ The reference implementation for the patterns in the package
 | `button.types.ts` | Prop types shared by two or more parts |
 | `button.variants.ts` | Pure `tv()` slots, no RN imports |
 | `button.variants.test.ts` | |
+| `button.render.test.tsx` | Mounted under Jest — role and name, assistive press, disabled and busy, a group's `isDisabled` |
 
 ## Design
 

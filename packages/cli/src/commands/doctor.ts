@@ -10,6 +10,7 @@ import { lockPath } from "../lock/lock";
 import { LOCK_FILENAME } from "../lock/schema";
 import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
+import { compilesMjs, MJS_TRANSFORM_PATTERN, MJS_TRANSFORMER } from "../project/jest-config";
 import { expoCommand } from "../project/package-manager";
 import { findRootLayout } from "../project/root-layout";
 import { checkTestRunner, readTestSetup, type TestSetup } from "../project/test-setup";
@@ -90,15 +91,6 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
  * publish TypeScript source; the charts engine also imports d3, whose packages
  * ship ES modules only.
  */
-/** The `transform` key that compiles `.mjs`, which `jest-expo`'s `\\.[jt]sx?$` does not match. */
-export const MJS_TRANSFORM_PATTERN = "^.+\\.mjs$";
-export const MJS_TRANSFORMER = "babel-jest";
-
-/** Whether a Jest config's text names a transform for `.mjs` — d3-shape 3.2.1 ships nothing else. */
-export function compilesMjs(text: string): boolean {
-	return /\btransform\b["']?\s*:\s*\{[^}]*mjs/.test(text);
-}
-
 const ENGINE_TRANSFORMS: Record<string, readonly string[]> = {
 	"@delacour/react-native-bottom-sheet": ["@delacour/.*"],
 	"@delacour/react-native-charts": ["@delacour/.*", "d3-.*", "internmap"],

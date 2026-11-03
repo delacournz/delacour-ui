@@ -29,6 +29,7 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 | `date-picker.types.ts` | `DatePickerSelectionProps` (the mode union) and `DatePickerProps` |
 | `date-picker.variants.ts` | Slotted `tv()`, the trigger class, and every pure rule: close, format, a11y value, placeholder, axes |
 | `date-picker.variants.test.ts` | |
+| `date-picker.render.test.tsx` | Mounted under Jest — trigger state, sheet open/close, `onOpenChange`/`onValueChange`, single/range/multiple finish rules, Clear/Done, inline, controlled and uncontrolled value and open, parts outside the root |
 
 ## Imports, never duplicates
 

@@ -5,10 +5,21 @@
 	"files": {
 		"includes": ["src/**/*", "scripts/**/*", "package.json"]
 	},
+	// Biome turns its `test` lint domain on by itself once `jest` is a dependency.
+	// The Bun suites predate it and export shared readers on purpose
+	// (`styles/theme-tokens.test.ts`), so the domain is scoped to the Jest render
+	// suites it was switched on for.
+	"linter": {
+		"domains": { "test": "none" }
+	},
 	"css": {
 		"parser": { "tailwindDirectives": true }
 	},
 	"overrides": [
+		{
+			"includes": ["src/**/*.render.test.tsx"],
+			"linter": { "domains": { "test": "recommended" } }
+		},
 		{
 			// Light and dark deliberately redefine the same token names inside
 			// their own `@variant` scopes; Biome reads them as one flat block.

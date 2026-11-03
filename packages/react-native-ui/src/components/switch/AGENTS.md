@@ -21,6 +21,7 @@ section to read first — what follows is only where a switch differs.
 | `switch.types.ts` | Prop types shared by two or more parts |
 | `switch.variants.ts` | Pure `tv()` slots + the release worklet, no RN imports |
 | `switch.variants.test.ts` | |
+| `switch.render.test.tsx` | Mounted under Jest — role, checked and disabled state, controlled and uncontrolled, assistive activation |
 
 ## Design
 
@@ -54,6 +55,10 @@ section to read first — what follows is only where a switch differs.
   only a state to end up in. `onFinalize` is still the callback because it is the
   one that fires on every path, the never-activated one included — which is
   exactly the path a stationary tap takes.
+- **`isDisabled` is checked in `toggle`, not only on the pan.** `.enabled()` gates
+  the gesture, but a screen reader's activation and an enclosing `Field`'s label
+  press both arrive through `toggle`, so a guard on the pan alone let a disabled
+  switch flip under VoiceOver and TalkBack. The first render test caught it.
 - **`minDistance(0)` and `shouldCancelWhenOutside(false)`**, for the reasons
   [Slider](../slider/AGENTS.md) sets out. The cost is the same one: a drag that
   starts on the switch is the switch's, so you cannot scroll a list by putting

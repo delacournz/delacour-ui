@@ -18,6 +18,7 @@ that owns the selection. Compound root plus `Radio.Label`, `Radio.Indicator` and
 | `radio.context.tsx` | `RadioContext` and `RadioGroupContext`, with their hooks |
 | `radio.variants.ts` | Pure `tv()` slots + three resolvers, no RN imports |
 | `radio.variants.test.ts` | |
+| `radio.render.test.tsx` | Mounted under Jest — radio role and checked state, standalone and grouped selection (controlled and uncontrolled), disabled at radio, group and Field level ignoring every activation path, compound-part errors. The group is found by label, not role: `Radio.Group` is deliberately not `accessible` |
 
 There is no `radio.types.ts`, unlike most compound folders here.
 `{name}.types.ts` holds only prop types shared by two or more modules and a type

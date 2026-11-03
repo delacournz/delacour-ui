@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { patchJestJson } from "./jest-config";
 import { checkTestRunner, type TestSetup } from "./test-setup";
 
 const JEST_EXPO = '{ "preset": "jest-expo" }';
@@ -15,6 +16,8 @@ function setup(overrides: Partial<TestSetup>): TestSetup {
 		runner: "bun",
 		scripted: null,
 		copiedTests: 3,
+		renderTests: 0,
+		setupFiles: ["<rootDir>/src/lib/test/setup.ts"],
 		dependencies: {},
 		jestConfig: null,
 		vitestConfig: null,
@@ -154,3 +157,53 @@ describe("checkTestRunner", () => {
 
 const JEST_PACKAGES = { jest: "^30.0.0", "jest-expo": "~58.0.0", "@jest/globals": "^30.0.0", "@types/node": "^24.0.0" };
 const VITEST_PACKAGES = { vitest: "^3.2.4", "@types/node": "^24.0.0" };
+
+describe("checkTestRunner with render tests", () => {
+	const SETUP = "<rootDir>/src/lib/test/setup.ts";
+	const installed = {
+		jest: "^30.0.0",
+		"@jest/globals": "^30.0.0",
+		"@types/node": "^22.0.0",
+		"@testing-library/react-native": "^14.1.0",
+		"test-renderer": "^1.0.0",
+		"jest-expo": "~58.0.0",
+	};
+	const patched = JSON.stringify(patchJestJson({ preset: "jest-expo" }, SETUP).config);
+
+	test("names the packages the render tests import and nobody installed", () => {
+		const check = checkTestRunner(
+			setup({
+				runner: "jest",
+				renderTests: 2,
+				jestConfig: patched,
+				dependencies: { jest: "^30.0.0", "@jest/globals": "1", "@types/node": "1" },
+			})
+		);
+
+		expect(check.status).toBe("warn");
+		expect(check.detail).toContain("@testing-library/react-native, test-renderer, jest-expo");
+	});
+
+	test("warns when the Jest config lacks the setup file, resolver and transforms", () => {
+		const check = checkTestRunner(
+			setup({ runner: "jest", renderTests: 2, jestConfig: JEST_EXPO, dependencies: installed })
+		);
+
+		expect(check.status).toBe("warn");
+		expect(check.detail).toContain("setupFiles does not list");
+		expect(check.detail).toContain("resolver is not");
+		expect(check.fix).toContain("react-native-reanimated/jest/resolver");
+	});
+
+	test("passes a config the CLI wrote", () => {
+		expect(
+			checkTestRunner(setup({ runner: "jest", renderTests: 2, jestConfig: patched, dependencies: installed })).status
+		).toBe("pass");
+	});
+
+	test("asks nothing extra of a project with no render tests", () => {
+		expect(
+			checkTestRunner(setup({ runner: "jest", renderTests: 0, jestConfig: JEST_EXPO, dependencies: installed })).status
+		).toBe("pass");
+	});
+});

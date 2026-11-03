@@ -96,3 +96,13 @@ describe("testRunnerPackages", () => {
 		expect(testRunnerPackages("jest")).toEqual(["@jest/globals", "@types/node"]);
 	});
 });
+
+describe("adaptTest on a render test", () => {
+	const RENDER = 'import { describe, expect, jest, test } from "@jest/globals";\nimport { Button } from "./button";\n';
+
+	test("is already Jest's, so it is copied as written but for the runner's types reference", () => {
+		expect(adaptTest(RENDER, "bun")).toBe(`/// <reference types="bun" />\n${RENDER}`);
+		expect(adaptTest(RENDER, "jest")).toBe(`/// <reference types="node" />\n${RENDER}`);
+		expect(adaptTest(RENDER, "vitest")).toBe(`/// <reference types="node" />\n${RENDER}`);
+	});
+});

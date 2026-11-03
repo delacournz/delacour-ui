@@ -24,6 +24,7 @@ blocks.
 | `meter.types.ts` | `MeterRenderProps`, shared by the context and the readout |
 | `meter.variants.ts` | The blocks' `tv()` slots + the scale, region, threshold and segment resolvers |
 | `meter.variants.test.ts` | |
+| `meter.render.test.tsx` | Mounted under Jest — the progressbar role and name, `accessibilityValue` (min/max/now/text) across scales and clamping, `valueLabel`, regions, thresholds, segments, and every part throwing outside a meter |
 
 ## Built on Progress
 

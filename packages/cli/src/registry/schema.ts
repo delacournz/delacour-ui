@@ -129,11 +129,23 @@ export const registryItemSchema = z.object({
 	testRegistryDependencies: z.array(z.string()).default([]),
 	/** Dev packages the tests need that the source does not — `@types/bun` for `bun:test`. */
 	testDependencies: z.array(z.string()).default([]),
+	/**
+	 * Render tests — `*.render.test.tsx`, which mount the component under
+	 * `@testing-library/react-native`. Jest-only: they sit in their own list, not
+	 * in `tests`, because Bun and Vitest cannot run them, and a CLI from before
+	 * this list existed ignores it rather than copying suites its runner cannot load.
+	 * Copied by `add --tests` when the project's runner is Jest.
+	 */
+	renderTests: z.array(registryFileSchema).default([]),
+	/** Items the render tests import — the test kit. Followed only for Jest. */
+	renderTestRegistryDependencies: z.array(z.string()).default([]),
+	/** Dev packages the render tests need that the source does not. Installed only for Jest. */
+	renderTestDependencies: z.array(z.string()).default([]),
 });
 
 /** An item without its file list — enough for `list`, `search` and dependency resolution. */
 export const registryIndexEntrySchema = registryItemSchema
-	.omit({ $schema: true, files: true, tests: true })
+	.omit({ $schema: true, files: true, tests: true, renderTests: true })
 	.extend({ files: z.array(z.string()).default([]) });
 
 export const registryIndexSchema = z.object({
@@ -155,7 +167,7 @@ export type LoadedFile = RegistryFile & { content: string };
 export type LoadedItem = Omit<RegistryItem, "files"> & { files: LoadedFile[] };
 
 export function toIndexEntry(item: RegistryItem): RegistryIndexEntry {
-	const { $schema: _schema, files, tests: _tests, ...rest } = item;
+	const { $schema: _schema, files, tests: _tests, renderTests: _renderTests, ...rest } = item;
 	return { ...rest, files: files.map((file) => `${file.namespace}/${file.target}`) };
 }
 
@@ -168,7 +180,9 @@ export function toIndexEntry(item: RegistryItem): RegistryIndexEntry {
  * the consumer's from then on, recorded and updated exactly as the source is.
  */
 export function withTests<T extends RegistryItem | RegistryIndexEntry>(item: T, runner: TestRunner = "bun"): T {
+	const jest = runner === "jest";
 	const tests = "tests" in item ? item.tests : [];
+	const renderTests = jest && "renderTests" in item ? item.renderTests : [];
 	// The registry records `bun:test` as Bun's types; a project on another
 	// runner gets the suites rewritten for it, and that runner's packages instead.
 	const testDependencies = item.testDependencies.flatMap((name) =>
@@ -177,12 +191,27 @@ export function withTests<T extends RegistryItem | RegistryIndexEntry>(item: T, 
 
 	return {
 		...item,
-		...("files" in item && "tests" in item ? { files: [...item.files, ...tests] } : {}),
-		registryDependencies: union(item.registryDependencies, item.testRegistryDependencies),
-		devDependencies: union(item.devDependencies, testDependencies),
+		...("files" in item && "tests" in item ? { files: [...item.files, ...tests, ...renderTests] } : {}),
+		registryDependencies: union(
+			item.registryDependencies,
+			item.testRegistryDependencies,
+			jest ? item.renderTestRegistryDependencies : []
+		),
+		devDependencies: union(item.devDependencies, testDependencies, jest ? item.renderTestDependencies : []),
 	};
 }
 
-function union(a: readonly string[], b: readonly string[]): string[] {
-	return [...new Set([...a, ...b])].sort();
+/** What `skipsRenderTests` reads — satisfied by an item, an index entry and a loaded item alike. */
+type RenderTestSource = {
+	renderTestRegistryDependencies: readonly string[];
+	renderTests?: readonly unknown[];
+};
+
+/** Whether the item has render tests the runner cannot run, so the caller can say so once. */
+export function skipsRenderTests(item: RenderTestSource, runner: TestRunner): boolean {
+	return runner !== "jest" && (item.renderTestRegistryDependencies.length > 0 || (item.renderTests?.length ?? 0) > 0);
+}
+
+function union(...lists: readonly (readonly string[])[]): string[] {
+	return [...new Set(lists.flat())].sort();
 }

@@ -21,6 +21,7 @@ plus `Progress.Header`, `Progress.Label`, `Progress.Output`, `Progress.Track` an
 | `progress.types.ts` | `ProgressRenderProps`, shared by the context and the readout |
 | `progress.variants.ts` | Pure `tv()` slots + the ratio, geometry, formatting and accessibility resolvers |
 | `progress.variants.test.ts` | |
+| `progress.render.test.tsx` | Mounted under Jest — the progressbar role, `accessibilityValue` (percent, count, `valueLabel`), busy while indeterminate, the hidden readout, and the out-of-root errors |
 
 ## Design
 

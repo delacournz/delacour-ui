@@ -22,6 +22,7 @@ because the target is the content. Compound root plus `ContextMenu.Trigger`,
 | `context-menu-item.tsx` | `ContextMenu.Item` — `Menu.Item` with a trailing icon and a taller row |
 | `context-menu.context.tsx` | The invocation, the registered trigger children, `useContextMenuTarget` |
 | `context-menu.variants.ts` | The slotted `tv()`, the constants and the pure resolvers — no RN imports |
+| `context-menu.render.test.tsx` | Mounted under Jest — trigger semantics, press path, controlled and uncontrolled open, rows, outside-root errors |
 | `context-menu.variants.test.ts` | Anchor, hold, accessibility, the content defaults against Menu's resolvers, tokens |
 
 ## Design

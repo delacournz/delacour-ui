@@ -582,6 +582,8 @@ describe("add --tests, in a project on another runner", () => {
 				"jest-expo": "~57.0.0",
 				"@jest/globals": "^30.0.0",
 				"@types/node": "^24.0.0",
+				"@testing-library/react-native": "^14.1.0",
+				"test-renderer": "^1.0.0",
 			},
 			jest: { preset: "jest-expo" },
 		});
@@ -609,6 +611,117 @@ describe("add --tests, in a project on another runner", () => {
 		expect(await read(root, "src/components/ui/button/button.tsx")).toBe(
 			await read(bun, "src/components/ui/button/button.tsx")
 		);
+	});
+});
+
+describe("add --tests, render tests", () => {
+	const RENDER_TEST = "src/components/ui/button/button.render.test.tsx";
+	const KIT = ["src/lib/test/setup.ts", "src/lib/test/render.tsx"];
+
+	async function scaffoldOn(manifest: Record<string, unknown>): Promise<string> {
+		const root = await scaffold("expo-app");
+		const packageJson = JSON.parse(await read(root, "package.json"));
+		await write(root, "package.json", JSON.stringify({ ...packageJson, ...manifest }, null, "\t"));
+		await init([], { ...SHARED, cwd: root });
+		return root;
+	}
+
+	test("Jest gets them with the test kit, and its config is set up for them", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest" }, jest: { preset: "jest-expo" } });
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		await expect(exists(root, RENDER_TEST)).resolves.toBe(true);
+		for (const path of KIT) await expect(exists(root, path)).resolves.toBe(true);
+		expect(await read(root, RENDER_TEST)).toContain("/lib/test/render");
+		expect(await read(root, RENDER_TEST)).not.toContain("@registry/");
+		expect(result?.dependencies.wanted).toEqual(
+			expect.arrayContaining(["@testing-library/react-native", "test-renderer", "@jest/globals"])
+		);
+
+		const jest = JSON.parse(await read(root, "package.json")).jest;
+		expect(jest.setupFiles).toEqual(["<rootDir>/src/lib/test/setup.ts"]);
+		expect(jest.resolver).toBe("react-native-reanimated/jest/resolver");
+		expect(jest.transformIgnorePatterns[0]).toContain("@delacour/.*");
+		expect(result?.renderTests?.jestConfig).toEqual({ status: "patched", file: "package.json" });
+	});
+
+	test("a second add leaves the Jest config as it was", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest" }, jest: { preset: "jest-expo" } });
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+		const after = await read(root, "package.json");
+
+		const again = await add(["switch"], { ...SHARED, cwd: root, tests: true });
+
+		expect(await read(root, "package.json")).toBe(after);
+		expect(again?.renderTests?.jestConfig?.status).toBe("unchanged");
+	});
+
+	test("a project's own Jest config is patched, not replaced", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest" } });
+		await write(root, "jest.config.js", 'module.exports = {\n\tpreset: "jest-expo",\n\ttestEnvironment: "node",\n};\n');
+
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		const config = await read(root, "jest.config.js");
+		expect(config).toContain('testEnvironment: "node"');
+		expect(config).toContain("<rootDir>/src/lib/test/setup.ts");
+		expect(config).toContain("react-native-reanimated/jest/resolver");
+	});
+
+	test.each([
+		["bun", {}],
+		["vitest", { devDependencies: { vitest: "^3.2.0" } }],
+	])("%s gets none of them, no kit, no Jest config — and one notice", async (_runner, manifest) => {
+		const root = await scaffoldOn(manifest);
+		const result = await add(["button", "switch"], { ...SHARED, cwd: root, tests: true });
+
+		await expect(exists(root, RENDER_TEST)).resolves.toBe(false);
+		await expect(exists(root, KIT[0] as string)).resolves.toBe(false);
+		expect(result?.dependencies.wanted).not.toContain("@testing-library/react-native");
+		expect(JSON.parse(await read(root, "package.json")).jest).toBeUndefined();
+		expect(result?.renderTests?.skipped).toContain("Render tests need Jest");
+		expect(result?.renderTests?.jestConfig).toBeNull();
+	});
+});
+
+describe("tests.enabled", () => {
+	const TEST = "src/components/ui/button/button.variants.test.ts";
+
+	test("--tests is remembered, so the next add needs no flag", async () => {
+		const root = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: root });
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+		expect(JSON.parse(await read(root, "native-components.json")).tests.enabled).toBe(true);
+
+		await add(["badge"], { ...SHARED, cwd: root });
+
+		await expect(exists(root, "src/components/ui/badge/badge.variants.test.ts")).resolves.toBe(true);
+	});
+
+	test("--no-tests is remembered too", async () => {
+		const root = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: root, tests: true });
+		expect(JSON.parse(await read(root, "native-components.json")).tests.enabled).toBe(true);
+
+		await add(["button"], { ...SHARED, cwd: root, tests: false });
+		expect(JSON.parse(await read(root, "native-components.json")).tests.enabled).toBe(false);
+		await expect(exists(root, TEST)).resolves.toBe(false);
+	});
+
+	test("init --tests saves the answer and the first add follows it", async () => {
+		const root = await scaffold("expo-app");
+		await init(["button"], { ...SHARED, cwd: root, tests: true });
+
+		expect(JSON.parse(await read(root, "native-components.json")).tests.enabled).toBe(true);
+		await expect(exists(root, TEST)).resolves.toBe(true);
+	});
+
+	test("a project that never answered gets no tests and no tests key", async () => {
+		const root = await scaffold("expo-app");
+		await init(["button"], { ...SHARED, cwd: root });
+
+		expect(JSON.parse(await read(root, "native-components.json")).tests).toBeUndefined();
+		await expect(exists(root, TEST)).resolves.toBe(false);
 	});
 });
 

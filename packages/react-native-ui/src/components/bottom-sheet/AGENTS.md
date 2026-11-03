@@ -22,6 +22,7 @@ navigator. `DelacourProvider` cannot mount it without importing the engine. See
 | `bottom-sheet.tsx` | `BottomSheet` — the engine's root with this library's defaults: `bottomInset` from the safe area, the two haptics, the stale-keyboard guard. The `Object.assign` names every part |
 | `bottom-sheet.variants.ts` | The slotted `tv()` — `overlay`, `background` (with a `detached` variant), `handle`, `handleIndicator`, `content`, `scrollContent`, `steps`, `step`, `footer`, `stickyFooter`, `close`, `title` — and the numeric constants the engine's props take |
 | `bottom-sheet.variants.test.ts` | Every token the slots name exists in both themes; the rules below, pinned |
+| `bottom-sheet.render.test.tsx` | Mounted under Jest — trigger and Close open/shut it, defaultOpen, controlled isOpen, handle's adjustable role and escape, title, scrim semantics, parts outside the root throw |
 | `bottom-sheet-trigger.tsx` | `BottomSheet.Trigger` — this library's `Pressable`, or `asChild` to donate the press |
 | `bottom-sheet-overlay.tsx` | `BottomSheet.Overlay` — the engine's scrim in `bg-overlay`, opacity 1 |
 | `bottom-sheet-container.tsx` | `BottomSheet.Container` — the panel; writes `Background` and `Handle` when the caller writes neither |

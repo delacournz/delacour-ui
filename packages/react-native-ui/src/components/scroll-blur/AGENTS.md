@@ -21,6 +21,7 @@ import { ExpoBlurLayer } from "@delacour/react-native-ui/expo/blur-layer";
 | `scroll-blur.types.ts` | Leaf. `BlurLayerProps` / `BlurLayerComponent` — the engine contract — `BLUR_MATERIALS`, `ScrollBlurProps` |
 | `scroll-blur.variants.ts` | The slotted `tv()`, `resolveBlurLayers`, `resolveBlurWash` |
 | `scroll-blur.variants.test.ts` | The strip and wash maths |
+| `scroll-blur.render.test.tsx` | Mounted under Jest — children stay reachable, bands hidden from assistive tech, edges and `enabled`, engine resolution (`layer` over provider, `null`, Reduce Transparency), the scroll source, the missing-source error |
 | `../../expo/blur-layer.tsx` | `ExpoBlurLayer` — the only file in the package that imports `expo-blur` |
 | `../../hooks/use-reduce-transparency.ts` | `useReduceTransparency()` — the iOS setting, live |
 

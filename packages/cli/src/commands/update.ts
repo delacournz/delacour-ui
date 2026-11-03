@@ -14,6 +14,8 @@ import { createOutput, type Output, style } from "../ui/output";
 import { type Decision, decide, type UpdateAction } from "../update/decide";
 import { planUpdate, shortRef, type UpdateFile, type UpdatePlan } from "../update/plan";
 import { settleDependencies } from "./add";
+import { settleRenderTests } from "./render-tests";
+import { chooseTests } from "./tests-choice";
 
 /**
  * Brings copied components up to what the registry holds now.
@@ -57,7 +59,10 @@ export type UpdateOptions = {
 	prune?: boolean;
 	/** Merge into files with uncommitted changes. */
 	force?: boolean;
-	/** Bring every component's tests along, not only the ones the project already copied. */
+	/**
+	 * Bring every component's tests along, not only the ones the project already
+	 * copied. Unset follows `tests.enabled`; a value overrides it and is saved there.
+	 */
 	tests?: boolean;
 	/** `true` installs, `false` never does, unset asks when there is someone to ask. */
 	install?: boolean;
@@ -139,6 +144,8 @@ async function runUpdate(
 	clients?: UpdateClients
 ): Promise<{ result: UpdateResult; untracked: string[] }> {
 	const { plan, config, lock, ref } = await readPlan(names, options, output, clients);
+	// A dry run changes nothing, the saved answer included.
+	const tests = await chooseTests(config, options.tests, !options.dryRun);
 
 	const unsafe = await unsafeToMerge(plan, options, output);
 	const decided = plan.files.map((file) => ({
@@ -174,6 +181,13 @@ async function runUpdate(
 	if (options.dryRun) return { result: finish(result, options, output), untracked };
 
 	await apply(decided, config, lock, ref);
+
+	// Whenever the render tests are in play, not only when a file moved: a project
+	// whose Jest config lost a key gets it back, and one that is current is untouched.
+	const keptKit = lock.items["test-kit"] !== undefined;
+	if (tests || keptKit) {
+		await settleRenderTests(config, tests ? plan.items : plan.items.filter((item) => item.name === "test-kit"), output);
+	}
 
 	// Only when a file moved: a component that did not change needs what it needed before.
 	if (decided.some(({ decision }) => decision.write !== undefined)) {
@@ -256,7 +270,7 @@ export async function readPlan(
 			baseClient: clients?.baseClient ?? open,
 			format,
 			baseRef: options.base,
-			tests: options.tests,
+			tests: options.tests ?? config.testsEnabled,
 		})
 	);
 

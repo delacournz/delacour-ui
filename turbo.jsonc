@@ -131,6 +131,8 @@
 		"codegen": { "cache": false, "outputs": [] },
 		"lint": { "cache": false, "outputs": [] },
 		"fmt": { "cache": false, "outputs": [] },
+		// Render tests (`*.render.test.tsx`): Jest through jest-expo, which `bun test` cannot run.
+		"test:render": { "cache": false, "outputs": [] },
 		// The release scripts under `.github/` belong to no workspace; this runs their tests. Root
 		// tasks stay uncached: the root package's inputs are the whole repository.
 		"//#test:release": { "cache": false, "outputs": [] },

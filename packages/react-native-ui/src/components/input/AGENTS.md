@@ -23,6 +23,7 @@ Root plus `Input.Group` and its parts: `Prefix`, `Suffix`, `Button`,
 | `input.types.ts` | Prop types shared by two or more parts |
 | `input.variants.ts` | Pure `tv()` slots + resolvers, no RN imports |
 | `input.variants.test.ts` | |
+| `input.render.test.tsx` | Mounted under Jest — typing, controlled/uncontrolled value, focus/blur, disabled and read-only, Field label as accessible name, Input.Group parts and their outside-group errors |
 
 ## Design
 

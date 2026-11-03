@@ -53,6 +53,8 @@ export type InitOptions = {
 	packageName?: string;
 	/** Where that package goes, relative to the workspace root. Defaults to `packages/ui`. */
 	packagePath?: string;
+	/** Answers "Also install component tests?" and skips the prompt; saved as `tests.enabled`. */
+	tests?: boolean;
 };
 
 export async function init(components: string[], options: InitOptions): Promise<AddResult | null> {
@@ -83,8 +85,11 @@ export async function init(components: string[], options: InitOptions): Promise<
 		css: metroPaths.css ?? (existingEntry ? relative(appRoot, existingEntry) : undefined),
 	};
 
+	const tests = await chooseInstallTests(options, output);
+
 	const config = buildConfig({
 		project,
+		tests,
 		root: placement.root,
 		source,
 		packageName: placement.packageName,
@@ -100,6 +105,7 @@ export async function init(components: string[], options: InitOptions): Promise<
 	// renderable — and responds to touch — before a single component is chosen.
 	const result = await add(["styles", "provider", ...components], {
 		...options,
+		tests,
 		cwd: placement.root,
 		overwrite: true,
 	});
@@ -208,6 +214,22 @@ async function choosePlacement(project: ProjectInfo, options: InitOptions, outpu
 	return { root: resolve(project.workspaceRoot, path), packageName: name };
 }
 
+/**
+ * "Also install component tests?" — asked only where there is someone to ask.
+ *
+ * A flag answers it. Without one and without a terminal the answer is left
+ * unset, which reads as no, rather than saved: nobody was asked. The answer is
+ * written to the config so `add` and `update` follow it from then on.
+ */
+async function chooseInstallTests(options: InitOptions, output: Output): Promise<boolean | undefined> {
+	if (options.tests !== undefined) return options.tests;
+	if (!output.interactive || options.defaults) return undefined;
+
+	const answer = await clack.confirm({ message: "Also install component tests?", initialValue: false });
+	if (clack.isCancel(answer)) throw new CancelledError();
+	return answer;
+}
+
 async function chooseSourceDirectory(options: InitOptions, output: Output): Promise<string> {
 	if (options.src) return options.src;
 	if (!output.interactive || options.defaults) return "src";
@@ -224,6 +246,8 @@ async function chooseSourceDirectory(options: InitOptions, output: Output): Prom
 
 type BuildConfigContext = {
 	project: ProjectInfo;
+	/** The answer to the tests question, when it was given. */
+	tests?: boolean;
 	root: string;
 	source: string;
 	/** Set for the shared-package layout only. */
@@ -264,6 +288,7 @@ function buildConfig(context: BuildConfigContext): Config {
 		// Read from tsconfig, never written to it. Absent means relative imports.
 		aliases: aliasesForDirectories(directories, context.project.pathMappings),
 		...(context.packageName ? { package: { name: context.packageName } } : {}),
+		...(context.tests === undefined ? {} : { tests: { enabled: context.tests } }),
 		app: {
 			root: toPosix(relative(context.root, appRoot)) || ".",
 			css: context.wired.css ? fromApp(context.wired.css) : under("styles/global.css"),

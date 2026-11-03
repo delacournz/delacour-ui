@@ -26,6 +26,7 @@ imports this folder's maths leaf rather than copying it.
 | `splitter.math.test.ts` | |
 | `splitter.variants.ts` | The slotted `tv()` and every layout resolver, no RN imports |
 | `splitter.variants.test.ts` | |
+| `splitter.render.test.tsx` | Mounted under Jest — handle role/name/value, increment/decrement/reset/collapse/expand actions, controlled vs uncontrolled `layout`, disabled (root and handle), `useSplitter()`, parts outside a root, and real pan / double-tap through `fireGestureHandler` |
 
 ## Design
 
@@ -191,3 +192,9 @@ wins the touch".
 - **A collapsed leading pane puts half the handle outside the box.** The touch
   box is centred on the seam, so at 0 its leading 22pt hang past the root's
   edge. The trailing half is still a full-height target; nothing clips it.
+
+## Render test hooks
+
+The handle's pan and double-tap carry `.withTestId("splitter-handle-<index>-pan")` and
+`"splitter-handle-<index>-reset"` so `fireGestureHandler` can drive them under Jest. A drag needs the
+root measured first: fire a `layout` event on the root. Inert in production; cannot move pixels.

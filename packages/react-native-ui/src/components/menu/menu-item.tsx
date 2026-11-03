@@ -1,10 +1,11 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
-import { type AccessibilityState, View } from "react-native";
+import { type AccessibilityActionEvent, type AccessibilityState, Platform, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { Icon } from "../icon";
 import { playHaptic } from "../pressable/pressable";
+import { dispatchPressableAccessibilityAction, resolvePressableActivation } from "../pressable/pressable.variants";
 import { Text } from "../text";
 import { useMenuPart } from "./menu.context";
 import type { MenuItemProps } from "./menu.types";
@@ -27,6 +28,36 @@ export type MenuRowProps = MenuItemProps & {
 	leading?: ReactNode;
 	accessibilityState?: AccessibilityState;
 };
+
+/**
+ * A gesture only sees touches, so a screen reader's activation is wired to the
+ * same select: `onAccessibilityTap` on iOS, an `activate` action on Android.
+ * A disabled row consumes the activation and does nothing.
+ */
+function useRowActivation(isDisabled: boolean, select: () => void) {
+	const activation = resolvePressableActivation({
+		hasAccessibilityTap: false,
+		hasPress: true,
+		platform: Platform.OS,
+	});
+	return {
+		accessibilityActions: activation.accessibilityActions,
+		onAccessibilityAction: (event: AccessibilityActionEvent) => {
+			dispatchPressableAccessibilityAction({
+				actionName: event.nativeEvent.actionName,
+				activation,
+				busy: false,
+				disabled: isDisabled,
+				onPress: select,
+			});
+		},
+		onAccessibilityTap: activation.wiresAccessibilityTap
+			? () => {
+					if (!isDisabled) select();
+				}
+			: undefined,
+	};
+}
 
 /**
  * The row every menu row is built on: the press fill, the scale, the label
@@ -100,6 +131,11 @@ export function MenuRow({
 		[handleSelect, haptic, inMs, isDisabled, outMs, pressed]
 	);
 
+	const { accessibilityActions, onAccessibilityAction, onAccessibilityTap } = useRowActivation(
+		isDisabled,
+		handleSelect
+	);
+
 	const rowStyle = useAnimatedStyle(() => ({
 		transform: [{ scale: 1 - pressed.value * (1 - pressedScale) }],
 	}));
@@ -123,8 +159,11 @@ export function MenuRow({
 			<Animated.View
 				accessibilityRole="menuitem"
 				accessibilityState={accessibilityState ?? resolveMenuItemAccessibility({ isDisabled, kind: "item" })}
+				accessibilityActions={accessibilityActions}
 				accessible
 				className={slots.item({ className })}
+				onAccessibilityAction={onAccessibilityAction}
+				onAccessibilityTap={onAccessibilityTap}
 				style={rowStyle}
 				{...props}
 			>

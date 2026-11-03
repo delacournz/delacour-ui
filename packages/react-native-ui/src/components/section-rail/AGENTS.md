@@ -22,6 +22,7 @@ and `onValueChange={sections.scrollTo}`.
 | `section-rail-scrim.tsx` | The transparent outside-tap layer — internal |
 | `section-rail.context.tsx` | The context, `useSectionRail`, and the part guard |
 | `section-rail.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
+| `section-rail.render.test.tsx` | Mounted under Jest — the adjustable trigger (value, expanded, increment/decrement/activate), controlled and uncontrolled value and open, row picks and the `closeDelay` linger, `value={undefined}`, the escape gesture, part guards. Touch, scrub and outside-tap run through Gesture Handler and are not reachable from Jest |
 | `section-rail.variants.test.ts` | |
 
 ## Design

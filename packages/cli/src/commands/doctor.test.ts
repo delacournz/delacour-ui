@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { resolveConfig } from "../config/resolve";
 import { configSchema } from "../config/schema";
 import type { ProjectInfo } from "../project/detect";
+import { MJS_TRANSFORM_PATTERN } from "../project/jest-config";
 import {
 	checkGestureHandlerRoot,
 	checkJestTransform,
@@ -13,7 +14,6 @@ import {
 	checkStylingConflict,
 	cssImportSpecifier,
 	isOutermostWrapper,
-	MJS_TRANSFORM_PATTERN,
 } from "./doctor";
 
 /**

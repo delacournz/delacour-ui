@@ -35,6 +35,11 @@ export type SourceClassification = {
 	 * copied only when someone asks for tests.
 	 */
 	test: boolean;
+	/**
+	 * A test that mounts the component — `*.render.test.tsx`. A `test` too, but Jest's
+	 * alone: it ships in the item's `renderTests`, for a project whose runner is Jest.
+	 */
+	renderTest: boolean;
 };
 
 const SOURCE_EXTENSIONS = [".ts", ".tsx"] as const;
@@ -60,6 +65,7 @@ export function classifySource(path: string): SourceClassification | null {
 			target: UNIWIND_ENV,
 			moduleId: null,
 			test: false,
+			renderTest: false,
 		};
 	}
 
@@ -67,11 +73,11 @@ export function classifySource(path: string): SourceClassification | null {
 	if (!directory || rest.length === 0) return null;
 
 	const classification = DIRECTORIES[directory]?.(rest) ?? null;
-	return classification && { ...classification, test: isTest(path) };
+	return classification && { ...classification, test: isTest(path), renderTest: isRenderTest(path) };
 }
 
 /** One classifier per source directory. Anything else is not registry source. */
-type Classified = Omit<SourceClassification, "test">;
+type Classified = Omit<SourceClassification, "test" | "renderTest">;
 
 const DIRECTORIES: Record<string, (rest: string[]) => Classified | null> = {
 	components: classifyComponent,
@@ -83,6 +89,15 @@ const DIRECTORIES: Record<string, (rest: string[]) => Classified | null> = {
 	// integration seam rather than a menu of helpers.
 	icons: (rest) => classifyDirectoryItem(rest, { item: "icons", namespace: "icons", type: "registry:lib" }),
 	styles: (rest) => classifyDirectoryItem(rest, { item: "styles", namespace: "styles", type: "registry:style" }),
+	// The render tests' kit: the Jest setup and `renderWithProviders`. An item of
+	// its own, copied only because a render test imports it, and under `lib/test/`
+	// so the `../../test/render` the tests write resolves to it from a copy too.
+	// Its `AGENTS.md` is the library's own testing guide, for the people who maintain
+	// it, so it stays here.
+	test: (rest) =>
+		rest[0]?.endsWith(".md")
+			? null
+			: classifyDirectoryItem(rest, { item: "test-kit", namespace: "lib", type: "registry:lib", prefix: "test/" }),
 	// Lands under the consumer's lib directory rather than claiming a namespace
 	// of its own: it is a helper that happens to import from expo-router, and a
 	// sixth configurable path would be one more thing to answer at `init`.
@@ -172,6 +187,11 @@ export function resolveModuleId(fromPath: string, specifier: string, known: read
 /** A test, or a file that exists only to serve tests — `*.test-helpers.ts`, `*.fixtures.ts`. */
 export function isTest(path: string): boolean {
 	return /\.(test|test-helpers|fixtures)\.tsx?$/.test(path);
+}
+
+/** A render test — `*.render.test.tsx`: Jest's alone, because it needs a renderer Bun and Vitest do not bring. */
+export function isRenderTest(path: string): boolean {
+	return /\.render\.test\.tsx$/.test(path);
 }
 
 /** `button/index.ts` → `button`; `cn.ts` → `cn`; `theme.css` → `null`. */

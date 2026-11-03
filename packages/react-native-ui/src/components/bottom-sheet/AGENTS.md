@@ -22,6 +22,7 @@ navigator. `DelacourProvider` cannot mount it without importing the engine. See
 | `bottom-sheet.tsx` | `BottomSheet` — the engine's root with this library's defaults: `bottomInset` from the safe area, the two haptics, the stale-keyboard guard. The `Object.assign` names every part |
 | `bottom-sheet.variants.ts` | The slotted `tv()` — `overlay`, `background` (with a `detached` variant), `handle`, `handleIndicator`, `content`, `scrollContent`, `steps`, `step`, `footer`, `stickyFooter`, `close`, `title` — and the numeric constants the engine's props take |
 | `bottom-sheet.variants.test.ts` | Every token the slots name exists in both themes; the rules below, pinned |
+| `bottom-sheet.render.test.tsx` | Mounted under Jest — trigger and Close open/shut it, defaultOpen, controlled isOpen, handle's adjustable role and escape, title, scrim semantics, parts outside the root throw |
 | `bottom-sheet-trigger.tsx` | `BottomSheet.Trigger` — this library's `Pressable`, or `asChild` to donate the press |
 | `bottom-sheet-overlay.tsx` | `BottomSheet.Overlay` — the engine's scrim in `bg-overlay`, opacity 1 |
 | `bottom-sheet-container.tsx` | `BottomSheet.Container` — the panel; writes `Background` and `Handle` when the caller writes neither |
@@ -112,7 +113,8 @@ read those before touching behaviour, because behaviour is not here.
   The engine's press handler is donated to the pressable rather than wrapping
   it, because two tap gestures in an ancestor/descendant pair give the touch to
   the descendant and a wrapping trigger never fires. `Close` presses with
-  `fade` and an 8pt slop, for `Badge.CloseButton`'s and `Checkbox`'s reasons.
+  `fade` and a 12pt slop, for `Badge.CloseButton`'s and `Checkbox`'s reasons:
+  a 20pt icon plus 12pt on each side is the 44pt minimum.
 - **The root fills in three defaults.** `bottomInset` is `useSafeAreaInsets().bottom`,
   so the engine reserves the home-indicator band and nobody pads for it by
   hand. `onSnapPointHaptic` is `Presets.System.selection` and `onCloseHaptic` is

@@ -49,6 +49,9 @@ import {
 import { SlideButtonLabel } from "./slide-button-label";
 import { SlideButtonThumb } from "./slide-button-thumb";
 
+/** The pan's Gesture Handler test id, for `fireGestureHandler` in a render test. */
+export const SLIDE_BUTTON_GESTURE_TEST_ID = "delacour-slide-button-pan";
+
 export type SlideButtonProps = Omit<ViewProps, "children" | "style"> & {
 	children: ReactNode;
 	/** Classes for the rail. */
@@ -216,6 +219,7 @@ function SlideButtonRoot({
 		// stack with a full-screen back swipe, a drag on a refused slide navigated
 		// back.
 		return Gesture.Pan()
+			.withTestId(SLIDE_BUTTON_GESTURE_TEST_ID)
 			.activeOffsetX([-SLIDE_BUTTON_ACTIVE_OFFSET_X, SLIDE_BUTTON_ACTIVE_OFFSET_X])
 			.failOffsetY([-SLIDE_BUTTON_FAIL_OFFSET_Y, SLIDE_BUTTON_FAIL_OFFSET_Y])
 			.onStart(() => {

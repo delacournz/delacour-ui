@@ -30,6 +30,7 @@ Not for confirmations or warnings — those are a `Dialog`. Like every overlay i
 | `feedback-submit.tsx` | `Feedback.Submit` — the gate, the trimmed value, the wait on a promise |
 | `feedback.variants.ts` | The slotted `tv()`, the row and motion constants, `canSubmitFeedback` and the field-height resolvers — no RN imports |
 | `feedback.variants.test.ts` | Slots, tokens in both themes, the submit gate, the field heights |
+| `feedback.render.test.tsx` | Mounted under Jest — open/close paths, controlled and uncontrolled draft, the submit gate and async send, and the out-of-root errors |
 
 ## Design
 

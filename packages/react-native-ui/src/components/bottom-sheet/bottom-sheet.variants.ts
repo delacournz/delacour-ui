@@ -36,8 +36,11 @@ export const BOTTOM_SHEET_BACKDROP_INDICES = { appearsOnIndex: 0, disappearsOnIn
  * The glyph is a bare icon in a corner with no padded capsule to absorb the
  * difference against the 44pt minimum — the case `Checkbox` mints slop for and
  * `Badge.CloseButton` does not need.
+ *
+ * **12** per side: the default icon is 20pt (`size-icon-lg`), and 20 + 2 × 12
+ * is the 44pt minimum. The pressable has no padding or size of its own to count.
  */
-export const BOTTOM_SHEET_CLOSE_HIT_SLOP = 8;
+export const BOTTOM_SHEET_CLOSE_HIT_SLOP = 12;
 
 /**
  * The padding a pinned footer's measured box carries.

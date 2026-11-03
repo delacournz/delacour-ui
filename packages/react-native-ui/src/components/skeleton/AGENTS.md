@@ -18,7 +18,8 @@ with a glint sweeping across it, or a pulse, on the UI thread. Compound root plu
 | `skeleton-clock.ts` | `useSkeletonClock`, the 0 → 1 UI-thread loop both animations read |
 | `skeleton.context.tsx` | `SkeletonGroupProvider`, `useSkeletonGroup()` |
 | `skeleton.variants.ts` | Pure `tv()` slots + resolvers + worklets, no RN imports |
-| `skeleton.variants.test.ts` | |
+| `skeleton.variants.test.ts` | Pure suite for the variants, resolvers and worklets |
+| `skeleton.render.test.tsx` | Mounted under Jest — accessibility (hidden / busy progressbar / content), group and per-skeleton `isLoading`, children kept mounted and inert while loading, `Skeleton.Lines` labelling |
 
 ## Design
 

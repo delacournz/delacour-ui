@@ -157,11 +157,14 @@ function ImageViewerRoot({
 	const [layer, setLayer] = useState<LayerState | null>(null);
 	const isMeasuring = useRef(false);
 
-	// Open: measure the Trigger, then mount the layer at its frame. A gallery
-	// emptied while open closes it rather than leave a viewer of nothing.
+	// Open: measure the Trigger, then mount the layer at its frame. Data mode
+	// with no images closes rather than leave a viewer of nothing. Composed mode
+	// waits instead: on the first commit its Triggers have not registered yet, so
+	// `defaultOpen` would otherwise shut itself before the gallery existed.
 	useEffect(() => {
 		if (!isOpen || layer || isMeasuring.current) return;
 		if (count === 0) {
+			if (imagesProp === undefined) return;
 			setOpen(false);
 			return;
 		}
@@ -170,7 +173,7 @@ function ImageViewerRoot({
 			isMeasuring.current = false;
 			setLayer({ origin });
 		});
-	}, [count, isOpen, layer, measureOrigin, setOpen]);
+	}, [count, imagesProp, isOpen, layer, measureOrigin, setOpen]);
 
 	const handleExited = useCallback(() => {
 		setLayer(null);

@@ -369,7 +369,7 @@ function SignatureRoot({
  *
  * @example
  * const svg = pad.current?.toSVG({ viewBox: "tight", background: "#ffffff" });
- * const png = pad.current?.toPNG({ viewBox: "tight", background: "#ffffff" }); // base64
+ * const png = await pad.current?.toPNG({ viewBox: "tight", background: "#ffffff" }); // base64
  */
 export const Signature = Object.assign(SignatureRoot, {
 	/** The drawing surface — the gesture, the ink, the guideline and the accessibility surface. */

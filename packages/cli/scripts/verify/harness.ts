@@ -47,7 +47,7 @@ const PACKAGE_JSON = {
 	},
 	devDependencies: {
 		"@types/react": "~19.2.2",
-		typescript: "^5.9.3",
+		typescript: "~6.0.3",
 	},
 };
 
@@ -65,7 +65,8 @@ const TSCONFIG = {
 	extends: "expo/tsconfig.base",
 	compilerOptions: {
 		strict: true,
-		baseUrl: ".",
+		// No `baseUrl`, as Expo's own template has none: TypeScript 6 deprecates it and fails the
+		// build on it, and `paths` resolve against the tsconfig's directory without it.
 		paths: { "@/*": ["./src/*"] },
 		// The copied components are the subject; a peer's own type errors are not.
 		skipLibCheck: true,

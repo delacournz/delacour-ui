@@ -109,7 +109,8 @@ export const avatarVariants = tv({
 	slots: {
 		root: "relative",
 		face: "size-full items-center justify-center overflow-hidden rounded-full",
-		image: "absolute inset-0",
+		/** `size-full` too: a bundled asset brings its own width and height, which `inset-0` does not override. */
+		image: "absolute inset-0 size-full",
 		fallbackLabel: "text-center font-medium",
 		/** Edge length the fallback glyph inherits. */
 		icon: "",

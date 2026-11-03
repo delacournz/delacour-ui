@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { MJS_TRANSFORM_PATTERN } from "../../src/commands/doctor";
 import { parseBunSummary, parseJsonReport, runnerManifest, vitestConfig } from "./test-runner";
 
 describe("parseJsonReport", () => {
@@ -64,6 +65,7 @@ describe("runnerManifest", () => {
 		expect(manifest.scripts.test).toBe("jest");
 		expect(manifest.devDependencies["jest-expo"]).toBe("~58.0.0");
 		expect(JSON.stringify(manifest.jest)).toContain("@delacour/.*|d3-.*|internmap");
+		expect((manifest.jest as { transform?: unknown }).transform).toEqual({ [MJS_TRANSFORM_PATTERN]: "babel-jest" });
 	});
 
 	test("Vitest runs once, with nothing but itself installed", () => {

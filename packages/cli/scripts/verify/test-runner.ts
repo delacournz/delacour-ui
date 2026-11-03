@@ -1,5 +1,6 @@
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { MJS_TRANSFORM_PATTERN, MJS_TRANSFORMER } from "../../src/commands/doctor";
 import { isTest } from "../../src/registry/classify";
 import type { TestRunner } from "../../src/registry/test-runner";
 import { type Reporter, run, type Workspace } from "./harness";
@@ -25,8 +26,8 @@ export type RunnerSetup = {
  * What a project on `runner` carries in its `package.json`.
  *
  * Jest's preset follows the app's SDK, and its `transformIgnorePatterns` is
- * jest-expo's own with the engines added — the setting the docs and `doctor`
- * both ask for. Vitest gets a `vitest.config.ts` (see `vitestConfig`).
+ * jest-expo's own with the engines added, plus a `transform` for `.mjs` (d3-shape
+ * 3.2.1 ships nothing else) — the settings the docs and `doctor` both ask for. Vitest gets a `vitest.config.ts` (see `vitestConfig`).
  */
 export function runnerManifest(runner: TestRunner, expoSdk: string): RunnerSetup {
 	if (runner === "bun") return { scripts: { test: "bun test" }, devDependencies: {} };
@@ -44,6 +45,7 @@ export function runnerManifest(runner: TestRunner, expoSdk: string): RunnerSetup
 			transformIgnorePatterns: [
 				"node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|@delacour/.*|d3-.*|internmap)",
 			],
+			transform: { [MJS_TRANSFORM_PATTERN]: MJS_TRANSFORMER },
 		},
 	};
 }

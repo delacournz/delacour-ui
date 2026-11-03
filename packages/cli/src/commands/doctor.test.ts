@@ -13,6 +13,7 @@ import {
 	checkStylingConflict,
 	cssImportSpecifier,
 	isOutermostWrapper,
+	MJS_TRANSFORM_PATTERN,
 } from "./doctor";
 
 /**
@@ -377,8 +378,9 @@ describe("checkLock", () => {
 describe("checkJestTransform", () => {
 	const CHARTS = { "@delacour/react-native-charts": "^0.1.0" };
 	const SHEET = { "@delacour/react-native-bottom-sheet": "^0.1.0" };
-	const PATTERN = (allowed: string) =>
-		JSON.stringify({ preset: "jest-expo", transformIgnorePatterns: [`node_modules/(?!(${allowed}))`] });
+	const PATTERN = (allowed: string, transform?: Record<string, string>) =>
+		JSON.stringify({ preset: "jest-expo", transform, transformIgnorePatterns: [`node_modules/(?!(${allowed}))`] });
+	const MJS = { [MJS_TRANSFORM_PATTERN]: "babel-jest" };
 
 	test("passes a project that does not test with Jest", () => {
 		expect(checkJestTransform({ runner: "vitest", dependencies: CHARTS, jestConfig: null }).status).toBe("pass");
@@ -409,9 +411,23 @@ describe("checkJestTransform", () => {
 		expect(check.fix).not.toContain("@delacour/.*");
 	});
 
+	test("asks for the .mjs transform when the charts engine is installed, since d3 ships only .mjs", () => {
+		const jestConfig = PATTERN("@delacour/.*|d3-.*|internmap");
+		const check = checkJestTransform({ runner: "jest", dependencies: CHARTS, jestConfig });
+
+		expect(check.status).toBe("warn");
+		expect(check.detail).toContain(".mjs");
+		expect(check.fix).toContain(JSON.stringify(MJS_TRANSFORM_PATTERN));
+	});
+
+	test("does not ask a bottom-sheet-only project for the .mjs transform", () => {
+		const jestConfig = PATTERN("@delacour/.*");
+		expect(checkJestTransform({ runner: "jest", dependencies: SHEET, jestConfig }).status).toBe("pass");
+	});
+
 	test("passes once the pattern lets everything through", () => {
 		const both = { ...CHARTS, ...SHEET };
-		const jestConfig = PATTERN("react-native|@delacour/.*|d3-.*|internmap");
+		const jestConfig = PATTERN("react-native|@delacour/.*|d3-.*|internmap", MJS);
 
 		expect(checkJestTransform({ runner: "jest", dependencies: both, jestConfig }).status).toBe("pass");
 	});

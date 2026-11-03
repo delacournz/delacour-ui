@@ -67,11 +67,11 @@ export type SignatureHandle = {
 	/** The signature as a standalone SVG document. Valid, if blank, when empty. */
 	toSVG: (options?: SignatureExportOptions) => string;
 	/**
-	 * The signature as a base64-encoded PNG (no `data:` prefix), framed and
+	 * Resolves to the signature as a base64-encoded PNG (no `data:` prefix), framed and
 	 * coloured as `toSVG` with the same options would be, at `scale` pixels per
 	 * point. Transparent unless `background` is set. `""` before the pad is measured.
 	 */
-	toPNG: (options?: SignaturePngOptions) => string;
+	toPNG: (options?: SignaturePngOptions) => Promise<string>;
 	/** One smoothed SVG path `d` per stroke, in pad coordinates. */
 	toPaths: () => readonly string[];
 };

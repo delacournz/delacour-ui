@@ -9,14 +9,7 @@ const COMPONENTS = join(import.meta.dirname, "components");
  *
  * Render tests run under Jest (`test:render`), which `bun test` cannot do — so,
  * like `docs.test.ts`, this reads the folder tree and imports nothing.
- *
- * `PENDING` is the rollout: the components whose render tests are still being
- * written, one block per batch so each batch deletes its own lines without
- * touching another's. A folder listed here that already has its test fails too,
- * so the list can only shrink. When it is empty, delete it.
  */
-const PENDING: ReadonlySet<string> = new Set([]);
-
 function componentFolders(): string[] {
 	return readdirSync(COMPONENTS, { withFileTypes: true })
 		.filter((entry) => entry.isDirectory())
@@ -27,19 +20,8 @@ function componentFolders(): string[] {
 const hasRenderTest = (name: string): boolean => existsSync(join(COMPONENTS, name, `${name}.render.test.tsx`));
 
 describe("render tests", () => {
-	test("every component has one, or is pending", () => {
-		const missing = componentFolders().filter((name) => !(hasRenderTest(name) || PENDING.has(name)));
+	test("every component has one", () => {
+		const missing = componentFolders().filter((name) => !hasRenderTest(name));
 		expect(missing).toEqual([]);
-	});
-
-	test("a pending component has none yet — take it off the list", () => {
-		const done = [...PENDING].filter(hasRenderTest);
-		expect(done).toEqual([]);
-	});
-
-	test("every pending name is a component folder", () => {
-		const folders = new Set(componentFolders());
-		const stale = [...PENDING].filter((name) => !folders.has(name));
-		expect(stale).toEqual([]);
 	});
 });

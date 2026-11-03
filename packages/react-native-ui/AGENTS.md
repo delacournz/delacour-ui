@@ -630,8 +630,8 @@ suite never asserts a class string.
 driving a control through accessibility actions because Jest has no touch system,
 what each suite covers, how to add a native mock — is
 [`src/test/AGENTS.md`](src/test/AGENTS.md). `src/render-tests.test.ts` fails by
-name for a component folder without `{name}.render.test.tsx`; its `PENDING` list
-is the rollout, grouped by batch, and can only shrink.
+name for a component folder without `{name}.render.test.tsx`, so a new component
+ships with one.
 
 A render suite that finds a bug fixes the component in the same change. The
 first one did: a disabled `Switch` still flipped on a screen reader's activation,

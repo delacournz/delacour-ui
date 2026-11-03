@@ -111,5 +111,5 @@ The reference suites are `button/button.render.test.tsx` (press, disabled, busy,
 `switch/switch.render.test.tsx` (controlled and uncontrolled, accessibility actions) and
 `dialog/dialog.render.test.tsx` (overlay wrapper, trigger, close, controlled open). Run one with
 `bunx jest src/components/<name>` from this package, all with `bun run test:render`.
-`src/render-tests.test.ts` fails for a component folder with no render test and not on its pending list.
+`src/render-tests.test.ts` fails for a component folder with no render test.
 <!-- /registry:omit -->

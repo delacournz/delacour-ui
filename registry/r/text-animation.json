@@ -83,6 +83,10 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		},
@@ -98,6 +102,10 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		},
@@ -204,6 +212,10 @@
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		}

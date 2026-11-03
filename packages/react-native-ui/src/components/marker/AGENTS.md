@@ -19,6 +19,7 @@ Compound root plus `Marker.Icon` and `Marker.Content`.
 | `marker.context.tsx` | `MarkerContext`, `useMarker()`, `useMarkerContext()`, `useMarkerPart()`, the internal shimmer registry |
 | `marker.variants.ts` | Slotted `tv()`, `MARKER_VARIANTS`, constants, resolvers, the shimmer worklet — no RN imports |
 | `marker.variants.test.ts` | |
+| `marker.render.test.tsx` | Mounted under Jest — static text vs pressable button role, busy from a shimmering `Marker.Content` (press still fires), disabled, parts outside a root throwing; long press runs on Android, where TalkBack lists the `longpress` action |
 
 ## Design
 

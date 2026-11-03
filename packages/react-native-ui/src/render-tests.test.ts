@@ -27,22 +27,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"selection-mode",
 	"time-picker",
 	"timeline",
-
-	// RNTL P8 — rich & media
-	"attachment",
-	"chart",
-	"flow",
-	"leaderboard",
-	"map",
-	"markdown-editor",
-	"marker",
-	"message",
-	"meter",
-	"post",
-	"progress",
-	"qr-code",
-	"signature",
-	"sketch",
 ]);
 
 function componentFolders(): string[] {

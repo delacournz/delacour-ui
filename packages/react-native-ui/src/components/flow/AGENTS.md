@@ -28,6 +28,7 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
 | `flow-geometry.test.ts` | Every side pair, every variant, overlap, zero size, fit, zoom, clamp |
 | `flow.variants.ts` | The slotted `tv()`, the defaults, and every non-geometry resolver — no RN imports |
 | `flow.variants.test.ts` | |
+| `flow.render.test.tsx` | Mounted under Jest — node labels and selected state, the assistive actions (activate, move, connect, delete) and their callbacks, `isValidConnection`, Controls labels, zoom/fit/lock behaviour, and every part's outside-a-root error. Drags, pinch and drawn edges are not reachable without a touch system or Skia |
 
 ## Design
 

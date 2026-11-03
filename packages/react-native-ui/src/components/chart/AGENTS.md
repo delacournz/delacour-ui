@@ -16,6 +16,7 @@ knows nothing about tokens.
 | `chart.types.ts` | `ChartConfig`, `ChartSeriesConfig`, `ChartResolvedSeries` |
 | `chart.variants.ts` | The slotted `tv()`, the ramp, and every pure resolver |
 | `chart.variants.test.ts` | Including the assertion that the ramp tokens exist |
+| `chart.render.test.tsx` | Mounted under Jest — legend rows, config relabels, dropped pie rows, `Center`, the controlled pie tooltip and the documented throws. Slice taps and the scrub are not reachable: the gestures live in the engine, without a test id |
 | `use-chart-font.ts` | `--font-sans` into an `SkFont` |
 | `use-chart-palette.ts` | The eight fixed `useThemeColor` slots a series list resolves through |
 | `chart-grid.tsx`, `chart-line.tsx`, `chart-area.tsx` | Skia marks; `Chart.Area` takes a `stackId` |

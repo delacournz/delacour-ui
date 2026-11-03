@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
-import { Avatar } from "./avatar";
+import { Avatar, type AvatarProps } from "./avatar";
 import { useAvatar } from "./avatar.context";
 
 const PHOTO = { uri: "https://example.com/aria.png" };
@@ -90,6 +90,16 @@ describe("Avatar", () => {
 		test("no source mounts no image", async () => {
 			await renderWithProviders(<Avatar imageProps={{ testID: "photo" }} name="Aria Whitlock" />);
 			expect(screen.queryByTestId("photo")).not.toBeOnTheScreen();
+		});
+
+		test("imageProps takes no source override, so source alone drives the request and the retry key", () => {
+			const overrides: NonNullable<AvatarProps["imageProps"]>[] = [
+				// @ts-expect-error `src` would win over `source` and skip the retry key.
+				{ src: "https://example.com/other.png" },
+				// @ts-expect-error `srcSet` would win over `source` and skip the retry key.
+				{ srcSet: "https://example.com/other.png 1x" },
+			];
+			expect(overrides).toHaveLength(2);
 		});
 
 		test("imageProps are forwarded to the image", async () => {

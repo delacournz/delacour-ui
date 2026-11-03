@@ -39,8 +39,12 @@ export type AvatarProps = Omit<PressableProps, "asChild" | "busy" | "children" |
 	/** Default `md`, or the enclosing group's size. */
 	size?: AvatarSize;
 	isDisabled?: boolean;
-	/** Passed to the `Image`. `onError` still fires, after the fallback has taken over. */
-	imageProps?: Omit<ImageProps, "source">;
+	/**
+	 * Passed to the `Image`. `onError` still fires, after the fallback has taken
+	 * over. `src` and `srcSet` are left out: `Image` prefers them to `source`, and
+	 * `source` is what the retry key is built from.
+	 */
+	imageProps?: Omit<ImageProps, "source" | "src" | "srcSet">;
 	/** Overlays — an `Avatar.Badge`. */
 	children?: ReactNode;
 };

@@ -147,10 +147,12 @@ export const textAnimationVariants = tv({
  */
 export function resolveCaretClass(kind: TextAnimationCaretKind, color?: TextColor): string {
 	if (kind === "none") return "";
-	const fill = CARET_FILL[color ?? "default"];
-	return kind === "bar" ? `w-0.5 right-0 ${fill}` : `left-full ${fill}/40`;
+	const tone = color ?? "default";
+	return kind === "bar" ? `w-0.5 right-0 ${CARET_FILL[tone]}` : `left-full ${CARET_BLOCK_FILL[tone]}`;
 }
 
+// Whole class names only: Tailwind finds utilities by scanning the source, so
+// a class built at runtime (`${fill}/40`) is never generated.
 const CARET_FILL: Record<TextColor, string> = {
 	default: "bg-foreground",
 	muted: "bg-muted-foreground",
@@ -158,6 +160,15 @@ const CARET_FILL: Record<TextColor, string> = {
 	success: "bg-success",
 	warning: "bg-warning",
 	info: "bg-info",
+};
+
+const CARET_BLOCK_FILL: Record<TextColor, string> = {
+	default: "bg-foreground/40",
+	muted: "bg-muted-foreground/40",
+	destructive: "bg-destructive/40",
+	success: "bg-success/40",
+	warning: "bg-warning/40",
+	info: "bg-info/40",
 };
 
 /** A wrapping row has no `textAlign`, so the text's alignment becomes the row's justification. */

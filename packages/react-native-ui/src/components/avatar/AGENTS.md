@@ -18,7 +18,7 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
 | `avatar.render.test.tsx` | Mounted under Jest — accessible name and role, fallback initials, image failure and retry, press and disabled, `Avatar.Badge`, `Avatar.Group` overflow and list semantics, context and out-of-root errors |
 | `avatar.variants.ts` | Pure `tv()` slots, `AVATAR_SIZE_POINTS`, `resolveAvatarSize`, `resolveAvatarOverlap`, `resolveAvatarInteractive` |
 | `avatar.variants.test.ts` | |
-| `avatar.utils.ts` | Pure non-styling logic — initials, the image-retry key, group overflow maths, the spoken label |
+| `avatar.utils.ts` | Pure non-styling logic — initials, the image-retry key, flattening a group's fragments, group overflow maths, the spoken label |
 | `avatar.utils.test.ts` | |
 
 ## Design
@@ -29,8 +29,9 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   showing rather than an empty circle — there is no loading state to manage
   because there is nothing to swap.
 - **A failure is remembered by key, not by object.** `resolveAvatarSourceKey`
-  turns the source into a string — URI plus sorted headers, or the asset's module
-  id — and `onError` stores the key that failed. Keyed by object identity, an
+  turns the source into a JSON string — every request field (URI, bundle,
+  method, sorted headers, body, cache mode), or the asset's module id — and
+  `onError` stores the key that failed. Keyed by object identity, an
   inline `source={{ uri }}` is new every render and a dead URL would retry
   forever; keyed by URI alone, a token refresh in the headers would never retry.
   A consumer's `imageProps.onError` fires after the fallback has taken over.

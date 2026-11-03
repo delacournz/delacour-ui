@@ -7,8 +7,27 @@
  * `ImageSourcePropType` for the same reason. See AGENTS.md.
  */
 
+import { Children, cloneElement, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
+
+/** The cache modes `Image` accepts for a URI request. */
+export type AvatarSourceCache = "default" | "reload" | "force-cache" | "only-if-cached";
+
+/**
+ * A URI request, as `Image` accepts it. Holds only the fields that change what
+ * is fetched. `width`, `height` and `scale` are left out: they pick an entry,
+ * they do not change the request.
+ */
+export type AvatarSourceRequest = {
+	uri?: string | null;
+	bundle?: string | null;
+	method?: string | null;
+	headers?: Readonly<Record<string, string>> | null;
+	body?: string | null;
+	cache?: AvatarSourceCache | null;
+};
+
 /** One entry of an image source, as `Image` accepts it — a URI request or a bundled asset's module id. */
-export type AvatarSourceEntry = number | { uri?: string; headers?: Record<string, string> };
+export type AvatarSourceEntry = number | AvatarSourceRequest;
 
 /** Anything `Image`'s `source` accepts: one entry or a list of resolutions. */
 export type AvatarSource = AvatarSourceEntry | readonly AvatarSourceEntry[];
@@ -38,15 +57,20 @@ export function resolveAvatarInitials(name: string | undefined): string {
 	return `${first}${last}`.toUpperCase();
 }
 
-function entryKey(entry: AvatarSourceEntry): string | null {
-	if (typeof entry === "number") return `asset:${entry}`;
+/** One entry as a plain value, ready for `JSON.stringify`. Header pairs are sorted by name. */
+function entryKey(entry: AvatarSourceEntry): unknown {
+	if (typeof entry === "number") return ["asset", entry];
 	if (!entry.uri) return null;
-	if (!entry.headers) return `uri:${entry.uri}`;
-	const headers = Object.keys(entry.headers)
-		.sort()
-		.map((name) => `${name}=${entry.headers?.[name]}`)
-		.join("&");
-	return `uri:${entry.uri}#${headers}`;
+	const headers = Object.entries(entry.headers ?? {}).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+	return [
+		"uri",
+		entry.uri,
+		entry.bundle ?? null,
+		entry.method ?? null,
+		headers,
+		entry.body ?? null,
+		entry.cache ?? null,
+	];
 }
 
 /**
@@ -55,16 +79,19 @@ function entryKey(entry: AvatarSourceEntry): string | null {
  * The avatar remembers which source failed by this key rather than by object
  * identity, because an inline `source={{ uri }}` is a new object every render —
  * keyed by identity, a failed image would retry forever. Keyed by URI alone, a
- * token refresh in the headers would never retry at all. Header order is
- * normalised so an equal request is an equal key.
+ * token refresh in the headers would never retry at all. Every field that
+ * changes the request is part of the key, including `cache`, so a cache miss
+ * retries when the cache mode changes. The key is a JSON array, so no value can
+ * look like a separator, and header order is normalised so an equal request is
+ * an equal key.
  *
  * `null` means there is nothing to load.
  */
 export function resolveAvatarSourceKey(source: AvatarSource | null | undefined): string | null {
 	if (source === null || source === undefined) return null;
 	const entries: readonly AvatarSourceEntry[] = Array.isArray(source) ? source : [source as AvatarSourceEntry];
-	const keys = entries.map(entryKey).filter((key): key is string => key !== null);
-	return keys.length === 0 ? null : keys.join("|");
+	const keys = entries.map(entryKey).filter((key) => key !== null);
+	return keys.length === 0 ? null : JSON.stringify(keys);
 }
 
 /**
@@ -101,6 +128,26 @@ export function resolveAvatarGroup({ count, max, total }: { count: number; max?:
 	const visible = Math.min(count, cap);
 	const people = total !== undefined && Number.isFinite(total) ? Math.max(count, Math.floor(total)) : count;
 	return { visible, overflow: people - visible };
+}
+
+/**
+ * The faces a group holds, with fragments opened up.
+ *
+ * `Children.toArray` treats a fragment as one child, so a fragment with two
+ * avatars would count as one face and skip `max`. This walks into each
+ * fragment, at any depth. A face from a fragment gets the key
+ * `JSON.stringify([fragmentKey, faceKey])`. A pair rather than a joined string,
+ * because `.$a` + `.$b.$c` and `.$a.$b` + `.$c` join to the same text.
+ */
+export function flattenAvatarChildren(children: ReactNode): ReactElement[] {
+	return Children.toArray(children).flatMap((child) => {
+		if (!isValidElement(child)) return [];
+		if (child.type !== Fragment) return [child];
+		const { children: inner } = child.props as { children?: ReactNode };
+		return flattenAvatarChildren(inner).map((nested) =>
+			cloneElement(nested, { key: JSON.stringify([child.key, nested.key]) })
+		);
+	});
 }
 
 /** The most the overflow tile draws before it reads `99+`. Three digits do not fit a small circle. */

@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
+import { createElement, Fragment } from "react";
 import {
+	flattenAvatarChildren,
 	resolveAvatarAccessibilityLabel,
 	resolveAvatarGroup,
 	resolveAvatarInitials,
@@ -55,7 +57,36 @@ describe("resolveAvatarSourceKey", () => {
 	});
 
 	test("names a bundled asset by its module id", () => {
-		expect(resolveAvatarSourceKey(12)).toBe("asset:12");
+		expect(resolveAvatarSourceKey(12)).toBe(JSON.stringify([["asset", 12]]));
+	});
+
+	test("tells a bundled asset from a uri of the same text", () => {
+		expect(resolveAvatarSourceKey(3)).not.toBe(resolveAvatarSourceKey({ uri: "3" }));
+	});
+
+	test("changes when the cache mode changes, so a cache miss can retry", () => {
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", cache: "only-if-cached" })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", cache: "reload" })
+		);
+	});
+
+	test("changes when the method or body changes", () => {
+		const get = resolveAvatarSourceKey({ uri: "https://a.test/1.png" });
+		const post = resolveAvatarSourceKey({ uri: "https://a.test/1.png", method: "POST" });
+		const body = resolveAvatarSourceKey({ uri: "https://a.test/1.png", method: "POST", body: "id=1" });
+		expect(new Set([get, post, body]).size).toBe(3);
+	});
+
+	test("does not let header values that look like separators collide", () => {
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", headers: { "X-A": "1&X-B=2" } })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", headers: { "X-A": "1", "X-B": "2" } })
+		);
+	});
+
+	test("does not let a uri that looks like a separator collide across a list", () => {
+		expect(resolveAvatarSourceKey([{ uri: "https://a.test/1.png|uri:https://a.test/2.png" }])).not.toBe(
+			resolveAvatarSourceKey([{ uri: "https://a.test/1.png" }, { uri: "https://a.test/2.png" }])
+		);
 	});
 
 	test("changes when the uri changes", () => {
@@ -78,9 +109,9 @@ describe("resolveAvatarSourceKey", () => {
 	});
 
 	test("reads every entry of a multi-resolution list", () => {
-		expect(resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/2x.png" }])).toBe(
-			"uri:https://a.test/1x.png|uri:https://a.test/2x.png"
-		);
+		const both = resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/2x.png" }]);
+		expect(both).not.toBe(resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }]));
+		expect(both).not.toBe(resolveAvatarSourceKey([{ uri: "https://a.test/2x.png" }]));
 		expect(resolveAvatarSourceKey([])).toBeNull();
 	});
 });
@@ -170,5 +201,58 @@ describe("resolveAvatarAccessibilityLabel", () => {
 
 	test("an explicit label wins over both", () => {
 		expect(resolveAvatarAccessibilityLabel({ accessibilityLabel: "You", name: "Aria Whitlock" })).toBe("You");
+	});
+});
+
+describe("flattenAvatarChildren", () => {
+	const face = (name: string, key?: string) => createElement("Face", { key, name });
+	const names = (children: Parameters<typeof flattenAvatarChildren>[0]) =>
+		flattenAvatarChildren(children).map((child) => (child.props as { name: string }).name);
+
+	test("keeps direct children in the order they were written", () => {
+		expect(names([face("Ana"), face("Ben")])).toEqual(["Ana", "Ben"]);
+	});
+
+	test("counts each avatar inside a fragment as its own face", () => {
+		expect(names(createElement(Fragment, null, face("Ana"), face("Ben")))).toEqual(["Ana", "Ben"]);
+	});
+
+	test("opens nested fragments and keeps the written order", () => {
+		const nested = [
+			face("Ana"),
+			createElement(Fragment, null, face("Ben"), createElement(Fragment, null, face("Cai"))),
+		];
+		expect(names(nested)).toEqual(["Ana", "Ben", "Cai"]);
+	});
+
+	test("drops text, null and booleans", () => {
+		expect(names([face("Ana"), "text", null, false, createElement(Fragment, null, true, face("Ben"))])).toEqual([
+			"Ana",
+			"Ben",
+		]);
+	});
+
+	test("gives every face a unique key when two fragments reuse the same keys", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, face("Ana", "x")),
+			createElement(Fragment, { key: "b" }, face("Ben", "x")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
+	});
+
+	test("does not let a fragment key and a face key run together into another pair", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, face("Ana", "b.$c")),
+			createElement(Fragment, { key: "a.$b" }, face("Ben", "c")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
+	});
+
+	test("keeps keys unique through nested fragments", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, createElement(Fragment, { key: "b" }, face("Ana", "c"))),
+			createElement(Fragment, { key: "a.$b" }, face("Ben", "c")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
 	});
 });

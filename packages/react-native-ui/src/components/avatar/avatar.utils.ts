@@ -7,6 +7,8 @@
  * `ImageSourcePropType` for the same reason. See AGENTS.md.
  */
 
+import { Children, cloneElement, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
+
 /** The cache modes `Image` accepts for a URI request. */
 export type AvatarSourceCache = "default" | "reload" | "force-cache" | "only-if-cached";
 
@@ -126,6 +128,23 @@ export function resolveAvatarGroup({ count, max, total }: { count: number; max?:
 	const visible = Math.min(count, cap);
 	const people = total !== undefined && Number.isFinite(total) ? Math.max(count, Math.floor(total)) : count;
 	return { visible, overflow: people - visible };
+}
+
+/**
+ * The faces a group holds, with fragments opened up.
+ *
+ * `Children.toArray` treats a fragment as one child, so a fragment with two
+ * avatars would count as one face and skip `max`. This walks into each
+ * fragment, at any depth. Each face from a fragment gets the fragment's key as
+ * a prefix, so two fragments can hold faces with the same key.
+ */
+export function flattenAvatarChildren(children: ReactNode): ReactElement[] {
+	return Children.toArray(children).flatMap((child) => {
+		if (!isValidElement(child)) return [];
+		if (child.type !== Fragment) return [child];
+		const { children: inner } = child.props as { children?: ReactNode };
+		return flattenAvatarChildren(inner).map((nested) => cloneElement(nested, { key: `${child.key}${nested.key}` }));
+	});
 }
 
 /** The most the overflow tile draws before it reads `99+`. Three digits do not fit a small circle. */

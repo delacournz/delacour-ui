@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
+import { createElement, Fragment } from "react";
 import {
+	flattenAvatarChildren,
 	resolveAvatarAccessibilityLabel,
 	resolveAvatarGroup,
 	resolveAvatarInitials,
@@ -199,5 +201,42 @@ describe("resolveAvatarAccessibilityLabel", () => {
 
 	test("an explicit label wins over both", () => {
 		expect(resolveAvatarAccessibilityLabel({ accessibilityLabel: "You", name: "Aria Whitlock" })).toBe("You");
+	});
+});
+
+describe("flattenAvatarChildren", () => {
+	const face = (name: string, key?: string) => createElement("Face", { key, name });
+	const names = (children: Parameters<typeof flattenAvatarChildren>[0]) =>
+		flattenAvatarChildren(children).map((child) => (child.props as { name: string }).name);
+
+	test("keeps direct children in the order they were written", () => {
+		expect(names([face("Ana"), face("Ben")])).toEqual(["Ana", "Ben"]);
+	});
+
+	test("counts each avatar inside a fragment as its own face", () => {
+		expect(names(createElement(Fragment, null, face("Ana"), face("Ben")))).toEqual(["Ana", "Ben"]);
+	});
+
+	test("opens nested fragments and keeps the written order", () => {
+		const nested = [
+			face("Ana"),
+			createElement(Fragment, null, face("Ben"), createElement(Fragment, null, face("Cai"))),
+		];
+		expect(names(nested)).toEqual(["Ana", "Ben", "Cai"]);
+	});
+
+	test("drops text, null and booleans", () => {
+		expect(names([face("Ana"), "text", null, false, createElement(Fragment, null, true, face("Ben"))])).toEqual([
+			"Ana",
+			"Ben",
+		]);
+	});
+
+	test("gives every face a unique key when two fragments reuse the same keys", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, face("Ana", "x")),
+			createElement(Fragment, { key: "b" }, face("Ben", "x")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
 	});
 });

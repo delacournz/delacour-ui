@@ -17,7 +17,7 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
 | `avatar.context.tsx` | `AvatarProvider`, `AvatarGroupProvider`, `useAvatar()`, `useAvatarContext()`, `useAvatarGroupContext()`, `useAvatarPart()` |
 | `avatar.variants.ts` | Pure `tv()` slots, `AVATAR_SIZE_POINTS`, `resolveAvatarSize`, `resolveAvatarOverlap`, `resolveAvatarInteractive` |
 | `avatar.variants.test.ts` | |
-| `avatar.utils.ts` | Pure non-styling logic — initials, the image-retry key, group overflow maths, the spoken label |
+| `avatar.utils.ts` | Pure non-styling logic — initials, the image-retry key, flattening a group's fragments, group overflow maths, the spoken label |
 | `avatar.utils.test.ts` | |
 
 ## Design

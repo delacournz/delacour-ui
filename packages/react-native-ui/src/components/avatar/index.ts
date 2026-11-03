@@ -13,6 +13,7 @@ export {
 	type AvatarSourceCache,
 	type AvatarSourceEntry,
 	type AvatarSourceRequest,
+	flattenAvatarChildren,
 	resolveAvatarAccessibilityLabel,
 	resolveAvatarGroup,
 	resolveAvatarInitials,

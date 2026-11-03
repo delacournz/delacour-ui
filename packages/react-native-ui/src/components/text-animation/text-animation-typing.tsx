@@ -8,7 +8,9 @@ import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	buildTypingTimeline,
+	capitalizeWords,
 	countTypedPhrases,
+	isCapitalizedClass,
 	resolveCaretClass,
 	resolveRowJustify,
 	resolveTypedPhrase,
@@ -177,13 +179,21 @@ export function TextAnimationTyping({
 	accessibilityHint,
 }: TextAnimationTypingProps): ReactElement {
 	const isCalm = useCalmMotion();
-	const textClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
+	const resolvedClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
+	// Every typed cell is its own `Text`, so `capitalize` would raise each
+	// letter. The phrases are capitalized instead, before the timeline, the
+	// cells, the caret and the measures read them, and the style is turned off.
+	const isCapitalized = isCapitalizedClass(resolvedClass);
+	const textClass = isCapitalized ? cn(resolvedClass, "normal-case") : resolvedClass;
 	// One cap for every text drawn — cells, caret and measuring copies — so they scale alike.
 	const fontCap = maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER;
 	// The phrases' text is their identity, not the array: a fresh literal each
 	// render must not restart the timeline.
 	const phrasesKey = typeof children === "string" ? children : children.join(PHRASE_SEPARATOR);
-	const phrases = useMemo<readonly string[]>(() => phrasesKey.split(PHRASE_SEPARATOR), [phrasesKey]);
+	const phrases = useMemo<readonly string[]>(() => {
+		const split = phrasesKey.split(PHRASE_SEPARATOR);
+		return isCapitalized ? split.map(capitalizeWords) : split;
+	}, [phrasesKey, isCapitalized]);
 	const isLooping = loop ?? phrases.length > 1;
 	const timeline = useMemo(
 		() => buildTypingTimeline(phrases, { speed, eraseSpeed, holdMs, loop: isLooping }),

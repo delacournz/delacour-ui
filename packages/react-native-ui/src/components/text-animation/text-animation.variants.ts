@@ -172,6 +172,31 @@ const CARET_BLOCK_FILL: Record<TextColor, string> = {
 	info: "bg-info/40",
 };
 
+const TEXT_TRANSFORM_CLASSES = new Set(["uppercase", "lowercase", "capitalize", "normal-case"]);
+
+/** Whether the resolved class ends on `capitalize` — the last transform wins. */
+export function isCapitalizedClass(textClass: string): boolean {
+	const tokens = textClass.split(/\s+/);
+	for (let i = tokens.length - 1; i >= 0; i--) {
+		const token = tokens[i] ?? "";
+		if (TEXT_TRANSFORM_CLASSES.has(token)) return token === "capitalize";
+	}
+	return false;
+}
+
+/**
+ * `capitalize` applied to a whole phrase. Text split into one `Text` per
+ * grapheme cannot use the style — every grapheme is a word's first letter —
+ * so the phrase is capitalized before it is split. A letter whose capital is
+ * longer (`ß` → `SS`) stays as it is, so the grapheme count never changes.
+ */
+export function capitalizeWords(text: string): string {
+	return text.replace(/(^|\s)(\S)/gu, (match, lead: string, letter: string) => {
+		const upper = letter.toUpperCase();
+		return upper.length === letter.length ? `${lead}${upper}` : match;
+	});
+}
+
 const ROW_JUSTIFY: Readonly<Record<string, string>> = {
 	"text-left": "justify-start",
 	"text-center": "justify-center",

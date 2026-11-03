@@ -6,7 +6,9 @@ import { cn } from "../../lib/cn";
 import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
+	capitalizeWords,
 	hashText,
+	isCapitalizedClass,
 	resolveRowJustify,
 	resolveStaggerDelays,
 	resolveTotalDuration,
@@ -150,7 +152,12 @@ function TextAnimationReveal({
 	accessibilityHint,
 }: TextAnimationRevealProps): ReactElement {
 	const isCalm = useCalmMotion();
-	const textClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
+	const resolvedClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
+	// One `Text` per grapheme would capitalize every letter, so a character
+	// split capitalizes the string itself and turns the style off.
+	const isCapitalized = split === "character" && isCapitalizedClass(resolvedClass);
+	const textClass = isCapitalized ? cn(resolvedClass, "normal-case") : resolvedClass;
+	const text = isCapitalized ? capitalizeWords(children) : children;
 	const step = stagger ?? TEXT_ANIMATION_STAGGER[split];
 	// One cap for the units, the whitespace between them and the measuring copy,
 	// so line breaks and spaces match the animated text at any system size.
@@ -160,8 +167,8 @@ function TextAnimationReveal({
 	const lines = measured?.text === children ? measured.lines : null;
 
 	const { pieces, count: pieceCount } = useMemo(
-		() => (split === "line" ? { pieces: [], count: 0 } : buildPieces(children, split)),
-		[children, split]
+		() => (split === "line" ? { pieces: [], count: 0 } : buildPieces(text, split)),
+		[text, split]
 	);
 	const count = split === "line" ? (lines?.length ?? 0) : pieceCount;
 	const delays = useMemo(

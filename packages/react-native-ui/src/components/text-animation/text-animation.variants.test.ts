@@ -1,10 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import {
 	buildTypingTimeline,
+	capitalizeWords,
 	countTypedPhrases,
 	formatNumber,
 	formatNumberParts,
 	hashText,
+	isCapitalizedClass,
 	resolveCaretClass,
 	resolveCaretOpacity,
 	resolveEffectFrame,
@@ -580,6 +582,27 @@ describe("resolveRowJustify", () => {
 
 	test("starts the row when the class sets no alignment", () => {
 		expect(resolveRowJustify("text-base text-foreground")).toBe("justify-start");
+	});
+});
+
+describe("capitalizeWords", () => {
+	test("raises the first letter of each word and leaves the rest", () => {
+		expect(capitalizeWords("hello world")).toBe("Hello World");
+		expect(capitalizeWords("  ship\nit iOS")).toBe("  Ship\nIt IOS");
+	});
+
+	test("keeps the grapheme count, so typed indices still line up", () => {
+		expect(capitalizeWords("élan vital")).toBe("Élan Vital");
+		expect(capitalizeWords("")).toBe("");
+	});
+});
+
+describe("isCapitalizedClass", () => {
+	test("is true only when the last transform in the class is capitalize", () => {
+		expect(isCapitalizedClass("text-base capitalize")).toBe(true);
+		expect(isCapitalizedClass("capitalize normal-case")).toBe(false);
+		expect(isCapitalizedClass("uppercase")).toBe(false);
+		expect(isCapitalizedClass("text-base")).toBe(false);
 	});
 });
 

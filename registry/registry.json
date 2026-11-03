@@ -368,6 +368,13 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"button",
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -1112,6 +1119,12 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -1398,6 +1411,13 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"button",
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -1885,6 +1905,12 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -2412,6 +2438,14 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"button",
+				"overlay",
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -2716,6 +2750,12 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -2771,6 +2811,13 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"button",
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -2944,6 +2991,13 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"button",
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -3417,6 +3471,13 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"button",
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -5167,6 +5228,12 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -5250,6 +5317,13 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"button",
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{
@@ -5296,6 +5370,12 @@
 			],
 			"testDependencies": [
 				"@types/bun"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{

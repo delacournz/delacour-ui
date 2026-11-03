@@ -42,20 +42,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"time-picker",
 	"timeline",
 
-	// RNTL P5 — overlays
-	"bottom-sheet",
-	"context-menu",
-	"drawer",
-	"image-viewer",
-	"menu",
-	"overlay",
-	"page-header",
-	"popover",
-	"screen",
-	"toast",
-	"tooltip",
-	"tour",
-
 	// RNTL P6 — navigation & layout
 	"accordion",
 	"breadcrumb",

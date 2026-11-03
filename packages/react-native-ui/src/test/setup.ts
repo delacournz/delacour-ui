@@ -31,6 +31,13 @@ jest.mock("react-native-worklets", () => ({
 require("react-native-reanimated").setUpTests();
 require("react-native-gesture-handler/jestSetup");
 
+/**
+ * React Native's Jest mock leaves `AppState.currentState` a mock function, which
+ * reads as "not active": anything that pauses in the background (a toast's
+ * auto-dismiss clock) would never run. A test runs in the foreground.
+ */
+Object.defineProperty(require("react-native").AppState, "currentState", { configurable: true, value: "active" });
+
 jest.mock("react-native-safe-area-context", () => require("react-native-safe-area-context/jest/mock").default);
 jest.mock("react-native-keyboard-controller", () => require("react-native-keyboard-controller/jest"));
 jest.mock("react-native-teleport", () => require("react-native-teleport/jest"));

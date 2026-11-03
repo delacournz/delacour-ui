@@ -24,6 +24,7 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | `overlay.variants.ts` | `overlayVariants` (`scrim`), `OVERLAY_MOTION`, `OVERLAY_SCRIM_TOKEN` |
 | `use-overlay-presence.ts` | `useOverlayPresence` — keeps an overlay mounted through its exit, drives `progress` 0 → 1 |
 | `use-overlay-back-handler.ts` | `useOverlayBackHandler` — Android back, only while the overlay is the top |
+| `overlay.render.test.tsx` | Mounted under Jest — provider and portal mounting, registry entry and z-order while mounted, scrim semantics and dismiss, presence unmount after exit, back handler (top-only, toast excluded), touch fan-out |
 | `*.test.ts` | The registry, the presence machine, the scrim token and the motion constants |
 
 ## Design

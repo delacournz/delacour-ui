@@ -184,7 +184,7 @@
 		"@delacour/react-native-bottom-sheet": ">=0.3.0",
 		"@delacour/react-native-charts": ">=0.2.0",
 		"@legendapp/list": ">=3.3",
-		"react-native-skia": ">=3.7.3",
+		"react-native-skia": ">=3.9.0",
 		"expo-linear-gradient": ">=15",
 		"expo-router": ">=57",
 		"react": ">=19",

@@ -70,9 +70,9 @@ type SketchPngTarget = SketchArea & { background: string | null; scale: number }
  *
  * Off screen rather than a snapshot of the visible canvas, so the file holds the
  * marks and the background only — never the image being annotated under them —
- * matching `toSVG`. Returns `""` before the canvas is measured.
+ * matching `toSVG`. Resolves to `""` before the canvas is measured.
  */
-export function renderSketchPng(items: readonly SketchItem[], target: SketchPngTarget): string {
+export async function renderSketchPng(items: readonly SketchItem[], target: SketchPngTarget): Promise<string> {
 	const pixelWidth = Math.round(target.width * target.scale);
 	const pixelHeight = Math.round(target.height * target.scale);
 	if (pixelWidth <= 0 || pixelHeight <= 0) return "";

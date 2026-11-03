@@ -1,0 +1,45 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "test-kit",
+	"type": "registry:lib",
+	"title": "Test kit",
+	"description": "The Jest setup and render helper the render tests share: stands in for every native module and renders inside the provider.",
+	"categories": [
+		"testing"
+	],
+	"registryDependencies": [
+		"provider"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-keyboard-controller",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-teleport"
+	],
+	"devDependencies": [
+		"@jest/globals",
+		"@testing-library/react-native",
+		"jest-expo",
+		"test-renderer"
+	],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/test/render.tsx",
+			"target": "test/render.tsx",
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../components/provider",
+					"to": "@registry/ui/provider"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/test/setup.ts",
+			"target": "test/setup.ts",
+			"namespace": "lib"
+		}
+	]
+}

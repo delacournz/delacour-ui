@@ -60,8 +60,22 @@ Xcode and `warden` on the PATH, and it is deliberately **not** part of `build`. 
 `apps/web/src/previews/manifest.ts` — is committed, which is what lets the docs site deploy on a
 machine with no simulator. See [apps/playground/AGENTS.md](apps/playground/AGENTS.md#capturing-preview-media).
 
-Turbo caching is **off** for every task but `build` (`cache: false` in
-`turbo.jsonc`), so a run always reflects the tree as it is now.
+`typecheck`, `check`, `test` and `@delacour/web#codegen` are **cached**; everything else is
+`cache: false` in `turbo.jsonc`. A hit replays a run over byte-identical inputs, so a cached task still
+reflects the tree as it is now — **provided its inputs are complete**. Turbo hashes a package's own
+files and, through the `transit` node, its workspace dependencies'. A task that reads anything else —
+`registry/`, another app's source, a sibling it does not depend on — must list it in that task's
+`pkg#task` entry as `$TURBO_ROOT$/…`, or a change there replays a stale green. The existing entries
+are that list: `delacour` reads the library, the engines, `registry/` and the docs content; `web` and
+`playground` read each other (which is why it cannot be a `package.json` dependency — that would be a
+cycle). Add the path in the same change as the read. `--force` (or `TURBO_FORCE=true`) reruns
+everything.
+
+Turbo's `--affected` is **not** used, deliberately: it decides by which package a changed file lives
+in and ignores `inputs`, so a `registry/` change affects nothing although three packages' tests read
+it. The cache key does include `inputs`, which makes the cache the correct form of "only what
+changed". `bun run signoff` points `TURBO_CACHE_DIR` at the git common dir, so every worktree shares
+one cache and a branch cut a minute ago starts warm.
 
 ## Branches
 
@@ -152,16 +166,19 @@ The checks are defined once, in `scripts/signoff-checks.ts`:
 | --- | --- | --- | --- |
 | `signoff/typecheck` | yes | always | `turbo typecheck` |
 | `signoff/check` | yes | always | `turbo check` |
-| `signoff/test` | yes | always | `turbo test test:release test:scripts` |
+| `signoff/test` | yes | always | `turbo test test:render test:release test:scripts` |
 | `signoff/build` | yes | always | `turbo build --filter=@delacour/web` |
 | `signoff/registry` | no | the library, CLI, skills, registry or a manifest changed | `turbo registry:build gen-install gen-skill`, `git diff --exit-code`, `turbo verify:expo -- --no-install` (both layouts) |
-| `signoff/tests` | no | anything but markdown changed | `verify:expo --tests <runner> --dir .verify/tests-<runner>` for `bun`, `jest` and `vitest`, at once — every component's suites copied into an installed app and run by that runner |
+| `signoff/tests` | no | the library, an engine, the CLI, design system, skills, types, registry or a manifest changed | `verify:expo --tests <runner> --dir .verify/tests-<runner> --keep` for `bun`, `jest` and `vitest`, at once — every component's suites copied into an installed app and run by that runner |
 | `signoff` | yes | — | the umbrella, written only when every applicable check passed |
 
 `registry`'s two runs share `packages/cli/.verify/app` and hold its pool lock. `tests` runs its three
 runners at the same time, each in its own `--dir` with its own CLI build and packed engines beside
-it, so it shares nothing with `registry` or with itself and needs no lock. `tests` installs from npm and takes minutes; it is path-gated on everything but
-markdown rather than `always`, which keeps the ruleset's required list unchanged — it gates through
+it, so it shares nothing with `registry` or with itself and needs no lock. `tests` installs from npm. It used to take 8–16 minutes,
+nearly all of it the scaffolded app's `tsc` under TypeScript 5.9, which spends four minutes on
+`input.variants.ts`'s compound variants alone; the scaffold now pins the TypeScript Expo's template
+ships (6.0), which checks the whole app in seconds. `--keep` leaves each app's `node_modules` for the
+next signoff. It is path-gated on what a copied app is built from rather than `always`, which keeps the ruleset's required list unchanged — it gates through
 the umbrella like `registry` does, and `ci.yml`'s `copied-tests` job runs it for the release pull
 request and a dispatched signoff.
 
@@ -216,10 +233,10 @@ installs from the registry and takes minutes. It runs on the version pull reques
 reaches npm, and on dispatch.
 
 Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
-`namespace-profile-linux-small` for Linux work — `namespace-profile-linux-medium` for `typecheck`,
-whose tsc runs were OOM-killed on the small profile — `namespace-profile-mac-small` for any job that
-needs macOS (Xcode, a simulator), and `namespace-profile-windows-small` for any job that needs
-Windows. Nothing needs macOS or Windows today, so those two profiles are unused.
+`namespace-profile-linux-medium` (4 vCPU, 8 GB) for Linux work, `namespace-profile-mac-medium` for any
+job that needs macOS (Xcode, a simulator), and `namespace-profile-windows-medium` for any job that needs
+Windows. The small profiles are not to be reintroduced: `typecheck`'s tsc was OOM-killed on
+`linux-small`, and its 2 vCPU made every install the critical path of a run. Nothing needs macOS or Windows today, so those two profiles are unused.
 The `ubuntu-latest` / `macos-*` / `windows-*` labels are not to be reintroduced — with one exception, below.
 
 The exceptions are `release.yml`'s `publish` job and `alpha.yml`, which stay on `ubuntu-latest`. npm's trusted
@@ -643,9 +660,11 @@ shapes; `@delacour/types`' `Result` is the house example.
 
 **Tests.** Write them first. Colocate as `{name}.test.ts` beside the source. Run
 `bun test <path>` after each change and the related suites before committing.
-`react-native-ui` can only test pure logic — React Native ships Flow-typed source Bun's
-transpiler cannot parse — so behaviour that needs a renderer is verified in the
-playground on a simulator instead.
+`react-native-ui` has two kinds: `*.test.ts` pure-logic suites under `bun test`, and a
+`{name}.render.test.tsx` per component under Jest (`bun run test:render`) — React Native ships
+Flow-typed source Bun's transpiler cannot parse, so mounting a component needs jest-expo. See
+`packages/react-native-ui/src/test/AGENTS.md`. Layout, animation and real gestures are still
+verified in the playground on a simulator.
 
 **Files.** Kebab-case, enforced by Biome. The exception is `apps/playground/src/app`,
 where Expo Router derives route names from filenames.

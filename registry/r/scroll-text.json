@@ -126,5 +126,29 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/scroll-text.render.test.tsx",
+			"target": "scroll-text/scroll-text.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../provider",
+					"to": "@registry/ui/provider"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"provider",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

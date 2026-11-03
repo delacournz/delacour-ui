@@ -24,6 +24,7 @@ plus seven parts: `Header`, `Title`, `Description`, `Action`, `Tray`, `Section`,
 | `frame.types.ts` | Prop types shared by two or more parts |
 | `frame.variants.ts` | The slotted `tv()` and every resolver — no RN imports |
 | `frame.variants.test.ts` | |
+| `frame.render.test.tsx` | Mounted under Jest — header/action/section/tray semantics, footer alignments, part-outside-root errors |
 
 ## Design
 

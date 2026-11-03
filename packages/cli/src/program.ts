@@ -72,6 +72,8 @@ withRegistryOptions(
 		.argument("[components...]", "components to add straight away")
 		.option("-y, --yes", "accept every default without asking")
 		.option("-d, --defaults", "use the default layout without asking")
+		.option("-t, --tests", "also install component tests, and every later add keeps them")
+		.option("--no-tests", "install no component tests, without asking")
 		.option("-f, --force", `rewrite an existing ${CONFIG_FILENAME}`)
 		.option("-s, --src <dir>", "base directory for source files")
 		.option("--package-name <name>", "put the components in a shared package with this name")
@@ -90,7 +92,8 @@ withRegistryOptions(
 		.argument("[components...]", "components to add")
 		.option("-a, --all", "add every component")
 		.option("-o, --overwrite", "replace files that differ")
-		.option("-t, --tests", "copy each component's tests too, and record them in the lock")
+		.option("-t, --tests", "copy each component's tests too, and remember the choice in the config")
+		.option("--no-tests", "copy no tests, and remember the choice in the config")
 		.option("-y, --yes", "accept every default without asking")
 		// Forwarded to `init`, and read only when this run is the one that sets
 		// the project up. The default is `src`, which is where `with-router-uniwind`
@@ -136,7 +139,8 @@ withRegistryOptions(
 		.option("--base <ref>", "the ref to merge from, for files copied before the lock existed")
 		.option("--prune", "delete untouched files their component no longer has")
 		.option("-f, --force", "merge into files with uncommitted changes")
-		.option("-t, --tests", "bring every component's tests, not only those already copied")
+		.option("-t, --tests", "bring every component's tests, not only those already copied, and remember the choice")
+		.option("--no-tests", "bring only the tests already copied, and remember the choice")
 		// Declared alone, so it defaults to true: the project's formatter is run
 		// unless a caller says not to.
 		.option("--no-format", "compare without running the project's formatter")

@@ -135,5 +135,28 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input.render.test.tsx",
+			"target": "otp-input/otp-input.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

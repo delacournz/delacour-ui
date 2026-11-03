@@ -3860,7 +3860,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 160,
+		fileCount: 161,
 		groups: [
 			{
 				name: "combobox",
@@ -4013,6 +4013,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -5547,7 +5548,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 136,
+		fileCount: 137,
 		groups: [
 			{
 				name: "color-picker",
@@ -5707,6 +5708,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -6029,7 +6031,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 151,
+		fileCount: 152,
 		groups: [
 			{
 				name: "planner",
@@ -6189,6 +6191,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -6771,7 +6774,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 147,
+		fileCount: 148,
 		groups: [
 			{
 				name: "date-picker",
@@ -6923,6 +6926,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -7120,7 +7124,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 192,
+		fileCount: 193,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -7274,6 +7278,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -7906,7 +7911,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 126,
+		fileCount: 127,
 		groups: [
 			{
 				name: "select",
@@ -8056,6 +8061,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -8635,7 +8641,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 131,
+		fileCount: 132,
 		groups: [
 			{
 				name: "time-picker",
@@ -8790,6 +8796,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -13150,7 +13157,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 112,
+		fileCount: 113,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -13311,6 +13318,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -14085,7 +14093,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 80,
+		fileCount: 81,
 		groups: [
 			{
 				name: "toast",
@@ -14188,6 +14196,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -14297,7 +14306,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 53,
+		fileCount: 54,
 		groups: [
 			{
 				name: "dialog",
@@ -14342,6 +14351,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -14468,7 +14478,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 55,
+		fileCount: 56,
 		groups: [
 			{
 				name: "popover",
@@ -14515,6 +14525,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -14641,7 +14652,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 66,
+		fileCount: 67,
 		groups: [
 			{
 				name: "tooltip",
@@ -14672,6 +14683,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -14832,7 +14844,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 55,
 		groups: [
 			{
 				name: "drawer",
@@ -14878,6 +14890,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -15004,7 +15017,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 117,
+		fileCount: 118,
 		groups: [
 			{
 				name: "feedback",
@@ -15117,6 +15130,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
@@ -18217,7 +18231,7 @@ export const install = {
 		expo: ["react-native-reanimated", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 18,
+		fileCount: 19,
 		groups: [
 			{
 				name: "overlay",
@@ -18230,6 +18244,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-teleport.ts", target: "src/components/ui/overlay/overlay-teleport.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },

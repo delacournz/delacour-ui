@@ -116,7 +116,11 @@ export function TextAnimationRotating({
 	const textClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
 	const phrasesKey = phrases.join("\u0000");
 	const [state, setState] = useState({ key: phrasesKey, index: 0, previous: -1 });
-	const { index, previous } = state.key === phrasesKey ? state : { index: 0, previous: -1 };
+	// A new list starts over, committed during render, so switching away and
+	// back never restores the old list's index or its transition.
+	if (state.key !== phrasesKey) setState({ key: phrasesKey, index: 0, previous: -1 });
+	// Calm motion holds the first phrase with no swap in flight.
+	const { index, previous } = state.key === phrasesKey && !isCalm ? state : { index: 0, previous: -1 };
 	const progress = useSharedValue(1);
 	const isRotating = isActive && !isCalm && phrases.length > 1;
 
@@ -131,6 +135,12 @@ export function TextAnimationRotating({
 		}, intervalMs);
 		return () => clearInterval(timer);
 	}, [isRotating, intervalMs, phrasesKey, phrases.length]);
+
+	// Turning calm motion on drops the rotated state, so resuming waits for the
+	// next swap instead of replaying the transition that was cut short.
+	useEffect(() => {
+		if (isCalm) setState({ key: phrasesKey, index: 0, previous: -1 });
+	}, [isCalm, phrasesKey]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: a new index is the trigger, though only `previous` is read
 	useEffect(() => {

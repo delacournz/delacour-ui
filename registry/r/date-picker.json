@@ -280,5 +280,34 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/date-picker/date-picker.render.test.tsx",
+			"target": "date-picker/date-picker.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../calendar/calendar.date",
+					"to": "@registry/ui/calendar/calendar.date"
+				},
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"overlay",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@delacour/react-native-bottom-sheet",
+		"@jest/globals"
 	]
 }

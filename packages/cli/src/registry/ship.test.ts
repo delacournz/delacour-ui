@@ -57,6 +57,13 @@ describe("shipContent", () => {
 });
 
 describe("findUnshippableReferences", () => {
+	test("a glob naming a kind of suite is not a file name", () => {
+		expect(findUnshippableReferences("Render tests (`*.render.test.tsx`) and `*.test.ts` run under Jest.")).toEqual([]);
+		expect(findUnshippableReferences("see button.render.test.tsx")).toEqual([
+			{ line: 1, match: "button.render.test.tsx" },
+		]);
+	});
+
 	test("finds nothing in neutral prose", () => {
 		expect(findUnshippableReferences("The decision is pure, so a unit test reaches it.\n")).toEqual([]);
 	});

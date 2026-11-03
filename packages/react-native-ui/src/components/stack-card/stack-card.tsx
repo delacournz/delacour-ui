@@ -325,7 +325,7 @@ function StackCardRoot({
 	const isGestureEnabled = !isDisabled && index < count;
 
 	const gesture = useMemo(() => {
-		const pan = Gesture.Pan().enabled(isGestureEnabled);
+		const pan = Gesture.Pan().withTestId("stack-card-pan").enabled(isGestureEnabled);
 		// A horizontal deck lets a vertical drag fall through to the scroll view
 		// around it. A deck that throws both ways claims both axes, so it cannot
 		// sit inside a scroller.

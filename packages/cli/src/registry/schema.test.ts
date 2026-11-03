@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { registryFileSchema, registryItemSchema, toIndexEntry, withTests } from "./schema";
+import { registryFileSchema, registryItemSchema, skipsRenderTests, toIndexEntry, withTests } from "./schema";
 
 const FILE = {
 	path: "packages/react-native-ui/src/components/button/button.tsx",
@@ -139,6 +139,67 @@ describe("withTests", () => {
 	test("leaves the item alone otherwise", () => {
 		expect(item.files).toHaveLength(1);
 		expect(item.registryDependencies).toEqual(["icon"]);
+	});
+});
+
+describe("withTests render tests", () => {
+	const RENDER_TEST = {
+		path: "packages/react-native-ui/src/components/button/button.render.test.tsx",
+		target: "button/button.render.test.tsx",
+		namespace: "ui",
+	} as const;
+
+	const item = registryItemSchema.parse({
+		name: "button",
+		type: "registry:ui",
+		title: "Button",
+		description: "A pressable action.",
+		files: [FILE],
+		testRegistryDependencies: ["text"],
+		renderTests: [RENDER_TEST],
+		renderTestRegistryDependencies: ["test-kit"],
+		renderTestDependencies: ["@jest/globals"],
+	});
+
+	test("defaults the render lists, so a registry from before them parses", () => {
+		const old = registryItemSchema.parse({
+			name: "a",
+			type: "registry:ui",
+			title: "A",
+			description: "a",
+			files: [FILE],
+		});
+		expect(old.renderTests).toEqual([]);
+		expect(old.renderTestRegistryDependencies).toEqual([]);
+		expect(old.renderTestDependencies).toEqual([]);
+	});
+
+	test("Jest copies them with the test kit and their packages", () => {
+		const scoped = withTests(item, "jest");
+		expect(scoped.files.map((file) => file.target)).toEqual(["button/button.tsx", RENDER_TEST.target]);
+		expect(scoped.registryDependencies).toEqual(["test-kit", "text"]);
+		expect(scoped.devDependencies).toEqual(["@jest/globals"]);
+	});
+
+	test.each(["bun", "vitest"] as const)("%s copies none of them", (runner) => {
+		const scoped = withTests(item, runner);
+		expect(scoped.files.map((file) => file.target)).toEqual(["button/button.tsx"]);
+		expect(scoped.registryDependencies).toEqual(["text"]);
+		expect(scoped.devDependencies).not.toContain("@jest/globals");
+	});
+
+	test("an index entry carries the dependencies, and not the files", () => {
+		const entry = toIndexEntry(item);
+		expect(withTests(entry, "jest").registryDependencies).toEqual(["test-kit", "text"]);
+		expect(withTests(entry, "bun").registryDependencies).toEqual(["text"]);
+		expect("renderTests" in entry).toBe(false);
+	});
+
+	test("skipsRenderTests names the runners that leave them out", () => {
+		expect(skipsRenderTests(item, "bun")).toBe(true);
+		expect(skipsRenderTests(item, "vitest")).toBe(true);
+		expect(skipsRenderTests(item, "jest")).toBe(false);
+		expect(skipsRenderTests(toIndexEntry(item), "bun")).toBe(true);
 	});
 });
 

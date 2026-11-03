@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, test } from "bun:test";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { type BuildResult, buildRegistry, escapingReads, runnerSpecificUses } from "./build";
+import { type BuildResult, buildRegistry, escapingReads, jestOnlyViolations, runnerSpecificUses } from "./build";
 import { isTest } from "./classify";
 import { PLACEHOLDER_PREFIX, parsePlaceholder } from "./namespaces";
 import { applyRewrites } from "./rewrite";
@@ -180,6 +180,34 @@ describe("buildRegistry", () => {
 			.flatMap(([path, content]) => runnerSpecificUses(content).map((use) => `${path} ${use}`));
 
 		expect(offences).toEqual([]);
+	});
+
+	test("ships render tests in renderTests, not tests or files, with the test kit behind them", () => {
+		const withRender = registry.items.filter((item) => item.renderTests.length > 0);
+
+		expect(withRender.map((item) => item.name)).toContain("button");
+		for (const item of withRender) {
+			for (const file of item.renderTests) expect(file.target).toMatch(/\.render\.test\.tsx$/);
+			for (const file of [...item.files, ...item.tests]) expect(file.target).not.toMatch(/\.render\.test\.tsx$/);
+			expect(item.renderTestRegistryDependencies).toContain("test-kit");
+			expect(item.renderTestDependencies).toContain("@jest/globals");
+			expect(item.testDependencies).not.toContain("@jest/globals");
+		}
+	});
+
+	test("the test kit is a lib item of its own, with the renderer and the provider behind it", () => {
+		const kit = byName.get("test-kit");
+
+		expect(kit?.type).toBe("registry:lib");
+		expect(kit?.files.map((file) => `${file.namespace}/${file.target}`)).toEqual([
+			"lib/test/render.tsx",
+			"lib/test/setup.ts",
+		]);
+		expect(kit?.registryDependencies).toContain("provider");
+		expect(kit?.devDependencies).toEqual(
+			expect.arrayContaining(["@jest/globals", "@testing-library/react-native", "test-renderer"])
+		);
+		expect(kit?.tests).toEqual([]);
 	});
 
 	test("records what only the tests need apart from what the source needs", () => {
@@ -385,5 +413,27 @@ describe("runnerSpecificUses", () => {
 			"test.if(",
 			"describe.skipIf(",
 		]);
+	});
+});
+
+describe("jestOnlyViolations", () => {
+	test("allows what Jest has and Bun does not: jest.fn, jest.mock and @jest/globals", () => {
+		const source = [
+			'import { describe, expect, jest, test } from "@jest/globals";',
+			'jest.mock("./thing");',
+			"const onPress = jest.fn();",
+			"expect(onPress).not.toHaveBeenCalled();",
+		].join("\n");
+
+		expect(jestOnlyViolations(source)).toEqual([]);
+	});
+
+	test("refuses an import from bun:test, which a Jest project cannot load", () => {
+		expect(jestOnlyViolations('import { expect, test } from "bun:test";')).toEqual(['imports from "bun:test"']);
+	});
+
+	test("refuses what Jest itself rejects", () => {
+		expect(jestOnlyViolations("expect(value, 'message').toBe(1);")).toEqual(["expect(…, message)"]);
+		expect(jestOnlyViolations("expect(list).toBeArray();")).toEqual([".toBeArray("]);
 	});
 });

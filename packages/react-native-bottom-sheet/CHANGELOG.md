@@ -1,5 +1,11 @@
 # @delacour/react-native-bottom-sheet
 
+## 0.6.0
+
+### Patch Changes
+
+- [#298](https://github.com/delacournz/delacour-ui/pull/298) [`664fb88`](https://github.com/delacournz/delacour-ui/commit/664fb88eab85d6825ac04a4e0b2666629edfa9e2) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `asChild` keeps the handler it donates when the child forwards an unset one. `<BottomSheet.Trigger asChild><Button onPress={maybe} /></BottomSheet.Trigger>` with `maybe` undefined now opens the sheet; before, the child's `undefined` replaced the trigger's `onPress`.
+
 ## 0.3.0
 
 ### Minor Changes

@@ -13,6 +13,7 @@ whole-screen states.
 | --- | --- |
 | `index.ts` | → `@registry/ui/screen` |
 | `screen.tsx` | The `Object.assign` compound surface |
+| `screen.render.test.tsx` | Mounted under Jest — navbar, back button (veto, disabled), Loading/Error and retry, scroll bodies, parts outside a Screen throw |
 | `screen-root.tsx` | The root box and its provider — see below for why it is split out |
 | `screen-scroll-source.tsx` | The bridge publishing the screen's scroll values as a `ScrollSource` — internal |
 | `screen-navbar.tsx` | `Screen.Navbar`, plus its own nested surface |
@@ -260,6 +261,14 @@ draw rather than reaching for the keyword after all.
 **Opacity ramps over a quarter of `size`, not all of it.** A fade that takes its
 own height to arrive reads as lagging the finger; a quarter puts it there while
 the first row is still leaving.
+
+## Accessibility
+
+- **A page's title is a heading.** `Screen.Navbar.Title` (a string child) and `Screen.Error`'s title
+  render with `accessibilityRole="header"`, so a screen reader can land on the page title and
+  rotor through headings. `Screen.Loading` takes its title through `Navbar.Title`, so it gets the
+  same role. A non-string `Navbar.Title` child is passed through untouched — give it the role
+  yourself. `Navbar.Subtitle` is not a heading.
 
 ## API
 

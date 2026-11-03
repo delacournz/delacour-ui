@@ -108,7 +108,10 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 	if (!meta) throw new Error(`No metadata for registry item "${context.name}" — add it to src/registry/config.ts`);
 
 	const sources = context.sources.filter((source) => !source.classification.test);
-	const testSources = context.sources.filter((source) => source.classification.test);
+	const testSources = context.sources.filter(
+		(source) => source.classification.test && !source.classification.renderTest
+	);
+	const renderTestSources = context.sources.filter((source) => source.classification.renderTest);
 
 	const first = sources[0];
 	if (!first) {
@@ -119,6 +122,7 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 
 	const source = await collectFiles(sources, context);
 	const tests = await collectFiles(testSources, context);
+	const renderTests = await collectFiles(renderTestSources, context);
 
 	const registryDependencies = new Set<string>([...(meta.registryDependencies ?? []), ...source.registryDependencies]);
 	const { dependencies, expoDependencies, devDependencies } = classifyPackages(
@@ -146,6 +150,15 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 			...expoDependencies,
 			...devDependencies,
 		]),
+		renderTests: renderTests.files,
+		renderTestRegistryDependencies: [...renderTests.registryDependencies]
+			.filter((name) => name !== context.name && !registryDependencies.has(name))
+			.sort(),
+		renderTestDependencies: testPackages(context.name, renderTests.bareImports, [
+			...dependencies,
+			...expoDependencies,
+			...devDependencies,
+		]),
 	};
 }
 
@@ -163,7 +176,10 @@ async function collectFiles(sources: readonly SourceFile[], context: BuildItemCo
 
 	for (const { path, classification } of sources) {
 		const raw = await readFile(join(context.sourceRoot, path), "utf-8");
-		if (classification.test) {
+		if (classification.renderTest) {
+			assertReadsStayLocal(path, raw);
+			assertJestOnly(path, raw);
+		} else if (classification.test) {
 			assertReadsStayLocal(path, raw);
 			assertRunnerNeutral(path, raw);
 		}
@@ -402,6 +418,28 @@ function assertRunnerNeutral(path: string, content: string): void {
 	throw new Error(
 		`${path}: ${uses.join(", ")} — only Bun runs this, and a copied test lands on Jest and Vitest too. ` +
 			"Keep to describe / test / expect and the before/after hooks."
+	);
+}
+
+/**
+ * A render test is Jest's alone, so `jest.fn` / `jest.mock` and an import from
+ * `@jest/globals` are what it should use — the one thing a shared suite may not.
+ * What it may not use is anything Bun-only (an import from `bun:test`, the `Bun`
+ * global, a jest-extended matcher) or anything Jest itself rejects (`expect(…, message)`):
+ * the file is copied as written, with no import rewrite to rescue it.
+ */
+export function jestOnlyViolations(content: string): string[] {
+	const bunImport = [...content.matchAll(/from\s*["']bun:test["']/g)].map(() => 'imports from "bun:test"');
+	return [...bunImport, ...runnerSpecificUses(content)];
+}
+
+function assertJestOnly(path: string, content: string): void {
+	const uses = jestOnlyViolations(content);
+	if (uses.length === 0) return;
+
+	throw new Error(
+		`${path}: ${uses.join(", ")} — a render test is copied to Jest projects as written, so it imports from ` +
+			'"@jest/globals" and uses nothing Bun-only.'
 	);
 }
 

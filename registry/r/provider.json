@@ -58,5 +58,33 @@
 				}
 			]
 		}
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/provider/provider.render.test.tsx",
+			"target": "provider/provider.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"button",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

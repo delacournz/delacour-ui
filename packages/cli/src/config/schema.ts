@@ -65,9 +65,15 @@ const packageSchema = z.object({
  * How copied tests are written. Without a `runner`, `add --tests` reads the one
  * the project's `package.json` tests with, and falls back to Bun's, which the
  * library's suites are written for.
+ *
+ * `enabled` is the project's standing answer to "also install component tests?":
+ * `add` and `update` copy tests when it is `true` without being told to, and
+ * `--tests` / `--no-tests` on either one both override it for the run and save
+ * the choice here. Unset reads as `false`.
  */
 const testsSchema = z.object({
 	runner: z.enum(TEST_RUNNERS).optional(),
+	enabled: z.boolean().optional(),
 });
 
 export const configSchema = z.object({

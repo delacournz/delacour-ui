@@ -89,18 +89,28 @@ function trim(file: RegistryFile): unknown {
 }
 
 /**
- * Drops the test fields from an item that has no tests, which the schema
- * defaults anyway — most lib and hook items, and three empty lists each.
+ * Drops the test fields from an item that has none, which the schema defaults
+ * anyway — most lib and hook items, and six empty lists each.
  */
 function trimTests(item: RegistryItem | RegistryIndexEntry): Record<string, unknown> {
-	const { testRegistryDependencies, testDependencies, ...rest } = item;
-	const { tests, ...source } = "tests" in rest ? rest : { ...rest, tests: [] };
+	const {
+		testRegistryDependencies,
+		testDependencies,
+		renderTestRegistryDependencies,
+		renderTestDependencies,
+		...rest
+	} = item;
+	const { tests, ...withRender } = "tests" in rest ? rest : { ...rest, tests: [] };
+	const { renderTests, ...source } = "renderTests" in withRender ? withRender : { ...withRender, renderTests: [] };
 
 	return {
 		...source,
 		...(tests.length > 0 ? { tests: tests.map(trim) } : {}),
 		...(testRegistryDependencies.length > 0 ? { testRegistryDependencies } : {}),
 		...(testDependencies.length > 0 ? { testDependencies } : {}),
+		...(renderTests.length > 0 ? { renderTests: renderTests.map(trim) } : {}),
+		...(renderTestRegistryDependencies.length > 0 ? { renderTestRegistryDependencies } : {}),
+		...(renderTestDependencies.length > 0 ? { renderTestDependencies } : {}),
 	};
 }
 

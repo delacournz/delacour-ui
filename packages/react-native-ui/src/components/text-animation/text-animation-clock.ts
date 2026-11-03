@@ -43,6 +43,8 @@ export function useTextAnimationClock({
 
 	const handleLimit = (finishedRun: number) => {
 		if (finishedRun !== runRef.current) return;
+		// A finished run stops the frame callback; a new run starts it again.
+		frame.setActive(false);
 		onLimitRef.current?.();
 	};
 
@@ -66,10 +68,13 @@ export function useTextAnimationClock({
 		reported.value = false;
 	}, [runKey, elapsed, reported, run]);
 
+	// After the rewind above, so a new run is live again; a run that already
+	// reached its limit stays off when `isRunning` flips back on.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: runKey is the trigger, not a value read here
 	useEffect(() => {
-		frame.setActive(isRunning);
+		frame.setActive(isRunning && !reported.value);
 		return () => frame.setActive(false);
-	}, [frame, isRunning]);
+	}, [frame, isRunning, reported, runKey]);
 
 	return elapsed;
 }

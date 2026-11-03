@@ -1,5 +1,5 @@
 import { tv } from "../../lib/tv";
-import type { TextAlign, TextColor } from "../text/text.variants";
+import type { TextColor } from "../text/text.variants";
 
 export const TEXT_ANIMATION_UNITS = ["character", "word", "line"] as const;
 export const TEXT_ANIMATION_ORDERS = ["forward", "reverse", "center", "random"] as const;
@@ -130,7 +130,8 @@ export const textAnimationVariants = tv({
 		measure: "absolute top-0 right-0 left-0 opacity-0",
 		caret: "absolute top-0 bottom-0",
 		slot: "relative",
-		layer: "absolute top-0 left-0",
+		// Both edges, so the layer spans the reserved slot and `textAlign` has room to act.
+		layer: "absolute top-0 right-0 left-0",
 		probe: "absolute top-0 left-0 w-[4096px] items-start opacity-0",
 		number: "flex-row items-end",
 		wheel: "relative overflow-hidden",
@@ -147,10 +148,12 @@ export const textAnimationVariants = tv({
  */
 export function resolveCaretClass(kind: TextAnimationCaretKind, color?: TextColor): string {
 	if (kind === "none") return "";
-	const fill = CARET_FILL[color ?? "default"];
-	return kind === "bar" ? `w-0.5 right-0 ${fill}` : `left-full ${fill}/40`;
+	const tone = color ?? "default";
+	return kind === "bar" ? `w-0.5 right-0 ${CARET_FILL[tone]}` : `left-full ${CARET_BLOCK_FILL[tone]}`;
 }
 
+// Whole class names only: Tailwind finds utilities by scanning the source, so
+// a class built at runtime (`${fill}/40`) is never generated.
 const CARET_FILL: Record<TextColor, string> = {
 	default: "bg-foreground",
 	muted: "bg-muted-foreground",
@@ -160,10 +163,57 @@ const CARET_FILL: Record<TextColor, string> = {
 	info: "bg-info",
 };
 
-/** A wrapping row has no `textAlign`, so the text's alignment becomes the row's justification. */
-export function resolveRowJustify(align: TextAlign | undefined): string {
-	if (align === "center") return "justify-center";
-	if (align === "right") return "justify-end";
+const CARET_BLOCK_FILL: Record<TextColor, string> = {
+	default: "bg-foreground/40",
+	muted: "bg-muted-foreground/40",
+	destructive: "bg-destructive/40",
+	success: "bg-success/40",
+	warning: "bg-warning/40",
+	info: "bg-info/40",
+};
+
+const TEXT_TRANSFORM_CLASSES = new Set(["uppercase", "lowercase", "capitalize", "normal-case"]);
+
+/** Whether the resolved class ends on `capitalize` — the last transform wins. */
+export function isCapitalizedClass(textClass: string): boolean {
+	const tokens = textClass.split(/\s+/);
+	for (let i = tokens.length - 1; i >= 0; i--) {
+		const token = tokens[i] ?? "";
+		if (TEXT_TRANSFORM_CLASSES.has(token)) return token === "capitalize";
+	}
+	return false;
+}
+
+/**
+ * `capitalize` applied to a whole phrase. Text split into one `Text` per
+ * grapheme cannot use the style — every grapheme is a word's first letter —
+ * so the phrase is capitalized before it is split. A letter whose capital is
+ * longer (`ß` → `SS`) stays as it is, so the grapheme count never changes.
+ */
+export function capitalizeWords(text: string): string {
+	return text.replace(/(^|\s)(\S)/gu, (match, lead: string, letter: string) => {
+		const upper = letter.toUpperCase();
+		return upper.length === letter.length ? `${lead}${upper}` : match;
+	});
+}
+
+const ROW_JUSTIFY: Readonly<Record<string, string>> = {
+	"text-left": "justify-start",
+	"text-center": "justify-center",
+	"text-right": "justify-end",
+};
+
+/**
+ * A wrapping row has no `textAlign`, so the text's alignment becomes the
+ * row's justification. Read from the resolved class — the last alignment
+ * wins — so an inherited alignment or a `className` override counts too.
+ */
+export function resolveRowJustify(textClass: string): string {
+	const tokens = textClass.split(/\s+/);
+	for (let i = tokens.length - 1; i >= 0; i--) {
+		const justify = ROW_JUSTIFY[tokens[i] ?? ""];
+		if (justify !== undefined) return justify;
+	}
 	return "justify-start";
 }
 
@@ -461,6 +511,64 @@ export function resolveTypingRest(timeline: TypingTimeline): TypingSample {
 	return { phraseIndex: last.phraseIndex, visibleCount: last.length, phase: "holding" };
 }
 
+/**
+ * How many phrases have finished typing by `elapsedMs`, counted across loops.
+ *
+ * A count rather than a phase change, so a frame that skips straight from one
+ * phrase's typing to the next — no hold, no erase — still reports both.
+ */
+export function countTypedPhrases(timeline: TypingTimeline, elapsedMs: number): number {
+	"worklet";
+	const { segments } = timeline;
+	const t0 = Math.max(0, elapsedMs);
+	let perCycle = 0;
+	for (let i = 0; i < segments.length; i++) {
+		if (segments[i]?.phase === "typing") perCycle += 1;
+	}
+	const isCycling = timeline.loop && timeline.cycleMs > 0 && Number.isFinite(timeline.cycleMs);
+	const cycles = isCycling ? Math.floor(t0 / timeline.cycleMs) : 0;
+	const t = isCycling ? t0 % timeline.cycleMs : t0;
+	let within = 0;
+	for (let i = 0; i < segments.length; i++) {
+		const segment = segments[i];
+		if (segment !== undefined && segment.phase === "typing" && segment.endMs <= t) within += 1;
+	}
+	return cycles * perCycle + within;
+}
+
+/** The phrase the `ordinal`-th finished typing belongs to (1-based, as `countTypedPhrases` counts). */
+export function resolveTypedPhrase(timeline: TypingTimeline, ordinal: number): number {
+	"worklet";
+	const { segments } = timeline;
+	let perCycle = 0;
+	for (let i = 0; i < segments.length; i++) {
+		if (segments[i]?.phase === "typing") perCycle += 1;
+	}
+	if (perCycle === 0 || ordinal < 1) return 0;
+	const slot = (ordinal - 1) % perCycle;
+	let seen = 0;
+	for (let i = 0; i < segments.length; i++) {
+		const segment = segments[i];
+		if (segment?.phase !== "typing") continue;
+		if (seen === slot) return segment.phraseIndex;
+		seen += 1;
+	}
+	return 0;
+}
+
+/**
+ * The completions to deliver this frame: every ordinal after the last frame's
+ * count, up to this one. A count below the last — a rewound clock, a new run —
+ * starts again from zero. `null` when nothing new finished, or under calm
+ * motion (a negative count).
+ */
+export function resolveTypedRange(previous: number | null, current: number): { from: number; to: number } | null {
+	"worklet";
+	if (current < 0) return null;
+	const start = previous === null || previous < 0 || current < previous ? 0 : previous;
+	return current > start ? { from: start + 1, to: current } : null;
+}
+
 /** Solid while characters are landing; otherwise on for `blinkMs`, off for `blinkMs`. */
 export function resolveCaretOpacity(elapsedMs: number, blinkMs: number, isTyping: boolean): 0 | 1 {
 	"worklet";
@@ -575,7 +683,9 @@ export function resolveNumberFormat(
  * forward through the wrap rather than back through 8…1. Never a full turn.
  */
 export function resolveRollTarget(currentPos: number, digit: number, direction: RollDirection): number {
-	const base = Math.round(currentPos);
+	// A wheel caught mid-roll starts from the next whole digit in the direction
+	// it is asked to go, so rounding never turns an upward roll back down.
+	const base = direction === "up" ? Math.ceil(currentPos) : Math.floor(currentPos);
 	const current = ((base % 10) + 10) % 10;
 	const delta = direction === "up" ? (digit - current + 10) % 10 : -((current - digit + 10) % 10);
 	return base + delta;

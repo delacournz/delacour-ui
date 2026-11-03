@@ -1,6 +1,6 @@
 {
 	"name": "@delacour/react-native-charts",
-	"version": "0.2.0",
+	"version": "0.6.0",
 	"description": "Headless Skia charting primitives for React Native \u2014 no tokens, no className",
 	"type": "module",
 	"license": "MIT",

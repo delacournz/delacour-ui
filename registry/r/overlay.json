@@ -57,6 +57,11 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay-teleport.ts",
+			"target": "overlay/overlay-teleport.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/overlay/overlay.context.tsx",
 			"target": "overlay/overlay.context.tsx",
 			"namespace": "ui"
@@ -116,5 +121,24 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay.render.test.tsx",
+			"target": "overlay/overlay.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

@@ -4,11 +4,17 @@ import { type SharedValue, useAnimatedReaction, useDerivedValue } from "react-na
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	buildTypingTimeline,
+	capitalizeWords,
+	countTypedPhrases,
+	isCapitalizedClass,
 	resolveCaretClass,
 	resolveRowJustify,
+	resolveTypedPhrase,
+	resolveTypedRange,
 	resolveTypingRest,
 	sampleTypingTimeline,
 	splitGraphemes,
@@ -99,7 +105,7 @@ type CellShared = {
 	phraseIndex: number;
 	isAtRest: boolean;
 	allowFontScaling?: boolean;
-	maxFontSizeMultiplier?: number;
+	maxFontSizeMultiplier: number;
 };
 
 /** The caret drawn at the right edge of a cell once the typed count reaches `visibleAt`. */
@@ -110,8 +116,10 @@ function renderCaret(shared: CellShared, visibleAt: number, measureText: string)
 			blinkMs={shared.blinkMs}
 			className={shared.caretClass}
 			elapsed={shared.elapsed}
+			allowFontScaling={shared.allowFontScaling}
 			isSteady={shared.isAtRest}
 			kind={shared.caretKind}
+			maxFontSizeMultiplier={shared.maxFontSizeMultiplier}
 			measureText={measureText === "" || measureText === " " ? "M" : measureText}
 			phraseIndex={shared.phraseIndex}
 			sample={shared.sample}
@@ -171,11 +179,21 @@ export function TextAnimationTyping({
 	accessibilityHint,
 }: TextAnimationTypingProps): ReactElement {
 	const isCalm = useCalmMotion();
-	const textClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
+	const resolvedClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
+	// Every typed cell is its own `Text`, so `capitalize` would raise each
+	// letter. The phrases are capitalized instead, before the timeline, the
+	// cells, the caret and the measures read them, and the style is turned off.
+	const isCapitalized = isCapitalizedClass(resolvedClass);
+	const textClass = isCapitalized ? cn(resolvedClass, "normal-case") : resolvedClass;
+	// One cap for every text drawn — cells, caret and measuring copies — so they scale alike.
+	const fontCap = maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER;
 	// The phrases' text is their identity, not the array: a fresh literal each
 	// render must not restart the timeline.
 	const phrasesKey = typeof children === "string" ? children : children.join(PHRASE_SEPARATOR);
-	const phrases = useMemo<readonly string[]>(() => phrasesKey.split(PHRASE_SEPARATOR), [phrasesKey]);
+	const phrases = useMemo<readonly string[]>(() => {
+		const split = phrasesKey.split(PHRASE_SEPARATOR);
+		return isCapitalized ? split.map(capitalizeWords) : split;
+	}, [phrasesKey, isCapitalized]);
 	const isLooping = loop ?? phrases.length > 1;
 	const timeline = useMemo(
 		() => buildTypingTimeline(phrases, { speed, eraseSpeed, holdMs, loop: isLooping }),
@@ -203,9 +221,17 @@ export function TextAnimationTyping({
 	const handlePhrase = useCallback((index: number, run: string) => {
 		if (run === runRef.current) setPhraseIndex(index);
 	}, []);
-	const handleTyped = useCallback((index: number, run: string) => {
-		if (run === runRef.current) onPhraseTypedRef.current?.(index);
-	}, []);
+	// One hop per frame carries every completion since the last, and this
+	// delivers each in order, so a long frame drops none.
+	const handleTyped = useCallback(
+		(from: number, to: number, run: string) => {
+			for (let ordinal = from; ordinal <= to; ordinal++) {
+				if (run !== runRef.current) return;
+				onPhraseTypedRef.current?.(resolveTypedPhrase(timeline, ordinal));
+			}
+		},
+		[timeline]
+	);
 
 	useAnimatedReaction(
 		() => sample.value,
@@ -213,9 +239,16 @@ export function TextAnimationTyping({
 			if (previous === null || current.phraseIndex !== previous.phraseIndex) {
 				scheduleOnRN(handlePhrase, current.phraseIndex, runKey);
 			}
-			if (previous !== null && previous.phase === "typing" && current.phase !== "typing") {
-				scheduleOnRN(handleTyped, previous.phraseIndex, runKey);
-			}
+		}
+	);
+
+	// Completed phrases are counted, not inferred from a phase change: with no
+	// hold and no erase one frame can jump from typing to typing.
+	useAnimatedReaction(
+		() => (isCalm ? -1 : countTypedPhrases(timeline, elapsed.value)),
+		(current, previous) => {
+			const range = resolveTypedRange(previous, current);
+			if (range !== null) scheduleOnRN(handleTyped, range.from, range.to, runKey);
 		}
 	);
 
@@ -224,7 +257,8 @@ export function TextAnimationTyping({
 	}, [isCalm, rest.phraseIndex]);
 
 	const [heights, setHeights] = useState<readonly number[]>([]);
-	const tallest = heights.reduce((max, height) => Math.max(max, height), 0);
+	// Only the current phrases count: a removed phrase's height must not hold the box open.
+	const tallest = heights.slice(0, phrases.length).reduce((max, height) => Math.max(max, height ?? 0), 0);
 	const onMeasure = (index: number) => (event: LayoutChangeEvent) => {
 		const height = event.nativeEvent.layout.height;
 		setHeights((previous) => {
@@ -249,9 +283,9 @@ export function TextAnimationTyping({
 		phraseIndex,
 		isAtRest: isCalm,
 		allowFontScaling,
-		maxFontSizeMultiplier,
+		maxFontSizeMultiplier: fontCap,
 	};
-	const rowClass = cn(slots.row(), resolveRowJustify(align));
+	const rowClass = cn(slots.row(), resolveRowJustify(textClass));
 
 	// The row opens with an empty cell so a caret has somewhere to sit before
 	// the first character lands. Behind it, one hidden copy of every phrase
@@ -272,14 +306,14 @@ export function TextAnimationTyping({
 			>
 				{phrases.map((phrase, index) => (
 					<View className={cn(rowClass, slots.measure())} key={`${index}-${phrase}`} onLayout={onMeasure(index)}>
-						<NativeText allowFontScaling={allowFontScaling} className={textClass}>
+						<NativeText allowFontScaling={allowFontScaling} className={textClass} maxFontSizeMultiplier={fontCap}>
 							{phrase === "" ? "​" : phrase}
 						</NativeText>
 					</View>
 				))}
 				<View className={rowClass}>
 					<View className="relative">
-						<NativeText allowFontScaling={allowFontScaling} className={textClass}>
+						<NativeText allowFontScaling={allowFontScaling} className={textClass} maxFontSizeMultiplier={fontCap}>
 							{"​"}
 						</NativeText>
 						{renderCaret(shared, 0, graphemes[0] ?? "")}

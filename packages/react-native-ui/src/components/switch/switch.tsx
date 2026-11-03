@@ -190,9 +190,13 @@ function SwitchRoot({
 		[axes.isDisabled, commit, grabbed, haptic, isPressed, progress, selected, setDragging, thumbWidth, trackWidth]
 	);
 
+	// Guarded here rather than at each caller: the pan is gated by `.enabled()`,
+	// but a screen reader's activation and an enclosing `Field`'s label press
+	// both arrive through this function, and a disabled switch must refuse them.
 	const toggle = useCallback(() => {
+		if (axes.isDisabled) return;
 		commit(!selectedRef.current);
-	}, [commit]);
+	}, [axes.isDisabled, commit]);
 
 	// Offered to an enclosing `Field` so tapping the label or the description
 	// beside the switch flips it. A switch in a form is a small pill next to a

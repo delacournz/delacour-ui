@@ -1,11 +1,14 @@
-import { Fragment, type ReactElement, type ReactNode, useEffect, useMemo, useState } from "react";
+import { Fragment, type ReactElement, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Text as NativeText, type TextLayoutEvent, View } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
+	capitalizeWords,
 	hashText,
+	isCapitalizedClass,
 	resolveRowJustify,
 	resolveStaggerDelays,
 	resolveTotalDuration,
@@ -54,27 +57,38 @@ type RevealPiece =
 	| { kind: "unit"; key: string; text: string; index: number }
 	| { kind: "word"; key: string; graphemes: readonly { text: string; index: number }[] }
 	| { kind: "space"; key: string; text: string }
-	| { kind: "break"; key: string };
+	| { kind: "break"; key: string }
+	| { kind: "blank"; key: string };
 
 /**
  * The pieces a word or character split renders, with each animated unit's
- * index in entry order. Whitespace stays static — it is where the row wraps —
- * and a newline becomes a full-width break, since a wrapping row has no line
- * feed of its own.
+ * index in entry order. Whitespace stays static — it is where the row wraps.
+ * A wrapping row has no line feed of its own, so a newline that ends a line
+ * becomes a full-width break, and one that ends an empty line becomes a blank
+ * line one text line tall, so `A\n\nB` keeps its gap and a leading newline
+ * keeps its line.
  */
 function buildPieces(text: string, split: "word" | "character"): { pieces: RevealPiece[]; count: number } {
 	const pieces: RevealPiece[] = [];
 	let count = 0;
+	let isLineEmpty = true;
 	splitText(text, "word").forEach((unit, i) => {
 		const key = `${i}`;
 		if (unit.isSpace) {
 			const lines = unit.text.split("\n");
 			lines.forEach((run, j) => {
-				if (j > 0) pieces.push({ kind: "break", key: `${key}-b${j}` });
-				if (run !== "") pieces.push({ kind: "space", key: `${key}-s${j}`, text: run });
+				if (j > 0) {
+					pieces.push({ kind: isLineEmpty ? "blank" : "break", key: `${key}-b${j}` });
+					isLineEmpty = true;
+				}
+				if (run !== "") {
+					pieces.push({ kind: "space", key: `${key}-s${j}`, text: run });
+					isLineEmpty = false;
+				}
 			});
 			return;
 		}
+		isLineEmpty = false;
 		if (split === "word") {
 			pieces.push({ kind: "unit", key, text: unit.text, index: count });
 			count += 1;
@@ -149,13 +163,23 @@ function TextAnimationReveal({
 	accessibilityHint,
 }: TextAnimationRevealProps): ReactElement {
 	const isCalm = useCalmMotion();
-	const textClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
+	const resolvedClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
+	// One `Text` per grapheme would capitalize every letter, so a character
+	// split capitalizes the string itself and turns the style off.
+	const isCapitalized = split === "character" && isCapitalizedClass(resolvedClass);
+	const textClass = isCapitalized ? cn(resolvedClass, "normal-case") : resolvedClass;
+	const text = isCapitalized ? capitalizeWords(children) : children;
 	const step = stagger ?? TEXT_ANIMATION_STAGGER[split];
-	const [lines, setLines] = useState<readonly string[] | null>(null);
+	// One cap for the units, the whitespace between them and the measuring copy,
+	// so line breaks and spaces match the animated text at any system size.
+	const fontCap = maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER;
+	// Lines belong to the text they were measured from; a new text waits for its own.
+	const [measured, setMeasured] = useState<{ text: string; lines: readonly string[] } | null>(null);
+	const lines = measured?.text === children ? measured.lines : null;
 
 	const { pieces, count: pieceCount } = useMemo(
-		() => (split === "line" ? { pieces: [], count: 0 } : buildPieces(children, split)),
-		[children, split]
+		() => (split === "line" ? { pieces: [], count: 0 } : buildPieces(text, split)),
+		[text, split]
 	);
 	const count = split === "line" ? (lines?.length ?? 0) : pieceCount;
 	const delays = useMemo(
@@ -165,18 +189,41 @@ function TextAnimationReveal({
 	const total = resolveTotalDuration(count, step, durationMs, delayMs, order);
 
 	const runKey = `${children}|${split}|${order}|${step}|${durationMs}|${delayMs}|${JSON.stringify(effect)}|${isActive}`;
+
+	// Every change of `runKey` is a new play, inactive ones included, so
+	// `isActive` going false → true replays even though the key repeats. The
+	// play id is updated during render, so no frame shows the last play at rest.
+	const [play, setPlay] = useState({ runKey, id: 0 });
+	const current = play.runKey === runKey ? play : { runKey, id: play.id + 1 };
+	if (current !== play) setPlay(current);
+	const playId = current.id;
+
+	// One guard per play, shared by the clock and the calm path, so toggling calm
+	// motion during or after a play never reports the same play twice.
+	const reportedPlayRef = useRef<number | null>(null);
+	const [finishedPlay, setFinishedPlay] = useState<number | null>(null);
+	const finish = () => {
+		if (reportedPlayRef.current === playId) return;
+		reportedPlayRef.current = playId;
+		setFinishedPlay(playId);
+		onFinished?.();
+	};
+
+	// A `line` split has no units until the paragraph is measured, so its clock
+	// waits for them rather than reaching a zero limit on an empty reveal.
+	const isMeasured = split !== "line" || lines !== null;
 	const elapsed = useTextAnimationClock({
-		isRunning: isActive && !isCalm,
+		isRunning: isActive && !isCalm && isMeasured,
 		runKey,
 		limitMs: total,
-		onLimit: onFinished,
+		onLimit: finish,
 	});
 
-	// Calm motion skips the clock, so it reports the finish itself — once per text.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: onFinished is read, not a trigger
+	// Calm motion skips the clock, so it reports the finish itself.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: finish is read, not a trigger
 	useEffect(() => {
-		if (isCalm && isActive) onFinished?.();
-	}, [isCalm, isActive, runKey]);
+		if (isCalm && isActive) finish();
+	}, [isCalm, isActive, playId]);
 
 	const shared: UnitShared = {
 		className: textClass,
@@ -184,18 +231,23 @@ function TextAnimationReveal({
 		delayMs,
 		durationMs,
 		effect,
-		isAtRest: isCalm,
+		// After the finish a remeasure — new line breaks — shows its lines whole
+		// instead of partly revealed on a clock that has stopped.
+		isAtRest: isCalm || finishedPlay === playId,
 		delays,
 		allowFontScaling,
-		maxFontSizeMultiplier,
+		maxFontSizeMultiplier: fontCap,
 	};
 
 	const onTextLayout = (event: TextLayoutEvent) => {
 		const next = event.nativeEvent.lines.map((line) => line.text.replace(/\s+$/, ""));
-		setLines((previous) =>
-			previous !== null && previous.length === next.length && previous.every((line, i) => line === next[i])
+		setMeasured((previous) =>
+			previous !== null &&
+			previous.text === children &&
+			previous.lines.length === next.length &&
+			previous.lines.every((line, i) => line === next[i])
 				? previous
-				: next
+				: { text: children, lines: next }
 		);
 	};
 
@@ -208,7 +260,7 @@ function TextAnimationReveal({
 				<NativeText
 					allowFontScaling={allowFontScaling}
 					className={cn(textClass, lines === null ? "opacity-0" : slots.measure())}
-					maxFontSizeMultiplier={maxFontSizeMultiplier}
+					maxFontSizeMultiplier={fontCap}
 					onTextLayout={onTextLayout}
 				>
 					{children}
@@ -216,12 +268,29 @@ function TextAnimationReveal({
 				{(lines ?? []).map((line, i) => renderUnit(shared, `${i}`, line, i, 1))}
 			</View>
 		) : (
-			<View className={cn(slots.row(), resolveRowJustify(align))}>
+			<View className={cn(slots.row(), resolveRowJustify(textClass))}>
 				{pieces.map((piece) => {
 					if (piece.kind === "break") return <View className="w-full" key={piece.key} />;
+					if (piece.kind === "blank") {
+						return (
+							<NativeText
+								allowFontScaling={allowFontScaling}
+								className={cn(textClass, "w-full")}
+								key={piece.key}
+								maxFontSizeMultiplier={fontCap}
+							>
+								{"\u200b"}
+							</NativeText>
+						);
+					}
 					if (piece.kind === "space") {
 						return (
-							<NativeText className={textClass} key={piece.key}>
+							<NativeText
+								allowFontScaling={allowFontScaling}
+								className={textClass}
+								key={piece.key}
+								maxFontSizeMultiplier={fontCap}
+							>
 								{piece.text}
 							</NativeText>
 						);

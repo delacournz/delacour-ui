@@ -31,9 +31,8 @@ import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
  * `tests` is the one installed verify that does run here: every component's suites copied into a real
  * app on Bun, on Jest and on Vitest, and run by each. A guard can only reject what someone already
  * knew only Bun runs; this is what finds the rest. The three run at once, each in its own
- * `verify:expo --dir`, so the check costs one runner's time rather than three. It is path-gated on
- * everything but markdown rather than `always`, so it gates through the umbrella and the ruleset's
- * required list stays as it is.
+ * `verify:expo --dir`, so the check costs one runner's time rather than three. It is path-gated on what a copied app is built from rather than `always`, so it
+ * gates through the umbrella and the ruleset's required list stays as it is.
  */
 
 /** One process to spawn. `cwd` is repo-root-relative; omitted means the repo root. */
@@ -66,6 +65,24 @@ const VERIFY_APP = "verify-app";
 /** The bare context the ruleset requires. Emitted last, and only when everything passed. */
 export const UMBRELLA_CONTEXT = "signoff";
 
+/**
+ * What a copied-test app is built from: the library and its engines, the CLI that copies them and the
+ * design system it bundles, the registry it reads, and the lockfile. A docs-site, playground or
+ * workflow change cannot move a copied suite, so it no longer pays for one.
+ */
+const COPIED_APP_SOURCES = [
+	"packages/react-native-ui/**",
+	"packages/react-native-charts/**",
+	"packages/react-native-bottom-sheet/**",
+	"packages/cli/**",
+	"packages/design-system/**",
+	"packages/skills/**",
+	"packages/types/**",
+	"registry/**",
+	"package.json",
+	"bun.lock",
+] as const;
+
 export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 	{
 		context: "typecheck",
@@ -90,8 +107,8 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		paths: [],
 		workflow: "ci.yml",
 		// `test:release` and `test:scripts` are root-package tasks: `.github/*.test.ts` and
-		// `scripts/*.test.ts` belong to no workspace.
-		run: [{ argv: ["bunx", "turbo", "test", "test:release", "test:scripts"] }],
+		// `scripts/*.test.ts` belong to no workspace. `test:render` is react-native-ui's Jest run.
+		run: [{ argv: ["bunx", "turbo", "test", "test:render", "test:release", "test:scripts"] }],
 	},
 	{
 		context: "build",
@@ -158,11 +175,14 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		context: "tests",
 		label: "copied tests under Bun, Jest and Vitest",
 		always: false,
-		paths: ["**"],
+		paths: COPIED_APP_SOURCES,
 		workflow: "ci.yml",
 		// Each runner in its own `--dir`, which also keeps it off `registry`'s `.verify/app`.
+		//
+		// `--keep` leaves each app's `node_modules` in place, so the next signoff re-scaffolds the
+		// project files over a warm install instead of starting from npm. `.verify/` is gitignored.
 		run: TEST_RUNNERS.map((runner) => ({
-			argv: ["bun", "run", "verify:expo", "--tests", runner, "--dir", `.verify/tests-${runner}`],
+			argv: ["bun", "run", "verify:expo", "--tests", runner, "--dir", `.verify/tests-${runner}`, "--keep"],
 			cwd: "packages/cli",
 		})),
 		parallel: true,

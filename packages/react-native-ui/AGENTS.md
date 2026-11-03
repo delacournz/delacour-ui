@@ -21,7 +21,8 @@ React Native component kit. Do not add one, and do not port patterns from one.
 ```bash
 bun run typecheck          # bun check --no-script
 bun run check              # Biome lint + format
-bun test                   # unit tests (pure logic only — see Testing)
+bun test                   # logic suites (`*.test.ts`) — see Testing
+bun run test:render        # render suites (`*.render.test.tsx`) under Jest — see Testing
 bun run gen-exports        # regenerate package.json exports
 ```
 
@@ -44,8 +45,10 @@ src/
 │                         paging, scroll-sections, scroll-maths, scroll-edges,
 │                         wrap-text-children
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
+├── test/                 the render-test kit — Jest setup and renderWithProviders
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
 ├── docs.test.ts          The package-wide documentation check — see Testing
+├── render-tests.test.ts  The package-wide render-test check — see Testing
 ├── variant-axes.test.ts  The package-wide axis-export check — see Testing
 └── uniwind-env.d.ts      /// <reference types="uniwind/types" />
 ```
@@ -609,11 +612,30 @@ shadcn's flat light mode back, which is a choice a consumer is free to make.
 
 ## Testing
 
-`bun test` covers **pure logic only**: `cn`, `mergeProps`, `composeRefs`, and
-the `tv()` variant functions. It cannot render components — React Native ships
-Flow-typed source that Bun's transpiler cannot parse, and
-`@testing-library/react-native` needs a Jest transform. This is why a slotted
-variant definition lives in a `*.variants.ts` file free of React Native imports.
+Two runners, split by file name, because one cannot do the other's job:
+
+| Suite | Runner | Covers |
+| --- | --- | --- |
+| `*.test.ts` | `bun test` | Pure logic — `cn`, `mergeProps`, `composeRefs`, the `tv()` variant functions, every `*.logic.ts` / `*.utils.ts` |
+| `*.render.test.tsx` | Jest (`bun run test:render`, jest-expo) | A mounted component — role, name, accessibility state, callbacks, controlled and uncontrolled state, compound parts |
+
+`bun test` cannot render anything: React Native ships Flow-typed source that Bun's
+transpiler cannot parse. So it skips `*.render.test.tsx`
+(`--path-ignore-patterns`), and Jest's `testMatch` takes only those. This is still
+why a slotted variant definition lives in a `*.variants.ts` file free of React
+Native imports — the class matrix is asserted in milliseconds by Bun, and a render
+suite never asserts a class string.
+
+**Every component has a render suite.** How to write one — the provider wrapper,
+driving a control through accessibility actions because Jest has no touch system,
+what each suite covers, how to add a native mock — is
+[`src/test/AGENTS.md`](src/test/AGENTS.md). `src/render-tests.test.ts` fails by
+name for a component folder without `{name}.render.test.tsx`, so a new component
+ships with one.
+
+A render suite that finds a bug fixes the component in the same change. The
+first one did: a disabled `Switch` still flipped on a screen reader's activation,
+because only the pan was gated.
 
 `separatorVariants` is the deliberate exception. It sits in `separator.tsx`, so
 `bun test` cannot reach it and its class strings are asserted nowhere — the
@@ -646,8 +668,9 @@ name is written as a plain string-literal type instead. It exists because
 `Badge`, `Button` and `Surface` each grew a public `material` prop whose type and
 values stayed behind the index, so a caller could pass the prop but not name it.
 
-Rendering is verified in `apps/playground` on a simulator. If render tests
-become necessary, add `jest-expo` to the playground rather than to this package.
+What a render suite cannot see — layout, animation, a real gesture, the native
+modules `src/test/setup.ts` stubs — is still verified in `apps/playground` on a
+simulator.
 
 This is also why a component's pure decisions belong in its `*.variants.ts`
 rather than inline in the `.tsx` — `resolveButtonLayout`, `resolveIconSizeClass`
@@ -667,15 +690,17 @@ and `resolveSpinnerRootClass` live there so the whole matrix is reachable from
 2. Build interaction on `Pressable` — never on a bare `TouchableOpacity`.
 3. Write the variant tests first where there is a `{name}.variants.ts` — that is
    the part `bun test` can reach. A colocated `tv()` has none, so state its rules
-   in the doc comment and verify them on a simulator at step 6. `bun test` also
+   in the doc comment and verify them on a simulator at step 7. `bun test` also
    fails with the name of any component still missing a `displayName`.
-4. Write `src/components/{name}/AGENTS.md` — what the component is, its file
+4. Write `{name}.render.test.tsx` — see [`src/test/AGENTS.md`](src/test/AGENTS.md).
+   `bun test` fails by name until it exists.
+5. Write `src/components/{name}/AGENTS.md` — what the component is, its file
    map, its axes, and the reasoning behind each decision that is not obvious
    from the source. Add its row to the **Components** table above. `bun test`
    fails by name until both exist. Match the neighbouring files: a bullet opens
    with a bold claim and then explains the failure it prevents.
-5. `bun run gen-exports`.
-6. Write its demos in `apps/playground/src/demos/{name}/`, list them in that
+6. `bun run gen-exports`.
+7. Write its demos in `apps/playground/src/demos/{name}/`, list them in that
    folder's `index.ts`, and render them from
    `apps/playground/src/app/(components)/{name}.tsx` — a six-line `DemoGallery`
    shell. Add a row for it to the `ListGroup` on `src/app/index.tsx`, and check
@@ -693,7 +718,7 @@ and `resolveSpinnerRootClass` live there so the whole matrix is reachable from
    `/pressable` for the gesture root, `/screen/navbar` for the insets,
    `/screen/form` for the keyboard.
 
-7. Mark four to six of those demos `capture`, one of them `hero`, and run
+8. Mark four to six of those demos `capture`, one of them `hero`, and run
    `bun run previews` from the repo root to photograph them. That is what puts
    the component on the documentation site; a component with no captured demo
    shows a placeholder on the components index.

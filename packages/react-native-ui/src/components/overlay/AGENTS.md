@@ -19,11 +19,13 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `bg-overlay`, opacity follows presence, hidden from assistive technology |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext` and their hooks. `bottom-sheet/` imports it |
-| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `OVERLAY_LAYER_BASE` |
-| `overlay-presence.ts` | **Pure.** `reducePresence` — `closed → entering → open → exiting → closed` |
+| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `OVERLAY_LAYER_BASE` |
+| `overlay-presence.ts` | **Pure.** `reducePresence` — `closed → entering → open → exiting → closed`; `isCurrentFinish` |
+| `overlay-teleport.ts` | **Pure.** `TELEPORT_INLINE`, `isTeleportInline` — whether teleport draws an overlay in place, as its Jest mock does |
 | `overlay.variants.ts` | `overlayVariants` (`scrim`), `OVERLAY_MOTION`, `OVERLAY_SCRIM_TOKEN` |
 | `use-overlay-presence.ts` | `useOverlayPresence` — keeps an overlay mounted through its exit, drives `progress` 0 → 1 |
 | `use-overlay-back-handler.ts` | `useOverlayBackHandler` — Android back, only while the overlay is the top |
+| `overlay.render.test.tsx` | Mounted under Jest — provider and portal mounting, registry entry and z-order while mounted, scrim semantics and dismiss, app content hidden behind a modal only when teleport moves it out, presence unmount after exit, back handler (top-only, toast excluded), touch fan-out |
 | `*.test.ts` | The registry, the presence machine, the scrim token and the motion constants |
 
 ## Design
@@ -68,6 +70,16 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   It always takes the touch, even with no `onDismiss`, because the app under a non-dismissible
   dialog must not be pressable. It is hidden from assistive technology; a screen reader user
   dismisses through the panel's `onAccessibilityEscape` or the back button.
+- **A modal overlay hides the app from screen readers.** Teleport's `"root"` host is a sibling of
+  the provider's content `View`, so a panel's `accessibilityViewIsModal` hides only its siblings in
+  the host, and VoiceOver or TalkBack could still reach the app behind a dialog. While
+  `hasModalOverlay` is true the provider sets `accessibilityElementsHidden` and
+  `importantForAccessibility="no-hide-descendants"` on that `View`. Overlays and sheets draw in the
+  host, outside it, and stay reachable. **Not when teleport draws inline.** `react-native-teleport`'s
+  Jest mock renders a portal in place, inside that `View`, so hiding it would hide the dialog too
+  and every query for it would fail. The test kit sets the global `TELEPORT_INLINE` symbol to say
+  so, and the provider then leaves the app visible. It is a symbol on `globalThis`, not an import, so
+  the test kit installs without Overlay.
 - **The portal's wrapper is `box-none`.** An overlay with no scrim — a toast, a tooltip — leaves
   the app under it interactive.
 - **The provider hears every touch that starts beneath it, and claims none.** Its children sit in a

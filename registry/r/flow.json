@@ -184,5 +184,28 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/flow/flow.render.test.tsx",
+			"target": "flow/flow.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

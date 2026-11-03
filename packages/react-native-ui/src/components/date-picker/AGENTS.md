@@ -29,6 +29,7 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 | `date-picker.types.ts` | `DatePickerSelectionProps` (the mode union) and `DatePickerProps` |
 | `date-picker.variants.ts` | Slotted `tv()`, the trigger class, and every pure rule: close, format, a11y value, placeholder, axes |
 | `date-picker.variants.test.ts` | |
+| `date-picker.render.test.tsx` | Mounted under Jest — trigger state, sheet open/close, `onOpenChange`/`onValueChange`, single/range/multiple finish rules, Clear/Done, inline, controlled and uncontrolled value and open, parts outside the root |
 
 ## Imports, never duplicates
 
@@ -74,7 +75,9 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 - **Open is focus.** `resolveTriggerState` maps `isOpen` onto the box's `isFocused`, so the ring
   shows while the sheet is up. A disabled trigger is never focused.
 - **Disabled and read-only never open**, from the trigger, a `Field.Label` tap or `open()`. Read-only
-  shows the value at full strength; disabled fades it.
+  shows the value at full strength; disabled fades it. Only disabled sets `accessibilityState.disabled`,
+  so a screen reader does not read a read-only value as dimmed. A trigger that cannot open drops the
+  "Opens calendar" hint, its press handler and its press feedback.
 - **`Field` cascade, nearest wins.** `isInvalid ?? field.isInvalid`, `isDisabled ??
   field.isDisabled` — `??`, so `isInvalid={false}` opts out. The accessible name is
   `accessibilityLabel ?? field.label ?? "Date"`, and the root registers `open` with the field's
@@ -89,14 +92,14 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 
 - **Parts derive their `testID` from the root's**, through the calendar's `resolvePartTestID`:
   `testID="stay"` names the trigger `stay-trigger`, the calendar `stay-calendar` (so a day is
-  `stay-calendar-day-2026-10-12`), and the sheet's `stay-title`, `stay-close`, `stay-clear` and
+  `stay-calendar-day-2026-10-12`), and the sheet's `stay-title`, `stay-description`, `stay-close`, `stay-clear` and
   `stay-done`. The default anatomy renders every one of those parts without the caller writing
   them, and a recorded flow still has to reach a particular day. No root `testID`, no part ids.
 
 ## Sheet
 
 - **`DatePicker.Content` is a whole `BottomSheet`**: portal, overlay, container, close, title,
-  calendar bare on the sheet's surface, and a footer. Single gets a footer only when
+  the root's `description` under it when given, calendar bare on the sheet's surface, and a footer. Single gets a footer only when
   `isClearable`; range and multiple always do, because Done is how multiple ends and how a range is
   abandoned. `isClearable` defaults on for range and multiple, off for single.
 - **The calendar keeps its own size.** `calendarSize` (default `md`) is independent of the trigger's

@@ -9,12 +9,14 @@ import {
 } from "./overlay.context";
 import { OverlayPortal } from "./overlay-portal";
 import {
+	hasModalOverlay,
 	INITIAL_OVERLAY_REGISTRY,
 	type OverlayLayer,
 	type OverlayRegistryState,
 	reduceOverlayRegistry,
 } from "./overlay-registry";
 import { OverlayScrim } from "./overlay-scrim";
+import { isTeleportInline } from "./overlay-teleport";
 
 export type OverlayProviderProps = {
 	children?: ReactNode;
@@ -57,9 +59,21 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 	// for a touch on any descendant in the React tree — teleported overlays
 	// included, since teleport leaves the fiber where it was — and never stops
 	// the touch reaching its target or a gesture handler.
+	//
+	// While a modal overlay is presented, the app content is hidden from
+	// VoiceOver and TalkBack. The overlays draw in teleport's host, outside
+	// this view in the native tree, so they stay reachable. Where teleport draws
+	// inline — the Jest mock does — the overlays are inside this view, so it
+	// stays visible.
+	const isAppHidden = hasModalOverlay(state) && !isTeleportInline();
 	const registry = (
 		<OverlayContext.Provider value={value}>
-			<View onTouchStart={onTouchStart} style={styles.fill}>
+			<View
+				accessibilityElementsHidden={isAppHidden}
+				importantForAccessibility={isAppHidden ? "no-hide-descendants" : "auto"}
+				onTouchStart={onTouchStart}
+				style={styles.fill}
+			>
 				{children}
 			</View>
 		</OverlayContext.Provider>
@@ -85,7 +99,9 @@ const styles = StyleSheet.create({ fill: { flex: 1 } });
  * skipped when a provider above already mounted one, because two would mean
  * two native hosts with one name. And the overlay registry, which gives every
  * presented overlay a `zIndex` in its layer's band and tells each one whether it
- * is the top, the one Android's back button closes. It also hears every touch
+ * is the top, the one Android's back button closes. While a modal overlay is
+ * presented it hides the app content from screen readers, so focus cannot move
+ * behind a dialog. It also hears every touch
  * that starts beneath it, without claiming one, so a tooltip can close on an
  * outside tap that still lands where it was aimed.
  *

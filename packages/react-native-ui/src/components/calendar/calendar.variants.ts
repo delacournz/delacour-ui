@@ -406,6 +406,22 @@ export function resolveCaptionPage({
 	return 0;
 }
 
+/** A page the calendar asked for: the month it moved to, and the side that month enters from. */
+export type CalendarPaging = { direction: -1 | 0 | 1; month: CalendarDate | null };
+
+/** No page in flight: the next month change, wherever it comes from, does not slide. */
+export const CALENDAR_NO_PAGING: CalendarPaging = { direction: 0, month: null };
+
+/**
+ * Which way the grid slides the visible month in. It uses the paging direction only while the
+ * calendar itself moved to that month. A month that the parent sets through a controlled `month`
+ * gets `0`. Without this check, reopening a picker on an earlier month after "next" would slide
+ * that month in from the right.
+ */
+export function resolveCommittedPageDirection(paging: CalendarPaging, visibleMonth: CalendarDate): -1 | 0 | 1 {
+	return paging.month && isSameMonth(paging.month, visibleMonth) ? paging.direction : 0;
+}
+
 /**
  * Which way a released swipe pages: `1` forward, `-1` back, `0` settle where it was.
  *

@@ -141,6 +141,33 @@ only — and `d3-shape` ships them as `.mjs`, which `jest-expo`'s Babel transfor
 checks it again — each warning names the fix.
 </Callout>
 
+#### Render tests, on Jest
+
+Each component also ships a render test — `button/button.render.test.tsx` — that mounts it with
+[React Native Testing Library](https://oss.callstack.com/react-native-testing-library) and checks
+what a person or a screen reader can observe: its role and name, its disabled, checked or busy
+state, its callbacks, and its controlled and uncontrolled behaviour.
+
+They run under Jest only, so they are copied only when the project's runner is Jest. On Bun or
+Vitest, `add --tests` copies the other suites and says once that the render tests were skipped.
+
+With them comes the test kit, copied under your `lib` alias as `test/setup.ts` and `test/render.tsx`:
+a Jest setup that stands in for every native module the components use — Reanimated, Gesture
+Handler, Skia, the keyboard controller, the safe area and the rest — and a `renderWithProviders`
+helper that mounts a component inside `DelacourProvider`. `add` then adds four things to the Jest
+config, in `package.json` or a `jest.config.*` that exports an object literal:
+
+```js
+setupFiles: ["<rootDir>/src/lib/test/setup.ts"],
+resolver: "react-native-reanimated/jest/resolver",
+transformIgnorePatterns: [/* jest-expo's, plus the library's ES-module dependencies */],
+transform: { "^.+\\.mjs$": "babel-jest" },
+```
+
+A config it cannot edit safely is left alone, and `add` prints that snippet with your paths for you
+to merge. `@testing-library/react-native` and `test-renderer` are added as dev dependencies; the
+project needs `jest-expo` as its preset already.
+
 `update` keeps the tests you copied current and leaves alone the components you copied without
 them; `update --tests` brings them in for everything.
 

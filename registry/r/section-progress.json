@@ -148,5 +148,24 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/section-progress.render.test.tsx",
+			"target": "section-progress/section-progress.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

@@ -39,6 +39,9 @@ row.
 | `stack-card.types.ts` | `StackCardHandle`, `StackCardState` — shared by the root and the context |
 | `stack-card.variants.ts` | The slotted `tv()` and every pure resolver, the gesture's worklets included — no RN imports |
 | `stack-card.variants.test.ts` | |
+| `stack-card.render.test.tsx` | Mounted under Jest — the top card's accessibility actions and labels, throw and undo by action, button and ref, `onSwipe`/`onIndexChange`/`onEmpty`, controlled and declined throws, disabled, and a drag (`stack-card-pan`) past and short of the threshold |
+
+The pan carries `.withTestId("stack-card-pan")` so a render test can drive it with `fireGestureHandler`.
 
 ## Axes
 

@@ -64,6 +64,10 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		},
@@ -109,6 +113,10 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		},
@@ -139,6 +147,10 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		},
@@ -178,5 +190,28 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation.render.test.tsx",
+			"target": "text-animation/text-animation.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

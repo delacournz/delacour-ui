@@ -19,8 +19,8 @@ export type DatePickerContentProps = {
 /**
  * Where the calendar is drawn.
  *
- * In a `sheet` picker: a `BottomSheet` portal with a scrim, a close control, the title, the
- * calendar bare on the sheet's surface, and a footer of Clear and Done when the mode wants one —
+ * In a `sheet` picker: a `BottomSheet` portal with a scrim, a close control, the title and the
+ * root's `description`, the calendar bare on the sheet's surface, and a footer of Clear and Done when the mode wants one —
  * a single day closes on its own, so it gets a footer only when it is clearable. In an `inline`
  * picker: the calendar on a card, in place, with no frame of its own.
  */
@@ -50,6 +50,11 @@ export function DatePickerContent({ title, className, children }: DatePickerCont
 						<BottomSheet.Title testID={resolvePartTestID(picker.testID, "title")}>
 							{title ?? picker.title}
 						</BottomSheet.Title>
+						{picker.description ? (
+							<BottomSheet.Description testID={resolvePartTestID(picker.testID, "description")}>
+								{picker.description}
+							</BottomSheet.Description>
+						) : null}
 					</View>
 					{children ?? (
 						<>

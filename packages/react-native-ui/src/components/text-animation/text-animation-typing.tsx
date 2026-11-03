@@ -243,7 +243,8 @@ export function TextAnimationTyping({
 	}, [isCalm, rest.phraseIndex]);
 
 	const [heights, setHeights] = useState<readonly number[]>([]);
-	const tallest = heights.reduce((max, height) => Math.max(max, height), 0);
+	// Only the current phrases count: a removed phrase's height must not hold the box open.
+	const tallest = heights.slice(0, phrases.length).reduce((max, height) => Math.max(max, height ?? 0), 0);
 	const onMeasure = (index: number) => (event: LayoutChangeEvent) => {
 		const height = event.nativeEvent.layout.height;
 		setHeights((previous) => {

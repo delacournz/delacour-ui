@@ -150,6 +150,17 @@ export function flattenAvatarChildren(children: ReactNode): ReactElement[] {
 	});
 }
 
+/**
+ * Whether an `Avatar.Badge` has something to pin, or is a presence dot.
+ *
+ * Only an element counts. `{unread && <Badge />}` with `unread = 0` passes a
+ * raw `0`, and a raw string or number in a `View` throws on native. So `0`,
+ * `""` and other non-elements mean the dot.
+ */
+export function resolveAvatarBadgeHasContent(children: ReactNode): boolean {
+	return Children.toArray(children).some(isValidElement);
+}
+
 /** The most the overflow tile draws before it reads `99+`. Three digits do not fit a small circle. */
 export const AVATAR_OVERFLOW_DISPLAY_MAX = 99;
 

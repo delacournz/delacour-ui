@@ -3,6 +3,7 @@ import { createElement, Fragment } from "react";
 import {
 	flattenAvatarChildren,
 	resolveAvatarAccessibilityLabel,
+	resolveAvatarBadgeHasContent,
 	resolveAvatarGroup,
 	resolveAvatarInitials,
 	resolveAvatarOverflowLabel,
@@ -201,6 +202,19 @@ describe("resolveAvatarAccessibilityLabel", () => {
 
 	test("an explicit label wins over both", () => {
 		expect(resolveAvatarAccessibilityLabel({ accessibilityLabel: "You", name: "Aria Whitlock" })).toBe("You");
+	});
+});
+
+describe("resolveAvatarBadgeHasContent", () => {
+	test("is false for nothing to pin, including a 0 or an empty string from a conditional", () => {
+		for (const children of [undefined, null, false, true, 0, "", [0, ""]]) {
+			expect(resolveAvatarBadgeHasContent(children)).toBe(false);
+		}
+	});
+
+	test("is true when there is an element to pin", () => {
+		expect(resolveAvatarBadgeHasContent(createElement("Badge"))).toBe(true);
+		expect(resolveAvatarBadgeHasContent([0, createElement("Badge", { key: "badge" })])).toBe(true);
 	});
 });
 

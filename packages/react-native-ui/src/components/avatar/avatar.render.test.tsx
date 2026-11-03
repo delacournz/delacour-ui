@@ -215,6 +215,16 @@ describe("Avatar", () => {
 			expect(screen.getByTestId("dot")).toHaveProp("pointerEvents", "none");
 		});
 
+		test("an Avatar.Badge given a 0 from a conditional count is a dot, not a raw 0", async () => {
+			const unread = 0;
+			await renderWithProviders(
+				<Avatar name="Aria Whitlock">
+					<Avatar.Badge testID="dot">{unread && <Text>{unread}</Text>}</Avatar.Badge>
+				</Avatar>
+			);
+			expect(screen.getByTestId("dot")).toHaveProp("pointerEvents", "none");
+		});
+
 		test("Avatar.Badge with children pins them and lets touches through", async () => {
 			await renderWithProviders(
 				<Avatar name="Aria Whitlock">

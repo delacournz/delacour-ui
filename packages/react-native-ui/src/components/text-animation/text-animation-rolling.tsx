@@ -97,6 +97,7 @@ function TextAnimationWheel({
 	const initial = isLate && !isCalm ? 0 : digit;
 	const position = useSharedValue(initial);
 	const targetRef = useRef(initial);
+	const directionRef = useRef(direction);
 
 	useEffect(() => {
 		// Calm motion lands first: assigning the position also cancels a roll in
@@ -107,11 +108,15 @@ function TextAnimationWheel({
 			position.value = settled;
 			return;
 		}
-		if (resolveWheelOffset(targetRef.current) === digit) return;
+		// The stored destination still holds when it shows this digit and the
+		// wheel is either resting there or already turning the asked way.
+		const isResting = position.value === targetRef.current;
+		if (resolveWheelOffset(targetRef.current) === digit && (isResting || directionRef.current === direction)) return;
 		// Retarget from where the wheel is now, not from the last destination, so
 		// an interrupted roll still turns the way the new value asks.
 		const target = resolveRollTarget(position.value, digit, direction);
 		targetRef.current = target;
+		directionRef.current = direction;
 		position.value = withDelay(
 			rank * stagger,
 			withTiming(target, { duration: durationMs, easing: Easing.out(Easing.cubic) })

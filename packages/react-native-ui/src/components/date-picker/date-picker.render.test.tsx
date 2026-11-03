@@ -84,9 +84,20 @@ describe("DatePicker trigger", () => {
 		expect(onOpenChange).not.toHaveBeenCalled();
 
 		await rerender(<Picker isReadOnly onOpenChange={onOpenChange} />);
-		await tap(trigger());
+		await tap(screen.getByTestId("stay-trigger"));
 		expect(onOpenChange).not.toHaveBeenCalled();
-		expect(trigger()).not.toBeExpanded();
+		expect(screen.getByTestId("stay-trigger")).not.toBeExpanded();
+	});
+
+	test("a read-only trigger reads as text, not a button it cannot press", async () => {
+		await renderWithProviders(<Picker isReadOnly />, { wrapper: Providers });
+		expect(screen.queryByRole("button", { name: "Date" })).not.toBeOnTheScreen();
+		expect(screen.getByRole("text", { name: "Date" })).toBeEnabled();
+	});
+
+	test("a disabled trigger keeps the button role", async () => {
+		await renderWithProviders(<Picker isDisabled />, { wrapper: Providers });
+		expect(trigger()).toBeDisabled();
 	});
 });
 

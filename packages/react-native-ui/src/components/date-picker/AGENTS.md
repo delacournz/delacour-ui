@@ -87,7 +87,8 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 - **Disabled and read-only never open**, from the trigger, a `Field.Label` tap or `open()`. Read-only
   shows the value at full strength; disabled fades it. Only disabled sets `accessibilityState.disabled`,
   so a screen reader does not read a read-only value as dimmed. A trigger that cannot open drops the
-  "Opens calendar" hint, its press handler and its press feedback.
+  "Opens calendar" hint, its press handler and its press feedback. Read-only also drops the button
+  role and reads as text, so VoiceOver does not offer a double-tap that does nothing.
 - **`Field` cascade, nearest wins.** `isInvalid ?? field.isInvalid`, `isDisabled ??
   field.isDisabled` — `??`, so `isInvalid={false}` opts out. The accessible name is
   `accessibilityLabel ?? field.label ?? "Date"`, and the root registers `open` with the field's

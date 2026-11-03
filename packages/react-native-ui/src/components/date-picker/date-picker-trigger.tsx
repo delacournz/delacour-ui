@@ -17,7 +17,8 @@ export type DatePickerTriggerProps = Omit<PressableProps, "asChild" | "busy" | "
  *
  * Only disabled reads as disabled. Read-only shows its value at full strength, so a screen reader
  * reads it as enabled — but it gets no press feedback, no press handler and no "Opens calendar"
- * hint, because it cannot open.
+ * hint, because it cannot open. It reads as text, not a button: a button that does nothing on a
+ * double-tap is a dead control. Disabled keeps the button role, so it reads as a dimmed button.
  *
  * Omitted children are `DatePicker.Value` then `DatePicker.Icon`.
  */
@@ -38,7 +39,7 @@ export function DatePickerTrigger({
 		<Pressable
 			accessibilityHint={state.canOpen ? accessibilityHint : undefined}
 			accessibilityLabel={picker.accessibilityLabel}
-			accessibilityRole="button"
+			accessibilityRole={state.canOpen || state.isDisabled ? "button" : "text"}
 			accessibilityState={{ disabled: state.isDisabled, expanded: picker.isOpen }}
 			accessibilityValue={{ text: picker.accessibilityValue }}
 			className={resolveDatePickerTriggerClass({

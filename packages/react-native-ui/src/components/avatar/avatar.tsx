@@ -79,7 +79,8 @@ function AvatarRoot({
 	const slots = avatarVariants({ size, variant, color, isDisabled, hasImage: showsImage });
 
 	const initials = fallback?.trim() || resolveAvatarInitials(name);
-	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback });
+	const isInteractive = resolveAvatarInteractive({ onPress, onLongPress });
+	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback, isInteractive });
 
 	const onImageError = (event: ImageErrorEvent) => {
 		setFailedKey(sourceKey);
@@ -112,7 +113,7 @@ function AvatarRoot({
 		</View>
 	);
 
-	if (!resolveAvatarInteractive({ onPress, onLongPress })) {
+	if (!isInteractive) {
 		return (
 			<AvatarProvider value={context}>
 				<View

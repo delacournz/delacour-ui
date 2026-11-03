@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { createElement, Fragment } from "react";
 import {
+	AVATAR_BUTTON_FALLBACK_LABEL,
 	flattenAvatarChildren,
 	resolveAvatarAccessibilityLabel,
 	resolveAvatarBadgeHasContent,
@@ -187,6 +188,12 @@ describe("resolveAvatarOverflowLabel", () => {
 });
 
 describe("resolveAvatarAccessibilityLabel", () => {
+	test("a pressable avatar with nothing to read gets a generic name, never a bare button", () => {
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true })).toBe(AVATAR_BUTTON_FALLBACK_LABEL);
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true, name: " " })).toBe(AVATAR_BUTTON_FALLBACK_LABEL);
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true, name: "Aria Whitlock" })).toBe("Aria Whitlock");
+	});
+
 	test("prefers the name", () => {
 		expect(resolveAvatarAccessibilityLabel({ name: "Aria Whitlock", fallback: "AW" })).toBe("Aria Whitlock");
 	});

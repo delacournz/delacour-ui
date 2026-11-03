@@ -165,6 +165,11 @@ describe("Avatar", () => {
 			}
 		});
 
+		test("a pressable avatar with no name, fallback or label is still named", async () => {
+			await renderWithProviders(<Avatar onPress={jest.fn()} />);
+			expect(screen.getByRole("button", { name: "Avatar" })).toBeOnTheScreen();
+		});
+
 		test("isDisabled is announced and blocks onPress and onLongPress", async () => {
 			const onPress = jest.fn();
 			const onLongPress = jest.fn();

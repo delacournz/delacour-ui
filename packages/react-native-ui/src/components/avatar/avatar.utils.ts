@@ -177,23 +177,31 @@ export function resolveAvatarOverflowLabel(overflow: number): { text: string; ac
 	};
 }
 
+/** What a pressable avatar is called when it has no label, name or fallback. */
+export const AVATAR_BUTTON_FALLBACK_LABEL = "Avatar";
+
 /**
  * The name a screen reader gives the avatar: an explicit label, else the
  * person's name, else the fallback text. Blank strings count as absent, so an
  * avatar with nothing to say is not announced as an empty image.
+ *
+ * A pressable avatar always has a name. With nothing else to read it is
+ * {@link AVATAR_BUTTON_FALLBACK_LABEL}, so it is never announced as only "button".
  */
 export function resolveAvatarAccessibilityLabel({
 	accessibilityLabel,
 	name,
 	fallback,
+	isInteractive = false,
 }: {
 	accessibilityLabel?: string;
 	name?: string;
 	fallback?: string;
+	isInteractive?: boolean;
 }): string | undefined {
 	for (const candidate of [accessibilityLabel, name, fallback]) {
 		const trimmed = candidate?.trim();
 		if (trimmed) return trimmed;
 	}
-	return undefined;
+	return isInteractive ? AVATAR_BUTTON_FALLBACK_LABEL : undefined;
 }

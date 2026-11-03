@@ -34,7 +34,8 @@
  *
  * Break-glass: bare `gh signoff` writes the contexts without running anything. It exists for the
  * case where a laptop genuinely cannot run a suite — but the honest escape hatch is dispatching the
- * workflow with `-f signoff-sha=<sha>`, which runs the real thing and signs off from CI.
+ * workflow with `-f mode=signoff -f pr=<n>` (or `-f signoff-sha=<sha>`), which runs the real thing
+ * and signs off from CI.
  */
 
 import { readdirSync } from "node:fs";

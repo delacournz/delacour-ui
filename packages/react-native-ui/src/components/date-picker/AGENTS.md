@@ -52,10 +52,12 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   `resolveShouldClose`: a single day → yes, `null` → no; a range → only with both ends; multiple →
   never, Done closes it. Closing waits `DATE_PICKER_CLOSE_DELAY` (120 ms) so the filled circle is
   seen; under calm motion it does not wait, because the pause is there for the eye and reads as
-  lag otherwise.
+  lag otherwise. Every tap cancels the last tap's pending close, so starting a new range or
+  deselecting the day inside that pause keeps the sheet open.
 - **A half-picked range is never reported.** The first tap is held in `rangeDraft` inside the
   root; `onValueChange` fires once the range is complete, and on Clear. Dismissing the sheet —
-  swipe, scrim, close, Done — drops the draft, so the last complete range stands. A caller who
+  swipe, scrim, close, Done, or a controlled `isOpen={false}` — drops the draft and any pending
+  close, so the last complete range stands. A caller who
   reads the value on every change would otherwise have to handle `{ start, end: null }` everywhere
   they use it.
 - **While open, the trigger shows the draft.** "12 Oct 2026 –" with a muted "End" behind the

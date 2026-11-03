@@ -263,6 +263,10 @@
 					"to": "@registry/styles/theme-tokens.test"
 				},
 				{
+					"from": "../icon/icon.variants",
+					"to": "@registry/ui/icon/icon.variants"
+				},
+				{
 					"from": "@delacour/react-native-ui/bottom-sheet",
 					"to": "@registry/ui/bottom-sheet"
 				}
@@ -274,5 +278,37 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.render.test.tsx",
+			"target": "bottom-sheet/bottom-sheet.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"button",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

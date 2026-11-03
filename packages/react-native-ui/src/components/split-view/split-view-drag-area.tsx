@@ -89,6 +89,7 @@ export function SplitViewDragArea({
 			.enabled(!isDisabled)
 			.minDistance(0)
 			.shouldCancelWhenOutside(false)
+			.withTestId("split-view-pan")
 			.onBegin(() => {
 				"worklet";
 				interrupt();
@@ -143,6 +144,7 @@ export function SplitViewDragArea({
 		const tap = Gesture.Tap()
 			.enabled(!isDisabled)
 			.maxDistance(SPLIT_VIEW_TAP_SLOP)
+			.withTestId("split-view-tap")
 			.onEnd((_event, success) => {
 				"worklet";
 				if (success) scheduleOnRN(cycle, false);

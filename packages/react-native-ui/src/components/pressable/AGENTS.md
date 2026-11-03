@@ -14,6 +14,7 @@ and only `onPress` and `onLongPress` cross back to JS.
 | `pressable.tsx` | The Gesture API primitive |
 | `pressable.variants.ts` | Shared feedback vocabulary and screen-reader activation routing, no RN imports |
 | `pressable.variants.test.ts` | Feedback, rest opacity, accessibility state, activation and action-dispatch matrices |
+| `pressable.render.test.tsx` | Mounted under Jest — role and name, disabled and busy state, iOS tap and Android `activate` / `longpress` routing, caller-owned actions, `asChild` and its errors |
 
 ## Design
 
@@ -115,3 +116,9 @@ and only `onPress` and `onLongPress` cross back to JS.
   since on the JS thread the helper resolves perfectly.
   [`Screen`](../screen/AGENTS.md)'s border ramps write the same clamp out twice
   for this reason.
+- **`asChild` reads its child with `Children.toArray`, not `Children.only`.**
+  `Children.only` throws React's own "expected to receive a single React element child"
+  for a text child, so the `isValidElement` check below it, with its documented
+  message, was unreachable. The count is already checked to be 1, so the first
+  entry is the child; a text child or fragment now reaches the documented error. A
+  render test pins it.

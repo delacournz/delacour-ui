@@ -73,6 +73,7 @@ export const ScrollFadeEdge = memo(function ScrollFadeEdge({
 			importantForAccessibility="no-hide-descendants"
 			pointerEvents="none"
 			style={[band, opacityStyle]}
+			testID={`scroll-fade-${edge}`}
 		>
 			<LinearGradient colors={[color, faded]} end={end} start={start} style={StyleSheet.absoluteFill} />
 		</Animated.View>

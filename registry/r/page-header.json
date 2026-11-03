@@ -260,5 +260,29 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header.render.test.tsx",
+			"target": "page-header/page-header.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"button",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

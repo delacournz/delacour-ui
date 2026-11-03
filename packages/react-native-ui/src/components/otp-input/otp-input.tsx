@@ -170,12 +170,19 @@ function OtpInputRoot({
 		[code, focus, setRaw]
 	);
 
+	// A disabled field ignores a press on its Field's row: the registered handler is gated here, since
+	// the row only knows its own `isDisabled`, not this field's own prop.
+	const isFieldDisabled = axes.isDisabled;
+	const focusFromRow = useCallback(() => {
+		if (!isFieldDisabled) focus();
+	}, [focus, isFieldDisabled]);
+
 	const registerPress = field?.registerPress;
 	useEffect(() => {
 		if (!registerPress) return;
-		registerPress(focus);
+		registerPress(focusFromRow);
 		return () => registerPress(null);
-	}, [focus, registerPress]);
+	}, [focusFromRow, registerPress]);
 
 	const handleFocus = useCallback(
 		(event: OtpFocusEvent) => {

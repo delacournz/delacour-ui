@@ -28,6 +28,9 @@ const LIVE_NONE = 0;
 const LIVE_INK = 1;
 const LIVE_ERASE = 2;
 
+/** The pan's Gesture Handler test id, which `fireGestureHandler` drives in render tests. */
+export const SKETCH_PAN_TEST_ID = "sketch-pan";
+
 const ACCESSIBILITY_ACTIONS = [
 	{ label: "Undo", name: "undo" },
 	{ label: "Clear", name: "clear" },
@@ -110,6 +113,7 @@ export function SketchCanvas({ children, className, onLayout, ...props }: Sketch
 	const gesture = useMemo(
 		() =>
 			Gesture.Pan()
+				.withTestId(SKETCH_PAN_TEST_ID)
 				.enabled(!isDisabled && isMeasured)
 				.minDistance(0)
 				.maxPointers(1)

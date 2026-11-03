@@ -25,6 +25,7 @@ standalone SVG document, or as a PNG.
 | `signature.context.tsx` | `SignatureContext`, `useSignature()`, `useSignatureContext()`, `useSignaturePart()` |
 | `signature.types.ts` | `SignaturePoint`, `SignatureStroke`, `SignatureValue`, `SignatureHandle`, `SignatureExportOptions`, `SignaturePngOptions` |
 | `signature.stroke.ts` | Pure, no RN: point filter, smoother and path tracer (worklets), history reducer, bounds, re-fit, the export frame and PNG size, SVG export, JSON round trip |
+| `signature.render.test.tsx` | Mounted under Jest — the pad's description and actions, a stroke driven through the pan, undo/redo/clear, controlled and uncontrolled value, the parts and their errors |
 | `signature.stroke.test.ts` | |
 | `signature.variants.ts` | Pure `tv()` slots, the size tables, the axis ladder and the accessibility resolvers |
 | `signature.variants.test.ts` | |
@@ -132,3 +133,6 @@ standalone SVG document, or as a PNG.
   snapshot of the pad, so the guideline, the placeholder and the pad's fill never
   reach the file. `""` before the pad is measured. The point's `t` is stored so
   a speed-eased stroke width can follow without a format change.
+
+- **The pan carries a test id** (`SIGNATURE_PAD_GESTURE_ID`, `"signature-pad"`), so a mounted test can drive a
+  stroke with Gesture Handler's `fireGestureHandler`. No visual effect.

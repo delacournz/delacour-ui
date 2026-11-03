@@ -40,7 +40,13 @@ export function PostCommunity({
 
 	const content = (
 		<>
-			<Avatar name={name} size={resolvePostAvatarSize(size, variant)} source={avatar} />
+			<Avatar
+				accessible={false}
+				importantForAccessibility="no-hide-descendants"
+				name={name}
+				size={resolvePostAvatarSize(size, variant)}
+				source={avatar}
+			/>
 			<View className={slots.authorText()}>
 				<Text className={slots.communityName()} numberOfLines={1}>
 					{name}

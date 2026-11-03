@@ -301,7 +301,7 @@ function renderAsChild(children: ReactNode, slotProps: Record<string, unknown>):
 		);
 	}
 
-	const child = Children.only(children);
+	const [child] = Children.toArray(children);
 	if (!isValidElement(child)) {
 		throw new Error("Pressable asChild expects a single React element child; text and fragments cannot take props.");
 	}

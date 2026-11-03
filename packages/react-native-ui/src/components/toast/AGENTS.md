@@ -29,6 +29,7 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 | `toast-viewport.tsx` | `ToastViewport` — two stacks in the overlay `toast` band; insets, keyboard, `AppState`, screen reader |
 | `toast-item.tsx` | One drawn toast: entrance, depth, exit, clock, swipe, announcement, haptic |
 | `*.test.ts` | The store, the clock and the resolvers |
+| `toast.render.test.tsx` | Mounted under Jest — the viewport drawing `toast()` calls, title/description, action and close, alert role and live region, assistive `activate`/`dismiss`, fake-timer auto-dismiss, custom `render`, parts outside a `Toast` |
 
 ## Design
 

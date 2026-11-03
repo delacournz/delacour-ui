@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
 	buildTypingTimeline,
+	countTypedPhrases,
 	formatNumber,
 	formatNumberParts,
 	hashText,
@@ -16,6 +17,7 @@ import {
 	resolveStaggerDelay,
 	resolveStaggerDelays,
 	resolveTotalDuration,
+	resolveTypedPhrase,
 	resolveTypingRest,
 	resolveUnitProgress,
 	resolveWheelOffset,
@@ -599,5 +601,35 @@ describe("textAnimationVariants", () => {
 
 	test("units are exported in the documented order", () => {
 		expect([...TEXT_ANIMATION_UNITS]).toEqual(["character", "word", "line"]);
+	});
+});
+
+describe("countTypedPhrases", () => {
+	test("counts a phrase once its typing segment ends", () => {
+		const timeline = buildTypingTimeline(["ab", "cd"], { speed: 2, eraseSpeed: 0, holdMs: 0, loop: true });
+		expect(countTypedPhrases(timeline, 0)).toBe(0);
+		expect(countTypedPhrases(timeline, 999)).toBe(0);
+		expect(countTypedPhrases(timeline, 1000)).toBe(1);
+		expect(countTypedPhrases(timeline, 2000)).toBe(2);
+	});
+
+	test("keeps counting across loops when nothing separates the typing segments", () => {
+		const timeline = buildTypingTimeline(["ab", "cd"], { speed: 2, eraseSpeed: 0, holdMs: 0, loop: true });
+		expect(countTypedPhrases(timeline, 3000)).toBe(3);
+		expect(resolveTypedPhrase(timeline, 1)).toBe(0);
+		expect(resolveTypedPhrase(timeline, 2)).toBe(1);
+		expect(resolveTypedPhrase(timeline, 3)).toBe(0);
+	});
+
+	test("counts a single looping phrase every cycle", () => {
+		const timeline = buildTypingTimeline(["ab"], { speed: 2, eraseSpeed: 0, holdMs: 0, loop: true });
+		expect(countTypedPhrases(timeline, 1000)).toBe(1);
+		expect(countTypedPhrases(timeline, 2000)).toBe(2);
+		expect(resolveTypedPhrase(timeline, 1)).toBe(0);
+	});
+
+	test("stops at the last phrase of a timeline that does not loop", () => {
+		const timeline = buildTypingTimeline(["ab", "cd"], { speed: 2, eraseSpeed: 4, holdMs: 100, loop: false });
+		expect(countTypedPhrases(timeline, 1_000_000)).toBe(2);
 	});
 });

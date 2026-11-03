@@ -461,6 +461,51 @@ export function resolveTypingRest(timeline: TypingTimeline): TypingSample {
 	return { phraseIndex: last.phraseIndex, visibleCount: last.length, phase: "holding" };
 }
 
+/**
+ * How many phrases have finished typing by `elapsedMs`, counted across loops.
+ *
+ * A count rather than a phase change, so a frame that skips straight from one
+ * phrase's typing to the next — no hold, no erase — still reports both.
+ */
+export function countTypedPhrases(timeline: TypingTimeline, elapsedMs: number): number {
+	"worklet";
+	const { segments } = timeline;
+	const t0 = Math.max(0, elapsedMs);
+	let perCycle = 0;
+	for (let i = 0; i < segments.length; i++) {
+		if (segments[i]?.phase === "typing") perCycle += 1;
+	}
+	const isCycling = timeline.loop && timeline.cycleMs > 0 && Number.isFinite(timeline.cycleMs);
+	const cycles = isCycling ? Math.floor(t0 / timeline.cycleMs) : 0;
+	const t = isCycling ? t0 % timeline.cycleMs : t0;
+	let within = 0;
+	for (let i = 0; i < segments.length; i++) {
+		const segment = segments[i];
+		if (segment !== undefined && segment.phase === "typing" && segment.endMs <= t) within += 1;
+	}
+	return cycles * perCycle + within;
+}
+
+/** The phrase the `ordinal`-th finished typing belongs to (1-based, as `countTypedPhrases` counts). */
+export function resolveTypedPhrase(timeline: TypingTimeline, ordinal: number): number {
+	"worklet";
+	const { segments } = timeline;
+	let perCycle = 0;
+	for (let i = 0; i < segments.length; i++) {
+		if (segments[i]?.phase === "typing") perCycle += 1;
+	}
+	if (perCycle === 0 || ordinal < 1) return 0;
+	const slot = (ordinal - 1) % perCycle;
+	let seen = 0;
+	for (let i = 0; i < segments.length; i++) {
+		const segment = segments[i];
+		if (segment?.phase !== "typing") continue;
+		if (seen === slot) return segment.phraseIndex;
+		seen += 1;
+	}
+	return 0;
+}
+
 /** Solid while characters are landing; otherwise on for `blinkMs`, off for `blinkMs`. */
 export function resolveCaretOpacity(elapsedMs: number, blinkMs: number, isTyping: boolean): 0 | 1 {
 	"worklet";

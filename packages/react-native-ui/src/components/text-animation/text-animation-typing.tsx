@@ -8,8 +8,10 @@ import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	buildTypingTimeline,
+	countTypedPhrases,
 	resolveCaretClass,
 	resolveRowJustify,
+	resolveTypedPhrase,
 	resolveTypingRest,
 	sampleTypingTimeline,
 	splitGraphemes,
@@ -218,8 +220,20 @@ export function TextAnimationTyping({
 			if (previous === null || current.phraseIndex !== previous.phraseIndex) {
 				scheduleOnRN(handlePhrase, current.phraseIndex, runKey);
 			}
-			if (previous !== null && previous.phase === "typing" && current.phase !== "typing") {
-				scheduleOnRN(handleTyped, previous.phraseIndex, runKey);
+		}
+	);
+
+	// Completed phrases are counted, not inferred from a phase change: with no
+	// hold and no erase one frame can jump from typing to typing.
+	useAnimatedReaction(
+		() => (isCalm ? -1 : countTypedPhrases(timeline, elapsed.value)),
+		(current, previous) => {
+			if (current < 0) return;
+			// A rewound clock — a new run — starts counting again from zero.
+			const start = previous === null || previous < 0 || current < previous ? 0 : previous;
+			const from = Math.max(start, current - timeline.segments.length);
+			for (let ordinal = from + 1; ordinal <= current; ordinal++) {
+				scheduleOnRN(handleTyped, resolveTypedPhrase(timeline, ordinal), runKey);
 			}
 		}
 	);

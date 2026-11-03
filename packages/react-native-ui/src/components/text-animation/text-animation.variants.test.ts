@@ -462,6 +462,12 @@ describe("resolveRollDirection", () => {
 		expect(resolveRollDirection(2, 2)).toBe("up");
 		expect(resolveRollDirection(2, 1)).toBe("down");
 	});
+
+	test("follows the magnitude of a negative number, not its sign", () => {
+		expect(resolveRollDirection(-19, -20)).toBe("up");
+		expect(resolveRollDirection(-20, -19)).toBe("down");
+		expect(resolveRollDirection(-3, 3)).toBe("up");
+	});
 });
 
 describe("resolveWheelOffset", () => {

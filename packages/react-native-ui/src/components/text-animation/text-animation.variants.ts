@@ -691,9 +691,13 @@ export function resolveRollTarget(currentPos: number, digit: number, direction: 
 	return base + delta;
 }
 
-/** Wheels roll up when the value grows or holds, down when it shrinks. */
+/**
+ * Wheels roll up when the shown digits grow or hold, down when they shrink.
+ * The wheels draw the magnitude — the sign is a static cell — so −19 → −20
+ * rolls up, the short way, though the value went down.
+ */
 export function resolveRollDirection(previous: number, next: number): RollDirection {
-	return next < previous ? "down" : "up";
+	return Math.abs(next) < Math.abs(previous) ? "down" : "up";
 }
 
 /**

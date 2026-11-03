@@ -6,6 +6,7 @@ import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test
 import { Overlay, OverlayProvider } from "./overlay";
 import { useOptionalOverlay } from "./overlay.context";
 import { type OverlayLayer, zIndexOfOverlay } from "./overlay-registry";
+import { TELEPORT_INLINE } from "./overlay-teleport";
 import { useOverlayBackHandler } from "./use-overlay-back-handler";
 import { useOverlayPresence } from "./use-overlay-presence";
 
@@ -150,6 +151,48 @@ describe("Overlay", () => {
 		);
 		const zIndexOf = (name: string): number => Number(screen.getByTestId(`probe-${name}`).props.children.split(":")[1]);
 		expect(zIndexOf("second")).toBeGreaterThan(zIndexOf("first"));
+	});
+});
+
+/** Runs `body` as on a device, where teleport moves an overlay out of the app's view. */
+async function withTeleportOutOfTree(body: () => Promise<void>): Promise<void> {
+	const flags = globalThis as unknown as Record<symbol, unknown>;
+	const previous = flags[TELEPORT_INLINE];
+	delete flags[TELEPORT_INLINE];
+	try {
+		await body();
+	} finally {
+		flags[TELEPORT_INLINE] = previous;
+	}
+}
+
+describe("OverlayProvider and screen readers", () => {
+	test("the test kit marks teleport inline, so an open modal and the app stay reachable", async () => {
+		await renderWithProviders(<Demo name="kit" />, { wrapper: Provider });
+		expect(screen.getByTestId("kit-panel")).toBeOnTheScreen();
+		expect(screen.getByText("open kit")).toBeOnTheScreen();
+	});
+
+	test("an open modal hides the app content when teleport moves it out of the app", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<Demo name="device" />, { wrapper: Provider });
+			expect(screen.queryByText("open device")).toBeNull();
+			expect(screen.getByText("open device", { includeHiddenElements: true })).toBeOnTheScreen();
+		});
+	});
+
+	test("a closed modal leaves the app content reachable", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<Demo name="closed" defaultOpen={false} />, { wrapper: Provider });
+			expect(screen.getByText("open closed")).toBeOnTheScreen();
+		});
+	});
+
+	test("a toast does not hide the app content", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<Demo name="toast" layer="toast" />, { wrapper: Provider });
+			expect(screen.getByText("open toast")).toBeOnTheScreen();
+		});
 	});
 });
 

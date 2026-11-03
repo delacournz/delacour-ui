@@ -101,6 +101,12 @@ Uniwind, Maplibre, `expo-linear-gradient` and `expo-blur` are stubbed by hand �
 render nothing, and `useCSSVariable` returns `undefined`, so a component must already tolerate a
 token that has not resolved.
 
+Teleport's mock draws a portal where it is written, not in the `"root"` host beside the app. So
+`setup.ts` also sets the global `delacour.overlay.teleportInline` symbol, and `OverlayProvider`
+then skips hiding the app content while a modal is open. Without it, every open dialog, drawer and
+feedback panel would sit inside a view hidden from accessibility, and RNTL would not find them. See
+[Overlay](../components/overlay/AGENTS.md).
+
 A suite needing a module that is not mocked fails at import with the module's own native error
 ("`TurboModuleRegistry.getEnforcing(...)` … could not be found"). Add the mock to `setup.ts`, inside
 the `jest.mock` factory; a helper the factory calls must be named `mock…`, or Jest's hoisting guard

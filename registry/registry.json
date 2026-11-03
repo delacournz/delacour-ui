@@ -2941,6 +2941,7 @@
 				"ui/overlay/overlay-presence.ts",
 				"ui/overlay/overlay-registry.ts",
 				"ui/overlay/overlay-scrim.tsx",
+				"ui/overlay/overlay-teleport.ts",
 				"ui/overlay/overlay.context.tsx",
 				"ui/overlay/overlay.tsx",
 				"ui/overlay/overlay.variants.ts",

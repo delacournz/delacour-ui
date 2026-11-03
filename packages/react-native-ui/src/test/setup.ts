@@ -58,6 +58,13 @@ Object.defineProperty(require("react-native").AppState, "currentState", { config
 jest.mock("react-native-safe-area-context", () => require("react-native-safe-area-context/jest/mock").default);
 jest.mock("react-native-keyboard-controller", () => require("react-native-keyboard-controller/jest"));
 jest.mock("react-native-teleport", () => require("react-native-teleport/jest"));
+/**
+ * Teleport's mock draws a portal where it is written, inside the app content `OverlayProvider` hides
+ * from screen readers while a modal is up. This tells the provider so, and it leaves the app visible,
+ * as a device's teleport host does for the modal. The symbol is `overlay-teleport.ts`'s
+ * `TELEPORT_INLINE`.
+ */
+(globalThis as unknown as Record<symbol, unknown>)[Symbol.for("delacour.overlay.teleportInline")] = true;
 jest.mock("react-native-pulsar", () => ({
 	Presets: mockDeepStub(),
 	Settings: mockDeepStub(),

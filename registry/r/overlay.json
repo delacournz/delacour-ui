@@ -57,6 +57,11 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay-teleport.ts",
+			"target": "overlay/overlay-teleport.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/overlay/overlay.context.tsx",
 			"target": "overlay/overlay.context.tsx",
 			"namespace": "ui"

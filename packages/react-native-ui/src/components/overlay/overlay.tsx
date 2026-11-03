@@ -16,6 +16,7 @@ import {
 	reduceOverlayRegistry,
 } from "./overlay-registry";
 import { OverlayScrim } from "./overlay-scrim";
+import { isTeleportInline } from "./overlay-teleport";
 
 export type OverlayProviderProps = {
 	children?: ReactNode;
@@ -61,8 +62,10 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 	//
 	// While a modal overlay is presented, the app content is hidden from
 	// VoiceOver and TalkBack. The overlays draw in teleport's host, outside
-	// this view in the native tree, so they stay reachable.
-	const isAppHidden = hasModalOverlay(state);
+	// this view in the native tree, so they stay reachable. Where teleport draws
+	// inline — the Jest mock does — the overlays are inside this view, so it
+	// stays visible.
+	const isAppHidden = hasModalOverlay(state) && !isTeleportInline();
 	const registry = (
 		<OverlayContext.Provider value={value}>
 			<View

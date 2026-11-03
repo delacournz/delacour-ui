@@ -13,9 +13,9 @@ import { Children, cloneElement, Fragment, isValidElement, type ReactElement, ty
 export type AvatarSourceCache = "default" | "reload" | "force-cache" | "only-if-cached";
 
 /**
- * A URI request, as `Image` accepts it. Holds only the fields that change what
- * is fetched. `width`, `height` and `scale` are left out: they pick an entry,
- * they do not change the request.
+ * A URI request, as `Image` accepts it. Holds the fields that change what is
+ * fetched, and `width`, `height` and `scale`, which pick the entry of a
+ * multi-resolution list that is fetched.
  */
 export type AvatarSourceRequest = {
 	uri?: string | null;
@@ -24,6 +24,9 @@ export type AvatarSourceRequest = {
 	headers?: Readonly<Record<string, string>> | null;
 	body?: string | null;
 	cache?: AvatarSourceCache | null;
+	width?: number | null;
+	height?: number | null;
+	scale?: number | null;
 };
 
 /** One entry of an image source, as `Image` accepts it — a URI request or a bundled asset's module id. */
@@ -72,6 +75,9 @@ function entryKey(entry: AvatarSourceEntry): unknown {
 		headers,
 		entry.body ?? null,
 		entry.cache ?? null,
+		entry.width ?? null,
+		entry.height ?? null,
+		entry.scale ?? null,
 	];
 }
 
@@ -83,7 +89,8 @@ function entryKey(entry: AvatarSourceEntry): unknown {
  * keyed by identity, a failed image would retry forever. Keyed by URI alone, a
  * token refresh in the headers would never retry at all. Every field that
  * changes the request is part of the key, including `cache`, so a cache miss
- * retries when the cache mode changes. The key is a JSON array, so no value can
+ * retries when the cache mode changes. So are `width`, `height` and `scale`:
+ * with the same URIs, new dimensions can pick another entry of a list. The key is a JSON array, so no value can
  * look like a separator, and header order is normalised so an equal request is
  * an equal key.
  *

@@ -95,6 +95,21 @@ describe("resolveAvatarSourceKey", () => {
 		);
 	});
 
+	test("changes when entry dimensions change, so a list that picks another uri can retry", () => {
+		const before = resolveAvatarSourceKey([
+			{ uri: "https://a.test/1x.png", width: 40, height: 40 },
+			{ uri: "https://a.test/2x.png", width: 80, height: 80 },
+		]);
+		const swapped = resolveAvatarSourceKey([
+			{ uri: "https://a.test/1x.png", width: 80, height: 80 },
+			{ uri: "https://a.test/2x.png", width: 40, height: 40 },
+		]);
+		expect(before).not.toBe(swapped);
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", scale: 1 })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", scale: 2 })
+		);
+	});
+
 	test("changes when the uri changes", () => {
 		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png" })).not.toBe(
 			resolveAvatarSourceKey({ uri: "https://a.test/2.png" })

@@ -25,7 +25,7 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | `overlay.variants.ts` | `overlayVariants` (`scrim`), `OVERLAY_MOTION`, `OVERLAY_SCRIM_TOKEN` |
 | `use-overlay-presence.ts` | `useOverlayPresence` — keeps an overlay mounted through its exit, drives `progress` 0 → 1 |
 | `use-overlay-back-handler.ts` | `useOverlayBackHandler` — Android back, only while the overlay is the top |
-| `overlay.render.test.tsx` | Mounted under Jest — provider and portal mounting, registry entry and z-order while mounted, scrim semantics and dismiss, app content hidden behind a modal only when teleport moves it out, presence unmount after exit, back handler (top-only, toast excluded), touch fan-out |
+| `overlay.render.test.tsx` | Mounted under Jest — provider and portal mounting, registry entry and z-order while mounted, scrim semantics and dismiss, app content hidden behind a modal only when teleport moves it out and reachable again while it exits, a dialog under another dialog hidden, presence unmount after exit and one timing per transition under owner re-renders, back handler (top-only, toast excluded), touch fan-out |
 | `*.test.ts` | The registry, the presence machine, the scrim token and the motion constants |
 
 ## Design
@@ -109,6 +109,10 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 
 ## Testing
 
-The registry, the presence machine, the scrim token and the motion constants are pure and unit-tested.
-The provider, the portal and the hooks are verified on a simulator through every overlay's
-gallery — the foundation has no gallery of its own, the way `DelacourProvider` has none.
+The registry, the presence machine, the scrim token and the motion constants are pure and unit-tested
+under `bun test`. `overlay.render.test.tsx` mounts the provider and portals under Jest: registry entry
+and z-order, scrim, presence, back handler and touch fan-out, and what screen readers can reach while
+a modal is open, exiting, or under another modal. `useOverlayPresence` is also tested with an owner
+that re-renders every frame: one timing per transition and one on-time finish. The native teleport
+host is not in Jest, so the provider, the portal and the hooks are also checked on a simulator through
+every overlay's gallery — the foundation has no gallery of its own, the way `DelacourProvider` has none.

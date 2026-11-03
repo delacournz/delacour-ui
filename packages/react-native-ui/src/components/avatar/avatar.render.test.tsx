@@ -119,6 +119,17 @@ describe("Avatar", () => {
 			expect(screen.queryByTestId("photo")).not.toBeOnTheScreen();
 		});
 
+		test("a new source mounts a new image, so a late error from the old one cannot fail it", async () => {
+			const view = await renderWithProviders(
+				<Avatar imageProps={{ testID: "photo" }} name="Aria Whitlock" source={PHOTO} />
+			);
+			const expired = screen.getByTestId("photo");
+			await view.rerender(<Avatar imageProps={{ testID: "photo" }} name="Aria Whitlock" source={OTHER_PHOTO} />);
+			expect(screen.getByTestId("photo")).not.toBe(expired);
+			await fireEvent(expired, "error", { nativeEvent: { error: "expired" } });
+			expect(screen.getByTestId("photo")).toBeOnTheScreen();
+		});
+
 		test("a different source is tried again", async () => {
 			const view = await renderWithProviders(
 				<Avatar imageProps={{ testID: "photo" }} name="Aria Whitlock" source={PHOTO} />

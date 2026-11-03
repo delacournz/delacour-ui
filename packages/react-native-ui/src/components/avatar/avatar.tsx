@@ -87,7 +87,9 @@ function AvatarRoot({
 	};
 
 	// The fallback is always painted and the image goes over it, so the circle is
-	// never empty while a picture loads or after it fails.
+	// never empty while a picture loads or after it fails. The image is keyed by
+	// its source, so a new source mounts a new image: a late error from the old
+	// request cannot mark the new one as failed.
 	const face = (
 		<View className={slots.face()}>
 			{initials ? (
@@ -99,6 +101,7 @@ function AvatarRoot({
 			)}
 			{showsImage && source !== undefined ? (
 				<Image
+					key={sourceKey}
 					accessibilityIgnoresInvertColors
 					{...imageProps}
 					className={cn(slots.image(), imageProps?.className)}

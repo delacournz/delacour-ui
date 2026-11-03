@@ -345,7 +345,7 @@ describe("Sketch", () => {
 		test("toPNG is empty before the canvas is measured", async () => {
 			const ref = createRef<SketchHandle>();
 			await renderWithProviders(<Sketch colors={COLORS} ref={ref} />);
-			expect(ref.current?.toPNG()).toBe("");
+			await expect(ref.current?.toPNG()).resolves.toBe("");
 		});
 	});
 

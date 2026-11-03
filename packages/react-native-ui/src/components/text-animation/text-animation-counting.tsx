@@ -1,4 +1,4 @@
-import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import { Text as NativeText, TextInput, type TextInputProps, View } from "react-native";
 import Animated, {
 	Easing,
@@ -77,7 +77,7 @@ function longer(a: string, b: string): string {
  * `TextInput`, computed on the UI thread by the `formatNumber` worklet every
  * frame — no React render per frame. Hermes worklets have no `Intl`, which is
  * why grouping and decimals are hand-written. An invisible `Text` in flow
- * holds the width of the longer of the start and the target, since the input
+ * holds the width of the longer of the on-screen start and the target, since the input
  * does not re-measure as its native text changes.
  *
  * A new `value` mid-tween retargets from what is on screen, never from
@@ -119,7 +119,6 @@ export function TextAnimationCounting({
 	const shown = useSharedValue(start);
 	const target = formatNumber(value, stableFormat);
 	const [reserve, setReserve] = useState(() => longer(formatNumber(start, stableFormat), target));
-	const lastRef = useRef(start);
 
 	const settle = useCallback((settled: string) => setReserve(settled), []);
 
@@ -127,12 +126,13 @@ export function TextAnimationCounting({
 		const formatted = formatNumber(value, stableFormat);
 		if (isCalm) {
 			shown.value = value;
-			lastRef.current = value;
 			setReserve(formatted);
 			return;
 		}
-		setReserve(longer(formatNumber(lastRef.current, stableFormat), formatted));
-		lastRef.current = value;
+		// The replacement tween starts from what is on screen, not the last
+		// target, so reserve against that: 900 → 0 retargeted to 9 at 450 must
+		// still fit three digits.
+		setReserve(longer(formatNumber(shown.value, stableFormat), formatted));
 		shown.value = withTiming(value, { duration: durationMs, easing: EASINGS[easing] }, (finished) => {
 			if (finished) scheduleOnRN(settle, formatted);
 		});

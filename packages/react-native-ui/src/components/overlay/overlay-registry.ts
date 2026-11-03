@@ -134,3 +134,38 @@ export function isTopOverlay(state: OverlayRegistryState, id: string): boolean {
 export function hasModalOverlay(state: OverlayRegistryState): boolean {
 	return state.open.some((entry) => entry.layer === "modal" && !entry.isExiting);
 }
+
+/**
+ * The modal overlay drawn on top that is not animating closed, or `null`.
+ *
+ * Its portal frame is the one screen readers stay inside. A popover or toast
+ * above it is in a higher band and stays reachable.
+ */
+export function topModalOverlay(state: OverlayRegistryState): string | null {
+	let top: string | null = null;
+	let topZ = 0;
+	for (const entry of state.open) {
+		if (entry.layer !== "modal" || entry.isExiting) continue;
+		const z = zIndexOfOverlay(state, entry.id);
+		if (z > topZ) {
+			top = entry.id;
+			topZ = z;
+		}
+	}
+	return top;
+}
+
+/**
+ * Whether `id` draws under the top modal overlay and must be hidden from
+ * screen readers.
+ *
+ * Every overlay draws in the same `"root"` host as the top modal, so hiding
+ * the app content does not hide a dialog under another dialog. Each portal
+ * reads this and hides its own frame.
+ */
+export function isBelowTopModal(state: OverlayRegistryState, id: string): boolean {
+	const top = topModalOverlay(state);
+	if (top === null || top === id) return false;
+	const z = zIndexOfOverlay(state, id);
+	return z !== 0 && z < zIndexOfOverlay(state, top);
+}

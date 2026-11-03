@@ -2,10 +2,12 @@ import { describe, expect, test } from "bun:test";
 import {
 	hasModalOverlay,
 	INITIAL_OVERLAY_REGISTRY,
+	isBelowTopModal,
 	isTopOverlay,
 	OVERLAY_LAYER_BASE,
 	type OverlayRegistryState,
 	reduceOverlayRegistry,
+	topModalOverlay,
 	topOverlay,
 	zIndexOfOverlay,
 } from "./overlay-registry";
@@ -164,5 +166,46 @@ describe("hasModalOverlay", () => {
 		let state = reduceOverlayRegistry(INITIAL_OVERLAY_REGISTRY, { type: "open", id: "dialog", layer: "modal" });
 		state = reduceOverlayRegistry(state, { type: "close", id: "dialog" });
 		expect(hasModalOverlay(state)).toBe(false);
+	});
+});
+
+describe("topModalOverlay / isBelowTopModal", () => {
+	test("is null with no modal open", () => {
+		const state = apply({ type: "open", id: "pop", layer: "anchored" });
+		expect(topModalOverlay(state)).toBeNull();
+		expect(isBelowTopModal(state, "pop")).toBe(false);
+	});
+
+	test("hides a dialog under another dialog, never the top one", () => {
+		const state = apply({ type: "open", id: "lower", layer: "modal" }, { type: "open", id: "upper", layer: "modal" });
+		expect(topModalOverlay(state)).toBe("upper");
+		expect(isBelowTopModal(state, "lower")).toBe(true);
+		expect(isBelowTopModal(state, "upper")).toBe(false);
+	});
+
+	test("leaves a popover or toast above the top dialog reachable", () => {
+		const state = apply(
+			{ type: "open", id: "dialog", layer: "modal" },
+			{ type: "open", id: "pop", layer: "anchored" },
+			{ type: "open", id: "toast", layer: "toast" }
+		);
+		expect(isBelowTopModal(state, "pop")).toBe(false);
+		expect(isBelowTopModal(state, "toast")).toBe(false);
+	});
+
+	test("an exiting top dialog hands screen readers to the one under it", () => {
+		const state = apply(
+			{ type: "open", id: "lower", layer: "modal" },
+			{ type: "open", id: "upper", layer: "modal" },
+			{ type: "exiting", id: "upper", isExiting: true }
+		);
+		expect(topModalOverlay(state)).toBe("lower");
+		expect(isBelowTopModal(state, "lower")).toBe(false);
+		expect(isBelowTopModal(state, "upper")).toBe(false);
+	});
+
+	test("an overlay that is not open is not below anything", () => {
+		const state = apply({ type: "open", id: "dialog", layer: "modal" });
+		expect(isBelowTopModal(state, "nope")).toBe(false);
 	});
 });

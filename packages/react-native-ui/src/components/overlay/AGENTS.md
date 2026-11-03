@@ -19,7 +19,7 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, reports `isExiting`, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `bg-overlay`, opacity follows presence, hidden from assistive technology |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext` and their hooks. `bottom-sheet/` imports it |
-| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `OVERLAY_LAYER_BASE` |
+| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `topModalOverlay`, `isBelowTopModal`, `OVERLAY_LAYER_BASE` |
 | `overlay-presence.ts` | **Pure.** `reducePresence` — `closed → entering → open → exiting → closed`; `isCurrentFinish` |
 | `overlay-teleport.ts` | **Pure.** `TELEPORT_INLINE`, `isTeleportInline` — whether teleport draws an overlay in place, as its Jest mock does |
 | `overlay.variants.ts` | `overlayVariants` (`scrim`), `OVERLAY_MOTION`, `OVERLAY_SCRIM_TOKEN` |
@@ -83,6 +83,12 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   and every query for it would fail. The test kit sets the global `TELEPORT_INLINE` symbol to say
   so, and the provider then leaves the app visible. It is a symbol on `globalThis`, not an import, so
   the test kit installs without Overlay.
+- **Screen readers stay inside the top modal.** Hiding the app content does not hide a dialog under
+  another dialog: both draw in the `"root"` host. So each portal reads the registry: the top open modal's frame sets `accessibilityViewIsModal`, and every frame drawn
+  under it sets `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`.
+  A popover or toast above the top dialog is in a higher band and stays reachable. When the top
+  dialog starts to exit, the one under it is the top again. A bottom sheet is not in this registry,
+  so a sheet under a dialog is not hidden yet.
 - **The portal's wrapper is `box-none`.** An overlay with no scrim — a toast, a tooltip — leaves
   the app under it interactive.
 - **The provider hears every touch that starts beneath it, and claims none.** Its children sit in a

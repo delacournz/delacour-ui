@@ -70,6 +70,13 @@ function ZIndexProbe({ id }: { id: string }): ReactElement {
 
 const scrim = (name: string) => screen.getByTestId(`${name}-scrim`, { includeHiddenElements: true });
 
+/** The portal frame: the parent of the overlay's panel. */
+function frame(name: string) {
+	const node = screen.getByTestId(`${name}-panel`, { includeHiddenElements: true }).parent;
+	if (node === null) throw new Error("no portal frame");
+	return node;
+}
+
 afterEach(() => {
 	jest.restoreAllMocks();
 });
@@ -201,6 +208,34 @@ describe("OverlayProvider and screen readers", () => {
 			expect(screen.getByText("open exit")).toBeOnTheScreen();
 			await waitFor(() => expect(reachableAtExit).toEqual([true]));
 		});
+	});
+
+	test("a dialog under another dialog is hidden and only the top one is modal", async () => {
+		await renderWithProviders(
+			<>
+				<Demo name="lower" />
+				<Demo name="upper" />
+			</>,
+			{ wrapper: Provider }
+		);
+		expect(frame("lower").props.accessibilityElementsHidden).toBe(true);
+		expect(frame("lower").props.importantForAccessibility).toBe("no-hide-descendants");
+		expect(frame("lower").props.accessibilityViewIsModal).toBe(false);
+		expect(frame("upper").props.accessibilityElementsHidden).toBe(false);
+		expect(frame("upper").props.accessibilityViewIsModal).toBe(true);
+	});
+
+	test("the lower dialog is reachable again once the top one starts to exit", async () => {
+		await renderWithProviders(
+			<>
+				<Demo name="lower" />
+				<Demo name="upper" />
+			</>,
+			{ wrapper: Provider }
+		);
+		await fireEvent.press(scrim("upper"));
+		expect(frame("lower").props.accessibilityElementsHidden).toBe(false);
+		expect(frame("lower").props.accessibilityViewIsModal).toBe(true);
 	});
 
 	test("a toast does not hide the app content", async () => {

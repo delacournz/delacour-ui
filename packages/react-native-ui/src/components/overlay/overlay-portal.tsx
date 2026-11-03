@@ -2,7 +2,7 @@ import { type ReactElement, type ReactNode, useEffect, useId } from "react";
 import { StyleSheet, View } from "react-native";
 import { Portal } from "react-native-teleport";
 import { useOptionalOverlay } from "./overlay.context";
-import { type OverlayLayer, zIndexOfOverlay } from "./overlay-registry";
+import { isBelowTopModal, type OverlayLayer, topModalOverlay, zIndexOfOverlay } from "./overlay-registry";
 
 export type OverlayPortalProps = {
 	/** Which band of the z-order this overlay draws in. */
@@ -42,6 +42,10 @@ let hasWarnedMissingProvider = false;
  * an overlay with no scrim — a toast, a tooltip — leaves the app under it
  * interactive.
  *
+ * While a modal overlay is open above it, the frame is hidden from screen
+ * readers, so VoiceOver and TalkBack cannot leave the top dialog for one under
+ * it.
+ *
  * Without an `OverlayProvider` above, or with `isInline`, the children render
  * where they are written, in an absolute fill of the nearest positioned
  * ancestor — and the missing provider warns once in development.
@@ -79,9 +83,20 @@ export function OverlayPortal({
 		);
 	}, [registry, isInline]);
 
+	// Screen readers stay inside the top modal. Its frame is modal for
+	// VoiceOver, and every frame drawn under it is hidden on both platforms:
+	// they share teleport's host, so hiding the app content does not cover them.
 	const zIndex = registry === null ? 0 : zIndexOfOverlay(registry.state, overlayId);
+	const isTopModal = registry !== null && topModalOverlay(registry.state) === overlayId;
+	const isHidden = registry !== null && isBelowTopModal(registry.state, overlayId);
 	const frame = (
-		<View pointerEvents="box-none" style={[StyleSheet.absoluteFill, { zIndex }]}>
+		<View
+			accessibilityElementsHidden={isHidden}
+			accessibilityViewIsModal={isTopModal}
+			importantForAccessibility={isHidden ? "no-hide-descendants" : "auto"}
+			pointerEvents="box-none"
+			style={[StyleSheet.absoluteFill, { zIndex }]}
+		>
 			{children}
 		</View>
 	);

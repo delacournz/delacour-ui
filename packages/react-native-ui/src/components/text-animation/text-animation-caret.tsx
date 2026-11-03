@@ -23,6 +23,9 @@ export type TextAnimationCaretProps = {
 	/** The glyph a `block` caret is as wide as. */
 	measureText: string;
 	textClassName: string;
+	/** The cells' scaling, so a `block` is as wide as the glyph it stands in for. */
+	allowFontScaling?: boolean;
+	maxFontSizeMultiplier: number;
 };
 
 const { caret } = textAnimationVariants();
@@ -46,6 +49,8 @@ export function TextAnimationCaret({
 	isSteady,
 	measureText,
 	textClassName,
+	allowFontScaling,
+	maxFontSizeMultiplier,
 }: TextAnimationCaretProps): ReactElement {
 	const style = useAnimatedStyle(() => {
 		const current = sample.value;
@@ -60,7 +65,13 @@ export function TextAnimationCaret({
 
 	return (
 		<Animated.View className={cn(caret(), className)} pointerEvents="none" style={style}>
-			<Animated.Text className={cn(textClassName, "opacity-0")}>{measureText}</Animated.Text>
+			<Animated.Text
+				allowFontScaling={allowFontScaling}
+				className={cn(textClassName, "opacity-0")}
+				maxFontSizeMultiplier={maxFontSizeMultiplier}
+			>
+				{measureText}
+			</Animated.Text>
 		</Animated.View>
 	);
 }

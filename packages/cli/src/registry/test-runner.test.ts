@@ -11,8 +11,21 @@ const SUITE = [
 ].join("\n");
 
 describe("adaptTest", () => {
-	test("leaves a suite alone for Bun", () => {
-		expect(adaptTest(SUITE, "bun")).toBe(SUITE);
+	test("leaves a suite alone for Bun but for the reference to Bun's types", () => {
+		expect(adaptTest(SUITE, "bun")).toBe(`/// <reference types="bun" />\n${SUITE}`);
+	});
+
+	// TypeScript 6 defaults `types` to [], and Expo's tsconfig names none, so a copied suite has to
+	// name its own ambient types: `bun:test` and `node:*` live only in them.
+	test("names the runner's ambient types, so it typechecks on TypeScript 6's empty `types` default", () => {
+		expect(adaptTest(SUITE, "bun").startsWith('/// <reference types="bun" />\n')).toBe(true);
+		expect(adaptTest(SUITE, "jest").startsWith('/// <reference types="node" />\n')).toBe(true);
+		expect(adaptTest(SUITE, "vitest").startsWith('/// <reference types="node" />\n')).toBe(true);
+	});
+
+	test("does not add the reference twice", () => {
+		const once = adaptTest(SUITE, "vitest");
+		expect(adaptTest(once, "vitest")).toBe(once);
 	});
 
 	test("imports the shared API from vitest under Vitest", () => {
@@ -35,11 +48,18 @@ describe("adaptTest", () => {
 	test("touches nothing but the runner import and import.meta.dirname", () => {
 		const adapted = adaptTest(SUITE, "jest");
 
-		expect(adapted.replace("@jest/globals", "bun:test").replace("__dirname", "import.meta.dirname")).toBe(SUITE);
+		expect(
+			adapted
+				.replace('/// <reference types="node" />\n', "")
+				.replace("@jest/globals", "bun:test")
+				.replace("__dirname", "import.meta.dirname")
+		).toBe(SUITE);
 	});
 
 	test("rewrites a single-quoted import too", () => {
-		expect(adaptTest("import { test } from 'bun:test';", "vitest")).toBe("import { test } from 'vitest';");
+		expect(adaptTest("import { test } from 'bun:test';", "vitest")).toBe(
+			"/// <reference types=\"node\" />\nimport { test } from 'vitest';"
+		);
 	});
 });
 
@@ -80,7 +100,9 @@ describe("testRunnerPackages", () => {
 describe("adaptTest on a render test", () => {
 	const RENDER = 'import { describe, expect, jest, test } from "@jest/globals";\nimport { Button } from "./button";\n';
 
-	test("is already Jest's, so it is copied as written under every runner", () => {
-		for (const runner of ["bun", "jest", "vitest"] as const) expect(adaptTest(RENDER, runner)).toBe(RENDER);
+	test("is already Jest's, so it is copied as written but for the runner's types reference", () => {
+		expect(adaptTest(RENDER, "bun")).toBe(`/// <reference types="bun" />\n${RENDER}`);
+		expect(adaptTest(RENDER, "jest")).toBe(`/// <reference types="node" />\n${RENDER}`);
+		expect(adaptTest(RENDER, "vitest")).toBe(`/// <reference types="node" />\n${RENDER}`);
 	});
 });

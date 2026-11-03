@@ -44,7 +44,7 @@ jobs:
     # Loop guard 1: never react to the App's own pushes (it writes only changeset-release/*, `main`
     # and tags, but a stray write to develop must not start a second version run).
     if: github.repository_owner == 'delacournz' && github.actor != 'delacour-release[bot]'
-    runs-on: namespace-profile-linux-small
+    runs-on: namespace-profile-linux-medium
     timeout-minutes: 15
     permissions:
       contents: read

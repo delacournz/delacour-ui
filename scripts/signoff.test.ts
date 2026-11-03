@@ -9,6 +9,7 @@ import {
 	parseTurboSummary,
 	renderReport,
 	signoffArgv,
+	turboEnv,
 	turboTaskName,
 	umbrellaEarned,
 } from "./signoff";
@@ -48,15 +49,27 @@ describe("planChecks", () => {
 		expect(applicable(["bun.lock"])).toContain("registry");
 	});
 
-	test("a docs-site or playground change runs the always-on checks and the copied tests, not the registry", () => {
-		expect(applicable(["apps/web/src/routes/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
-		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
+	test("a docs-site, playground or workflow change runs the always-on checks only", () => {
+		expect(applicable(["apps/web/src/routes/index.tsx"])).toEqual([...ALWAYS_CONTEXTS]);
+		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS]);
+		expect(applicable([".github/workflows/ci.yml"])).toEqual([...ALWAYS_CONTEXTS]);
+		expect(applicable(["scripts/signoff.ts"])).toEqual([...ALWAYS_CONTEXTS]);
 	});
 
-	test("every change but markdown runs the copied tests", () => {
+	test("anything a copied app is built from runs the copied tests", () => {
+		expect(applicable(["packages/react-native-ui/src/components/button/button.tsx"])).toContain("tests");
+		expect(applicable(["packages/react-native-charts/src/index.ts"])).toContain("tests");
+		expect(applicable(["packages/react-native-bottom-sheet/src/index.ts"])).toContain("tests");
 		expect(applicable(["packages/cli/src/registry/test-runner.ts"])).toContain("tests");
+		expect(applicable(["packages/design-system/src/convert.ts"])).toContain("tests");
+		expect(applicable(["registry/r/button.json"])).toContain("tests");
 		expect(applicable(["bun.lock"])).toContain("tests");
 		expect(applicable(["README.md"])).not.toContain("tests");
+	});
+
+	test("each runner keeps its app between signoffs, so a rerun skips the scaffold and the install", () => {
+		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
+		for (const step of tests?.run ?? []) expect(step.argv).toContain("--keep");
 	});
 
 	test("the copied tests run under every runner a consumer may use", () => {
@@ -520,5 +533,24 @@ describe("drift guard", () => {
 	test("contexts are unique", () => {
 		const contexts = SIGNOFF_CHECKS.map((check) => check.context);
 		expect(new Set(contexts).size).toBe(contexts.length);
+	});
+});
+
+describe("turboEnv", () => {
+	test("points every worktree at one turbo cache, under the git common dir", () => {
+		const env = turboEnv({ PATH: "/bin" }, "/repo/.git", { force: false });
+		expect(env.TURBO_CACHE_DIR).toBe("/repo/.git/turbo-cache");
+		expect(env.PATH).toBe("/bin");
+		expect(env.TURBO_FORCE).toBeUndefined();
+	});
+
+	test("keeps a cache dir the caller already chose", () => {
+		expect(turboEnv({ TURBO_CACHE_DIR: "/elsewhere" }, "/repo/.git", { force: false }).TURBO_CACHE_DIR).toBe(
+			"/elsewhere"
+		);
+	});
+
+	test("--force reruns every task rather than replaying the cache", () => {
+		expect(turboEnv({}, "/repo/.git", { force: true }).TURBO_FORCE).toBe("true");
 	});
 });

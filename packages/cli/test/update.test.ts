@@ -10,6 +10,7 @@ import { contentHash } from "../src/lock/hash";
 import { lockPath, readLock } from "../src/lock/lock";
 import type { Format } from "../src/project/formatter";
 import { createRegistryClient } from "../src/registry/client";
+import { adaptTest } from "../src/registry/test-runner";
 
 /**
  * `update`, end to end, against two registries that stand in for two refs.
@@ -48,6 +49,8 @@ const CARD_TEST_KEY = "ui/card/card.test.ts";
 const CARD_TEST = "src/components/ui/card/card.test.ts";
 const CARD_TEST_V1 = 'import { test } from "bun:test";\n\ntest("card", () => {});\n';
 const CARD_TEST_V2 = CARD_TEST_V1.replace('"card"', '"card pads"');
+/** A test as it lands in a Bun project: the registry's text, adapted to the runner. */
+const copied = (text: string) => adaptTest(text, "bun");
 
 /**
  * A component doc as an older CLI served it: the registry's text whole, its
@@ -309,13 +312,13 @@ describe("update, and a component's tests", () => {
 
 	test("keeps the tests a project copied in step with the registry", async () => {
 		const root = await project({ tests: true });
-		expect(await read(root, CARD_TEST)).toBe(CARD_TEST_V1);
+		expect(await read(root, CARD_TEST)).toBe(copied(CARD_TEST_V1));
 
 		const result = await run(root);
 
 		expect(action(result, CARD_TEST)).toBe("updated");
-		expect(await read(root, CARD_TEST)).toBe(CARD_TEST_V2);
-		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]?.hash).toBe(contentHash(CARD_TEST_V2));
+		expect(await read(root, CARD_TEST)).toBe(copied(CARD_TEST_V2));
+		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]?.hash).toBe(contentHash(copied(CARD_TEST_V2)));
 	});
 
 	test("--tests copies them into a project that has none yet", async () => {
@@ -323,7 +326,7 @@ describe("update, and a component's tests", () => {
 		const result = await run(root, { tests: true });
 
 		expect(action(result, CARD_TEST)).toBe("added");
-		expect(await read(root, CARD_TEST)).toBe(CARD_TEST_V2);
+		expect(await read(root, CARD_TEST)).toBe(copied(CARD_TEST_V2));
 		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]?.ref).toBe("v2");
 	});
 });

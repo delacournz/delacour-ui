@@ -354,6 +354,27 @@ describe("week start", () => {
 		expect(resolveWeekStart("not a locale!!")).toBe(1);
 	});
 
+	test("reads the device locale when the engine has no Intl.Locale and none is passed", () => {
+		// A plain stub, not a runner's spy: a copied suite runs under Bun, Jest and Vitest alike.
+		const intl: { Locale?: typeof Intl.Locale } = Intl;
+		const original = intl.Locale;
+		const proto = Intl.DateTimeFormat.prototype;
+		const resolvedOptions = proto.resolvedOptions;
+		const real = new Intl.DateTimeFormat().resolvedOptions();
+		let device = "en-US";
+		proto.resolvedOptions = () => ({ ...real, locale: device });
+		intl.Locale = undefined;
+		try {
+			expect(resolveWeekStart(undefined)).toBe(0);
+			device = "ar-EG";
+			expect(resolveWeekStart(undefined)).toBe(6);
+			expect(resolveWeekStart("en-NZ")).toBe(1);
+		} finally {
+			intl.Locale = original;
+			proto.resolvedOptions = resolvedOptions;
+		}
+	});
+
 	test("the region table stands in where Intl has no week info", () => {
 		expect(weekStartFromRegion("US")).toBe(0);
 		expect(weekStartFromRegion("NZ")).toBe(1);

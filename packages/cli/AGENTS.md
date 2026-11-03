@@ -222,7 +222,11 @@ expects the `*.render.test.tsx` suites too, and fails if none were copied; the B
 expect none and fail if any were. The Jest leg's manifest deliberately carries **no** `setupFiles`,
 `resolver` or `transformIgnorePatterns` — the CLI's Jest config writer (see
 [Render tests](#render-tests-are-jests-alone)) has to add them, and that is what the leg proves. Under it `doctor`'s **Test runner** and **Jest
-transforms** must pass, not merely warn. `signoff/tests` runs all three runners on every change but markdown.
+transforms** must pass, not merely warn. `signoff/tests` runs all three runners whenever the library, an engine, the CLI or the registry changes.
+
+The scaffold's `typescript` follows Expo's template (`~6.0.3` on SDK 58). It is the consumer's
+compiler, so it decides what "every type lines up" means — and its speed: on 5.9 the app's `tsc`
+took six minutes, four of them in `input.variants.ts`'s compound variants; on 6.0 it takes seconds.
 
 `--layout monorepo` runs the whole thing again with the components in a shared package the app
 imports by name. That layout has wiring the standalone one does not — a workspace link, an
@@ -598,6 +602,12 @@ test through `adaptTest` after the alias transform, and `withTests(item, runner)
 - **It is two substitutions because the guard keeps it two.** `runnerSpecificUses` (above) is what
   lets `adaptTest` be a string replace: the import's module, and for Jest `import.meta.dirname` →
   `__dirname`, since Jest evaluates CommonJS. A suite needing a third rewrite fails the build first.
+- **Every copied suite names its own ambient types.** `adaptTest` prepends
+  `/// <reference types="bun" />` (Bun) or `"node"` (Jest, Vitest). TypeScript 6 — what Expo SDK 58's
+  template ships — defaults `types` to `[]`, Expo's base config names none, and `bun:test`, `node:*`,
+  `__dirname` and `import.meta.dirname` are declared only in those packages. Without the reference every
+  suite fails `tsc` in a fresh app; the CLI never writes a project's `tsconfig`, so the file carries it.
+  `verify:expo` pinned TypeScript 5.9 until this was found, which is how it shipped unnoticed.
 - **It happens in `transformFile`, so the lock agrees.** The lock hashes the text after the
   transform, and `add`, `update` and `diff` all go through `transformFile`, so the hash is of the
   runner's text. Switching runners reads as an upstream change on the next `update`, not an edit.

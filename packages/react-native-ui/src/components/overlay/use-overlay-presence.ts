@@ -56,6 +56,9 @@ const EXIT_EASING = Easing.in(Easing.cubic);
  * `isCurrentFinish` drops one that no longer matches the latest transition
  * and request, before it moves the phase or reaches `onEntered`/`onExited`.
  *
+ * `onEntered` and `onExited` are read through refs, so an owner that passes
+ * new inline callbacks on every render does not restart the timing.
+ *
  * Under reduce motion the fade still runs — an opacity change is not motion —
  * so both timings set `ReduceMotion.Never`, and `isReduced` tells the
  * component to drop its transforms.
@@ -72,6 +75,13 @@ export function useOverlayPresence({
 	const isReduced = useReducedMotion();
 	const generation = useRef(0);
 	const isOpenRequested = useRef(isOpen);
+	const onEnteredRef = useRef(onEntered);
+	const onExitedRef = useRef(onExited);
+
+	useEffect(() => {
+		onEnteredRef.current = onEntered;
+		onExitedRef.current = onExited;
+	}, [onEntered, onExited]);
 
 	const send = useCallback((event: PresenceEvent) => {
 		setPhase((current) => reducePresence(current, event));
@@ -90,18 +100,18 @@ export function useOverlayPresence({
 		(finishGeneration: number) => {
 			if (!isCurrent("entered", finishGeneration)) return;
 			send({ type: "entered" });
-			onEntered?.();
+			onEnteredRef.current?.();
 		},
-		[isCurrent, send, onEntered]
+		[isCurrent, send]
 	);
 
 	const finishExit = useCallback(
 		(finishGeneration: number) => {
 			if (!isCurrent("exited", finishGeneration)) return;
 			send({ type: "exited" });
-			onExited?.();
+			onExitedRef.current?.();
 		},
-		[isCurrent, send, onExited]
+		[isCurrent, send]
 	);
 
 	useEffect(() => {

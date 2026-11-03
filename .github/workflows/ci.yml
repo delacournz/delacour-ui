@@ -51,9 +51,10 @@ on:
 # No `paths:` filter. On a pull request the jobs are gated by `if:` to the release pull request
 # instead: a skipped job bills nothing, and the gate itself is the signoff statuses, not these jobs.
 #
-# Runners are Namespace profiles, not GitHub-hosted labels. `namespace-profile-linux-small` is
-# the default for everything here; a job that needs macOS (Xcode, a simulator) must use
-# `namespace-profile-mac-small` instead, and one that needs Windows `namespace-profile-windows-small`.
+# Runners are Namespace profiles, not GitHub-hosted labels. `namespace-profile-linux-medium` (4 vCPU,
+# 8 GB) is the default for everything here — the small profile's 2 vCPU made every install and tsc
+# the critical path; a job that needs macOS (Xcode, a simulator) must use `namespace-profile-mac-medium`
+# instead, and one that needs Windows `namespace-profile-windows-medium`.
 # Nothing in this workflow needs either — `previews` is deliberately kept out of CI (see the build job).
 
 # `statuses: write` is for the `signoff` job. The default token is read-only on statuses.
@@ -82,7 +83,7 @@ jobs:
   resolve:
     name: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-small
+    runs-on: namespace-profile-linux-medium
     timeout-minutes: 5
     permissions:
       contents: read
@@ -174,7 +175,7 @@ jobs:
     name: check (lint + format)
     needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-small
+    runs-on: namespace-profile-linux-medium
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -190,7 +191,7 @@ jobs:
     name: test
     needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-small
+    runs-on: namespace-profile-linux-medium
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -206,7 +207,7 @@ jobs:
     name: build
     needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-small
+    runs-on: namespace-profile-linux-medium
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -232,7 +233,7 @@ jobs:
     name: registry
     needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-small
+    runs-on: namespace-profile-linux-medium
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -294,7 +295,7 @@ jobs:
     name: CLI against a real Expo app (${{ matrix.layout }})
     needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-small
+    runs-on: namespace-profile-linux-medium
     timeout-minutes: 20
 
     strategy:
@@ -336,8 +337,6 @@ jobs:
     name: copied tests (${{ matrix.runner }})
     needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    # The Jest and Vitest legs tsc the app with a render suite per component copied in, which ran
-    # out of heap on the small profile ("Ineffective mark-compacts near heap limit") — as typecheck did.
     runs-on: namespace-profile-linux-medium
     timeout-minutes: 20
 
@@ -372,7 +371,7 @@ jobs:
     if: >-
       success() && needs.resolve.outputs.sign == 'true' &&
       (github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop')
-    runs-on: namespace-profile-linux-small
+    runs-on: namespace-profile-linux-medium
     timeout-minutes: 5
     steps:
       - env:

@@ -172,14 +172,22 @@ function TextAnimationReveal({
 
 	const runKey = `${children}|${split}|${order}|${step}|${durationMs}|${delayMs}|${JSON.stringify(effect)}|${isActive}`;
 
-	// One guard per run, shared by the clock and the calm path, so toggling calm
-	// motion during or after a run never reports the same run twice.
-	const reportedRunRef = useRef<string | null>(null);
-	const [finishedRun, setFinishedRun] = useState<string | null>(null);
+	// Every change of `runKey` is a new play, inactive ones included, so
+	// `isActive` going false → true replays even though the key repeats. The
+	// play id is updated during render, so no frame shows the last play at rest.
+	const [play, setPlay] = useState({ runKey, id: 0 });
+	const current = play.runKey === runKey ? play : { runKey, id: play.id + 1 };
+	if (current !== play) setPlay(current);
+	const playId = current.id;
+
+	// One guard per play, shared by the clock and the calm path, so toggling calm
+	// motion during or after a play never reports the same play twice.
+	const reportedPlayRef = useRef<number | null>(null);
+	const [finishedPlay, setFinishedPlay] = useState<number | null>(null);
 	const finish = () => {
-		if (reportedRunRef.current === runKey) return;
-		reportedRunRef.current = runKey;
-		setFinishedRun(runKey);
+		if (reportedPlayRef.current === playId) return;
+		reportedPlayRef.current = playId;
+		setFinishedPlay(playId);
 		onFinished?.();
 	};
 
@@ -197,7 +205,7 @@ function TextAnimationReveal({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: finish is read, not a trigger
 	useEffect(() => {
 		if (isCalm && isActive) finish();
-	}, [isCalm, isActive, runKey]);
+	}, [isCalm, isActive, playId]);
 
 	const shared: UnitShared = {
 		className: textClass,
@@ -207,7 +215,7 @@ function TextAnimationReveal({
 		effect,
 		// After the finish a remeasure — new line breaks — shows its lines whole
 		// instead of partly revealed on a clock that has stopped.
-		isAtRest: isCalm || finishedRun === runKey,
+		isAtRest: isCalm || finishedPlay === playId,
 		delays,
 		allowFontScaling,
 		maxFontSizeMultiplier: fontCap,

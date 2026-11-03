@@ -14,6 +14,7 @@ import {
 	reconcileVisibleMonth,
 	resolveCalendarAxes,
 	resolveCaptionPage,
+	resolveCommittedPageDirection,
 	resolveDayState,
 	resolveDayTone,
 	resolveMonthBounds,
@@ -407,6 +408,18 @@ describe("resolvePageDirection", () => {
 
 	test("an unmeasured grid never pages", () => {
 		expect(resolvePageDirection({ ...base, width: 0, translationX: -200, velocityX: 0 })).toBe(0);
+	});
+});
+
+describe("resolveCommittedPageDirection", () => {
+	test("slides the month the calendar paged to in from the side it paged", () => {
+		expect(resolveCommittedPageDirection({ direction: 1, month: d(2026, 11, 1) }, d(2026, 11, 1))).toBe(1);
+		expect(resolveCommittedPageDirection({ direction: -1, month: d(2026, 9, 1) }, d(2026, 9, 1))).toBe(-1);
+	});
+
+	test("does not slide a month the parent set", () => {
+		expect(resolveCommittedPageDirection({ direction: 1, month: d(2026, 11, 1) }, d(2026, 3, 1))).toBe(0);
+		expect(resolveCommittedPageDirection({ direction: 0, month: null }, d(2026, 3, 1))).toBe(0);
 	});
 });
 

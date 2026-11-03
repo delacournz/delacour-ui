@@ -22,12 +22,15 @@ import {
 } from "./calendar.date";
 import type { CalendarProps, CalendarSelection } from "./calendar.types";
 import {
+	CALENDAR_NO_PAGING,
+	type CalendarPaging,
 	type CalendarView,
 	calendarVariants,
 	isDateSelected,
 	isMonthInBounds,
 	reconcileVisibleMonth,
 	resolveCalendarAxes,
+	resolveCommittedPageDirection,
 	resolveMonthBounds,
 	resolveRangeRole,
 	resolveSelectionPage,
@@ -166,14 +169,19 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 	const visibleMonth = useMemo(() => startOfMonth(visibleMonthRaw), [visibleMonthRaw]);
 
 	const [view, setView] = useState<CalendarView>("days");
-	const [pageDirection, setPageDirection] = useState<-1 | 0 | 1>(0);
+	// The direction counts only for the month the calendar paged to. When `month` changes from
+	// outside, the stale page is dropped during render, so the new month never slides in from the
+	// side of an earlier page.
+	const [paging, setPaging] = useState<CalendarPaging>(CALENDAR_NO_PAGING);
+	if (paging.month && !isSameMonth(paging.month, visibleMonth)) setPaging(CALENDAR_NO_PAGING);
+	const pageDirection = resolveCommittedPageDirection(paging, visibleMonth);
 
 	// New bounds can leave the visible month outside them. Move it to the nearest bound and report
 	// the change, so the arrows and the swipe always have somewhere to go.
 	useEffect(() => {
 		const held = reconcileVisibleMonth(visibleMonth, monthBounds);
 		if (!held) return;
-		setPageDirection(0);
+		setPaging(CALENDAR_NO_PAGING);
 		setVisibleMonth(held);
 	}, [monthBounds, setVisibleMonth, visibleMonth]);
 
@@ -181,7 +189,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		(date: CalendarDate) => {
 			const target = startOfMonth(clampDate(startOfMonth(date), monthBounds.first, monthBounds.last));
 			if (isSameMonth(target, visibleMonth)) return;
-			setPageDirection(0);
+			setPaging(CALENDAR_NO_PAGING);
 			setVisibleMonth(target);
 		},
 		[monthBounds.first, monthBounds.last, setVisibleMonth, visibleMonth]
@@ -204,7 +212,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			const target = addMonths(visibleMonth, direction * step);
 			const held = startOfMonth(clampDate(target, monthBounds.first, monthBounds.last));
 			if (compareMonths(held, visibleMonth) === 0) return;
-			setPageDirection(view === "days" ? direction : 0);
+			setPaging({ direction: view === "days" ? direction : 0, month: held });
 			setVisibleMonth(held);
 		},
 		[monthBounds.first, monthBounds.last, setVisibleMonth, step, view, visibleMonth]
@@ -223,8 +231,9 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			setSelection(nextSelection(selection, date, isDateDisabled));
 			const direction = resolveSelectionPage(date, visibleMonth, monthBounds);
 			if (direction === 0) return;
-			setPageDirection(direction);
-			setVisibleMonth(startOfMonth(date));
+			const target = startOfMonth(date);
+			setPaging({ direction, month: target });
+			setVisibleMonth(target);
 		},
 		[
 			axes.isDisabled,

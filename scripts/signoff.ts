@@ -5,6 +5,7 @@
  *   bun run signoff              # plan, run, sign off, post the report
  *   bun run signoff -- --dry-run # print the plan and stop
  *   bun run signoff -- --concurrency 1       # one check at a time (default 3)
+ *   bun run signoff -- --force               # rerun every turbo task rather than replay the cache
  *
  * Why this exists: every check here had already run on the machine that authored the change —
  * through prek, through `bun test`, or through the agent that wrote it — and then ran a second time
@@ -129,6 +130,27 @@ export const GH_SIGNOFF_SUBCOMMANDS = [
  */
 export function signoffArgv(sha: string, context: string | null): string[] {
 	return ["gh", "signoff", "create", ...(context === null ? [] : [context]), "--commit", sha];
+}
+
+/**
+ * The turbo half of a check's env.
+ *
+ * Every worktree of this repository shares one turbo cache, under the git common dir, so a branch
+ * cut a minute ago replays every task whose inputs it has not touched rather than starting cold.
+ * Turbo's own `--affected` cannot do this job: it decides by which package a changed file sits in
+ * and ignores `inputs`, so a change to `registry/` affects nothing although three packages' tests
+ * read it. The cache key is the full input hash, `inputs` included, so a replay is only ever of a
+ * run over the same bytes. `--force` sets `TURBO_FORCE` and reruns everything.
+ */
+export function turboEnv(
+	env: Record<string, string | undefined>,
+	gitCommonDir: string,
+	options: { force: boolean }
+): Record<string, string | undefined> {
+	const next = { ...env };
+	next.TURBO_CACHE_DIR ??= `${gitCommonDir}/turbo-cache`;
+	if (options.force) next.TURBO_FORCE = "true";
+	return next;
 }
 
 export function formatDuration(ms: number): string {
@@ -286,8 +308,11 @@ async function ciLikeEnv(): Promise<Record<string, string | undefined>> {
 	return env;
 }
 
-/** Resolved once: reading and parsing the file per spawned command would be pointless churn. */
-const checkEnv = await ciLikeEnv();
+/**
+ * Resolved once: reading and parsing the file per spawned command would be pointless churn. The
+ * turbo cache settings are layered on in the entry point, once `--force` has been read.
+ */
+let checkEnv = await ciLikeEnv();
 
 /**
  * Run a command; returns its exit code. With no `sink` the user's stdio is attached. With one, stdout
@@ -539,6 +564,8 @@ type Args = {
 	base: string | null;
 	/** How many checks run at once; 1 is the old strictly-serial, live-output run. */
 	concurrency: number;
+	/** Rerun every turbo task instead of replaying cached ones. */
+	force: boolean;
 };
 
 /** The valueless flags, as setters — a table rather than more `else if` arms. */
@@ -553,6 +580,12 @@ const BOOLEAN_FLAGS = new Map<string, (args: Args) => void>([
 		"--no-comment",
 		(args) => {
 			args.comment = false;
+		},
+	],
+	[
+		"--force",
+		(args) => {
+			args.force = true;
 		},
 	],
 ]);
@@ -595,6 +628,7 @@ function parseArgs(argv: readonly string[]): Args {
 		comment: true,
 		base: null,
 		concurrency: DEFAULT_CONCURRENCY,
+		force: false,
 	};
 	for (let index = 0; index < argv.length; index++) {
 		const arg = argv[index];
@@ -605,7 +639,7 @@ function parseArgs(argv: readonly string[]): Args {
 		else {
 			console.error(`unknown argument: ${arg}`);
 			console.error(
-				"usage: bun run signoff [--dry-run] [--only ctx,ctx] [--skip ctx,ctx] [--no-comment] [--base ref] [--concurrency n]"
+				"usage: bun run signoff [--dry-run] [--only ctx,ctx] [--skip ctx,ctx] [--no-comment] [--base ref] [--concurrency n] [--force]"
 			);
 			process.exit(2);
 		}
@@ -774,6 +808,8 @@ async function outcomeFor(entry: PlannedCheck, args: Args): Promise<CheckOutcome
 
 if (import.meta.main) {
 	const args = parseArgs(process.argv.slice(2));
+	const commonDir = await capture(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"]);
+	if (commonDir) checkEnv = turboEnv(checkEnv, commonDir, { force: args.force });
 
 	if (args.dryRun) {
 		const base = await resolveBase(args.base);

@@ -1,5 +1,27 @@
 # delacour
 
+## 0.6.0
+
+### Minor Changes
+
+- [#289](https://github.com/delacournz/delacour-ui/pull/289) [`53c7d47`](https://github.com/delacournz/delacour-ui/commit/53c7d47e0be61b43158085524687b1f885806dd9) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `prefix` to `native-components.json`: `add` and `update` rename every `DelacourUI` display name and thrown-message tag to it, and `DelacourProvider` to `<prefix>Provider` — `"prefix": "UI"` gives `UI.Flow.Provider` and `UIProvider`. `init` and `doctor` name the provider the same way.
+
+  `add` now installs the plain npm packages the components use (tailwind-variants, tailwind-merge, cn, tailwindcss, the icon set) at the ranges `@delacour/react-native-ui` declares, instead of npm's latest. tailwind-variants 4.0.0 broke every copied `*.variants.ts`.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add component render tests with `@testing-library/react-native` under Jest. `delacour add --tests` now copies a component's render suite, the Jest setup that stubs its native modules and a `renderWithProviders` helper into a Jest project, adds the setup to the project's Jest config, and remembers the choice in `native-components.json`. Fix a disabled `Switch` flipping on a screen reader's activation or its `Field` label press.
+
+- [#291](https://github.com/delacournz/delacour-ui/pull/291) [`703b1cd`](https://github.com/delacournz/delacour-ui/commit/703b1cd3e9d252cef78753bf6cbd4b38c1c44536) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Upgrade `tailwind-variants` to v4. `lib/tv` now builds `tv` with `createTV` from `tailwind-variants/config`, the only v4 entry that accepts `twMergeConfig` — the default entry throws on it, so a `tv.ts` copied by an earlier CLI breaks as soon as v4 is installed. `tailwind-merge` is no longer a dependency: v4 ships its own compiled merge tables. `delacour add` stops installing it.
+
+  v4's types drop numeric variant keys, so `KpiVariantProps["colorIndex"]`, `PlannerVariantProps["colorIndex"]` and `LeaderboardVariantProps["place"]` are now string unions (`"1" | "2" | …`). The component props — `KpiColorIndex`, `PlannerColorIndex`, `LeaderboardPlace` — stay numeric.
+
+### Patch Changes
+
+- [#316](https://github.com/delacournz/delacour-ui/pull/316) [`e4ff8e2`](https://github.com/delacournz/delacour-ui/commit/e4ff8e24d073457ab9b1c7cda1422550fa5672b8) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Copied tests now typecheck on TypeScript 6. `add --tests` prepends a `/// <reference types>` for the runner's ambient types (`bun`, or `node` under Jest and Vitest), since TypeScript 6 — what Expo SDK 58 ships — defaults `types` to `[]` and every copied suite failed `tsc` in a fresh app.
+
+- [#312](https://github.com/delacournz/delacour-ui/pull/312) [`59ef8d6`](https://github.com/delacournz/delacour-ui/commit/59ef8d627aca12f4bbe011820895ee5ebd3a9003) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `doctor` warns when a Jest project using `chart` has no transform for `.mjs`. d3-shape 3.2.1 ships only `.mjs`, which `jest-expo`'s transform does not compile, so every suite reaching `chart` failed with "Must use import to load ES Module" — add `transform: { "^.+\\.mjs$": "babel-jest" }` to the Jest config.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add --tests` on Jest now adds `transform: { "^.+\\.mjs$": "babel-jest" }` to the Jest config, and `doctor` warns when it is missing. d3-shape 3.2.1 ships only `.mjs`, which `jest-expo`'s transform does not compile, so every suite reaching `chart` failed with "Must use import to load ES Module".
+
 ## 0.5.1
 
 ### Patch Changes

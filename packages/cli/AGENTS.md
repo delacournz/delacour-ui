@@ -655,7 +655,9 @@ it, so these are **Jest-only** and ship apart from the logic suites:
   own testing guide and is not shipped.
 - **The CLI writes the Jest config.** `project/jest-config.ts` (`ensureJestConfig`) adds
   `setupFiles` (the kit's `setup.ts` as a `<rootDir>/…` path from the config's directory), the
-  Reanimated `resolver`, and the engines and ESM-only packages to `transformIgnorePatterns`, in
+  Reanimated `resolver`, the engines and ESM-only packages to `transformIgnorePatterns`, and a
+  `transform` of `^.+\.mjs$` to `babel-jest` — d3-shape 3.2.1 ships only `.mjs`, and `jest-expo`'s
+  own transform matches `.js`/`.ts` alone, so letting it through compiles nothing — in
   `package.json#jest` or an object-literal `jest.config.{js,ts,cjs,mjs}`. It is idempotent, keeps
   every existing entry, widens the project's own `node_modules/(?!…)` pattern rather than replacing
   it, and creates `package.json#jest` with the `jest-expo` preset when there is none. What it

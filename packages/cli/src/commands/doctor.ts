@@ -10,6 +10,7 @@ import { lockPath } from "../lock/lock";
 import { LOCK_FILENAME } from "../lock/schema";
 import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
+import { compilesMjs, MJS_TRANSFORM_PATTERN, MJS_TRANSFORMER } from "../project/jest-config";
 import { expoCommand } from "../project/package-manager";
 import { findRootLayout } from "../project/root-layout";
 import { checkTestRunner, readTestSetup, type TestSetup } from "../project/test-setup";
@@ -129,7 +130,18 @@ export function checkJestTransform(setup: JestSetup): Check {
 	const needed = [...new Set(engines.flatMap((engine) => ENGINE_TRANSFORMS[engine] ?? []))];
 	const missing = needed.filter((pattern) => !patterns.includes(pattern.replace(".*", "")));
 
-	if (missing.length === 0) return { name, status: "pass", detail: `${engines.join(", ")} transformed` };
+	const needsMjs = needed.some((pattern) => pattern.startsWith("d3-")) && !compilesMjs(setup.jestConfig ?? "");
+
+	if (missing.length === 0 && !needsMjs) return { name, status: "pass", detail: `${engines.join(", ")} transformed` };
+
+	if (missing.length === 0) {
+		return {
+			name,
+			status: "warn",
+			detail: "d3-shape ships only .mjs, and no transform compiles .mjs — jest-expo's matches .js and .ts alone",
+			fix: `Add \`transform: { ${JSON.stringify(MJS_TRANSFORM_PATTERN)}: "${MJS_TRANSFORMER}" }\` to the Jest config.`,
+		};
+	}
 
 	return {
 		name,

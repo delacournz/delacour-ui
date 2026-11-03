@@ -28,8 +28,9 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   showing rather than an empty circle — there is no loading state to manage
   because there is nothing to swap.
 - **A failure is remembered by key, not by object.** `resolveAvatarSourceKey`
-  turns the source into a string — URI plus sorted headers, or the asset's module
-  id — and `onError` stores the key that failed. Keyed by object identity, an
+  turns the source into a JSON string — every request field (URI, bundle,
+  method, sorted headers, body, cache mode), or the asset's module id — and
+  `onError` stores the key that failed. Keyed by object identity, an
   inline `source={{ uri }}` is new every render and a dead URL would retry
   forever; keyed by URI alone, a token refresh in the headers would never retry.
   A consumer's `imageProps.onError` fires after the fallback has taken over.

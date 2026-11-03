@@ -10,7 +10,9 @@ export {
 export {
 	AVATAR_OVERFLOW_DISPLAY_MAX,
 	type AvatarSource,
+	type AvatarSourceCache,
 	type AvatarSourceEntry,
+	type AvatarSourceRequest,
 	resolveAvatarAccessibilityLabel,
 	resolveAvatarGroup,
 	resolveAvatarInitials,

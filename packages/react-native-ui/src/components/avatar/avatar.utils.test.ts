@@ -55,7 +55,36 @@ describe("resolveAvatarSourceKey", () => {
 	});
 
 	test("names a bundled asset by its module id", () => {
-		expect(resolveAvatarSourceKey(12)).toBe("asset:12");
+		expect(resolveAvatarSourceKey(12)).toBe(JSON.stringify([["asset", 12]]));
+	});
+
+	test("tells a bundled asset from a uri of the same text", () => {
+		expect(resolveAvatarSourceKey(3)).not.toBe(resolveAvatarSourceKey({ uri: "3" }));
+	});
+
+	test("changes when the cache mode changes, so a cache miss can retry", () => {
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", cache: "only-if-cached" })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", cache: "reload" })
+		);
+	});
+
+	test("changes when the method or body changes", () => {
+		const get = resolveAvatarSourceKey({ uri: "https://a.test/1.png" });
+		const post = resolveAvatarSourceKey({ uri: "https://a.test/1.png", method: "POST" });
+		const body = resolveAvatarSourceKey({ uri: "https://a.test/1.png", method: "POST", body: "id=1" });
+		expect(new Set([get, post, body]).size).toBe(3);
+	});
+
+	test("does not let header values that look like separators collide", () => {
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", headers: { "X-A": "1&X-B=2" } })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", headers: { "X-A": "1", "X-B": "2" } })
+		);
+	});
+
+	test("does not let a uri that looks like a separator collide across a list", () => {
+		expect(resolveAvatarSourceKey([{ uri: "https://a.test/1.png|uri:https://a.test/2.png" }])).not.toBe(
+			resolveAvatarSourceKey([{ uri: "https://a.test/1.png" }, { uri: "https://a.test/2.png" }])
+		);
 	});
 
 	test("changes when the uri changes", () => {
@@ -78,9 +107,9 @@ describe("resolveAvatarSourceKey", () => {
 	});
 
 	test("reads every entry of a multi-resolution list", () => {
-		expect(resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/2x.png" }])).toBe(
-			"uri:https://a.test/1x.png|uri:https://a.test/2x.png"
-		);
+		const both = resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/2x.png" }]);
+		expect(both).not.toBe(resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }]));
+		expect(both).not.toBe(resolveAvatarSourceKey([{ uri: "https://a.test/2x.png" }]));
 		expect(resolveAvatarSourceKey([])).toBeNull();
 	});
 });

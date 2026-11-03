@@ -411,6 +411,17 @@ export function resolveUnitProgress(
 }
 
 /**
+ * A rotating layer's progress. With no swap in flight the phrase shows whole;
+ * a layer rendered for a swap holds its start until progress has rewound for
+ * that swap, so the arriving phrase never paints a frame fully shown.
+ */
+export function resolveSwapProgress(isSwapping: boolean, shownSwap: number, swapId: number, progress: number): number {
+	"worklet";
+	if (!isSwapping) return 1;
+	return shownSwap === swapId ? progress : 0;
+}
+
+/**
  * A unit's progress on its own run. Until the clock has rewound for the run
  * the unit was rendered for, it holds the unit at its start, so new text never
  * paints a frame at the previous run's finished value.

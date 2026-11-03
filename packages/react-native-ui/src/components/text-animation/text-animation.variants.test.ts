@@ -19,6 +19,7 @@ import {
 	resolveRunProgress,
 	resolveStaggerDelay,
 	resolveStaggerDelays,
+	resolveSwapProgress,
 	resolveTotalDuration,
 	resolveTypedPhrase,
 	resolveTypedRange,
@@ -362,6 +363,20 @@ describe("resolveNextPhrase", () => {
 	test("a single phrase has nowhere to go", () => {
 		expect(resolveNextPhrase(0, 1, true)).toBeNull();
 		expect(resolveNextPhrase(0, 0, true)).toBeNull();
+	});
+});
+
+describe("resolveSwapProgress", () => {
+	test("shows a phrase whole when no swap is in flight", () => {
+		expect(resolveSwapProgress(false, 0, 3, 0.4)).toBe(1);
+	});
+
+	test("holds a new swap at its start until progress has rewound for it", () => {
+		expect(resolveSwapProgress(true, 2, 3, 1)).toBe(0);
+	});
+
+	test("follows progress once the swap is current", () => {
+		expect(resolveSwapProgress(true, 3, 3, 0.4)).toBe(0.4);
 	});
 });
 

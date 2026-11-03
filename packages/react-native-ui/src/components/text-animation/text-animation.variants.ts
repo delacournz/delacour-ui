@@ -506,6 +506,19 @@ export function resolveTypedPhrase(timeline: TypingTimeline, ordinal: number): n
 	return 0;
 }
 
+/**
+ * The completions to deliver this frame: every ordinal after the last frame's
+ * count, up to this one. A count below the last — a rewound clock, a new run —
+ * starts again from zero. `null` when nothing new finished, or under calm
+ * motion (a negative count).
+ */
+export function resolveTypedRange(previous: number | null, current: number): { from: number; to: number } | null {
+	"worklet";
+	if (current < 0) return null;
+	const start = previous === null || previous < 0 || current < previous ? 0 : previous;
+	return current > start ? { from: start + 1, to: current } : null;
+}
+
 /** Solid while characters are landing; otherwise on for `blinkMs`, off for `blinkMs`. */
 export function resolveCaretOpacity(elapsedMs: number, blinkMs: number, isTyping: boolean): 0 | 1 {
 	"worklet";

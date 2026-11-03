@@ -12,6 +12,7 @@ import {
 	resolveCaretClass,
 	resolveRowJustify,
 	resolveTypedPhrase,
+	resolveTypedRange,
 	resolveTypingRest,
 	sampleTypingTimeline,
 	splitGraphemes,
@@ -210,9 +211,17 @@ export function TextAnimationTyping({
 	const handlePhrase = useCallback((index: number, run: string) => {
 		if (run === runRef.current) setPhraseIndex(index);
 	}, []);
-	const handleTyped = useCallback((index: number, run: string) => {
-		if (run === runRef.current) onPhraseTypedRef.current?.(index);
-	}, []);
+	// One hop per frame carries every completion since the last, and this
+	// delivers each in order, so a long frame drops none.
+	const handleTyped = useCallback(
+		(from: number, to: number, run: string) => {
+			for (let ordinal = from; ordinal <= to; ordinal++) {
+				if (run !== runRef.current) return;
+				onPhraseTypedRef.current?.(resolveTypedPhrase(timeline, ordinal));
+			}
+		},
+		[timeline]
+	);
 
 	useAnimatedReaction(
 		() => sample.value,
@@ -228,13 +237,8 @@ export function TextAnimationTyping({
 	useAnimatedReaction(
 		() => (isCalm ? -1 : countTypedPhrases(timeline, elapsed.value)),
 		(current, previous) => {
-			if (current < 0) return;
-			// A rewound clock — a new run — starts counting again from zero.
-			const start = previous === null || previous < 0 || current < previous ? 0 : previous;
-			const from = Math.max(start, current - timeline.segments.length);
-			for (let ordinal = from + 1; ordinal <= current; ordinal++) {
-				scheduleOnRN(handleTyped, resolveTypedPhrase(timeline, ordinal), runKey);
-			}
+			const range = resolveTypedRange(previous, current);
+			if (range !== null) scheduleOnRN(handleTyped, range.from, range.to, runKey);
 		}
 	);
 

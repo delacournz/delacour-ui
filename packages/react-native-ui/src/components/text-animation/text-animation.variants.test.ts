@@ -18,6 +18,7 @@ import {
 	resolveStaggerDelays,
 	resolveTotalDuration,
 	resolveTypedPhrase,
+	resolveTypedRange,
 	resolveTypingRest,
 	resolveUnitProgress,
 	resolveWheelOffset,
@@ -638,5 +639,24 @@ describe("countTypedPhrases", () => {
 	test("stops at the last phrase of a timeline that does not loop", () => {
 		const timeline = buildTypingTimeline(["ab", "cd"], { speed: 2, eraseSpeed: 4, holdMs: 100, loop: false });
 		expect(countTypedPhrases(timeline, 1_000_000)).toBe(2);
+	});
+});
+
+describe("resolveTypedRange", () => {
+	test("delivers every completion since the last frame, however many", () => {
+		expect(resolveTypedRange(0, 3)).toEqual({ from: 1, to: 3 });
+		expect(resolveTypedRange(3, 40)).toEqual({ from: 4, to: 40 });
+	});
+
+	test("is null when nothing new finished, or under calm motion", () => {
+		expect(resolveTypedRange(2, 2)).toBeNull();
+		expect(resolveTypedRange(2, -1)).toBeNull();
+	});
+
+	test("counts from zero on the first frame and after a rewind", () => {
+		expect(resolveTypedRange(null, 2)).toEqual({ from: 1, to: 2 });
+		expect(resolveTypedRange(-1, 1)).toEqual({ from: 1, to: 1 });
+		expect(resolveTypedRange(9, 1)).toEqual({ from: 1, to: 1 });
+		expect(resolveTypedRange(9, 0)).toBeNull();
 	});
 });

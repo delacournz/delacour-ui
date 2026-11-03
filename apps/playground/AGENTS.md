@@ -26,8 +26,8 @@ bun android                # ensure-prebuild, then expo run:android --device --p
 bun run prebuild           # expo prebuild — regenerate ios/ and android/
 bun run icons              # rasterise the app icon from @delacour/brand
 bun run check              # Biome
-bun run typecheck          # tsc --noEmit — everything but the warden specs
-bun run typecheck:e2e      # tsc on the warden specs and warden.config.ts; needs warden linked
+bun run typecheck          # bun check --no-script — everything but the warden specs
+bun run typecheck:e2e      # bun check on the warden specs and warden.config.ts; needs warden linked
 bun run gen-demos          # regenerate src/demos/registry.ts
 ```
 

@@ -36,7 +36,7 @@
 		"registry:build": "bun src/registry/cli.ts",
 		"verify:expo": "bun scripts/verify-expo.ts",
 		"check": "biome check ./src",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "bun check --no-script",
 		"test": "bun test",
 		"prepublishOnly": "bun run build && bun run build:check"
 	},

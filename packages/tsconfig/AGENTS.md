@@ -57,7 +57,7 @@ copy. That comment lives in the app's `tsconfig.json`; keep it there.
 ## Commands
 
 ```bash
-bun run typecheck          # tsc --noEmit, from any package
+bun run typecheck          # bun check --no-script, from any package
 bun run typecheck          # from the repo root, via turbo, across every package
 ```
 

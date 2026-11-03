@@ -19,7 +19,7 @@ React Native component kit. Do not add one, and do not port patterns from one.
 ## Commands
 
 ```bash
-bun run typecheck          # tsc --noEmit
+bun run typecheck          # bun check --no-script
 bun run check              # Biome lint + format
 bun test                   # unit tests (pure logic only — see Testing)
 bun run gen-exports        # regenerate package.json exports

@@ -34,7 +34,7 @@ bun ios                    # or: bun android
 ## Working on the library
 
 ```bash
-bun run typecheck          # tsc --noEmit everywhere
+bun run typecheck          # bun check (TypeScript 7, built into Bun) everywhere
 bun run check              # Biome
 bun test                   # unit tests
 ```

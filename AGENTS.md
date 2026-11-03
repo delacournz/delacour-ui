@@ -32,7 +32,7 @@ Run from the repo root; turbo fans each out across every workspace.
 ```bash
 bun install                # postinstall wires the prek hooks
 bun run dev                # turbo dev — the playground via `warden dev ios`, in practice
-bun run typecheck          # tsc --noEmit everywhere
+bun run typecheck          # bun check (TypeScript 7, built into Bun) everywhere
 bun run check              # Biome lint + format
 bun run lint               # lint only
 bun run fmt                # format only
@@ -271,12 +271,30 @@ Rename a package and that order changes — `packages/react-native-ui` then comp
 `tsc` blamed `pressable.tsx`.
 
 `typescript` is catalogued for `@types/react`'s reason — eleven workspaces each pinned it — and is
-the second exception to the SDK rule. It is the native **TypeScript 7** compiler,
-so every `tsc` and `turbo typecheck` is the Go one — a forced `turbo typecheck` spends about 16s in
-`tsc` across the workspaces where TypeScript 6 spent about 40s (the turbo wall time barely moves,
-because `@delacour/web#codegen`'s `vite build` is its critical path). Expo SDK 58 expects `~6.0.3`, so
+the second exception to the SDK rule. It is the native **TypeScript 7** compiler — what an editor
+and a bare `tsc` load. Expo SDK 58 expects `~6.0.3`, so
 `apps/playground` lists `typescript` under `expo.install.exclude` — without it `expo install --check`
 flags it and `--fix` would put 6 back.
+
+**`typecheck` is `bun check`, not `tsc`.** Every workspace's `typecheck` script is
+`bun check --no-script` ([docs](https://bun.com/docs/runtime/check)): TypeScript 7 compiled into Bun,
+reading the same `tsconfig.json` and reporting the same errors as `tsc` 7. A forced
+`turbo typecheck` spends about 6s type checking across the workspaces, where `tsc` 7 spent about 16s
+and `tsc` 6 about 40s — the playground alone went 12.4s → 3.8s → 1.5s. The turbo wall time barely
+moves, because `@delacour/web#codegen`'s `vite build` is its critical path.
+
+- **`--no-script` is not optional.** `bun check` runs a `check` script when the package has one, and
+  every workspace's `check` is Biome. Without the flag, `typecheck` would lint.
+- **Bun ≥ 1.4.4.** 1.4.3 and earlier have no working builtin, pass `--no-script` through to Biome,
+  and fail with `` `--no-script` is not expected in this context `` — run `bun upgrade`. That is
+  also why one Bun version is pinned everywhere: `packageManager`, every workflow's `bun-version`,
+  `apps/web/Dockerfile`, `apps/playground/eas.json` and the EAS workflows.
+- **The checker's TypeScript is Bun's** (`bun -p process.versions.typescript`), not the catalog's.
+  Bump Bun and `typescript` together, or the editor and the gate disagree.
+  `scripts/toolchain.test.ts` fails on any of the three drifting: a Bun pin that differs from
+  `packageManager`, a `typecheck` script that is not `bun check --no-script`, or Bun's TypeScript
+  outside the catalog range.
+- `bun check` loads no language service plugins and never writes a file.
 
 TypeScript 7's npm package no longer exports the classic compiler API: `exports["."]` is only
 `lib/version.cjs`, and `typescript/unstable/*` has no in-process parser — a `SourceFile` comes from a

@@ -15,7 +15,7 @@ bun run registry:build   # rebuild /registry from packages/react-native-ui
 bun run verify:expo      # scaffold a real Expo app, add everything, typecheck it
 bun run build            # bundle dist/index.js with tsdown
 bun run build:check      # assert the bundle stayed small and executable
-bun run typecheck        # tsc --noEmit (src and scripts)
+bun run typecheck        # bun check --no-script (src and scripts)
 bun run check            # Biome
 bun test                 # unit + end-to-end against the local registry
 ```

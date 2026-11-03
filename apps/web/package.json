@@ -12,7 +12,7 @@
 		"build": "vite build",
 		"start": "bun --preload @delacournz/otel-start/preload .output/server/index.mjs",
 		"check": "biome check ./src",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "bun check --no-script",
 		"test": "bun test",
 		"icons": "bun scripts/generate-icons.ts",
 		"screenshots": "bun scripts/screenshots.ts",

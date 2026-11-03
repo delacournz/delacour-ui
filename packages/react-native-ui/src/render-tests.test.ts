@@ -16,20 +16,6 @@ const COMPONENTS = join(import.meta.dirname, "components");
  * so the list can only shrink. When it is empty, delete it.
  */
 const PENDING: ReadonlySet<string> = new Set([
-	// RNTL P3 — form controls
-	"checkbox",
-	"combobox",
-	"field",
-	"input",
-	"number-input",
-	"otp-input",
-	"radio",
-	"search-bar",
-	"select",
-	"slider",
-	"tag-input",
-	"textarea",
-
 	// RNTL P4 — date/time & pickers
 	"calendar",
 	"color-picker",
@@ -41,23 +27,6 @@ const PENDING: ReadonlySet<string> = new Set([
 	"selection-mode",
 	"time-picker",
 	"timeline",
-
-	// RNTL P7 — scroll & motion
-	"carousel",
-	"circular-text",
-	"compare",
-	"flip-card",
-	"marquee",
-	"message-scroller",
-	"scroll-blur",
-	"scroll-canvas",
-	"scroll-fade",
-	"scroll-header",
-	"scroll-text",
-	"sortable",
-	"stack-card",
-	"swipe",
-	"text-animation",
 
 	// RNTL P8 — rich & media
 	"attachment",

@@ -33,6 +33,7 @@ typed text can become a value.
 | `combobox.types.ts` | `ComboboxOption`, `ComboboxOptionGroup`, `ComboboxEntry`, `ComboboxFilter`, `ComboboxListRow`, … |
 | `combobox.filter.ts` | Pure: normalise, match, filter, create row, highlight ranges, pending remove, query reset, announcement, remembered selection |
 | `combobox.variants.ts` | Pure: the added slots, the trigger class, chip size / colour / cap, trigger text, the keyboard-aware sheet cap and the sheet's held height |
+| `combobox.render.test.tsx` | Mounted under Jest — trigger role/state, typing filters, empty state, pick/clear/custom value, controlled and uncontrolled value and query, disabled/read-only, multiple chips/Done/max, parts outside the root |
 | `*.test.ts` | |
 
 ## Design

@@ -24,6 +24,7 @@ A form field's layout, and the one place its state is written down. Root plus
 | `field.types.ts` | Prop types shared by two or more parts |
 | `field.variants.ts` | Pure `tv()` slots + resolvers, no RN imports |
 | `field.variants.test.ts` | |
+| `field.render.test.tsx` | Mounted under Jest — label press reaching Checkbox/Switch (and refused when disabled), state cascade, Slider thumb naming, Error alert, parts outside a Field |
 
 ## Design
 

@@ -18,6 +18,7 @@ parts: pattern A over `Text`.
 | `scroll-text.types.ts` | `ScrollTextSource`, `ScrollTextProps` |
 | `scroll-text.variants.ts` | Pure `tv()` + every resolver, `splitText`, `splitGraphemes`, `splitLines`; no RN imports |
 | `scroll-text.variants.test.ts` | |
+| `scroll-text.render.test.tsx` | Mounted under Jest — the block is one accessible `text` element named by the whole string (or `accessibilityLabel`) with every piece hidden, for `word`, `character` and `line` splits; every effect; the detached-`screen` warning fires once; `progress` and `offset` sources mount. Reveal frames are not asserted |
 
 ## Axes
 

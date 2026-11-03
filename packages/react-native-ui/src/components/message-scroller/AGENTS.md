@@ -25,6 +25,7 @@ older history at the top and rises with the keyboard. Compound root plus `Messag
 | `message-scroller.utils.ts` | Pure: row building, stick and jump hysteresis, unread, older-page guard, announce coalescing, labels |
 | `message-scroller.variants.ts` | `tv()` slots, jump motion and lift resolvers |
 | `*.test.ts` | Both pure modules, written first |
+| `message-scroller.render.test.tsx` | Mounted under Jest — rows, run positions, `isNew`, separators, unread divider, loading row, controller, unread counting and the jump button through `Provider`, parts outside a root. The real LegendList is used; it draws nothing until its scroll view gets a `layout` event, so the suite fires one. Not reachable: `onLoadOlder` from a scroll (LegendList needs a measured content size), and the jump button's show/hide off a scroll, because Reanimated's Jest runtime does not chain a reaction off a reaction's write — the suite writes `isJumpVisible` itself |
 
 ## Design
 

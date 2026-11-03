@@ -91,5 +91,33 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/textarea/textarea.render.test.tsx",
+			"target": "textarea/textarea.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"field",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

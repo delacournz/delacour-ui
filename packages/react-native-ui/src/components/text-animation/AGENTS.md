@@ -24,6 +24,7 @@ scope — it is an input, not a text effect.
 | `text-animation.types.ts` | `TextAnimationBase`, the props every part shares |
 | `text-animation.variants.ts` | The slotted `tv()` + every pure resolver: splitting, stagger, effect frames, typing timeline, number format, roll targets — and the five axes (`TEXT_ANIMATION_UNITS`, `_ORDERS`, `_EFFECT_KINDS`, `_CARET_KINDS`, `_SLIDE_DIRECTIONS`), each exported with its union |
 | `text-animation.variants.test.ts` | |
+| `text-animation.render.test.tsx` | Mounted under Jest — every part announces its whole final text once from the container with its pieces hidden; Rotating's timer, Counting and Rolling prefix/suffix/format labels, calm motion, `onFinished` |
 
 ## The root is Reveal
 

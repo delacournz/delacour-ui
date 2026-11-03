@@ -10,6 +10,7 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	formatNumber,
@@ -110,6 +111,8 @@ export function TextAnimationCounting({
 		useTextAnimationClass({ variant, size, weight, color, align, transform, className }),
 		"tabular-nums"
 	);
+	// The reserving text and the input must scale alike or the input drifts off it.
+	const fontCap = maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER;
 	// biome-ignore lint/correctness/useExhaustiveDependencies: the format's fields are its identity
 	const stableFormat = useMemo<TextAnimationNumberFormat>(
 		() => resolveNumberFormat(format, prefix, suffix),
@@ -154,7 +157,12 @@ export function TextAnimationCounting({
 			testID={testID}
 		>
 			<View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-				<NativeText {...HIDDEN} allowFontScaling={allowFontScaling} className={cn(textClass, "opacity-0")}>
+				<NativeText
+					{...HIDDEN}
+					allowFontScaling={allowFontScaling}
+					className={cn(textClass, "opacity-0")}
+					maxFontSizeMultiplier={fontCap}
+				>
 					{reserve}
 				</NativeText>
 				<AnimatedTextInput
@@ -164,7 +172,7 @@ export function TextAnimationCounting({
 					className={cn(textClass, "absolute inset-0 m-0 p-0")}
 					defaultValue={formatNumber(start, stableFormat)}
 					editable={false}
-					maxFontSizeMultiplier={maxFontSizeMultiplier}
+					maxFontSizeMultiplier={fontCap}
 					pointerEvents="none"
 					scrollEnabled={false}
 					underlineColorAndroid="transparent"

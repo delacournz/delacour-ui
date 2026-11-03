@@ -12,8 +12,12 @@ name: CI
 #   off. Every job is gated to that head branch on `pull_request`, and the `signoff` job writes the
 #   same statuses `bun run signoff` would, for the head SHA it tested. It is also the one run that
 #   includes `verify-expo` before a release reaches npm.
-# - `workflow_dispatch`, the escape hatch for a check a laptop cannot run. Passing `signoff-sha`
-#   makes a green run write the statuses itself; blank is a report only.
+# - `workflow_dispatch`, the escape hatch for a check a laptop cannot run. The `mode` dropdown picks
+#   `report` (run only) or `signoff` (a green run writes the statuses itself). `pr` and `signoff-sha`
+#   are both optional and pick the commit: a PR number tests that PR's head, a SHA tests that commit,
+#   both pins the PR to that exact head, neither tests the tip of the dispatched ref. The `resolve`
+#   job turns that into one SHA, and every job checks that SHA out — the workflow file is always the
+#   dispatched ref's, the tree tested is the target's.
 # - A push to `release/playground/*`, which triggers the EAS `release:prod` workflow that ships the
 #   app to the stores. GitHub and EAS run independently, so these checks cannot hold that release
 #   back — they only mean a push that shipped something broken is visibly red rather than silently
@@ -29,8 +33,18 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
+      mode:
+        description: "report = run the checks only; signoff = a green run writes the signoff statuses"
+        required: true
+        type: choice
+        options: [report, signoff]
+        default: report
+      pr:
+        description: "Pull request number to test (blank = not a PR)"
+        required: false
+        type: string
       signoff-sha:
-        description: "Commit SHA to sign off on success (blank = report only)"
+        description: "Commit SHA to test (blank = the PR's head, or the dispatched ref's tip)"
         required: false
         type: string
 
@@ -48,7 +62,9 @@ permissions:
   statuses: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # The target is in the key so two dispatches from the same ref for different PRs or SHAs do not
+  # evict each other's pending run. Both inputs are empty outside a dispatch.
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.pr }}-${{ inputs.signoff-sha }}
   # Pull requests only. A cancelled push run reports `cancelled`, which is not success, and a
   # red run on `develop` or a release branch should mean the tree is broken, not superseded.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -60,8 +76,79 @@ env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
+  # Picks the one commit every job below checks out and the `signoff` job writes statuses for, and
+  # whether it writes them at all. Resolved once, up front: resolving again at signoff time would
+  # sign whatever a PR's head had moved to while the checks ran.
+  resolve:
+    name: resolve
+    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
+    runs-on: namespace-profile-linux-small
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+      sign: ${{ steps.resolve.outputs.sign }}
+    steps:
+      - id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+          EVENT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          MODE: ${{ inputs.mode }}
+          PR: ${{ inputs.pr }}
+          INPUT_SHA: ${{ inputs.signoff-sha }}
+        # Inputs reach the script through env, never `${{ }}` inside it, so a crafted value cannot
+        # become shell.
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" != "workflow_dispatch" ]; then
+            SIGN=false
+            [ "$EVENT" = "pull_request" ] && SIGN=true
+            echo "sha=${EVENT_SHA}" >> "$GITHUB_OUTPUT"
+            echo "sign=${SIGN}" >> "$GITHUB_OUTPUT"
+            echo "→ ${EVENT}: ${EVENT_SHA} (sign: ${SIGN})"
+            exit 0
+          fi
+
+          PR="${PR#\#}"
+          SHA="$EVENT_SHA"
+          if [ -n "$INPUT_SHA" ]; then
+            # Expands a short SHA and proves the commit exists in this repository.
+            SHA=$(gh api "repos/${REPO}/commits/${INPUT_SHA}" --jq .sha) \
+              || { echo "::error::signoff-sha ${INPUT_SHA} is not a commit in ${REPO}"; exit 1; }
+          fi
+
+          if [ -n "$PR" ]; then
+            [[ "$PR" =~ ^[0-9]+$ ]] || { echo "::error::pr must be a number, got '${PR}'"; exit 1; }
+            IFS=$'\t' read -r STATE HEAD_REPO HEAD_SHA < <(gh api "repos/${REPO}/pulls/${PR}" \
+              --jq '[.state, (.head.repo.full_name // ""), .head.sha] | @tsv') \
+              || { echo "::error::#${PR} is not a pull request in ${REPO}"; exit 1; }
+            [ "$STATE" = "open" ] || { echo "::error::#${PR} is ${STATE}, not open"; exit 1; }
+            # A fork's head is untrusted code; this run carries NPM_TOKEN and a status-writing token.
+            [ "$HEAD_REPO" = "$REPO" ] || { echo "::error::#${PR} is from ${HEAD_REPO:-a deleted fork}; fork pull requests are not run here"; exit 1; }
+            if [ -n "$INPUT_SHA" ] && [ "$SHA" != "$HEAD_SHA" ]; then
+              echo "::error::#${PR}'s head is ${HEAD_SHA}, not ${SHA}; it moved, or the SHA is from another branch"
+              exit 1
+            fi
+            SHA="$HEAD_SHA"
+          fi
+
+          SIGN=false
+          [ "$MODE" = "signoff" ] && SIGN=true
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+          echo "sign=${SIGN}" >> "$GITHUB_OUTPUT"
+          {
+            echo "### ${MODE}: \`${SHA}\`"
+            [ -n "$PR" ] && echo "Pull request #${PR}"
+            [ "$SIGN" = "true" ] && echo "A green run writes the signoff statuses for this commit." || echo "Report only — no statuses are written."
+          } >> "$GITHUB_STEP_SUMMARY"
+
   typecheck:
     name: typecheck
+    needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     # tsc over every workspace at once outgrew the small profile: with the component stack applied,
     # the playground's tsc was OOM-killed (exit 137) on every run.
@@ -71,6 +158,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           # Matches `packageManager` in package.json — Railpack reads the same field to pick Bun.
@@ -83,11 +172,14 @@ jobs:
 
   check:
     name: check (lint + format)
+    needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.3.14
@@ -96,11 +188,14 @@ jobs:
 
   test:
     name: test
+    needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.3.14
@@ -109,11 +204,14 @@ jobs:
 
   build:
     name: build
+    needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.3.14
@@ -132,10 +230,13 @@ jobs:
 
   registry:
     name: registry
+    needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.3.14
@@ -191,6 +292,7 @@ jobs:
 
   verify-expo:
     name: CLI against a real Expo app (${{ matrix.layout }})
+    needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 20
@@ -202,6 +304,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.3.14
@@ -230,6 +334,7 @@ jobs:
   # guard; this is what proves the guard knew everything Jest and Vitest refuse.
   copied-tests:
     name: copied tests (${{ matrix.runner }})
+    needs: resolve
     if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
     runs-on: namespace-profile-linux-small
     timeout-minutes: 20
@@ -241,6 +346,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.3.14
@@ -257,27 +364,30 @@ jobs:
   # only when all of them — registry, both verify-expo legs and both copied-tests legs included — passed.
   signoff:
     name: signoff
-    needs: [typecheck, check, test, build, registry, verify-expo, copied-tests]
+    needs: [resolve, typecheck, check, test, build, registry, verify-expo, copied-tests]
+    # `sign` is true only for the version pull request and a dispatch with mode `signoff`. The
+    # head-branch clause stays so the drift test can see this job is gated on `pull_request` too.
     if: >-
-      success() &&
-      ((github.event_name == 'pull_request' && github.head_ref == 'changeset-release/develop') ||
-      (github.event_name == 'workflow_dispatch' && inputs.signoff-sha != ''))
+      success() && needs.resolve.outputs.sign == 'true' &&
+      (github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop')
     runs-on: namespace-profile-linux-small
     timeout-minutes: 5
     steps:
       - env:
           GH_TOKEN: ${{ github.token }}
-          SHA: ${{ github.event.pull_request.head.sha || inputs.signoff-sha }}
+          SHA: ${{ needs.resolve.outputs.sha }}
+          PR: ${{ inputs.pr }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           ACTOR: ${{ github.actor }}
         # Same contexts as REQUIRED_CONTEXTS in scripts/signoff-checks.ts, which signoff.test.ts pins
         # against `.github/rulesets/develop.json`.
         run: |
+          BY="passed in CI, triggered by ${ACTOR}${PR:+ for #${PR}}"
           for CONTEXT in signoff/typecheck signoff/check signoff/test signoff/build signoff; do
             gh api "repos/${{ github.repository }}/statuses/${SHA}" --method POST \
               -f state=success \
               -f "context=${CONTEXT}" \
-              -f "description=passed in CI, triggered by ${ACTOR}" \
+              -f "description=${BY}" \
               -f "target_url=${RUN_URL}"
             echo "✓ ${CONTEXT} written for ${SHA}"
           done

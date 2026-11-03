@@ -6,7 +6,7 @@ import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useCalendarPart } from "./calendar.context";
 import { formatMonthYear, formatYear } from "./calendar.date";
-import { calendarVariants, resolvePartTestID } from "./calendar.variants";
+import { calendarVariants, resolveCaptionPage, resolvePartTestID } from "./calendar.variants";
 
 export type CalendarCaptionProps = Omit<ViewProps, "children"> & {
 	className?: string;
@@ -28,7 +28,8 @@ const PAGE_ACTIONS = [
  * element — iOS and Android both fold an accessible container's children into it, and the days
  * would become unreachable — so the caption carries the increment and decrement actions instead:
  * swipe up or down on "October 2026" to move a month. As a plain label it takes the `adjustable`
- * role outright; as a button the two actions sit beside its activation.
+ * role outright; as a button the two actions sit beside its activation. Like the arrows, they do
+ * nothing on a disabled calendar or in the years view.
  */
 export function CalendarCaption({ className, ...props }: CalendarCaptionProps): ReactElement {
 	const {
@@ -58,10 +59,17 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 
 	const handleAction = useCallback(
 		(event: AccessibilityActionEvent) => {
-			if (event.nativeEvent.actionName === "increment" && canGoNext) goNext();
-			if (event.nativeEvent.actionName === "decrement" && canGoPrev) goPrev();
+			const direction = resolveCaptionPage({
+				actionName: event.nativeEvent.actionName,
+				canGoNext,
+				canGoPrev,
+				isDisabled,
+				view,
+			});
+			if (direction === 1) goNext();
+			if (direction === -1) goPrev();
 		},
-		[canGoNext, canGoPrev, goNext, goPrev]
+		[canGoNext, canGoPrev, goNext, goPrev, isDisabled, view]
 	);
 
 	const handlePress = useCallback(() => {

@@ -1,8 +1,22 @@
-import { useCallback, useEffect, useState } from "react";
-import { Easing, type SharedValue, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	Easing,
+	ReduceMotion,
+	type SharedValue,
+	useReducedMotion,
+	useSharedValue,
+	withTiming,
+} from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { OVERLAY_MOTION } from "./overlay.variants";
-import { isPresent, type PresenceEvent, type PresencePhase, presenceTarget, reducePresence } from "./overlay-presence";
+import {
+	isCurrentFinish,
+	isPresent,
+	type PresenceEvent,
+	type PresencePhase,
+	presenceTarget,
+	reducePresence,
+} from "./overlay-presence";
 
 export type UseOverlayPresenceOptions = {
 	isOpen: boolean;
@@ -37,10 +51,14 @@ const EXIT_EASING = Easing.in(Easing.cubic);
  * which is what lets a re-open during the exit reverse smoothly from wherever
  * the animation is. The finish of each animation reaches React through
  * `scheduleOnRN`, and only when the animation ran to the end — an interrupted
- * one reports nothing, and the reducer drops a stale finish anyway.
+ * one reports nothing. A finish can still be queued when the owner flips
+ * `isOpen`, so each animation carries its transition generation and
+ * `isCurrentFinish` drops one that no longer matches the latest transition
+ * and request, before it moves the phase or reaches `onEntered`/`onExited`.
  *
  * Under reduce motion the fade still runs — an opacity change is not motion —
- * and `isReduced` tells the component to drop its transforms.
+ * so both timings set `ReduceMotion.Never`, and `isReduced` tells the
+ * component to drop its transforms.
  */
 export function useOverlayPresence({
 	isOpen,
@@ -52,34 +70,65 @@ export function useOverlayPresence({
 	const [phase, setPhase] = useState<PresencePhase>(isOpen ? "entering" : "closed");
 	const progress = useSharedValue(0);
 	const isReduced = useReducedMotion();
+	const generation = useRef(0);
+	const isOpenRequested = useRef(isOpen);
 
 	const send = useCallback((event: PresenceEvent) => {
 		setPhase((current) => reducePresence(current, event));
 	}, []);
 
-	const finishEnter = useCallback(() => {
-		send({ type: "entered" });
-		onEntered?.();
-	}, [send, onEntered]);
+	const isCurrent = useCallback(
+		(type: "entered" | "exited", finishGeneration: number) =>
+			isCurrentFinish(
+				{ type, generation: finishGeneration },
+				{ generation: generation.current, isOpen: isOpenRequested.current }
+			),
+		[]
+	);
 
-	const finishExit = useCallback(() => {
-		send({ type: "exited" });
-		onExited?.();
-	}, [send, onExited]);
+	const finishEnter = useCallback(
+		(finishGeneration: number) => {
+			if (!isCurrent("entered", finishGeneration)) return;
+			send({ type: "entered" });
+			onEntered?.();
+		},
+		[isCurrent, send, onEntered]
+	);
+
+	const finishExit = useCallback(
+		(finishGeneration: number) => {
+			if (!isCurrent("exited", finishGeneration)) return;
+			send({ type: "exited" });
+			onExited?.();
+		},
+		[isCurrent, send, onExited]
+	);
 
 	useEffect(() => {
+		isOpenRequested.current = isOpen;
 		send({ type: isOpen ? "open" : "close" });
 	}, [isOpen, send]);
 
 	useEffect(() => {
+		if (phase !== "entering" && phase !== "exiting") return;
+		generation.current += 1;
+		const current = generation.current;
 		if (phase === "entering") {
-			progress.value = withTiming(presenceTarget(phase), { duration: enterMs, easing: ENTER_EASING }, (finished) => {
-				if (finished) scheduleOnRN(finishEnter);
-			});
-		} else if (phase === "exiting") {
-			progress.value = withTiming(presenceTarget(phase), { duration: exitMs, easing: EXIT_EASING }, (finished) => {
-				if (finished) scheduleOnRN(finishExit);
-			});
+			progress.value = withTiming(
+				presenceTarget(phase),
+				{ duration: enterMs, easing: ENTER_EASING, reduceMotion: ReduceMotion.Never },
+				(finished) => {
+					if (finished) scheduleOnRN(finishEnter, current);
+				}
+			);
+		} else {
+			progress.value = withTiming(
+				presenceTarget(phase),
+				{ duration: exitMs, easing: EXIT_EASING, reduceMotion: ReduceMotion.Never },
+				(finished) => {
+					if (finished) scheduleOnRN(finishExit, current);
+				}
+			);
 		}
 	}, [phase, progress, enterMs, exitMs, finishEnter, finishExit]);
 

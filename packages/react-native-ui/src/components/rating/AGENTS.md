@@ -18,6 +18,7 @@ tap or a drag along the row.
 | `rating.context.tsx` | `RatingContext`, `useRating()`, `useRatingContext()`, `useRatingPart()`, `RatingRenderProps` |
 | `rating.variants.ts` | Pure `tv()` slots, the value maths and the paint resolver, no RN imports |
 | `rating.variants.test.ts` | |
+| `rating.render.test.tsx` | Mounted under Jest — adjustable/image role and spoken value, controlled and uncontrolled, assistive steps, read-only and disabled gating, Field cascade, Output, parts outside the root. The pan is driven with `fireGestureHandler` — tap-to-set, drag, `allowClear`, read-only and disabled |
 
 There is no `rating.types.ts`: `RatingRenderProps` is the one shared type and it
 is part of the context's own shape, so it lives beside it.
@@ -118,6 +119,10 @@ is part of the context's own shape, so it lives beside it.
 - **The haptic ticks on grab, on every star crossed and on a clear.** There is no
   distance rate limit as there is on `Slider`: the stops are a star apart, so a
   flick across ten of them is ten ticks a hand can feel.
+
+- **The pan carries `.withTestId(RATING_GESTURE_TEST_ID)`**, exported from
+  `rating-stars.tsx`, so a render test can drive it with `fireGestureHandler`. It changes
+  no pixels and no behaviour.
 
 ## Accessibility
 

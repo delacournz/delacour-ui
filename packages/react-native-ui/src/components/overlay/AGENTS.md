@@ -52,11 +52,15 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 - **Presence is a reducer so an interrupted animation is boring.** A re-open mid-exit goes back
   to `entering` from wherever `progress` is; a close mid-entrance goes to `exiting`. The finish
   callback reaches React only when the timing ran to the end, and a stale finish (`entered` while
-  `exiting`) is a no-op in the reducer, so the hook keeps no generation counter.
+  `exiting`) is a no-op in the reducer. A finish can also be queued for React just as the owner
+  flips `isOpen`, before the new phase renders, so each timing carries its transition generation
+  and `isCurrentFinish` checks it and the requested state before the hook sends the finish or calls
+  `onEntered`/`onExited`.
 - **Overlay motion is behaviour, not decoration.** `isMotionCalm` does not still it — an overlay
   that did not appear would change what the screen says — but every animation is finite, so an E2E
   runner's settle wait ends anyway. Under reduce motion the fade still runs (opacity is not
-  motion) and `isReduced` tells the component to drop its transforms. Exit (160 ms) is quicker
+  motion): both timings set `ReduceMotion.Never`, or Reanimated's default `System` policy would
+  snap the scrim, and `isReduced` tells the component to drop its transforms. Exit (160 ms) is quicker
   than entrance (220 ms): a dismissed overlay should get out of the way.
 - **The scrim is `bg-overlay` at opacity 1**, the token carrying its own alpha, for
   `BottomSheet.Overlay`'s reason. It is React Native's `Pressable`, not this library's: it wants

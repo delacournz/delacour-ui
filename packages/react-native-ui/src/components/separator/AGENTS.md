@@ -11,6 +11,7 @@ carries nothing a screen reader can use, and announcing them buries the rows.
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/separator` |
 | `separator.tsx` | The `tv()` and the component, in one file |
+| `separator.render.test.tsx` | Mounted under Jest — hidden from assistive technology on both axes, props forwarded, siblings stay readable |
 
 ## Design
 

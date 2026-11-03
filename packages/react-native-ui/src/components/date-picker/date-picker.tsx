@@ -138,6 +138,14 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	}, []);
 	useEffect(() => cancelPendingClose, [cancelPendingClose]);
 
+	// A caller that closes a controlled sheet with `isOpen={false}` skips `close()`, so the sheet
+	// drops its half-picked range and pending close here too. An inline picker never opens or closes.
+	useEffect(() => {
+		if (isOpen || presentation === "inline") return;
+		cancelPendingClose();
+		setRangeDraft(null);
+	}, [cancelPendingClose, isOpen, presentation]);
+
 	const trigger = resolveTriggerState({ ...axes, isOpen });
 
 	const open = useCallback(() => {
@@ -179,8 +187,11 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		[cancelPendingClose, isCalm, locale, presentation, setOpen]
 	);
 
+	// Every tap cancels the last selection's pending close. `finish()` schedules a new one only
+	// when this selection is complete, so a new range start or a deselect keeps the sheet open.
 	const select = useCallback(
 		(next: CalendarSelectionState) => {
+			cancelPendingClose();
 			if (next.mode === "range" && !resolveShouldClose(next)) {
 				setRangeDraft(next.value);
 				return;
@@ -189,7 +200,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			setValue(next);
 			if (resolveShouldClose(next)) finish(next);
 		},
-		[finish, setValue]
+		[cancelPendingClose, finish, setValue]
 	);
 
 	const clear = useCallback(() => {

@@ -7,6 +7,7 @@
  * only when the library ships none of its own; prefer the library's.
  */
 import { jest } from "@jest/globals";
+import type { ReactNode } from "react";
 
 /**
  * A value every property read and call of which returns another such value:
@@ -49,8 +50,23 @@ jest.mock("uniwind", () => ({
 	useCSSVariable: (name: string | string[]) => (Array.isArray(name) ? name.map(() => undefined) : undefined),
 	useUniwind: () => ({ theme: "light", hasAdaptiveThemes: true }),
 	Uniwind: { setTheme: () => undefined, currentTheme: "light", hasAdaptiveThemes: true },
-	LayoutDirection: { LTR: "ltr", RTL: "rtl" },
+	LayoutDirection: ({ children }: { children?: ReactNode }) => children,
 }));
+
+/**
+ * A font whose metrics are numbers, so label layout can do arithmetic on them:
+ * every glyph is half the size wide.
+ */
+function mockFont(size: number) {
+	return {
+		getSize: () => size,
+		getMetrics: () => ({ ascent: -size * 0.8, descent: size * 0.2, leading: 0 }),
+		getGlyphIDs: (text: string) => Array.from(text, (_char, index) => index),
+		getGlyphWidths: (ids: readonly number[]) => ids.map(() => size / 2),
+		measureText: (text: string) => ({ x: 0, y: -size * 0.8, width: (text.length * size) / 2, height: size }),
+		getTextWidth: (text: string) => (text.length * size) / 2,
+	};
+}
 
 jest.mock("react-native-skia", () => {
 	const { View } = require("react-native");
@@ -60,12 +76,18 @@ jest.mock("react-native-skia", () => {
 		Circle: Draw,
 		DashPathEffect: Draw,
 		Group: Draw,
+		Line: Draw,
+		LinearGradient: Draw,
 		Path: Draw,
 		Picture: Draw,
 		Rect: Draw,
 		RoundedRect: Draw,
 		Shader: Draw,
+		Text: Draw,
 		Skia: mockDeepStub(),
+		matchFont: (font?: { fontSize?: number }) => mockFont(font?.fontSize ?? 12),
+		usePathInterpolation: () => mockDeepStub(),
+		vec: (x = 0, y = x) => ({ x, y }),
 	};
 });
 

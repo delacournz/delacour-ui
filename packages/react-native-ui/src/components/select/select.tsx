@@ -61,6 +61,14 @@ type SelectBaseProps = {
 	emptyText?: string;
 	/** Where the options open. Only `sheet` today. */
 	presentation?: SelectPresentation;
+	/** Whether the sheet is open. Pair with `onOpenChange` to control it, for a form that opens the select when focus moves to it. */
+	isOpen?: boolean;
+	/** Whether the sheet starts open, while `isOpen` is left off. @default false */
+	defaultOpen?: boolean;
+	/** Called with the sheet's next open state, from a press on the trigger, a pick, or any dismissal. */
+	onOpenChange?: (isOpen: boolean) => void;
+	/** Runs once the sheet has slid fully closed, after any pick or dismissal. */
+	onClose?: () => void;
 	/** Forwarded to the sheet. Leave it off and the sheet sizes to its rows — or, searchable, opens at its cap and holds it while you type. */
 	snapPoints?: BottomSheetProps["snapPoints"];
 	/** Custom trigger content for a non-empty selection. */
@@ -117,6 +125,10 @@ function SelectRoot(props: SelectProps): ReactElement {
 		isSearchable = false,
 		searchPlaceholder = "Search",
 		emptyText = "No results",
+		onClose,
+		isOpen: isOpenProp,
+		defaultOpen = false,
+		onOpenChange,
 		snapPoints,
 		renderValue,
 		maxLabels,
@@ -153,20 +165,27 @@ function SelectRoot(props: SelectProps): ReactElement {
 		value: controlled,
 	});
 
-	const [isOpen, setOpen] = useState(false);
+	const [isOpen, setOpen] = useControllableState<boolean>({
+		defaultValue: defaultOpen,
+		onChange: onOpenChange,
+		value: isOpenProp,
+	});
 	const [query, setQuery] = useState("");
 	const canOpen = !resolvedIsDisabled && !isReadOnly;
 
 	const open = useCallback(() => {
 		if (canOpen) setOpen(true);
-	}, [canOpen]);
+	}, [canOpen, setOpen]);
 
 	// One path for every close — a pick, Done, a swipe, the overlay, the close
 	// button — and each one clears the search, so the next open starts whole.
-	const handleOpenChange = useCallback((next: boolean) => {
-		setOpen(next);
-		if (!next) setQuery("");
-	}, []);
+	const handleOpenChange = useCallback(
+		(next: boolean) => {
+			setOpen(next);
+			if (!next) setQuery("");
+		},
+		[setOpen]
+	);
 	const close = useCallback(() => handleOpenChange(false), [handleOpenChange]);
 
 	const maxSelected = multiple?.maxSelected;
@@ -308,6 +327,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 				isOpen={isOpen}
 				keyboardLiftLimit="maxDynamicContentSize"
 				maxDynamicContentSize={sheetMaxHeight}
+				onClose={onClose}
 				onOpenChange={handleOpenChange}
 				snapPoints={snapPoints}
 			>

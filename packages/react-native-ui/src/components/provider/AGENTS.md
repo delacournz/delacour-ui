@@ -11,6 +11,7 @@ everything — a root layout, an `App.tsx`.
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/provider` |
 | `provider.tsx` | `DelacourProvider` — the app's root layer stack; its `displayName` is `DelacourUI.Provider`, because prefix-plus-symbol would stutter and this matches its export subpath |
+| `provider.render.test.tsx` | Mounted under Jest — children render, gesture root lets a Button mount, `isMotionCalm` reaches `useCalmMotion`, `initialMetrics` seeds insets, `style` forwarded |
 
 ## Design
 

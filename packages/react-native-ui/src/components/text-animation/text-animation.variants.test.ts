@@ -572,11 +572,14 @@ describe("resolveCaretClass", () => {
 });
 
 describe("resolveRowJustify", () => {
-	test("maps the text alignment onto the wrapping row", () => {
-		expect(resolveRowJustify(undefined)).toBe("justify-start");
-		expect(resolveRowJustify("left")).toBe("justify-start");
-		expect(resolveRowJustify("center")).toBe("justify-center");
-		expect(resolveRowJustify("right")).toBe("justify-end");
+	test("follows the alignment the resolved class ends on", () => {
+		expect(resolveRowJustify("text-base text-left text-center")).toBe("justify-center");
+		expect(resolveRowJustify("text-foreground text-right")).toBe("justify-end");
+		expect(resolveRowJustify("text-center text-left")).toBe("justify-start");
+	});
+
+	test("starts the row when the class sets no alignment", () => {
+		expect(resolveRowJustify("text-base text-foreground")).toBe("justify-start");
 	});
 });
 

@@ -275,7 +275,7 @@ export function TextAnimationTyping({
 		allowFontScaling,
 		maxFontSizeMultiplier: fontCap,
 	};
-	const rowClass = cn(slots.row(), resolveRowJustify(align));
+	const rowClass = cn(slots.row(), resolveRowJustify(textClass));
 
 	// The row opens with an empty cell so a caret has somewhere to sit before
 	// the first character lands. Behind it, one hidden copy of every phrase

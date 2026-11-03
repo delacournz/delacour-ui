@@ -1,5 +1,5 @@
 import { tv } from "../../lib/tv";
-import type { TextAlign, TextColor } from "../text/text.variants";
+import type { TextColor } from "../text/text.variants";
 
 export const TEXT_ANIMATION_UNITS = ["character", "word", "line"] as const;
 export const TEXT_ANIMATION_ORDERS = ["forward", "reverse", "center", "random"] as const;
@@ -172,10 +172,23 @@ const CARET_BLOCK_FILL: Record<TextColor, string> = {
 	info: "bg-info/40",
 };
 
-/** A wrapping row has no `textAlign`, so the text's alignment becomes the row's justification. */
-export function resolveRowJustify(align: TextAlign | undefined): string {
-	if (align === "center") return "justify-center";
-	if (align === "right") return "justify-end";
+const ROW_JUSTIFY: Readonly<Record<string, string>> = {
+	"text-left": "justify-start",
+	"text-center": "justify-center",
+	"text-right": "justify-end",
+};
+
+/**
+ * A wrapping row has no `textAlign`, so the text's alignment becomes the
+ * row's justification. Read from the resolved class — the last alignment
+ * wins — so an inherited alignment or a `className` override counts too.
+ */
+export function resolveRowJustify(textClass: string): string {
+	const tokens = textClass.split(/\s+/);
+	for (let i = tokens.length - 1; i >= 0; i--) {
+		const justify = ROW_JUSTIFY[tokens[i] ?? ""];
+		if (justify !== undefined) return justify;
+	}
 	return "justify-start";
 }
 

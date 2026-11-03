@@ -250,7 +250,7 @@ function TextAnimationReveal({
 				{(lines ?? []).map((line, i) => renderUnit(shared, `${i}`, line, i, 1))}
 			</View>
 		) : (
-			<View className={cn(slots.row(), resolveRowJustify(align))}>
+			<View className={cn(slots.row(), resolveRowJustify(textClass))}>
 				{pieces.map((piece) => {
 					if (piece.kind === "break") return <View className="w-full" key={piece.key} />;
 					if (piece.kind === "space") {

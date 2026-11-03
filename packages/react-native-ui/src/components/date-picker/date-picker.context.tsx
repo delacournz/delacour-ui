@@ -44,6 +44,8 @@ export type DatePickerContextValue = {
 	size: InputSize;
 	presentation: DatePickerPresentation;
 	title: string;
+	/** Supporting copy under the sheet's title, when the root gives one. */
+	description: string | undefined;
 	doneLabel: string;
 	clearLabel: string;
 	calendar: {

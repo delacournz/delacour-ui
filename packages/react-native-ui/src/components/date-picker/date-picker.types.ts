@@ -91,6 +91,8 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		calendarSize?: CalendarSize;
 		/** The sheet's title. */
 		title?: string;
+		/** Supporting copy under the sheet's title, such as why some days cannot be picked. */
+		description?: string;
 		/** Done's label. */
 		doneLabel?: string;
 		/** Clear's label. */

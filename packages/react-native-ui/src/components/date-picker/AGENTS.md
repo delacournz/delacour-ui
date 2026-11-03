@@ -91,14 +91,14 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 
 - **Parts derive their `testID` from the root's**, through the calendar's `resolvePartTestID`:
   `testID="stay"` names the trigger `stay-trigger`, the calendar `stay-calendar` (so a day is
-  `stay-calendar-day-2026-10-12`), and the sheet's `stay-title`, `stay-close`, `stay-clear` and
+  `stay-calendar-day-2026-10-12`), and the sheet's `stay-title`, `stay-description`, `stay-close`, `stay-clear` and
   `stay-done`. The default anatomy renders every one of those parts without the caller writing
   them, and a recorded flow still has to reach a particular day. No root `testID`, no part ids.
 
 ## Sheet
 
 - **`DatePicker.Content` is a whole `BottomSheet`**: portal, overlay, container, close, title,
-  calendar bare on the sheet's surface, and a footer. Single gets a footer only when
+  the root's `description` under it when given, calendar bare on the sheet's surface, and a footer. Single gets a footer only when
   `isClearable`; range and multiple always do, because Done is how multiple ends and how a range is
   abandoned. `isClearable` defaults on for range and multiple, off for single.
 - **The calendar keeps its own size.** `calendarSize` (default `md`) is independent of the trigger's

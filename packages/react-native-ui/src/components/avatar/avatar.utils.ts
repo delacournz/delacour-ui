@@ -135,15 +135,18 @@ export function resolveAvatarGroup({ count, max, total }: { count: number; max?:
  *
  * `Children.toArray` treats a fragment as one child, so a fragment with two
  * avatars would count as one face and skip `max`. This walks into each
- * fragment, at any depth. Each face from a fragment gets the fragment's key as
- * a prefix, so two fragments can hold faces with the same key.
+ * fragment, at any depth. A face from a fragment gets the key
+ * `JSON.stringify([fragmentKey, faceKey])`. A pair rather than a joined string,
+ * because `.$a` + `.$b.$c` and `.$a.$b` + `.$c` join to the same text.
  */
 export function flattenAvatarChildren(children: ReactNode): ReactElement[] {
 	return Children.toArray(children).flatMap((child) => {
 		if (!isValidElement(child)) return [];
 		if (child.type !== Fragment) return [child];
 		const { children: inner } = child.props as { children?: ReactNode };
-		return flattenAvatarChildren(inner).map((nested) => cloneElement(nested, { key: `${child.key}${nested.key}` }));
+		return flattenAvatarChildren(inner).map((nested) =>
+			cloneElement(nested, { key: JSON.stringify([child.key, nested.key]) })
+		);
 	});
 }
 

@@ -239,4 +239,20 @@ describe("flattenAvatarChildren", () => {
 		]).map((child) => child.key);
 		expect(new Set(keys).size).toBe(2);
 	});
+
+	test("does not let a fragment key and a face key run together into another pair", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, face("Ana", "b.$c")),
+			createElement(Fragment, { key: "a.$b" }, face("Ben", "c")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
+	});
+
+	test("keeps keys unique through nested fragments", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, createElement(Fragment, { key: "b" }, face("Ana", "c"))),
+			createElement(Fragment, { key: "a.$b" }, face("Ben", "c")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
+	});
 });

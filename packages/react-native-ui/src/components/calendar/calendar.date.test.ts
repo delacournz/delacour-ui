@@ -1,4 +1,4 @@
-import { describe, expect, spyOn, test } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import {
 	addDays,
 	addMonths,
@@ -355,20 +355,23 @@ describe("week start", () => {
 	});
 
 	test("reads the device locale when the engine has no Intl.Locale and none is passed", () => {
+		// A plain stub, not a runner's spy: a copied suite runs under Bun, Jest and Vitest alike.
 		const intl: { Locale?: typeof Intl.Locale } = Intl;
 		const original = intl.Locale;
+		const proto = Intl.DateTimeFormat.prototype;
+		const resolvedOptions = proto.resolvedOptions;
 		const real = new Intl.DateTimeFormat().resolvedOptions();
-		const device = spyOn(Intl.DateTimeFormat.prototype, "resolvedOptions");
+		let device = "en-US";
+		proto.resolvedOptions = () => ({ ...real, locale: device });
 		intl.Locale = undefined;
 		try {
-			device.mockReturnValue({ ...real, locale: "en-US" });
 			expect(resolveWeekStart(undefined)).toBe(0);
-			device.mockReturnValue({ ...real, locale: "ar-EG" });
+			device = "ar-EG";
 			expect(resolveWeekStart(undefined)).toBe(6);
 			expect(resolveWeekStart("en-NZ")).toBe(1);
 		} finally {
 			intl.Locale = original;
-			device.mockRestore();
+			proto.resolvedOptions = resolvedOptions;
 		}
 	});
 

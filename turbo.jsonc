@@ -38,7 +38,9 @@
 		"@delacour/web#codegen": {
 			"dependsOn": ["transit"],
 			"inputs": ["$TURBO_DEFAULT$", "!src/routeTree.gen.ts"],
-			"outputs": ["src/routeTree.gen.ts", ".output/**", "dist/**"],
+			// The route tree alone: it is all `typecheck` needs, and restoring `.output/` from cache
+			// raced `build`'s own `vite build` into the same directory when signoff ran both at once.
+			"outputs": ["src/routeTree.gen.ts"],
 			"env": ["VITE_*"]
 		},
 		"@delacour/web#typecheck": {

@@ -74,7 +74,9 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 - **Open is focus.** `resolveTriggerState` maps `isOpen` onto the box's `isFocused`, so the ring
   shows while the sheet is up. A disabled trigger is never focused.
 - **Disabled and read-only never open**, from the trigger, a `Field.Label` tap or `open()`. Read-only
-  shows the value at full strength; disabled fades it.
+  shows the value at full strength; disabled fades it. Only disabled sets `accessibilityState.disabled`,
+  so a screen reader does not read a read-only value as dimmed. A trigger that cannot open drops the
+  "Opens calendar" hint, its press handler and its press feedback.
 - **`Field` cascade, nearest wins.** `isInvalid ?? field.isInvalid`, `isDisabled ??
   field.isDisabled` — `??`, so `isInvalid={false}` opts out. The accessible name is
   `accessibilityLabel ?? field.label ?? "Date"`, and the root registers `open` with the field's

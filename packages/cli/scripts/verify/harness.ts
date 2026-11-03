@@ -352,6 +352,8 @@ type RunOptions = {
 	 * "produced no parseable report" and hid what had actually failed.
 	 */
 	allowFailure?: boolean;
+	/** Extra environment for this command alone, over the process's own. */
+	env?: Record<string, string>;
 };
 
 /**
@@ -362,7 +364,7 @@ type RunOptions = {
  */
 export async function run(command: string, args: string[], options: RunOptions): Promise<string> {
 	const result = await x(command, args, {
-		nodeOptions: { cwd: options.cwd, env: { ...process.env, CI: "1" } },
+		nodeOptions: { cwd: options.cwd, env: { ...process.env, CI: "1", ...options.env } },
 		throwOnError: false,
 	});
 

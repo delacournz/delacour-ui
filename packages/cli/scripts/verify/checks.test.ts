@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { standaloneItems } from "./checks";
+import { itemsAddedFor, standaloneItems } from "./checks";
 
 describe("standaloneItems", () => {
 	let dir: string;
@@ -44,5 +44,35 @@ describe("standaloneItems", () => {
 			item("fixtures", "registry:lib"),
 		]);
 		expect(await standaloneItems(dir, dir)).toEqual([]);
+	});
+});
+
+describe("itemsAddedFor", () => {
+	const items = [
+		{
+			name: "button",
+			type: "registry:ui",
+			registryDependencies: ["cn"],
+			testRegistryDependencies: ["fixtures"],
+			renderTestRegistryDependencies: ["test-kit"],
+		},
+		{ name: "cn", type: "registry:lib", registryDependencies: [] },
+		{ name: "fixtures", type: "registry:lib", registryDependencies: [] },
+		{ name: "test-kit", type: "registry:lib", registryDependencies: ["provider"] },
+		{ name: "provider", type: "registry:ui", registryDependencies: [] },
+		{ name: "expo-theme", type: "registry:lib", registryDependencies: [] },
+	];
+
+	test("a plain run adds components, their closure and the standalone items, and no test-only item", () => {
+		expect([...itemsAddedFor(items, null)].sort()).toEqual(["button", "cn", "expo-theme", "provider"]);
+	});
+
+	test("--tests on bun or vitest adds the logic suites' items but not the render-test kit", () => {
+		expect(itemsAddedFor(items, "bun").has("fixtures")).toBe(true);
+		expect(itemsAddedFor(items, "vitest").has("test-kit")).toBe(false);
+	});
+
+	test("--tests on jest adds the render-test kit too", () => {
+		expect(itemsAddedFor(items, "jest").has("test-kit")).toBe(true);
 	});
 });

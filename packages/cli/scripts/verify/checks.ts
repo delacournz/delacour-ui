@@ -263,7 +263,7 @@ export const CHECKS: Check[] = [
 			const index = registryIndexSchema.parse(
 				JSON.parse(await readFile(join(context.registryDir, "registry.json"), "utf-8"))
 			);
-			const requested = context.only ? new Set(context.only) : null;
+			const requested = context.only ? new Set(context.only) : itemsAddedFor(index.items, context.tests);
 			const problems = new Set<string>();
 			let declared = 0;
 
@@ -365,7 +365,14 @@ export const CHECKS: Check[] = [
 		needsInstall: true,
 		async run({ appDir, reporter }) {
 			try {
-				await run("bun", ["x", "tsc", "--noEmit"], { cwd: appDir, reporter, label: "tsc" });
+				// With a render suite per component copied in, the program outgrows V8's default
+				// heap on an 8 GB CI runner ("Ineffective mark-compacts near heap limit").
+				await run("bun", ["x", "tsc", "--noEmit"], {
+					cwd: appDir,
+					reporter,
+					label: "tsc",
+					env: { NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} --max-old-space-size=6144`.trim() },
+				});
 				return { ok: true, summary: "tsc --noEmit clean across every copied component" };
 			} catch (error) {
 				const message = (error as Error).message;
@@ -461,6 +468,47 @@ async function copiedFiles(context: CheckContext): Promise<CopiedFile[]> {
 	return files;
 }
 
+type ItemEdges = {
+	name: string;
+	type: string;
+	registryDependencies?: readonly string[];
+	testRegistryDependencies?: readonly string[];
+	renderTestRegistryDependencies?: readonly string[];
+};
+
+/**
+ * The items an `add --all` run (plus the standalone items it names) copies.
+ *
+ * Every component and its closure, and every item nothing reaches. An item
+ * reached only through a component's tests comes with `--tests`, and one reached
+ * only through its render tests (`test-kit`) only with `--tests` on Jest — so a
+ * check asserting on "every item" must not expect them otherwise.
+ */
+export function itemsAddedFor(items: readonly ItemEdges[], tests: TestRunner | null): Set<string> {
+	const byName = new Map(items.map((item) => [item.name, item]));
+	const closure = (withTests: boolean, withRender: boolean): Set<string> => {
+		const seen = new Set<string>();
+		const visit = (name: string) => {
+			if (seen.has(name)) return;
+			seen.add(name);
+			const item = byName.get(name);
+			const edges = [
+				...(item?.registryDependencies ?? []),
+				...(withTests ? (item?.testRegistryDependencies ?? []) : []),
+				...(withRender ? (item?.renderTestRegistryDependencies ?? []) : []),
+			];
+			for (const dependency of edges) visit(dependency);
+		};
+		for (const item of items) if (item.type === "registry:ui") visit(item.name);
+		return seen;
+	};
+
+	const everything = closure(true, true);
+	const added = closure(tests !== null, tests === "jest");
+	for (const item of items) if (!everything.has(item.name)) added.add(item.name);
+	return added;
+}
+
 async function loadTarget(
 	context: CheckContext
 ): Promise<{ config: Awaited<ReturnType<typeof readConfig>>; items: RegistryItem[] }> {
@@ -478,7 +526,10 @@ async function loadTarget(
 
 	// With `--only`, the closure was copied but the rest was not, so assert on
 	// what was actually asked for plus whatever it pulled in.
-	if (!context.only) return { config, items };
+	if (!context.only) {
+		const added = itemsAddedFor(items, context.tests);
+		return { config, items: items.filter((item) => added.has(item.name)) };
+	}
 
 	const wanted = new Set<string>();
 	const visit = (name: string) => {

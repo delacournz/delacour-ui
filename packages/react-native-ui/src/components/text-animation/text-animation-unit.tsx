@@ -5,7 +5,7 @@ import { resolveTextClass, TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.va
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	resolveEffectFrame,
-	resolveUnitProgress,
+	resolveRunProgress,
 	type TextAnimationEffect,
 	type TypingSample,
 } from "./text-animation.variants";
@@ -42,6 +42,10 @@ export type TextAnimationUnitDrive =
 	| {
 			kind: "reveal";
 			elapsed: SharedValue<number>;
+			/** The run the clock has rewound for. */
+			run: SharedValue<number>;
+			/** The run this unit was rendered for — it holds its start until `run` catches up. */
+			runId: number;
 			delayMs: number;
 			staggerMs: number;
 			durationMs: number;
@@ -89,7 +93,16 @@ export function TextAnimationUnit({
 			const shown = isAtRest || (sample.phraseIndex === drive.phraseIndex && drive.index < sample.visibleCount);
 			return { opacity: shown ? 1 : 0 };
 		}
-		const t = isAtRest ? 1 : resolveUnitProgress(drive.elapsed.value, drive.delayMs, drive.staggerMs, drive.durationMs);
+		const t = isAtRest
+			? 1
+			: resolveRunProgress(
+					drive.run.value,
+					drive.runId,
+					drive.elapsed.value,
+					drive.delayMs,
+					drive.staggerMs,
+					drive.durationMs
+				);
 		const frame = resolveEffectFrame(drive.effect, t);
 		return {
 			opacity: frame.opacity,

@@ -411,6 +411,24 @@ export function resolveUnitProgress(
 }
 
 /**
+ * A unit's progress on its own run. Until the clock has rewound for the run
+ * the unit was rendered for, it holds the unit at its start, so new text never
+ * paints a frame at the previous run's finished value.
+ */
+export function resolveRunProgress(
+	shownRun: number,
+	runId: number,
+	elapsedMs: number,
+	delayMs: number,
+	staggerDelayMs: number,
+	durationMs: number
+): number {
+	"worklet";
+	if (shownRun !== runId) return 0;
+	return resolveUnitProgress(elapsedMs, delayMs, staggerDelayMs, durationMs);
+}
+
+/**
  * What a unit looks like at progress `t`. Only opacity and transform — a
  * unit's layout is final from the first frame, so nothing reflows as it enters.
  */

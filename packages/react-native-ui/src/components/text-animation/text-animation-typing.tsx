@@ -202,7 +202,7 @@ export function TextAnimationTyping({
 	const rest = resolveTypingRest(timeline);
 	const runKey = `${phrasesKey}|${speed}|${eraseSpeed}|${holdMs}|${isLooping}|${isActive}`;
 
-	const elapsed = useTextAnimationClock({
+	const { elapsed } = useTextAnimationClock({
 		isRunning: isActive && !isCalm,
 		runKey,
 		limitMs: Number.POSITIVE_INFINITY,

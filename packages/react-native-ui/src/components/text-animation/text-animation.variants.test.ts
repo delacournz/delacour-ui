@@ -16,6 +16,7 @@ import {
 	resolveRollDirection,
 	resolveRollTarget,
 	resolveRowJustify,
+	resolveRunProgress,
 	resolveStaggerDelay,
 	resolveStaggerDelays,
 	resolveTotalDuration,
@@ -194,6 +195,17 @@ describe("resolveUnitProgress", () => {
 	test("a zero duration snaps at its start", () => {
 		expect(resolveUnitProgress(39, 0, 40, 0)).toBe(0);
 		expect(resolveUnitProgress(40, 0, 40, 0)).toBe(1);
+	});
+});
+
+describe("resolveRunProgress", () => {
+	test("holds a unit at its start until the clock has rewound for its run", () => {
+		expect(resolveRunProgress(1, 2, 5000, 0, 0, 300)).toBe(0);
+	});
+
+	test("follows the clock once the run is current", () => {
+		expect(resolveRunProgress(2, 2, 5000, 0, 0, 300)).toBe(1);
+		expect(resolveRunProgress(2, 2, 0, 0, 0, 300)).toBe(0);
 	});
 });
 

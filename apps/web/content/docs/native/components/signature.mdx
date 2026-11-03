@@ -106,7 +106,7 @@ type SignatureValue = {
 ## Exporting SVG and PNG
 
 The ref's `toSVG()` returns a standalone SVG document, with literal colours and `#000000` ink by default. `toPNG()` takes the
-same options plus `scale` and returns the same frame as a base64 PNG, transparent unless `background` is set.
+same options plus `scale` and resolves to the same frame as a base64 PNG, transparent unless `background` is set.
 
 ```tsx
 const pad = useRef<SignatureHandle>(null);
@@ -114,7 +114,7 @@ const pad = useRef<SignatureHandle>(null);
 <Signature ref={pad} />;
 
 const svg = pad.current?.toSVG({ viewBox: "tight", padding: 8, background: "#ffffff" });
-const png = pad.current?.toPNG({ viewBox: "tight", background: "#ffffff", scale: 3 });
+const png = await pad.current?.toPNG({ viewBox: "tight", background: "#ffffff", scale: 3 });
 const uri = `data:image/png;base64,${png}`;
 ```
 
@@ -214,7 +214,7 @@ so no downstroke is lost. Leave room around it to scroll from.
     strokeCount: { type: "number" },
     value: { type: "SignatureValue | null" },
     toSVG: { type: "(options?: SignatureExportOptions) => string", description: "A standalone SVG document. Valid, if blank, when empty." },
-    toPNG: { type: "(options?: SignaturePngOptions) => string", description: "Base64 PNG, no data: prefix, framed as toSVG. Empty string before the pad is measured." },
+    toPNG: { type: "(options?: SignaturePngOptions) => Promise<string>", description: "Resolves to a base64 PNG, no data: prefix, framed as toSVG. Empty string before the pad is measured." },
     toPaths: { type: "() => readonly string[]", description: "One smoothed path d per stroke, in pad coordinates." },
   }}
 />

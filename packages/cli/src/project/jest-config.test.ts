@@ -8,6 +8,8 @@ import { configSchema } from "../config/schema";
 import {
 	ensureJestConfig,
 	JEST_RESOLVER,
+	MJS_TRANSFORM_PATTERN,
+	MJS_TRANSFORMER,
 	patchJestJson,
 	patchJestSource,
 	RENDER_TRANSFORMS,
@@ -29,6 +31,25 @@ describe("patchJestJson", () => {
 		const [pattern] = config.transformIgnorePatterns as string[];
 		for (const transform of RENDER_TRANSFORMS) expect(pattern).toContain(transform);
 		expect(pattern).toContain("(jest-)?react-native");
+		expect(config.transform).toEqual({ [MJS_TRANSFORM_PATTERN]: MJS_TRANSFORMER });
+	});
+
+	test("adds the .mjs transform beside the project's own transforms", () => {
+		const { config, changed } = patchJestJson({ transform: { "\\.svg$": "./svg.js" } }, SETUP);
+
+		expect(changed).toBe(true);
+		expect(config.transform).toEqual({ "\\.svg$": "./svg.js", [MJS_TRANSFORM_PATTERN]: MJS_TRANSFORMER });
+	});
+
+	test("leaves a transform that already compiles .mjs alone", () => {
+		const transform = { "^.+\\.(mjs|js)$": "./mine.js" };
+		const { config } = patchJestJson({ transform }, SETUP);
+		expect(config.transform).toEqual(transform);
+	});
+
+	test("a transform that is not an object is left for the user", () => {
+		const { manual } = patchJestJson({ transform: "nope" }, SETUP);
+		expect(manual.join("\n")).toContain(".mjs");
 	});
 
 	test("keeps existing setup files and with ours first", () => {
@@ -86,7 +107,13 @@ describe("patchJestSource", () => {
 		expect(text).toContain(`setupFiles: ["${SETUP}"]`);
 		expect(text).toContain(`resolver: "${JEST_RESOLVER}"`);
 		expect(text).toContain("transformIgnorePatterns: [");
+		expect(text).toContain(`transform: { "${MJS_TRANSFORM_PATTERN.replaceAll("\\", "\\\\")}": "${MJS_TRANSFORMER}" }`);
 		expect(text).toContain('preset: "jest-expo"');
+	});
+
+	test("a transform key that does not compile .mjs is left for the user", () => {
+		const { manual } = patchJestSource('export default {\n\ttransform: { "\\\\.svg$": "./svg.js" },\n};\n', SETUP);
+		expect(manual.join("\n")).toContain(".mjs");
 	});
 
 	test("handles module.exports and a typed const config", () => {
@@ -131,6 +158,7 @@ describe("renderSetupIssues", () => {
 			`setupFiles does not list ${SETUP}`,
 			`resolver is not ${JEST_RESOLVER}`,
 			expect.stringContaining("transformIgnorePatterns"),
+			expect.stringContaining(".mjs"),
 		]);
 	});
 

@@ -6,11 +6,13 @@ import type { ResolvedConfig } from "../config/resolve";
 /**
  * Wires a project's Jest up for the render tests (`*.render.test.tsx`).
  *
- * A render test needs three things of Jest, and none of them is the test kit's
+ * A render test needs four things of Jest, and none of them is the test kit's
  * to supply by itself: the kit's `setup.ts` listed in `setupFiles` (it mocks
  * every native module), Reanimated's resolver (without it worklets and
- * Reanimated load their `.native` entries and crash), and the engines and
- * ESM-only packages let through `transformIgnorePatterns`. `ensureJestConfig`
+ * Reanimated load their `.native` entries and crash), the engines and
+ * ESM-only packages let through `transformIgnorePatterns`, and a `transform`
+ * for `.mjs` — d3-shape 3.2.1 ships only `dist/d3-shape.mjs`, and `jest-expo`'s
+ * Babel transform matches `.js`/`.ts` alone, so letting it through is not enough. `ensureJestConfig`
  * adds whichever is missing and nothing else, so it can run on every `add` and
  * `update` and leave a configured project byte for byte as it was.
  *
@@ -24,6 +26,15 @@ import type { ResolvedConfig } from "../config/resolve";
 
 /** Without it Reanimated and worklets resolve their `.native` entry points and throw under Node. */
 export const JEST_RESOLVER = "react-native-reanimated/jest/resolver";
+
+/** The `transform` key that compiles `.mjs`, which `jest-expo`'s `\.[jt]sx?$` does not match. */
+export const MJS_TRANSFORM_PATTERN = "^.+\\.mjs$";
+export const MJS_TRANSFORMER = "babel-jest";
+
+/** Whether a config's text already names a transform for `.mjs`. */
+export function compilesMjs(text: string): boolean {
+	return /\btransform\b["']?\s*:\s*\{[^}]*mjs/.test(text);
+}
 
 /** What `transformIgnorePatterns` has to let through, beside whatever the preset already does. */
 export const RENDER_TRANSFORMS = [
@@ -85,6 +96,7 @@ export function jestSnippet(setupFile: string): string {
 		`  setupFiles: ["${setupFile}"],`,
 		`  resolver: "${JEST_RESOLVER}",`,
 		`  transformIgnorePatterns: ["${fullPattern()}"],`,
+		`  transform: { ${JSON.stringify(MJS_TRANSFORM_PATTERN)}: "${MJS_TRANSFORMER}" },`,
 		"}",
 	].join("\n");
 }
@@ -137,6 +149,20 @@ export function patchJestJson(
 		}
 	}
 
+	if (next.transform === undefined) {
+		next.transform = { [MJS_TRANSFORM_PATTERN]: MJS_TRANSFORMER };
+		changed = true;
+	} else if (isRecord(next.transform)) {
+		if (!Object.keys(next.transform).some((key) => key.includes("mjs"))) {
+			next.transform = { ...next.transform, [MJS_TRANSFORM_PATTERN]: MJS_TRANSFORMER };
+			changed = true;
+		}
+	} else {
+		manual.push(
+			`transform is not an object — add ${JSON.stringify(MJS_TRANSFORM_PATTERN)}: "${MJS_TRANSFORMER}" so .mjs compiles.`
+		);
+	}
+
 	return { value: next, config: next, changed, manual };
 }
 
@@ -186,6 +212,13 @@ export function patchJestSource(text: string, setupFile: string): Patch<string> 
 		}
 	} else added.push(`transformIgnorePatterns: [${JSON.stringify(fullPattern())}],`);
 
+	if (/\btransform\s*:/.test(next)) {
+		if (!compilesMjs(next))
+			manual.push(
+				`transform is already set — add ${JSON.stringify(MJS_TRANSFORM_PATTERN)}: "${MJS_TRANSFORMER}" so .mjs compiles.`
+			);
+	} else added.push(`transform: { ${JSON.stringify(MJS_TRANSFORM_PATTERN)}: "${MJS_TRANSFORMER}" },`);
+
 	if (added.length > 0) {
 		// Re-find the brace: the edits above only ever land after it.
 		const brace = CONFIG_OBJECT.exec(next) as RegExpExecArray;
@@ -208,6 +241,7 @@ export function renderSetupIssues(configText: string, setupFile: string | readon
 
 	const missing = missingTransforms(configText);
 	if (missing.length > 0) issues.push(`transformIgnorePatterns does not let ${missing.join(", ")} through`);
+	if (!compilesMjs(configText)) issues.push("transform does not compile .mjs, which d3-shape ships");
 	return issues;
 }
 

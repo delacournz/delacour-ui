@@ -166,6 +166,23 @@ describe("DatePicker single mode", () => {
 		expect(trigger()).not.toBeExpanded();
 	});
 
+	test("a re-tap on the shown day keeps it, reports nothing and closes", async () => {
+		const onValueChange = jest.fn();
+		const onOpenChange = jest.fn();
+		await renderWithProviders(
+			<Picker defaultOpen defaultValue={OCT_12} onOpenChange={onOpenChange} onValueChange={onValueChange} />,
+			{ wrapper: Providers }
+		);
+
+		await tap(day("2026-10-12"));
+		expect(day("2026-10-12")).toBeSelected();
+		expect(onValueChange).not.toHaveBeenCalled();
+
+		await settle();
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		expect(trigger()).toHaveAccessibilityValue({ text: "12 October 2026" });
+	});
+
 	test("the picked day is announced as selected", async () => {
 		await renderWithProviders(<Picker defaultOpen defaultValue={OCT_12} />, { wrapper: Providers });
 		expect(day("2026-10-12")).toBeSelected();

@@ -196,10 +196,16 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	);
 
 	// Every tap cancels the last selection's pending close. `finish()` schedules a new one only
-	// when this selection is complete, so a new range start or a deselect keeps the sheet open.
+	// when this selection is complete, so a new range start keeps the sheet open.
+	// A single day tapped again is a confirmation, not a clear: the calendar reports it as `null`,
+	// but the picker keeps the day and closes. Clearing a single day is Clear's job.
 	const select = useCallback(
 		(next: CalendarSelectionState) => {
 			cancelPendingClose();
+			if (next.mode === "single" && next.value === null && value.mode === "single" && value.value !== null) {
+				finish(value);
+				return;
+			}
 			if (next.mode === "range" && !resolveShouldClose(next)) {
 				setRangeDraft(next.value);
 				return;
@@ -208,7 +214,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			setValue(next);
 			if (resolveShouldClose(next)) finish(next);
 		},
-		[cancelPendingClose, finish, setValue]
+		[cancelPendingClose, finish, setValue, value]
 	);
 
 	const clear = useCallback(() => {

@@ -10,6 +10,7 @@ import { installClickTracking } from "@/lib/analytics/track";
 import { siteFontLinks } from "@/lib/google-fonts";
 import { HOUSE_BACKGROUND } from "@/lib/house-meta";
 import { appDescription, appName, docsImageRoute, homeTitle, siteUrl } from "@/lib/shared";
+import { ORGANIZATION } from "@/lib/structured-data";
 import { OG_HEIGHT, OG_WIDTH } from "@/og/card";
 import appCss from "@/styles/app.css?url";
 
@@ -46,6 +47,8 @@ export const Route = createRootRoute({
 			{ name: "twitter:title", content: homeTitle },
 			{ name: "twitter:description", content: appDescription },
 			{ name: "twitter:image", content: `${siteUrl}${docsImageRoute}` },
+			// Who publishes every page — see `src/lib/structured-data.ts`.
+			{ "script:ld+json": ORGANIZATION },
 		],
 		links: [
 			{ rel: "stylesheet", href: appCss },

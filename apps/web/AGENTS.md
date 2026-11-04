@@ -54,6 +54,7 @@ src/
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
 ├── lib/seo.ts             PRODUCTS, docsHead() (title, canonical, .md alternate, TechArticle + BreadcrumbList JSON-LD), pageHead(), homeHead()
 ├── lib/sitemap.ts         MARKETING_PATHS, sitemapXml()
+├── lib/structured-data.ts ORGANIZATION (root JSON-LD), PUBLISHER, componentsItemList(), LLMS_PREAMBLE
 ├── lib/security-headers.ts  HSTS, nosniff, frame, referrer and permissions headers, added in start.ts
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/number-words.ts    numberToWords — 0–99 as English, for <ComponentCount />
@@ -77,6 +78,7 @@ src/
 │   ├── playground/components/{$}.tsx  the deep link's web fallback
 │   ├── [.]well-known/     apple-app-site-association, assetlinks.json
 │   ├── api/search.ts
+│   ├── api/components.ts  every component as a schema.org ItemList, for AI systems
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
 │   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts, sitemap[.]xml.ts
 ├── start.ts               crawler block + preset rate limit + br/gzip + csrf + Accept: text/markdown negotiation
@@ -708,6 +710,13 @@ MDX do that (see [A link to `/llms.txt` has to be a plain anchor](#a-link-to-llm
 **It returns a plain `404` `Response`, not `notFound()`.** Thrown from a server handler on a route
 with no component, `notFound()` came back as **`200`** carrying `{"isNotFound":true}` — a body no
 client reads as an error.
+
+**SEO and GEO follow TanStack Start's two guides** (`guide/seo`, `guide/geo`): `head()` title,
+description, `og:*`, canonical and JSON-LD on every route; an `Organization` on the root; a dynamic
+sitemap and robots; `/llms.txt` opening with the convention's H1 and `>` summary (`LLMS_PREAMBLE`)
+before Fumadocs' index; and `/api/components`. Two items there are deliberately not done:
+prerendering (see [Prerendering is off](#prerendering-is-off)) and `FAQPage`, which has to mark up
+an FAQ a reader can see.
 
 `robots[.]txt.ts` names `/llms.txt` somewhere a crawler already looks, and carries a `Sitemap:` line
 for `/sitemap.xml` (`routes/sitemap[.]xml.ts`). The sitemap is built per request from

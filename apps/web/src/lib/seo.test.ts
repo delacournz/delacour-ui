@@ -159,6 +159,13 @@ describe("docsHead", () => {
 		expect(meta.find((tag) => tag.title)?.title).toBe("All Components — Delacour UI for React Native");
 	});
 
+	test("is an article, with an author", () => {
+		const { meta } = docsHead({ slugs: ["native", "components", "button"], title: "Button" });
+
+		expect(content(meta, "og:type")).toBe("article");
+		expect(content(meta, "author")).toBe("Delacour");
+	});
+
 	test("every page links its Markdown twin for agents", () => {
 		const { links } = docsHead({ slugs: ["native", "components", "button"], title: "Button" });
 
@@ -176,6 +183,7 @@ describe("docsHead", () => {
 		expect(article?.["@type"]).toBe("TechArticle");
 		expect(article?.headline).toBe("React Native Button component — Delacour UI");
 		expect(article?.url).toBe("https://ui.delacour.co.nz/docs/native/components/button");
+		expect(article?.author).toMatchObject({ "@type": "Organization", name: "Delacour" });
 		expect(crumbs?.["@type"]).toBe("BreadcrumbList");
 		expect(crumbs?.itemListElement).toHaveLength(3);
 	});

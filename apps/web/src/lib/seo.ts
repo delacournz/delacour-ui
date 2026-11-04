@@ -8,6 +8,7 @@ import {
 	homeTitle,
 	siteUrl,
 } from "./shared";
+import { type JsonLd, ORGANIZATION, PUBLISHER } from "./structured-data";
 
 /**
  * The three things the docs site documents, and what a search result or a link
@@ -100,8 +101,7 @@ export function docsImageUrl(slugs: readonly string[]): string {
 
 export type DocsPageSeo = { slugs: readonly string[]; title: string; description?: string };
 
-/** A schema.org node, as TanStack Router's `script:ld+json` meta entry renders it. */
-export type JsonLd = { "@context"?: "https://schema.org"; "@type": string; [key: string]: unknown };
+export type { JsonLd };
 
 export type HeadMeta =
 	| { title: string }
@@ -112,9 +112,6 @@ export type HeadMeta =
 	| { "script:ld+json": JsonLd; content?: undefined };
 export type HeadLink = { rel: string; href: string; type?: string };
 export type Head = { meta: HeadMeta[]; links: HeadLink[] };
-
-/** The publisher every JSON-LD node names. */
-const PUBLISHER: JsonLd = { "@type": "Organization", name: "Delacour", url: "https://delacour.co.nz" };
 
 /**
  * What a search result calls a docs page. The query people type is "react native
@@ -175,6 +172,9 @@ export function docsHead({ slugs, title, description }: DocsPageSeo): Head {
 			{ title: pageTitle },
 			{ name: "description", content: body },
 			{ property: "og:site_name", content: seo.name },
+			{ property: "og:type", content: "article" },
+			{ name: "author", content: ORGANIZATION.name },
+			{ property: "article:author", content: ORGANIZATION.url },
 			{ property: "og:title", content: pageTitle },
 			{ property: "og:description", content: body },
 			{ property: "og:url", content: url },
@@ -193,6 +193,7 @@ export function docsHead({ slugs, title, description }: DocsPageSeo): Head {
 					image,
 					inLanguage: "en",
 					isPartOf: { "@type": "WebSite", name: appName, url: siteUrl },
+					author: PUBLISHER,
 					publisher: PUBLISHER,
 				},
 			},

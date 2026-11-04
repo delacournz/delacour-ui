@@ -6,7 +6,15 @@ import { siteUrl } from "./shared";
  * the way a hand-written list would — only this short list is written down, and
  * `sitemap.test.ts` pins it.
  */
-export const MARKETING_PATHS = ["/", "/compare/heroui", "/theme", "/privacy"] as const;
+export const MARKETING_PATHS = [
+	"/",
+	"/compare",
+	"/compare/heroui",
+	"/compare/react-native-reusables",
+	"/compare/bna-ui",
+	"/theme",
+	"/privacy",
+] as const;
 
 function escapeXml(value: string): string {
 	return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

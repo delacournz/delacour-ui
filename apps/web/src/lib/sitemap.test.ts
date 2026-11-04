@@ -28,6 +28,14 @@ describe("sitemapXml", () => {
 
 describe("MARKETING_PATHS", () => {
 	test("covers the routes outside /docs a search result should land on", () => {
-		expect(MARKETING_PATHS).toEqual(["/", "/compare/heroui", "/theme", "/privacy"]);
+		expect(MARKETING_PATHS).toEqual([
+			"/",
+			"/compare",
+			"/compare/heroui",
+			"/compare/react-native-reusables",
+			"/compare/bna-ui",
+			"/theme",
+			"/privacy",
+		]);
 	});
 });

@@ -143,7 +143,7 @@ describe("the sections", () => {
 			line: "Delacour UI — React Native only. iOS and Android, Expo or bare.",
 			charts: "Charts",
 			bottomSheet: "Bottom Sheet",
-			compare: "vs HeroUI",
+			compare: "Compare",
 			github: "GitHub",
 			llms: "llms.txt",
 			privacy: "Privacy",

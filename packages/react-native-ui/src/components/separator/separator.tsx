@@ -44,7 +44,13 @@ export const separatorVariants = tv({
 
 export type SeparatorVariantProps = VariantProps<typeof separatorVariants>;
 
-export type SeparatorProps = ViewProps & {
+/**
+ * The props that hide a separator from assistive technology. The component
+ * always sets them, so they are not part of `SeparatorProps`.
+ */
+type SeparatorHiddenProps = "accessible" | "accessibilityElementsHidden" | "importantForAccessibility";
+
+export type SeparatorProps = Omit<ViewProps, SeparatorHiddenProps> & {
 	/** Axis the line runs along. A vertical separator needs a parent with a height. */
 	orientation?: SeparatorOrientation;
 	className?: string;
@@ -72,13 +78,15 @@ export type SeparatorProps = ViewProps & {
  * </View>
  */
 export function Separator({ orientation = "horizontal", className, ...props }: SeparatorProps): ReactElement {
+	// `{...props}` goes first, so the hidden props below win even when a caller
+	// casts past `SeparatorProps` and passes them anyway.
 	return (
 		<View
+			{...props}
 			accessibilityElementsHidden
 			accessible={false}
 			className={separatorVariants({ className, orientation })}
 			importantForAccessibility="no-hide-descendants"
-			{...props}
 		/>
 	);
 }

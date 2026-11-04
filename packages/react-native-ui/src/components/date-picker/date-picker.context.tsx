@@ -52,6 +52,9 @@ export type DatePickerContextValue = {
 		size: CalendarSize;
 		minDate: CalendarDate | undefined;
 		maxDate: CalendarDate | undefined;
+		defaultMonth: CalendarDate | undefined;
+		startMonth: CalendarDate | undefined;
+		endMonth: CalendarDate | undefined;
 		disabled: readonly DateMatcher[] | undefined;
 		weekStartsOn: Weekday | "auto";
 		captionLayout: CalendarCaptionLayout;

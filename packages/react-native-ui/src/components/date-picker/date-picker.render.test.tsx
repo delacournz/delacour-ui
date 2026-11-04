@@ -84,9 +84,20 @@ describe("DatePicker trigger", () => {
 		expect(onOpenChange).not.toHaveBeenCalled();
 
 		await rerender(<Picker isReadOnly onOpenChange={onOpenChange} />);
-		await tap(trigger());
+		await tap(screen.getByTestId("stay-trigger"));
 		expect(onOpenChange).not.toHaveBeenCalled();
-		expect(trigger()).not.toBeExpanded();
+		expect(screen.getByTestId("stay-trigger")).not.toBeExpanded();
+	});
+
+	test("a read-only trigger reads as text, not a button it cannot press", async () => {
+		await renderWithProviders(<Picker isReadOnly />, { wrapper: Providers });
+		expect(screen.queryByRole("button", { name: "Date" })).not.toBeOnTheScreen();
+		expect(screen.getByRole("text", { name: "Date" })).toBeEnabled();
+	});
+
+	test("a disabled trigger keeps the button role", async () => {
+		await renderWithProviders(<Picker isDisabled />, { wrapper: Providers });
+		expect(trigger()).toBeDisabled();
 	});
 });
 
@@ -166,6 +177,23 @@ describe("DatePicker single mode", () => {
 		expect(trigger()).not.toBeExpanded();
 	});
 
+	test("a re-tap on the shown day keeps it, reports nothing and closes", async () => {
+		const onValueChange = jest.fn();
+		const onOpenChange = jest.fn();
+		await renderWithProviders(
+			<Picker defaultOpen defaultValue={OCT_12} onOpenChange={onOpenChange} onValueChange={onValueChange} />,
+			{ wrapper: Providers }
+		);
+
+		await tap(day("2026-10-12"));
+		expect(day("2026-10-12")).toBeSelected();
+		expect(onValueChange).not.toHaveBeenCalled();
+
+		await settle();
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		expect(trigger()).toHaveAccessibilityValue({ text: "12 October 2026" });
+	});
+
 	test("the picked day is announced as selected", async () => {
 		await renderWithProviders(<Picker defaultOpen defaultValue={OCT_12} />, { wrapper: Providers });
 		expect(day("2026-10-12")).toBeSelected();
@@ -195,6 +223,19 @@ describe("DatePicker single mode", () => {
 		await rerender(<Picker defaultOpen onValueChange={onValueChange} value={OCT_14} />);
 		expect(day("2026-10-14")).toBeSelected();
 		expect(day("2026-10-12")).not.toBeSelected();
+	});
+
+	test("passing value keeps it controlled when a form resets it to undefined", async () => {
+		const { rerender } = await renderWithProviders(<Picker isOpen value={undefined} />, { wrapper: Providers });
+		await tap(day("2026-10-12"));
+		expect(day("2026-10-12")).not.toBeSelected();
+
+		await rerender(<Picker isOpen value={OCT_12} />);
+		expect(day("2026-10-12")).toBeSelected();
+
+		await rerender(<Picker isOpen value={undefined} />);
+		expect(day("2026-10-12")).not.toBeSelected();
+		expect(trigger()).toHaveAccessibilityValue({ text: "not set" });
 	});
 
 	test("is not clearable by default; isClearable adds Clear, which empties, reports and stays open", async () => {
@@ -236,6 +277,19 @@ describe("DatePicker single mode", () => {
 	test("uncontrolled defaultValue seeds the selection", async () => {
 		await renderWithProviders(<Picker defaultOpen defaultValue={OCT_20} />, { wrapper: Providers });
 		expect(day("2026-10-20")).toBeSelected();
+	});
+});
+
+describe("DatePicker month bounds", () => {
+	test("defaultMonth, startMonth and endMonth reach the default calendar", async () => {
+		const june1990: CalendarDate = { year: 1990, month: 6, day: 1 };
+		await renderWithProviders(
+			<Picker defaultMonth={june1990} defaultOpen endMonth={june1990} startMonth={june1990} />,
+			{ wrapper: Providers }
+		);
+		expect(day("1990-06-15")).toBeOnTheScreen();
+		expect(screen.getByTestId("stay-calendar-prev")).toBeDisabled();
+		expect(screen.getByTestId("stay-calendar-next")).toBeDisabled();
 	});
 });
 

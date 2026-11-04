@@ -46,14 +46,24 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   asserts the trigger's class is a superset. A picker beside an `Input` is the same box by
   construction, invalid outranking focus included.
 
+## Controlled or not
+
+- **Passing `value` controls the picker, even as `undefined`.** `controlledValue` checks
+  `"value" in props`, not `value === undefined`, and reads `undefined` as empty. A form field
+  starts `undefined` and resets to it; a value test would flip the picker to its own state and keep
+  showing a day the form no longer holds. Use `null` (or an empty range or list) for "none".
+
 ## The finish rule
 
 - **The sheet closes when the selection is finished, not when it changes.**
   `resolveShouldClose`: a single day → yes, `null` → no; a range → only with both ends; multiple →
   never, Done closes it. Closing waits `DATE_PICKER_CLOSE_DELAY` (120 ms) so the filled circle is
   seen; under calm motion it does not wait, because the pause is there for the eye and reads as
-  lag otherwise. Every tap cancels the last tap's pending close, so starting a new range or
-  deselecting the day inside that pause keeps the sheet open.
+  lag otherwise. Every tap cancels the last tap's pending close, so starting a new range inside
+  that pause keeps the sheet open.
+- **A re-tap on the shown single day confirms it.** The calendar's `applySingleTap` reports it as
+  `null`; the picker keeps the day, reports nothing and closes. A user who opens a date of birth to
+  check it and taps it must not clear it. Clear (`isClearable`) is the way to empty a single day.
 - **A half-picked range is never reported.** The first tap is held in `rangeDraft` inside the
   root; `onValueChange` fires once the range is complete, and on Clear. Dismissing the sheet —
   swipe, scrim, close, Done, or a controlled `isOpen={false}` — drops the draft and any pending
@@ -77,7 +87,8 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 - **Disabled and read-only never open**, from the trigger, a `Field.Label` tap or `open()`. Read-only
   shows the value at full strength; disabled fades it. Only disabled sets `accessibilityState.disabled`,
   so a screen reader does not read a read-only value as dimmed. A trigger that cannot open drops the
-  "Opens calendar" hint, its press handler and its press feedback.
+  "Opens calendar" hint, its press handler and its press feedback. Read-only also drops the button
+  role and reads as text, so VoiceOver does not offer a double-tap that does nothing.
 - **`Field` cascade, nearest wins.** `isInvalid ?? field.isInvalid`, `isDisabled ??
   field.isDisabled` — `??`, so `isInvalid={false}` opts out. The accessible name is
   `accessibilityLabel ?? field.label ?? "Date"`, and the root registers `open` with the field's
@@ -108,6 +119,27 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   Overlays category ships one, without a breaking change. Today: `sheet` (default) and `inline`,
   which draws the calendar on a card in place and renders no trigger. There is no popover import
   here and must not be until that merges.
+
+## Month bounds
+
+- **`defaultMonth`, `startMonth` and `endMonth` pass through to the `Calendar`**, so the default
+  anatomy can open near a likely date and bound paging and the year list without a custom
+  `DatePicker.Calendar`. Omitted, the calendar derives `startMonth`/`endMonth` from
+  `minDate`/`maxDate`, and opens on the selection's month, else today's.
+- **A date of birth sets `maxDate`.** Without it the picker allows future days and the year list
+  runs a century ahead:
+
+  ```tsx
+  const now = today();
+  <DatePicker
+    defaultMonth={{ year: now.year - 30, month: 1, day: 1 }}
+    maxDate={addYears(now, -18)}
+    minDate={{ year: now.year - 120, month: 1, day: 1 }}
+    onValueChange={field.onChange}
+    title="Date of birth"
+    value={field.value ?? null}
+  />
+  ```
 
 ## Open questions
 

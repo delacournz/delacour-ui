@@ -15,7 +15,10 @@ import type { DatePickerFormat, DatePickerFormatRange, DatePickerPresentation } 
 export type DatePickerSelectionProps =
 	| {
 			mode?: "single";
-			/** Controlled day. `null` is none. */
+			/**
+			 * Controlled day. `null` is none. Passing the prop at all controls the picker, so a form
+			 * value that starts or resets to `undefined` reads as none too.
+			 */
 			value?: CalendarDate | null;
 			/** Starting day while uncontrolled. */
 			defaultValue?: CalendarDate | null;
@@ -58,6 +61,12 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		minDate?: CalendarDate;
 		/** The latest day that can be picked, inclusive. */
 		maxDate?: CalendarDate;
+		/** The month the calendar opens on. Omitted, the selection's month, else today's. */
+		defaultMonth?: CalendarDate;
+		/** The earliest month paging and the year list reach. Omitted, `minDate`'s month. */
+		startMonth?: CalendarDate;
+		/** The latest month paging and the year list reach. Omitted, `maxDate`'s month. */
+		endMonth?: CalendarDate;
 		/** Further days that cannot be picked. */
 		disabledDates?: readonly DateMatcher[];
 		/** Lets a neighbouring month's day be picked. */

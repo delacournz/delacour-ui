@@ -31,7 +31,9 @@ export function DatePickerCalendar(props: DatePickerCalendarProps): ReactElement
 	const { calendar, shown, select } = picker;
 	const common = {
 		captionLayout: calendar.captionLayout,
+		defaultMonth: calendar.defaultMonth,
 		disabled: calendar.disabled,
+		endMonth: calendar.endMonth,
 		isDisabled: picker.isDisabled,
 		isInvalid: picker.isInvalid,
 		isReadOnly: picker.isReadOnly,
@@ -40,6 +42,7 @@ export function DatePickerCalendar(props: DatePickerCalendarProps): ReactElement
 		minDate: calendar.minDate,
 		selectOutsideDays: calendar.selectOutsideDays,
 		size: calendar.size,
+		startMonth: calendar.startMonth,
 		today: calendar.today,
 		testID: resolvePartTestID(picker.testID, "calendar"),
 		weekStartsOn: calendar.weekStartsOn,

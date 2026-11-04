@@ -109,8 +109,8 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 
 ## Testing
 
-The registry, the presence machine, the scrim token and the motion constants are pure and unit-tested
-under `bun test`. `overlay.render.test.tsx` mounts the provider and portals under Jest: registry entry
+The registry, the presence machine, the scrim token and the motion constants are pure and unit-tested.
+The render tests mount the provider and portals under Jest: registry entry
 and z-order, scrim, presence, back handler and touch fan-out, and what screen readers can reach while
 a modal is open, exiting, or under another modal. `useOverlayPresence` is also tested with an owner
 that re-renders every frame: one timing per transition and one on-time finish. The native teleport

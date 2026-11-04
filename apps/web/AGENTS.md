@@ -297,6 +297,10 @@ sitemap's `MARKETING_PATHS`. **A row says only what a source says.** React Nativ
 renders client-side, so its rows cite the MDX in its repository. A new comparison is a file in
 `src/lib/compare/`, an entry in `COMPARISONS`, and a path in `MARKETING_PATHS`.
 
+**How a reader arrives:** the hero's **How it compares →** arrow link beside GitHub, the FAQ's closing
+line, the footer's **Compare**, the Quick start's **Next** cards, and a sentence at the top of Design
+Principles. Deliberately not the navbar or the sidebar — the docs' own voice stays out of the argument.
+
 `TwoWayTable` and `Mark` (`src/components/compare/`) draw the same hairlines and marks the HeroUI page
 does, which is why `Mark` moved out of `heroui.tsx`.
 

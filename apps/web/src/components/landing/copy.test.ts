@@ -34,6 +34,7 @@ describe("the hero", () => {
 			lede: "Composable, accessible components with thoughtful defaults. Code you can customize, extend and make your own — for iOS and Android, painted from the same design tokens as your web app.",
 			primary: "Quick start",
 			secondary: "Browse components",
+			compare: "How it compares →",
 			github: "GitHub →",
 			install: "delacour@latest add button switch slider",
 			phone: {

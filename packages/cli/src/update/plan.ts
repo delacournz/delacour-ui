@@ -5,7 +5,7 @@ import type { Lock, LockFile } from "../lock/schema";
 import type { Format } from "../project/formatter";
 import { installedItems } from "../project/installed";
 import { destination, planFiles, readText, transformFile } from "../project/write-files";
-import { isTest } from "../registry/classify";
+import { isTest, isTestSupportItem } from "../registry/classify";
 import type { RegistryClient } from "../registry/client";
 import { isNamespace, type Namespace } from "../registry/namespaces";
 import { LIBRARY_PREFIX } from "../registry/prefix";
@@ -129,12 +129,12 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 	const testsLeftOut = new Map<string, string[]>();
 
 	// Tests are scoped like files: a suite that renders a component the project does not hold is left
-	// out rather than bringing that component in. The test kit is the exception — it is what the suites run on.
+	// out rather than bringing that component in. The test kit and its mocks are the exception — they are what the suites run on.
 	const narrow = <T extends RegistryItem | RegistryIndexEntry>(item: T): T => {
 		let scoped = item;
 
 		if (input.tests || hasTests(lock, item.name)) {
-			const unheld = (names: readonly string[]) => names.filter((name) => !allowed(name) && name !== TEST_KIT);
+			const unheld = (names: readonly string[]) => names.filter((name) => !allowed(name) && !isTestSupportItem(name));
 			const logic = unheld(item.testRegistryDependencies);
 			const render = config.testRunner === "jest" ? unheld(item.renderTestRegistryDependencies) : [];
 			const needs = [...new Set([...logic, ...render])].sort();
@@ -147,7 +147,7 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 
 		const before = earlier.get(item.name) ?? null;
 		const keep = (dependency: string) =>
-			allowed(dependency) || dependency === TEST_KIT || (before !== null && !before.has(dependency));
+			allowed(dependency) || isTestSupportItem(dependency) || (before !== null && !before.has(dependency));
 		const dropped = scoped.registryDependencies.filter((dependency) => !keep(dependency));
 
 		for (const dependency of dropped) {
@@ -184,7 +184,7 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 			const base =
 				assumed?.base ??
 				(entry && needsBase(file.current, file.content, entry)
-					? await fetchBase(clientAt(entry.ref), file.item, file.key, file.path, config, entry.hash, previous)
+					? await baseFor(clientAt(entry.ref), target, file.item, file.key, file.path, config, entry.hash, previous)
 					: null);
 
 			return {
@@ -245,7 +245,6 @@ function previousConfig(input: PlanInput): ResolvedConfig | undefined {
 }
 
 /** The item the render tests run on, which a project that takes tests gets whether or not it held it. */
-const TEST_KIT = "test-kit";
 
 /**
  * The registry dependencies an item had at the ref the project copied it from, or `null` when that
@@ -298,6 +297,30 @@ async function assumeBase(
 
 	const base = await fetchBase(clientAt(input.baseRef), file.item, file.key, file.path, input.config);
 	return base === null ? null : { entry: { ref: input.baseRef, hash: contentHash(base) }, base };
+}
+
+/**
+ * The base a lock entry hashes to: from the ref it records, else from the registry being updated to.
+ *
+ * The second read is for a lock written by a CLI reading a local registry, which recorded the branch
+ * it was named for while copying that directory's working tree — text the branch itself may never
+ * have held. Only a match is taken from it, so it cannot stand in for a base that really moved.
+ */
+async function baseFor(
+	atRef: RegistryClient,
+	target: RegistryClient,
+	item: string,
+	key: string,
+	path: string,
+	config: ResolvedConfig,
+	hash: string,
+	previous?: ResolvedConfig
+): Promise<string | null> {
+	const base = await fetchBase(atRef, item, key, path, config, hash, previous);
+	if (base !== null && contentHash(base) === hash) return base;
+
+	const fallback = atRef === target ? null : await fetchBase(target, item, key, path, config, hash, previous);
+	return fallback !== null && contentHash(fallback) === hash ? fallback : base;
 }
 
 /**
@@ -366,7 +389,7 @@ async function removedFile(
 	const edited = local !== null && contentHash(local) !== entry.hash;
 	const previous = previousConfig(input);
 	const base = edited
-		? await fetchBase(clientAt(entry.ref), item, key, path, input.config, entry.hash, previous)
+		? await baseFor(clientAt(entry.ref), input.target, item, key, path, input.config, entry.hash, previous)
 		: null;
 
 	return {

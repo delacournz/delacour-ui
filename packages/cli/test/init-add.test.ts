@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { cp, mkdtemp, readFile, rm } from "node:fs/promises";
+import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { add } from "../src/commands/add";
@@ -40,6 +40,24 @@ async function scaffold(fixture: string): Promise<string> {
 
 afterAll(async () => {
 	await Promise.all(workspaces.map((directory) => rm(directory, { recursive: true, force: true })));
+});
+
+describe("add, in a project on an older major of a package the library needs", () => {
+	test("plans tailwind-variants again at the library's range, and says why", async () => {
+		const root = await scaffold("expo-app");
+		const manifest = join(root, "package.json");
+		const pkg = JSON.parse(await readFile(manifest, "utf-8"));
+		pkg.dependencies = { ...pkg.dependencies, "tailwind-variants": "3.3.1" };
+		await writeFile(manifest, JSON.stringify(pkg, null, 2));
+
+		await init([], { ...SHARED, cwd: root });
+		const result = await add(["button"], { ...SHARED, cwd: root });
+
+		expect(result.dependencies?.outdated).toEqual([
+			{ name: "tailwind-variants", declared: "3.3.1", required: "^4.0.0" },
+		]);
+		expect(result.dependencies?.missing).toContain("tailwind-variants");
+	});
 });
 
 describe("init and add, in a plain Expo app", () => {
@@ -686,6 +704,21 @@ describe("add --tests, render tests", () => {
 		return root;
 	}
 
+	test("a native mock comes only with a component that installs its module, and Jest is told about it", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest" }, jest: { preset: "jest-expo" } });
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		await expect(exists(root, "src/lib/test/mocks/skia.ts")).resolves.toBe(false);
+		expect(await read(root, "src/lib/test/setup.ts")).not.toContain("react-native-skia");
+
+		await add(["chart"], { ...SHARED, cwd: root, tests: true });
+
+		expect(await read(root, "src/lib/test/mocks/skia.ts")).toContain('jest.mock("react-native-skia"');
+		expect(JSON.parse(await read(root, "package.json")).jest.setupFiles).toContain(
+			"<rootDir>/src/lib/test/mocks/skia.ts"
+		);
+	});
+
 	test("Jest gets them with the test kit, and its config is set up for them", async () => {
 		const root = await scaffoldOn({ scripts: { test: "jest" }, jest: { preset: "jest-expo" } });
 		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
@@ -699,7 +732,8 @@ describe("add --tests, render tests", () => {
 		);
 
 		const jest = JSON.parse(await read(root, "package.json")).jest;
-		expect(jest.setupFiles).toEqual(["<rootDir>/src/lib/test/setup.ts"]);
+		// `button` presses through Pulsar, so Pulsar's mock comes with it.
+		expect(jest.setupFiles).toEqual(["<rootDir>/src/lib/test/setup.ts", "<rootDir>/src/lib/test/mocks/pulsar.ts"]);
 		expect(jest.resolver).toBe("react-native-reanimated/jest/resolver");
 		expect(jest.transformIgnorePatterns[0]).toContain("@delacour/.*");
 		expect(result?.renderTests?.jestConfig).toEqual({ status: "patched", file: "package.json" });

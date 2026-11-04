@@ -1,6 +1,7 @@
 import type { ResolvedConfig } from "../config/resolve";
 import { CONFIG_FILENAME } from "../config/schema";
 import { ensureJestConfig, type JestPatchResult } from "../project/jest-config";
+import { isTestSupportItem } from "../registry/classify";
 import { skipsRenderTests } from "../registry/schema";
 import type { Output } from "../ui/output";
 
@@ -44,7 +45,8 @@ export async function settleRenderTests(
 		return { skipped, jestConfig: null };
 	}
 
-	if (!items.some((item) => item.name === "test-kit")) return { skipped: null, jestConfig: null };
+	// The kit or a native mock in the run: either is a file the config has to list.
+	if (!items.some((item) => isTestSupportItem(item.name))) return { skipped: null, jestConfig: null };
 
 	const jestConfig = await ensureJestConfig(config);
 	report(jestConfig, output);

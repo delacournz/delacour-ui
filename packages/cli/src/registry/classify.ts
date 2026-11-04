@@ -44,6 +44,17 @@ export type SourceClassification = {
 
 const SOURCE_EXTENSIONS = [".ts", ".tsx"] as const;
 
+/** The name every `test/mocks/` item carries: `test-mock-skia` for `test/mocks/skia.ts`. */
+export const TEST_MOCK_PREFIX = "test-mock-";
+
+/**
+ * Whether an item is part of what the render tests run on — the kit or one of its mocks — rather
+ * than a component a suite renders. `update` never leaves a suite out for want of one.
+ */
+export function isTestSupportItem(name: string): boolean {
+	return name === "test-kit" || name.startsWith(TEST_MOCK_PREFIX);
+}
+
 /** The type-only shim that has to travel with the styles it types. */
 const UNIWIND_ENV = "uniwind-env.d.ts";
 
@@ -94,10 +105,26 @@ const DIRECTORIES: Record<string, (rest: string[]) => Classified | null> = {
 	// so the `../../test/render` the tests write resolves to it from a copy too.
 	// Its `AGENTS.md` is the library's own testing guide, for the people who maintain
 	// it, so it stays here.
-	test: (rest) =>
-		rest[0]?.endsWith(".md")
-			? null
-			: classifyDirectoryItem(rest, { item: "test-kit", namespace: "lib", type: "registry:lib", prefix: "test/" }),
+	//
+	// `test/mocks/<name>.ts` is not the kit's: each stands in for a native module only some
+	// components bring, so it is an item of its own (`test-mock-<name>`), copied with the
+	// components that install that module and never into a project that lacks it.
+	test: (rest) => {
+		if (rest[0]?.endsWith(".md")) return null;
+		if (rest[0] === "mocks") {
+			const file = onlyFile(rest.slice(1));
+			if (!file) return null;
+			const target = `test/mocks/${file}`;
+			return {
+				item: `${TEST_MOCK_PREFIX}${file.replace(/\.tsx?$/, "")}`,
+				type: "registry:lib",
+				namespace: "lib",
+				target,
+				moduleId: toModuleId(target),
+			};
+		}
+		return classifyDirectoryItem(rest, { item: "test-kit", namespace: "lib", type: "registry:lib", prefix: "test/" });
+	},
 	// Lands under the consumer's lib directory rather than claiming a namespace
 	// of its own: it is a helper that happens to import from expo-router, and a
 	// sixth configurable path would be one more thing to answer at `init`.

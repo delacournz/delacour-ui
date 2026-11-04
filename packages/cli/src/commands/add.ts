@@ -399,6 +399,9 @@ function reportDependencies(plan: DependencyPlan, output: Output): void {
 	if (plan.wanted.length === 0) return;
 
 	const lines = plan.groups.map((group) => `  ${style.code(commandLine(group))}`);
+	for (const entry of plan.outdated) {
+		lines.push(`  ${style.dim(`${entry.name} is ${entry.declared} here; the components need ${entry.required}`)}`);
+	}
 	if (plan.satisfied.length > 0) {
 		lines.push(`  ${style.dim(`already installed — ${plan.satisfied.join(", ")}`)}`);
 	}

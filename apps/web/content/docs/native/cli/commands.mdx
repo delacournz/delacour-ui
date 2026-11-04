@@ -104,6 +104,16 @@ The missing ones are shown as commands rather than as a list of names, because t
 part that is not obvious — and they are spelled for the package manager this project is actually
 on.
 
+A package the project already has at a version older than the components need counts as missing
+too, and is installed again at the library's range. The report says which, and from what:
+
+```txt
+│    yarn add tailwind-variants@^4.0.0
+│    tailwind-variants is 3.3.1 here; the components need ^4.0.0
+```
+
+A newer version than the range is left alone.
+
 Then it asks which to install, one checkbox per missing package, all ticked, each naming the
 command it goes through and the components that need it:
 
@@ -179,6 +189,10 @@ resolver: "react-native-reanimated/jest/resolver",
 transformIgnorePatterns: [/* jest-expo's, plus the library's ES-module dependencies */],
 transform: { "^.+\\.mjs$": "babel-jest" },
 ```
+
+A component that installs a native module only some components bring — Skia for `chart`, MapLibre
+for `map` — also brings that module's mock, under `test/mocks/`, and `add` lists it in `setupFiles`
+after the setup file. A project never gets a mock for a module it does not have.
 
 A config it cannot edit safely is left alone, and `add` prints that snippet with your paths for you
 to merge. `@testing-library/react-native` and `test-renderer` are added as dev dependencies; the

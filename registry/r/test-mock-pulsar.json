@@ -1,0 +1,31 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "test-mock-pulsar",
+	"type": "registry:lib",
+	"title": "Pulsar mock",
+	"description": "Pulsar's haptics as no-ops, for the render tests of components that install it.",
+	"categories": [
+		"testing"
+	],
+	"registryDependencies": [
+		"test-kit"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [
+		"@jest/globals"
+	],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/test/mocks/pulsar.ts",
+			"target": "test/mocks/pulsar.ts",
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../mock-stub",
+					"to": "@registry/lib/test/mock-stub"
+				}
+			]
+		}
+	]
+}

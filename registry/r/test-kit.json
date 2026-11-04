@@ -26,6 +26,11 @@
 	],
 	"files": [
 		{
+			"path": "packages/react-native-ui/src/test/mock-stub.ts",
+			"target": "test/mock-stub.ts",
+			"namespace": "lib"
+		},
+		{
 			"path": "packages/react-native-ui/src/test/render.tsx",
 			"target": "test/render.tsx",
 			"namespace": "lib",

@@ -332,7 +332,8 @@
 	],
 	"renderTestRegistryDependencies": [
 		"button",
-		"test-kit"
+		"test-kit",
+		"test-mock-pulsar"
 	],
 	"renderTestDependencies": [
 		"@jest/globals"

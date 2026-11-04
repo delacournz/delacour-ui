@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PACKAGE_INSTALL } from "../registry/config";
 import {
+	belowRange,
 	commandLine,
 	expoCommand,
 	type InstallGroup,
@@ -83,6 +84,36 @@ describe("missingPackages", () => {
 	});
 });
 
+describe("belowRange", () => {
+	test("an exact or caret version under the required major is below it", () => {
+		expect(belowRange("3.3.1", "^4.0.0")).toBe(true);
+		expect(belowRange("^3.2.0", "^4.0.0")).toBe(true);
+		expect(belowRange("~3.3.1", "^4.0.0")).toBe(true);
+	});
+
+	test("a version inside the range, or above it, is not", () => {
+		expect(belowRange("4.1.0", "^4.0.0")).toBe(false);
+		expect(belowRange("^4.0.0", "^4.0.0")).toBe(false);
+		expect(belowRange("5.0.0", "^4.0.0")).toBe(false);
+		expect(belowRange("^4", "^4")).toBe(false);
+	});
+
+	test("a 0.x range is bounded by its minor", () => {
+		expect(belowRange("0.4.9", "^0.5.0")).toBe(true);
+		expect(belowRange("^0.5.2", "^0.5.0")).toBe(false);
+	});
+
+	test("an older patch in the same major is below the floor", () => {
+		expect(belowRange("3.5.0", "^3.6.0")).toBe(true);
+	});
+
+	test("a spec it cannot read as a version is left alone", () => {
+		for (const declared of ["catalog:", "workspace:*", "*", "latest", "github:owner/repo", "file:../x"]) {
+			expect(belowRange(declared, "^4.0.0")).toBe(false);
+		}
+	});
+});
+
 describe("planDependencies", () => {
 	const packageJson = {
 		dependencies: { "react-native-reanimated": "~4.5.1" },
@@ -103,6 +134,18 @@ describe("planDependencies", () => {
 		expect(plan.groups.map((group) => group.packages)).toEqual([["react-native-teleport"], ["tailwind-variants"]]);
 		expect(plan.satisfied).toEqual(["react-native-reanimated", "typescript"]);
 		expect(plan.missing).toEqual(["react-native-teleport", "tailwind-variants"]);
+	});
+
+	test("a package declared below the library's range is planned again at that range, and reported as outdated", () => {
+		const plan = planDependencies(
+			{ packageManager: "yarn", expoDependencies: [], dependencies: ["tailwind-variants", "cn"], devDependencies: [] },
+			{ dependencies: { "tailwind-variants": "3.3.1", cn: "^0.5.0" } }
+		);
+
+		expect(plan.missing).toEqual(["tailwind-variants"]);
+		expect(plan.satisfied).toEqual(["cn"]);
+		expect(plan.outdated).toEqual([{ name: "tailwind-variants", declared: "3.3.1", required: "^4.0.0" }]);
+		expect(plan.groups[0]?.args).toContain("tailwind-variants@^4.0.0");
 	});
 
 	test("a package wanted by two routes is reported once", () => {

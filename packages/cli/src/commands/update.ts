@@ -9,6 +9,7 @@ import { hasUncommittedChanges } from "../project/git";
 import type { DependencyPlan } from "../project/package-manager";
 import { findProviderReferences } from "../project/provider-references";
 import { destination, writeFiles } from "../project/write-files";
+import { isTestSupportItem } from "../registry/classify";
 import { createRegistryClient, type RegistryClient } from "../registry/client";
 import { isNamespace } from "../registry/namespaces";
 import { LIBRARY_PREFIX, providerName } from "../registry/prefix";
@@ -314,7 +315,7 @@ async function runUpdate(
 	// whose Jest config lost a key gets it back, and one that is current is untouched.
 	const keptKit = lock.items["test-kit"] !== undefined;
 	if (tests || keptKit) {
-		await settleRenderTests(config, tests ? items : items.filter((item) => item.name === "test-kit"), output);
+		await settleRenderTests(config, tests ? items : items.filter((item) => isTestSupportItem(item.name)), output);
 	}
 	if (tests) await settleTestScripts(config, output);
 
@@ -467,7 +468,8 @@ export async function readPlan(
 	const ref = options.ref || config.registry.ref || DEFAULT_REGISTRY_REF;
 	const url = options.registry ?? config.registry.url;
 
-	const open = (at: string) => createRegistryClient({ cwd: options.cwd, url, ref: at, offline: options.offline });
+	const open = (at: string, atRef = false) =>
+		createRegistryClient({ cwd: options.cwd, url, ref: at, offline: options.offline, atRef });
 	const format = clients?.format ?? (await projectFormat(config, options, output));
 
 	const plan = await output.task("Comparing with the registry", () =>
@@ -477,7 +479,7 @@ export async function readPlan(
 			names,
 			ref,
 			target: clients?.target ?? open(ref),
-			baseClient: clients?.baseClient ?? open,
+			baseClient: clients?.baseClient ?? ((at: string) => open(at, true)),
 			format,
 			baseRef: options.base,
 			tests: options.tests ?? config.testsEnabled,

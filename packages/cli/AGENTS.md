@@ -593,8 +593,26 @@ the version, so the snapshot bump in `alpha.yml` is what switches it.
 `tailwind-variants` 4.0 the day it shipped, and its root entry throws on the
 `createTV({ twMergeConfig })` every copied `tv.ts` then made. A test holds each range to the library's,
 so bumping the library's range means bumping `NPM_RANGES` in the same change. Like the alpha
-dist-tag, the range goes on the command's args only; `missingPackages` still compares bare names,
-and `peerRange` declares a pinned package's peer at the same range rather than `*`.
+dist-tag, the range goes on the command's args, and `peerRange` declares a pinned package's peer at
+the same range rather than `*`.
+
+A pinned package already in `package.json` **below** its range counts as missing, and is planned
+again at the range (`DependencyPlan.outdated` says which, and from what). A name alone was the test
+once: a project on `tailwind-variants` 3 took an update whose `lib/tv.ts` imports
+`tailwind-variants/config`, an entry only 4 has, and every suite reaching a `tv()` failed with
+`Cannot find module`. `belowRange` reads an exact version, `^`, `~` or `>=`; a `catalog:`,
+`workspace:`, tag or URL is left alone, and so is a version **above** the range — moving someone's
+dependency back a major is not the CLI's call.
+
+### `update` reads an old ref out of git when the registry is a directory
+
+A local registry (`DELACOUR_REGISTRY`, which `cli:link` sets) has no refs of its own, so every ref
+used to serve the working tree. The base `update` merges from — the file at the commit the lock
+records — then came back as today's text, never hashed to the lock entry, and the file was skipped
+as "no longer serves the text it was copied from" while its item's newer tests were still copied
+beside it. The base client now passes `atRef`, which reads a local registry through
+`git show <ref>:./<path>`; `baseFor` falls back to the target registry when that does not hash,
+which covers a lock a linked CLI wrote under a branch name for working-tree text.
 
 ### The CLI version is baked in too
 
@@ -722,6 +740,14 @@ it, so these are **Jest-only** and ship apart from the logic suites:
   cannot edit safely — a config built by a function, a `resolver` already set to something else —
   is left alone and returned as `{ status: "manual", snippet, reasons }`, which `add` prints.
   It runs after the install whenever `test-kit` is in the run (`settleRenderTests`).
+- **A native module only some components bring is mocked by an item of its own.** `test/mocks/<name>.ts`
+  classifies to `test-mock-<name>`, not to `test-kit`, and `RENDER_TEST_MOCKS` in `registry/config.ts`
+  maps each module to its mock. The builder puts that mock in the `renderTestRegistryDependencies` of
+  every item that installs the module, so the mock is copied exactly when the module is — the kit's
+  `setup.ts` never names one, because a `jest.mock` of a module that is not installed fails every
+  suite at load, which is what a consumer without `chart` hit. `ensureJestConfig` lists every
+  `lib/test/mocks/*.ts` on disk after the setup file, and `update` treats a mock like the kit
+  (`isTestSupportItem`): never a reason to leave a suite out.
 - **`doctor` checks it.** `checkTestRunner` asks for `@testing-library/react-native`,
   `test-renderer` and `jest-expo` once the lock records a render test, and warns, with the snippet,
   when the config lacks the setup file, the resolver or a transform (`renderSetupIssues`).

@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "test-mock-blur",
+	"type": "registry:lib",
+	"title": "Blur mock",
+	"description": "`expo-blur` as a plain View, for the render tests of components that install it.",
+	"categories": [
+		"testing"
+	],
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [
+		"@jest/globals"
+	],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/test/mocks/blur.ts",
+			"target": "test/mocks/blur.ts",
+			"namespace": "lib"
+		}
+	]
+}

@@ -228,7 +228,8 @@
 		}
 	],
 	"renderTestRegistryDependencies": [
-		"test-kit"
+		"test-kit",
+		"test-mock-maplibre"
 	],
 	"renderTestDependencies": [
 		"@jest/globals",

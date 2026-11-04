@@ -206,7 +206,7 @@ describe("homeHead", () => {
 		const types = jsonLd(meta).map((entry) => entry["@type"]);
 
 		expect(links).toContainEqual({ rel: "canonical", href: "https://ui.delacour.co.nz/" });
-		expect(types).toEqual(["WebSite", "SoftwareSourceCode"]);
+		expect(types).toEqual(["WebSite", "SoftwareSourceCode", "FAQPage"]);
 	});
 });
 

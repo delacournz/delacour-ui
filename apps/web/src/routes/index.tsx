@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactElement } from "react";
 import { ComponentIndex } from "@/components/landing/component-index";
+import { Faq } from "@/components/landing/faq";
 import { Features } from "@/components/landing/features";
 import { Footer } from "@/components/landing/footer";
 import { GetStarted } from "@/components/landing/get-started";
@@ -39,6 +40,7 @@ function Home(): ReactElement {
 			<ThemeTeaser />
 			<GetStarted />
 			<ComponentIndex />
+			<Faq />
 			<Footer />
 		</HomeLayout>
 	);

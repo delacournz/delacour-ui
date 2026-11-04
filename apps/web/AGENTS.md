@@ -60,6 +60,8 @@ src/
 ├── lib/number-words.ts    numberToWords — 0–99 as English, for <ComponentCount />
 ├── lib/remark-component-count.ts  the remark plugin that spells <ComponentCount /> — wired in source.config.ts
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
+├── lib/compare/           the two-way comparisons and the /compare hub — see "/compare and the two-way pages"
+├── lib/faq.ts             the landing FAQ and its FAQPage JSON-LD
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
 ├── lib/analytics/         PostHog, Google Analytics and consent — see "Analytics"
 ├── lib/native-app.ts      the playground app, and the two association bodies
@@ -70,6 +72,8 @@ src/
 │   ├── __root.tsx         RootProvider + <html>
 │   ├── index.tsx          the landing page
 │   ├── compare/heroui.tsx /compare/heroui — renders lib/comparison.ts
+│   ├── compare/index.tsx  /compare — the hub
+│   ├── compare/$slug.tsx  /compare/<slug> — renders lib/compare/<slug>.ts
 │   ├── privacy.tsx        /privacy — renders lib/privacy.ts
 │   ├── docs/index.tsx     /docs → /docs/native/getting-started
 │   ├── docs/$.tsx         the docs catch-all
@@ -277,6 +281,32 @@ Five things about it are load-bearing:
 - **Every section is `PAGE_SECTION`, like every other page here.** See
   [One container, every page](#one-container-every-page) — including why the `w-full min-w-0` in
   it is load-bearing.
+
+## `/compare` and the two-way pages
+
+`/compare` (`routes/compare/index.tsx`) is the hub the footer's **Compare** link opens: one card per
+`HUB_ENTRIES` row in `src/lib/compare/index.ts`. `/compare/$slug` renders a two-column table, Delacour
+UI against one library, from `src/lib/compare/<slug>.ts` — `react-native-reusables` and `bna-ui` today.
+`/compare/heroui` keeps its own three-column page and wins over `$slug` as a static route. An unknown
+slug is a 404.
+
+The rules are `/compare/heroui`'s, held by `src/lib/compare/compare.test.ts`: every answer carries a
+note, Delacour loses at least two rows, no section is a sweep either way, the page prints at least two
+`https://` sources and the date they were read (`checked`), no prices, and every page is in the
+sitemap's `MARKETING_PATHS`. **A row says only what a source says.** React Native Reusables' site
+renders client-side, so its rows cite the MDX in its repository. A new comparison is a file in
+`src/lib/compare/`, an entry in `COMPARISONS`, and a path in `MARKETING_PATHS`.
+
+`TwoWayTable` and `Mark` (`src/components/compare/`) draw the same hairlines and marks the HeroUI page
+does, which is why `Mark` moved out of `heroui.tsx`.
+
+## The landing FAQ is its own JSON-LD
+
+`src/lib/faq.ts` holds `FAQ`, which `components/landing/faq.tsx` renders as `<details>` above the
+footer and `faqJsonLd()` marks up as `FAQPage` in `homeHead()`. One list, because Google only honours
+FAQ markup that matches the visible page. Answers are plain text — they are quoted verbatim by search
+results and AI systems — and `faq.test.ts` holds that and holds the questions to the queries the page
+is for (shadcn, Expo, NativeWind, agents). Change an answer when the fact under it changes.
 
 ## `/privacy` is held to the code
 
@@ -715,8 +745,7 @@ client reads as an error.
 description, `og:*`, canonical and JSON-LD on every route; an `Organization` on the root; a dynamic
 sitemap and robots; `/llms.txt` opening with the convention's H1 and `>` summary (`LLMS_PREAMBLE`)
 before Fumadocs' index; and `/api/components`. Two items there are deliberately not done:
-prerendering (see [Prerendering is off](#prerendering-is-off)) and `FAQPage`, which has to mark up
-an FAQ a reader can see.
+prerendering (see [Prerendering is off](#prerendering-is-off)). `FAQPage` is in — see [The landing FAQ](#the-landing-faq-is-its-own-json-ld).
 
 `robots[.]txt.ts` names `/llms.txt` somewhere a crawler already looks, and carries a `Sitemap:` line
 for `/sitemap.xml` (`routes/sitemap[.]xml.ts`). The sitemap is built per request from

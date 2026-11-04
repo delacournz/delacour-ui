@@ -155,11 +155,17 @@ export const COMPONENT_INDEX_COPY = {
 	link: "Open the index →",
 } as const;
 
+export const FAQ_COPY = {
+	eyebrow: "FAQ",
+	title: "Questions people ask first.",
+	compare: "Weighing it against another library? See the comparisons.",
+} as const;
+
 export const FOOTER_COPY = {
 	line: `${appName} — React Native only. iOS and Android, Expo or bare.`,
 	charts: "Charts",
 	bottomSheet: "Bottom Sheet",
-	compare: "vs HeroUI",
+	compare: "Compare",
 	github: "GitHub",
 	llms: "llms.txt",
 	privacy: "Privacy",

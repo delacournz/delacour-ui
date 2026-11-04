@@ -1,3 +1,4 @@
+import { faqJsonLd } from "./faq";
 import {
 	appDescription,
 	appName,
@@ -266,6 +267,7 @@ export function homeHead(): Head {
 					publisher: PUBLISHER,
 				},
 			},
+			{ "script:ld+json": faqJsonLd() },
 		],
 		links,
 	};

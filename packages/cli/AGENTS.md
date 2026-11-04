@@ -15,7 +15,7 @@ bun run registry:build   # rebuild /registry from packages/react-native-ui
 bun run verify:expo      # scaffold a real Expo app, add everything, typecheck it
 bun run build            # bundle dist/index.js with tsdown
 bun run build:check      # assert the bundle stayed small and executable
-bun run typecheck        # tsc --noEmit (src and scripts)
+bun run typecheck        # bun check --no-script (src and scripts)
 bun run check            # Biome
 bun test                 # unit + end-to-end against the local registry
 ```
@@ -90,7 +90,7 @@ scripts/
 
 ## The eight rules
 
-1. **`src/index.ts` must never reach `scan-imports.ts`.** It imports the whole of `typescript` —
+1. **`src/index.ts` must never reach `scan-imports.ts`.** It imports the whole of `typescript-6` (the TypeScript 6 compiler API, aliased because TypeScript 7 does not export one — see the root `AGENTS.md`, Dependency versions) —
    about ten megabytes — to read type-only imports out of the library's source. That runs at
    *registry build* time, in this repository. If an entry-point module ever imports it, every
    `bunx delacour` pays for it. `scripts/check-bundle.ts` asserts the compiler is absent from the

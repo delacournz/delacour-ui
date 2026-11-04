@@ -12,7 +12,7 @@
 		"build": "vite build",
 		"start": "bun --preload @delacournz/otel-start/preload .output/server/index.mjs",
 		"check": "biome check ./src",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "bun check --no-script",
 		"test": "bun test",
 		"icons": "bun scripts/generate-icons.ts",
 		"screenshots": "bun scripts/screenshots.ts",
@@ -57,7 +57,7 @@
 		"remark": "15.0.1",
 		"remark-mdx": "3.1.1",
 		"tailwindcss": "^4.3.3",
-		"typescript": "^6.0.3",
+		"typescript": "catalog:",
 		"unified": "11.0.5",
 		"unist-util-visit": "5.1.0",
 		"vite": "^8.3.4"

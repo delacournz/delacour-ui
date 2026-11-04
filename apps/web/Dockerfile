@@ -9,7 +9,7 @@
 #
 # Build context: repo root (the service's `dockerfilePath` in delacour-monorepo's
 # apps/ui/infra/railway.ts, trimmed by the root .dockerignore).
-FROM oven/bun:1.3.14 AS build
+FROM oven/bun:1.4.4 AS build
 WORKDIR /repo
 COPY . .
 # The classic `read:packages` PAT bunfig.toml installs `@delacournz/*` with. Railway passes a
@@ -36,7 +36,7 @@ RUN OTEL=node_modules/@delacournz/otel-start && mkdir -p /vendor/$OTEL \
 	&& bun build $OTEL/dist/index.js $OTEL/dist/preload.js --target bun --splitting --outdir /vendor/$OTEL/dist \
 	&& cp $OTEL/package.json /vendor/$OTEL/
 
-FROM oven/bun:1.3.14-slim
+FROM oven/bun:1.4.4-slim
 WORKDIR /app
 COPY --from=build --chown=bun:bun /vendor/node_modules ./node_modules
 COPY --from=build --chown=bun:bun /repo/apps/web/.output ./.output

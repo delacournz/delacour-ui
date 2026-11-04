@@ -32,7 +32,7 @@ Run from the repo root; turbo fans each out across every workspace.
 ```bash
 bun install                # postinstall wires the prek hooks
 bun run dev                # turbo dev — the playground via `warden dev ios`, in practice
-bun run typecheck          # tsc --noEmit everywhere
+bun run typecheck          # bun check (TypeScript 7, built into Bun) everywhere
 bun run check              # Biome lint + format
 bun run lint               # lint only
 bun run fmt                # format only
@@ -263,6 +263,7 @@ Shared native and React versions are pinned once, in the root `package.json`
 react-native-gesture-handler ~3.3.0  react-native-keyboard-controller 1.22.7  react-native-reanimated 4.7.1
 react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.9.0
 react-native-svg 15.16.0  react-native-worklets 0.13.0
+typescript ^7.0.2  typescript-6 npm:typescript@~6.0.3
 ```
 
 Every version here is the one Expo SDK 58 bundles. That is the rule, not a coincidence: `expo
@@ -285,6 +286,51 @@ copies were always installed and only bun's hoisting order decided which one lan
 Rename a package and that order changes — `packages/react-native-ui` then compiled against a different
 `@types/react` from the app, every `ComponentRef<typeof Animated.View>` collapsed to `never`, and
 `tsc` blamed `pressable.tsx`.
+
+`typescript` is catalogued for `@types/react`'s reason — eleven workspaces each pinned it — and is
+the second exception to the SDK rule. It is the native **TypeScript 7** compiler — what an editor
+and a bare `tsc` load. Expo SDK 58 expects `~6.0.3`, so
+`apps/playground` lists `typescript` under `expo.install.exclude` — without it `expo install --check`
+flags it and `--fix` would put 6 back.
+
+**`typecheck` is `bun check`, not `tsc`.** Every workspace's `typecheck` script is
+`bun check --no-script` ([docs](https://bun.com/docs/runtime/check)): TypeScript 7 compiled into Bun,
+reading the same `tsconfig.json` and reporting the same errors as `tsc` 7. A forced
+`turbo typecheck` spends about 6s type checking across the workspaces, where `tsc` 7 spent about 16s
+and `tsc` 6 about 40s — the playground alone went 12.4s → 3.8s → 1.5s. The turbo wall time barely
+moves, because `@delacour/web#codegen`'s `vite build` is its critical path.
+
+- **`--no-script` is not optional.** `bun check` runs a `check` script when the package has one, and
+  every workspace's `check` is Biome. Without the flag, `typecheck` would lint.
+- **Bun ≥ 1.4.4.** 1.4.3 and earlier have no working builtin, pass `--no-script` through to Biome,
+  and fail with `` `--no-script` is not expected in this context `` — run `bun upgrade`. That is
+  also why one Bun version is pinned everywhere: `packageManager`, every workflow's `bun-version`,
+  `apps/web/Dockerfile`, `apps/playground/eas.json` and the EAS workflows.
+- **The checker's TypeScript is Bun's** (`bun -p process.versions.typescript`), not the catalog's.
+  Bump Bun and `typescript` together, or the editor and the gate disagree.
+  `scripts/toolchain.test.ts` fails on any of the three drifting: a Bun pin that differs from
+  `packageManager`, a `typecheck` script that is not `bun check --no-script`, or Bun's TypeScript
+  outside the catalog range.
+- `bun check` loads no language service plugins and never writes a file.
+
+TypeScript 7's npm package no longer exports the classic compiler API: `exports["."]` is only
+`lib/version.cjs`, and `typescript/unstable/*` has no in-process parser — a `SourceFile` comes from a
+`Program` on the Go server, over IPC. Three build-time scripts need `preProcessFile` and
+`createSourceFile`, so they import **`typescript-6`**, an npm alias of `typescript@~6.0.3`, declared
+only where they live:
+
+| File | Uses |
+| --- | --- |
+| `packages/cli/src/registry/scan-imports.ts` | `preProcessFile` — type-only imports and `export type … from`, which `Bun.Transpiler` drops (cli rule 2) |
+| `apps/playground/scripts/previews/demo-source.ts` | `createSourceFile` and the node guards, to read a demo's `meta` and imports |
+| `apps/playground/scripts/previews/spec-source.ts` | the same, to read a spec's `capture` calls |
+
+Write `from "typescript-6"` for the compiler API; `from "typescript"` type-checks as nothing but a
+version string. Drop the alias when `typescript/unstable/ast` grows a synchronous parser.
+
+The one TypeScript that does **not** follow the catalog is the `verify:expo` scaffold's
+(`packages/cli/scripts/verify/harness.ts`): it models a consumer's freshly created Expo app, so it
+pins whatever Expo's template ships.
 
 **Bump a version in the catalog, never in a package.** Two versions of a native
 module register twice and break at runtime — which is also why `react-native-ui`

@@ -14,7 +14,7 @@
  * `meta` may only hold literals.
  */
 
-import ts from "typescript";
+import ts from "typescript-6";
 
 /**
  * What a demo may reach for. Anything else and it has stopped being

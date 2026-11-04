@@ -169,7 +169,7 @@
 	},
 	"scripts": {
 		"check": "biome check ./src",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "bun check --no-script",
 		"test": "bun test --path-ignore-patterns='**/*.render.test.tsx'",
 		"test:render": "jest",
 		"gen-exports": "bun scripts/gen-exports.ts"
@@ -249,6 +249,6 @@
 		"react-native-teleport": "^1.2.2",
 		"tailwind-merge": "^3.6.0",
 		"test-renderer": "^1",
-		"typescript": "~6.0.3"
+		"typescript": "catalog:"
 	}
 }

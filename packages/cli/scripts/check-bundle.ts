@@ -5,7 +5,7 @@ import { join } from "node:path";
  * Guards the two properties the published bundle has to keep.
  *
  * **No TypeScript compiler.** `src/registry/scan-imports.ts` imports the whole
- * of `typescript` to read type-only imports out of the library's source. That
+ * of `typescript-6` (the TypeScript 6 compiler, aliased) to read type-only imports out of the library's source. That
  * runs when the registry is built, in this repository. If an entry-point module
  * ever reaches it, the published tarball grows by about ten megabytes and every
  * `bunx delacour` pays for it.

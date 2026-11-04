@@ -9,7 +9,7 @@ import pkg from "./package.json" with { type: "json" };
  * that download has to resolve and install first, so everything is bundled in
  * and the package ships nothing but `dist`.
  *
- * `typescript` is a build-time dependency only. It powers the registry
+ * `typescript-6` (the TypeScript 6 compiler API) is a build-time dependency only. It powers the registry
  * builder's import scanner, which runs here and never in a consumer's project —
  * and it is roughly ten megabytes, so the entry point must not reach it. The
  * `noExternal` rule below cannot save us from that; keeping

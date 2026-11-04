@@ -9,6 +9,10 @@
 		"url": "git+https://github.com/delacournz/delacour-ui.git",
 		"directory": "packages/cli"
 	},
+	"homepage": "https://ui.delacour.co.nz/docs/native/cli",
+	"bugs": {
+		"url": "https://github.com/delacournz/delacour-ui/issues"
+	},
 	"keywords": [
 		"expo",
 		"react-native",

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
-import { Avatar } from "./avatar";
+import { Avatar, type AvatarProps } from "./avatar";
 import { useAvatar } from "./avatar.context";
 
 const PHOTO = { uri: "https://example.com/aria.png" };
@@ -92,6 +92,16 @@ describe("Avatar", () => {
 			expect(screen.queryByTestId("photo")).not.toBeOnTheScreen();
 		});
 
+		test("imageProps takes no source override, so source alone drives the request and the retry key", () => {
+			const overrides: NonNullable<AvatarProps["imageProps"]>[] = [
+				// @ts-expect-error `src` would win over `source` and skip the retry key.
+				{ src: "https://example.com/other.png" },
+				// @ts-expect-error `srcSet` would win over `source` and skip the retry key.
+				{ srcSet: "https://example.com/other.png 1x" },
+			];
+			expect(overrides).toHaveLength(2);
+		});
+
 		test("imageProps are forwarded to the image", async () => {
 			await renderWithProviders(
 				<Avatar imageProps={{ accessibilityLabel: "portrait", testID: "photo" }} name="Aria Whitlock" source={PHOTO} />
@@ -117,6 +127,17 @@ describe("Avatar", () => {
 			await fireEvent(screen.getByTestId("photo"), "error", { nativeEvent: { error: "404" } });
 			await view.rerender(<Avatar imageProps={{ testID: "photo" }} name="Aria Whitlock" source={{ uri: PHOTO.uri }} />);
 			expect(screen.queryByTestId("photo")).not.toBeOnTheScreen();
+		});
+
+		test("a new source mounts a new image, so a late error from the old one cannot fail it", async () => {
+			const view = await renderWithProviders(
+				<Avatar imageProps={{ testID: "photo" }} name="Aria Whitlock" source={PHOTO} />
+			);
+			const expired = screen.getByTestId("photo");
+			await view.rerender(<Avatar imageProps={{ testID: "photo" }} name="Aria Whitlock" source={OTHER_PHOTO} />);
+			expect(screen.getByTestId("photo")).not.toBe(expired);
+			await fireEvent(expired, "error", { nativeEvent: { error: "expired" } });
+			expect(screen.getByTestId("photo")).toBeOnTheScreen();
 		});
 
 		test("a different source is tried again", async () => {
@@ -152,6 +173,11 @@ describe("Avatar", () => {
 			} finally {
 				Platform.OS = original;
 			}
+		});
+
+		test("a pressable avatar with no name, fallback or label is still named", async () => {
+			await renderWithProviders(<Avatar onPress={jest.fn()} />);
+			expect(screen.getByRole("button", { name: "Avatar" })).toBeOnTheScreen();
 		});
 
 		test("isDisabled is announced and blocks onPress and onLongPress", async () => {
@@ -199,6 +225,16 @@ describe("Avatar", () => {
 			await renderWithProviders(
 				<Avatar name="Aria Whitlock">
 					<Avatar.Badge testID="dot" />
+				</Avatar>
+			);
+			expect(screen.getByTestId("dot")).toHaveProp("pointerEvents", "none");
+		});
+
+		test("an Avatar.Badge given a 0 from a conditional count is a dot, not a raw 0", async () => {
+			const unread = 0;
+			await renderWithProviders(
+				<Avatar name="Aria Whitlock">
+					<Avatar.Badge testID="dot">{unread && <Text>{unread}</Text>}</Avatar.Badge>
 				</Avatar>
 			);
 			expect(screen.getByTestId("dot")).toHaveProp("pointerEvents", "none");

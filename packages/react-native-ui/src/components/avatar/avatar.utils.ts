@@ -13,9 +13,9 @@ import { Children, cloneElement, Fragment, isValidElement, type ReactElement, ty
 export type AvatarSourceCache = "default" | "reload" | "force-cache" | "only-if-cached";
 
 /**
- * A URI request, as `Image` accepts it. Holds only the fields that change what
- * is fetched. `width`, `height` and `scale` are left out: they pick an entry,
- * they do not change the request.
+ * A URI request, as `Image` accepts it. Holds the fields that change what is
+ * fetched, and `width`, `height` and `scale`, which pick the entry of a
+ * multi-resolution list that is fetched.
  */
 export type AvatarSourceRequest = {
 	uri?: string | null;
@@ -24,6 +24,9 @@ export type AvatarSourceRequest = {
 	headers?: Readonly<Record<string, string>> | null;
 	body?: string | null;
 	cache?: AvatarSourceCache | null;
+	width?: number | null;
+	height?: number | null;
+	scale?: number | null;
 };
 
 /** One entry of an image source, as `Image` accepts it — a URI request or a bundled asset's module id. */
@@ -47,10 +50,12 @@ function initialOf(word: string): string {
  *
  * Walks code points rather than UTF-16 units, so a letter outside the basic
  * plane is kept whole instead of drawn as a replacement box, and skips leading
- * punctuation so a quoted nickname still gives a letter.
+ * punctuation so a quoted nickname still gives a letter. The name is put in
+ * NFC form first: in NFD form, as servers and macOS input often send it,
+ * `É` is `E` plus a combining accent, and only the `E` would be kept.
  */
 export function resolveAvatarInitials(name: string | undefined): string {
-	const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+	const words = (name ?? "").normalize("NFC").trim().split(/\s+/).filter(Boolean);
 	if (words.length === 0) return "";
 	const first = initialOf(words[0] ?? "");
 	const last = words.length > 1 ? initialOf(words[words.length - 1] ?? "") : "";
@@ -70,6 +75,9 @@ function entryKey(entry: AvatarSourceEntry): unknown {
 		headers,
 		entry.body ?? null,
 		entry.cache ?? null,
+		entry.width ?? null,
+		entry.height ?? null,
+		entry.scale ?? null,
 	];
 }
 
@@ -81,17 +89,22 @@ function entryKey(entry: AvatarSourceEntry): unknown {
  * keyed by identity, a failed image would retry forever. Keyed by URI alone, a
  * token refresh in the headers would never retry at all. Every field that
  * changes the request is part of the key, including `cache`, so a cache miss
- * retries when the cache mode changes. The key is a JSON array, so no value can
+ * retries when the cache mode changes. So are `width`, `height` and `scale`:
+ * with the same URIs, new dimensions can pick another entry of a list. The key is a JSON array, so no value can
  * look like a separator, and header order is normalised so an equal request is
  * an equal key.
  *
  * `null` means there is nothing to load.
  */
-export function resolveAvatarSourceKey(source: AvatarSource | null | undefined): string | null {
+export function resolveAvatarSourceKey(
+	source: AvatarSource | null | undefined,
+	{ edge }: { edge?: number } = {}
+): string | null {
 	if (source === null || source === undefined) return null;
 	const entries: readonly AvatarSourceEntry[] = Array.isArray(source) ? source : [source as AvatarSourceEntry];
 	const keys = entries.map(entryKey).filter((key) => key !== null);
-	return keys.length === 0 ? null : JSON.stringify(keys);
+	if (keys.length === 0) return null;
+	return JSON.stringify(keys.length > 1 && edge !== undefined ? [...keys, ["edge", edge]] : keys);
 }
 
 /**
@@ -150,6 +163,17 @@ export function flattenAvatarChildren(children: ReactNode): ReactElement[] {
 	});
 }
 
+/**
+ * Whether an `Avatar.Badge` has something to pin, or is a presence dot.
+ *
+ * Only an element counts. `{unread && <Badge />}` with `unread = 0` passes a
+ * raw `0`, and a raw string or number in a `View` throws on native. So `0`,
+ * `""` and other non-elements mean the dot.
+ */
+export function resolveAvatarBadgeHasContent(children: ReactNode): boolean {
+	return Children.toArray(children).some(isValidElement);
+}
+
 /** The most the overflow tile draws before it reads `99+`. Three digits do not fit a small circle. */
 export const AVATAR_OVERFLOW_DISPLAY_MAX = 99;
 
@@ -166,23 +190,31 @@ export function resolveAvatarOverflowLabel(overflow: number): { text: string; ac
 	};
 }
 
+/** What a pressable avatar is called when it has no label, name or fallback. */
+export const AVATAR_BUTTON_FALLBACK_LABEL = "Avatar";
+
 /**
  * The name a screen reader gives the avatar: an explicit label, else the
  * person's name, else the fallback text. Blank strings count as absent, so an
  * avatar with nothing to say is not announced as an empty image.
+ *
+ * A pressable avatar always has a name. With nothing else to read it is
+ * {@link AVATAR_BUTTON_FALLBACK_LABEL}, so it is never announced as only "button".
  */
 export function resolveAvatarAccessibilityLabel({
 	accessibilityLabel,
 	name,
 	fallback,
+	isInteractive = false,
 }: {
 	accessibilityLabel?: string;
 	name?: string;
 	fallback?: string;
+	isInteractive?: boolean;
 }): string | undefined {
 	for (const candidate of [accessibilityLabel, name, fallback]) {
 		const trimmed = candidate?.trim();
 		if (trimmed) return trimmed;
 	}
-	return undefined;
+	return isInteractive ? AVATAR_BUTTON_FALLBACK_LABEL : undefined;
 }

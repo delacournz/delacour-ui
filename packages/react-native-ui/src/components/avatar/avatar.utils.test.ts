@@ -1,8 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { createElement, Fragment } from "react";
 import {
+	AVATAR_BUTTON_FALLBACK_LABEL,
 	flattenAvatarChildren,
 	resolveAvatarAccessibilityLabel,
+	resolveAvatarBadgeHasContent,
 	resolveAvatarGroup,
 	resolveAvatarInitials,
 	resolveAvatarOverflowLabel,
@@ -34,6 +36,10 @@ describe("resolveAvatarInitials", () => {
 	test("never splits a letter outside the basic plane", () => {
 		// A naive `word[0]` would take half of a surrogate pair and draw a box.
 		expect(resolveAvatarInitials("𝒜ria 𝒲hitlock")).toBe("𝒜𝒲");
+	});
+
+	test("keeps an accent from a decomposed (NFD) name", () => {
+		expect(resolveAvatarInitials("E\u0301mile Zola")).toBe("\u00C9Z");
 	});
 
 	test("keeps letters in scripts with no case", () => {
@@ -87,6 +93,32 @@ describe("resolveAvatarSourceKey", () => {
 		expect(resolveAvatarSourceKey([{ uri: "https://a.test/1.png|uri:https://a.test/2.png" }])).not.toBe(
 			resolveAvatarSourceKey([{ uri: "https://a.test/1.png" }, { uri: "https://a.test/2.png" }])
 		);
+	});
+
+	test("changes when entry dimensions change, so a list that picks another uri can retry", () => {
+		const before = resolveAvatarSourceKey([
+			{ uri: "https://a.test/1x.png", width: 40, height: 40 },
+			{ uri: "https://a.test/2x.png", width: 80, height: 80 },
+		]);
+		const swapped = resolveAvatarSourceKey([
+			{ uri: "https://a.test/1x.png", width: 80, height: 80 },
+			{ uri: "https://a.test/2x.png", width: 40, height: 40 },
+		]);
+		expect(before).not.toBe(swapped);
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", scale: 1 })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", scale: 2 })
+		);
+	});
+
+	test("changes with the face's edge for a list, so a failure at one size does not block another resolution", () => {
+		const list = [{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/3x.png" }];
+		expect(resolveAvatarSourceKey(list, { edge: 32 })).not.toBe(resolveAvatarSourceKey(list, { edge: 96 }));
+	});
+
+	test("ignores the edge for a single source, which loads the same image at every size", () => {
+		const one = { uri: "https://a.test/1.png" };
+		expect(resolveAvatarSourceKey(one, { edge: 32 })).toBe(resolveAvatarSourceKey(one, { edge: 96 }));
+		expect(resolveAvatarSourceKey([one], { edge: 32 })).toBe(resolveAvatarSourceKey([one], { edge: 96 }));
 	});
 
 	test("changes when the uri changes", () => {
@@ -186,6 +218,12 @@ describe("resolveAvatarOverflowLabel", () => {
 });
 
 describe("resolveAvatarAccessibilityLabel", () => {
+	test("a pressable avatar with nothing to read gets a generic name, never a bare button", () => {
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true })).toBe(AVATAR_BUTTON_FALLBACK_LABEL);
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true, name: " " })).toBe(AVATAR_BUTTON_FALLBACK_LABEL);
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true, name: "Aria Whitlock" })).toBe("Aria Whitlock");
+	});
+
 	test("prefers the name", () => {
 		expect(resolveAvatarAccessibilityLabel({ name: "Aria Whitlock", fallback: "AW" })).toBe("Aria Whitlock");
 	});
@@ -201,6 +239,19 @@ describe("resolveAvatarAccessibilityLabel", () => {
 
 	test("an explicit label wins over both", () => {
 		expect(resolveAvatarAccessibilityLabel({ accessibilityLabel: "You", name: "Aria Whitlock" })).toBe("You");
+	});
+});
+
+describe("resolveAvatarBadgeHasContent", () => {
+	test("is false for nothing to pin, including a 0 or an empty string from a conditional", () => {
+		for (const children of [undefined, null, false, true, 0, "", [0, ""]]) {
+			expect(resolveAvatarBadgeHasContent(children)).toBe(false);
+		}
+	});
+
+	test("is true when there is an element to pin", () => {
+		expect(resolveAvatarBadgeHasContent(createElement("Badge"))).toBe(true);
+		expect(resolveAvatarBadgeHasContent([0, createElement("Badge", { key: "badge" })])).toBe(true);
 	});
 });
 

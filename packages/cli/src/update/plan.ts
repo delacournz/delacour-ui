@@ -49,7 +49,18 @@ export type UpdatePlan = {
 	/** Every item in scope that the registry still has, closure included. */
 	items: LoadedItem[];
 	files: UpdateFile[];
+	/**
+	 * Dependencies of a held item that the project does not hold and had when it copied the item —
+	 * removed on purpose, so not added. `include` adds them.
+	 */
+	missing: MissingItem[];
+	/** Items whose tests were left out because they render a component the project does not hold. */
+	testsLeftOut: { item: string; needs: string[] }[];
+	/** The items `include` brought in, their new dependencies with them. */
+	included: string[];
 };
+
+export type MissingItem = { name: string; neededBy: string[] };
 
 export type PlanInput = {
 	config: ResolvedConfig;
@@ -70,33 +81,14 @@ export type PlanInput = {
 	 * tests keeps them current, and one that did not is not handed any.
 	 */
 	tests?: boolean;
+	/** Items the project does not hold to add anyway — chosen from `missing` by a person. */
+	include?: readonly string[];
 };
 
 export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 	const { config, lock, target } = input;
 	const index = await target.getIndex();
 	const byName = new Map(index.items.map((item) => [item.name, item]));
-
-	const candidates =
-		input.names.length > 0
-			? [...input.names]
-			: [...new Set([...Object.keys(lock.items), ...(await installedItems(index.items, config))])];
-
-	// An item the lock knows and the registry has since dropped is not an unknown
-	// name: every file of it is simply no longer upstream.
-	const dropped = candidates.filter((name) => !byName.has(name) && lock.items[name] !== undefined);
-	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T =>
-		input.tests || hasTests(lock, item.name) ? withTests(item, config.testRunner) : item;
-	const order = resolveItemGraph(
-		candidates.filter((name) => !dropped.includes(name)),
-		(name) => {
-			const entry = byName.get(name);
-			return entry && scope(entry);
-		}
-	);
-
-	const items = await Promise.all(order.map(async (name) => target.loadItem(scope(await target.getItem(name)))));
-	const planned = await planFiles(items, config);
 	const clients = new Map<string, RegistryClient>();
 	const clientAt = (ref: string) => {
 		let client = clients.get(ref);
@@ -108,6 +100,72 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 
 		return client;
 	};
+
+	const held = new Set([...Object.keys(lock.items), ...(await installedItems(index.items, config))]);
+	const candidates = input.names.length > 0 ? [...input.names] : [...held];
+	const chosen = new Set([...input.names, ...(input.include ?? [])]);
+	const allowed = (name: string) => held.has(name) || chosen.has(name);
+
+	// What each held item depended on when it was copied. A dependency it had then and the project
+	// does not hold now was removed on purpose — an icon set swapped for another — and stays out; one
+	// it gained since is new, and comes with the update.
+	const earlier = new Map(
+		await Promise.all(
+			[...held]
+				.filter((name) => byName.has(name))
+				.map(async (name) => [name, await dependenciesWhenCopied(lock, name, clientAt)] as const)
+		)
+	);
+
+	const missing = new Map<string, Set<string>>();
+	const testsLeftOut = new Map<string, string[]>();
+
+	// Tests are scoped like files: a suite that renders a component the project does not hold is left
+	// out rather than bringing that component in. The test kit is the exception — it is what the suites run on.
+	const narrow = <T extends RegistryItem | RegistryIndexEntry>(item: T): T => {
+		let scoped = item;
+
+		if (input.tests || hasTests(lock, item.name)) {
+			const unheld = (names: readonly string[]) => names.filter((name) => !allowed(name) && name !== TEST_KIT);
+			const logic = unheld(item.testRegistryDependencies);
+			const render = config.testRunner === "jest" ? unheld(item.renderTestRegistryDependencies) : [];
+			const needs = [...new Set([...logic, ...render])].sort();
+
+			if (needs.length > 0) testsLeftOut.set(item.name, needs);
+			scoped = withTests(item, config.testRunner, { tests: logic.length === 0, renderTests: render.length === 0 });
+		}
+
+		if (!held.has(item.name)) return scoped;
+
+		const before = earlier.get(item.name) ?? null;
+		const keep = (dependency: string) =>
+			allowed(dependency) || dependency === TEST_KIT || (before !== null && !before.has(dependency));
+		const dropped = scoped.registryDependencies.filter((dependency) => !keep(dependency));
+
+		for (const dependency of dropped) {
+			const neededBy = missing.get(dependency) ?? new Set<string>();
+			neededBy.add(item.name);
+			missing.set(dependency, neededBy);
+		}
+
+		return { ...scoped, registryDependencies: scoped.registryDependencies.filter(keep) };
+	};
+
+	// An item the lock knows and the registry has since dropped is not an unknown
+	// name: every file of it is simply no longer upstream.
+	const dropped = candidates.filter((name) => !byName.has(name) && lock.items[name] !== undefined);
+	const lookup = (name: string) => {
+		const entry = byName.get(name);
+		return entry && narrow(entry);
+	};
+	const order = resolveItemGraph(
+		candidates.filter((name) => !dropped.includes(name)),
+		lookup
+	);
+	const included = input.include ? resolveItemGraph(input.include, lookup).filter((name) => !held.has(name)) : [];
+
+	const items = await Promise.all(order.map(async (name) => target.loadItem(narrow(await target.getItem(name)))));
+	const planned = await planFiles(items, config);
 
 	const present = await Promise.all(
 		planned.map(async (file): Promise<UpdateFile> => {
@@ -151,7 +209,42 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 		)
 	);
 
-	return { ref: input.ref, items, files: [...present, ...gone.filter((file) => file !== null)] };
+	return {
+		ref: input.ref,
+		items,
+		files: [...present, ...gone.filter((file) => file !== null)],
+		missing: [...missing]
+			.filter(([name]) => !order.includes(name))
+			.map(([name, neededBy]) => ({ name, neededBy: [...neededBy].sort() }))
+			.sort((a, b) => a.name.localeCompare(b.name)),
+		testsLeftOut: [...testsLeftOut]
+			.map(([item, needs]) => ({ item, needs }))
+			.sort((a, b) => a.item.localeCompare(b.item)),
+		included,
+	};
+}
+
+/** The item the render tests run on, which a project that takes tests gets whether or not it held it. */
+const TEST_KIT = "test-kit";
+
+/**
+ * The registry dependencies an item had at the ref the project copied it from, or `null` when that
+ * cannot be had — no lock entry, the ref gone, offline. `null` is read as "it had them all": an
+ * update never adds what it cannot show is new.
+ */
+async function dependenciesWhenCopied(
+	lock: Lock,
+	item: string,
+	clientAt: (ref: string) => RegistryClient
+): Promise<ReadonlySet<string> | null> {
+	const ref = Object.values(lock.items[item]?.files ?? {})[0]?.ref;
+	if (!ref) return null;
+
+	try {
+		return new Set((await clientAt(ref).getItem(item)).registryDependencies);
+	} catch {
+		return null;
+	}
 }
 
 /** Whether the project copied any of this item's tests — the lock is the only record of that choice. */

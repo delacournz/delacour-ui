@@ -38,6 +38,7 @@ npx delacour@latest doctor
 | Changed by both, on different lines | Merges the two |
 | Changed by both, on the same lines | Writes both sides between conflict markers, and exits `1` |
 | New to the component | Writes it |
+| A component it needs that you removed | Leaves it out, and says so |
 | Dropped from the component | Leaves it and says so. `--prune` deletes it, if you never edited it |
 
 What makes this possible is [`native-components.lock.json`](/docs/native/cli/configuration#the-lock-file):

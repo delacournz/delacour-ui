@@ -352,6 +352,18 @@ again. Not asked when names are passed, under `--dry-run`, or when `output.inter
 those take every change, as before. Escape chooses none. The second, untracked pass reuses the
 first pass's choice (`UpdateOptions.selected`) rather than asking again.
 
+**`update` never adds an item the project does not hold, unless it is new.** `planUpdate` scopes
+the walk to what the lock and the disk hold (`held`). A held item's dependency outside that set is
+added only when the item did not have it at the ref its lock entry names (`dependenciesWhenCopied`)
+— the registry introduced it, so the update needs it. One the item already had was removed on
+purpose (a project that swapped the central icon set for Lucide deletes `icons`), so it lands in
+`plan.missing`, is printed with the `add` command, and is offered **unticked** in the picker; ticking
+one re-plans with `include`. Unknown — no lock entry, the ref gone — reads as "already had". Tests
+are scoped the same way: `withTests(item, runner, parts)` folds an item's logic or render suites
+only when every component they render is held (`test-kit` excepted), and the rest are reported as
+`testsLeftOut`. Without this, turning tests on pulled `checkbox`, `slider` and `switch` in as whole
+components because `field`'s render test renders them.
+
 `UpdateClients.askUntracked` is the seam `test/update.test.ts` answers through, for the same reason
 the registry clients are injected: a prompt cannot be driven offline.
 

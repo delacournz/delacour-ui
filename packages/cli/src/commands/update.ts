@@ -12,7 +12,7 @@ import { createRegistryClient, type RegistryClient } from "../registry/client";
 import { DEFAULT_REGISTRY_REF } from "../registry/source";
 import { createOutput, type Output, style } from "../ui/output";
 import { type Decision, decide, type UpdateAction } from "../update/decide";
-import { planUpdate, shortRef, type UpdateFile, type UpdatePlan } from "../update/plan";
+import { type MissingItem, planUpdate, shortRef, type UpdateFile, type UpdatePlan } from "../update/plan";
 import { type ComponentChange, componentChanges, describeChange, onlySelected } from "../update/select";
 import { type ChoosePackages, settleDependencies } from "./add";
 import { type AskConfig, type ConfigUpgrade, promptConfig, upgradeConfig } from "./config-upgrade";
@@ -70,6 +70,8 @@ export type UpdateOptions = {
 	 * again. Not a flag — set from the answer to the component question.
 	 */
 	selected?: readonly string[];
+	/** Components the project does not hold to add anyway. Not a flag — set from the component question. */
+	include?: readonly string[];
 	/** Leave config fields an older config predates unchosen rather than defaulting them — the MCP server's choice. */
 	leaveConfig?: boolean;
 	/**
@@ -109,6 +111,10 @@ export type UpdateResult = {
 	installed: boolean;
 	/** What became of `native-components.json` itself — see `config-upgrade.ts`. */
 	config: ConfigUpgrade;
+	/** Components the project's components need but it does not hold, and that were left out — see `plan.ts`. */
+	missing: MissingItem[];
+	/** Components whose tests were left out, and what those tests render that the project does not hold. */
+	testsLeftOut: { item: string; needs: string[] }[];
 };
 
 /** What to do with the files a run skipped for having no lock entry. */
@@ -123,8 +129,14 @@ export type UpdateClients = {
 	askUntracked?: (files: readonly string[]) => Promise<UntrackedAnswer>;
 	/** Asks about the config fields an older `native-components.json` predates. */
 	askConfig?: AskConfig;
-	/** Picks the components to update from those with changes. The prompt, unless a test answers instead. */
-	chooseComponents?: (changes: readonly ComponentChange[]) => Promise<readonly string[] | null>;
+	/**
+	 * Picks the components to update from those with changes, and any missing ones to add. The
+	 * prompt, unless a test answers instead.
+	 */
+	chooseComponents?: (
+		changes: readonly ComponentChange[],
+		missing: readonly MissingItem[]
+	) => Promise<readonly string[] | null>;
 	/** Picks which missing packages to install. */
 	choosePackages?: ChoosePackages;
 };
@@ -192,6 +204,19 @@ async function runUpdate(
 	const selected = options.selected
 		? new Set(options.selected)
 		: await chooseComponents(decideAll(new Set()), plan, names, options, output, clients);
+	// A missing component someone ticked is planned again with it in scope, and its own new dependencies with it.
+	const adding = selected === null ? [] : plan.missing.map((entry) => entry.name).filter((name) => selected.has(name));
+	if (adding.length > 0 && !options.include) {
+		const replanned = await readPlan(names, { ...options, include: adding }, output, clients);
+		return runUpdate(
+			names,
+			{ ...options, include: adding, selected: [...(selected ?? []), ...replanned.plan.included] },
+			output,
+			configUpgrade,
+			clients
+		);
+	}
+
 	const inScope = (item: string) => selected === null || selected.has(item);
 
 	const unsafe = await unsafeToMerge(
@@ -222,6 +247,8 @@ async function runUpdate(
 		dependencies: null,
 		installed: false,
 		config: configUpgrade,
+		missing: plan.missing,
+		testsLeftOut: plan.testsLeftOut,
 	};
 
 	const chosen = selected === null ? undefined : [...selected];
@@ -271,9 +298,9 @@ async function chooseComponents(
 
 	const onDisk = new Set(plan.files.filter((file) => file.local !== null).map((file) => file.item));
 	const changes = componentChanges(decided, plan.items, onDisk);
-	if (changes.length === 0) return null;
+	if (changes.length === 0 && plan.missing.length === 0) return null;
 
-	const picked = await ask(changes);
+	const picked = await ask(changes, plan.missing);
 	return new Set(picked ?? []);
 }
 
@@ -285,26 +312,40 @@ const VERB: Partial<Record<UpdateAction, string>> = {
 	deleted: "delete",
 };
 
-async function promptComponents(changes: readonly ComponentChange[]): Promise<readonly string[] | null> {
-	const width = Math.max(...changes.flatMap((change) => change.files.map((file) => (VERB[file.action] ?? "").length)));
-
-	clack.log.message(
-		changes
-			.map((change) =>
-				[
-					`${style.code(change.item)}  ${style.dim(describeChange(change))}`,
-					...change.files.map(
-						(file) =>
-							`  ${paint(file.action)((VERB[file.action] ?? file.action).padEnd(width))}  ${file.path}  ${style.dim(`+${file.added} −${file.removed}`)}`
-					),
-				].join("\n")
-			)
-			.join("\n\n")
+async function promptComponents(
+	changes: readonly ComponentChange[],
+	missing: readonly MissingItem[]
+): Promise<readonly string[] | null> {
+	const width = Math.max(
+		0,
+		...changes.flatMap((change) => change.files.map((file) => (VERB[file.action] ?? "").length))
 	);
+
+	if (changes.length > 0)
+		clack.log.message(
+			changes
+				.map((change) =>
+					[
+						`${style.code(change.item)}  ${style.dim(describeChange(change))}`,
+						...change.files.map(
+							(file) =>
+								`  ${paint(file.action)((VERB[file.action] ?? file.action).padEnd(width))}  ${file.path}  ${style.dim(`+${file.added} −${file.removed}`)}`
+						),
+					].join("\n")
+				)
+				.join("\n\n")
+		);
 
 	const picked = await clack.multiselect({
 		message: `Update which components? ${style.dim("space toggles · enter confirms · delacour diff <name> shows the lines")}`,
-		options: changes.map((change) => ({ value: change.item, label: change.item, hint: describeChange(change) })),
+		options: [
+			...changes.map((change) => ({ value: change.item, label: change.item, hint: describeChange(change) })),
+			...missing.map((entry) => ({
+				value: entry.name,
+				label: entry.name,
+				hint: `not in this project · add it · needed by ${entry.neededBy.join(", ")}`,
+			})),
+		],
 		initialValues: changes.map((change) => change.item),
 		required: false,
 	});
@@ -349,7 +390,10 @@ async function promptUntracked(files: readonly string[]): Promise<UntrackedAnswe
 }
 
 /** What reading a plan needs of the options — the part `diff` shares. */
-export type PlanOptions = Pick<UpdateOptions, "cwd" | "base" | "format" | "offline" | "ref" | "registry" | "tests">;
+export type PlanOptions = Pick<
+	UpdateOptions,
+	"cwd" | "base" | "format" | "offline" | "ref" | "registry" | "tests" | "include"
+>;
 
 /**
  * Reads the project and the registry into a plan.
@@ -382,6 +426,7 @@ export async function readPlan(
 			format,
 			baseRef: options.base,
 			tests: options.tests ?? config.testsEnabled,
+			...(options.include ? { include: options.include } : {}),
 		})
 	);
 
@@ -495,6 +540,8 @@ function finish(result: UpdateResult, options: UpdateOptions, output: Output): U
 
 	if (output.silent) return result;
 
+	reportLeftOut(result, output);
+
 	const shown = result.files.filter((file) => file.action !== "current" && file.action !== "adopted");
 	const quiet = result.files.length - shown.length;
 	const at = style.code(shortRef(result.ref));
@@ -555,6 +602,35 @@ function finish(result: UpdateResult, options: UpdateOptions, output: Output): U
 	}
 
 	return result;
+}
+
+/**
+ * What the update did not bring in. A component that needs one the project does not hold is not a
+ * mistake to fix — it is usually a swap the project made — so this is a note with the command, not a warning.
+ */
+function reportLeftOut(result: UpdateResult, output: Output): void {
+	if (result.missing.length > 0) {
+		output.info(
+			[
+				"Not in this project, so not added:",
+				...result.missing.map(
+					(entry) => `  ${style.code(entry.name)}  ${style.dim(`needed by ${entry.neededBy.join(", ")}`)}`
+				),
+				`Add one with ${style.code(`delacour add ${result.missing[0]?.name ?? "<name>"}`)} if you want it back.`,
+			].join("\n")
+		);
+	}
+
+	if (result.testsLeftOut.length > 0) {
+		output.info(
+			[
+				"Tests left out — they render components this project does not hold:",
+				...result.testsLeftOut.map(
+					(entry) => `  ${style.code(entry.item)}  ${style.dim(`needs ${entry.needs.join(", ")}`)}`
+				),
+			].join("\n")
+		);
+	}
 }
 
 function paint(action: UpdateAction): (text: string) => string {

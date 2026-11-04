@@ -179,27 +179,35 @@ export function toIndexEntry(item: RegistryItem): RegistryIndexEntry {
  * then treats a test like any other file, which is the point: a copied test is
  * the consumer's from then on, recorded and updated exactly as the source is.
  */
-export function withTests<T extends RegistryItem | RegistryIndexEntry>(item: T, runner: TestRunner = "bun"): T {
-	const jest = runner === "jest";
-	const tests = "tests" in item ? item.tests : [];
+export function withTests<T extends RegistryItem | RegistryIndexEntry>(
+	item: T,
+	runner: TestRunner = "bun",
+	parts: TestParts = { tests: true, renderTests: true }
+): T {
+	const jest = runner === "jest" && parts.renderTests;
+	const logic = parts.tests;
+	const tests = logic && "tests" in item ? item.tests : [];
 	const renderTests = jest && "renderTests" in item ? item.renderTests : [];
 	// The registry records `bun:test` as Bun's types; a project on another
 	// runner gets the suites rewritten for it, and that runner's packages instead.
-	const testDependencies = item.testDependencies.flatMap((name) =>
-		name === BUN_TEST_TYPES ? testRunnerPackages(runner) : [name]
-	);
+	const testDependencies = logic
+		? item.testDependencies.flatMap((name) => (name === BUN_TEST_TYPES ? testRunnerPackages(runner) : [name]))
+		: [];
 
 	return {
 		...item,
 		...("files" in item && "tests" in item ? { files: [...item.files, ...tests, ...renderTests] } : {}),
 		registryDependencies: union(
 			item.registryDependencies,
-			item.testRegistryDependencies,
+			logic ? item.testRegistryDependencies : [],
 			jest ? item.renderTestRegistryDependencies : []
 		),
 		devDependencies: union(item.devDependencies, testDependencies, jest ? item.renderTestDependencies : []),
 	};
 }
+
+/** Which of an item's suites `withTests` folds in — `update` leaves out one whose components the project does not hold. */
+export type TestParts = { tests: boolean; renderTests: boolean };
 
 /** What `skipsRenderTests` reads — satisfied by an item, an index entry and a loaded item alike. */
 type RenderTestSource = {

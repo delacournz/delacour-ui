@@ -401,7 +401,14 @@ take:
 │  ◼ spinner
 ```
 
-Everything is ticked. A component you untick is reported as skipped and is not recorded in the
+A component the project's components need but it does not hold — one you deleted, say, after
+swapping the icon set for another — is listed too, unticked, as *not in this project*. `update`
+never adds one on its own; tick it to add it. A dependency the registry introduced since you copied
+the component is the exception: that one is new, so it is offered ticked like any other change.
+Tests follow the same rule: a suite that renders a component you do not hold is left out, not given
+that component.
+
+Everything else is ticked. A component you untick is reported as skipped and is not recorded in the
 lock, so the next `update` offers it again. `delacour diff <name>` prints the lines themselves.
 Naming components (`update icon`), `--yes`, `--json` and a run with nobody to ask take every change
 without the list; packages a taken component needs are then offered the same way `add` offers them.

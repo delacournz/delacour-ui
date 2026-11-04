@@ -8,7 +8,7 @@ import { diff } from "../src/commands/diff";
 import { type UpdateClients, type UpdateOptions, type UpdateResult, update } from "../src/commands/update";
 import { CONFIG_VERSION } from "../src/config/schema";
 import { contentHash } from "../src/lock/hash";
-import { lockPath, readLock } from "../src/lock/lock";
+import { lockPath, readLock, writeLock } from "../src/lock/lock";
 import type { Format } from "../src/project/formatter";
 import { createRegistryClient } from "../src/registry/client";
 import { adaptTest } from "../src/registry/test-runner";
@@ -86,7 +86,26 @@ type FixtureItem = {
 	files: Record<string, string>;
 	/** The same, for the item's tests. */
 	tests?: Record<string, string>;
+	testRegistryDependencies?: string[];
 };
+
+const CHIP_V1 = 'export const Chip = "chip";\n';
+const CHIP_V2 = 'export const Chip = "chip, v2";\n';
+const GLYPH = 'export const Glyph = "glyph";\n';
+const METER_TEST = 'import { test } from "bun:test";\n\ntest("meter", () => {});\n';
+/** An item the project already depended on when it copied `chip`, and could have swapped out since. */
+const CHIP_ITEMS = (chip: string): FixtureItem[] => [
+	{ name: "chip", type: "registry:ui", registryDependencies: ["glyph"], files: { "ui/chip/chip.tsx": chip } },
+	{ name: "glyph", type: "registry:lib", files: { "lib/glyph.ts": GLYPH } },
+	{
+		name: "meter",
+		type: "registry:ui",
+		files: { "ui/meter/meter.tsx": "export const Meter = null;\n" },
+		tests: { "ui/meter/meter.test.ts": METER_TEST },
+		testRegistryDependencies: ["slide"],
+	},
+	{ name: "slide", type: "registry:ui", files: { "ui/slide/slide.tsx": "export const Slide = null;\n" } },
+];
 
 const V1: FixtureItem[] = [
 	{
@@ -99,6 +118,7 @@ const V1: FixtureItem[] = [
 	{ name: "badge", type: "registry:ui", files: { "ui/badge/badge.tsx": BADGE } },
 	{ name: "cn", type: "registry:lib", files: { "lib/cn.ts": CN } },
 	{ name: "guide", type: "registry:ui", files: { "ui/guide/guide.tsx": GUIDE, [GUIDE_DOC_KEY]: GUIDE_DOC_V1 } },
+	...CHIP_ITEMS(CHIP_V1),
 ];
 
 const V2: FixtureItem[] = [
@@ -113,6 +133,7 @@ const V2: FixtureItem[] = [
 	{ name: "cn", type: "registry:lib", files: { "lib/cn.ts": CN } },
 	{ name: "tag", type: "registry:ui", files: { "ui/tag/tag.tsx": "export const Tag = null;\n" } },
 	{ name: "guide", type: "registry:ui", files: { "ui/guide/guide.tsx": GUIDE, [GUIDE_DOC_KEY]: GUIDE_DOC_V2 } },
+	...CHIP_ITEMS(CHIP_V2),
 ];
 
 const CARD = "src/components/ui/card/card.tsx";
@@ -151,6 +172,7 @@ async function buildRegistry(root: string, items: readonly FixtureItem[]): Promi
 		registryDependencies: item.registryDependencies ?? [],
 		files: Object.keys(item.files).map(toFile),
 		tests: Object.keys(item.tests ?? {}).map(toFile),
+		...(item.testRegistryDependencies ? { testRegistryDependencies: item.testRegistryDependencies } : {}),
 	}));
 
 	await put(
@@ -182,7 +204,7 @@ async function put(path: string, content: string): Promise<void> {
 const clientAt = (ref: string) => createRegistryClient({ cwd: registries, url: join(registries, ref, "registry") });
 
 /** A project with `card` and `badge` copied in from `v1`, lock and all — and their tests, when asked. */
-async function project(options: { tests?: boolean } = {}): Promise<string> {
+async function project(options: { tests?: boolean; items?: string[] } = {}): Promise<string> {
 	const root = await temp("delacour-update-");
 	await cp(join(FIXTURES, "expo-app"), root, { recursive: true });
 
@@ -200,7 +222,7 @@ async function project(options: { tests?: boolean } = {}): Promise<string> {
 		})
 	);
 
-	await add(["card", "badge"], {
+	await add(options.items ?? ["card", "badge"], {
 		cwd: root,
 		registry: join(registries, "v1", "registry"),
 		ref: "v1",
@@ -423,6 +445,64 @@ describe("update, and a config an older CLI wrote", () => {
 		await run(root, { dryRun: true }, { askConfig: async () => ({ "tests.enabled": true }) });
 
 		expect(await read(root, "native-components.json")).toBe(before);
+	});
+});
+
+describe("update, and a dependency the project does not hold", () => {
+	/** `chip` copied with `glyph`, and `glyph` then deleted — the way a project swaps one icon set for another. */
+	async function swappedOut(): Promise<string> {
+		const root = await project({ items: ["chip"] });
+		await rm(join(root, "src/lib/glyph.ts"));
+		const lock = await readLock(root);
+		delete lock.items.glyph;
+		await writeLock(root, lock);
+		return root;
+	}
+
+	test("does not bring back one the project removed", async () => {
+		const root = await swappedOut();
+		const result = await run(root);
+
+		expect(action(result, "src/components/ui/chip/chip.tsx")).toBe("updated");
+		await expect(exists(root, "src/lib/glyph.ts")).resolves.toBe(false);
+		expect((await readLock(root)).items.glyph).toBeUndefined();
+		expect(result.missing).toEqual([{ name: "glyph", neededBy: ["chip"] }]);
+	});
+
+	test("offers it in the picker, and adds it only when it is ticked", async () => {
+		const root = await swappedOut();
+		let offered: readonly string[] = [];
+
+		await run(
+			root,
+			{},
+			{
+				chooseComponents: async (_changes, missing) => {
+					offered = missing.map((entry) => entry.name);
+					return ["chip", "glyph"];
+				},
+			}
+		);
+
+		expect(offered).toEqual(["glyph"]);
+		expect(await read(root, "src/lib/glyph.ts")).toBe(GLYPH);
+	});
+
+	test("still adds one the registry introduced since the project copied the component", async () => {
+		const root = await project();
+		const result = await run(root);
+
+		expect(action(result, "src/components/ui/tag/tag.tsx")).toBe("added");
+		expect(result.missing).toEqual([]);
+	});
+
+	test("leaves out tests that need a component the project does not hold, rather than adding it", async () => {
+		const root = await project({ items: ["meter"] });
+		const result = await run(root, { tests: true });
+
+		await expect(exists(root, "src/components/ui/meter/meter.test.ts")).resolves.toBe(false);
+		await expect(exists(root, "src/components/ui/slide/slide.tsx")).resolves.toBe(false);
+		expect(result.testsLeftOut).toEqual([{ item: "meter", needs: ["slide"] }]);
 	});
 });
 

@@ -316,6 +316,18 @@ function describeUpdate(result: UpdateResult): string[] {
 		lines.push("Not installed. Run from the app:", ...groups.map((group) => `  ${commandLine(group)}`));
 	}
 
+	for (const entry of result.missing) {
+		lines.push(
+			`Not added: ${entry.name}, needed by ${entry.neededBy.join(", ")} — the project does not hold it. Ask before calling add_components for it.`
+		);
+	}
+
+	for (const entry of result.testsLeftOut) {
+		lines.push(
+			`Tests left out for ${entry.item}: they render ${entry.needs.join(", ")}, which the project does not hold.`
+		);
+	}
+
 	return lines;
 }
 

@@ -328,6 +328,13 @@ never overwritten, a file is deleted only under `--prune` and only if it was nev
 file that already holds markers is not merged into a second time. `--overwrite` on `add` remains the
 one flag that takes the registry's copy wholesale, and it is the user who has to type it.
 
+**A clean merge that adds one line twice is a conflict.** Line by line, the project adding
+`accessibilityLabel,` to a destructure and the registry adding the same line three lines lower are
+two unrelated insertions, so both were taken — a duplicate parameter, reported `merged`, that no
+longer parsed. `merge3` now counts each line both sides added (a line with no word in it — `}`, `);`,
+a blank — is not counted), and when the clean result holds one more often than either side, it
+writes the span between their common prefix and suffix as a single conflict instead.
+
 **The one question it asks is asked afterwards, and never answers itself.** A file copied before the
 lock existed that differs from the registry has no base, so the run skips it. With a TTY, `update`
 then asks about the files it skipped — leave, merge from a ref the reader types, or replace — and

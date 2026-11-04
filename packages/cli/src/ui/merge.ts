@@ -58,7 +58,71 @@ export function merge3(input: MergeInput): MergeResult {
 		);
 	}
 
+	if (conflicts === 0 && doubledAddition(input, lines)) return wholeConflict(input);
+
 	return { content: lines.join("\n"), conflicts };
+}
+
+/**
+ * Whether a clean merge holds a line both sides added more often than either side does.
+ *
+ * Line by line, an insertion the project made and the same insertion the registry made a few lines
+ * away are two unrelated changes, so both are taken — and a prop both sides added to one
+ * destructure became a duplicate parameter, a file that no longer parsed but was reported merged.
+ * A line with no word in it (`}`, `);`, a blank) repeats legitimately and is not counted.
+ */
+function doubledAddition(input: MergeInput, merged: readonly string[]): boolean {
+	const base = lineCounts(input.base.split("\n"));
+	const local = lineCounts(input.local.split("\n"));
+	const next = lineCounts(input.next.split("\n"));
+	const result = lineCounts(merged);
+
+	for (const [line, count] of result) {
+		const was = base.get(line) ?? 0;
+		const ours = local.get(line) ?? 0;
+		const theirs = next.get(line) ?? 0;
+		if (ours > was && theirs > was && count > Math.max(ours, theirs)) return true;
+	}
+	return false;
+}
+
+function lineCounts(lines: readonly string[]): Map<string, number> {
+	const counts = new Map<string, number>();
+	for (const raw of lines) {
+		const line = raw.trim();
+		if (!/\w/.test(line)) continue;
+		counts.set(line, (counts.get(line) ?? 0) + 1);
+	}
+	return counts;
+}
+
+/** One conflict over everything between the lines `local` and `next` share at either end. */
+function wholeConflict(input: MergeInput): MergeResult {
+	const local = input.local.split("\n");
+	const next = input.next.split("\n");
+
+	let start = 0;
+	while (start < local.length && start < next.length && local[start] === next[start]) start++;
+
+	let end = 0;
+	while (
+		end < local.length - start &&
+		end < next.length - start &&
+		local[local.length - 1 - end] === next[next.length - 1 - end]
+	)
+		end++;
+
+	const lines = [
+		...local.slice(0, start),
+		`<<<<<<< ${LOCAL_LABEL}`,
+		...local.slice(start, local.length - end),
+		"=======",
+		...next.slice(start, next.length - end),
+		`>>>>>>> ${input.nextLabel}`,
+		...local.slice(local.length - end),
+	];
+
+	return { content: lines.join("\n"), conflicts: 1 };
 }
 
 /** Whether a file still carries markers from a merge nobody finished. */

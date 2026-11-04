@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import * as clack from "@clack/prompts";
 import { findConfig, type ResolvedConfig, readConfig } from "../config/resolve";
-import { CONFIG_FILENAME, CONFIG_SCHEMA_URL, type Config, type ConfigPaths } from "../config/schema";
+import { CONFIG_FILENAME, CONFIG_SCHEMA_URL, CONFIG_VERSION, type Config, type ConfigPaths } from "../config/schema";
 import { aliasesForDirectories } from "../project/aliases";
 import { buildStylesBlock, patchGlobalCss } from "../project/css";
 import { findTailwindEntry } from "../project/css-entry";
@@ -280,6 +280,7 @@ function buildConfig(context: BuildConfigContext): Config {
 
 	return {
 		$schema: CONFIG_SCHEMA_URL,
+		version: CONFIG_VERSION,
 		framework: context.project.expoVersion ? "expo" : "react-native",
 		typescript: true,
 		registry: {},

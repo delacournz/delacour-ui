@@ -5,6 +5,12 @@
 		"$schema": {
 			"type": "string"
 		},
+		"version": {
+			"description": "The config shape this project was last brought up to. Written by init and update.",
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 9007199254740991
+		},
 		"framework": {
 			"default": "expo",
 			"type": "string",

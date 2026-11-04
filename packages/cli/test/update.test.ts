@@ -6,6 +6,7 @@ import { x } from "tinyexec";
 import { add } from "../src/commands/add";
 import { diff } from "../src/commands/diff";
 import { type UpdateClients, type UpdateOptions, type UpdateResult, update } from "../src/commands/update";
+import { CONFIG_VERSION } from "../src/config/schema";
 import { contentHash } from "../src/lock/hash";
 import { lockPath, readLock } from "../src/lock/lock";
 import type { Format } from "../src/project/formatter";
@@ -328,6 +329,99 @@ describe("update, and a component's tests", () => {
 		expect(action(result, CARD_TEST)).toBe("added");
 		expect(await read(root, CARD_TEST)).toBe(copied(CARD_TEST_V2));
 		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]?.ref).toBe("v2");
+	});
+});
+
+describe("update, and a config an older CLI wrote", () => {
+	const config = async (root: string) =>
+		JSON.parse(await read(root, "native-components.json")) as Record<string, unknown>;
+	const setConfig = async (root: string, change: (raw: Record<string, unknown>) => Record<string, unknown>) =>
+		writeFile(join(root, "native-components.json"), JSON.stringify(change(await config(root))), "utf-8");
+
+	test("asks for the fields it predates, records the answers and the version, and acts on them in the same run", async () => {
+		const root = await project();
+		const asked: string[][] = [];
+
+		const result = await run(
+			root,
+			{},
+			{
+				askConfig: async (questions) => {
+					asked.push(questions.map((question) => question.key));
+					return { "tests.enabled": true };
+				},
+			}
+		);
+
+		expect(asked).toEqual([["tests.enabled"]]);
+		expect(await config(root)).toMatchObject({ version: CONFIG_VERSION, tests: { enabled: true } });
+		expect(action(result, CARD_TEST)).toBe("added");
+	});
+
+	test("under --yes, records the version and leaves every new field at its default", async () => {
+		const root = await project();
+		await run(root);
+
+		const raw = await config(root);
+		expect(raw.version).toBe(CONFIG_VERSION);
+		expect(raw.tests).toBeUndefined();
+	});
+
+	test("with leaveConfig, leaves the file alone and names the fields still to choose", async () => {
+		const root = await project();
+		const before = await read(root, "native-components.json");
+
+		const result = await run(root, { leaveConfig: true });
+
+		expect(await read(root, "native-components.json")).toBe(before);
+		expect(result.config).toEqual({ kind: "pending", from: 1, to: CONFIG_VERSION, fields: ["tests.enabled"] });
+	});
+
+	test("with leaveConfig and a --tests answer, has nothing left to ask and records the version", async () => {
+		const root = await project();
+
+		const result = await run(root, { leaveConfig: true, tests: false });
+
+		expect(result.config.kind).toBe("upgraded");
+		expect((await config(root)).version).toBe(CONFIG_VERSION);
+	});
+
+	test("asks nothing of a config already at this version", async () => {
+		const root = await project();
+		await setConfig(root, (raw) => ({ ...raw, version: CONFIG_VERSION }));
+		let calls = 0;
+
+		await run(
+			root,
+			{},
+			{
+				askConfig: async () => {
+					calls += 1;
+					return {};
+				},
+			}
+		);
+
+		expect(calls).toBe(0);
+	});
+
+	test("leaves alone a config a newer CLI wrote", async () => {
+		const root = await project();
+		await setConfig(root, (raw) => ({ ...raw, version: CONFIG_VERSION + 1 }));
+		const before = await read(root, "native-components.json");
+
+		await run(root, {}, { askConfig: async () => ({ "tests.enabled": true }) });
+
+		expect(await read(root, "native-components.json")).toBe(before);
+	});
+
+	test("writes nothing to the config on a dry run", async () => {
+		const root = await project();
+		const before = await read(root, "native-components.json");
+
+		await run(root, { dryRun: true }, { askConfig: async () => ({ "tests.enabled": true }) });
+
+		expect(await read(root, "native-components.json")).toBe(before);
 	});
 });
 

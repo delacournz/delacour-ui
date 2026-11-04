@@ -14,6 +14,7 @@ import { createOutput, type Output, style } from "../ui/output";
 import { type Decision, decide, type UpdateAction } from "../update/decide";
 import { planUpdate, shortRef, type UpdateFile, type UpdatePlan } from "../update/plan";
 import { settleDependencies } from "./add";
+import { type AskConfig, type ConfigUpgrade, promptConfig, upgradeConfig } from "./config-upgrade";
 import { settleRenderTests } from "./render-tests";
 import { chooseTests } from "./tests-choice";
 
@@ -40,6 +41,10 @@ import { chooseTests } from "./tests-choice";
  * second pass over the same plan with that answer filled in, so the question
  * changes nothing about how a file is classified or written.
  *
+ * Before any of that, `native-components.json` itself is brought up to the
+ * shape this CLI writes (`config-upgrade.ts`): the fields it predates are asked
+ * about once and its `version` recorded, so an answer applies to this run.
+ *
  * The ref it updates to is the one the running CLI was built against, so
  * updating a project means running a newer CLI: `bunx delacour@latest update`.
  */
@@ -59,6 +64,8 @@ export type UpdateOptions = {
 	prune?: boolean;
 	/** Merge into files with uncommitted changes. */
 	force?: boolean;
+	/** Leave config fields an older config predates unchosen rather than defaulting them — the MCP server's choice. */
+	leaveConfig?: boolean;
 	/**
 	 * Bring every component's tests along, not only the ones the project already
 	 * copied. Unset follows `tests.enabled`; a value overrides it and is saved there.
@@ -94,6 +101,8 @@ export type UpdateResult = {
 	conflicts: number;
 	dependencies: DependencyPlan | null;
 	installed: boolean;
+	/** What became of `native-components.json` itself — see `config-upgrade.ts`. */
+	config: ConfigUpgrade;
 };
 
 /** What to do with the files a run skipped for having no lock entry. */
@@ -106,11 +115,18 @@ export type UpdateClients = {
 	format?: Format;
 	/** Asks about the skipped files, by display path. The prompt, unless a test answers instead. */
 	askUntracked?: (files: readonly string[]) => Promise<UntrackedAnswer>;
+	/** Asks about the config fields an older `native-components.json` predates. */
+	askConfig?: AskConfig;
 };
 
 export async function update(names: string[], options: UpdateOptions, clients?: UpdateClients): Promise<UpdateResult> {
 	const output = createOutput({ ...options, silent: options.silent || options.json });
-	const first = await runUpdate(names, options, output, clients);
+	const config = await upgradeConfig(
+		options,
+		output,
+		clients?.askConfig ?? (output.interactive ? promptConfig : undefined)
+	);
+	const first = await runUpdate(names, options, output, config, clients);
 
 	const ask = clients?.askUntracked ?? (output.interactive ? promptUntracked : undefined);
 	const answered = options.dryRun || options.base !== undefined || options.replaceUntracked;
@@ -124,6 +140,7 @@ export async function update(names: string[], options: UpdateOptions, clients?: 
 		names,
 		answer.kind === "merge" ? { ...options, base: answer.base } : { ...options, replaceUntracked: true },
 		output,
+		config,
 		clients
 	);
 
@@ -141,6 +158,7 @@ async function runUpdate(
 	names: string[],
 	options: UpdateOptions,
 	output: Output,
+	configUpgrade: ConfigUpgrade,
 	clients?: UpdateClients
 ): Promise<{ result: UpdateResult; untracked: string[] }> {
 	const { plan, config, lock, ref } = await readPlan(names, options, output, clients);
@@ -176,6 +194,7 @@ async function runUpdate(
 		conflicts: files.filter((file) => file.action === "conflict").length,
 		dependencies: null,
 		installed: false,
+		config: configUpgrade,
 	};
 
 	if (options.dryRun) return { result: finish(result, options, output), untracked };

@@ -43,7 +43,7 @@ Unlike shadcn, the target is Expo, which changes real things:
 | `init [components...]` | Do that setup deliberately — choose the source directory, or a shared package |
 | `list` / `search <q>` | Browse the registry |
 | `view <name>` | One item: its files, what it pulls in, what it installs |
-| `update [components...]` | Bring copied components up to the registry, merged with your edits |
+| `update [components...]` | Bring copied components up to the registry, merged with your edits, and `native-components.json` up to this CLI's `version` |
 | `diff [name]` | What `update` would change, without changing it |
 | `doctor` | Check this app is wired up correctly |
 | `info` | The resolved config and what was detected |

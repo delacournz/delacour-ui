@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { add } from "../src/commands/add";
 import { init } from "../src/commands/init";
 import { readConfig } from "../src/config/resolve";
+import { CONFIG_VERSION } from "../src/config/schema";
 import { contentHash } from "../src/lock/hash";
 import { readLock } from "../src/lock/lock";
 import { LOCK_FILENAME } from "../src/lock/schema";
@@ -56,6 +57,12 @@ describe("init and add, in a plain Expo app", () => {
 		expect(config.paths.ui).toBe("src/components/ui");
 		expect(config.aliases.ui).toBe("@/components/ui");
 		expect(config.app.root).toBe(".");
+	});
+
+	test("records the config version, so a later update knows what it has not asked", async () => {
+		const config = await readConfig(join(root, "native-components.json"));
+
+		expect(config.version).toBe(CONFIG_VERSION);
 	});
 
 	test("copies the component and everything it needs", async () => {

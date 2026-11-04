@@ -45,7 +45,8 @@ src/
 │   ├── classify.ts       three texts and a lock entry → what happened to one file (pure)
 │   ├── decide.ts         that, plus the flags → what is done about it (pure)
 │   └── plan.ts           every file in scope, classified; registry clients are injected
-├── config/               native-components.json — schema.ts (zod), resolve.ts (nearest-wins walk)
+├── config/               native-components.json — schema.ts (zod, CONFIG_VERSION), resolve.ts (nearest-wins walk),
+│                         upgrade.ts (which new fields an older config is asked about — pure)
 ├── project/              everything that reads or patches a consumer's project
 │   ├── detect.ts         package manager, Expo SDK, workspace root, app root, tsconfig paths
 │   ├── aliases.ts        tsconfig paths → an import prefix per namespace
@@ -677,6 +678,31 @@ it, so these are **Jest-only** and ship apart from the logic suites:
 - **`doctor` checks it.** `checkTestRunner` asks for `@testing-library/react-native`,
   `test-renderer` and `jest-expo` once the lock records a render test, and warns, with the snippet,
   when the config lacks the setup file, the resolver or a transform (`renderSetupIssues`).
+
+### `native-components.json` carries a `version`, and `update` brings it up
+
+`CONFIG_VERSION` in `config/schema.ts` is the shape `init` writes; a config with no `version` reads
+as `1`. `update` calls `upgradeConfig` (`commands/config-upgrade.ts`) **before** it plans, so an
+answer applies to the same run. `config/upgrade.ts` is the pure half: `FIELDS` lists each askable
+option with the version that introduced it, and `upgradeStatus` returns the questions for the ones
+the file predates and lacks. Four rules:
+
+- **Adding an option a project should be asked about is three edits:** bump `CONFIG_VERSION`, add a
+  `FIELDS` entry with `since` set to the new number, and a `ConfigQuestion` variant. `applyUpgrade`
+  then records the answer, and `describeConfig` in `mcp.ts` needs a line naming the parameter that
+  answers it (the `Record` is exhaustive, so `tsc` asks for it).
+- **The version is recorded whether or not each question was answered.** Skipping is an answer;
+  asking on every run is noise. That is also why it is **not** recorded with no one to ask and no
+  `--yes`: a pipe, `--json`, CI and the MCP server (`leaveConfig: true`) leave the file alone and
+  return `config: { kind: "pending", fields }`, so the question reaches a person later rather than
+  never. `--yes` means "take the defaults", so it records.
+- **A question that would damage the project is not asked.** `prefix` is offered only when the lock
+  is empty: every copied file was hashed under the old name, so renaming then reads as an edit to
+  all of them. A `--tests` / `--no-tests` flag answers `tests.enabled`, so it is not asked either.
+- **A config from a newer CLI is never rewritten** — `newer`, a warning, nothing written. `doctor`'s
+  `checkConfigVersion` warns on both directions.
+
+`UpdateClients.askConfig` is the test seam, beside `askUntracked`.
 
 ### `tests.enabled` is remembered
 

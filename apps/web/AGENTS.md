@@ -52,11 +52,16 @@ src/
 ├── registry/install.ts    here, **generated** — see "The install block is derived"
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
-├── lib/seo.ts             PRODUCTS (ui, charts, bottom-sheet), isDocsProduct() and docsHead() — each docs page's head tags
+├── lib/seo.ts             PRODUCTS, docsHead() (title, canonical, .md alternate, TechArticle + BreadcrumbList JSON-LD), pageHead(), homeHead()
+├── lib/sitemap.ts         MARKETING_PATHS, sitemapXml()
+├── lib/structured-data.ts ORGANIZATION (root JSON-LD), PUBLISHER, componentsItemList(), LLMS_PREAMBLE
+├── lib/security-headers.ts  HSTS, nosniff, frame, referrer and permissions headers, added in start.ts
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/number-words.ts    numberToWords — 0–99 as English, for <ComponentCount />
 ├── lib/remark-component-count.ts  the remark plugin that spells <ComponentCount /> — wired in source.config.ts
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
+├── lib/compare/           the two-way comparisons and the /compare hub — see "/compare and the two-way pages"
+├── lib/faq.ts             the landing FAQ and its FAQPage JSON-LD
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
 ├── lib/analytics/         PostHog, Google Analytics and consent — see "Analytics"
 ├── lib/native-app.ts      the playground app, and the two association bodies
@@ -67,6 +72,8 @@ src/
 │   ├── __root.tsx         RootProvider + <html>
 │   ├── index.tsx          the landing page
 │   ├── compare/heroui.tsx /compare/heroui — renders lib/comparison.ts
+│   ├── compare/index.tsx  /compare — the hub
+│   ├── compare/$slug.tsx  /compare/<slug> — renders lib/compare/<slug>.ts
 │   ├── privacy.tsx        /privacy — renders lib/privacy.ts
 │   ├── docs/index.tsx     /docs → /docs/native/getting-started
 │   ├── docs/$.tsx         the docs catch-all
@@ -75,8 +82,9 @@ src/
 │   ├── playground/components/{$}.tsx  the deep link's web fallback
 │   ├── [.]well-known/     apple-app-site-association, assetlinks.json
 │   ├── api/search.ts
+│   ├── api/components.ts  every component as a schema.org ItemList, for AI systems
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
-│   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
+│   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts, sitemap[.]xml.ts
 ├── start.ts               crawler block + preset rate limit + br/gzip + csrf + Accept: text/markdown negotiation
 ├── server/otel.ts         Nitro middleware — one OpenTelemetry SERVER span per request
 ├── server/trace.ts        traceRequest(), adapts withServerSpan to the middleware — see "Tracing"
@@ -273,6 +281,36 @@ Five things about it are load-bearing:
 - **Every section is `PAGE_SECTION`, like every other page here.** See
   [One container, every page](#one-container-every-page) — including why the `w-full min-w-0` in
   it is load-bearing.
+
+## `/compare` and the two-way pages
+
+`/compare` (`routes/compare/index.tsx`) is the hub the footer's **Compare** link opens: one card per
+`HUB_ENTRIES` row in `src/lib/compare/index.ts`. `/compare/$slug` renders a two-column table, Delacour
+UI against one library, from `src/lib/compare/<slug>.ts` — `react-native-reusables` and `bna-ui` today.
+`/compare/heroui` keeps its own three-column page and wins over `$slug` as a static route. An unknown
+slug is a 404.
+
+The rules are `/compare/heroui`'s, held by `src/lib/compare/compare.test.ts`: every answer carries a
+note, Delacour loses at least two rows, no section is a sweep either way, the page prints at least two
+`https://` sources and the date they were read (`checked`), no prices, and every page is in the
+sitemap's `MARKETING_PATHS`. **A row says only what a source says.** React Native Reusables' site
+renders client-side, so its rows cite the MDX in its repository. A new comparison is a file in
+`src/lib/compare/`, an entry in `COMPARISONS`, and a path in `MARKETING_PATHS`.
+
+**How a reader arrives:** the hero's **How it compares →** arrow link beside GitHub, the FAQ's closing
+line, the footer's **Compare**, the Quick start's **Next** cards, and a sentence at the top of Design
+Principles. Deliberately not the navbar or the sidebar — the docs' own voice stays out of the argument.
+
+`TwoWayTable` and `Mark` (`src/components/compare/`) draw the same hairlines and marks the HeroUI page
+does, which is why `Mark` moved out of `heroui.tsx`.
+
+## The landing FAQ is its own JSON-LD
+
+`src/lib/faq.ts` holds `FAQ`, which `components/landing/faq.tsx` renders as `<details>` above the
+footer and `faqJsonLd()` marks up as `FAQPage` in `homeHead()`. One list, because Google only honours
+FAQ markup that matches the visible page. Answers are plain text — they are quoted verbatim by search
+results and AI systems — and `faq.test.ts` holds that and holds the questions to the queries the page
+is for (shadcn, Expo, NativeWind, agents). Change an answer when the fact under it changes.
 
 ## `/privacy` is held to the code
 
@@ -707,9 +745,17 @@ MDX do that (see [A link to `/llms.txt` has to be a plain anchor](#a-link-to-llm
 with no component, `notFound()` came back as **`200`** carrying `{"isNotFound":true}` — a body no
 client reads as an error.
 
-`robots[.]txt.ts` exists for one reason: to name `/llms.txt` somewhere a crawler already looks. It
-carries no `Sitemap:` line, because prerendering is off and nothing produces a page list at build
-time — a hand-written sitemap is the transcription this site keeps deleting.
+**SEO and GEO follow TanStack Start's two guides** (`guide/seo`, `guide/geo`): `head()` title,
+description, `og:*`, canonical and JSON-LD on every route; an `Organization` on the root; a dynamic
+sitemap and robots; `/llms.txt` opening with the convention's H1 and `>` summary (`LLMS_PREAMBLE`)
+before Fumadocs' index; and `/api/components`. Two items there are deliberately not done:
+prerendering (see [Prerendering is off](#prerendering-is-off)). `FAQPage` is in — see [The landing FAQ](#the-landing-faq-is-its-own-json-ld).
+
+`robots[.]txt.ts` names `/llms.txt` somewhere a crawler already looks, and carries a `Sitemap:` line
+for `/sitemap.xml` (`routes/sitemap[.]xml.ts`). The sitemap is built per request from
+`source.getPages()` plus `MARKETING_PATHS` in `src/lib/sitemap.ts` — the same source `/llms.txt`
+reads, so it is not the hand-written transcription this site keeps deleting. `sitemapXml` throws on
+a path with a query: a `/theme?preset=` URL in it would invite the crawl below.
 
 Its one rule is `Disallow: /theme?` — see the builder below for why.
 

@@ -34,7 +34,7 @@ export function Footer(): ReactElement {
 					</a>
 					<Link
 						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
-						to="/compare/heroui"
+						to="/compare"
 					>
 						{FOOTER_COPY.compare}
 					</Link>

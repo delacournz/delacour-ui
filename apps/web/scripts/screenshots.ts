@@ -265,6 +265,16 @@ const SHOTS: Shot[] = [
 		frame: "desktop",
 		theme: "dark",
 	},
+	{ id: "74-compare-hub-desktop-dark", path: "/compare", frame: "desktop", theme: "dark" },
+	{
+		id: "75-compare-rnr-full-desktop-dark",
+		path: "/compare/react-native-reusables",
+		frame: "desktop",
+		theme: "dark",
+		full: true,
+	},
+	{ id: "76-compare-bna-full-phone-dark", path: "/compare/bna-ui", frame: "phone", theme: "dark", full: true },
+	{ id: "77-home-faq-desktop-dark", path: "/#faq", frame: "desktop", theme: "dark" },
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

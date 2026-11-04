@@ -1,12 +1,30 @@
 import { describe, expect, test } from "bun:test";
-import { type DocsPageSeo, docsHead as docsHeadRaw, docsImageUrl, docsProduct, isDocsProduct, PRODUCTS } from "./seo";
+import {
+	type DocsPageSeo,
+	docsHead as docsHeadRaw,
+	docsImageUrl,
+	docsProduct,
+	homeHead as homeHeadRaw,
+	isDocsProduct,
+	PRODUCTS,
+	pageHead as pageHeadRaw,
+} from "./seo";
 
-type Meta = { name?: string; property?: string; content?: string; title?: string };
+type Meta = { name?: string; property?: string; content?: string; title?: string; "script:ld+json"?: unknown };
+type JsonLd = { "@type": string; [key: string]: unknown };
+
+function jsonLd(meta: Meta[]): JsonLd[] {
+	return meta.flatMap((tag) => (tag["script:ld+json"] ? [tag["script:ld+json"] as JsonLd] : []));
+}
 
 /** Widened to one optional-field shape, so a test can read any tag without narrowing first. */
-function docsHead(page: DocsPageSeo): { meta: Meta[]; links: { rel: string; href: string }[] } {
+function docsHead(page: DocsPageSeo): { meta: Meta[]; links: { rel: string; href: string; type?: string }[] } {
 	return docsHeadRaw(page);
 }
+
+type Widened = { meta: Meta[]; links: { rel: string; href: string; type?: string }[] };
+const homeHead = (): Widened => homeHeadRaw();
+const pageHead = (page: Parameters<typeof pageHeadRaw>[0]): Widened => pageHeadRaw(page);
 
 function content(meta: Meta[], key: string): string | undefined {
 	return meta.find((tag) => tag.name === key || tag.property === key)?.content;
@@ -124,8 +142,80 @@ describe("docsHead", () => {
 	test("a component page stays under the library's name", () => {
 		const { meta } = docsHead({ slugs: ["native", "components", "button"], title: "Button" });
 
-		expect(meta.find((tag) => tag.title)?.title).toBe("Button — Delacour UI");
+		expect(meta.find((tag) => tag.title)?.title).toBe("React Native Button component — Delacour UI");
 		expect(content(meta, "og:site_name")).toBe("Delacour UI");
 		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?page=native%2Fcomponents%2Fbutton");
+	});
+
+	test("a guide page names React Native in its title", () => {
+		const { meta } = docsHead({ slugs: ["native", "getting-started", "theming"], title: "Theming" });
+
+		expect(meta.find((tag) => tag.title)?.title).toBe("Theming — Delacour UI for React Native");
+	});
+
+	test("the components index is not titled as one component", () => {
+		const { meta } = docsHead({ slugs: ["native", "components"], title: "All Components" });
+
+		expect(meta.find((tag) => tag.title)?.title).toBe("All Components — Delacour UI for React Native");
+	});
+
+	test("is an article, with an author", () => {
+		const { meta } = docsHead({ slugs: ["native", "components", "button"], title: "Button" });
+
+		expect(content(meta, "og:type")).toBe("article");
+		expect(content(meta, "author")).toBe("Delacour");
+	});
+
+	test("every page links its Markdown twin for agents", () => {
+		const { links } = docsHead({ slugs: ["native", "components", "button"], title: "Button" });
+
+		expect(links).toContainEqual({
+			rel: "alternate",
+			type: "text/markdown",
+			href: "https://ui.delacour.co.nz/docs/native/components/button.md",
+		});
+	});
+
+	test("carries a TechArticle and a BreadcrumbList", () => {
+		const { meta } = docsHead({ slugs: ["native", "components", "button"], title: "Button", description: "A press." });
+		const [article, crumbs] = jsonLd(meta);
+
+		expect(article?.["@type"]).toBe("TechArticle");
+		expect(article?.headline).toBe("React Native Button component — Delacour UI");
+		expect(article?.url).toBe("https://ui.delacour.co.nz/docs/native/components/button");
+		expect(article?.author).toMatchObject({ "@type": "Organization", name: "Delacour" });
+		expect(crumbs?.["@type"]).toBe("BreadcrumbList");
+		expect(crumbs?.itemListElement).toHaveLength(3);
+	});
+});
+
+describe("homeHead", () => {
+	test("targets shadcn/ui for React Native in the title and description", () => {
+		const { meta } = homeHead();
+		const title = meta.find((tag) => tag.title)?.title ?? "";
+
+		expect(title).toMatch(/shadcn\/ui/);
+		expect(title).toMatch(/React Native/);
+		expect(title.length).toBeLessThanOrEqual(60);
+		expect(content(meta, "description")).toMatch(/shadcn/);
+		expect((content(meta, "description") ?? "").length).toBeLessThanOrEqual(160);
+	});
+
+	test("is canonical at the origin and describes the site and the library", () => {
+		const { meta, links } = homeHead();
+		const types = jsonLd(meta).map((entry) => entry["@type"]);
+
+		expect(links).toContainEqual({ rel: "canonical", href: "https://ui.delacour.co.nz/" });
+		expect(types).toEqual(["WebSite", "SoftwareSourceCode", "FAQPage"]);
+	});
+});
+
+describe("pageHead", () => {
+	test("gives a marketing page a canonical with no query", () => {
+		const { links, meta } = pageHead({ path: "/theme", title: "Neutral — Delacour UI", description: "CSS." });
+
+		expect(links).toEqual([{ rel: "canonical", href: "https://ui.delacour.co.nz/theme" }]);
+		expect(content(meta, "og:url")).toBe("https://ui.delacour.co.nz/theme");
+		expect(content(meta, "og:title")).toBe("Neutral — Delacour UI");
 	});
 });

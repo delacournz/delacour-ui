@@ -1,4 +1,15 @@
-import { appDescription, appName, docsImageRoute, docsRoute, siteUrl } from "./shared";
+import { faqJsonLd } from "./faq";
+import {
+	appDescription,
+	appName,
+	docsImageRoute,
+	docsRoute,
+	encodeMarkdownUrl,
+	gitConfig,
+	homeTitle,
+	siteUrl,
+} from "./shared";
+import { type JsonLd, ORGANIZATION, PUBLISHER } from "./structured-data";
 
 /**
  * The three things the docs site documents, and what a search result or a link
@@ -91,8 +102,53 @@ export function docsImageUrl(slugs: readonly string[]): string {
 
 export type DocsPageSeo = { slugs: readonly string[]; title: string; description?: string };
 
-export type HeadMeta = { title: string } | { name: string; content: string } | { property: string; content: string };
-export type HeadLink = { rel: string; href: string };
+export type { JsonLd };
+
+export type HeadMeta =
+	| { title: string }
+	| { name: string; content: string }
+	| { property: string; content: string }
+	// `content?: undefined` gives the entry a key in common with a `<meta>`'s props, which
+	// TanStack's head type needs to accept it; the router renders it as a `<script>`.
+	| { "script:ld+json": JsonLd; content?: undefined };
+export type HeadLink = { rel: string; href: string; type?: string };
+export type Head = { meta: HeadMeta[]; links: HeadLink[] };
+
+/**
+ * What a search result calls a docs page. The query people type is "react native
+ * <thing> component" and "shadcn react native", so a component page leads with
+ * React Native and the part's name, and every other library page carries
+ * "for React Native" after the site's name — "Button — Delacour UI" told a
+ * results page nothing it could match. An engine keeps its own name, which
+ * already says what it is.
+ */
+function docsTitle(product: DocsProduct, slugs: readonly string[], title: string): string {
+	const seo = PRODUCTS[product];
+	if (product !== "ui") return `${title} — ${seo.name}`;
+	const isComponent = slugs.length === 3 && slugs[0] === "native" && slugs[1] === "components";
+	return isComponent ? `React Native ${title} component — ${seo.name}` : `${title} — ${seo.name} for React Native`;
+}
+
+/** The crumbs a docs page sits under, one per slug, named from the slug. */
+function breadcrumbs(slugs: readonly string[], title: string): JsonLd {
+	const crumbs = [{ name: "Docs", path: docsRoute }];
+	slugs.forEach((slug, index) => {
+		const path = `${docsRoute}/${slugs.slice(0, index + 1).join("/")}`;
+		const last = index === slugs.length - 1;
+		crumbs.push({ name: last ? title : slug.replace(/-/g, " ").replace(/^./, (c) => c.toUpperCase()), path });
+	});
+
+	return {
+		"@context": "https://schema.org",
+		"@type": "BreadcrumbList",
+		itemListElement: crumbs.slice(1).map((crumb, index) => ({
+			"@type": "ListItem",
+			position: index + 1,
+			name: crumb.name,
+			item: `${siteUrl}${crumb.path}`,
+		})),
+	};
+}
 
 /**
  * Every tag a docs page owns, overriding the root route's site-wide set —
@@ -103,12 +159,12 @@ export type HeadLink = { rel: string; href: string };
  * titled with the product's headline; an inner page is "Line — Delacour
  * Charts". The card is the page's own — see `og/page.ts`.
  */
-export function docsHead({ slugs, title, description }: DocsPageSeo): { meta: HeadMeta[]; links: HeadLink[] } {
+export function docsHead({ slugs, title, description }: DocsPageSeo): Head {
 	const product = docsProduct(slugs);
 	const seo = PRODUCTS[product];
 	const url = `${siteUrl}${docsRoute}${slugs.length ? `/${slugs.join("/")}` : ""}`;
 	const isLanding = product !== "ui" && url === `${siteUrl}${seo.path}`;
-	const pageTitle = isLanding ? seo.headline : `${title} — ${seo.name}`;
+	const pageTitle = isLanding ? seo.headline : docsTitle(product, slugs, title);
 	const body = description || seo.description;
 	const image = docsImageUrl(slugs);
 
@@ -117,6 +173,9 @@ export function docsHead({ slugs, title, description }: DocsPageSeo): { meta: He
 			{ title: pageTitle },
 			{ name: "description", content: body },
 			{ property: "og:site_name", content: seo.name },
+			{ property: "og:type", content: "article" },
+			{ name: "author", content: ORGANIZATION.name },
+			{ property: "article:author", content: ORGANIZATION.url },
 			{ property: "og:title", content: pageTitle },
 			{ property: "og:description", content: body },
 			{ property: "og:url", content: url },
@@ -125,7 +184,91 @@ export function docsHead({ slugs, title, description }: DocsPageSeo): { meta: He
 			{ name: "twitter:title", content: pageTitle },
 			{ name: "twitter:description", content: body },
 			{ name: "twitter:image", content: image },
+			{
+				"script:ld+json": {
+					"@context": "https://schema.org",
+					"@type": "TechArticle",
+					headline: pageTitle,
+					description: body,
+					url,
+					image,
+					inLanguage: "en",
+					isPartOf: { "@type": "WebSite", name: appName, url: siteUrl },
+					author: PUBLISHER,
+					publisher: PUBLISHER,
+				},
+			},
+			...(slugs.length ? [{ "script:ld+json": breadcrumbs(slugs, title) }] : []),
+		],
+		links: [
+			{ rel: "canonical", href: url },
+			// The page as Markdown, for an agent that reads `<link rel=alternate>` rather than `/llms.txt`.
+			{ rel: "alternate", type: "text/markdown", href: `${siteUrl}${encodeMarkdownUrl([...slugs])}` },
+		],
+	};
+}
+
+export type MarketingPageSeo = { path: string; title: string; description: string };
+
+/**
+ * A page outside `/docs`: its title, description, `og:*` and a canonical with no
+ * query string — `/theme?preset=…` is one page however many codes reach it.
+ */
+export function pageHead({ path, title, description }: MarketingPageSeo): Head {
+	const url = `${siteUrl}${path}`;
+
+	return {
+		meta: [
+			{ title },
+			{ name: "description", content: description },
+			{ property: "og:title", content: title },
+			{ property: "og:description", content: description },
+			{ property: "og:url", content: url },
+			{ name: "twitter:title", content: title },
+			{ name: "twitter:description", content: description },
 		],
 		links: [{ rel: "canonical", href: url }],
+	};
+}
+
+/**
+ * The landing page: `homeTitle`, the site description, and the two JSON-LD nodes
+ * a search engine builds a sitelinks box and a software result from.
+ */
+export function homeHead(): Head {
+	const { meta, links } = pageHead({ path: "/", title: homeTitle, description: appDescription });
+	const repository = `https://github.com/${gitConfig.user}/${gitConfig.repo}`;
+
+	return {
+		meta: [
+			...meta,
+			{
+				"script:ld+json": {
+					"@context": "https://schema.org",
+					"@type": "WebSite",
+					name: appName,
+					url: `${siteUrl}/`,
+					description: appDescription,
+					publisher: PUBLISHER,
+				},
+			},
+			{
+				"script:ld+json": {
+					"@context": "https://schema.org",
+					"@type": "SoftwareSourceCode",
+					name: `${appName} — shadcn/ui for React Native`,
+					description: appDescription,
+					url: `${siteUrl}/`,
+					codeRepository: repository,
+					programmingLanguage: ["TypeScript", "React Native"],
+					runtimePlatform: ["iOS", "Android", "Expo"],
+					license: "https://opensource.org/licenses/MIT",
+					keywords: "shadcn, shadcn/ui, React Native, Expo, components, Uniwind, Tailwind, UI library",
+					publisher: PUBLISHER,
+				},
+			},
+			{ "script:ld+json": faqJsonLd() },
+		],
+		links,
 	};
 }

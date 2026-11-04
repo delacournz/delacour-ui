@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactElement } from "react";
 import { ComponentIndex } from "@/components/landing/component-index";
+import { Faq } from "@/components/landing/faq";
 import { Features } from "@/components/landing/features";
 import { Footer } from "@/components/landing/footer";
 import { GetStarted } from "@/components/landing/get-started";
@@ -11,13 +12,11 @@ import { Showcase } from "@/components/landing/showcase";
 import { ThemeTeaser } from "@/components/landing/theme-teaser";
 import { Tokens } from "@/components/landing/tokens";
 import { homeOptions } from "@/lib/layout.shared";
-import { appDescription, appName } from "@/lib/shared";
+import { homeHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
 	component: Home,
-	head: () => ({
-		meta: [{ title: `${appName} — React Native components` }, { name: "description", content: appDescription }],
-	}),
+	head: homeHead,
 });
 
 /**
@@ -41,6 +40,7 @@ function Home(): ReactElement {
 			<ThemeTeaser />
 			<GetStarted />
 			<ComponentIndex />
+			<Faq />
 			<Footer />
 		</HomeLayout>
 	);

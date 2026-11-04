@@ -19,6 +19,7 @@ export const HERO = {
 	lede: "Composable, accessible components with thoughtful defaults. Code you can customize, extend and make your own — for iOS and Android, painted from the same design tokens as your web app.",
 	primary: "Quick start",
 	secondary: "Browse components",
+	compare: "How it compares →",
 	github: "GitHub →",
 	install: "delacour@latest add button switch slider",
 	phone: {
@@ -155,11 +156,17 @@ export const COMPONENT_INDEX_COPY = {
 	link: "Open the index →",
 } as const;
 
+export const FAQ_COPY = {
+	eyebrow: "FAQ",
+	title: "Questions people ask first.",
+	compare: "Weighing it against another library? See the comparisons.",
+} as const;
+
 export const FOOTER_COPY = {
 	line: `${appName} — React Native only. iOS and Android, Expo or bare.`,
 	charts: "Charts",
 	bottomSheet: "Bottom Sheet",
-	compare: "vs HeroUI",
+	compare: "Compare",
 	github: "GitHub",
 	llms: "llms.txt",
 	privacy: "Privacy",

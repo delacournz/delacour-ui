@@ -92,13 +92,23 @@ export function formatterArgs(kind: FormatterKind, path: string): string[] {
 	return kind === "biome" ? ["format", `--stdin-file-path=${path}`] : ["--stdin-filepath", path];
 }
 
+/**
+ * stdin is written here rather than through tinyexec's `stdin` option, which
+ * writes with no `error` listener. A formatter that exits before reading its
+ * input — a bad config, an ignored path — then raises EPIPE on that stream,
+ * unhandled, and takes the process down. The exit code already reports the
+ * failure, so the write error is dropped.
+ */
 export async function runFormatter(formatter: Formatter, content: string, path: string): Promise<string> {
-	const result = await x(formatter.bin, formatterArgs(formatter.kind, path), {
-		stdin: content,
+	const proc = x(formatter.bin, formatterArgs(formatter.kind, path), {
 		throwOnError: true,
 		nodeOptions: { cwd: formatter.cwd },
 	});
+	const stdin = proc.process?.stdin;
+	stdin?.on("error", () => {});
+	stdin?.end(content);
 
+	const result = await proc;
 	return result.stdout;
 }
 

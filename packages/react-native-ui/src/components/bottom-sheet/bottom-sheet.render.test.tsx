@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import type { ReactElement, ReactNode } from "react";
+import { Fragment, type ReactElement, type ReactNode } from "react";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
@@ -186,5 +186,25 @@ describe("BottomSheet", () => {
 				"outside <BottomSheet>"
 			);
 		});
+	});
+});
+
+describe("BottomSheet.Container", () => {
+	test("a Handle inside a fragment counts as written, so no second one is added", async () => {
+		const showHandle = true;
+		await renderWithProviders(
+			<BottomSheet defaultOpen>
+				<BottomSheet.Portal>
+					<BottomSheet.Container>
+						<Fragment key="surface">{showHandle && <BottomSheet.Handle />}</Fragment>
+						<BottomSheet.Content>
+							<BottomSheet.Title>One handle</BottomSheet.Title>
+						</BottomSheet.Content>
+					</BottomSheet.Container>
+				</BottomSheet.Portal>
+			</BottomSheet>,
+			{ wrapper: Providers }
+		);
+		expect(screen.getAllByRole("adjustable")).toHaveLength(1);
 	});
 });

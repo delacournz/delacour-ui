@@ -2,7 +2,7 @@ import {
 	BottomSheet as Headless,
 	type BottomSheetContainerProps as HeadlessProps,
 } from "@delacour/react-native-bottom-sheet";
-import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
+import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 import { withUniwind } from "uniwind";
 import { cn } from "../../lib/cn";
 import { BottomSheetBackground } from "./bottom-sheet-background";
@@ -30,11 +30,20 @@ export type BottomSheetContainerProps = HeadlessProps & {
 	handleIndicatorClassName?: string;
 };
 
-/** Whether any direct child is one of the two parts the container would otherwise write itself. */
-function hasSurfaceParts(children: ReactNode): boolean {
-	return Children.toArray(children).some(
-		(child) => isValidElement(child) && (child.type === BottomSheetBackground || child.type === BottomSheetHandle)
-	);
+/**
+ * Whether the children hold one of the two parts the container would
+ * otherwise write itself.
+ *
+ * `Children.toArray` does not open fragments, so this walks into them: a
+ * `<>{showHandle && <BottomSheet.Handle />}</>` must count, or the sheet gets
+ * a second handle and a second adjustable element for screen readers.
+ */
+export function hasSurfaceParts(children: ReactNode): boolean {
+	return Children.toArray(children).some((child) => {
+		if (!isValidElement<{ children?: ReactNode }>(child)) return false;
+		if (child.type === Fragment) return hasSurfaceParts(child.props.children);
+		return child.type === BottomSheetBackground || child.type === BottomSheetHandle;
+	});
 }
 
 /**
@@ -44,7 +53,7 @@ function hasSurfaceParts(children: ReactNode): boolean {
  * sheet's geometry; this adds classes and the two parts every sheet has.
  *
  * **It writes `Background` and `Handle` for you** when the children hold
- * neither, so the common sheet is `Container > Content` and nothing else. Write
+ * neither (directly or inside a fragment), so the common sheet is `Container > Content` and nothing else. Write
  * either one yourself and it writes nothing — a container with a custom handle
  * and no surface is a decision, not an omission. The three `*ClassName` props
  * reach the parts it writes; a part you write takes its own `className`.

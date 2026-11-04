@@ -101,7 +101,7 @@ read those before touching behaviour, because behaviour is not here.
   it, which is what makes that safe where it was not with the library this
   replaces.
 - **`Container` writes `Background` and `Handle` for you** when the children
-  hold neither, detected by element type. Write either yourself and it writes
+  hold neither, detected by element type and inside fragments too. Write either yourself and it writes
   nothing: a custom handle with no surface is a decision. The three
   `*ClassName` props reach only the parts it writes.
 - **`Title` and `Description` are `Text` presets**, through the engine's

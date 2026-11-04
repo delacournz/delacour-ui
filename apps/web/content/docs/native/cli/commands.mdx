@@ -98,9 +98,19 @@ The missing ones are shown as commands rather than as a list of names, because t
 part that is not obvious — and they are spelled for the package manager this project is actually
 on.
 
-Then it asks. `--install` answers yes without asking, `--no-install` answers no, and a run with
-nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead. Copying
-source into your repository is local and reversible; running your package manager is neither.
+Then it asks which to install, one checkbox per missing package, all ticked, each naming the
+command it goes through and the components that need it:
+
+```txt
+◆  Install which packages now? (space to toggle, enter to confirm)
+│  ◼ react-native-teleport             (npx expo install · for bottom-sheet)
+│  ◼ react-native-keyboard-controller  (npx expo install · for bottom-sheet, input)
+```
+
+Untick one and the rest are installed; the ones you left are printed as commands to run later.
+`--install` installs every one without asking, `--no-install` none, and a run with nobody to ask —
+a script, CI, an agent — installs nothing and prints the commands instead. Copying source into your
+repository is local and reversible; running your package manager is neither.
 
 ### Tests, if you want them
 
@@ -370,6 +380,31 @@ what to do with one:
 ```
 
 Keep the side you want, delete the markers, and that file is done.
+
+### Choosing what to take
+
+Run with no names at a terminal, `update` lists every component it would change before it writes
+anything — each file, what happens to it, and how far the registry moved it — then asks which to
+take:
+
+```txt
+●  icon  1 updated, 1 added, 1 merged with your edits · +14 −3
+│    update  src/components/ui/icon/icon.tsx           +9 −2
+│    add     src/components/ui/icon/icon.types.ts      +4 −0
+│    merge   src/components/ui/icon/icon.variants.ts   +1 −1
+│
+│  spinner  new · 1 added · needed by button · +40 −0
+│    add     src/components/ui/spinner/spinner.tsx     +40 −0
+│
+◆  Update which components?
+│  ◼ icon
+│  ◼ spinner
+```
+
+Everything is ticked. A component you untick is reported as skipped and is not recorded in the
+lock, so the next `update` offers it again. `delacour diff <name>` prints the lines themselves.
+Naming components (`update icon`), `--yes`, `--json` and a run with nobody to ask take every change
+without the list; packages a taken component needs are then offered the same way `add` offers them.
 
 **It updates to the ref your CLI was published from**, so `npx delacour@latest update` is the
 whole upgrade: the newest CLI, and the registry it shipped against.

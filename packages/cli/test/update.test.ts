@@ -12,6 +12,7 @@ import { lockPath, readLock } from "../src/lock/lock";
 import type { Format } from "../src/project/formatter";
 import { createRegistryClient } from "../src/registry/client";
 import { adaptTest } from "../src/registry/test-runner";
+import type { ComponentChange } from "../src/update/select";
 
 /**
  * `update`, end to end, against two registries that stand in for two refs.
@@ -422,6 +423,76 @@ describe("update, and a config an older CLI wrote", () => {
 		await run(root, { dryRun: true }, { askConfig: async () => ({ "tests.enabled": true }) });
 
 		expect(await read(root, "native-components.json")).toBe(before);
+	});
+});
+
+describe("update, choosing which components to take", () => {
+	test("offers every component with a change, naming each file, and a new dependency as new", async () => {
+		const root = await project();
+		let offered: ComponentChange[] = [];
+
+		await run(
+			root,
+			{},
+			{
+				chooseComponents: async (changes) => {
+					offered = [...changes];
+					return [];
+				},
+			}
+		);
+
+		const card = offered.find((change) => change.item === "card");
+		const tag = offered.find((change) => change.item === "tag");
+		expect(card?.files.map((file) => [file.path, file.action])).toContainEqual([CARD, "updated"]);
+		expect(card?.files.map((file) => [file.path, file.action])).toContainEqual([
+			"src/components/ui/card/card.types.ts",
+			"added",
+		]);
+		expect(tag).toMatchObject({ isNew: true, neededBy: ["card"] });
+		expect(offered.find((change) => change.item === "badge")).toBeUndefined();
+	});
+
+	test("choosing none writes nothing and records nothing, so the next update offers them again", async () => {
+		const root = await project();
+		const before = (await readLock(root)).items.card;
+
+		const result = await run(root, {}, { chooseComponents: async () => [] });
+
+		expect(await read(root, CARD)).toBe(local(CARD_V1));
+		expect((await readLock(root)).items.card?.files[CARD_KEY]).toEqual(before?.files[CARD_KEY]);
+		await expect(exists(root, "src/components/ui/tag/tag.tsx")).resolves.toBe(false);
+		expect(result.files.find((file) => file.path === CARD)).toMatchObject({ action: "skipped", note: "not selected" });
+	});
+
+	test("updates only what was chosen", async () => {
+		const root = await project();
+
+		await run(root, {}, { chooseComponents: async () => ["tag"] });
+
+		await expect(exists(root, "src/components/ui/tag/tag.tsx")).resolves.toBe(true);
+		expect(await read(root, CARD)).toBe(local(CARD_V1));
+		expect((await readLock(root)).items.card?.files[CARD_KEY]?.ref).toBe("v1");
+	});
+
+	test("is not asked when components are named", async () => {
+		const root = await project();
+		let asked = false;
+
+		await run(
+			root,
+			{},
+			{
+				chooseComponents: async () => {
+					asked = true;
+					return [];
+				},
+			},
+			["card"]
+		);
+
+		expect(asked).toBe(false);
+		expect(await read(root, CARD)).toBe(local(CARD_V2));
 	});
 });
 

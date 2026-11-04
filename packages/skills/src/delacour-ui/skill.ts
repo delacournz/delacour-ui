@@ -102,6 +102,10 @@ npx delacour@latest update [names…]      # apply it
   option still to choose. **Those choices are the person's** — relay the question (keep component
   tests? which \`prefix\`?) and pass the answer (\`--tests\` / \`--no-tests\`), rather than running
   \`--yes\` to make the notice go away. Never set \`version\` by hand.
+- **At a terminal a bare \`update\` asks which components to take**, listing each file it would
+  write, add or merge, and then which new packages to install. With names, \`--yes\`, \`--json\` or
+  MCP it takes every change and asks nothing — so name the components the person chose rather than
+  updating all of them on their behalf.
 - After it, install anything it printed with \`expo install\`, rebuild the dev client if a native
   module was added, and run \`doctor\`.
 

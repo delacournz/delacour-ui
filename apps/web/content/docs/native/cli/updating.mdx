@@ -46,7 +46,12 @@ your formatter, uncommitted changes, components copied before the lock existed �
 [`update`](/docs/native/cli/commands#update).
 
 A component that gained a native module needs an `expo install` and a dev-client rebuild
-(`npx expo run:ios`), not just a reload. `update` prints the install commands; `--install` runs them.
+(`npx expo run:ios`), not just a reload. `update` asks which of the new packages to install, and
+prints the commands for any you leave; `--install` runs them all.
+
+At a terminal, a bare `update` first lists each component it would change — the files it writes,
+adds or merges, with a line count — and asks which to take. Untick one to leave it for later; the
+next `update` offers it again. See [choosing what to take](/docs/native/cli/commands#choosing-what-to-take).
 
 ## Updating `native-components.json`
 

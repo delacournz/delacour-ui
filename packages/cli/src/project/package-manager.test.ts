@@ -9,6 +9,8 @@ import {
 	installCommands,
 	missingPackages,
 	NPM_RANGES,
+	narrowRequest,
+	packageChoices,
 	peerRange,
 	planDependencies,
 } from "./package-manager";
@@ -243,5 +245,51 @@ describe("NPM_RANGES", () => {
 	test("declares a shared package's peer at the pinned range rather than *", () => {
 		expect(peerRange("tailwind-variants")).toBe(NPM_RANGES["tailwind-variants"]);
 		expect(peerRange("clsx")).toBe("*");
+	});
+});
+
+describe("packageChoices", () => {
+	const items = [
+		{ name: "carousel", expoDependencies: ["react-native-teleport"], dependencies: [], devDependencies: [] },
+		{ name: "icon", expoDependencies: [], dependencies: ["@central-icons-react-native/round"], devDependencies: [] },
+		{ name: "test-kit", expoDependencies: [], dependencies: [], devDependencies: ["@jest/globals"] },
+		{ name: "sheet", expoDependencies: ["react-native-teleport"], dependencies: [], devDependencies: [] },
+	];
+
+	test("one choice per missing package, naming its route and the components that need it", () => {
+		const plan = planDependencies(
+			{
+				...NONE,
+				packageManager: "yarn",
+				expoDependencies: ["react-native-teleport"],
+				dependencies: ["@central-icons-react-native/round"],
+				devDependencies: ["@jest/globals"],
+			},
+			null
+		);
+
+		expect(packageChoices(plan, items)).toEqual([
+			{ name: "react-native-teleport", route: "expo install", neededBy: ["carousel", "sheet"] },
+			{ name: "@central-icons-react-native/round", route: "yarn add", neededBy: ["icon"] },
+			{ name: "@jest/globals", route: "yarn add --dev", neededBy: ["test-kit"] },
+		]);
+	});
+});
+
+describe("narrowRequest", () => {
+	test("keeps only the chosen packages, on the route each came by", () => {
+		const request = {
+			packageManager: "bun" as const,
+			expoDependencies: ["react-native-teleport", "react-native-svg"],
+			dependencies: ["cn"],
+			devDependencies: ["@jest/globals"],
+		};
+
+		expect(narrowRequest(request, new Set(["react-native-svg", "@jest/globals"]))).toEqual({
+			packageManager: "bun",
+			expoDependencies: ["react-native-svg"],
+			dependencies: [],
+			devDependencies: ["@jest/globals"],
+		});
 	});
 });

@@ -202,6 +202,40 @@ export function planDependencies(request: InstallRequest, packageJson: PackageJs
 	return { wanted, satisfied: wanted.filter((name) => !missingSet.has(name)), missing, groups };
 }
 
+/** One missing package, as a choice: how it would be installed and which components need it. */
+export type PackageChoice = { name: string; route: string; neededBy: string[] };
+
+type ItemPackages = {
+	name: string;
+	expoDependencies: readonly string[];
+	dependencies: readonly string[];
+	devDependencies: readonly string[];
+};
+
+/** Every package `plan` would install, in command order, for someone to pick from. */
+export function packageChoices(plan: DependencyPlan, items: readonly ItemPackages[]): PackageChoice[] {
+	return plan.groups.flatMap((group) =>
+		group.packages.map((name) => ({
+			name,
+			route: group.label,
+			neededBy: items
+				.filter((item) => [...item.expoDependencies, ...item.dependencies, ...item.devDependencies].includes(name))
+				.map((item) => item.name)
+				.sort(),
+		}))
+	);
+}
+
+/** `request` with only the packages in `keep`, each still on the route it came by. */
+export function narrowRequest(request: InstallRequest, keep: ReadonlySet<string>): InstallRequest {
+	return {
+		...request,
+		expoDependencies: request.expoDependencies.filter((name) => keep.has(name)),
+		dependencies: request.dependencies.filter((name) => keep.has(name)),
+		devDependencies: request.devDependencies.filter((name) => keep.has(name)),
+	};
+}
+
 /** A group as the line someone could paste into a terminal. */
 export function commandLine(group: InstallGroup): string {
 	return `${group.command} ${group.args.join(" ")}`;

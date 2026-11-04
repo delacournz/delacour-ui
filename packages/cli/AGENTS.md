@@ -58,6 +58,7 @@ src/
 ├── update/               what an update means, with no I/O of its own beyond reading
 │   ├── classify.ts       three texts and a lock entry → what happened to one file (pure)
 │   ├── decide.ts         that, plus the flags → what is done about it (pure)
+│   ├── select.ts         which components an update changes, for the picker, and narrowing to a choice (pure)
 │   └── plan.ts           every file in scope, classified; registry clients are injected
 ├── config/               native-components.json — schema.ts (zod, CONFIG_VERSION), resolve.ts (nearest-wins walk),
 │                         upgrade.ts (which new fields an older config is asked about — pure)
@@ -342,6 +343,15 @@ from eroding the rule above:
 - **Escape means leave.** The first pass has already been applied and reported; there is nothing
   left to cancel, so the prompt does not throw `CancelledError`.
 
+**Which components to take is asked before anything is written.** A bare `update` at a terminal
+lists every component with a file to update, add, merge, conflict or delete (`update/select.ts`:
+`componentChanges`, `describeChange`, with `+/−` counted from the base — or the file, if untouched —
+to the new text) and offers a multiselect, all ticked. `onlySelected` turns every unchosen change
+into `skipped: not selected`, which writes nothing and records nothing, so the next run offers it
+again. Not asked when names are passed, under `--dry-run`, or when `output.interactive` is false —
+those take every change, as before. Escape chooses none. The second, untracked pass reuses the
+first pass's choice (`UpdateOptions.selected`) rather than asking again.
+
 `UpdateClients.askUntracked` is the seam `test/update.test.ts` answers through, for the same reason
 the registry clients are injected: a prompt cannot be driven offline.
 
@@ -387,7 +397,11 @@ manager unprompted. `src/index.ts` declares `--install` first for the same reaso
 
 `add` therefore always prints what the components need and only sometimes installs it. The report
 is `reportDependencies`, built from `planDependencies` in `project/package-manager.ts`, which is
-pure and tested; the decision is `shouldInstall`, which is three lines and no cleverness.
+pure and tested. The decision is `choosePackagesToInstall` in `commands/add.ts`: `--install` takes
+every missing package, `--no-install` none, a TTY gets a multiselect (`packageChoices`, all ticked,
+`required: false`) and anything else none. Only the chosen ones are installed —
+`planDependencies(narrowRequest(request, chosen))` — and the declined ones are printed as commands.
+`update` reuses it through `settleDependencies`, and `UpdateClients.choosePackages` is the test seam.
 
 ### An existing Tailwind entry is adopted, never duplicated
 
@@ -716,7 +730,7 @@ the file predates and lacks. Four rules:
 - **A config from a newer CLI is never rewritten** — `newer`, a warning, nothing written. `doctor`'s
   `checkConfigVersion` warns on both directions.
 
-`UpdateClients.askConfig` is the test seam, beside `askUntracked`.
+`UpdateClients.askConfig` is the test seam, beside `askUntracked`, `chooseComponents` and `choosePackages`.
 
 ### `tests.enabled` is remembered
 

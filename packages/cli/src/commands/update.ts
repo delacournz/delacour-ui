@@ -13,7 +13,8 @@ import { DEFAULT_REGISTRY_REF } from "../registry/source";
 import { createOutput, type Output, style } from "../ui/output";
 import { type Decision, decide, type UpdateAction } from "../update/decide";
 import { planUpdate, shortRef, type UpdateFile, type UpdatePlan } from "../update/plan";
-import { settleDependencies } from "./add";
+import { type ComponentChange, componentChanges, describeChange, onlySelected } from "../update/select";
+import { type ChoosePackages, settleDependencies } from "./add";
 import { type AskConfig, type ConfigUpgrade, promptConfig, upgradeConfig } from "./config-upgrade";
 import { settleRenderTests } from "./render-tests";
 import { chooseTests } from "./tests-choice";
@@ -64,6 +65,11 @@ export type UpdateOptions = {
 	prune?: boolean;
 	/** Merge into files with uncommitted changes. */
 	force?: boolean;
+	/**
+	 * The components a first pass was told to update, carried into the second so it does not ask
+	 * again. Not a flag — set from the answer to the component question.
+	 */
+	selected?: readonly string[];
 	/** Leave config fields an older config predates unchosen rather than defaulting them — the MCP server's choice. */
 	leaveConfig?: boolean;
 	/**
@@ -117,6 +123,10 @@ export type UpdateClients = {
 	askUntracked?: (files: readonly string[]) => Promise<UntrackedAnswer>;
 	/** Asks about the config fields an older `native-components.json` predates. */
 	askConfig?: AskConfig;
+	/** Picks the components to update from those with changes. The prompt, unless a test answers instead. */
+	chooseComponents?: (changes: readonly ComponentChange[]) => Promise<readonly string[] | null>;
+	/** Picks which missing packages to install. */
+	choosePackages?: ChoosePackages;
 };
 
 export async function update(names: string[], options: UpdateOptions, clients?: UpdateClients): Promise<UpdateResult> {
@@ -138,7 +148,10 @@ export async function update(names: string[], options: UpdateOptions, clients?: 
 	// Everything the first pass settled is current now, so the second touches only the files asked about.
 	const second = await runUpdate(
 		names,
-		answer.kind === "merge" ? { ...options, base: answer.base } : { ...options, replaceUntracked: true },
+		{
+			...(answer.kind === "merge" ? { ...options, base: answer.base } : { ...options, replaceUntracked: true }),
+			...(first.selected ? { selected: first.selected } : {}),
+		},
 		output,
 		config,
 		clients
@@ -160,23 +173,37 @@ async function runUpdate(
 	output: Output,
 	configUpgrade: ConfigUpgrade,
 	clients?: UpdateClients
-): Promise<{ result: UpdateResult; untracked: string[] }> {
+): Promise<{ result: UpdateResult; untracked: string[]; selected?: string[] }> {
 	const { plan, config, lock, ref } = await readPlan(names, options, output, clients);
 	// A dry run changes nothing, the saved answer included.
 	const tests = await chooseTests(config, options.tests, !options.dryRun);
 
-	const unsafe = await unsafeToMerge(plan, options, output);
-	const decided = plan.files.map((file) => ({
-		file,
-		decision: decide(file, {
-			prune: options.prune ?? false,
-			unsafe: unsafe.has(file.path),
-			replaceUntracked: options.replaceUntracked ?? false,
-		}),
-	}));
+	const decideAll = (unsafe: ReadonlySet<string>) =>
+		plan.files.map((file) => ({
+			file,
+			decision: decide(file, {
+				prune: options.prune ?? false,
+				unsafe: unsafe.has(file.path),
+				replaceUntracked: options.replaceUntracked ?? false,
+			}),
+		}));
+
+	// Chosen before the uncommitted-changes question, so it is asked only about what will be written.
+	const selected = options.selected
+		? new Set(options.selected)
+		: await chooseComponents(decideAll(new Set()), plan, names, options, output, clients);
+	const inScope = (item: string) => selected === null || selected.has(item);
+
+	const unsafe = await unsafeToMerge(
+		{ ...plan, files: plan.files.filter((file) => inScope(file.item)) },
+		options,
+		output
+	);
+	const decided = selected === null ? decideAll(unsafe) : onlySelected(decideAll(unsafe), selected);
+	const items = plan.items.filter((item) => inScope(item.name));
 
 	const untracked = decided
-		.filter(({ file, decision }) => isUnrecorded(file) && decision.action === "skipped")
+		.filter(({ file, decision }) => inScope(file.item) && isUnrecorded(file) && decision.action === "skipped")
 		.map(({ file }) => file.displayPath);
 
 	const files = decided.map(({ file, decision }) => ({
@@ -197,7 +224,8 @@ async function runUpdate(
 		config: configUpgrade,
 	};
 
-	if (options.dryRun) return { result: finish(result, options, output), untracked };
+	const chosen = selected === null ? undefined : [...selected];
+	if (options.dryRun) return { result: finish(result, options, output), untracked, selected: chosen };
 
 	await apply(decided, config, lock, ref);
 
@@ -205,19 +233,83 @@ async function runUpdate(
 	// whose Jest config lost a key gets it back, and one that is current is untouched.
 	const keptKit = lock.items["test-kit"] !== undefined;
 	if (tests || keptKit) {
-		await settleRenderTests(config, tests ? plan.items : plan.items.filter((item) => item.name === "test-kit"), output);
+		await settleRenderTests(config, tests ? items : items.filter((item) => item.name === "test-kit"), output);
 	}
 
 	// Only when a file moved: a component that did not change needs what it needed before.
 	if (decided.some(({ decision }) => decision.write !== undefined)) {
 		const project = await detectProject(config.app.resolved.root);
-		const settled = await settleDependencies(plan.items, config, project, options, output);
+		const settled = await settleDependencies(items, config, project, options, output, clients?.choosePackages);
 
 		result.dependencies = settled.dependencies;
 		result.installed = settled.installed;
 	}
 
-	return { result: finish(result, options, output), untracked };
+	return { result: finish(result, options, output), untracked, selected: chosen };
+}
+
+/**
+ * Which components to update, asked when someone ran `update` with no names at a terminal.
+ *
+ * Every component with a file to write is listed with what happens to each file and how far the
+ * registry moved it, all ticked, so Enter takes everything. Named components were already chosen,
+ * and a run with no one to ask — `--yes`, `--json`, CI, MCP — takes every one. `null` means all;
+ * Escape is an empty set, so nothing is written.
+ */
+async function chooseComponents(
+	decided: Parameters<typeof componentChanges>[0],
+	plan: UpdatePlan,
+	names: readonly string[],
+	options: UpdateOptions,
+	output: Output,
+	clients: UpdateClients | undefined
+): Promise<Set<string> | null> {
+	if (names.length > 0 || options.dryRun) return null;
+
+	const ask = clients?.chooseComponents ?? (output.interactive ? promptComponents : undefined);
+	if (!ask) return null;
+
+	const onDisk = new Set(plan.files.filter((file) => file.local !== null).map((file) => file.item));
+	const changes = componentChanges(decided, plan.items, onDisk);
+	if (changes.length === 0) return null;
+
+	const picked = await ask(changes);
+	return new Set(picked ?? []);
+}
+
+const VERB: Partial<Record<UpdateAction, string>> = {
+	updated: "update",
+	added: "add",
+	merged: "merge",
+	conflict: "conflict",
+	deleted: "delete",
+};
+
+async function promptComponents(changes: readonly ComponentChange[]): Promise<readonly string[] | null> {
+	const width = Math.max(...changes.flatMap((change) => change.files.map((file) => (VERB[file.action] ?? "").length)));
+
+	clack.log.message(
+		changes
+			.map((change) =>
+				[
+					`${style.code(change.item)}  ${style.dim(describeChange(change))}`,
+					...change.files.map(
+						(file) =>
+							`  ${paint(file.action)((VERB[file.action] ?? file.action).padEnd(width))}  ${file.path}  ${style.dim(`+${file.added} −${file.removed}`)}`
+					),
+				].join("\n")
+			)
+			.join("\n\n")
+	);
+
+	const picked = await clack.multiselect({
+		message: `Update which components? ${style.dim("space toggles · enter confirms · delacour diff <name> shows the lines")}`,
+		options: changes.map((change) => ({ value: change.item, label: change.item, hint: describeChange(change) })),
+		initialValues: changes.map((change) => change.item),
+		required: false,
+	});
+
+	return clack.isCancel(picked) ? null : picked;
 }
 
 /** On disk, differing from the registry, and with no lock entry to say which side moved. */

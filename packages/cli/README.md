@@ -65,8 +65,10 @@ whether or not any are missing:
 │    already installed — clsx, react-native-reanimated, react-native-svg, tailwind-variants, …
 ```
 
-Then it asks. `--install` answers yes without asking, `--no-install` answers no, and a run with
-nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead:
+Then it asks which of them to install — a checkbox per package, all ticked, naming the command
+and the components that need it; the ones you untick are printed as commands. `--install` installs
+every one without asking, `--no-install` none, and a run with nobody to ask — a script, CI, an
+agent — installs nothing and prints the commands instead:
 
 ```bash
 npx delacour@latest add bottom-sheet --install

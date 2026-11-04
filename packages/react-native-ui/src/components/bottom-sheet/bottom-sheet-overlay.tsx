@@ -1,6 +1,7 @@
 import {
 	BottomSheet as Headless,
 	type BottomSheetOverlayProps as HeadlessProps,
+	useBottomSheetInternal,
 } from "@delacour/react-native-bottom-sheet";
 import type { ReactElement } from "react";
 import { withUniwind } from "uniwind";
@@ -9,6 +10,7 @@ import {
 	BOTTOM_SHEET_OVERLAY_OPACITY,
 	bottomSheetVariants,
 } from "./bottom-sheet.variants";
+import { useHideAppWhileModal, useIsInRootHost } from "./bottom-sheet-modal.context";
 
 type StyledOverlayComponent = (props: HeadlessProps & { className?: string }) => ReactElement | null;
 
@@ -32,6 +34,13 @@ export type BottomSheetOverlayProps = HeadlessProps & {
  * Omit it and the sheet has no scrim at all. `pressBehavior="none"` keeps it
  * and makes it inert, for a sheet that must be answered.
  *
+ * **A scrim makes the sheet modal for screen readers.** While the sheet is
+ * presented in the `"root"` host, the overlay tells `BottomSheetProvider` to
+ * hide the app from VoiceOver and TalkBack. The panel's
+ * `accessibilityViewIsModal` hides only its siblings in the host, not the app.
+ * An inline sheet, a sheet in another host, and `enableTouchThrough` leave the
+ * app reachable.
+ *
  * @example
  * <BottomSheet.Overlay />
  *
@@ -42,14 +51,20 @@ export function BottomSheetOverlay({
 	appearsOnIndex = BOTTOM_SHEET_BACKDROP_INDICES.appearsOnIndex,
 	className,
 	disappearsOnIndex = BOTTOM_SHEET_BACKDROP_INDICES.disappearsOnIndex,
+	enableTouchThrough = false,
 	opacity = BOTTOM_SHEET_OVERLAY_OPACITY,
 	...props
 }: BottomSheetOverlayProps): ReactElement {
+	const { presented } = useBottomSheetInternal();
+	const isInRootHost = useIsInRootHost();
+	useHideAppWhileModal(presented && isInRootHost && !enableTouchThrough);
+
 	return (
 		<StyledOverlay
 			appearsOnIndex={appearsOnIndex}
 			className={bottomSheetVariants().overlay({ className })}
 			disappearsOnIndex={disappearsOnIndex}
+			enableTouchThrough={enableTouchThrough}
 			opacity={opacity}
 			{...props}
 		/>

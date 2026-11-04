@@ -136,8 +136,18 @@
 			]
 		},
 		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx",
+			"target": "bottom-sheet/bottom-sheet-modal.context.tsx",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx",
 			"target": "bottom-sheet/bottom-sheet-overlay.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx",
+			"target": "bottom-sheet/bottom-sheet-portal.tsx",
 			"namespace": "ui"
 		},
 		{
@@ -145,6 +155,10 @@
 			"target": "bottom-sheet/bottom-sheet-provider.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../overlay/overlay-teleport",
+					"to": "@registry/ui/overlay/overlay-teleport"
+				},
 				{
 					"from": "../overlay/overlay.context",
 					"to": "@registry/ui/overlay/overlay.context"
@@ -227,6 +241,14 @@
 				{
 					"from": "../../hooks/use-keyboard-state-sync",
 					"to": "@registry/hooks/use-keyboard-state-sync"
+				},
+				{
+					"from": "../overlay/overlay-registry",
+					"to": "@registry/ui/overlay/overlay-registry"
+				},
+				{
+					"from": "../overlay/overlay.context",
+					"to": "@registry/ui/overlay/overlay.context"
 				}
 			]
 		},
@@ -296,6 +318,10 @@
 				{
 					"from": "../overlay",
 					"to": "@registry/ui/overlay"
+				},
+				{
+					"from": "../overlay/overlay-teleport",
+					"to": "@registry/ui/overlay/overlay-teleport"
 				},
 				{
 					"from": "../text",

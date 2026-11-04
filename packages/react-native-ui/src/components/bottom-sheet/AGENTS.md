@@ -22,9 +22,12 @@ navigator. `DelacourProvider` cannot mount it without importing the engine. See
 | `bottom-sheet.tsx` | `BottomSheet` — the engine's root with this library's defaults: `bottomInset` from the safe area, the two haptics, the stale-keyboard guard. The `Object.assign` names every part |
 | `bottom-sheet.variants.ts` | The slotted `tv()` — `overlay`, `background` (with a `detached` variant), `handle`, `handleIndicator`, `content`, `scrollContent`, `steps`, `step`, `footer`, `stickyFooter`, `close`, `title` — and the numeric constants the engine's props take |
 | `bottom-sheet.variants.test.ts` | Every token the slots name exists in both themes; the rules below, pinned |
-| `bottom-sheet.render.test.tsx` | Mounted under Jest — trigger and Close open/shut it, defaultOpen, controlled isOpen, handle's adjustable role and escape, title, scrim semantics, parts outside the root throw |
+| `bottom-sheet.render.test.tsx` | Mounted under Jest — trigger and Close open/shut it, defaultOpen, controlled isOpen, handle's adjustable role and escape, title, scrim semantics, parts outside the root throw, a fragment-wrapped handle, the app hidden under a modal sheet, back left to an open overlay |
 | `bottom-sheet-trigger.tsx` | `BottomSheet.Trigger` — this library's `Pressable`, or `asChild` to donate the press |
-| `bottom-sheet-overlay.tsx` | `BottomSheet.Overlay` — the engine's scrim in `bg-overlay`, opacity 1 |
+| `bottom-sheet-portal.tsx` | `BottomSheet.Portal` — the engine's portal, plus whether it teleports to `"root"` |
+| `bottom-sheet-overlay.tsx` | `BottomSheet.Overlay` — the engine's scrim in `bg-overlay`, opacity 1; registers the sheet as modal for screen readers |
+| `bottom-sheet-provider.tsx` | `BottomSheetProvider` — the engine's provider, sharing teleport with `OverlayProvider`, hiding the app under a modal sheet |
+| `bottom-sheet-modal.context.tsx` | **Leaf.** The modal-sheet registry context, the root-host context and `useHideAppWhileModal` |
 | `bottom-sheet-container.tsx` | `BottomSheet.Container` — the panel; writes `Background` and `Handle` when the caller writes neither |
 | `bottom-sheet-background.tsx` | `BottomSheet.Background` — `bg-popover`, top corners rounded, every corner when detached |
 | `bottom-sheet-handle.tsx` | `BottomSheet.Handle` — the engine's row with the pill inside it |
@@ -41,8 +44,9 @@ navigator. `DelacourProvider` cannot mount it without importing the engine. See
 | `bottom-sheet-steps.tsx` | `BottomSheet.Steps` and `BottomSheet.Step` — the multi-step body, gutter on the stack and vertical padding on each step |
 | `use-bottom-sheet-input.ts` | `useBottomSheetInput()` — the engine's `useBottomSheetTextInput` under the name this library shipped |
 
-`Portal`, `Host` and `Provider` are the engine's own, re-exported unchanged:
-none of them draws anything a class could reach.
+`Host` is the engine's own, re-exported unchanged. `Portal` and `Provider`
+wrap the engine's for screen-reader modality only; they draw nothing a class
+could reach.
 
 ## Anatomy
 
@@ -101,7 +105,7 @@ read those before touching behaviour, because behaviour is not here.
   it, which is what makes that safe where it was not with the library this
   replaces.
 - **`Container` writes `Background` and `Handle` for you** when the children
-  hold neither, detected by element type. Write either yourself and it writes
+  hold neither, detected by element type and inside fragments too. Write either yourself and it writes
   nothing: a custom handle with no surface is a decision. The three
   `*ClassName` props reach only the parts it writes.
 - **`Title` and `Description` are `Text` presets**, through the engine's
@@ -123,12 +127,28 @@ read those before touching behaviour, because behaviour is not here.
   the UI thread. And `useKeyboardAnimationGuard()` runs on mount, the same
   stale-keyboard repair `Screen.Footer` runs. `topInset` stays at the engine's
   zero, so a `%` snap point is the fraction of the window it always was.
+- **Android back skips a sheet under an overlay.** Sheets and overlays keep
+  separate registries, and `BackHandler` calls the newest listener first. The
+  engine re-subscribes when its methods change, so after a parent render the
+  sheet's listener is newer than a dialog's. The root turns `closeOnBack` off
+  while `topOverlay()` of the `OverlayProvider` registry is set, so back closes
+  the dialog and not the sheet under it.
 - **`Footer.sticky` defaults to `false`**, matching `Screen.Footer`, and this is
   the one engine default the skin overrides. A pinned footer takes
   `padding={BOTTOM_SHEET_FOOTER_PADDING}` through the engine's prop rather
   than a class, so the padding is inside the box the snap point measures; the
   `stickyFooter` slot carries the gutter, the surface and the hairline, and
   the test asserts it carries no vertical padding.
+- **A scrim makes the sheet modal for screen readers.** The panel's
+  `accessibilityViewIsModal` hides only its siblings in the teleport host, not
+  the app, and sheets are not in `OverlayProvider`'s registry. So while a sheet
+  with an `Overlay` is presented in the `"root"` host, the overlay registers
+  with `BottomSheetProvider`, which sets `accessibilityElementsHidden` and
+  `importantForAccessibility="no-hide-descendants"` on the view around its
+  children. The `"root"` host draws beside that view, so the sheet stays
+  reachable. An inline sheet, a sheet in another `BottomSheet.Host` (inside the
+  app view) and `enableTouchThrough` do not register. Under Jest's inline
+  teleport (`isTeleportInline()`) it hides nothing, as `OverlayProvider` does.
 - **The overlay's opacity is 1**, because `--overlay` carries its own alpha and
   the two theme variants carry different ones. `BOTTOM_SHEET_OVERLAY_OPACITY`
   and `BOTTOM_SHEET_BACKDROP_INDICES` restate the engine's defaults so a test

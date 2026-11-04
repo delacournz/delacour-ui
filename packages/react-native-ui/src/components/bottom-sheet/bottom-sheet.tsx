@@ -7,6 +7,8 @@ import type { ReactElement } from "react";
 import { Presets } from "react-native-pulsar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useKeyboardAnimationGuard } from "../../hooks/use-keyboard-state-sync";
+import { useOptionalOverlay } from "../overlay/overlay.context";
+import { topOverlay } from "../overlay/overlay-registry";
 import { BottomSheetBackground } from "./bottom-sheet-background";
 import { BottomSheetClose } from "./bottom-sheet-close";
 import { BottomSheetContainer } from "./bottom-sheet-container";
@@ -17,6 +19,7 @@ import { BottomSheetFooter } from "./bottom-sheet-footer";
 import { BottomSheetHandle } from "./bottom-sheet-handle";
 import { BottomSheetLegendList } from "./bottom-sheet-legend-list";
 import { BottomSheetOverlay } from "./bottom-sheet-overlay";
+import { BottomSheetPortal } from "./bottom-sheet-portal";
 import { BottomSheetProvider } from "./bottom-sheet-provider";
 import { BottomSheetScrollView } from "./bottom-sheet-scroll-view";
 import { BottomSheetSectionList } from "./bottom-sheet-section-list";
@@ -49,7 +52,7 @@ const closeHaptic = Presets.System.impactLight;
  * The engine's root with this library's defaults on it. It renders no view of
  * its own.
  *
- * Three things happen here and nowhere else in the skin:
+ * Four things happen here and nowhere else in the skin:
  *
  * - **`bottomInset` defaults to the safe-area bottom**, read from
  *   `useSafeAreaInsets()`. The engine reserves that band under the body or the
@@ -61,13 +64,24 @@ const closeHaptic = Presets.System.impactLight;
  *   `KeyboardProvider`'s shared values are pinned open by a keyboard that
  *   vanished without a `will` event would lift for a keyboard that is not
  *   there; `Screen.Footer` runs the same repair for the same reason.
+ * - **Android back skips the sheet while an overlay is over it.** Under an
+ *   `OverlayProvider`, `closeOnBack` is off while a modal or anchored overlay
+ *   is open, so back closes the dialog and leaves the sheet under it.
  *
  * `topInset` is left at the engine's zero, so a `%` snap point is a fraction of the
  * whole window — the same fraction it was before this rewrite.
  */
-function BottomSheetRoot({ bottomInset, ...props }: BottomSheetProps): ReactElement {
+function BottomSheetRoot({ bottomInset, closeOnBack = true, ...props }: BottomSheetProps): ReactElement {
 	const insets = useSafeAreaInsets();
+	const overlays = useOptionalOverlay();
 	useKeyboardAnimationGuard();
+
+	// Every overlay draws over every sheet, so while one that answers back is
+	// open the sheet must not. Sheets and overlays keep separate registries,
+	// and `BackHandler` calls the newest listener first: the engine
+	// re-subscribes whenever its methods change, so after any parent render
+	// the sheet's listener would be newer than the dialog's.
+	const isUnderOverlay = overlays !== null && topOverlay(overlays.state) !== null;
 
 	// The haptics go before the spread, not into destructuring defaults: a
 	// default also replaces an explicit `undefined`, which is the opt-out.
@@ -77,6 +91,7 @@ function BottomSheetRoot({ bottomInset, ...props }: BottomSheetProps): ReactElem
 			onSnapPointHaptic={snapPointHaptic}
 			{...props}
 			bottomInset={bottomInset ?? insets.bottom}
+			closeOnBack={closeOnBack && !isUnderOverlay}
 		/>
 	);
 }
@@ -134,7 +149,7 @@ export const BottomSheet = Object.assign(BottomSheetRoot, {
 	/** The control that opens the sheet. `asChild` to make a `Button` the trigger. */
 	Trigger: BottomSheetTrigger,
 	/** Everything drawn above the app, teleported to the nearest host. `inline` to render in place. */
-	Portal: Headless.Portal,
+	Portal: BottomSheetPortal,
 	/** The scrim. Omit it and the sheet has none. */
 	Overlay: BottomSheetOverlay,
 	/** The panel that moves. Brings its own `Background` and `Handle` unless you write them. */

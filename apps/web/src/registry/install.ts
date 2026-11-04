@@ -3860,7 +3860,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 161,
+		fileCount: 163,
 		groups: [
 			{
 				name: "combobox",
@@ -4036,7 +4036,9 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-modal.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
@@ -5548,7 +5550,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 137,
+		fileCount: 139,
 		groups: [
 			{
 				name: "color-picker",
@@ -5731,7 +5733,9 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-modal.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
@@ -6031,7 +6035,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 152,
+		fileCount: 154,
 		groups: [
 			{
 				name: "planner",
@@ -6214,7 +6218,9 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-modal.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
@@ -6774,7 +6780,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 148,
+		fileCount: 150,
 		groups: [
 			{
 				name: "date-picker",
@@ -6949,7 +6955,9 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-modal.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
@@ -7124,7 +7132,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 193,
+		fileCount: 195,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -7301,7 +7309,9 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-modal.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
@@ -7911,7 +7921,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 127,
+		fileCount: 129,
 		groups: [
 			{
 				name: "select",
@@ -8084,7 +8094,9 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-modal.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
@@ -8641,7 +8653,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 132,
+		fileCount: 134,
 		groups: [
 			{
 				name: "time-picker",
@@ -8819,7 +8831,9 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-modal.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
@@ -13157,7 +13171,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 113,
+		fileCount: 115,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -13174,7 +13188,9 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-modal.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-modal.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },

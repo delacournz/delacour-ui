@@ -1,10 +1,13 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import type { ReactElement, ReactNode } from "react";
+import { Fragment, type ReactElement, type ReactNode } from "react";
+import { BackHandler } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
-import { OverlayProvider } from "../overlay";
+import { Overlay, OverlayProvider } from "../overlay";
+import { TELEPORT_INLINE } from "../overlay/overlay-teleport";
 import { Text } from "../text";
 import { BottomSheet, type BottomSheetProps } from "./bottom-sheet";
+import { teleportsToRoot } from "./bottom-sheet-portal";
 import { BottomSheetProvider } from "./bottom-sheet-provider";
 
 function Providers({ children }: { children: ReactNode }): ReactElement {
@@ -186,5 +189,132 @@ describe("BottomSheet", () => {
 				"outside <BottomSheet>"
 			);
 		});
+	});
+});
+
+describe("BottomSheet.Container", () => {
+	test("a Handle inside a fragment counts as written, so no second one is added", async () => {
+		const showHandle = true;
+		await renderWithProviders(
+			<BottomSheet defaultOpen>
+				<BottomSheet.Portal>
+					<BottomSheet.Container>
+						<Fragment key="surface">{showHandle && <BottomSheet.Handle />}</Fragment>
+						<BottomSheet.Content>
+							<BottomSheet.Title>One handle</BottomSheet.Title>
+						</BottomSheet.Content>
+					</BottomSheet.Container>
+				</BottomSheet.Portal>
+			</BottomSheet>,
+			{ wrapper: Providers }
+		);
+		expect(screen.getAllByRole("adjustable")).toHaveLength(1);
+	});
+});
+
+/** Runs `body` as on a device, where teleport moves the sheet out of the app's view. */
+async function withTeleportOutOfTree(body: () => Promise<void>): Promise<void> {
+	const flags = globalThis as unknown as Record<symbol, unknown>;
+	const previous = flags[TELEPORT_INLINE];
+	delete flags[TELEPORT_INLINE];
+	try {
+		await body();
+	} finally {
+		flags[TELEPORT_INLINE] = previous;
+	}
+}
+
+describe("BottomSheetProvider and screen readers", () => {
+	function App({ overlay, inline }: { overlay: boolean; inline?: boolean }): ReactElement {
+		return (
+			<>
+				<Text>app behind</Text>
+				<BottomSheet defaultOpen>
+					<BottomSheet.Portal inline={inline}>
+						{overlay ? <BottomSheet.Overlay /> : null}
+						<BottomSheet.Container>
+							<BottomSheet.Content>
+								<BottomSheet.Title>Sheet</BottomSheet.Title>
+							</BottomSheet.Content>
+						</BottomSheet.Container>
+					</BottomSheet.Portal>
+				</BottomSheet>
+			</>
+		);
+	}
+
+	test("an open sheet with a scrim hides the app when teleport moves it out of the app", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<App overlay />, { wrapper: Providers });
+			expect(screen.queryByText("app behind")).toBeNull();
+			expect(screen.getByText("app behind", { includeHiddenElements: true })).toBeOnTheScreen();
+		});
+	});
+
+	test("a sheet with no scrim leaves the app reachable", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<App overlay={false} />, { wrapper: Providers });
+			expect(screen.getByText("app behind")).toBeOnTheScreen();
+		});
+	});
+
+	test("an inline sheet leaves the app reachable", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<App inline overlay />, { wrapper: Providers });
+			expect(screen.getByText("app behind")).toBeOnTheScreen();
+		});
+	});
+
+	test("only a portal teleported to the root host counts", () => {
+		expect(teleportsToRoot({ inline: false, hostName: undefined, nearest: "root" })).toBe(true);
+		expect(teleportsToRoot({ inline: true, hostName: undefined, nearest: "root" })).toBe(false);
+		expect(teleportsToRoot({ inline: false, hostName: undefined, nearest: null })).toBe(false);
+		expect(teleportsToRoot({ inline: false, hostName: "modal", nearest: "root" })).toBe(false);
+	});
+});
+
+describe("BottomSheet and Android back", () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	function countBackSubscriptions(): { count: () => number } {
+		let count = 0;
+		jest.spyOn(BackHandler, "addEventListener").mockImplementation(() => {
+			count++;
+			return { remove: () => undefined };
+		});
+		return { count: () => count };
+	}
+
+	test("an open sheet answers back on its own", async () => {
+		const subscriptions = countBackSubscriptions();
+		await renderWithProviders(<FilterSheet defaultOpen />, { wrapper: Providers });
+		expect(subscriptions.count()).toBeGreaterThan(0);
+	});
+
+	test("a parent render with a new inline onOpenChange does not re-subscribe", async () => {
+		const subscriptions = countBackSubscriptions();
+		const { rerender } = await renderWithProviders(<FilterSheet defaultOpen onOpenChange={() => undefined} />, {
+			wrapper: Providers,
+		});
+		const before = subscriptions.count();
+		await rerender(<FilterSheet defaultOpen onOpenChange={() => undefined} />);
+		expect(subscriptions.count()).toBe(before);
+	});
+
+	test("a sheet under an open modal overlay leaves back to the overlay", async () => {
+		const subscriptions = countBackSubscriptions();
+		await renderWithProviders(
+			<>
+				<FilterSheet defaultOpen />
+				<Overlay.Portal layer="modal">
+					<Text>dialog</Text>
+				</Overlay.Portal>
+			</>,
+			{ wrapper: Providers }
+		);
+		expect(screen.getByText("dialog")).toBeOnTheScreen();
+		expect(subscriptions.count()).toBe(0);
 	});
 });

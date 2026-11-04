@@ -123,6 +123,12 @@ read those before touching behaviour, because behaviour is not here.
   the UI thread. And `useKeyboardAnimationGuard()` runs on mount, the same
   stale-keyboard repair `Screen.Footer` runs. `topInset` stays at the engine's
   zero, so a `%` snap point is the fraction of the window it always was.
+- **Android back skips a sheet under an overlay.** Sheets and overlays keep
+  separate registries, and `BackHandler` calls the newest listener first. The
+  engine re-subscribes when its methods change, so after a parent render the
+  sheet's listener is newer than a dialog's. The root turns `closeOnBack` off
+  while `topOverlay()` of the `OverlayProvider` registry is set, so back closes
+  the dialog and not the sheet under it.
 - **`Footer.sticky` defaults to `false`**, matching `Screen.Footer`, and this is
   the one engine default the skin overrides. A pinned footer takes
   `padding={BOTTOM_SHEET_FOOTER_PADDING}` through the engine's prop rather

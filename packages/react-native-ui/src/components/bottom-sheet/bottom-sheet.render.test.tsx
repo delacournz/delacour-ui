@@ -3,7 +3,7 @@ import { Fragment, type ReactElement, type ReactNode } from "react";
 import { BackHandler } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
-import { OverlayProvider } from "../overlay";
+import { Overlay, OverlayProvider } from "../overlay";
 import { Text } from "../text";
 import { BottomSheet, type BottomSheetProps } from "./bottom-sheet";
 import { BottomSheetProvider } from "./bottom-sheet-provider";
@@ -238,5 +238,20 @@ describe("BottomSheet and Android back", () => {
 		const before = subscriptions.count();
 		await rerender(<FilterSheet defaultOpen onOpenChange={() => undefined} />);
 		expect(subscriptions.count()).toBe(before);
+	});
+
+	test("a sheet under an open modal overlay leaves back to the overlay", async () => {
+		const subscriptions = countBackSubscriptions();
+		await renderWithProviders(
+			<>
+				<FilterSheet defaultOpen />
+				<Overlay.Portal layer="modal">
+					<Text>dialog</Text>
+				</Overlay.Portal>
+			</>,
+			{ wrapper: Providers }
+		);
+		expect(screen.getByText("dialog")).toBeOnTheScreen();
+		expect(subscriptions.count()).toBe(0);
 	});
 });

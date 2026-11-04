@@ -9,6 +9,10 @@
 		"url": "git+https://github.com/delacournz/delacour-ui.git",
 		"directory": "packages/react-native-charts"
 	},
+	"homepage": "https://ui.delacour.co.nz/docs/charts",
+	"bugs": {
+		"url": "https://github.com/delacournz/delacour-ui/issues"
+	},
 	"keywords": [
 		"react-native",
 		"skia",

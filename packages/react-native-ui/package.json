@@ -9,6 +9,10 @@
 		"url": "git+https://github.com/delacournz/delacour-ui.git",
 		"directory": "packages/react-native-ui"
 	},
+	"homepage": "https://ui.delacour.co.nz/docs/native/getting-started",
+	"bugs": {
+		"url": "https://github.com/delacournz/delacour-ui/issues"
+	},
 	"keywords": [
 		"react-native",
 		"expo",

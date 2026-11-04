@@ -1,5 +1,13 @@
 {
 	"name": "@delacour/source",
+	"homepage": "https://ui.delacour.co.nz",
+	"bugs": {
+		"url": "https://github.com/delacournz/delacour-ui/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/delacournz/delacour-ui.git"
+	},
 	"version": "0.1.0",
 	"type": "module",
 	"private": true,

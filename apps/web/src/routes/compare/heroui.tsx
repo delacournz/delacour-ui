@@ -23,6 +23,7 @@ import {
 } from "@/lib/comparison";
 import { COMPONENTS } from "@/lib/components";
 import { homeOptions } from "@/lib/layout.shared";
+import { pageHead } from "@/lib/seo";
 import { appName } from "@/lib/shared";
 
 /**
@@ -49,12 +50,12 @@ import { appName } from "@/lib/shared";
  */
 export const Route = createFileRoute("/compare/heroui")({
 	component: CompareHeroUI,
-	head: () => ({
-		meta: [
-			{ title: `${appName} vs HeroUI — where the component code lives` },
-			{ name: "description", content: COMPARE_COPY.description },
-		],
-	}),
+	head: () =>
+		pageHead({
+			path: "/compare/heroui",
+			title: `${appName} vs HeroUI — where the component code lives`,
+			description: COMPARE_COPY.description,
+		}),
 });
 
 function CompareHeroUI(): ReactElement {

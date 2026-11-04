@@ -9,7 +9,7 @@ import { startPosthog } from "@/lib/analytics/posthog";
 import { installClickTracking } from "@/lib/analytics/track";
 import { siteFontLinks } from "@/lib/google-fonts";
 import { HOUSE_BACKGROUND } from "@/lib/house-meta";
-import { appDescription, appName, docsImageRoute, siteUrl } from "@/lib/shared";
+import { appDescription, appName, docsImageRoute, homeTitle, siteUrl } from "@/lib/shared";
 import { OG_HEIGHT, OG_WIDTH } from "@/og/card";
 import appCss from "@/styles/app.css?url";
 
@@ -24,7 +24,7 @@ export const Route = createRootRoute({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: `${appName} — React Native components`,
+				title: homeTitle,
 			},
 			{
 				name: "description",
@@ -32,7 +32,7 @@ export const Route = createRootRoute({
 			},
 			{ property: "og:type", content: "website" },
 			{ property: "og:site_name", content: appName },
-			{ property: "og:title", content: `${appName} — React Native components` },
+			{ property: "og:title", content: homeTitle },
 			{ property: "og:description", content: appDescription },
 			{ property: "og:url", content: siteUrl },
 			// The 1200×630 card `/og/docs` renders — the mark, the site line, the house
@@ -41,9 +41,9 @@ export const Route = createRootRoute({
 			{ property: "og:image", content: `${siteUrl}${docsImageRoute}` },
 			{ property: "og:image:width", content: String(OG_WIDTH) },
 			{ property: "og:image:height", content: String(OG_HEIGHT) },
-			{ property: "og:image:alt", content: `${appName} — React Native components` },
+			{ property: "og:image:alt", content: homeTitle },
 			{ name: "twitter:card", content: "summary_large_image" },
-			{ name: "twitter:title", content: `${appName} — React Native components` },
+			{ name: "twitter:title", content: homeTitle },
 			{ name: "twitter:description", content: appDescription },
 			{ name: "twitter:image", content: `${siteUrl}${docsImageRoute}` },
 		],
@@ -59,6 +59,9 @@ export const Route = createRootRoute({
 			{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
 			{ rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
 			{ rel: "manifest", href: "/site.webmanifest" },
+			// Where an agent finds every page as Markdown — see `routes/llms[.]txt.ts`.
+			{ rel: "alternate", type: "text/plain", href: "/llms.txt", title: "llms.txt" },
+			{ rel: "sitemap", type: "application/xml", href: "/sitemap.xml" },
 		],
 	}),
 	component: RootComponent,

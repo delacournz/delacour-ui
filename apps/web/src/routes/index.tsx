@@ -11,13 +11,11 @@ import { Showcase } from "@/components/landing/showcase";
 import { ThemeTeaser } from "@/components/landing/theme-teaser";
 import { Tokens } from "@/components/landing/tokens";
 import { homeOptions } from "@/lib/layout.shared";
-import { appDescription, appName } from "@/lib/shared";
+import { homeHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
 	component: Home,
-	head: () => ({
-		meta: [{ title: `${appName} — React Native components` }, { name: "description", content: appDescription }],
-	}),
+	head: homeHead,
 });
 
 /**

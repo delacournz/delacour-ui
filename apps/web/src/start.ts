@@ -7,6 +7,7 @@ import { compressResponse } from "@/lib/compress";
 import { blockCrawlerResponse, isBlockedCrawler } from "@/lib/crawler-block";
 import { createPresetLimiter } from "@/lib/preset-rate-limit";
 import { siteLimiter } from "@/lib/rate-limit";
+import { withSecurityHeaders } from "@/lib/security-headers";
 import { docsRoute, encodeMarkdownUrl } from "@/lib/shared";
 
 const csrfMiddleware = createCsrfMiddleware({
@@ -56,6 +57,15 @@ const compressionMiddleware = createMiddleware().server(async ({ next, request }
 });
 
 /**
+ * Outermost of the chain after the block, so a 403, a 429 and a rendered page all
+ * carry the same headers. See `src/lib/security-headers.ts`.
+ */
+const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
+	const result = await next();
+	return withSecurityHeaders(result.response);
+});
+
+/**
  * Counts reads of the Markdown the site serves to agents — see
  * `src/lib/analytics/server.ts`. `llmMiddleware`'s `Accept: text/markdown` redirect is
  * not counted here; the `.md` request it redirects to is.
@@ -68,6 +78,7 @@ const analyticsMiddleware = createMiddleware().server(({ next, request }) => {
 export const startInstance = createStart(() => {
 	return {
 		requestMiddleware: [
+			securityHeadersMiddleware,
 			crawlerBlockMiddleware,
 			compressionMiddleware,
 			csrfMiddleware,

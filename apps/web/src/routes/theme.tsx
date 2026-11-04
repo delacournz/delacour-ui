@@ -7,7 +7,7 @@ import { CopyThemeButton, PresetNotice, ThemeCssPanel, ThemeSummary } from "@/co
 import { ThemePreview } from "@/components/theme-preview";
 import { themeFontLinks } from "@/lib/google-fonts";
 import { homeOptions } from "@/lib/layout.shared";
-import { appName } from "@/lib/shared";
+import { appName, siteUrl } from "@/lib/shared";
 import { presetCss, presetNativeCss, resolvePreset, themeTitle } from "@/lib/theme-preset";
 
 export type ThemeSearch = { preset?: string };
@@ -58,7 +58,8 @@ export const Route = createFileRoute("/theme")({
 			// The Font axis is the one axis a name cannot carry, so the tiles are
 			// set in the faces they choose. The order of these matters — see
 			// `src/lib/google-fonts.ts`.
-			links: [...themeFontLinks(config)],
+			// One canonical for every `?preset=` code — the codes are one page.
+			links: [{ rel: "canonical", href: `${siteUrl}/theme` }, ...themeFontLinks(config)],
 		};
 	},
 });

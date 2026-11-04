@@ -52,7 +52,9 @@ src/
 ├── registry/install.ts    here, **generated** — see "The install block is derived"
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
-├── lib/seo.ts             PRODUCTS (ui, charts, bottom-sheet), isDocsProduct() and docsHead() — each docs page's head tags
+├── lib/seo.ts             PRODUCTS, docsHead() (title, canonical, .md alternate, TechArticle + BreadcrumbList JSON-LD), pageHead(), homeHead()
+├── lib/sitemap.ts         MARKETING_PATHS, sitemapXml()
+├── lib/security-headers.ts  HSTS, nosniff, frame, referrer and permissions headers, added in start.ts
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/number-words.ts    numberToWords — 0–99 as English, for <ComponentCount />
 ├── lib/remark-component-count.ts  the remark plugin that spells <ComponentCount /> — wired in source.config.ts
@@ -76,7 +78,7 @@ src/
 │   ├── [.]well-known/     apple-app-site-association, assetlinks.json
 │   ├── api/search.ts
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
-│   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
+│   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts, sitemap[.]xml.ts
 ├── start.ts               crawler block + preset rate limit + br/gzip + csrf + Accept: text/markdown negotiation
 ├── server/otel.ts         Nitro middleware — one OpenTelemetry SERVER span per request
 ├── server/trace.ts        traceRequest(), adapts withServerSpan to the middleware — see "Tracing"
@@ -707,9 +709,11 @@ MDX do that (see [A link to `/llms.txt` has to be a plain anchor](#a-link-to-llm
 with no component, `notFound()` came back as **`200`** carrying `{"isNotFound":true}` — a body no
 client reads as an error.
 
-`robots[.]txt.ts` exists for one reason: to name `/llms.txt` somewhere a crawler already looks. It
-carries no `Sitemap:` line, because prerendering is off and nothing produces a page list at build
-time — a hand-written sitemap is the transcription this site keeps deleting.
+`robots[.]txt.ts` names `/llms.txt` somewhere a crawler already looks, and carries a `Sitemap:` line
+for `/sitemap.xml` (`routes/sitemap[.]xml.ts`). The sitemap is built per request from
+`source.getPages()` plus `MARKETING_PATHS` in `src/lib/sitemap.ts` — the same source `/llms.txt`
+reads, so it is not the hand-written transcription this site keeps deleting. `sitemapXml` throws on
+a path with a query: a `/theme?preset=` URL in it would invite the crawl below.
 
 Its one rule is `Disallow: /theme?` — see the builder below for why.
 

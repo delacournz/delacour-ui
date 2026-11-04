@@ -7,7 +7,8 @@ import { Eyebrow } from "@/components/landing/section-heading";
 import { COLUMN_SECTION } from "@/components/section";
 import { homeOptions } from "@/lib/layout.shared";
 import { type Disclosure, PRIVACY, PRIVACY_SECTIONS, type PrivacySection } from "@/lib/privacy";
-import { appName } from "@/lib/shared";
+import { pageHead } from "@/lib/seo";
+import { appName, privacyRoute } from "@/lib/shared";
 
 /**
  * `/privacy` — the policy both store listings and the app's home screen link to.
@@ -29,9 +30,8 @@ import { appName } from "@/lib/shared";
  */
 export const Route = createFileRoute("/privacy")({
 	component: Privacy,
-	head: () => ({
-		meta: [{ title: `${PRIVACY.title} — ${appName}` }, { name: "description", content: PRIVACY.description }],
-	}),
+	head: () =>
+		pageHead({ path: privacyRoute, title: `${PRIVACY.title} — ${appName}`, description: PRIVACY.description }),
 });
 
 const UPDATED = new Date(`${PRIVACY.updated}T00:00:00Z`).toLocaleDateString("en-NZ", {

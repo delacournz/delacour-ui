@@ -9,6 +9,9 @@ export default {
 	testMatch: ["<rootDir>/src/**/*.render.test.tsx"],
 	resolver: "react-native-reanimated/jest/resolver",
 	setupFiles: ["<rootDir>/src/test/setup.ts"],
+	// Half the cores, not Jest's all-but-one: signoff runs this beside a build and three copied-test
+	// apps, and a starved worker blows the 5 s test timeout on a render that takes 100 ms.
+	maxWorkers: "50%",
 	// d3-shape 3.2.1 ships only `.mjs`, which jest-expo's `\\.[jt]sx?$` Babel transform does not match.
 	transform: { "^.+\\.mjs$": "babel-jest" },
 	transformIgnorePatterns: [

@@ -179,10 +179,24 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		workflow: "ci.yml",
 		// Each runner in its own `--dir`, which also keeps it off `registry`'s `.verify/app`.
 		//
+		// `--max-workers 25%` because the three run at once, beside `test`'s own Jest run: at their
+		// defaults each takes nearly every core, and a starved worker blows Jest's 5 s test timeout.
+		//
 		// `--keep` leaves each app's `node_modules` in place, so the next signoff re-scaffolds the
 		// project files over a warm install instead of starting from npm. `.verify/` is gitignored.
 		run: TEST_RUNNERS.map((runner) => ({
-			argv: ["bun", "run", "verify:expo", "--tests", runner, "--dir", `.verify/tests-${runner}`, "--keep"],
+			argv: [
+				"bun",
+				"run",
+				"verify:expo",
+				"--tests",
+				runner,
+				"--dir",
+				`.verify/tests-${runner}`,
+				"--keep",
+				"--max-workers",
+				"25%",
+			],
 			cwd: "packages/cli",
 		})),
 		parallel: true,

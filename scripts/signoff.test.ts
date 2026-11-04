@@ -72,6 +72,11 @@ describe("planChecks", () => {
 		for (const step of tests?.run ?? []) expect(step.argv).toContain("--keep");
 	});
 
+	test("the runners that run side by side each take a share of the cores, not all of them", () => {
+		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
+		for (const step of tests?.run ?? []) expect(step.argv).toContain("--max-workers");
+	});
+
 	test("the copied tests run under every runner a consumer may use", () => {
 		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
 		const runners = (tests?.run ?? []).map((step) => step.argv[step.argv.indexOf("--tests") + 1]);

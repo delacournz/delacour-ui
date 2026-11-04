@@ -4,8 +4,10 @@ import { BackHandler } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Overlay, OverlayProvider } from "../overlay";
+import { TELEPORT_INLINE } from "../overlay/overlay-teleport";
 import { Text } from "../text";
 import { BottomSheet, type BottomSheetProps } from "./bottom-sheet";
+import { teleportsToRoot } from "./bottom-sheet-portal";
 import { BottomSheetProvider } from "./bottom-sheet-provider";
 
 function Providers({ children }: { children: ReactNode }): ReactElement {
@@ -207,6 +209,67 @@ describe("BottomSheet.Container", () => {
 			{ wrapper: Providers }
 		);
 		expect(screen.getAllByRole("adjustable")).toHaveLength(1);
+	});
+});
+
+/** Runs `body` as on a device, where teleport moves the sheet out of the app's view. */
+async function withTeleportOutOfTree(body: () => Promise<void>): Promise<void> {
+	const flags = globalThis as unknown as Record<symbol, unknown>;
+	const previous = flags[TELEPORT_INLINE];
+	delete flags[TELEPORT_INLINE];
+	try {
+		await body();
+	} finally {
+		flags[TELEPORT_INLINE] = previous;
+	}
+}
+
+describe("BottomSheetProvider and screen readers", () => {
+	function App({ overlay, inline }: { overlay: boolean; inline?: boolean }): ReactElement {
+		return (
+			<>
+				<Text>app behind</Text>
+				<BottomSheet defaultOpen>
+					<BottomSheet.Portal inline={inline}>
+						{overlay ? <BottomSheet.Overlay /> : null}
+						<BottomSheet.Container>
+							<BottomSheet.Content>
+								<BottomSheet.Title>Sheet</BottomSheet.Title>
+							</BottomSheet.Content>
+						</BottomSheet.Container>
+					</BottomSheet.Portal>
+				</BottomSheet>
+			</>
+		);
+	}
+
+	test("an open sheet with a scrim hides the app when teleport moves it out of the app", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<App overlay />, { wrapper: Providers });
+			expect(screen.queryByText("app behind")).toBeNull();
+			expect(screen.getByText("app behind", { includeHiddenElements: true })).toBeOnTheScreen();
+		});
+	});
+
+	test("a sheet with no scrim leaves the app reachable", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<App overlay={false} />, { wrapper: Providers });
+			expect(screen.getByText("app behind")).toBeOnTheScreen();
+		});
+	});
+
+	test("an inline sheet leaves the app reachable", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<App inline overlay />, { wrapper: Providers });
+			expect(screen.getByText("app behind")).toBeOnTheScreen();
+		});
+	});
+
+	test("only a portal teleported to the root host counts", () => {
+		expect(teleportsToRoot({ inline: false, hostName: undefined, nearest: "root" })).toBe(true);
+		expect(teleportsToRoot({ inline: true, hostName: undefined, nearest: "root" })).toBe(false);
+		expect(teleportsToRoot({ inline: false, hostName: undefined, nearest: null })).toBe(false);
+		expect(teleportsToRoot({ inline: false, hostName: "modal", nearest: "root" })).toBe(false);
 	});
 });
 

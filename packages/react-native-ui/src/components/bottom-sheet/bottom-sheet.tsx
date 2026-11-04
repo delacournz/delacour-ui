@@ -19,6 +19,7 @@ import { BottomSheetFooter } from "./bottom-sheet-footer";
 import { BottomSheetHandle } from "./bottom-sheet-handle";
 import { BottomSheetLegendList } from "./bottom-sheet-legend-list";
 import { BottomSheetOverlay } from "./bottom-sheet-overlay";
+import { BottomSheetPortal } from "./bottom-sheet-portal";
 import { BottomSheetProvider } from "./bottom-sheet-provider";
 import { BottomSheetScrollView } from "./bottom-sheet-scroll-view";
 import { BottomSheetSectionList } from "./bottom-sheet-section-list";
@@ -148,7 +149,7 @@ export const BottomSheet = Object.assign(BottomSheetRoot, {
 	/** The control that opens the sheet. `asChild` to make a `Button` the trigger. */
 	Trigger: BottomSheetTrigger,
 	/** Everything drawn above the app, teleported to the nearest host. `inline` to render in place. */
-	Portal: Headless.Portal,
+	Portal: BottomSheetPortal,
 	/** The scrim. Omit it and the sheet has none. */
 	Overlay: BottomSheetOverlay,
 	/** The panel that moves. Brings its own `Background` and `Handle` unless you write them. */

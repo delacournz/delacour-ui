@@ -53,7 +53,7 @@ export const Route = createFileRoute("/compare/heroui")({
 	head: () =>
 		pageHead({
 			path: "/compare/heroui",
-			title: `${appName} vs HeroUI — where the component code lives`,
+			title: `${appName} vs HeroUI Native: React Native UI libraries`,
 			description: COMPARE_COPY.description,
 		}),
 });

@@ -1,5 +1,11 @@
 # @delacour/react-native-bottom-sheet
 
+## 0.7.0
+
+### Patch Changes
+
+- [#323](https://github.com/delacournz/delacour-ui/pull/323) [`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The sheet's Android back listener no longer re-subscribes when its methods change. An inline `onOpenChange` changed them on every parent render, and because `BackHandler` calls the newest listener first, the sheet's listener moved ahead of an overlay opened over it.
+
 ## 0.6.0
 
 ### Patch Changes

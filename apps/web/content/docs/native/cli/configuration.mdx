@@ -145,7 +145,7 @@ Covered in [The registry](/docs/native/cli/registry).
 
 <TypeTable
   type={{
-    "tests.enabled": { type: "boolean", description: "Whether add and update copy each component's tests. init asks; --tests and --no-tests on init, add or update change it. Unset means no tests unless --tests is passed." },
+    "tests.enabled": { type: "boolean", description: "Whether add and update copy each component's tests. init asks; --tests and --no-tests on init, add or update change it. Unset means no tests unless --tests is passed. Copying tests also adds test:ui, test:ui:unit and (on Jest) test:ui:render to package.json, keeping any you already have." },
     "tests.runner": { type: '"bun" | "jest" | "vitest"', description: "What `add --tests` writes copied suites for. Read from package.json when unset — the test script, then a vitest, jest or jest-expo dependency — and Bun when it names none." },
   }}
 />

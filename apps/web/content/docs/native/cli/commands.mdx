@@ -187,6 +187,20 @@ project needs `jest-expo` as its preset already.
 `update` keeps the tests you copied current and leaves alone the components you copied without
 them; `update --tests` brings them in for everything.
 
+#### Running them
+
+Whenever tests are copied, `add` and `update` add scripts to your `package.json` that run only the
+copied suites, so your own `test` script is left alone:
+
+| Script | Runs |
+| --- | --- |
+| `test:ui` | every copied suite |
+| `test:ui:unit` | the logic suites, without the render tests |
+| `test:ui:render` | the render tests — Jest only, so Bun and Vitest projects do not get it |
+
+A script you already have under one of those names is kept as it is, and a run that finds all of
+them writes nothing.
+
 <Callout title="Dependencies are split three ways">
 `expo install` for native modules and anything pinned to the SDK, your package manager for plain
 JavaScript, and `registryDependencies` — which are other components to copy, not packages to

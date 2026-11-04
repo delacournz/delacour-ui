@@ -395,6 +395,10 @@ function describeAdd(result: AddResult): string[] {
 		);
 	}
 
+	if (result.testScripts?.status === "added") {
+		lines.push(`Added ${result.testScripts.scripts.join(", ")} to ${result.testScripts.file} to run the copied tests.`);
+	}
+
 	for (const check of result.testSetup.filter((entry) => entry.status === "warn" || entry.status === "fail")) {
 		lines.push(
 			`The copied tests will not run yet — ${check.name}: ${check.detail}.${check.fix ? ` ${check.fix}` : ""}`

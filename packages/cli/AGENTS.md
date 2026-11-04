@@ -663,6 +663,13 @@ test through `adaptTest` after the alias transform, and `withTests(item, runner)
   `add --tests` runs them after its install, warns, and returns them as `AddResult.testSetup` for
   the MCP reply. The config is read as text, so a setting built in code can be missed; both stay
   warnings, since only the tests break. Under `verify:expo --tests` both have to pass.
+- **Copying tests adds the scripts that run them.** `project/test-scripts.ts` (`ensureTestScripts`,
+  called through `settleTestScripts` from `add` and `update` whenever tests are on, never on a dry
+  run) writes `test:ui`, `test:ui:unit` and, on Jest, `test:ui:render` into the config's
+  `package.json` (else the app's), scoped to the component directories so the project's own `test`
+  is left alone. A name the project already has is never overwritten — once it exists the script is
+  theirs, so a second run writes nothing. Render scripts are Jest's alone for the reason in
+  [Render tests](#render-tests-are-jests-alone). `AddResult.testScripts` carries the outcome for MCP.
 
 `verify:expo --tests bun`, `--tests jest` and `--tests vitest` (see Testing) prove it end to end, and
 `signoff/tests` runs all three.

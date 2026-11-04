@@ -354,6 +354,26 @@ describe("update, and a component's tests", () => {
 		expect(await read(root, CARD_TEST)).toBe(copied(CARD_TEST_V2));
 		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]?.ref).toBe("v2");
 	});
+
+	test("--tests adds the test:ui scripts, and a later update keeps the project's edit to one", async () => {
+		const root = await project();
+		await run(root, { tests: true });
+		const manifest = JSON.parse(await read(root, "package.json"));
+		expect(manifest.scripts["test:ui"]).toStartWith("bun test ");
+
+		manifest.scripts["test:ui"] = "bun test --mine";
+		await writeFile(join(root, "package.json"), JSON.stringify(manifest), "utf-8");
+		await run(root, { tests: true });
+
+		expect(JSON.parse(await read(root, "package.json")).scripts["test:ui"]).toBe("bun test --mine");
+	});
+
+	test("a dry run writes no scripts", async () => {
+		const root = await project();
+		await run(root, { tests: true, dryRun: true });
+
+		expect(JSON.parse(await read(root, "package.json")).scripts?.["test:ui"]).toBeUndefined();
+	});
 });
 
 describe("update, and a config an older CLI wrote", () => {

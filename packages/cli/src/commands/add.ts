@@ -17,6 +17,7 @@ import {
 	runInstall,
 } from "../project/package-manager";
 import { linkPackageToApp, syncSharedPackage } from "../project/shared-package";
+import type { TestScriptsResult } from "../project/test-scripts";
 import { readTestSetup } from "../project/test-setup";
 import { type PlannedFile, planFiles, writeFiles } from "../project/write-files";
 import { createRegistryClient } from "../registry/client";
@@ -29,7 +30,7 @@ import { type Check, testChecks } from "./doctor";
 // other at load time, only inside a call.
 import { init } from "./init";
 import { type RenderTestsOutcome, settleRenderTests } from "./render-tests";
-import { chooseTests } from "./tests-choice";
+import { chooseTests, settleTestScripts } from "./tests-choice";
 
 /**
  * Copies components into the project, with everything they need.
@@ -91,6 +92,8 @@ export type AddResult = {
 	testSetup: Check[];
 	/** Under `--tests`, what became of the render tests: skipped for a runner that cannot run them, or the Jest config set up for them. */
 	renderTests: RenderTestsOutcome | null;
+	/** Under `--tests`, the `test:ui` scripts added to `package.json` — none when the project already had them. */
+	testScripts: TestScriptsResult | null;
 };
 
 export async function add(names: string[], options: AddOptions): Promise<AddResult | null> {
@@ -154,8 +157,16 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	const settled = await settleDependencies(items, config, project, options, output);
 	// After the install, so the config can be checked against what is now there.
 	const renderTests = tests ? await settleRenderTests(config, items, output) : null;
+	const testScripts = tests ? await settleTestScripts(config, output) : null;
 	const testSetup = tests ? await checkTestSetup(config, project, output) : [];
-	return { items: items.map((item) => item.name), written: toWrite.length, ...settled, testSetup, renderTests };
+	return {
+		items: items.map((item) => item.name),
+		written: toWrite.length,
+		...settled,
+		testSetup,
+		renderTests,
+		testScripts,
+	};
 }
 
 /**

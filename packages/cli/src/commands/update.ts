@@ -20,7 +20,7 @@ import { type ComponentChange, componentChanges, describeChange, onlySelected } 
 import { type ChoosePackages, settleDependencies } from "./add";
 import { type AskConfig, type ConfigUpgrade, promptConfig, upgradeConfig } from "./config-upgrade";
 import { settleRenderTests } from "./render-tests";
-import { chooseTests } from "./tests-choice";
+import { chooseTests, settleTestScripts } from "./tests-choice";
 
 /**
  * Brings copied components up to what the registry holds now.
@@ -316,6 +316,7 @@ async function runUpdate(
 	if (tests || keptKit) {
 		await settleRenderTests(config, tests ? items : items.filter((item) => item.name === "test-kit"), output);
 	}
+	if (tests) await settleTestScripts(config, output);
 
 	// Only when a file moved: a component that did not change needs what it needed before.
 	if (decided.some(({ decision }) => decision.write !== undefined)) {

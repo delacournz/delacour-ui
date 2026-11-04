@@ -520,6 +520,27 @@ describe("add --tests", () => {
 	test("asks for the types bun:test needs, as a dev dependency", () => {
 		expect(result?.dependencies.wanted).toContain("@types/bun");
 	});
+
+	test("adds the test:ui scripts for the runner, with no render script on Bun", async () => {
+		const scripts = JSON.parse(await read(root, "package.json")).scripts;
+
+		expect(scripts["test:ui"]).toStartWith("bun test ./src/components/ui ");
+		expect(scripts["test:ui:unit"]).toBe(scripts["test:ui"]);
+		expect(scripts["test:ui:render"]).toBeUndefined();
+		expect(result?.testScripts).toEqual({
+			status: "added",
+			file: "package.json",
+			scripts: ["test:ui", "test:ui:unit"],
+		});
+	});
+
+	test("a second add leaves the scripts alone", async () => {
+		const before = await read(root, "package.json");
+		const again = await add(["badge"], { ...SHARED, cwd: root, tests: true });
+
+		expect(again?.testScripts).toEqual({ status: "unchanged", file: "package.json" });
+		expect(JSON.parse(await read(root, "package.json")).scripts).toEqual(JSON.parse(before).scripts);
+	});
 });
 
 describe("add --tests, in a project on another runner", () => {
@@ -547,6 +568,38 @@ describe("add --tests, in a project on another runner", () => {
 		}
 		expect(result?.dependencies.wanted).toEqual(expect.arrayContaining(["@jest/globals", "@types/node"]));
 		expect(result?.dependencies.wanted).not.toContain("@types/bun");
+	});
+
+	test("Jest gets all three scripts, and keeps a test:ui the project already had", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest", "test:ui": "jest --mine" } });
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+		const scripts = JSON.parse(await read(root, "package.json")).scripts;
+
+		expect(scripts["test:ui"]).toBe("jest --mine");
+		expect(scripts["test:ui:unit"]).toContain("--testPathIgnorePatterns");
+		expect(scripts["test:ui:render"]).toContain("\\.render\\.test\\.tsx$");
+		expect(result?.testScripts).toEqual({
+			status: "added",
+			file: "package.json",
+			scripts: ["test:ui:unit", "test:ui:render"],
+		});
+	});
+
+	test("Vitest gets vitest run over the component directories", async () => {
+		const root = await scaffoldOn({ devDependencies: { vitest: "^3.2.0" } });
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		expect(JSON.parse(await read(root, "package.json")).scripts["test:ui"]).toStartWith(
+			"vitest run src/components/ui "
+		);
+	});
+
+	test("a plain add writes no test scripts", async () => {
+		const root = await scaffoldOn({});
+		const result = await add(["button"], { ...SHARED, cwd: root });
+
+		expect(result?.testScripts).toBeNull();
+		expect(JSON.parse(await read(root, "package.json")).scripts?.["test:ui"]).toBeUndefined();
 	});
 
 	test("writes Vitest's suites against vitest, and records what it wrote", async () => {

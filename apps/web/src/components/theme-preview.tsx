@@ -83,6 +83,35 @@ function Chart({ mode }: { mode: ResolvedMode }): ReactElement {
 	);
 }
 
+function StateSamples({ mode }: { mode: ResolvedMode }): ReactElement {
+	return (
+		<fieldset aria-label="Control state samples" className="flex flex-wrap items-center gap-2 text-sm">
+			<span
+				className="rounded-lg px-3 py-2"
+				style={{ background: swatch(mode, "accent"), color: swatch(mode, "accent-foreground") }}
+			>
+				Selected
+			</span>
+			<span
+				className="rounded-lg px-3 py-2"
+				style={{ background: swatch(mode, "primary"), color: swatch(mode, "primary-foreground") }}
+			>
+				Loading
+			</span>
+			<span
+				className="rounded-lg px-3 py-2 opacity-50"
+				style={{ background: swatch(mode, "primary"), color: swatch(mode, "primary-foreground") }}
+			>
+				Disabled
+			</span>
+			<span className="rounded-lg px-3 py-2" style={{ outline: `2px solid ${swatch(mode, "ring")}`, outlineOffset: 2 }}>
+				Focused
+			</span>
+			<span style={{ color: swatch(mode, "destructive") }}>Check this value.</span>
+		</fieldset>
+	);
+}
+
 function Surface({ mode, fonts }: { mode: ResolvedMode; fonts: ResolvedFonts }): ReactElement {
 	const radius = length(mode, "radius", 10);
 	const gutter = length(mode, "spacing-screen-gutter", 16);
@@ -159,6 +188,7 @@ function Surface({ mode, fonts }: { mode: ResolvedMode; fonts: ResolvedFonts }):
 					/>
 				</div>
 
+				<StateSamples mode={mode} />
 				<Chart mode={mode} />
 			</div>
 		</div>

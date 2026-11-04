@@ -63,6 +63,7 @@ export type ThemeCssFiles = {
 	native: string;
 	/** `globals.css`, in shadcn's `:root` / `.dark` shape, for a web app sharing the theme. */
 	web: string;
+	report: string;
 };
 
 const FILE_TAB_CLASS = "max-h-[28rem]";
@@ -95,9 +96,9 @@ const FILE_TAB_CLASS = "max-h-[28rem]";
  * `data-[inactive]:hidden` — so `curl … | grep ".dark {"` finds `globals.css`
  * too, and the panel switch after hydration moves nothing.
  */
-export function ThemeCssPanel({ native, web }: ThemeCssFiles): ReactElement {
+export function ThemeCssPanel({ native, web, report }: ThemeCssFiles): ReactElement {
 	return (
-		<Tabs items={["theme.css", "globals.css"]}>
+		<Tabs items={["theme.css", "globals.css", "quality.txt"]}>
 			<Tab keepMounted value="theme.css">
 				<DynamicCodeBlock
 					code={native}
@@ -111,6 +112,20 @@ export function ThemeCssPanel({ native, web }: ThemeCssFiles): ReactElement {
 					codeblock={{ title: "globals.css", viewportProps: { className: FILE_TAB_CLASS } }}
 					lang="css"
 				/>
+			</Tab>
+			<Tab keepMounted value="quality.txt">
+				<DynamicCodeBlock
+					code={report}
+					codeblock={{ title: "quality.txt", viewportProps: { className: FILE_TAB_CLASS } }}
+					lang="text"
+				/>
+				<a
+					className="text-sm underline"
+					download="theme-quality.txt"
+					href={`data:text/plain;charset=utf-8,${encodeURIComponent(report)}`}
+				>
+					Download report
+				</a>
 			</Tab>
 		</Tabs>
 	);

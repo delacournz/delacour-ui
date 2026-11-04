@@ -13,6 +13,7 @@ import { PresetStrip } from "@/components/theme/preset-strip";
 import { FontPreview } from "@/components/theme/previews";
 import { RadiusStrip } from "@/components/theme/radius-strip";
 import { StyleStrip } from "@/components/theme/style-strip";
+import { ThemeQuality } from "@/components/theme/theme-quality";
 import { ThemeStrip } from "@/components/theme/theme-strip";
 import { ThemeTabBarSpacer } from "@/components/theme/theme-tab-bar";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
@@ -88,6 +89,7 @@ export default function ThemeDesignTab(): ReactElement {
 				<ThemeStrip />
 				<ChartColorStrip />
 				<AxisRows onOpen={setOpen} />
+				<ThemeQuality />
 			</Screen.ScrollArea>
 
 			<HeadingBottomSheet {...sheet("fontHeading")} />

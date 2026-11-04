@@ -329,15 +329,22 @@ function BottomSheetRoot({
 	// Android's back button closes the top sheet of its host and nothing else:
 	// without a registry every sheet is its own top. Subscribed only while
 	// presented, so a closed sheet never swallows a press.
+	//
+	// `methods` is read through a ref, not listed as a dependency. It changes
+	// whenever an inline `onOpenChange` does, and `BackHandler` calls the newest
+	// listener first: re-subscribing on a parent render would put this sheet's
+	// listener ahead of an overlay opened over it.
+	const latestMethods = useRef(methods);
+	latestMethods.current = methods;
 	const registryTop = registry === null ? true : isTop(registry.state, sheetId);
 	useEffect(() => {
 		if (!presented || !closeOnBack || !registryTop) return;
 		const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
-			methods.close();
+			latestMethods.current.close();
 			return true;
 		});
 		return () => subscription.remove();
-	}, [presented, closeOnBack, registryTop, methods]);
+	}, [presented, closeOnBack, registryTop]);
 
 	const contextValue = useMemo<BottomSheetContextValue>(
 		() => ({ ...methods, isOpen, setOpen, index, snapPointCount }),

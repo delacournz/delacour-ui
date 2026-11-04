@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Fragment, type ReactElement, type ReactNode } from "react";
+import { BackHandler } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
@@ -206,5 +207,36 @@ describe("BottomSheet.Container", () => {
 			{ wrapper: Providers }
 		);
 		expect(screen.getAllByRole("adjustable")).toHaveLength(1);
+	});
+});
+
+describe("BottomSheet and Android back", () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	function countBackSubscriptions(): { count: () => number } {
+		let count = 0;
+		jest.spyOn(BackHandler, "addEventListener").mockImplementation(() => {
+			count++;
+			return { remove: () => undefined };
+		});
+		return { count: () => count };
+	}
+
+	test("an open sheet answers back on its own", async () => {
+		const subscriptions = countBackSubscriptions();
+		await renderWithProviders(<FilterSheet defaultOpen />, { wrapper: Providers });
+		expect(subscriptions.count()).toBeGreaterThan(0);
+	});
+
+	test("a parent render with a new inline onOpenChange does not re-subscribe", async () => {
+		const subscriptions = countBackSubscriptions();
+		const { rerender } = await renderWithProviders(<FilterSheet defaultOpen onOpenChange={() => undefined} />, {
+			wrapper: Providers,
+		});
+		const before = subscriptions.count();
+		await rerender(<FilterSheet defaultOpen onOpenChange={() => undefined} />);
+		expect(subscriptions.count()).toBe(before);
 	});
 });

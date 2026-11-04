@@ -62,6 +62,11 @@ outside the provider — there is nothing to ask without one — and the
 under it survives. Without a registry every sheet is its own top. iOS has no
 back button; the unit test on `isTop` is what stands in for the device check.
 
+The listener reads the sheet's methods through a ref and does not re-subscribe
+when they change. `BackHandler` calls the newest listener first, and the methods
+change whenever a caller passes an inline `onOpenChange`; re-subscribing on a
+parent render would put the sheet's listener ahead of an overlay opened over it.
+
 ## Hosts
 
 `BottomSheet.Host` is for the one place the root host cannot reach: a native

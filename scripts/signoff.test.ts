@@ -72,6 +72,12 @@ describe("planChecks", () => {
 		for (const step of tests?.run ?? []) expect(step.argv).toContain("--keep");
 	});
 
+	test("typecheck and build never run at once — both vite build apps/web into .output", () => {
+		const locksOf = (context: string) => SIGNOFF_CHECKS.find((check) => check.context === context)?.locks ?? [];
+		const shared = locksOf("typecheck").filter((lock) => locksOf("build").includes(lock));
+		expect(shared.length).toBeGreaterThan(0);
+	});
+
 	test("the runners that run side by side each take a share of the cores, not all of them", () => {
 		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
 		for (const step of tests?.run ?? []) expect(step.argv).toContain("--max-workers");

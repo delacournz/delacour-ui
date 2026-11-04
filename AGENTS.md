@@ -172,7 +172,7 @@ The checks are defined once, in `scripts/signoff-checks.ts`:
 | `signoff/tests` | no | the library, an engine, the CLI, design system, skills, types, registry or a manifest changed | `verify:expo --tests <runner> --dir .verify/tests-<runner> --keep --max-workers 25%` for `bun`, `jest` and `vitest`, at once — every component's suites copied into an installed app and run by that runner |
 | `signoff` | yes | — | the umbrella, written only when every applicable check passed |
 
-`registry`'s two runs share `packages/cli/.verify/app` and hold its pool lock. `tests` runs its three
+`registry`'s two runs share `packages/cli/.verify/app` and hold its pool lock. `typecheck` and `build` hold a lock of their own on `apps/web/.output`: `build`'s `vite build` writes there, and so does `typecheck`'s `@delacour/web#codegen` on a cache miss, and two at once failed with `ENOTEMPTY`. `tests` runs its three
 runners at the same time, each in its own `--dir` with its own CLI build and packed engines beside
 it, so it shares nothing with `registry` or with itself and needs no lock. Each runner takes a quarter of the cores (`--max-workers 25%`) and `react-native-ui`'s own Jest run half (`maxWorkers: "50%"`): at their defaults each takes nearly every core, and a 100 ms render starved that way blew Jest's 5 s test timeout. `tests` installs from npm. It used to take 8–16 minutes,
 nearly all of it the scaffolded app's `tsc` under TypeScript 5.9, which spends four minutes on

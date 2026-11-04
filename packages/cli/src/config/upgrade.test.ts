@@ -55,10 +55,12 @@ describe("upgradeStatus", () => {
 		expect(status.kind === "outdated" && status.questions.map((question) => question.key)).toEqual(["prefix"]);
 	});
 
-	test("does not offer a prefix once components are copied, since renaming would make every file look edited", () => {
+	test("offers a prefix once components are copied too, saying it renames them", () => {
 		const status = upgradeStatus({ paths: PATHS }, { hasCopiedFiles: true });
+		const prefix =
+			status.kind === "outdated" ? status.questions.find((question) => question.key === "prefix") : undefined;
 
-		expect(status.kind === "outdated" && status.questions.map((question) => question.key)).toEqual(["tests.enabled"]);
+		expect(prefix?.message).toContain("renames");
 	});
 });
 

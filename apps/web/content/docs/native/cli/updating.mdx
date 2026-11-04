@@ -99,7 +99,7 @@ the file is kept as it was.
 | Option | Asked when | Why not always |
 | --- | --- | --- |
 | [`tests.enabled`](/docs/native/cli/configuration#tests) | The file has no `tests.enabled` and no `--tests` / `--no-tests` was passed | — |
-| [`prefix`](/docs/native/cli/configuration#prefix) | The file has no `prefix` and nothing has been copied yet | The lock hashed every copied file under the old name, so renaming now would make every one look edited. Set it by hand and re-run `add --all --overwrite` |
+| [`prefix`](/docs/native/cli/configuration#prefix) | The file has no `prefix` | — answering renames it through every copied component, merging where you edited, and lists your own files that still import `DelacourProvider` |
 
 `delacour doctor` reports **Config version** as a warning while the file is behind, so a project that
 only ever updates from CI still finds out.
@@ -110,8 +110,8 @@ The file is yours. Change a key and the next command reads it:
 
 - **`paths`** — re-run `add` for anything already copied; old files stay where they were.
 - **`tests.runner`** — the next `update` rewrites each copied suite for the new runner.
-- **`prefix`** — `add --all --overwrite` rewrites copied files under the new name; then rename the
-  provider where your root layout mounts it.
+- **`prefix`** — the next `update` renames it through every copy, merging where you edited; then
+  rename the provider where your root layout mounts it — `update` lists the files.
 
 `delacour info` prints the resolved paths, the quickest check that an edit landed the way you meant.
 Leave `version` to the CLI: setting it by hand only stops `update` asking about options you have not

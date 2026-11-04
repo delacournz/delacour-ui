@@ -59,6 +59,8 @@ export type AddOptions = {
 	init?: boolean;
 	/** Base directory for source files. Read only when this run sets the project up. */
 	src?: string;
+	/** What components call the library in place of `DelacourUI`. Read only when this run sets the project up. */
+	prefix?: string;
 	offline?: boolean;
 	ref?: string;
 	registry?: string;

@@ -691,6 +691,37 @@ describe("add --tests, render tests", () => {
 	});
 });
 
+describe("prefix", () => {
+	test("init --prefix saves it and names the provider after it", async () => {
+		const root = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: root, prefix: "Acme" });
+
+		expect(JSON.parse(await read(root, "native-components.json")).prefix).toBe("Acme");
+		const provider = await read(root, "src/components/ui/provider/provider.tsx");
+		expect(provider).toContain("AcmeProvider");
+		expect(provider).not.toContain("DelacourProvider");
+	});
+
+	test("add --prefix sets up an unconfigured project under that name", async () => {
+		const root = await scaffold("expo-app");
+		await add(["button"], { ...SHARED, cwd: root, prefix: "Acme" });
+
+		expect(JSON.parse(await read(root, "native-components.json")).prefix).toBe("Acme");
+	});
+
+	test("refuses a prefix that is not a PascalCase identifier", async () => {
+		const root = await scaffold("expo-app");
+		await expect(init([], { ...SHARED, cwd: root, prefix: "acme-ui" })).rejects.toThrow(/PascalCase/);
+	});
+
+	test("a project that never answered has no prefix key", async () => {
+		const root = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: root });
+
+		expect(JSON.parse(await read(root, "native-components.json")).prefix).toBeUndefined();
+	});
+});
+
 describe("tests.enabled", () => {
 	const TEST = "src/components/ui/button/button.variants.test.ts";
 

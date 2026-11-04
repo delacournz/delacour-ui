@@ -27,7 +27,7 @@ export type ConfigQuestionKey = ConfigQuestion["key"];
 export type ConfigAnswers = { "tests.enabled"?: boolean; prefix?: string };
 
 export type UpgradeContext = {
-	/** Whether the lock records any copied file — renaming the prefix then would read as an edit to every one. */
+	/** Whether the lock records any copied file — choosing a prefix then renames it in every one, which the question says. */
 	hasCopiedFiles: boolean;
 	/** `--tests` / `--no-tests` on this run, which already answers and saves `tests.enabled`. */
 	testsFlag?: boolean;
@@ -63,16 +63,16 @@ const FIELDS: readonly ConfigField[] = [
 	{
 		since: 2,
 		present: (raw) => typeof raw.prefix === "string",
-		// Every copied file was hashed under the old name, so renaming now reads as an edit to all of them.
-		question: (context) =>
-			context.hasCopiedFiles
-				? null
-				: {
-						key: "prefix",
-						kind: "text",
-						message: `What should components call the library, in place of ${LIBRARY_PREFIX}? Leave empty to keep it.`,
-						placeholder: "UI",
-					},
+		// With components copied, an answer is a rename: `update` rewrites the name in each copy, merging
+		// where it was edited, and lists the project's own files that still import the old provider.
+		question: (context) => ({
+			key: "prefix",
+			kind: "text",
+			message: context.hasCopiedFiles
+				? `What should components call the library, in place of ${LIBRARY_PREFIX}? This update renames it in every copied component. Leave empty to keep it.`
+				: `What should components call the library, in place of ${LIBRARY_PREFIX}? Leave empty to keep it.`,
+			placeholder: "UI",
+		}),
 	},
 ];
 

@@ -89,8 +89,9 @@ type FixtureItem = {
 	testRegistryDependencies?: string[];
 };
 
-const CHIP_V1 = 'export const Chip = "chip";\n';
-const CHIP_V2 = 'export const Chip = "chip, v2";\n';
+const CHIP_BODY = '\n\nexport const size = 1;\n\n\nChip.displayName = "DelacourUI.Chip";\n';
+const CHIP_V1 = `export const Chip = "chip";${CHIP_BODY}`;
+const CHIP_V2 = `export const Chip = "chip, v2";${CHIP_BODY}`;
 const GLYPH = 'export const Glyph = "glyph";\n';
 const METER_TEST = 'import { test } from "bun:test";\n\ntest("meter", () => {});\n';
 /** An item the project already depended on when it copied `chip`, and could have swapped out since. */
@@ -376,7 +377,7 @@ describe("update, and a config an older CLI wrote", () => {
 			}
 		);
 
-		expect(asked).toEqual([["tests.enabled"]]);
+		expect(asked).toEqual([["tests.enabled", "prefix"]]);
 		expect(await config(root)).toMatchObject({ version: CONFIG_VERSION, tests: { enabled: true } });
 		expect(action(result, CARD_TEST)).toBe("added");
 	});
@@ -397,11 +398,17 @@ describe("update, and a config an older CLI wrote", () => {
 		const result = await run(root, { leaveConfig: true });
 
 		expect(await read(root, "native-components.json")).toBe(before);
-		expect(result.config).toEqual({ kind: "pending", from: 1, to: CONFIG_VERSION, fields: ["tests.enabled"] });
+		expect(result.config).toEqual({
+			kind: "pending",
+			from: 1,
+			to: CONFIG_VERSION,
+			fields: ["tests.enabled", "prefix"],
+		});
 	});
 
-	test("with leaveConfig and a --tests answer, has nothing left to ask and records the version", async () => {
+	test("with leaveConfig, a --tests answer and a prefix already set, has nothing left to ask and records the version", async () => {
 		const root = await project();
+		await setConfig(root, (raw) => ({ ...raw, prefix: "Acme" }));
 
 		const result = await run(root, { leaveConfig: true, tests: false });
 
@@ -436,6 +443,34 @@ describe("update, and a config an older CLI wrote", () => {
 		await run(root, {}, { askConfig: async () => ({ "tests.enabled": true }) });
 
 		expect(await read(root, "native-components.json")).toBe(before);
+	});
+
+	test("a prefix chosen after components were copied renames them, merging where they were edited", async () => {
+		const root = await project({ items: ["chip", "card"] });
+		const CHIP = "src/components/ui/chip/chip.tsx";
+		await edit(root, CHIP, (text) => text.replace("size = 1", "size = 2"));
+		await put(join(root, "src/app/_layout.tsx"), 'import { DelacourProvider } from "@/components/ui/provider";\n');
+
+		const result = await run(root, {}, { askConfig: async () => ({ prefix: "Acme" }) });
+
+		expect(action(result, CHIP)).toBe("merged");
+		expect(await read(root, CHIP)).toBe(
+			'export const Chip = "chip, v2";\n\nexport const size = 2;\n\n\nChip.displayName = "Acme.Chip";\n'
+		);
+		expect(result.renamed).toEqual({ from: "DelacourUI", to: "Acme", references: ["src/app/_layout.tsx"] });
+	});
+
+	test("a prefix set by hand renames the copies on the next update, edited ones included", async () => {
+		const root = await project({ items: ["chip"] });
+		const CHIP = "src/components/ui/chip/chip.tsx";
+		await edit(root, CHIP, (text) => text.replace("size = 1", "size = 2"));
+		await setConfig(root, (raw) => ({ ...raw, version: CONFIG_VERSION, prefix: "Acme" }));
+
+		const result = await run(root);
+
+		expect(action(result, CHIP)).toBe("merged");
+		expect(await read(root, CHIP)).toContain('Chip.displayName = "Acme.Chip";');
+		expect(await read(root, CHIP)).toContain("size = 2");
 	});
 
 	test("writes nothing to the config on a dry run", async () => {

@@ -347,7 +347,7 @@ function describeConfig(config: UpdateResult["config"]): string[] {
 		"tests.enabled":
 			"`tests.enabled` — ask the user whether to keep component tests, then call `update_components` with `tests`",
 		prefix:
-			"`prefix` — ask the user what copied components should call the library, then set it in native-components.json",
+			"`prefix` — ask the user what copied components should call the library, then set it in native-components.json and call update_components: it renames the name in every copy, and the app's own imports of the old provider need renaming by hand",
 	};
 
 	return [

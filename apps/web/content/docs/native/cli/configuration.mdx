@@ -173,10 +173,14 @@ provider, `DelacourProvider`. A copy is your code, so `add` and `update` swap al
 with `"prefix": "UI"`, `UI.Flow.Provider`, `[UI] …` and `UIProvider`. `init` and `doctor` name the
 provider the same way.
 
-Set it before the first `add`. The lock hashes the text as it was written, so changing it later makes
-every copied file look edited to `update`; re-run `add --all --overwrite` (or `add <item> --overwrite`
-for what you have) to rewrite them under the new name, then rename the provider where your root layout
-mounts it.
+`init` asks for it at a terminal — `--prefix <name>` on `init` or the first `add` answers without
+asking — and leaving it empty keeps the library's name. A project with no `prefix` is asked once more
+by `update`.
+
+It can change after components are copied. The next `update` renames it through every copy: an
+untouched file is rewritten, an edited one is merged like any other upstream change. Your own code is
+not touched — `update` lists each file of yours that still imports `DelacourProvider`, for you to
+rename where your root layout mounts it.
 
 ## The lock file
 

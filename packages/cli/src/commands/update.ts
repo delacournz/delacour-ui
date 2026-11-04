@@ -7,8 +7,11 @@ import { detectProject } from "../project/detect";
 import { createFormat, detectFormatter, type Format } from "../project/formatter";
 import { hasUncommittedChanges } from "../project/git";
 import type { DependencyPlan } from "../project/package-manager";
-import { writeFiles } from "../project/write-files";
+import { findProviderReferences } from "../project/provider-references";
+import { destination, writeFiles } from "../project/write-files";
 import { createRegistryClient, type RegistryClient } from "../registry/client";
+import { isNamespace } from "../registry/namespaces";
+import { LIBRARY_PREFIX, providerName } from "../registry/prefix";
 import { DEFAULT_REGISTRY_REF } from "../registry/source";
 import { createOutput, type Output, style } from "../ui/output";
 import { type Decision, decide, type UpdateAction } from "../update/decide";
@@ -72,6 +75,8 @@ export type UpdateOptions = {
 	selected?: readonly string[];
 	/** Components the project does not hold to add anyway. Not a flag — set from the component question. */
 	include?: readonly string[];
+	/** The prefix the copies were made under, when this run's config answer renames it. Not a flag. */
+	renamedFrom?: string;
 	/** Leave config fields an older config predates unchosen rather than defaulting them — the MCP server's choice. */
 	leaveConfig?: boolean;
 	/**
@@ -115,6 +120,11 @@ export type UpdateResult = {
 	missing: MissingItem[];
 	/** Components whose tests were left out, and what those tests render that the project does not hold. */
 	testsLeftOut: { item: string; needs: string[] }[];
+	/**
+	 * A `prefix` chosen this run, renamed through every copy. `references` are the project's own files
+	 * that still name the old provider — its code, so listed for the reader to change rather than edited.
+	 */
+	renamed?: { from: string; to: string; references: string[] };
 };
 
 /** What to do with the files a run skipped for having no lock entry. */
@@ -148,7 +158,10 @@ export async function update(names: string[], options: UpdateOptions, clients?: 
 		output,
 		clients?.askConfig ?? (output.interactive ? promptConfig : undefined)
 	);
-	const first = await runUpdate(names, options, output, config, clients);
+	// A prefix answered now, over components already copied, makes this run the rename.
+	const renaming = config.kind === "upgraded" && config.answered.includes("prefix");
+	const passOptions: UpdateOptions = renaming ? { ...options, renamedFrom: LIBRARY_PREFIX } : options;
+	const first = await withRename(await runUpdate(names, passOptions, output, config, clients), passOptions, output);
 
 	const ask = clients?.askUntracked ?? (output.interactive ? promptUntracked : undefined);
 	const answered = options.dryRun || options.base !== undefined || options.replaceUntracked;
@@ -158,24 +171,65 @@ export async function update(names: string[], options: UpdateOptions, clients?: 
 	if (answer.kind === "leave") return first.result;
 
 	// Everything the first pass settled is current now, so the second touches only the files asked about.
+	const answeredOptions: UpdateOptions =
+		answer.kind === "merge" ? { ...passOptions, base: answer.base } : { ...passOptions, replaceUntracked: true };
 	const second = await runUpdate(
 		names,
-		{
-			...(answer.kind === "merge" ? { ...options, base: answer.base } : { ...options, replaceUntracked: true }),
-			...(first.selected ? { selected: first.selected } : {}),
-		},
+		first.selected ? { ...answeredOptions, selected: first.selected } : answeredOptions,
 		output,
 		config,
 		clients
 	);
 
+	return combine(first.result, second.result);
+}
+
+/** Two passes reported as one run: the second's files, both passes' counts. */
+function combine(first: UpdateResult, second: UpdateResult): UpdateResult {
 	return {
-		...second.result,
-		written: first.result.written + second.result.written,
-		conflicts: first.result.conflicts + second.result.conflicts,
-		dependencies: second.result.dependencies ?? first.result.dependencies,
-		installed: first.result.installed || second.result.installed,
+		...second,
+		...(first.renamed ? { renamed: first.renamed } : {}),
+		written: first.written + second.written,
+		conflicts: first.conflicts + second.conflicts,
+		dependencies: second.dependencies ?? first.dependencies,
+		installed: first.installed || second.installed,
 	};
+}
+
+/**
+ * After a pass that renamed the prefix: the project's own files still importing the old provider,
+ * listed and warned about. Nothing of theirs is edited.
+ */
+async function withRename<T extends { result: UpdateResult }>(
+	pass: T,
+	options: UpdateOptions,
+	output: Output
+): Promise<T> {
+	if (options.renamedFrom === undefined || options.dryRun) return pass;
+
+	const config = await loadConfig(options.cwd);
+	const to = config.prefix ?? LIBRARY_PREFIX;
+	const lock = await readLock(config.root);
+	const copied = Object.values(lock.items).flatMap((item) =>
+		Object.keys(item.files).flatMap((key) => {
+			const slash = key.indexOf("/");
+			const namespace = key.slice(0, slash);
+			return isNamespace(namespace) ? [destination(config, namespace, key.slice(slash + 1)).path] : [];
+		})
+	);
+	const references = await findProviderReferences(config.root, copied, providerName(undefined));
+
+	if (references.length > 0) {
+		output.warn(
+			[
+				`Renamed ${style.code(providerName(undefined))} to ${style.code(providerName(to))}. These files of yours still use the old name:`,
+				...references.map((path) => `  ${style.path(path)}`),
+			].join("\n")
+		);
+	}
+
+	pass.result.renamed = { from: options.renamedFrom, to, references };
+	return pass;
 }
 
 /** One pass: plan, decide, apply, report. `untracked` is what it skipped for want of a lock entry. */
@@ -392,7 +446,7 @@ async function promptUntracked(files: readonly string[]): Promise<UntrackedAnswe
 /** What reading a plan needs of the options — the part `diff` shares. */
 export type PlanOptions = Pick<
 	UpdateOptions,
-	"cwd" | "base" | "format" | "offline" | "ref" | "registry" | "tests" | "include"
+	"cwd" | "base" | "format" | "offline" | "ref" | "registry" | "tests" | "include" | "renamedFrom"
 >;
 
 /**
@@ -427,6 +481,7 @@ export async function readPlan(
 			baseRef: options.base,
 			tests: options.tests ?? config.testsEnabled,
 			...(options.include ? { include: options.include } : {}),
+			...(options.renamedFrom === undefined ? {} : { renamedFrom: options.renamedFrom }),
 		})
 	);
 

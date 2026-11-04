@@ -8,6 +8,7 @@ import { destination, planFiles, readText, transformFile } from "../project/writ
 import { isTest } from "../registry/classify";
 import type { RegistryClient } from "../registry/client";
 import { isNamespace, type Namespace } from "../registry/namespaces";
+import { LIBRARY_PREFIX } from "../registry/prefix";
 import { resolveItemGraph } from "../registry/resolve";
 import { applyRewrites } from "../registry/rewrite";
 import { type LoadedItem, type RegistryIndexEntry, type RegistryItem, withTests } from "../registry/schema";
@@ -83,6 +84,12 @@ export type PlanInput = {
 	tests?: boolean;
 	/** Items the project does not hold to add anyway — chosen from `missing` by a person. */
 	include?: readonly string[];
+	/**
+	 * The `prefix` the project's files were copied under, when this run renames it. Every lock entry
+	 * hashes the old name, so a base is re-derived under it; the new name then arrives as an upstream
+	 * change, replacing an untouched copy and merging into an edited one.
+	 */
+	renamedFrom?: string;
 };
 
 export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
@@ -101,6 +108,7 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 		return client;
 	};
 
+	const previous = previousConfig(input);
 	const held = new Set([...Object.keys(lock.items), ...(await installedItems(index.items, config))]);
 	const candidates = input.names.length > 0 ? [...input.names] : [...held];
 	const chosen = new Set([...input.names, ...(input.include ?? [])]);
@@ -176,7 +184,7 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 			const base =
 				assumed?.base ??
 				(entry && needsBase(file.current, file.content, entry)
-					? await fetchBase(clientAt(entry.ref), file.item, file.key, file.path, config, entry.hash)
+					? await fetchBase(clientAt(entry.ref), file.item, file.key, file.path, config, entry.hash, previous)
 					: null);
 
 			return {
@@ -222,6 +230,18 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 			.sort((a, b) => a.item.localeCompare(b.item)),
 		included,
 	};
+}
+
+/**
+ * The config the copies may have been made under, when it differs from this one's `prefix`: the
+ * prefix this run renames away from, or — for one set by hand in `native-components.json` — the
+ * library's own. A base fetched under it is used only if it hashes to the lock entry.
+ */
+function previousConfig(input: PlanInput): ResolvedConfig | undefined {
+	const from = input.renamedFrom ?? (input.config.prefix ? LIBRARY_PREFIX : undefined);
+	if (from === undefined || from === (input.config.prefix ?? LIBRARY_PREFIX)) return undefined;
+
+	return { ...input.config, prefix: from === LIBRARY_PREFIX ? undefined : from };
 }
 
 /** The item the render tests run on, which a project that takes tests gets whether or not it held it. */
@@ -301,7 +321,8 @@ async function fetchBase(
 	key: string,
 	path: string,
 	config: ResolvedConfig,
-	hash?: string
+	hash?: string,
+	previous?: ResolvedConfig
 ): Promise<string | null> {
 	try {
 		const fetched = await client.getItem(item);
@@ -313,10 +334,18 @@ async function fetchBase(
 		if (content === undefined) return null;
 
 		const shipped = transformFile(content, path, config);
-		if (hash === undefined || contentHash(shipped) === hash || !file.target.endsWith(".md")) return shipped;
+		if (hash === undefined || contentHash(shipped) === hash) return shipped;
 
-		const whole = transformFile(applyRewrites(await client.getFile(file), file.rewrites), path, config);
-		return contentHash(whole) === hash ? whole : shipped;
+		// Copied under the prefix this run is renaming away from.
+		const renamed = previous ? transformFile(content, path, previous) : null;
+		if (renamed !== null && contentHash(renamed) === hash) return renamed;
+		if (!file.target.endsWith(".md")) return shipped;
+
+		for (const candidate of previous ? [config, previous] : [config]) {
+			const whole = transformFile(applyRewrites(await client.getFile(file), file.rewrites), path, candidate);
+			if (contentHash(whole) === hash) return whole;
+		}
+		return shipped;
 	} catch {
 		return null;
 	}
@@ -335,7 +364,10 @@ async function removedFile(
 	const { path, displayPath } = destination(input.config, parsed.namespace, parsed.target);
 	const local = await readText(path);
 	const edited = local !== null && contentHash(local) !== entry.hash;
-	const base = edited ? await fetchBase(clientAt(entry.ref), item, key, path, input.config, entry.hash) : null;
+	const previous = previousConfig(input);
+	const base = edited
+		? await fetchBase(clientAt(entry.ref), item, key, path, input.config, entry.hash, previous)
+		: null;
 
 	return {
 		item,

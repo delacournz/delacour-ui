@@ -736,9 +736,13 @@ the file predates and lacks. Four rules:
   `--yes`: a pipe, `--json`, CI and the MCP server (`leaveConfig: true`) leave the file alone and
   return `config: { kind: "pending", fields }`, so the question reaches a person later rather than
   never. `--yes` means "take the defaults", so it records.
-- **A question that would damage the project is not asked.** `prefix` is offered only when the lock
-  is empty: every copied file was hashed under the old name, so renaming then reads as an edit to
-  all of them. A `--tests` / `--no-tests` flag answers `tests.enabled`, so it is not asked either.
+- **A `prefix` answered over copied files is a rename, not damage.** Every lock entry hashes the old
+  name, so `update` passes `renamedFrom` to `planUpdate` and `fetchBase` re-derives a base under it
+  (`previousConfig`; for a prefix set by hand it tries the library's own name). The new name then
+  reads as an upstream change: an untouched copy is replaced, an edited one merged. The app's own
+  imports of the old provider are listed (`project/provider-references.ts`, `UpdateResult.renamed`),
+  never edited. `init` asks it at a terminal and takes `--prefix`, and `add` forwards it to the
+  `init` it runs. A `--tests` / `--no-tests` flag answers `tests.enabled`, so that is not asked.
 - **A config from a newer CLI is never rewritten** — `newer`, a warning, nothing written. `doctor`'s
   `checkConfigVersion` warns on both directions.
 

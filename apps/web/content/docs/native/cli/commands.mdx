@@ -37,12 +37,18 @@ Arguments:
 Options:
   -y, --yes              accept every default without asking
   -d, --defaults         use the default layout without asking
+  -t, --tests            also install component tests, and every later add keeps
+                         them
+  --no-tests             install no component tests, without asking
+  --prefix <name>        what components call the library, in place of
+                         DelacourUI
   -f, --force            rewrite an existing native-components.json
   -s, --src <dir>        base directory for source files
   --package-name <name>  put the components in a shared package with this name
   --package-path <dir>   where that package goes, relative to the workspace root
                          (default: "packages/ui")
-  --install              install the packages the components need, without asking
+  --install              install the packages the components need, without
+                         asking
   --no-install           write the files and install nothing
   --silent               print nothing but errors
   --registry <url>       registry to read from: a URL, github:owner/repo, or a
@@ -207,9 +213,13 @@ Arguments:
 Options:
   -a, --all         add every component
   -o, --overwrite   replace files that differ
-  -t, --tests       copy each component's tests too, and record them in the lock
+  -t, --tests       copy each component's tests too, and remember the choice in
+                    the config
+  --no-tests        copy no tests, and remember the choice in the config
   -y, --yes         accept every default without asking
   -s, --src <dir>   base directory for source files, when setting the project up
+  --prefix <name>   what components call the library, when setting the project
+                    up
   --install         install the packages the components need, without asking
   --no-install      write the files and install nothing
   --no-init         error instead of writing native-components.json when this

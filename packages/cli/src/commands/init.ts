@@ -12,7 +12,7 @@ import { patchMetroConfig, readUniwindPaths, type UniwindPaths } from "../projec
 import { findRootLayout, renderRootLayout } from "../project/root-layout";
 import { UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
-import { providerName } from "../registry/prefix";
+import { LIBRARY_PREFIX, PREFIX_PATTERN, providerName } from "../registry/prefix";
 import { CancelledError, createOutput, type Output, style } from "../ui/output";
 import { type AddResult, add } from "./add";
 import { checkGestureHandlerRoot, checkStylingConflict, filesImporting, layoutSpecifiers } from "./doctor";
@@ -55,6 +55,8 @@ export type InitOptions = {
 	packagePath?: string;
 	/** Answers "Also install component tests?" and skips the prompt; saved as `tests.enabled`. */
 	tests?: boolean;
+	/** What components call the library in place of `DelacourUI`; skips the prompt; saved as `prefix`. */
+	prefix?: string;
 };
 
 export async function init(components: string[], options: InitOptions): Promise<AddResult | null> {
@@ -86,10 +88,12 @@ export async function init(components: string[], options: InitOptions): Promise<
 	};
 
 	const tests = await chooseInstallTests(options, output);
+	const prefix = await choosePrefix(options, output);
 
 	const config = buildConfig({
 		project,
 		tests,
+		prefix,
 		root: placement.root,
 		source,
 		packageName: placement.packageName,
@@ -230,6 +234,32 @@ async function chooseInstallTests(options: InitOptions, output: Output): Promise
 	return answer;
 }
 
+/**
+ * What the copied components call the library — `DelacourUI` in every display name and error, and
+ * `DelacourProvider` at the root. Asked once, here, because every file is copied under the answer;
+ * `update` can still rename later. A flag answers it; with nobody to ask it stays the library's.
+ */
+async function choosePrefix(options: InitOptions, output: Output): Promise<string | undefined> {
+	if (options.prefix !== undefined) {
+		const prefix = options.prefix.trim();
+		if (!PREFIX_PATTERN.test(prefix))
+			throw new Error(`--prefix "${options.prefix}" must be a PascalCase identifier, like UI or Acme.`);
+		return prefix === LIBRARY_PREFIX ? undefined : prefix;
+	}
+	if (!output.interactive || options.defaults) return undefined;
+
+	const answer = await clack.text({
+		message: `What should components call the library, in place of ${LIBRARY_PREFIX}? Leave empty to keep it.`,
+		placeholder: "UI",
+		validate: (value) =>
+			!value?.trim() || PREFIX_PATTERN.test(value.trim()) ? undefined : "A PascalCase identifier, like UI or Acme.",
+	});
+
+	if (clack.isCancel(answer)) throw new CancelledError();
+	const prefix = answer.trim();
+	return prefix && prefix !== LIBRARY_PREFIX ? prefix : undefined;
+}
+
 async function chooseSourceDirectory(options: InitOptions, output: Output): Promise<string> {
 	if (options.src) return options.src;
 	if (!output.interactive || options.defaults) return "src";
@@ -248,6 +278,7 @@ type BuildConfigContext = {
 	project: ProjectInfo;
 	/** The answer to the tests question, when it was given. */
 	tests?: boolean;
+	prefix?: string;
 	root: string;
 	source: string;
 	/** Set for the shared-package layout only. */
@@ -290,6 +321,7 @@ function buildConfig(context: BuildConfigContext): Config {
 		aliases: aliasesForDirectories(directories, context.project.pathMappings),
 		...(context.packageName ? { package: { name: context.packageName } } : {}),
 		...(context.tests === undefined ? {} : { tests: { enabled: context.tests } }),
+		...(context.prefix ? { prefix: context.prefix } : {}),
 		app: {
 			root: toPosix(relative(context.root, appRoot)) || ".",
 			css: context.wired.css ? fromApp(context.wired.css) : under("styles/global.css"),

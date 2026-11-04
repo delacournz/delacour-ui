@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	formatNumber,
@@ -177,6 +178,9 @@ export function TextAnimationRolling({
 	accessibilityHint,
 }: TextAnimationRollingProps): ReactElement {
 	const isCalm = useCalmMotion();
+	// One cap for the measuring digit, the wheels and the static cells, the
+	// same default the other parts use, so a balance never outgrows its card.
+	const fontCap = maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER;
 	const textClass = cn(
 		useTextAnimationClass({ variant, size, weight, color, align, transform, className }),
 		"tabular-nums"
@@ -242,7 +246,7 @@ export function TextAnimationRolling({
 					{...HIDDEN}
 					allowFontScaling={allowFontScaling}
 					className={cn(textClass, slots.layer(), "opacity-0")}
-					maxFontSizeMultiplier={maxFontSizeMultiplier}
+					maxFontSizeMultiplier={fontCap}
 					onLayout={onLayout}
 				>
 					0
@@ -259,7 +263,7 @@ export function TextAnimationRolling({
 							isLate={hasMounted}
 							key={key}
 							lineHeight={lineHeight}
-							maxFontSizeMultiplier={maxFontSizeMultiplier}
+							maxFontSizeMultiplier={fontCap}
 							rank={rank}
 							stagger={stagger}
 						/>
@@ -269,7 +273,7 @@ export function TextAnimationRolling({
 							allowFontScaling={allowFontScaling}
 							className={textClass}
 							key={key}
-							maxFontSizeMultiplier={maxFontSizeMultiplier}
+							maxFontSizeMultiplier={fontCap}
 						>
 							{cell.text}
 						</NativeText>

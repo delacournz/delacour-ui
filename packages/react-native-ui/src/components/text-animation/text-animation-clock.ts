@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type SharedValue, useFrameCallback, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 
@@ -13,6 +13,15 @@ export type TextAnimationClockOptions = {
 	onLimit?: () => void;
 };
 
+export type TextAnimationClock = {
+	/** Milliseconds into the current run. */
+	elapsed: SharedValue<number>;
+	/** The run `elapsed` has been rewound for. Lags `runId` until the rewind lands. */
+	run: SharedValue<number>;
+	/** The run this render belongs to, counted during render. */
+	runId: number;
+};
+
 /**
  * An elapsed-ms shared value that advances by each frame's `dt` while running.
  *
@@ -24,17 +33,26 @@ export type TextAnimationClockOptions = {
  * A run is identified by `runKey`. Changing it rewinds to 0, and a limit
  * crossed by an older run is dropped rather than reported, so an interrupted
  * animation never fires its predecessor's callback.
+ *
+ * The rewind runs in an effect, after the new render has committed, so a
+ * part drawn for the new run compares `run` with `runId` and holds its start
+ * until they match — new text never paints at the old run's end.
  */
 export function useTextAnimationClock({
 	isRunning,
 	runKey,
 	limitMs,
 	onLimit,
-}: TextAnimationClockOptions): SharedValue<number> {
+}: TextAnimationClockOptions): TextAnimationClock {
 	const elapsed = useSharedValue(0);
 	const run = useSharedValue(0);
 	const reported = useSharedValue(false);
 	const runRef = useRef(0);
+	// Counted during render, so the units of a new run know it before they paint.
+	const [counted, setCounted] = useState({ runKey, id: 0 });
+	const current = counted.runKey === runKey ? counted : { runKey, id: counted.id + 1 };
+	if (current !== counted) setCounted(current);
+	const runId = current.id;
 	const onLimitRef = useRef(onLimit);
 
 	useEffect(() => {
@@ -60,21 +78,21 @@ export function useTextAnimationClock({
 		elapsed.value = next;
 	}, false);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: runKey is the trigger, not a value read here
+	// `run` is written last, so a frame between the writes still holds the start.
 	useEffect(() => {
-		runRef.current += 1;
-		run.value = runRef.current;
+		runRef.current = runId;
 		elapsed.value = 0;
 		reported.value = false;
-	}, [runKey, elapsed, reported, run]);
+		run.value = runId;
+	}, [runId, elapsed, reported, run]);
 
 	// After the rewind above, so a new run is live again; a run that already
 	// reached its limit stays off when `isRunning` flips back on.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: runKey is the trigger, not a value read here
+	// biome-ignore lint/correctness/useExhaustiveDependencies: runId is the trigger, not a value read here
 	useEffect(() => {
 		frame.setActive(isRunning && !reported.value);
 		return () => frame.setActive(false);
-	}, [frame, isRunning, reported, runKey]);
+	}, [frame, isRunning, reported, runId]);
 
-	return elapsed;
+	return { elapsed, run, runId };
 }

@@ -411,6 +411,35 @@ export function resolveUnitProgress(
 }
 
 /**
+ * A rotating layer's progress. With no swap in flight the phrase shows whole;
+ * a layer rendered for a swap holds its start until progress has rewound for
+ * that swap, so the arriving phrase never paints a frame fully shown.
+ */
+export function resolveSwapProgress(isSwapping: boolean, shownSwap: number, swapId: number, progress: number): number {
+	"worklet";
+	if (!isSwapping) return 1;
+	return shownSwap === swapId ? progress : 0;
+}
+
+/**
+ * A unit's progress on its own run. Until the clock has rewound for the run
+ * the unit was rendered for, it holds the unit at its start, so new text never
+ * paints a frame at the previous run's finished value.
+ */
+export function resolveRunProgress(
+	shownRun: number,
+	runId: number,
+	elapsedMs: number,
+	delayMs: number,
+	staggerDelayMs: number,
+	durationMs: number
+): number {
+	"worklet";
+	if (shownRun !== runId) return 0;
+	return resolveUnitProgress(elapsedMs, delayMs, staggerDelayMs, durationMs);
+}
+
+/**
  * What a unit looks like at progress `t`. Only opacity and transform — a
  * unit's layout is final from the first frame, so nothing reflows as it enters.
  */
@@ -691,9 +720,13 @@ export function resolveRollTarget(currentPos: number, digit: number, direction: 
 	return base + delta;
 }
 
-/** Wheels roll up when the value grows or holds, down when it shrinks. */
+/**
+ * Wheels roll up when the shown digits grow or hold, down when they shrink.
+ * The wheels draw the magnitude — the sign is a static cell — so −19 → −20
+ * rolls up, the short way, though the value went down.
+ */
 export function resolveRollDirection(previous: number, next: number): RollDirection {
-	return next < previous ? "down" : "up";
+	return Math.abs(next) < Math.abs(previous) ? "down" : "up";
 }
 
 /**

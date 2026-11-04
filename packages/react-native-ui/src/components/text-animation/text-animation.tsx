@@ -107,6 +107,8 @@ function buildPieces(text: string, split: "word" | "character"): { pieces: Revea
 type UnitShared = {
 	className: string;
 	elapsed: SharedValue<number>;
+	run: SharedValue<number>;
+	runId: number;
 	delayMs: number;
 	durationMs: number;
 	effect: TextAnimationEffect;
@@ -124,6 +126,8 @@ function renderUnit(shared: UnitShared, key: string, text: string, index: number
 			drive={{
 				kind: "reveal",
 				elapsed: shared.elapsed,
+				run: shared.run,
+				runId: shared.runId,
 				delayMs: shared.delayMs,
 				staggerMs: shared.delays[index] ?? 0,
 				durationMs: shared.durationMs,
@@ -212,7 +216,7 @@ function TextAnimationReveal({
 	// A `line` split has no units until the paragraph is measured, so its clock
 	// waits for them rather than reaching a zero limit on an empty reveal.
 	const isMeasured = split !== "line" || lines !== null;
-	const elapsed = useTextAnimationClock({
+	const { elapsed, run, runId } = useTextAnimationClock({
 		isRunning: isActive && !isCalm && isMeasured,
 		runKey,
 		limitMs: total,
@@ -228,6 +232,8 @@ function TextAnimationReveal({
 	const shared: UnitShared = {
 		className: textClass,
 		elapsed,
+		run,
+		runId,
 		delayMs,
 		durationMs,
 		effect,

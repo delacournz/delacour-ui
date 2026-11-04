@@ -16,8 +16,10 @@ import {
 	resolveRollDirection,
 	resolveRollTarget,
 	resolveRowJustify,
+	resolveRunProgress,
 	resolveStaggerDelay,
 	resolveStaggerDelays,
+	resolveSwapProgress,
 	resolveTotalDuration,
 	resolveTypedPhrase,
 	resolveTypedRange,
@@ -197,6 +199,17 @@ describe("resolveUnitProgress", () => {
 	});
 });
 
+describe("resolveRunProgress", () => {
+	test("holds a unit at its start until the clock has rewound for its run", () => {
+		expect(resolveRunProgress(1, 2, 5000, 0, 0, 300)).toBe(0);
+	});
+
+	test("follows the clock once the run is current", () => {
+		expect(resolveRunProgress(2, 2, 5000, 0, 0, 300)).toBe(1);
+		expect(resolveRunProgress(2, 2, 0, 0, 0, 300)).toBe(0);
+	});
+});
+
 describe("resolveEffectFrame", () => {
 	test("every effect rests at full opacity, no offset, full scale", () => {
 		const effects = [
@@ -353,6 +366,20 @@ describe("resolveNextPhrase", () => {
 	});
 });
 
+describe("resolveSwapProgress", () => {
+	test("shows a phrase whole when no swap is in flight", () => {
+		expect(resolveSwapProgress(false, 0, 3, 0.4)).toBe(1);
+	});
+
+	test("holds a new swap at its start until progress has rewound for it", () => {
+		expect(resolveSwapProgress(true, 2, 3, 1)).toBe(0);
+	});
+
+	test("follows progress once the swap is current", () => {
+		expect(resolveSwapProgress(true, 3, 3, 0.4)).toBe(0.4);
+	});
+});
+
 describe("resolveWidestPhrase", () => {
 	test("picks the most graphemes, the first on a tie", () => {
 		expect(resolveWidestPhrase(["fast", "reliable", "small", "accurate"])).toBe(1);
@@ -461,6 +488,12 @@ describe("resolveRollDirection", () => {
 		expect(resolveRollDirection(1, 2)).toBe("up");
 		expect(resolveRollDirection(2, 2)).toBe("up");
 		expect(resolveRollDirection(2, 1)).toBe("down");
+	});
+
+	test("follows the magnitude of a negative number, not its sign", () => {
+		expect(resolveRollDirection(-19, -20)).toBe("up");
+		expect(resolveRollDirection(-20, -19)).toBe("down");
+		expect(resolveRollDirection(-3, 3)).toBe("up");
 	});
 });
 

@@ -47,6 +47,11 @@ export type ResolveSourceOptions = {
 	/** `github:owner/repo[#ref]`, a URL, or a filesystem path. */
 	url?: string;
 	ref?: string;
+	/**
+	 * Read for `DELACOUR_REGISTRY`, the registry used when neither `--registry` nor the config names
+	 * one. `cli:link`'s shim sets it to the linked tree's `registry/`. Defaults to `process.env`.
+	 */
+	env?: Record<string, string | undefined>;
 };
 
 const RAW_GITHUB = "https://raw.githubusercontent.com";
@@ -56,7 +61,7 @@ const BARE_RAW_REPO = new RegExp(`^${RAW_GITHUB}/([^/]+)/([^/]+)$`);
 
 export function resolveRegistrySource(options: ResolveSourceOptions): RegistrySource {
 	const ref = options.ref || DEFAULT_REGISTRY_REF;
-	const url = options.url?.trim();
+	const url = options.url?.trim() || (options.env ?? process.env).DELACOUR_REGISTRY?.trim();
 
 	if (!url) return remote(`${DEFAULT_REGISTRY_URL}/${ref}`);
 

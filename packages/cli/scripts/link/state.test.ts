@@ -8,135 +8,202 @@ import {
 	readlinkSync,
 	rmSync,
 	symlinkSync,
+	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { globalPaths, type LinkPaths, restoreLinks, snapshotLinks } from "./state";
+import {
+	globalPaths,
+	type LinkPaths,
+	linkPaths,
+	restoreBunLink,
+	restoreLink,
+	shimFor,
+	shimTarget,
+	snapshotLink,
+	writeShim,
+} from "./state";
 
 let root: string;
 let paths: LinkPaths;
 let tree: string;
+let cli: string;
+let registry: string;
 
-/** What `bun link` does: replace both entries with symlinks into the working tree. */
-const bunLink = (target: string) => {
-	for (const path of [paths.moduleLink, paths.binLink]) rmSync(path, { recursive: true, force: true });
-	symlinkSync(target, paths.moduleLink);
-	symlinkSync(join(target, "dist/index.js"), paths.binLink);
+const link = (cliPath = cli, registryDir = registry) => {
+	snapshotLink(paths);
+	writeShim(paths, shimFor(cliPath, registryDir));
 };
 
 beforeEach(() => {
 	root = mkdtempSync(join(tmpdir(), "delacour-link-"));
-	paths = globalPaths({ BUN_INSTALL: root }, "/nobody", "delacour", "delacour");
+	paths = linkPaths({ BUN_INSTALL: root }, "/nobody", "delacour");
 	tree = join(root, "tree");
-	mkdirSync(join(paths.globalDir, "node_modules"), { recursive: true });
-	mkdirSync(join(root, "bin"), { recursive: true });
-	mkdirSync(join(tree, "dist"), { recursive: true });
-	Bun.write(join(tree, "dist/index.js"), "#!/usr/bin/env node\n");
+	cli = join(tree, "packages/cli/src/index.ts");
+	registry = join(tree, "registry");
+	mkdirSync(join(tree, "packages/cli/src"), { recursive: true });
+	writeFileSync(cli, "");
 });
 
 afterEach(() => rmSync(root, { recursive: true, force: true }));
 
-describe("globalPaths", () => {
-	test("defaults to ~/.bun", () => {
-		const defaults = globalPaths({}, "/home/me", "delacour", "delacour");
-		expect(defaults.moduleLink).toBe("/home/me/.bun/install/global/node_modules/delacour");
-		expect(defaults.binLink).toBe("/home/me/.bun/bin/delacour");
+describe("linkPaths", () => {
+	test("the bin bun installs globals into, defaulting to ~/.bun/bin", () => {
+		expect(linkPaths({}, "/home/me", "delacour").bin).toBe("/home/me/.bun/bin/delacour");
 	});
 
 	test("follows bun's own overrides", () => {
-		const overridden = globalPaths(
-			{ BUN_INSTALL: "/opt/bun", BUN_INSTALL_GLOBAL_DIR: "/g", BUN_INSTALL_BIN: "/b" },
-			"/home/me",
-			"delacour",
-			"delacour"
+		expect(linkPaths({ BUN_INSTALL: "/opt/bun", BUN_INSTALL_BIN: "/b" }, "/home/me", "delacour").bin).toBe(
+			"/b/delacour"
 		);
-		expect(overridden.moduleLink).toBe("/g/node_modules/delacour");
-		expect(overridden.binLink).toBe("/b/delacour");
 	});
 });
 
-describe("snapshotLinks then restoreLinks", () => {
-	test("nothing installed before: both entries are removed again", () => {
-		snapshotLinks(paths);
-		bunLink(tree);
+describe("the shim", () => {
+	test("runs this tree's source under bun and reads this tree's registry", () => {
+		const shim = shimFor(cli, registry);
 
-		expect(restoreLinks(paths, tree)).toEqual({ kind: "restored", module: "absent", bin: "absent" });
-		expect(existsSync(paths.moduleLink)).toBe(false);
-		expect(existsSync(paths.binLink)).toBe(false);
+		expect(shim.startsWith("#!/bin/sh\n")).toBe(true);
+		expect(shim).toContain(`exec bun "${cli}" "$@"`);
+		expect(shim).toContain(`DELACOUR_REGISTRY="\${DELACOUR_REGISTRY-${registry}}"`);
+	});
+
+	test("is recognised, and names the source it runs", () => {
+		link();
+
+		expect(shimTarget(paths.bin)).toBe(cli);
+	});
+
+	test("anything else is not a shim", () => {
+		mkdirSync(paths.binDir, { recursive: true });
+		writeFileSync(paths.bin, "#!/usr/bin/env node\nconsole.log('published')\n");
+
+		expect(shimTarget(paths.bin)).toBeUndefined();
+	});
+
+	test("is executable", () => {
+		link();
+
+		expect(lstatSync(paths.bin).mode & 0o111).toBe(0o111);
+	});
+});
+
+describe("link then restoreLink", () => {
+	test("nothing there before: the shim is removed again", () => {
+		link();
+
+		expect(restoreLink(paths, cli)).toEqual({ kind: "restored", was: "absent" });
+		expect(existsSync(paths.bin)).toBe(false);
 		expect(existsSync(paths.stateFile)).toBe(false);
 	});
 
-	test("a link to another tree comes back", () => {
-		const other = join(root, "other");
-		mkdirSync(join(other, "dist"), { recursive: true });
-		bunLink(other);
+	test("a symlink to a global install comes back", () => {
+		mkdirSync(paths.binDir, { recursive: true });
+		symlinkSync("../install/global/node_modules/delacour/dist/index.js", paths.bin);
 
-		snapshotLinks(paths);
-		bunLink(tree);
-		restoreLinks(paths, tree);
+		link();
+		restoreLink(paths, cli);
 
-		expect(readlinkSync(paths.moduleLink)).toBe(other);
-		expect(readlinkSync(paths.binLink)).toBe(join(other, "dist/index.js"));
+		expect(readlinkSync(paths.bin)).toBe("../install/global/node_modules/delacour/dist/index.js");
 	});
 
-	test("a real global install is set aside and put back", () => {
-		mkdirSync(join(paths.moduleLink, "dist"), { recursive: true });
-		Bun.write(join(paths.moduleLink, "dist/index.js"), "published");
-		symlinkSync("../install/global/node_modules/delacour/dist/index.js", paths.binLink);
+	test("a real file is set aside, not overwritten, and put back", () => {
+		mkdirSync(paths.binDir, { recursive: true });
+		writeFileSync(paths.bin, "published");
 
-		snapshotLinks(paths);
-		expect(existsSync(paths.moduleLink)).toBe(false);
-		bunLink(tree);
-		restoreLinks(paths, tree);
+		link();
+		expect(readFileSync(paths.backup, "utf8")).toBe("published");
+		restoreLink(paths, cli);
 
-		expect(lstatSync(paths.moduleLink).isDirectory()).toBe(true);
-		expect(readFileSync(join(paths.moduleLink, "dist/index.js"), "utf8")).toBe("published");
-		expect(readlinkSync(paths.binLink)).toBe("../install/global/node_modules/delacour/dist/index.js");
-		expect(existsSync(paths.backupDir)).toBe(false);
+		expect(readFileSync(paths.bin, "utf8")).toBe("published");
+		expect(existsSync(paths.backup)).toBe(false);
+	});
+
+	test("another worktree's shim comes back", () => {
+		const other = join(root, "other/packages/cli/src/index.ts");
+		link(other, join(root, "other/registry"));
+		rmSync(paths.stateFile);
+
+		link();
+		restoreLink(paths, cli);
+
+		expect(shimTarget(paths.bin)).toBe(other);
 	});
 
 	test("linking twice keeps the first snapshot", () => {
-		snapshotLinks(paths);
-		bunLink(tree);
-		snapshotLinks(paths);
-		bunLink(tree);
+		link();
+		link();
 
-		expect(restoreLinks(paths, tree)).toEqual({ kind: "restored", module: "absent", bin: "absent" });
-		expect(existsSync(paths.moduleLink)).toBe(false);
+		expect(restoreLink(paths, cli)).toEqual({ kind: "restored", was: "absent" });
+		expect(existsSync(paths.bin)).toBe(false);
 	});
 });
 
-describe("restoreLinks without a clean slate", () => {
+describe("restoreLink without a clean slate", () => {
 	test("a real install made since the link is left alone", () => {
-		snapshotLinks(paths);
-		bunLink(tree);
-		rmSync(paths.moduleLink);
-		mkdirSync(paths.moduleLink);
+		link();
+		writeFileSync(paths.bin, "installed since");
 
-		expect(restoreLinks(paths, tree)).toEqual({ kind: "replaced" });
-		expect(lstatSync(paths.moduleLink).isDirectory()).toBe(true);
-		expect(existsSync(paths.binLink)).toBe(true);
+		expect(restoreLink(paths, cli)).toEqual({ kind: "replaced" });
+		expect(readFileSync(paths.bin, "utf8")).toBe("installed since");
 		expect(existsSync(paths.stateFile)).toBe(false);
 	});
 
-	test("no snapshot, linked to this tree: the link is removed", () => {
-		bunLink(tree);
+	test("no snapshot, this tree's shim: it is removed", () => {
+		link();
+		rmSync(paths.stateFile);
 
-		expect(restoreLinks(paths, tree)).toEqual({ kind: "restored", module: "absent", bin: "absent" });
-		expect(existsSync(paths.moduleLink)).toBe(false);
-		expect(existsSync(paths.binLink)).toBe(false);
+		expect(restoreLink(paths, cli)).toEqual({ kind: "restored", was: "absent" });
+		expect(existsSync(paths.bin)).toBe(false);
 	});
 
-	test("no snapshot, linked elsewhere: nothing is touched", () => {
-		const other = join(root, "other");
-		mkdirSync(join(other, "dist"), { recursive: true });
-		bunLink(other);
+	test("no snapshot, another tree's shim: nothing is touched", () => {
+		const other = join(root, "other/packages/cli/src/index.ts");
+		link(other);
+		rmSync(paths.stateFile);
 
-		expect(restoreLinks(paths, tree)).toEqual({ kind: "not-linked" });
-		expect(readlinkSync(paths.moduleLink)).toBe(other);
+		expect(restoreLink(paths, cli)).toEqual({ kind: "not-linked" });
+		expect(shimTarget(paths.bin)).toBe(other);
 	});
 
 	test("no snapshot, nothing linked", () => {
-		expect(restoreLinks(paths, tree)).toEqual({ kind: "not-linked" });
+		expect(restoreLink(paths, cli)).toEqual({ kind: "not-linked" });
+	});
+});
+
+/**
+ * `cli:link` used to be `bun link` over a built `dist/`. A machine linked that way still has its
+ * snapshot in bun's global directory, so linking or unlinking now undoes that one first.
+ */
+describe("restoreBunLink, for a tree linked the old way", () => {
+	let legacy: ReturnType<typeof globalPaths>;
+	const packageDir = () => join(tree, "packages/cli");
+
+	const bunLink = () => {
+		for (const path of [legacy.moduleLink, legacy.binLink]) rmSync(path, { recursive: true, force: true });
+		symlinkSync(packageDir(), legacy.moduleLink);
+		symlinkSync(join(packageDir(), "dist/index.js"), legacy.binLink);
+	};
+
+	beforeEach(() => {
+		legacy = globalPaths({ BUN_INSTALL: root }, "/nobody", "delacour", "delacour");
+		mkdirSync(join(legacy.globalDir, "node_modules"), { recursive: true });
+		mkdirSync(paths.binDir, { recursive: true });
+	});
+
+	test("with its snapshot, puts back what bun link replaced", () => {
+		writeFileSync(
+			legacy.stateFile,
+			JSON.stringify({ module: { kind: "absent" }, bin: { kind: "symlink", target: "elsewhere" } })
+		);
+		bunLink();
+
+		expect(restoreBunLink(legacy, packageDir())).toEqual({ kind: "restored", module: "absent", bin: "symlink" });
+		expect(existsSync(legacy.moduleLink)).toBe(false);
+		expect(readlinkSync(legacy.binLink)).toBe("elsewhere");
+	});
+
+	test("with no snapshot and no link, does nothing", () => {
+		expect(restoreBunLink(legacy, packageDir())).toEqual({ kind: "not-linked" });
 	});
 });

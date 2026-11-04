@@ -20,17 +20,31 @@ bun run check            # Biome
 bun test                 # unit + end-to-end against the local registry
 ```
 
-To run this tree's CLI in another app, `bun run cli:link` from the repository root builds it and
-registers `delacour` globally with `bun link`; `bun run dev` here then keeps `dist/` current. A
-linked build has no `DELACOUR_REGISTRY_REF`, so it reads the registry at `main` — pass
-`--registry <path to this repository's registry/>` to read this branch's instead.
+To try this tree's CLI in another app before pushing, link it from the repository root:
 
-`bun run cli:unlink` undoes it, and restores rather than removes. `bun link` silently replaces two
-global entries — `<global>/node_modules/delacour` and `<bin>/delacour` — so `scripts/link.ts`
-snapshots both first, into `.delacour-link.json` beside them, moving a real `bun add -g` install
-aside instead of letting it be deleted. Unlinking puts back another worktree's link, the published
-install, or nothing, whichever was there. The snapshot is machine-wide, not per worktree, and a
-second `cli:link` keeps the first one: what is on disk by then is a link, not what the user had.
+```bash
+bun run cli:link      # <bun bin>/delacour becomes a shim running this tree's src/index.ts
+bun run cli:status    # which `delacour` is on PATH, and whether it is this tree
+bun run cli:unlink    # put back what was there
+```
+
+The link is a source shim, the way warden's is: `exec bun <tree>/packages/cli/src/index.ts`, so
+nothing is built and an edit is live on the next run. It also exports `DELACOUR_REGISTRY` as this
+tree's `registry/`, which `resolveRegistrySource` reads when neither `--registry` nor the config
+names a registry — so a linked `add` copies **this branch's** components, as they will ship once it
+merges, rather than `main`'s. Rebuild the registry (`bun run registry:build`) after changing a
+component, or the linked CLI copies the last build. `DELACOUR_REGISTRY= delacour …` (empty) runs the
+linked source against the published registry instead. The lock records the ref as `main` for a local
+registry, so treat an app linked this way as a scratch app, not one to `update` later from npm.
+A linked CLI reports `0.0.0-dev`, which installs Delacour packages from `latest`.
+
+The shim goes where `bun add -g delacour` puts the published CLI (`$BUN_INSTALL_BIN`, else
+`~/.bun/bin`), and `cli:link` prints a warning when another `delacour` comes first on PATH. The
+entry it replaces — a published install, another worktree's shim, or nothing — is snapshotted first
+into `.delacour-link.json` beside it, a real file moved aside rather than deleted, and `cli:unlink`
+restores that. The snapshot is machine-wide, not per worktree, and a second `cli:link` keeps the
+first one: what is on disk by then is a shim, not what the user had. `cli:link` used to be `bun link`
+over a built `dist/`; both commands undo a link made that way first (`restoreBunLink`).
 
 ## Directory structure
 
@@ -84,8 +98,8 @@ The theme converter is NOT here. `@delacour/design-system/convert` owns it — s
 scripts/
 ├── verify-expo.ts        the integration script
 ├── verify/               harness (scaffold, run), checks (the assertions), render (bundle, boot)
-├── link.ts               cli:link / cli:unlink — `bun link`, and restoring what it replaced
-├── link/                 state.ts: snapshot and restore the two global entries (tested)
+├── link.ts               cli:link / cli:unlink / cli:status — a source shim on PATH, reading this tree's registry
+├── link/                 state.ts: the shim, and snapshotting / restoring what it replaced (tested)
 └── check-bundle.ts       prepublish guard
 ```
 

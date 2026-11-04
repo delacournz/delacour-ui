@@ -1,5 +1,52 @@
 # delacour
 
+## 0.7.0
+
+### Minor Changes
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `native-components.json` records a `version`. `init` writes the current one, and `update` brings an older config up to it first: at a terminal it asks once about each option the file predates (`tests.enabled`, and `prefix` while nothing is copied yet), then records the answers and the version. `--yes` keeps the defaults; `--json`, a pipe, CI and the MCP server leave the file alone and name what is still to choose. `doctor` warns on a config that is behind, or written by a newer CLI. The docs gain an Updating guide.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `init` asks what components should call the library in place of `DelacourUI` (`--prefix <name>` on
+  `init` or the first `add` answers it), and `update` asks a project that has no `prefix` even after
+  components are copied: answering renames it through every copy, merging into edited files, and lists
+  the project's own files that still import `DelacourProvider`. A `prefix` set by hand in
+  `native-components.json` is renamed through on the next `update` the same way.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - When `add` or `update` copies tests, it adds `test:ui` (every copied suite), `test:ui:unit` (the
+  logic suites) and, on Jest, `test:ui:render` (the render tests) to `package.json`, scoped to the
+  component directories so the project's own `test` script is untouched. A script already under one
+  of those names is kept as it is.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `update` lists each component it would change — every file it updates, adds or merges, with a line
+  count — and asks which to take; an unticked component is left for the next run. `add` and `update`
+  now ask which missing packages to install, one checkbox each, instead of all or nothing.
+
+  `update` no longer adds a component the project does not hold unless the registry introduced it
+  since the copy: a dependency the project removed (an icon set swapped for another) is reported and
+  offered unticked, and a test that renders a component the project lacks is left out instead of
+  copying that component in.
+
+### Patch Changes
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `update` no longer reports a merge as clean when the project and the registry each added the same line
+  in different places. The merge used to keep both — a duplicate parameter in a file that then failed to
+  parse — and now writes the region as a conflict to resolve.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add` and `update` install a package again at the library's range when `package.json` has it below
+  that range — a project on `tailwind-variants` 3 now gets 4, which the copied `lib/tv.ts` imports from.
+  The report names each one and the version it found. `update` also reads an old ref out of git when the
+  registry is a local directory, so a linked CLI merges an edited file instead of skipping it and
+  copying newer tests beside the old source.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DELACOUR_REGISTRY` names the registry to read when neither `--registry` nor `registry.url` in `native-components.json` does — a path, a URL or `github:owner/repo`. Empty means the published registry.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The test kit no longer mocks native modules the project may not have. Skia, Pulsar, MapLibre,
+  `expo-linear-gradient` and `expo-blur` each have a mock of their own under `test/mocks/`, copied only
+  with a component that installs the module and added to Jest's `setupFiles` — so a project without
+  `chart` no longer fails every suite with "Cannot find module 'react-native-skia'".
+
+- [#326](https://github.com/delacournz/delacour-ui/pull/326) [`478268f`](https://github.com/delacournz/delacour-ui/commit/478268f678f5972410b45001bb83e4c7c675d0d8) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `update` no longer crashes with `EPIPE` when the project's formatter exits before reading its input; the file is compared unformatted and the failure reported once.
+
 ## 0.6.0
 
 ### Minor Changes

@@ -1,5 +1,59 @@
 # @delacour/react-native-ui
 
+## 0.7.0
+
+### Minor Changes
+
+- [#320](https://github.com/delacournz/delacour-ui/pull/320) [`5608867`](https://github.com/delacournz/delacour-ui/commit/56088670cf9c7614fcfa6432588b025c52342218) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker` takes `defaultMonth`, `startMonth` and `endMonth` and passes them to its calendar, so the default anatomy can open near a likely date and bound paging and the year list. Its docs add a date of birth example with `minDate` and `maxDate`.
+
+### Patch Changes
+
+- [#319](https://github.com/delacournz/delacour-ui/pull/319) [`f9beba7`](https://github.com/delacournz/delacour-ui/commit/f9beba7936ca536f8fa667523f5a2329f43f65bf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar` falls back to the accessible name "Avatar" when it is pressable and has no `name`, `fallback` or `accessibilityLabel`, so it is never read as only "button". Initials keep their accent when the name arrives in NFD form.
+
+- [#319](https://github.com/delacournz/delacour-ui/pull/319) [`f9beba7`](https://github.com/delacournz/delacour-ui/commit/f9beba7936ca536f8fa667523f5a2329f43f65bf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar.Badge` draws the presence dot when its children are `0` or `""`, such as `{unread && <Badge />}` with no unread items, instead of throwing on a raw string in a `View`.
+
+- [#319](https://github.com/delacournz/delacour-ui/pull/319) [`f9beba7`](https://github.com/delacournz/delacour-ui/commit/f9beba7936ca536f8fa667523f5a2329f43f65bf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar` remounts its image when the source changes, so a late error from an expired URL no longer marks the refreshed one as failed.
+
+- [#319](https://github.com/delacournz/delacour-ui/pull/319) [`f9beba7`](https://github.com/delacournz/delacour-ui/commit/f9beba7936ca536f8fa667523f5a2329f43f65bf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar` retries its image when the entries of a multi-resolution list change their `width`, `height` or `scale`, and, for a list, when the avatar changes size. `imageProps` no longer accepts `src` or `srcSet`, which would override `source` and bypass the retry key.
+
+- [#323](https://github.com/delacournz/delacour-ui/pull/323) [`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Android back closes an overlay open over a `BottomSheet`, not the sheet. Under an `OverlayProvider`, the sheet turns `closeOnBack` off while a modal or anchored overlay is open.
+
+- [#323](https://github.com/delacournz/delacour-ui/pull/323) [`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `BottomSheet.Container` finds a `Handle` or `Background` written inside a fragment. `<>{showHandle && <BottomSheet.Handle />}</>` no longer gets a second handle and background added, which gave screen readers two adjustable elements.
+
+- [#323](https://github.com/delacournz/delacour-ui/pull/323) [`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A `BottomSheet` with an `Overlay` hides the app behind it from VoiceOver and TalkBack while it is presented in the root host. `BottomSheetProvider` hides its children, as `OverlayProvider` does for a dialog. Inline sheets, sheets in another `BottomSheet.Host` and `enableTouchThrough` leave the app reachable.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`f3cc562`](https://github.com/delacournz/delacour-ui/commit/f3cc5623f588c1866ffcc5e248fd18c17b5c23e4) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - `Calendar.Caption` now reads an enclosing `Field.Label` before the month ("Date of birth, October 2026"). The label used to sit only on the grid, which is not `accessible` and gets no iOS trait from `role="grid"`, so VoiceOver never read it. `resolveCaptionLabel` is exported from the variants.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`f3cc562`](https://github.com/delacournz/delacour-ui/commit/f3cc5623f588c1866ffcc5e248fd18c17b5c23e4) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - `Calendar.Day` now puts "Today", "Range start" and "Range end" in its accessibility label ("Monday 5 October 2026, Today, Range start") instead of the hint, so they are read with VoiceOver hints off. `resolveDayAccessibilityLabel` is exported from the variants.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`f3cc562`](https://github.com/delacournz/delacour-ui/commit/f3cc5623f588c1866ffcc5e248fd18c17b5c23e4) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - A read-only `Calendar` no longer announces every day as disabled ("dimmed"). A read-only day keeps an enabled accessibility state, its tap is still ignored, and it skips the press fade and haptic. `CalendarDayState` gains `isUnavailable` for the days that are announced disabled.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The test kit no longer mocks native modules the project may not have. Skia, Pulsar, MapLibre,
+  `expo-linear-gradient` and `expo-blur` each have a mock of their own under `test/mocks/`, copied only
+  with a component that installs the module and added to Jest's `setupFiles` — so a project without
+  `chart` no longer fails every suite with "Cannot find module 'react-native-skia'".
+
+- [#320](https://github.com/delacournz/delacour-ui/pull/320) [`5608867`](https://github.com/delacournz/delacour-ui/commit/56088670cf9c7614fcfa6432588b025c52342218) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker` stays controlled whenever `value` is passed, even as `undefined`, which now reads as empty. A form field that starts `undefined` or resets to it no longer flips the picker to its own state and leaves a stale day on the trigger.
+
+- [#320](https://github.com/delacournz/delacour-ui/pull/320) [`5608867`](https://github.com/delacournz/delacour-ui/commit/56088670cf9c7614fcfa6432588b025c52342218) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A read-only `DatePicker.Trigger` reads as text instead of a button. It has no press handler, so VoiceOver no longer offers a double-tap that does nothing. A disabled trigger keeps the button role.
+
+- [#320](https://github.com/delacournz/delacour-ui/pull/320) [`5608867`](https://github.com/delacournz/delacour-ui/commit/56088670cf9c7614fcfa6432588b025c52342218) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A re-tap on a single `DatePicker`'s shown day now confirms it and closes the sheet instead of clearing it. A user who opens a date of birth to check it no longer empties it by tapping it. `DatePicker.Clear` (`isClearable`) stays the way to empty a single day.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`df5d76b`](https://github.com/delacournz/delacour-ui/commit/df5d76b9c5fe0c960719c90d9e1da75da8666313) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - A modal overlay that is animating closed no longer hides the app content from screen readers, so a Dialog or Drawer that moves focus back to its trigger in `onExited` lands on it. `Overlay.Portal` takes `isExiting`; pass `useOverlayPresence().phase === "exiting"`.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`df5d76b`](https://github.com/delacournz/delacour-ui/commit/df5d76b9c5fe0c960719c90d9e1da75da8666313) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - Screen readers stay inside the top modal overlay. The top open modal's portal frame is modal for VoiceOver, and every overlay drawn under it is hidden from VoiceOver and TalkBack, so a dialog opened over another dialog no longer leaves the lower one reachable. `topModalOverlay` and `isBelowTopModal` are exported from `overlay`.
+
+- [#325](https://github.com/delacournz/delacour-ui/pull/325) [`96cfac8`](https://github.com/delacournz/delacour-ui/commit/96cfac847eb7eee7cb50e6954e199c9bfab2cb17) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `TextAnimation` fixes for first-frame painting, negative numbers and font scaling:
+
+  - `Rolling` picks its roll direction from the magnitude, so a negative number such as −19 → −20 rolls the short way.
+  - New reveal text holds its start until the clock has rewound, so it never paints a frame fully shown before it reveals.
+  - A `Rotating` swap holds its start until progress has rewound, so the arriving phrase never flashes in fully shown.
+  - `Rolling` and `Rotating` cap font scaling at `TEXT_MAX_FONT_SIZE_MULTIPLIER` by default, like the other parts.
+
+- Updated dependencies [[`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0)]:
+  - @delacour/react-native-bottom-sheet@0.7.0
+  - @delacour/react-native-charts@0.7.0
+
 ## 0.6.0
 
 ### Minor Changes

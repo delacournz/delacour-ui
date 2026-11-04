@@ -76,8 +76,24 @@ const testsSchema = z.object({
 	enabled: z.boolean().optional(),
 });
 
+/**
+ * The shape version `init` writes, and `update` brings an older config up to.
+ *
+ * Bump it in the same change that adds a field a project should be asked about,
+ * and add that field's question to `upgrade.ts` with `since` set to the new
+ * number. Absent reads as `1`: every config written before versions existed.
+ */
+export const CONFIG_VERSION = 2;
+
 export const configSchema = z.object({
 	$schema: z.string().optional(),
+	/** Which shape of this file the project was last brought up to. Absent is `1`. */
+	version: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe("The config shape this project was last brought up to. Written by init and update."),
 	framework: z.enum(["expo", "react-native"]).default("expo"),
 	typescript: z.boolean().default(true),
 	registry: registrySchema.default({}),

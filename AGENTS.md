@@ -42,8 +42,9 @@ bun run previews:verify    # recapture a selection, pixel-diff it against origin
 bun run previews:affected  # which components' preview media this branch made stale, and the command to recapture them
 bun run previews:pr-table  # the before/after table of this branch's recaptured media, for the pull request body
 bun run signoff            # run the merge gate's checks locally and sign off the open pull request
-bun run cli:link           # build the CLI and link it, so `delacour` on PATH is this tree
+bun run cli:link           # `delacour` on PATH runs this tree's source and reads this tree's registry
 bun run cli:unlink         # put back whatever `delacour` was before cli:link
+bun run cli:status         # which `delacour` is on PATH, and whether it is this tree
 bun run nuke               # delete every node_modules and reinstall from scratch
 ```
 

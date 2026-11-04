@@ -281,7 +281,8 @@
 	],
 	"renderTestRegistryDependencies": [
 		"overlay",
-		"test-kit"
+		"test-kit",
+		"test-mock-pulsar"
 	],
 	"renderTestDependencies": [
 		"@jest/globals"

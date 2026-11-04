@@ -251,7 +251,8 @@
 		}
 	],
 	"renderTestRegistryDependencies": [
-		"test-kit"
+		"test-kit",
+		"test-mock-skia"
 	],
 	"renderTestDependencies": [
 		"@jest/globals"

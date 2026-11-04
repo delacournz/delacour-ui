@@ -18,6 +18,7 @@ function setup(overrides: Partial<TestSetup>): TestSetup {
 		copiedTests: 3,
 		renderTests: 0,
 		setupFiles: ["<rootDir>/src/lib/test/setup.ts"],
+		mockFiles: [],
 		dependencies: {},
 		jestConfig: null,
 		vitestConfig: null,

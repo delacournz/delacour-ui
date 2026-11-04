@@ -7,7 +7,7 @@ import { readLock } from "../lock/lock";
 import { isRenderTest, isTest } from "../registry/classify";
 import { detectTestRunner, type RunnerManifest, type TestRunner, testRunnerPackages } from "../registry/test-runner";
 import type { ProjectInfo } from "./detect";
-import { jestSnippet, renderSetupIssues, setupFileFor } from "./jest-config";
+import { jestSnippet, mockSetupFilesFor, renderSetupIssues, setupFileFor } from "./jest-config";
 import { parseJsonc } from "./jsonc";
 
 /**
@@ -32,6 +32,8 @@ export type TestSetup = {
 	renderTests: number;
 	/** Where the test kit's `setup.ts` is as a `<rootDir>/…` path, from each directory a Jest config could sit in. */
 	setupFiles: string[];
+	/** The native mocks copied beside the kit, by file name — `skia.ts` — each of which Jest has to list. */
+	mockFiles: string[];
 	/** Every dependency the app and the config's package declare. */
 	dependencies: Record<string, string>;
 	/** The Jest config's text — a `jest.config.*` file, or `package.json`'s `jest` key — or `null`. */
@@ -124,7 +126,7 @@ function jestProblems(setup: TestSetup): Problem[] {
 function renderSetupProblems(setup: TestSetup): Problem[] {
 	if (setup.renderTests === 0 || setup.jestConfig === null) return [];
 
-	const issues = renderSetupIssues(setup.jestConfig, setup.setupFiles);
+	const issues = renderSetupIssues(setup.jestConfig, setup.setupFiles, setup.mockFiles);
 	if (issues.length === 0) return [];
 
 	return [
@@ -236,6 +238,7 @@ export async function readTestSetup(config: ResolvedConfig, project: ProjectInfo
 		scripted: manifests.map((manifest) => (manifest ? detectTestRunner(manifest) : null)).find(Boolean) ?? null,
 		...(await countCopiedTests(config.root)),
 		setupFiles: roots.map((root) => setupFileFor(root, config)),
+		mockFiles: mockSetupFilesFor(config.root, config).map((path) => path.split("/").pop() as string),
 		dependencies,
 		jestConfig: await readJestConfig(roots, manifests),
 		vitestConfig: await readFirst(roots, VITEST_CONFIG_FILES),

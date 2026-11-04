@@ -9,7 +9,9 @@ logic suites.
 
 | File | What it is |
 | --- | --- |
-| `setup.ts` | Jest `setupFiles` entry: a stand-in for every native module the components reach |
+| `setup.ts` | Jest `setupFiles` entry: a stand-in for every native module every app with the kit has |
+| `mocks/*.ts` | One `setupFiles` entry per native module only some components bring — Skia, Pulsar, MapLibre, `expo-linear-gradient`, `expo-blur` |
+| `mock-stub.ts` | `mockDeepStub`, the value the mocks answer with where a result feeds native code |
 | `render.tsx` | `renderWithProviders` — `render` inside `DelacourProvider` — and RNTL re-exported |
 
 Jest needs three settings to run them, all in the package's Jest config: `preset: "jest-expo"`,
@@ -96,10 +98,17 @@ spring values, or test a native module's behaviour through its mock.
 
 `setup.ts` mocks a module only when the module ships no Jest mock of its own. The ones it uses
 from the libraries themselves: Reanimated's `setUpTests()`, Gesture Handler's `jestSetup`, Safe Area
-Context's `jest/mock`, Keyboard Controller's `jest` entry and Teleport's `jest` entry. Skia, Pulsar,
-Uniwind, Maplibre, `expo-linear-gradient` and `expo-blur` are stubbed by hand — drawing primitives
-render nothing, and `useCSSVariable` returns `undefined`, so a component must already tolerate a
-token that has not resolved.
+Context's `jest/mock`, Keyboard Controller's `jest` entry and Teleport's `jest` entry. Uniwind,
+Skia, Pulsar, Maplibre, `expo-linear-gradient` and `expo-blur` are stubbed by hand — drawing
+primitives render nothing, and `useCSSVariable` returns `undefined`, so a component must already
+tolerate a token that has not resolved.
+
+**A module only some components bring is mocked in `mocks/`, never in `setup.ts`.** The kit is
+copied into apps that hold a few components, and a `jest.mock` of a module that is not installed
+fails every suite at load ("Cannot find module 'react-native-skia'"). So each such mock is a file of
+its own, `mocks/<name>.ts`, and ships as its own registry item: it lands in a project only beside a
+component that installs its module, and is then added to Jest's `setupFiles`. This package's Jest
+config lists every one.
 
 Teleport's mock draws a portal where it is written, not in the `"root"` host beside the app. So
 `setup.ts` also sets the global `delacour.overlay.teleportInline` symbol, and `OverlayProvider`
@@ -108,9 +117,10 @@ feedback panel would sit inside a view hidden from accessibility, and RNTL would
 [Overlay](../components/overlay/AGENTS.md).
 
 A suite needing a module that is not mocked fails at import with the module's own native error
-("`TurboModuleRegistry.getEnforcing(...)` … could not be found"). Add the mock to `setup.ts`, inside
-the `jest.mock` factory; a helper the factory calls must be named `mock…`, or Jest's hoisting guard
-refuses it.
+("`TurboModuleRegistry.getEnforcing(...)` … could not be found"). Add the mock inside a `jest.mock`
+factory — in `setup.ts` when every app with the kit has the module, else in a new `mocks/<name>.ts`
+listed in this package's Jest config and mapped to its module in the registry config; a helper the
+factory calls must be named `mock…`, or Jest's hoisting guard refuses it.
 
 <!-- registry:omit -->
 The reference suites are `button/button.render.test.tsx` (press, disabled, busy, group),

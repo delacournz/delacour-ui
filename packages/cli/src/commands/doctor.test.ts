@@ -3,10 +3,11 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { resolveConfig } from "../config/resolve";
-import { configSchema } from "../config/schema";
+import { CONFIG_VERSION, configSchema } from "../config/schema";
 import type { ProjectInfo } from "../project/detect";
 import { MJS_TRANSFORM_PATTERN } from "../project/jest-config";
 import {
+	checkConfigVersion,
 	checkGestureHandlerRoot,
 	checkJestTransform,
 	checkLock,
@@ -351,6 +352,23 @@ describe("cssImportSpecifier", () => {
 	test("falls back to an app-relative path when there is no layout to anchor on", async () => {
 		const root = await app({ "package.json": "{}" });
 		expect(cssImportSpecifier(config(root))).toBe("./src/styles/global.css");
+	});
+});
+
+describe("checkConfigVersion", () => {
+	test("passes at the version this CLI writes", () => {
+		expect(checkConfigVersion(CONFIG_VERSION).status).toBe("pass");
+	});
+
+	test("warns on a config with no version, naming update as the fix", () => {
+		const check = checkConfigVersion(undefined);
+
+		expect(check.status).toBe("warn");
+		expect(check.fix).toContain("delacour@latest update");
+	});
+
+	test("warns when a newer CLI wrote it", () => {
+		expect(checkConfigVersion(CONFIG_VERSION + 1).status).toBe("warn");
 	});
 });
 

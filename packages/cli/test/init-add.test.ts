@@ -1,10 +1,11 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { cp, mkdtemp, readFile, rm } from "node:fs/promises";
+import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { add } from "../src/commands/add";
 import { init } from "../src/commands/init";
 import { readConfig } from "../src/config/resolve";
+import { CONFIG_VERSION } from "../src/config/schema";
 import { contentHash } from "../src/lock/hash";
 import { readLock } from "../src/lock/lock";
 import { LOCK_FILENAME } from "../src/lock/schema";
@@ -41,6 +42,24 @@ afterAll(async () => {
 	await Promise.all(workspaces.map((directory) => rm(directory, { recursive: true, force: true })));
 });
 
+describe("add, in a project on an older major of a package the library needs", () => {
+	test("plans tailwind-variants again at the library's range, and says why", async () => {
+		const root = await scaffold("expo-app");
+		const manifest = join(root, "package.json");
+		const pkg = JSON.parse(await readFile(manifest, "utf-8"));
+		pkg.dependencies = { ...pkg.dependencies, "tailwind-variants": "3.3.1" };
+		await writeFile(manifest, JSON.stringify(pkg, null, 2));
+
+		await init([], { ...SHARED, cwd: root });
+		const result = await add(["button"], { ...SHARED, cwd: root });
+
+		expect(result.dependencies?.outdated).toEqual([
+			{ name: "tailwind-variants", declared: "3.3.1", required: "^4.0.0" },
+		]);
+		expect(result.dependencies?.missing).toContain("tailwind-variants");
+	});
+});
+
 describe("init and add, in a plain Expo app", () => {
 	let root: string;
 
@@ -56,6 +75,12 @@ describe("init and add, in a plain Expo app", () => {
 		expect(config.paths.ui).toBe("src/components/ui");
 		expect(config.aliases.ui).toBe("@/components/ui");
 		expect(config.app.root).toBe(".");
+	});
+
+	test("records the config version, so a later update knows what it has not asked", async () => {
+		const config = await readConfig(join(root, "native-components.json"));
+
+		expect(config.version).toBe(CONFIG_VERSION);
 	});
 
 	test("copies the component and everything it needs", async () => {
@@ -513,6 +538,27 @@ describe("add --tests", () => {
 	test("asks for the types bun:test needs, as a dev dependency", () => {
 		expect(result?.dependencies.wanted).toContain("@types/bun");
 	});
+
+	test("adds the test:ui scripts for the runner, with no render script on Bun", async () => {
+		const scripts = JSON.parse(await read(root, "package.json")).scripts;
+
+		expect(scripts["test:ui"]).toStartWith("bun test ./src/components/ui ");
+		expect(scripts["test:ui:unit"]).toBe(scripts["test:ui"]);
+		expect(scripts["test:ui:render"]).toBeUndefined();
+		expect(result?.testScripts).toEqual({
+			status: "added",
+			file: "package.json",
+			scripts: ["test:ui", "test:ui:unit"],
+		});
+	});
+
+	test("a second add leaves the scripts alone", async () => {
+		const before = await read(root, "package.json");
+		const again = await add(["badge"], { ...SHARED, cwd: root, tests: true });
+
+		expect(again?.testScripts).toEqual({ status: "unchanged", file: "package.json" });
+		expect(JSON.parse(await read(root, "package.json")).scripts).toEqual(JSON.parse(before).scripts);
+	});
 });
 
 describe("add --tests, in a project on another runner", () => {
@@ -540,6 +586,38 @@ describe("add --tests, in a project on another runner", () => {
 		}
 		expect(result?.dependencies.wanted).toEqual(expect.arrayContaining(["@jest/globals", "@types/node"]));
 		expect(result?.dependencies.wanted).not.toContain("@types/bun");
+	});
+
+	test("Jest gets all three scripts, and keeps a test:ui the project already had", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest", "test:ui": "jest --mine" } });
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+		const scripts = JSON.parse(await read(root, "package.json")).scripts;
+
+		expect(scripts["test:ui"]).toBe("jest --mine");
+		expect(scripts["test:ui:unit"]).toContain("--testPathIgnorePatterns");
+		expect(scripts["test:ui:render"]).toContain("\\.render\\.test\\.tsx$");
+		expect(result?.testScripts).toEqual({
+			status: "added",
+			file: "package.json",
+			scripts: ["test:ui:unit", "test:ui:render"],
+		});
+	});
+
+	test("Vitest gets vitest run over the component directories", async () => {
+		const root = await scaffoldOn({ devDependencies: { vitest: "^3.2.0" } });
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		expect(JSON.parse(await read(root, "package.json")).scripts["test:ui"]).toStartWith(
+			"vitest run src/components/ui "
+		);
+	});
+
+	test("a plain add writes no test scripts", async () => {
+		const root = await scaffoldOn({});
+		const result = await add(["button"], { ...SHARED, cwd: root });
+
+		expect(result?.testScripts).toBeNull();
+		expect(JSON.parse(await read(root, "package.json")).scripts?.["test:ui"]).toBeUndefined();
 	});
 
 	test("writes Vitest's suites against vitest, and records what it wrote", async () => {
@@ -626,6 +704,21 @@ describe("add --tests, render tests", () => {
 		return root;
 	}
 
+	test("a native mock comes only with a component that installs its module, and Jest is told about it", async () => {
+		const root = await scaffoldOn({ scripts: { test: "jest" }, jest: { preset: "jest-expo" } });
+		await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		await expect(exists(root, "src/lib/test/mocks/skia.ts")).resolves.toBe(false);
+		expect(await read(root, "src/lib/test/setup.ts")).not.toContain("react-native-skia");
+
+		await add(["chart"], { ...SHARED, cwd: root, tests: true });
+
+		expect(await read(root, "src/lib/test/mocks/skia.ts")).toContain('jest.mock("react-native-skia"');
+		expect(JSON.parse(await read(root, "package.json")).jest.setupFiles).toContain(
+			"<rootDir>/src/lib/test/mocks/skia.ts"
+		);
+	});
+
 	test("Jest gets them with the test kit, and its config is set up for them", async () => {
 		const root = await scaffoldOn({ scripts: { test: "jest" }, jest: { preset: "jest-expo" } });
 		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
@@ -639,7 +732,8 @@ describe("add --tests, render tests", () => {
 		);
 
 		const jest = JSON.parse(await read(root, "package.json")).jest;
-		expect(jest.setupFiles).toEqual(["<rootDir>/src/lib/test/setup.ts"]);
+		// `button` presses through Pulsar, so Pulsar's mock comes with it.
+		expect(jest.setupFiles).toEqual(["<rootDir>/src/lib/test/setup.ts", "<rootDir>/src/lib/test/mocks/pulsar.ts"]);
 		expect(jest.resolver).toBe("react-native-reanimated/jest/resolver");
 		expect(jest.transformIgnorePatterns[0]).toContain("@delacour/.*");
 		expect(result?.renderTests?.jestConfig).toEqual({ status: "patched", file: "package.json" });
@@ -681,6 +775,37 @@ describe("add --tests, render tests", () => {
 		expect(JSON.parse(await read(root, "package.json")).jest).toBeUndefined();
 		expect(result?.renderTests?.skipped).toContain("Render tests need Jest");
 		expect(result?.renderTests?.jestConfig).toBeNull();
+	});
+});
+
+describe("prefix", () => {
+	test("init --prefix saves it and names the provider after it", async () => {
+		const root = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: root, prefix: "Acme" });
+
+		expect(JSON.parse(await read(root, "native-components.json")).prefix).toBe("Acme");
+		const provider = await read(root, "src/components/ui/provider/provider.tsx");
+		expect(provider).toContain("AcmeProvider");
+		expect(provider).not.toContain("DelacourProvider");
+	});
+
+	test("add --prefix sets up an unconfigured project under that name", async () => {
+		const root = await scaffold("expo-app");
+		await add(["button"], { ...SHARED, cwd: root, prefix: "Acme" });
+
+		expect(JSON.parse(await read(root, "native-components.json")).prefix).toBe("Acme");
+	});
+
+	test("refuses a prefix that is not a PascalCase identifier", async () => {
+		const root = await scaffold("expo-app");
+		await expect(init([], { ...SHARED, cwd: root, prefix: "acme-ui" })).rejects.toThrow(/PascalCase/);
+	});
+
+	test("a project that never answered has no prefix key", async () => {
+		const root = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: root });
+
+		expect(JSON.parse(await read(root, "native-components.json")).prefix).toBeUndefined();
 	});
 });
 

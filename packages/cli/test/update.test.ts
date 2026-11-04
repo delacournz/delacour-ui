@@ -6,11 +6,13 @@ import { x } from "tinyexec";
 import { add } from "../src/commands/add";
 import { diff } from "../src/commands/diff";
 import { type UpdateClients, type UpdateOptions, type UpdateResult, update } from "../src/commands/update";
+import { CONFIG_VERSION } from "../src/config/schema";
 import { contentHash } from "../src/lock/hash";
-import { lockPath, readLock } from "../src/lock/lock";
+import { lockPath, readLock, writeLock } from "../src/lock/lock";
 import type { Format } from "../src/project/formatter";
 import { createRegistryClient } from "../src/registry/client";
 import { adaptTest } from "../src/registry/test-runner";
+import type { ComponentChange } from "../src/update/select";
 
 /**
  * `update`, end to end, against two registries that stand in for two refs.
@@ -84,7 +86,27 @@ type FixtureItem = {
 	files: Record<string, string>;
 	/** The same, for the item's tests. */
 	tests?: Record<string, string>;
+	testRegistryDependencies?: string[];
 };
+
+const CHIP_BODY = '\n\nexport const size = 1;\n\n\nChip.displayName = "DelacourUI.Chip";\n';
+const CHIP_V1 = `export const Chip = "chip";${CHIP_BODY}`;
+const CHIP_V2 = `export const Chip = "chip, v2";${CHIP_BODY}`;
+const GLYPH = 'export const Glyph = "glyph";\n';
+const METER_TEST = 'import { test } from "bun:test";\n\ntest("meter", () => {});\n';
+/** An item the project already depended on when it copied `chip`, and could have swapped out since. */
+const CHIP_ITEMS = (chip: string): FixtureItem[] => [
+	{ name: "chip", type: "registry:ui", registryDependencies: ["glyph"], files: { "ui/chip/chip.tsx": chip } },
+	{ name: "glyph", type: "registry:lib", files: { "lib/glyph.ts": GLYPH } },
+	{
+		name: "meter",
+		type: "registry:ui",
+		files: { "ui/meter/meter.tsx": "export const Meter = null;\n" },
+		tests: { "ui/meter/meter.test.ts": METER_TEST },
+		testRegistryDependencies: ["slide"],
+	},
+	{ name: "slide", type: "registry:ui", files: { "ui/slide/slide.tsx": "export const Slide = null;\n" } },
+];
 
 const V1: FixtureItem[] = [
 	{
@@ -97,6 +119,7 @@ const V1: FixtureItem[] = [
 	{ name: "badge", type: "registry:ui", files: { "ui/badge/badge.tsx": BADGE } },
 	{ name: "cn", type: "registry:lib", files: { "lib/cn.ts": CN } },
 	{ name: "guide", type: "registry:ui", files: { "ui/guide/guide.tsx": GUIDE, [GUIDE_DOC_KEY]: GUIDE_DOC_V1 } },
+	...CHIP_ITEMS(CHIP_V1),
 ];
 
 const V2: FixtureItem[] = [
@@ -111,6 +134,7 @@ const V2: FixtureItem[] = [
 	{ name: "cn", type: "registry:lib", files: { "lib/cn.ts": CN } },
 	{ name: "tag", type: "registry:ui", files: { "ui/tag/tag.tsx": "export const Tag = null;\n" } },
 	{ name: "guide", type: "registry:ui", files: { "ui/guide/guide.tsx": GUIDE, [GUIDE_DOC_KEY]: GUIDE_DOC_V2 } },
+	...CHIP_ITEMS(CHIP_V2),
 ];
 
 const CARD = "src/components/ui/card/card.tsx";
@@ -149,6 +173,7 @@ async function buildRegistry(root: string, items: readonly FixtureItem[]): Promi
 		registryDependencies: item.registryDependencies ?? [],
 		files: Object.keys(item.files).map(toFile),
 		tests: Object.keys(item.tests ?? {}).map(toFile),
+		...(item.testRegistryDependencies ? { testRegistryDependencies: item.testRegistryDependencies } : {}),
 	}));
 
 	await put(
@@ -180,7 +205,7 @@ async function put(path: string, content: string): Promise<void> {
 const clientAt = (ref: string) => createRegistryClient({ cwd: registries, url: join(registries, ref, "registry") });
 
 /** A project with `card` and `badge` copied in from `v1`, lock and all — and their tests, when asked. */
-async function project(options: { tests?: boolean } = {}): Promise<string> {
+async function project(options: { tests?: boolean; items?: string[] } = {}): Promise<string> {
 	const root = await temp("delacour-update-");
 	await cp(join(FIXTURES, "expo-app"), root, { recursive: true });
 
@@ -198,7 +223,7 @@ async function project(options: { tests?: boolean } = {}): Promise<string> {
 		})
 	);
 
-	await add(["card", "badge"], {
+	await add(options.items ?? ["card", "badge"], {
 		cwd: root,
 		registry: join(registries, "v1", "registry"),
 		ref: "v1",
@@ -328,6 +353,281 @@ describe("update, and a component's tests", () => {
 		expect(action(result, CARD_TEST)).toBe("added");
 		expect(await read(root, CARD_TEST)).toBe(copied(CARD_TEST_V2));
 		expect((await readLock(root)).items.card?.files[CARD_TEST_KEY]?.ref).toBe("v2");
+	});
+
+	test("--tests adds the test:ui scripts, and a later update keeps the project's edit to one", async () => {
+		const root = await project();
+		await run(root, { tests: true });
+		const manifest = JSON.parse(await read(root, "package.json"));
+		expect(manifest.scripts["test:ui"]).toStartWith("bun test ");
+
+		manifest.scripts["test:ui"] = "bun test --mine";
+		await writeFile(join(root, "package.json"), JSON.stringify(manifest), "utf-8");
+		await run(root, { tests: true });
+
+		expect(JSON.parse(await read(root, "package.json")).scripts["test:ui"]).toBe("bun test --mine");
+	});
+
+	test("a dry run writes no scripts", async () => {
+		const root = await project();
+		await run(root, { tests: true, dryRun: true });
+
+		expect(JSON.parse(await read(root, "package.json")).scripts?.["test:ui"]).toBeUndefined();
+	});
+});
+
+describe("update, and a config an older CLI wrote", () => {
+	const config = async (root: string) =>
+		JSON.parse(await read(root, "native-components.json")) as Record<string, unknown>;
+	const setConfig = async (root: string, change: (raw: Record<string, unknown>) => Record<string, unknown>) =>
+		writeFile(join(root, "native-components.json"), JSON.stringify(change(await config(root))), "utf-8");
+
+	test("asks for the fields it predates, records the answers and the version, and acts on them in the same run", async () => {
+		const root = await project();
+		const asked: string[][] = [];
+
+		const result = await run(
+			root,
+			{},
+			{
+				askConfig: async (questions) => {
+					asked.push(questions.map((question) => question.key));
+					return { "tests.enabled": true };
+				},
+			}
+		);
+
+		expect(asked).toEqual([["tests.enabled", "prefix"]]);
+		expect(await config(root)).toMatchObject({ version: CONFIG_VERSION, tests: { enabled: true } });
+		expect(action(result, CARD_TEST)).toBe("added");
+	});
+
+	test("under --yes, records the version and leaves every new field at its default", async () => {
+		const root = await project();
+		await run(root);
+
+		const raw = await config(root);
+		expect(raw.version).toBe(CONFIG_VERSION);
+		expect(raw.tests).toBeUndefined();
+	});
+
+	test("with leaveConfig, leaves the file alone and names the fields still to choose", async () => {
+		const root = await project();
+		const before = await read(root, "native-components.json");
+
+		const result = await run(root, { leaveConfig: true });
+
+		expect(await read(root, "native-components.json")).toBe(before);
+		expect(result.config).toEqual({
+			kind: "pending",
+			from: 1,
+			to: CONFIG_VERSION,
+			fields: ["tests.enabled", "prefix"],
+		});
+	});
+
+	test("with leaveConfig, a --tests answer and a prefix already set, has nothing left to ask and records the version", async () => {
+		const root = await project();
+		await setConfig(root, (raw) => ({ ...raw, prefix: "Acme" }));
+
+		const result = await run(root, { leaveConfig: true, tests: false });
+
+		expect(result.config.kind).toBe("upgraded");
+		expect((await config(root)).version).toBe(CONFIG_VERSION);
+	});
+
+	test("asks nothing of a config already at this version", async () => {
+		const root = await project();
+		await setConfig(root, (raw) => ({ ...raw, version: CONFIG_VERSION }));
+		let calls = 0;
+
+		await run(
+			root,
+			{},
+			{
+				askConfig: async () => {
+					calls += 1;
+					return {};
+				},
+			}
+		);
+
+		expect(calls).toBe(0);
+	});
+
+	test("leaves alone a config a newer CLI wrote", async () => {
+		const root = await project();
+		await setConfig(root, (raw) => ({ ...raw, version: CONFIG_VERSION + 1 }));
+		const before = await read(root, "native-components.json");
+
+		await run(root, {}, { askConfig: async () => ({ "tests.enabled": true }) });
+
+		expect(await read(root, "native-components.json")).toBe(before);
+	});
+
+	test("a prefix chosen after components were copied renames them, merging where they were edited", async () => {
+		const root = await project({ items: ["chip", "card"] });
+		const CHIP = "src/components/ui/chip/chip.tsx";
+		await edit(root, CHIP, (text) => text.replace("size = 1", "size = 2"));
+		await put(join(root, "src/app/_layout.tsx"), 'import { DelacourProvider } from "@/components/ui/provider";\n');
+
+		const result = await run(root, {}, { askConfig: async () => ({ prefix: "Acme" }) });
+
+		expect(action(result, CHIP)).toBe("merged");
+		expect(await read(root, CHIP)).toBe(
+			'export const Chip = "chip, v2";\n\nexport const size = 2;\n\n\nChip.displayName = "Acme.Chip";\n'
+		);
+		expect(result.renamed).toEqual({ from: "DelacourUI", to: "Acme", references: ["src/app/_layout.tsx"] });
+	});
+
+	test("a prefix set by hand renames the copies on the next update, edited ones included", async () => {
+		const root = await project({ items: ["chip"] });
+		const CHIP = "src/components/ui/chip/chip.tsx";
+		await edit(root, CHIP, (text) => text.replace("size = 1", "size = 2"));
+		await setConfig(root, (raw) => ({ ...raw, version: CONFIG_VERSION, prefix: "Acme" }));
+
+		const result = await run(root);
+
+		expect(action(result, CHIP)).toBe("merged");
+		expect(await read(root, CHIP)).toContain('Chip.displayName = "Acme.Chip";');
+		expect(await read(root, CHIP)).toContain("size = 2");
+	});
+
+	test("writes nothing to the config on a dry run", async () => {
+		const root = await project();
+		const before = await read(root, "native-components.json");
+
+		await run(root, { dryRun: true }, { askConfig: async () => ({ "tests.enabled": true }) });
+
+		expect(await read(root, "native-components.json")).toBe(before);
+	});
+});
+
+describe("update, and a dependency the project does not hold", () => {
+	/** `chip` copied with `glyph`, and `glyph` then deleted — the way a project swaps one icon set for another. */
+	async function swappedOut(): Promise<string> {
+		const root = await project({ items: ["chip"] });
+		await rm(join(root, "src/lib/glyph.ts"));
+		const lock = await readLock(root);
+		delete lock.items.glyph;
+		await writeLock(root, lock);
+		return root;
+	}
+
+	test("does not bring back one the project removed", async () => {
+		const root = await swappedOut();
+		const result = await run(root);
+
+		expect(action(result, "src/components/ui/chip/chip.tsx")).toBe("updated");
+		await expect(exists(root, "src/lib/glyph.ts")).resolves.toBe(false);
+		expect((await readLock(root)).items.glyph).toBeUndefined();
+		expect(result.missing).toEqual([{ name: "glyph", neededBy: ["chip"] }]);
+	});
+
+	test("offers it in the picker, and adds it only when it is ticked", async () => {
+		const root = await swappedOut();
+		let offered: readonly string[] = [];
+
+		await run(
+			root,
+			{},
+			{
+				chooseComponents: async (_changes, missing) => {
+					offered = missing.map((entry) => entry.name);
+					return ["chip", "glyph"];
+				},
+			}
+		);
+
+		expect(offered).toEqual(["glyph"]);
+		expect(await read(root, "src/lib/glyph.ts")).toBe(GLYPH);
+	});
+
+	test("still adds one the registry introduced since the project copied the component", async () => {
+		const root = await project();
+		const result = await run(root);
+
+		expect(action(result, "src/components/ui/tag/tag.tsx")).toBe("added");
+		expect(result.missing).toEqual([]);
+	});
+
+	test("leaves out tests that need a component the project does not hold, rather than adding it", async () => {
+		const root = await project({ items: ["meter"] });
+		const result = await run(root, { tests: true });
+
+		await expect(exists(root, "src/components/ui/meter/meter.test.ts")).resolves.toBe(false);
+		await expect(exists(root, "src/components/ui/slide/slide.tsx")).resolves.toBe(false);
+		expect(result.testsLeftOut).toEqual([{ item: "meter", needs: ["slide"] }]);
+	});
+});
+
+describe("update, choosing which components to take", () => {
+	test("offers every component with a change, naming each file, and a new dependency as new", async () => {
+		const root = await project();
+		let offered: ComponentChange[] = [];
+
+		await run(
+			root,
+			{},
+			{
+				chooseComponents: async (changes) => {
+					offered = [...changes];
+					return [];
+				},
+			}
+		);
+
+		const card = offered.find((change) => change.item === "card");
+		const tag = offered.find((change) => change.item === "tag");
+		expect(card?.files.map((file) => [file.path, file.action])).toContainEqual([CARD, "updated"]);
+		expect(card?.files.map((file) => [file.path, file.action])).toContainEqual([
+			"src/components/ui/card/card.types.ts",
+			"added",
+		]);
+		expect(tag).toMatchObject({ isNew: true, neededBy: ["card"] });
+		expect(offered.find((change) => change.item === "badge")).toBeUndefined();
+	});
+
+	test("choosing none writes nothing and records nothing, so the next update offers them again", async () => {
+		const root = await project();
+		const before = (await readLock(root)).items.card;
+
+		const result = await run(root, {}, { chooseComponents: async () => [] });
+
+		expect(await read(root, CARD)).toBe(local(CARD_V1));
+		expect((await readLock(root)).items.card?.files[CARD_KEY]).toEqual(before?.files[CARD_KEY]);
+		await expect(exists(root, "src/components/ui/tag/tag.tsx")).resolves.toBe(false);
+		expect(result.files.find((file) => file.path === CARD)).toMatchObject({ action: "skipped", note: "not selected" });
+	});
+
+	test("updates only what was chosen", async () => {
+		const root = await project();
+
+		await run(root, {}, { chooseComponents: async () => ["tag"] });
+
+		await expect(exists(root, "src/components/ui/tag/tag.tsx")).resolves.toBe(true);
+		expect(await read(root, CARD)).toBe(local(CARD_V1));
+		expect((await readLock(root)).items.card?.files[CARD_KEY]?.ref).toBe("v1");
+	});
+
+	test("is not asked when components are named", async () => {
+		const root = await project();
+		let asked = false;
+
+		await run(
+			root,
+			{},
+			{
+				chooseComponents: async () => {
+					asked = true;
+					return [];
+				},
+			},
+			["card"]
+		);
+
+		expect(asked).toBe(false);
+		expect(await read(root, CARD)).toBe(local(CARD_V2));
 	});
 });
 

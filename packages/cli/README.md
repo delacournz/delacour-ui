@@ -43,7 +43,7 @@ Unlike shadcn, the target is Expo, which changes real things:
 | `init [components...]` | Do that setup deliberately — choose the source directory, or a shared package |
 | `list` / `search <q>` | Browse the registry |
 | `view <name>` | One item: its files, what it pulls in, what it installs |
-| `update [components...]` | Bring copied components up to the registry, merged with your edits |
+| `update [components...]` | Bring copied components up to the registry, merged with your edits, and `native-components.json` up to this CLI's `version` |
 | `diff [name]` | What `update` would change, without changing it |
 | `doctor` | Check this app is wired up correctly |
 | `info` | The resolved config and what was detected |
@@ -65,8 +65,10 @@ whether or not any are missing:
 │    already installed — clsx, react-native-reanimated, react-native-svg, tailwind-variants, …
 ```
 
-Then it asks. `--install` answers yes without asking, `--no-install` answers no, and a run with
-nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead:
+Then it asks which of them to install — a checkbox per package, all ticked, naming the command
+and the components that need it; the ones you untick are printed as commands. `--install` installs
+every one without asking, `--no-install` none, and a run with nobody to ask — a script, CI, an
+agent — installs nothing and prints the commands instead:
 
 ```bash
 npx delacour@latest add bottom-sheet --install

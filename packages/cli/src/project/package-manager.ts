@@ -180,11 +180,16 @@ export type DependencyPlan = {
 	wanted: string[];
 	/** Already in the project's `package.json`. */
 	satisfied: string[];
-	/** Not there yet — the union of every group's packages. */
+	/** Not there yet, or declared below the library's range — the union of every group's packages. */
 	missing: string[];
+	/** In `package.json` at a version below the range the library needs, so `missing` installs it again. */
+	outdated: OutdatedPackage[];
 	/** One command per install route, covering `missing` only. */
 	groups: InstallGroup[];
 };
+
+/** A package the project has, at a version the copied components cannot run against. */
+export type OutdatedPackage = { name: string; declared: string; required: string };
 
 export function planDependencies(request: InstallRequest, packageJson: PackageJson | null): DependencyPlan {
 	const groups = installCommands({
@@ -199,7 +204,47 @@ export function planDependencies(request: InstallRequest, packageJson: PackageJs
 	const missing = unique(groups.flatMap((group) => group.packages));
 	const missingSet = new Set(missing);
 
-	return { wanted, satisfied: wanted.filter((name) => !missingSet.has(name)), missing, groups };
+	return {
+		wanted,
+		satisfied: wanted.filter((name) => !missingSet.has(name)),
+		missing,
+		outdated: outdatedPackages(packageJson, wanted),
+		groups,
+	};
+}
+
+/** One missing package, as a choice: how it would be installed and which components need it. */
+export type PackageChoice = { name: string; route: string; neededBy: string[] };
+
+type ItemPackages = {
+	name: string;
+	expoDependencies: readonly string[];
+	dependencies: readonly string[];
+	devDependencies: readonly string[];
+};
+
+/** Every package `plan` would install, in command order, for someone to pick from. */
+export function packageChoices(plan: DependencyPlan, items: readonly ItemPackages[]): PackageChoice[] {
+	return plan.groups.flatMap((group) =>
+		group.packages.map((name) => ({
+			name,
+			route: group.label,
+			neededBy: items
+				.filter((item) => [...item.expoDependencies, ...item.dependencies, ...item.devDependencies].includes(name))
+				.map((item) => item.name)
+				.sort(),
+		}))
+	);
+}
+
+/** `request` with only the packages in `keep`, each still on the route it came by. */
+export function narrowRequest(request: InstallRequest, keep: ReadonlySet<string>): InstallRequest {
+	return {
+		...request,
+		expoDependencies: request.expoDependencies.filter((name) => keep.has(name)),
+		dependencies: request.dependencies.filter((name) => keep.has(name)),
+		devDependencies: request.devDependencies.filter((name) => keep.has(name)),
+	};
 }
 
 /** A group as the line someone could paste into a terminal. */
@@ -211,14 +256,67 @@ function unique(names: readonly string[]): string[] {
 	return [...new Set(names)].sort();
 }
 
-/** The packages in `wanted` that the project does not already have. */
+/**
+ * The packages in `wanted` that the project does not have, or has below the range the library needs.
+ *
+ * A name alone was the test once, and it let a project on tailwind-variants 3 take an update whose
+ * `lib/tv.ts` imports `tailwind-variants/config`, an entry point only 4 has: every suite that reached
+ * a `tv()` failed with `Cannot find module`. A package `NPM_RANGES` pins is now installed again at
+ * that range when the declared version sits below it. One above it is left alone — moving
+ * someone's dependency back a major is not this tool's call.
+ */
 export function missingPackages(packageJson: PackageJson | null, wanted: readonly string[]): string[] {
-	const installed = new Set([
-		...Object.keys(packageJson?.dependencies ?? {}),
-		...Object.keys(packageJson?.devDependencies ?? {}),
-	]);
+	const declared = declaredVersions(packageJson);
+	const outdated = new Set(outdatedPackages(packageJson, wanted).map((entry) => entry.name));
 
-	return wanted.filter((name) => !installed.has(name));
+	return wanted.filter((name) => !declared.has(name) || outdated.has(name));
+}
+
+function declaredVersions(packageJson: PackageJson | null): Map<string, string> {
+	return new Map([
+		...Object.entries(packageJson?.devDependencies ?? {}),
+		...Object.entries(packageJson?.dependencies ?? {}),
+	]);
+}
+
+function outdatedPackages(packageJson: PackageJson | null, wanted: readonly string[]): OutdatedPackage[] {
+	const declared = declaredVersions(packageJson);
+
+	return unique(wanted).flatMap((name) => {
+		const version = declared.get(name);
+		const required = NPM_RANGES[name];
+		if (version === undefined || required === undefined || !belowRange(version, required)) return [];
+		return [{ name, declared: version, required }];
+	});
+}
+
+const VERSION = /^(?:[\^~]|>=?|=)?\s*v?(\d+)(?:\.(\d+))?(?:\.(\d+))?/;
+
+/**
+ * Whether a `package.json` spec sits below a caret range: its lowest version is under the range's floor,
+ * or under its major (its minor, for a `0.x` range).
+ *
+ * Only the forms a project writes for a registry package are read — an exact version, `^`, `~`, `>=`.
+ * Anything else (`catalog:`, `workspace:`, a tag, a URL) is not a version this can compare, and is left
+ * alone rather than reinstalled over.
+ */
+export function belowRange(declared: string, required: string): boolean {
+	const have = parseVersion(declared.trim());
+	const need = parseVersion(required.trim());
+	if (have === null || need === null) return false;
+
+	for (let index = 0; index < 3; index++) {
+		const a = have[index] ?? 0;
+		const b = need[index] ?? 0;
+		if (a !== b) return a < b;
+	}
+	return false;
+}
+
+function parseVersion(spec: string): [number, number, number] | null {
+	const match = VERSION.exec(spec);
+	if (match === null) return null;
+	return [Number(match[1]), Number(match[2] ?? 0), Number(match[3] ?? 0)];
 }
 
 export type RunOptions = {

@@ -37,12 +37,18 @@ Arguments:
 Options:
   -y, --yes              accept every default without asking
   -d, --defaults         use the default layout without asking
+  -t, --tests            also install component tests, and every later add keeps
+                         them
+  --no-tests             install no component tests, without asking
+  --prefix <name>        what components call the library, in place of
+                         DelacourUI
   -f, --force            rewrite an existing native-components.json
   -s, --src <dir>        base directory for source files
   --package-name <name>  put the components in a shared package with this name
   --package-path <dir>   where that package goes, relative to the workspace root
                          (default: "packages/ui")
-  --install              install the packages the components need, without asking
+  --install              install the packages the components need, without
+                         asking
   --no-install           write the files and install nothing
   --silent               print nothing but errors
   --registry <url>       registry to read from: a URL, github:owner/repo, or a
@@ -98,9 +104,29 @@ The missing ones are shown as commands rather than as a list of names, because t
 part that is not obvious — and they are spelled for the package manager this project is actually
 on.
 
-Then it asks. `--install` answers yes without asking, `--no-install` answers no, and a run with
-nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead. Copying
-source into your repository is local and reversible; running your package manager is neither.
+A package the project already has at a version older than the components need counts as missing
+too, and is installed again at the library's range. The report says which, and from what:
+
+```txt
+│    yarn add tailwind-variants@^4.0.0
+│    tailwind-variants is 3.3.1 here; the components need ^4.0.0
+```
+
+A newer version than the range is left alone.
+
+Then it asks which to install, one checkbox per missing package, all ticked, each naming the
+command it goes through and the components that need it:
+
+```txt
+◆  Install which packages now? (space to toggle, enter to confirm)
+│  ◼ react-native-teleport             (npx expo install · for bottom-sheet)
+│  ◼ react-native-keyboard-controller  (npx expo install · for bottom-sheet, input)
+```
+
+Untick one and the rest are installed; the ones you left are printed as commands to run later.
+`--install` installs every one without asking, `--no-install` none, and a run with nobody to ask —
+a script, CI, an agent — installs nothing and prints the commands instead. Copying source into your
+repository is local and reversible; running your package manager is neither.
 
 ### Tests, if you want them
 
@@ -164,12 +190,30 @@ transformIgnorePatterns: [/* jest-expo's, plus the library's ES-module dependenc
 transform: { "^.+\\.mjs$": "babel-jest" },
 ```
 
+A component that installs a native module only some components bring — Skia for `chart`, MapLibre
+for `map` — also brings that module's mock, under `test/mocks/`, and `add` lists it in `setupFiles`
+after the setup file. A project never gets a mock for a module it does not have.
+
 A config it cannot edit safely is left alone, and `add` prints that snippet with your paths for you
 to merge. `@testing-library/react-native` and `test-renderer` are added as dev dependencies; the
 project needs `jest-expo` as its preset already.
 
 `update` keeps the tests you copied current and leaves alone the components you copied without
 them; `update --tests` brings them in for everything.
+
+#### Running them
+
+Whenever tests are copied, `add` and `update` add scripts to your `package.json` that run only the
+copied suites, so your own `test` script is left alone:
+
+| Script | Runs |
+| --- | --- |
+| `test:ui` | every copied suite |
+| `test:ui:unit` | the logic suites, without the render tests |
+| `test:ui:render` | the render tests — Jest only, so Bun and Vitest projects do not get it |
+
+A script you already have under one of those names is kept as it is, and a run that finds all of
+them writes nothing.
 
 <Callout title="Dependencies are split three ways">
 `expo install` for native modules and anything pinned to the SDK, your package manager for plain
@@ -197,9 +241,13 @@ Arguments:
 Options:
   -a, --all         add every component
   -o, --overwrite   replace files that differ
-  -t, --tests       copy each component's tests too, and record them in the lock
+  -t, --tests       copy each component's tests too, and remember the choice in
+                    the config
+  --no-tests        copy no tests, and remember the choice in the config
   -y, --yes         accept every default without asking
   -s, --src <dir>   base directory for source files, when setting the project up
+  --prefix <name>   what components call the library, when setting the project
+                    up
   --install         install the packages the components need, without asking
   --no-install      write the files and install nothing
   --no-init         error instead of writing native-components.json when this
@@ -371,8 +419,50 @@ what to do with one:
 
 Keep the side you want, delete the markers, and that file is done.
 
+### Choosing what to take
+
+Run with no names at a terminal, `update` lists every component it would change before it writes
+anything — each file, what happens to it, and how far the registry moved it — then asks which to
+take:
+
+```txt
+●  icon  1 updated, 1 added, 1 merged with your edits · +14 −3
+│    update  src/components/ui/icon/icon.tsx           +9 −2
+│    add     src/components/ui/icon/icon.types.ts      +4 −0
+│    merge   src/components/ui/icon/icon.variants.ts   +1 −1
+│
+│  spinner  new · 1 added · needed by button · +40 −0
+│    add     src/components/ui/spinner/spinner.tsx     +40 −0
+│
+◆  Update which components?
+│  ◼ icon
+│  ◼ spinner
+```
+
+A component the project's components need but it does not hold — one you deleted, say, after
+swapping the icon set for another — is listed too, unticked, as *not in this project*. `update`
+never adds one on its own; tick it to add it. A dependency the registry introduced since you copied
+the component is the exception: that one is new, so it is offered ticked like any other change.
+Tests follow the same rule: a suite that renders a component you do not hold is left out, not given
+that component.
+
+Everything else is ticked. A component you untick is reported as skipped and is not recorded in the
+lock, so the next `update` offers it again. `delacour diff <name>` prints the lines themselves.
+Naming components (`update icon`), `--yes`, `--json` and a run with nobody to ask take every change
+without the list; packages a taken component needs are then offered the same way `add` offers them.
+
 **It updates to the ref your CLI was published from**, so `npx delacour@latest update` is the
 whole upgrade: the newest CLI, and the registry it shipped against.
+
+The walkthrough — commit, `diff`, update, resolve, `doctor` — is the [Updating](/docs/native/cli/updating) guide.
+
+### Your config
+
+Before it reads a component, `update` brings [`native-components.json`](/docs/native/cli/configuration#version)
+up to the shape this CLI writes. At a terminal it asks about each option the file predates, once,
+then records the answers and the new `version`. `--yes` keeps every default; `--json`, a pipe or CI
+leaves the file alone and names what is still to choose; `--dry-run` says what it would ask. See
+[Updating `native-components.json`](/docs/native/cli/updating#updating-native-componentsjson).
 
 ### Your formatter
 

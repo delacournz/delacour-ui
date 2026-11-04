@@ -9,6 +9,7 @@ Written by `init`, next to your components. The nearest one wins, walking up fro
 ```json title="native-components.json"
 {
   "$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/config.schema.json",
+  "version": 2,
   "framework": "expo",
   "typescript": true,
   "registry": {},
@@ -144,7 +145,7 @@ Covered in [The registry](/docs/native/cli/registry).
 
 <TypeTable
   type={{
-    "tests.enabled": { type: "boolean", description: "Whether add and update copy each component's tests. init asks; --tests and --no-tests on init, add or update change it. Unset means no tests unless --tests is passed." },
+    "tests.enabled": { type: "boolean", description: "Whether add and update copy each component's tests. init asks; --tests and --no-tests on init, add or update change it. Unset means no tests unless --tests is passed. Copying tests also adds test:ui, test:ui:unit and (on Jest) test:ui:render to package.json, keeping any you already have." },
     "tests.runner": { type: '"bun" | "jest" | "vitest"', description: "What `add --tests` writes copied suites for. Read from package.json when unset — the test script, then a vitest, jest or jest-expo dependency — and Bun when it names none." },
   }}
 />
@@ -172,10 +173,14 @@ provider, `DelacourProvider`. A copy is your code, so `add` and `update` swap al
 with `"prefix": "UI"`, `UI.Flow.Provider`, `[UI] …` and `UIProvider`. `init` and `doctor` name the
 provider the same way.
 
-Set it before the first `add`. The lock hashes the text as it was written, so changing it later makes
-every copied file look edited to `update`; re-run `add --all --overwrite` (or `add <item> --overwrite`
-for what you have) to rewrite them under the new name, then rename the provider where your root layout
-mounts it.
+`init` asks for it at a terminal — `--prefix <name>` on `init` or the first `add` answers without
+asking — and leaving it empty keeps the library's name. A project with no `prefix` is asked once more
+by `update`.
+
+It can change after components are copied. The next `update` renames it through every copy: an
+untouched file is rewritten, an edited one is merged like any other upstream change. Your own code is
+not touched — `update` lists each file of yours that still imports `DelacourProvider`, for you to
+rename where your root layout mounts it.
 
 ## The lock file
 
@@ -207,6 +212,25 @@ current, and one without is never handed any unless you pass `--tests`.
 Delete the file and nothing breaks: the components work as they did, and `update` goes back to
 recording whatever still matches the registry.
 
+## `version`
+
+```json
+{
+  "version": 2
+}
+```
+
+<TypeTable
+  type={{
+    version: { type: "number", description: "The shape of this file the project was last brought up to. Written by init and update — leave it to them. Absent reads as 1." },
+  }}
+/>
+
+When an option is added to this file, `version` moves with it. `update` reads the gap, asks about
+each option the file predates — once — and records the new number, so a project set up by an older
+CLI is never left on a default nobody chose. `doctor` warns while it is behind. See
+[Updating `native-components.json`](/docs/native/cli/updating#updating-native-componentsjson).
+
 ## The rest
 
 <TypeTable
@@ -218,6 +242,9 @@ recording whatever still matches the registry.
 
 ## Changing it later
 
-Edit the file and re-run `add` for anything already copied — the CLI writes to whatever `paths`
+A newer CLI brings the file up to date for you: `npx delacour@latest update` asks about anything
+new before it updates a component — see [Updating](/docs/native/cli/updating).
+
+To change something yourself, edit the file and re-run `add` for anything already copied — the CLI writes to whatever `paths`
 says now, so old files stay where they were. `delacour info` prints the resolved absolute paths,
 which is the quickest way to check a change landed the way you meant.

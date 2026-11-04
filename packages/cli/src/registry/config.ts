@@ -664,6 +664,32 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		// preset is what the setup file's mocks and the config's transforms lean on.
 		dependencies: ["test-renderer", "jest-expo"],
 	},
+	"test-mock-blur": {
+		title: "Blur mock",
+		description: "`expo-blur` as a plain View, for the render tests of components that install it.",
+		categories: ["testing"],
+	},
+	"test-mock-linear-gradient": {
+		title: "Linear gradient mock",
+		description: "`expo-linear-gradient` as a plain View, for the render tests of components that install it.",
+		categories: ["testing"],
+	},
+	"test-mock-maplibre": {
+		title: "MapLibre mock",
+		description: "MapLibre's hosts as Views with a stub ref, for the render tests of components that install it.",
+		categories: ["testing"],
+	},
+	"test-mock-pulsar": {
+		title: "Pulsar mock",
+		description: "Pulsar's haptics as no-ops, for the render tests of components that install it.",
+		categories: ["testing"],
+	},
+	"test-mock-skia": {
+		title: "Skia mock",
+		description:
+			"Skia drawn as nothing, with a font that measures, for the render tests of components that install it.",
+		categories: ["testing"],
+	},
 	textarea: {
 		title: "Textarea",
 		description: "A multiline text field sized in rows, with auto-grow and a character count.",
@@ -824,4 +850,20 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		// base.css pulls both in through CSS, which no import scan can see.
 		dependencies: ["tailwindcss", "uniwind"],
 	},
+};
+
+/**
+ * The native modules only some components bring, and the `test/mocks/` item that stands in for each
+ * under Jest. An item that installs one of these takes its mock behind its render tests, so the mock
+ * reaches a project exactly when the module does — the kit's `setup.ts` never names one, because a
+ * `jest.mock` of a module that is not installed fails every suite at load. A module the engines pull
+ * in counts too: `chart`'s Skia arrives through `@delacour/react-native-charts`.
+ */
+export const RENDER_TEST_MOCKS: Readonly<Record<string, string>> = {
+	"expo-blur": "test-mock-blur",
+	"expo-linear-gradient": "test-mock-linear-gradient",
+	"@maplibre/maplibre-react-native": "test-mock-maplibre",
+	"react-native-pulsar": "test-mock-pulsar",
+	"react-native-skia": "test-mock-skia",
+	"@delacour/react-native-charts": "test-mock-skia",
 };

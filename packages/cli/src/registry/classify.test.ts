@@ -214,4 +214,17 @@ describe("render tests and the test kit", () => {
 		expect(classifySource("test/render.tsx")).toMatchObject({ item: "test-kit", target: "test/render.tsx" });
 		expect(classifySource("test/AGENTS.md")).toBeNull();
 	});
+
+	test("src/test/mocks/ holds one item per mocked module, copied only with what needs it", () => {
+		expect(classifySource("test/mocks/skia.ts")).toEqual({
+			item: "test-mock-skia",
+			type: "registry:lib",
+			namespace: "lib",
+			target: "test/mocks/skia.ts",
+			moduleId: "test/mocks/skia",
+			test: false,
+			renderTest: false,
+		});
+		expect(classifySource("test/mock-stub.ts")).toMatchObject({ item: "test-kit", target: "test/mock-stub.ts" });
+	});
 });

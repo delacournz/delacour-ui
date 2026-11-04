@@ -2,7 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
 import { canonicaliseFile, canonicaliseMarkdown } from "./canonicalise";
 import { classifySource, type SourceClassification } from "./classify";
-import { ITEM_META, PACKAGE_INSTALL } from "./config";
+import { ITEM_META, PACKAGE_INSTALL, RENDER_TEST_MOCKS } from "./config";
 import { applyRewrites, type Rewrite } from "./rewrite";
 import type { RegistryFile, RegistryIndex, RegistryItem } from "./schema";
 import { toIndexEntry } from "./schema";
@@ -151,15 +151,25 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 			...devDependencies,
 		]),
 		renderTests: renderTests.files,
-		renderTestRegistryDependencies: [...renderTests.registryDependencies]
-			.filter((name) => name !== context.name && !registryDependencies.has(name))
-			.sort(),
+		renderTestRegistryDependencies: [
+			...new Set([
+				...[...renderTests.registryDependencies].filter(
+					(name) => name !== context.name && !registryDependencies.has(name)
+				),
+				...nativeMocks([...dependencies, ...expoDependencies]),
+			]),
+		].sort(),
 		renderTestDependencies: testPackages(context.name, renderTests.bareImports, [
 			...dependencies,
 			...expoDependencies,
 			...devDependencies,
 		]),
 	};
+}
+
+/** The `test/mocks/` items standing in for the mocked native modules among `packages`. */
+function nativeMocks(packages: readonly string[]): string[] {
+	return packages.flatMap((name) => RENDER_TEST_MOCKS[name] ?? []);
 }
 
 type CollectedFiles = {

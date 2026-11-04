@@ -8,11 +8,16 @@ import {
 	commandLine,
 	type DependencyPlan,
 	expoCommand,
+	type InstallRequest,
 	missingPackages,
+	narrowRequest,
+	type PackageChoice,
+	packageChoices,
 	planDependencies,
 	runInstall,
 } from "../project/package-manager";
 import { linkPackageToApp, syncSharedPackage } from "../project/shared-package";
+import type { TestScriptsResult } from "../project/test-scripts";
 import { readTestSetup } from "../project/test-setup";
 import { type PlannedFile, planFiles, writeFiles } from "../project/write-files";
 import { createRegistryClient } from "../registry/client";
@@ -25,7 +30,7 @@ import { type Check, testChecks } from "./doctor";
 // other at load time, only inside a call.
 import { init } from "./init";
 import { type RenderTestsOutcome, settleRenderTests } from "./render-tests";
-import { chooseTests } from "./tests-choice";
+import { chooseTests, settleTestScripts } from "./tests-choice";
 
 /**
  * Copies components into the project, with everything they need.
@@ -55,6 +60,8 @@ export type AddOptions = {
 	init?: boolean;
 	/** Base directory for source files. Read only when this run sets the project up. */
 	src?: string;
+	/** What components call the library in place of `DelacourUI`. Read only when this run sets the project up. */
+	prefix?: string;
 	offline?: boolean;
 	ref?: string;
 	registry?: string;
@@ -85,6 +92,8 @@ export type AddResult = {
 	testSetup: Check[];
 	/** Under `--tests`, what became of the render tests: skipped for a runner that cannot run them, or the Jest config set up for them. */
 	renderTests: RenderTestsOutcome | null;
+	/** Under `--tests`, the `test:ui` scripts added to `package.json` — none when the project already had them. */
+	testScripts: TestScriptsResult | null;
 };
 
 export async function add(names: string[], options: AddOptions): Promise<AddResult | null> {
@@ -148,8 +157,16 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	const settled = await settleDependencies(items, config, project, options, output);
 	// After the install, so the config can be checked against what is now there.
 	const renderTests = tests ? await settleRenderTests(config, items, output) : null;
+	const testScripts = tests ? await settleTestScripts(config, output) : null;
 	const testSetup = tests ? await checkTestSetup(config, project, output) : [];
-	return { items: items.map((item) => item.name), written: toWrite.length, ...settled, testSetup, renderTests };
+	return {
+		items: items.map((item) => item.name),
+		written: toWrite.length,
+		...settled,
+		testSetup,
+		renderTests,
+		testScripts,
+	};
 }
 
 /**
@@ -181,7 +198,8 @@ export async function settleDependencies(
 	config: ResolvedConfig,
 	project: ProjectInfo,
 	options: Pick<AddOptions, "cwd" | "install">,
-	output: Output
+	output: Output,
+	choose?: ChoosePackages
 ): Promise<Pick<AddResult, "dependencies" | "installed">> {
 	// After the write, so the map is derived from what is on disk rather than
 	// from what this run believed it wrote.
@@ -190,31 +208,89 @@ export async function settleDependencies(
 	// Into the app, never into a shared package: two copies of a native module
 	// register twice and break at runtime.
 	const appRoot = project.appRoot ?? project.packageRoot ?? project.cwd;
-	const plan = planDependencies(
-		{
-			packageManager: project.packageManager,
-			expoDependencies: collect(items, "expoDependencies"),
-			dependencies: collect(items, "dependencies"),
-			devDependencies: collect(items, "devDependencies"),
-		},
-		project.packageJson
-	);
+	const request: InstallRequest = {
+		packageManager: project.packageManager,
+		expoDependencies: collect(items, "expoDependencies"),
+		dependencies: collect(items, "dependencies"),
+		devDependencies: collect(items, "devDependencies"),
+	};
+	const plan = planDependencies(request, project.packageJson);
 
 	reportDependencies(plan, output);
 
-	if (!(await shouldInstall(plan, options, output))) {
+	const chosen = await choosePackagesToInstall(plan, items, options, output, choose);
+	if (chosen.size === 0) {
 		printSkippedInstall(plan, relative(options.cwd, appRoot), output);
 		return { dependencies: plan, installed: false };
 	}
 
-	for (const group of plan.groups) {
+	const install =
+		chosen.size === plan.missing.length ? plan : planDependencies(narrowRequest(request, chosen), project.packageJson);
+
+	for (const group of install.groups) {
 		await output.task(`${group.label}: ${group.packages.join(", ")}`, () =>
 			runInstall(group, { cwd: appRoot, silent: output.silent })
 		);
 	}
 
-	warnAboutNativeRebuild(items, project, output);
+	const declined = new Set(plan.missing.filter((name) => !chosen.has(name)));
+	if (declined.size > 0) {
+		const left = planDependencies(narrowRequest(request, declined), project.packageJson);
+		output.warn(
+			[
+				`Not installed — the components that need ${declined.size === 1 ? "it" : "these"} will not build until you run:`,
+				...left.groups.map((group) => `  ${style.code(commandLine(group))}`),
+			].join("\n")
+		);
+	}
+
+	warnAboutNativeRebuild(items, project, chosen, output);
 	return { dependencies: plan, installed: true };
+}
+
+/** Picks the packages to install from those offered. `null` is a cancel: install nothing. */
+export type ChoosePackages = (choices: readonly PackageChoice[]) => Promise<readonly string[] | null>;
+
+/**
+ * Which missing packages to install.
+ *
+ * `--install` takes them all and `--no-install` none. With neither, someone at a
+ * terminal picks from the list — every one ticked, so Enter installs the lot —
+ * and a run with no one to ask installs nothing: a script, a CI job or an agent
+ * gets the report and decides for itself.
+ */
+async function choosePackagesToInstall(
+	plan: DependencyPlan,
+	items: readonly RegistryItem[],
+	options: Pick<AddOptions, "install">,
+	output: Output,
+	choose: ChoosePackages | undefined
+): Promise<Set<string>> {
+	if (plan.groups.length === 0) return new Set();
+	if (options.install !== undefined) return new Set(options.install ? plan.missing : []);
+
+	const ask = choose ?? (output.interactive ? promptPackages : undefined);
+	if (!ask) return new Set();
+
+	const picked = await ask(packageChoices(plan, items));
+	return new Set((picked ?? []).filter((name) => plan.missing.includes(name)));
+}
+
+async function promptPackages(choices: readonly PackageChoice[]): Promise<readonly string[] | null> {
+	const picked = await clack.multiselect({
+		message: `Install which ${choices.length === 1 ? "package" : "packages"} now? (space to toggle, enter to confirm)`,
+		options: choices.map((choice) => ({
+			value: choice.name,
+			label: choice.name,
+			hint: [choice.route, choice.neededBy.length > 0 ? `for ${choice.neededBy.join(", ")}` : ""]
+				.filter(Boolean)
+				.join(" · "),
+		})),
+		initialValues: choices.map((choice) => choice.name),
+		required: false,
+	});
+
+	return clack.isCancel(picked) ? null : picked;
 }
 
 /**
@@ -323,6 +399,9 @@ function reportDependencies(plan: DependencyPlan, output: Output): void {
 	if (plan.wanted.length === 0) return;
 
 	const lines = plan.groups.map((group) => `  ${style.code(commandLine(group))}`);
+	for (const entry of plan.outdated) {
+		lines.push(`  ${style.dim(`${entry.name} is ${entry.declared} here; the components need ${entry.required}`)}`);
+	}
 	if (plan.satisfied.length > 0) {
 		lines.push(`  ${style.dim(`already installed — ${plan.satisfied.join(", ")}`)}`);
 	}
@@ -335,25 +414,6 @@ function reportDependencies(plan: DependencyPlan, output: Output): void {
 			...lines,
 		].join("\n")
 	);
-}
-
-/**
- * Whether to actually run the package manager.
- *
- * Unset means ask, and a run with no one to ask installs nothing — a script, a
- * CI job or an agent gets the report and decides for itself. `--install` is how
- * any of them says yes.
- */
-async function shouldInstall(
-	plan: DependencyPlan,
-	options: Pick<AddOptions, "install">,
-	output: Output
-): Promise<boolean> {
-	if (plan.groups.length === 0) return false;
-	if (options.install !== undefined) return options.install;
-	if (!output.interactive) return false;
-
-	return output.confirm(`Install ${count(plan.missing, "package")} now?`, true);
 }
 
 /**
@@ -404,8 +464,15 @@ function printSkippedInstall(plan: DependencyPlan, appPath: string, output: Outp
  * pulled it in — so it is worth saying plainly, once, at the point it becomes
  * true.
  */
-function warnAboutNativeRebuild(items: readonly RegistryItem[], project: ProjectInfo, output: Output): void {
-	const added = missingPackages(project.packageJson, collect(items, "expoDependencies"));
+function warnAboutNativeRebuild(
+	items: readonly RegistryItem[],
+	project: ProjectInfo,
+	installed: ReadonlySet<string>,
+	output: Output
+): void {
+	const added = missingPackages(project.packageJson, collect(items, "expoDependencies")).filter((name) =>
+		installed.has(name)
+	);
 	if (added.length === 0) return;
 
 	output.warn(

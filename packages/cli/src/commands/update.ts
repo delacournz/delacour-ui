@@ -7,15 +7,21 @@ import { detectProject } from "../project/detect";
 import { createFormat, detectFormatter, type Format } from "../project/formatter";
 import { hasUncommittedChanges } from "../project/git";
 import type { DependencyPlan } from "../project/package-manager";
-import { writeFiles } from "../project/write-files";
+import { findProviderReferences } from "../project/provider-references";
+import { destination, writeFiles } from "../project/write-files";
+import { isTestSupportItem } from "../registry/classify";
 import { createRegistryClient, type RegistryClient } from "../registry/client";
+import { isNamespace } from "../registry/namespaces";
+import { LIBRARY_PREFIX, providerName } from "../registry/prefix";
 import { DEFAULT_REGISTRY_REF } from "../registry/source";
 import { createOutput, type Output, style } from "../ui/output";
 import { type Decision, decide, type UpdateAction } from "../update/decide";
-import { planUpdate, shortRef, type UpdateFile, type UpdatePlan } from "../update/plan";
-import { settleDependencies } from "./add";
+import { type MissingItem, planUpdate, shortRef, type UpdateFile, type UpdatePlan } from "../update/plan";
+import { type ComponentChange, componentChanges, describeChange, onlySelected } from "../update/select";
+import { type ChoosePackages, settleDependencies } from "./add";
+import { type AskConfig, type ConfigUpgrade, promptConfig, upgradeConfig } from "./config-upgrade";
 import { settleRenderTests } from "./render-tests";
-import { chooseTests } from "./tests-choice";
+import { chooseTests, settleTestScripts } from "./tests-choice";
 
 /**
  * Brings copied components up to what the registry holds now.
@@ -40,6 +46,10 @@ import { chooseTests } from "./tests-choice";
  * second pass over the same plan with that answer filled in, so the question
  * changes nothing about how a file is classified or written.
  *
+ * Before any of that, `native-components.json` itself is brought up to the
+ * shape this CLI writes (`config-upgrade.ts`): the fields it predates are asked
+ * about once and its `version` recorded, so an answer applies to this run.
+ *
  * The ref it updates to is the one the running CLI was built against, so
  * updating a project means running a newer CLI: `bunx delacour@latest update`.
  */
@@ -59,6 +69,17 @@ export type UpdateOptions = {
 	prune?: boolean;
 	/** Merge into files with uncommitted changes. */
 	force?: boolean;
+	/**
+	 * The components a first pass was told to update, carried into the second so it does not ask
+	 * again. Not a flag — set from the answer to the component question.
+	 */
+	selected?: readonly string[];
+	/** Components the project does not hold to add anyway. Not a flag — set from the component question. */
+	include?: readonly string[];
+	/** The prefix the copies were made under, when this run's config answer renames it. Not a flag. */
+	renamedFrom?: string;
+	/** Leave config fields an older config predates unchosen rather than defaulting them — the MCP server's choice. */
+	leaveConfig?: boolean;
 	/**
 	 * Bring every component's tests along, not only the ones the project already
 	 * copied. Unset follows `tests.enabled`; a value overrides it and is saved there.
@@ -94,6 +115,17 @@ export type UpdateResult = {
 	conflicts: number;
 	dependencies: DependencyPlan | null;
 	installed: boolean;
+	/** What became of `native-components.json` itself — see `config-upgrade.ts`. */
+	config: ConfigUpgrade;
+	/** Components the project's components need but it does not hold, and that were left out — see `plan.ts`. */
+	missing: MissingItem[];
+	/** Components whose tests were left out, and what those tests render that the project does not hold. */
+	testsLeftOut: { item: string; needs: string[] }[];
+	/**
+	 * A `prefix` chosen this run, renamed through every copy. `references` are the project's own files
+	 * that still name the old provider — its code, so listed for the reader to change rather than edited.
+	 */
+	renamed?: { from: string; to: string; references: string[] };
 };
 
 /** What to do with the files a run skipped for having no lock entry. */
@@ -106,11 +138,31 @@ export type UpdateClients = {
 	format?: Format;
 	/** Asks about the skipped files, by display path. The prompt, unless a test answers instead. */
 	askUntracked?: (files: readonly string[]) => Promise<UntrackedAnswer>;
+	/** Asks about the config fields an older `native-components.json` predates. */
+	askConfig?: AskConfig;
+	/**
+	 * Picks the components to update from those with changes, and any missing ones to add. The
+	 * prompt, unless a test answers instead.
+	 */
+	chooseComponents?: (
+		changes: readonly ComponentChange[],
+		missing: readonly MissingItem[]
+	) => Promise<readonly string[] | null>;
+	/** Picks which missing packages to install. */
+	choosePackages?: ChoosePackages;
 };
 
 export async function update(names: string[], options: UpdateOptions, clients?: UpdateClients): Promise<UpdateResult> {
 	const output = createOutput({ ...options, silent: options.silent || options.json });
-	const first = await runUpdate(names, options, output, clients);
+	const config = await upgradeConfig(
+		options,
+		output,
+		clients?.askConfig ?? (output.interactive ? promptConfig : undefined)
+	);
+	// A prefix answered now, over components already copied, makes this run the rename.
+	const renaming = config.kind === "upgraded" && config.answered.includes("prefix");
+	const passOptions: UpdateOptions = renaming ? { ...options, renamedFrom: LIBRARY_PREFIX } : options;
+	const first = await withRename(await runUpdate(names, passOptions, output, config, clients), passOptions, output);
 
 	const ask = clients?.askUntracked ?? (output.interactive ? promptUntracked : undefined);
 	const answered = options.dryRun || options.base !== undefined || options.replaceUntracked;
@@ -120,20 +172,65 @@ export async function update(names: string[], options: UpdateOptions, clients?: 
 	if (answer.kind === "leave") return first.result;
 
 	// Everything the first pass settled is current now, so the second touches only the files asked about.
+	const answeredOptions: UpdateOptions =
+		answer.kind === "merge" ? { ...passOptions, base: answer.base } : { ...passOptions, replaceUntracked: true };
 	const second = await runUpdate(
 		names,
-		answer.kind === "merge" ? { ...options, base: answer.base } : { ...options, replaceUntracked: true },
+		first.selected ? { ...answeredOptions, selected: first.selected } : answeredOptions,
 		output,
+		config,
 		clients
 	);
 
+	return combine(first.result, second.result);
+}
+
+/** Two passes reported as one run: the second's files, both passes' counts. */
+function combine(first: UpdateResult, second: UpdateResult): UpdateResult {
 	return {
-		...second.result,
-		written: first.result.written + second.result.written,
-		conflicts: first.result.conflicts + second.result.conflicts,
-		dependencies: second.result.dependencies ?? first.result.dependencies,
-		installed: first.result.installed || second.result.installed,
+		...second,
+		...(first.renamed ? { renamed: first.renamed } : {}),
+		written: first.written + second.written,
+		conflicts: first.conflicts + second.conflicts,
+		dependencies: second.dependencies ?? first.dependencies,
+		installed: first.installed || second.installed,
 	};
+}
+
+/**
+ * After a pass that renamed the prefix: the project's own files still importing the old provider,
+ * listed and warned about. Nothing of theirs is edited.
+ */
+async function withRename<T extends { result: UpdateResult }>(
+	pass: T,
+	options: UpdateOptions,
+	output: Output
+): Promise<T> {
+	if (options.renamedFrom === undefined || options.dryRun) return pass;
+
+	const config = await loadConfig(options.cwd);
+	const to = config.prefix ?? LIBRARY_PREFIX;
+	const lock = await readLock(config.root);
+	const copied = Object.values(lock.items).flatMap((item) =>
+		Object.keys(item.files).flatMap((key) => {
+			const slash = key.indexOf("/");
+			const namespace = key.slice(0, slash);
+			return isNamespace(namespace) ? [destination(config, namespace, key.slice(slash + 1)).path] : [];
+		})
+	);
+	const references = await findProviderReferences(config.root, copied, providerName(undefined));
+
+	if (references.length > 0) {
+		output.warn(
+			[
+				`Renamed ${style.code(providerName(undefined))} to ${style.code(providerName(to))}. These files of yours still use the old name:`,
+				...references.map((path) => `  ${style.path(path)}`),
+			].join("\n")
+		);
+	}
+
+	pass.result.renamed = { from: options.renamedFrom, to, references };
+	return pass;
 }
 
 /** One pass: plan, decide, apply, report. `untracked` is what it skipped for want of a lock entry. */
@@ -141,24 +238,52 @@ async function runUpdate(
 	names: string[],
 	options: UpdateOptions,
 	output: Output,
+	configUpgrade: ConfigUpgrade,
 	clients?: UpdateClients
-): Promise<{ result: UpdateResult; untracked: string[] }> {
+): Promise<{ result: UpdateResult; untracked: string[]; selected?: string[] }> {
 	const { plan, config, lock, ref } = await readPlan(names, options, output, clients);
 	// A dry run changes nothing, the saved answer included.
 	const tests = await chooseTests(config, options.tests, !options.dryRun);
 
-	const unsafe = await unsafeToMerge(plan, options, output);
-	const decided = plan.files.map((file) => ({
-		file,
-		decision: decide(file, {
-			prune: options.prune ?? false,
-			unsafe: unsafe.has(file.path),
-			replaceUntracked: options.replaceUntracked ?? false,
-		}),
-	}));
+	const decideAll = (unsafe: ReadonlySet<string>) =>
+		plan.files.map((file) => ({
+			file,
+			decision: decide(file, {
+				prune: options.prune ?? false,
+				unsafe: unsafe.has(file.path),
+				replaceUntracked: options.replaceUntracked ?? false,
+			}),
+		}));
+
+	// Chosen before the uncommitted-changes question, so it is asked only about what will be written.
+	const selected = options.selected
+		? new Set(options.selected)
+		: await chooseComponents(decideAll(new Set()), plan, names, options, output, clients);
+	// A missing component someone ticked is planned again with it in scope, and its own new dependencies with it.
+	const adding = selected === null ? [] : plan.missing.map((entry) => entry.name).filter((name) => selected.has(name));
+	if (adding.length > 0 && !options.include) {
+		const replanned = await readPlan(names, { ...options, include: adding }, output, clients);
+		return runUpdate(
+			names,
+			{ ...options, include: adding, selected: [...(selected ?? []), ...replanned.plan.included] },
+			output,
+			configUpgrade,
+			clients
+		);
+	}
+
+	const inScope = (item: string) => selected === null || selected.has(item);
+
+	const unsafe = await unsafeToMerge(
+		{ ...plan, files: plan.files.filter((file) => inScope(file.item)) },
+		options,
+		output
+	);
+	const decided = selected === null ? decideAll(unsafe) : onlySelected(decideAll(unsafe), selected);
+	const items = plan.items.filter((item) => inScope(item.name));
 
 	const untracked = decided
-		.filter(({ file, decision }) => isUnrecorded(file) && decision.action === "skipped")
+		.filter(({ file, decision }) => inScope(file.item) && isUnrecorded(file) && decision.action === "skipped")
 		.map(({ file }) => file.displayPath);
 
 	const files = decided.map(({ file, decision }) => ({
@@ -176,9 +301,13 @@ async function runUpdate(
 		conflicts: files.filter((file) => file.action === "conflict").length,
 		dependencies: null,
 		installed: false,
+		config: configUpgrade,
+		missing: plan.missing,
+		testsLeftOut: plan.testsLeftOut,
 	};
 
-	if (options.dryRun) return { result: finish(result, options, output), untracked };
+	const chosen = selected === null ? undefined : [...selected];
+	if (options.dryRun) return { result: finish(result, options, output), untracked, selected: chosen };
 
 	await apply(decided, config, lock, ref);
 
@@ -186,19 +315,98 @@ async function runUpdate(
 	// whose Jest config lost a key gets it back, and one that is current is untouched.
 	const keptKit = lock.items["test-kit"] !== undefined;
 	if (tests || keptKit) {
-		await settleRenderTests(config, tests ? plan.items : plan.items.filter((item) => item.name === "test-kit"), output);
+		await settleRenderTests(config, tests ? items : items.filter((item) => isTestSupportItem(item.name)), output);
 	}
+	if (tests) await settleTestScripts(config, output);
 
 	// Only when a file moved: a component that did not change needs what it needed before.
 	if (decided.some(({ decision }) => decision.write !== undefined)) {
 		const project = await detectProject(config.app.resolved.root);
-		const settled = await settleDependencies(plan.items, config, project, options, output);
+		const settled = await settleDependencies(items, config, project, options, output, clients?.choosePackages);
 
 		result.dependencies = settled.dependencies;
 		result.installed = settled.installed;
 	}
 
-	return { result: finish(result, options, output), untracked };
+	return { result: finish(result, options, output), untracked, selected: chosen };
+}
+
+/**
+ * Which components to update, asked when someone ran `update` with no names at a terminal.
+ *
+ * Every component with a file to write is listed with what happens to each file and how far the
+ * registry moved it, all ticked, so Enter takes everything. Named components were already chosen,
+ * and a run with no one to ask — `--yes`, `--json`, CI, MCP — takes every one. `null` means all;
+ * Escape is an empty set, so nothing is written.
+ */
+async function chooseComponents(
+	decided: Parameters<typeof componentChanges>[0],
+	plan: UpdatePlan,
+	names: readonly string[],
+	options: UpdateOptions,
+	output: Output,
+	clients: UpdateClients | undefined
+): Promise<Set<string> | null> {
+	if (names.length > 0 || options.dryRun) return null;
+
+	const ask = clients?.chooseComponents ?? (output.interactive ? promptComponents : undefined);
+	if (!ask) return null;
+
+	const onDisk = new Set(plan.files.filter((file) => file.local !== null).map((file) => file.item));
+	const changes = componentChanges(decided, plan.items, onDisk);
+	if (changes.length === 0 && plan.missing.length === 0) return null;
+
+	const picked = await ask(changes, plan.missing);
+	return new Set(picked ?? []);
+}
+
+const VERB: Partial<Record<UpdateAction, string>> = {
+	updated: "update",
+	added: "add",
+	merged: "merge",
+	conflict: "conflict",
+	deleted: "delete",
+};
+
+async function promptComponents(
+	changes: readonly ComponentChange[],
+	missing: readonly MissingItem[]
+): Promise<readonly string[] | null> {
+	const width = Math.max(
+		0,
+		...changes.flatMap((change) => change.files.map((file) => (VERB[file.action] ?? "").length))
+	);
+
+	if (changes.length > 0)
+		clack.log.message(
+			changes
+				.map((change) =>
+					[
+						`${style.code(change.item)}  ${style.dim(describeChange(change))}`,
+						...change.files.map(
+							(file) =>
+								`  ${paint(file.action)((VERB[file.action] ?? file.action).padEnd(width))}  ${file.path}  ${style.dim(`+${file.added} −${file.removed}`)}`
+						),
+					].join("\n")
+				)
+				.join("\n\n")
+		);
+
+	const picked = await clack.multiselect({
+		message: `Update which components? ${style.dim("space toggles · enter confirms · delacour diff <name> shows the lines")}`,
+		options: [
+			...changes.map((change) => ({ value: change.item, label: change.item, hint: describeChange(change) })),
+			...missing.map((entry) => ({
+				value: entry.name,
+				label: entry.name,
+				hint: `not in this project · add it · needed by ${entry.neededBy.join(", ")}`,
+			})),
+		],
+		initialValues: changes.map((change) => change.item),
+		required: false,
+	});
+
+	return clack.isCancel(picked) ? null : picked;
 }
 
 /** On disk, differing from the registry, and with no lock entry to say which side moved. */
@@ -238,7 +446,10 @@ async function promptUntracked(files: readonly string[]): Promise<UntrackedAnswe
 }
 
 /** What reading a plan needs of the options — the part `diff` shares. */
-export type PlanOptions = Pick<UpdateOptions, "cwd" | "base" | "format" | "offline" | "ref" | "registry" | "tests">;
+export type PlanOptions = Pick<
+	UpdateOptions,
+	"cwd" | "base" | "format" | "offline" | "ref" | "registry" | "tests" | "include" | "renamedFrom"
+>;
 
 /**
  * Reads the project and the registry into a plan.
@@ -257,7 +468,8 @@ export async function readPlan(
 	const ref = options.ref || config.registry.ref || DEFAULT_REGISTRY_REF;
 	const url = options.registry ?? config.registry.url;
 
-	const open = (at: string) => createRegistryClient({ cwd: options.cwd, url, ref: at, offline: options.offline });
+	const open = (at: string, atRef = false) =>
+		createRegistryClient({ cwd: options.cwd, url, ref: at, offline: options.offline, atRef });
 	const format = clients?.format ?? (await projectFormat(config, options, output));
 
 	const plan = await output.task("Comparing with the registry", () =>
@@ -267,10 +479,12 @@ export async function readPlan(
 			names,
 			ref,
 			target: clients?.target ?? open(ref),
-			baseClient: clients?.baseClient ?? open,
+			baseClient: clients?.baseClient ?? ((at: string) => open(at, true)),
 			format,
 			baseRef: options.base,
 			tests: options.tests ?? config.testsEnabled,
+			...(options.include ? { include: options.include } : {}),
+			...(options.renamedFrom === undefined ? {} : { renamedFrom: options.renamedFrom }),
 		})
 	);
 
@@ -384,6 +598,8 @@ function finish(result: UpdateResult, options: UpdateOptions, output: Output): U
 
 	if (output.silent) return result;
 
+	reportLeftOut(result, output);
+
 	const shown = result.files.filter((file) => file.action !== "current" && file.action !== "adopted");
 	const quiet = result.files.length - shown.length;
 	const at = style.code(shortRef(result.ref));
@@ -444,6 +660,35 @@ function finish(result: UpdateResult, options: UpdateOptions, output: Output): U
 	}
 
 	return result;
+}
+
+/**
+ * What the update did not bring in. A component that needs one the project does not hold is not a
+ * mistake to fix — it is usually a swap the project made — so this is a note with the command, not a warning.
+ */
+function reportLeftOut(result: UpdateResult, output: Output): void {
+	if (result.missing.length > 0) {
+		output.info(
+			[
+				"Not in this project, so not added:",
+				...result.missing.map(
+					(entry) => `  ${style.code(entry.name)}  ${style.dim(`needed by ${entry.neededBy.join(", ")}`)}`
+				),
+				`Add one with ${style.code(`delacour add ${result.missing[0]?.name ?? "<name>"}`)} if you want it back.`,
+			].join("\n")
+		);
+	}
+
+	if (result.testsLeftOut.length > 0) {
+		output.info(
+			[
+				"Tests left out — they render components this project does not hold:",
+				...result.testsLeftOut.map(
+					(entry) => `  ${style.code(entry.item)}  ${style.dim(`needs ${entry.needs.join(", ")}`)}`
+				),
+			].join("\n")
+		);
+	}
 }
 
 function paint(action: UpdateAction): (text: string) => string {

@@ -280,7 +280,8 @@
 	],
 	"renderTestRegistryDependencies": [
 		"button",
-		"test-kit"
+		"test-kit",
+		"test-mock-linear-gradient"
 	],
 	"renderTestDependencies": [
 		"@jest/globals"

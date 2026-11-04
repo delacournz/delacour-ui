@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
 import type { ResolvedConfig } from "../config/resolve";
@@ -73,6 +73,31 @@ export function setupFileFor(rootDir: string, config: ResolvedConfig): string {
 	return `<rootDir>/${path}`;
 }
 
+/**
+ * `<rootDir>/…` paths of the native mocks copied beside the kit — `lib/test/mocks/*.ts`, one per
+ * module only some components bring. Read off disk, so a mock is listed exactly when its component
+ * copied it.
+ */
+export function mockSetupFilesFor(rootDir: string, config: ResolvedConfig): string[] {
+	const directory = join(config.directories.lib, "test", "mocks");
+	if (!existsSync(directory)) return [];
+	return readdirSync(directory)
+		.filter((name) => /\.tsx?$/.test(name))
+		.sort()
+		.map((name) => `<rootDir>/${relative(rootDir, join(directory, name)).split(sep).join("/")}`);
+}
+
+/** Where `file` goes among `existing`: after the file before it in `wanted`, else first. */
+function insertInOrder(existing: readonly unknown[], wanted: readonly string[]): unknown[] {
+	const next = [...existing];
+	wanted.forEach((file, index) => {
+		if (next.includes(file)) return;
+		const previous = index === 0 ? -1 : next.indexOf(wanted[index - 1]);
+		next.splice(previous + 1, 0, file);
+	});
+	return next;
+}
+
 function missingTransforms(text: string): string[] {
 	return RENDER_TRANSFORMS.filter((transform) => !text.includes(transform));
 }
@@ -90,10 +115,12 @@ function fullPattern(): string {
 }
 
 /** The exact lines to add, for the parts a patch could not make. */
-export function jestSnippet(setupFile: string): string {
+export function jestSnippet(setupFile: string | readonly string[]): string {
 	return [
 		"{",
-		`  setupFiles: ["${setupFile}"],`,
+		`  setupFiles: [${listOf(setupFile)
+			.map((file) => `"${file}"`)
+			.join(", ")}],`,
 		`  resolver: "${JEST_RESOLVER}",`,
 		`  transformIgnorePatterns: ["${fullPattern()}"],`,
 		`  transform: { ${JSON.stringify(MJS_TRANSFORM_PATTERN)}: "${MJS_TRANSFORMER}" },`,
@@ -104,21 +131,22 @@ export function jestSnippet(setupFile: string): string {
 /** Patches a parsed `jest` config (`package.json`'s key, or JSON). Returns a copy. */
 export function patchJestJson(
 	config: JestConfigObject,
-	setupFile: string
+	setupFile: string | readonly string[]
 ): Patch<JestConfigObject> & { config: JestConfigObject } {
 	const next: JestConfigObject = { ...config };
 	const manual: string[] = [];
 	let changed = false;
+	const files = listOf(setupFile);
 
 	const setup = Array.isArray(next.setupFiles) ? (next.setupFiles as unknown[]) : null;
 	if (next.setupFiles === undefined) {
-		next.setupFiles = [setupFile];
+		next.setupFiles = [...files];
 		changed = true;
-	} else if (setup && !setup.includes(setupFile)) {
-		next.setupFiles = [setupFile, ...setup];
+	} else if (setup && files.some((file) => !setup.includes(file))) {
+		next.setupFiles = insertInOrder(setup, files);
 		changed = true;
 	} else if (!setup) {
-		manual.push(`setupFiles is not a list — add "${setupFile}" to it.`);
+		manual.push(`setupFiles is not a list — add ${files.map((file) => `"${file}"`).join(", ")} to it.`);
 	}
 
 	if (next.resolver === undefined) {
@@ -169,7 +197,8 @@ export function patchJestJson(
 const CONFIG_OBJECT = /(?:export\s+default|module\.exports\s*=)\s*\{|(?:const|let|var)\s+config\b[^=\n]*=\s*\{/;
 
 /** Patches the text of a `jest.config.*` whose config is an object literal. */
-export function patchJestSource(text: string, setupFile: string): Patch<string> & { text: string } {
+export function patchJestSource(text: string, setupFile: string | readonly string[]): Patch<string> & { text: string } {
+	const files = listOf(setupFile);
 	const opening = CONFIG_OBJECT.exec(text);
 	if (!opening) {
 		return { value: text, text, changed: false, manual: ["the config is not an object literal this can edit."] };
@@ -181,16 +210,26 @@ export function patchJestSource(text: string, setupFile: string): Patch<string> 
 	let changed = false;
 
 	if (/\bsetupFiles\s*:/.test(next)) {
-		if (!next.includes(setupFile)) {
-			const array = /\bsetupFiles\s*:\s*\[/.exec(next);
-			if (array) {
-				const at = array.index + array[0].length;
+		const array = /\bsetupFiles\s*:\s*\[/.exec(next);
+		for (const [index, file] of files.entries()) {
+			if (next.includes(file)) continue;
+			if (!array) {
+				manual.push(`setupFiles is not a list literal — add "${file}" to it.`);
+				continue;
+			}
+			// After the file before it when that one is quoted in the list, else first in it.
+			const previous = index === 0 ? -1 : next.indexOf(`"${files[index - 1]}"`);
+			if (previous !== -1) {
+				const at = previous + `"${files[index - 1]}"`.length;
+				next = `${next.slice(0, at)}, "${file}"${next.slice(at)}`;
+			} else {
+				const at = (/\bsetupFiles\s*:\s*\[/.exec(next) as RegExpExecArray).index + array[0].length;
 				const separator = /^\s*\]/.test(next.slice(at)) ? "" : ", ";
-				next = `${next.slice(0, at)}"${setupFile}"${separator}${next.slice(at)}`;
-				changed = true;
-			} else manual.push(`setupFiles is not a list literal — add "${setupFile}" to it.`);
+				next = `${next.slice(0, at)}"${file}"${separator}${next.slice(at)}`;
+			}
+			changed = true;
 		}
-	} else added.push(`setupFiles: ["${setupFile}"],`);
+	} else added.push(`setupFiles: [${files.map((file) => `"${file}"`).join(", ")}],`);
 
 	if (/\bresolver\s*:/.test(next)) {
 		if (!next.includes(JEST_RESOLVER))
@@ -231,12 +270,18 @@ export function patchJestSource(text: string, setupFile: string): Patch<string> 
 }
 
 /** Why a Jest config's text will not run the render tests. Empty when it will. */
-export function renderSetupIssues(configText: string, setupFile: string | readonly string[]): string[] {
+export function renderSetupIssues(
+	configText: string,
+	setupFile: string | readonly string[],
+	mocks: readonly string[] = []
+): string[] {
 	const candidates = typeof setupFile === "string" ? [setupFile] : setupFile;
 	const issues: string[] = [];
 	if (!candidates.some((candidate) => configText.includes(candidate))) {
 		issues.push(`setupFiles does not list ${candidates[0] ?? "the test kit's setup.ts"}`);
 	}
+	const unlisted = mocks.filter((name) => !configText.includes(`test/mocks/${name}`));
+	if (unlisted.length > 0) issues.push(`setupFiles does not list the copied mock ${unlisted.join(", ")}`);
 	if (!configText.includes(JEST_RESOLVER)) issues.push(`resolver is not ${JEST_RESOLVER}`);
 
 	const missing = missingTransforms(configText);
@@ -262,9 +307,10 @@ export async function ensureJestConfig(config: ResolvedConfig): Promise<JestPatc
 			if (!existsSync(path)) continue;
 
 			const setupFile = setupFileFor(root, config);
+			const setupFiles = [setupFile, ...mockSetupFilesFor(root, config)];
 			const text = await readFile(path, "utf-8");
-			const patch = patchJestSource(text, setupFile);
-			return finish(name, setupFile, patch, patch.changed ? () => writeFile(path, patch.text, "utf-8") : null);
+			const patch = patchJestSource(text, setupFiles);
+			return finish(name, setupFiles, patch, patch.changed ? () => writeFile(path, patch.text, "utf-8") : null);
 		}
 	}
 
@@ -275,23 +321,24 @@ export async function ensureJestConfig(config: ResolvedConfig): Promise<JestPatc
 		const raw = await readFile(path, "utf-8");
 		const manifest = JSON.parse(raw) as Record<string, unknown>;
 		const setupFile = setupFileFor(root, config);
+		const setupFiles = [setupFile, ...mockSetupFilesFor(root, config)];
 		const current = isRecord(manifest.jest)
 			? manifest.jest
 			: manifest.jest === undefined
 				? { preset: "jest-expo" }
 				: null;
 		if (!current) {
-			return finish("package.json", setupFile, {
+			return finish("package.json", setupFiles, {
 				manual: ["`jest` in package.json is not an object."],
 				changed: false,
 			});
 		}
 
-		const patch = patchJestJson(current, setupFile);
+		const patch = patchJestJson(current, setupFiles);
 		const created = manifest.jest === undefined;
 		return finish(
 			"package.json",
-			setupFile,
+			setupFiles,
 			{ ...patch, changed: patch.changed || created },
 			patch.changed || created
 				? () =>
@@ -310,7 +357,7 @@ export async function ensureJestConfig(config: ResolvedConfig): Promise<JestPatc
 
 async function finish(
 	file: string,
-	setupFile: string,
+	setupFile: string | readonly string[],
 	patch: { changed: boolean; manual: string[] },
 	write?: (() => Promise<void>) | null
 ): Promise<JestPatchResult> {
@@ -326,6 +373,10 @@ async function finish(
 /** The indent the file already uses, so a patched `package.json` diffs as a few lines. */
 function indentOf(raw: string): string {
 	return /^([ \t]+)"/m.exec(raw)?.[1] ?? "\t";
+}
+
+function listOf(setupFile: string | readonly string[]): readonly string[] {
+	return typeof setupFile === "string" ? [setupFile] : setupFile;
 }
 
 function isRecord(value: unknown): value is JestConfigObject {

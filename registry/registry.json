@@ -312,6 +312,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/expo/blur-layer.tsx"
+			],
+			"renderTestRegistryDependencies": [
+				"test-mock-blur"
 			]
 		},
 		{
@@ -385,7 +388,8 @@
 			],
 			"renderTestRegistryDependencies": [
 				"button",
-				"test-kit"
+				"test-kit",
+				"test-mock-pulsar"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -727,7 +731,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-skia"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -1823,7 +1828,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-skia"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -2212,7 +2218,8 @@
 			],
 			"renderTestRegistryDependencies": [
 				"button",
-				"test-kit"
+				"test-kit",
+				"test-mock-skia"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -2403,7 +2410,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-maplibre"
 			],
 			"renderTestDependencies": [
 				"@jest/globals",
@@ -3019,7 +3027,8 @@
 			],
 			"renderTestRegistryDependencies": [
 				"button",
-				"test-kit"
+				"test-kit",
+				"test-mock-linear-gradient"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -3272,7 +3281,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-linear-gradient"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -3309,7 +3319,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-pulsar"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -3722,7 +3733,8 @@
 			],
 			"renderTestRegistryDependencies": [
 				"button",
-				"test-kit"
+				"test-kit",
+				"test-mock-linear-gradient"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -3767,7 +3779,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-linear-gradient"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -3869,7 +3882,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-linear-gradient"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -3926,7 +3940,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-linear-gradient"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -4109,7 +4124,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-skia"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -4360,7 +4376,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-skia"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -4460,7 +4477,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-skia"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -5153,7 +5171,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-linear-gradient"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -5293,8 +5312,105 @@
 				"test-renderer"
 			],
 			"files": [
+				"lib/test/mock-stub.ts",
 				"lib/test/render.tsx",
 				"lib/test/setup.ts"
+			]
+		},
+		{
+			"name": "test-mock-blur",
+			"type": "registry:lib",
+			"title": "Blur mock",
+			"description": "`expo-blur` as a plain View, for the render tests of components that install it.",
+			"categories": [
+				"testing"
+			],
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [
+				"@jest/globals"
+			],
+			"files": [
+				"lib/test/mocks/blur.ts"
+			]
+		},
+		{
+			"name": "test-mock-linear-gradient",
+			"type": "registry:lib",
+			"title": "Linear gradient mock",
+			"description": "`expo-linear-gradient` as a plain View, for the render tests of components that install it.",
+			"categories": [
+				"testing"
+			],
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [
+				"@jest/globals"
+			],
+			"files": [
+				"lib/test/mocks/linear-gradient.ts"
+			]
+		},
+		{
+			"name": "test-mock-maplibre",
+			"type": "registry:lib",
+			"title": "MapLibre mock",
+			"description": "MapLibre's hosts as Views with a stub ref, for the render tests of components that install it.",
+			"categories": [
+				"testing"
+			],
+			"registryDependencies": [
+				"test-kit"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [
+				"@jest/globals"
+			],
+			"files": [
+				"lib/test/mocks/maplibre.ts"
+			]
+		},
+		{
+			"name": "test-mock-pulsar",
+			"type": "registry:lib",
+			"title": "Pulsar mock",
+			"description": "Pulsar's haptics as no-ops, for the render tests of components that install it.",
+			"categories": [
+				"testing"
+			],
+			"registryDependencies": [
+				"test-kit"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [
+				"@jest/globals"
+			],
+			"files": [
+				"lib/test/mocks/pulsar.ts"
+			]
+		},
+		{
+			"name": "test-mock-skia",
+			"type": "registry:lib",
+			"title": "Skia mock",
+			"description": "Skia drawn as nothing, with a font that measures, for the render tests of components that install it.",
+			"categories": [
+				"testing"
+			],
+			"registryDependencies": [
+				"test-kit"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [
+				"@jest/globals"
+			],
+			"files": [
+				"lib/test/mocks/skia.ts"
 			]
 		},
 		{
@@ -5516,7 +5632,8 @@
 			],
 			"renderTestRegistryDependencies": [
 				"overlay",
-				"test-kit"
+				"test-kit",
+				"test-mock-pulsar"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
@@ -5781,7 +5898,8 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
-				"test-kit"
+				"test-kit",
+				"test-mock-skia"
 			],
 			"renderTestDependencies": [
 				"@jest/globals"

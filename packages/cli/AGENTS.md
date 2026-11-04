@@ -20,17 +20,31 @@ bun run check            # Biome
 bun test                 # unit + end-to-end against the local registry
 ```
 
-To run this tree's CLI in another app, `bun run cli:link` from the repository root builds it and
-registers `delacour` globally with `bun link`; `bun run dev` here then keeps `dist/` current. A
-linked build has no `DELACOUR_REGISTRY_REF`, so it reads the registry at `main` — pass
-`--registry <path to this repository's registry/>` to read this branch's instead.
+To try this tree's CLI in another app before pushing, link it from the repository root:
 
-`bun run cli:unlink` undoes it, and restores rather than removes. `bun link` silently replaces two
-global entries — `<global>/node_modules/delacour` and `<bin>/delacour` — so `scripts/link.ts`
-snapshots both first, into `.delacour-link.json` beside them, moving a real `bun add -g` install
-aside instead of letting it be deleted. Unlinking puts back another worktree's link, the published
-install, or nothing, whichever was there. The snapshot is machine-wide, not per worktree, and a
-second `cli:link` keeps the first one: what is on disk by then is a link, not what the user had.
+```bash
+bun run cli:link      # <bun bin>/delacour becomes a shim running this tree's src/index.ts
+bun run cli:status    # which `delacour` is on PATH, and whether it is this tree
+bun run cli:unlink    # put back what was there
+```
+
+The link is a source shim, the way warden's is: `exec bun <tree>/packages/cli/src/index.ts`, so
+nothing is built and an edit is live on the next run. It also exports `DELACOUR_REGISTRY` as this
+tree's `registry/`, which `resolveRegistrySource` reads when neither `--registry` nor the config
+names a registry — so a linked `add` copies **this branch's** components, as they will ship once it
+merges, rather than `main`'s. Rebuild the registry (`bun run registry:build`) after changing a
+component, or the linked CLI copies the last build. `DELACOUR_REGISTRY= delacour …` (empty) runs the
+linked source against the published registry instead. The lock records the ref as `main` for a local
+registry, so treat an app linked this way as a scratch app, not one to `update` later from npm.
+A linked CLI reports `0.0.0-dev`, which installs Delacour packages from `latest`.
+
+The shim goes where `bun add -g delacour` puts the published CLI (`$BUN_INSTALL_BIN`, else
+`~/.bun/bin`), and `cli:link` prints a warning when another `delacour` comes first on PATH. The
+entry it replaces — a published install, another worktree's shim, or nothing — is snapshotted first
+into `.delacour-link.json` beside it, a real file moved aside rather than deleted, and `cli:unlink`
+restores that. The snapshot is machine-wide, not per worktree, and a second `cli:link` keeps the
+first one: what is on disk by then is a shim, not what the user had. `cli:link` used to be `bun link`
+over a built `dist/`; both commands undo a link made that way first (`restoreBunLink`).
 
 ## Directory structure
 
@@ -44,8 +58,10 @@ src/
 ├── update/               what an update means, with no I/O of its own beyond reading
 │   ├── classify.ts       three texts and a lock entry → what happened to one file (pure)
 │   ├── decide.ts         that, plus the flags → what is done about it (pure)
+│   ├── select.ts         which components an update changes, for the picker, and narrowing to a choice (pure)
 │   └── plan.ts           every file in scope, classified; registry clients are injected
-├── config/               native-components.json — schema.ts (zod), resolve.ts (nearest-wins walk)
+├── config/               native-components.json — schema.ts (zod, CONFIG_VERSION), resolve.ts (nearest-wins walk),
+│                         upgrade.ts (which new fields an older config is asked about — pure)
 ├── project/              everything that reads or patches a consumer's project
 │   ├── detect.ts         package manager, Expo SDK, workspace root, app root, tsconfig paths
 │   ├── aliases.ts        tsconfig paths → an import prefix per namespace
@@ -83,8 +99,8 @@ The theme converter is NOT here. `@delacour/design-system/convert` owns it — s
 scripts/
 ├── verify-expo.ts        the integration script
 ├── verify/               harness (scaffold, run), checks (the assertions), render (bundle, boot)
-├── link.ts               cli:link / cli:unlink — `bun link`, and restoring what it replaced
-├── link/                 state.ts: snapshot and restore the two global entries (tested)
+├── link.ts               cli:link / cli:unlink / cli:status — a source shim on PATH, reading this tree's registry
+├── link/                 state.ts: the shim, and snapshotting / restoring what it replaced (tested)
 └── check-bundle.ts       prepublish guard
 ```
 
@@ -312,6 +328,13 @@ never overwritten, a file is deleted only under `--prune` and only if it was nev
 file that already holds markers is not merged into a second time. `--overwrite` on `add` remains the
 one flag that takes the registry's copy wholesale, and it is the user who has to type it.
 
+**A clean merge that adds one line twice is a conflict.** Line by line, the project adding
+`accessibilityLabel,` to a destructure and the registry adding the same line three lines lower are
+two unrelated insertions, so both were taken — a duplicate parameter, reported `merged`, that no
+longer parsed. `merge3` now counts each line both sides added (a line with no word in it — `}`, `);`,
+a blank — is not counted), and when the clean result holds one more often than either side, it
+writes the span between their common prefix and suffix as a single conflict instead.
+
 **The one question it asks is asked afterwards, and never answers itself.** A file copied before the
 lock existed that differs from the registry has no base, so the run skips it. With a TTY, `update`
 then asks about the files it skipped — leave, merge from a ref the reader types, or replace — and
@@ -326,6 +349,27 @@ from eroding the rule above:
   uncommitted changes is confirmed separately, default no.
 - **Escape means leave.** The first pass has already been applied and reported; there is nothing
   left to cancel, so the prompt does not throw `CancelledError`.
+
+**Which components to take is asked before anything is written.** A bare `update` at a terminal
+lists every component with a file to update, add, merge, conflict or delete (`update/select.ts`:
+`componentChanges`, `describeChange`, with `+/−` counted from the base — or the file, if untouched —
+to the new text) and offers a multiselect, all ticked. `onlySelected` turns every unchosen change
+into `skipped: not selected`, which writes nothing and records nothing, so the next run offers it
+again. Not asked when names are passed, under `--dry-run`, or when `output.interactive` is false —
+those take every change, as before. Escape chooses none. The second, untracked pass reuses the
+first pass's choice (`UpdateOptions.selected`) rather than asking again.
+
+**`update` never adds an item the project does not hold, unless it is new.** `planUpdate` scopes
+the walk to what the lock and the disk hold (`held`). A held item's dependency outside that set is
+added only when the item did not have it at the ref its lock entry names (`dependenciesWhenCopied`)
+— the registry introduced it, so the update needs it. One the item already had was removed on
+purpose (a project that swapped the central icon set for Lucide deletes `icons`), so it lands in
+`plan.missing`, is printed with the `add` command, and is offered **unticked** in the picker; ticking
+one re-plans with `include`. Unknown — no lock entry, the ref gone — reads as "already had". Tests
+are scoped the same way: `withTests(item, runner, parts)` folds an item's logic or render suites
+only when every component they render is held (`test-kit` excepted), and the rest are reported as
+`testsLeftOut`. Without this, turning tests on pulled `checkbox`, `slider` and `switch` in as whole
+components because `field`'s render test renders them.
 
 `UpdateClients.askUntracked` is the seam `test/update.test.ts` answers through, for the same reason
 the registry clients are injected: a prompt cannot be driven offline.
@@ -372,7 +416,11 @@ manager unprompted. `src/index.ts` declares `--install` first for the same reaso
 
 `add` therefore always prints what the components need and only sometimes installs it. The report
 is `reportDependencies`, built from `planDependencies` in `project/package-manager.ts`, which is
-pure and tested; the decision is `shouldInstall`, which is three lines and no cleverness.
+pure and tested. The decision is `choosePackagesToInstall` in `commands/add.ts`: `--install` takes
+every missing package, `--no-install` none, a TTY gets a multiselect (`packageChoices`, all ticked,
+`required: false`) and anything else none. Only the chosen ones are installed —
+`planDependencies(narrowRequest(request, chosen))` — and the declined ones are printed as commands.
+`update` reuses it through `settleDependencies`, and `UpdateClients.choosePackages` is the test seam.
 
 ### An existing Tailwind entry is adopted, never duplicated
 
@@ -552,8 +600,26 @@ the version, so the snapshot bump in `alpha.yml` is what switches it.
 `tailwind-variants` 4.0 the day it shipped, and its root entry throws on the
 `createTV({ twMergeConfig })` every copied `tv.ts` then made. A test holds each range to the library's,
 so bumping the library's range means bumping `NPM_RANGES` in the same change. Like the alpha
-dist-tag, the range goes on the command's args only; `missingPackages` still compares bare names,
-and `peerRange` declares a pinned package's peer at the same range rather than `*`.
+dist-tag, the range goes on the command's args, and `peerRange` declares a pinned package's peer at
+the same range rather than `*`.
+
+A pinned package already in `package.json` **below** its range counts as missing, and is planned
+again at the range (`DependencyPlan.outdated` says which, and from what). A name alone was the test
+once: a project on `tailwind-variants` 3 took an update whose `lib/tv.ts` imports
+`tailwind-variants/config`, an entry only 4 has, and every suite reaching a `tv()` failed with
+`Cannot find module`. `belowRange` reads an exact version, `^`, `~` or `>=`; a `catalog:`,
+`workspace:`, tag or URL is left alone, and so is a version **above** the range — moving someone's
+dependency back a major is not the CLI's call.
+
+### `update` reads an old ref out of git when the registry is a directory
+
+A local registry (`DELACOUR_REGISTRY`, which `cli:link` sets) has no refs of its own, so every ref
+used to serve the working tree. The base `update` merges from — the file at the commit the lock
+records — then came back as today's text, never hashed to the lock entry, and the file was skipped
+as "no longer serves the text it was copied from" while its item's newer tests were still copied
+beside it. The base client now passes `atRef`, which reads a local registry through
+`git show <ref>:./<path>`; `baseFor` falls back to the target registry when that does not hash,
+which covers a lock a linked CLI wrote under a branch name for working-tree text.
 
 ### The CLI version is baked in too
 
@@ -622,6 +688,13 @@ test through `adaptTest` after the alias transform, and `withTests(item, runner)
   `add --tests` runs them after its install, warns, and returns them as `AddResult.testSetup` for
   the MCP reply. The config is read as text, so a setting built in code can be missed; both stay
   warnings, since only the tests break. Under `verify:expo --tests` both have to pass.
+- **Copying tests adds the scripts that run them.** `project/test-scripts.ts` (`ensureTestScripts`,
+  called through `settleTestScripts` from `add` and `update` whenever tests are on, never on a dry
+  run) writes `test:ui`, `test:ui:unit` and, on Jest, `test:ui:render` into the config's
+  `package.json` (else the app's), scoped to the component directories so the project's own `test`
+  is left alone. A name the project already has is never overwritten — once it exists the script is
+  theirs, so a second run writes nothing. Render scripts are Jest's alone for the reason in
+  [Render tests](#render-tests-are-jests-alone). `AddResult.testScripts` carries the outcome for MCP.
 
 `verify:expo --tests bun`, `--tests jest` and `--tests vitest` (see Testing) prove it end to end, and
 `signoff/tests` runs all three.
@@ -674,9 +747,46 @@ it, so these are **Jest-only** and ship apart from the logic suites:
   cannot edit safely — a config built by a function, a `resolver` already set to something else —
   is left alone and returned as `{ status: "manual", snippet, reasons }`, which `add` prints.
   It runs after the install whenever `test-kit` is in the run (`settleRenderTests`).
+- **A native module only some components bring is mocked by an item of its own.** `test/mocks/<name>.ts`
+  classifies to `test-mock-<name>`, not to `test-kit`, and `RENDER_TEST_MOCKS` in `registry/config.ts`
+  maps each module to its mock. The builder puts that mock in the `renderTestRegistryDependencies` of
+  every item that installs the module, so the mock is copied exactly when the module is — the kit's
+  `setup.ts` never names one, because a `jest.mock` of a module that is not installed fails every
+  suite at load, which is what a consumer without `chart` hit. `ensureJestConfig` lists every
+  `lib/test/mocks/*.ts` on disk after the setup file, and `update` treats a mock like the kit
+  (`isTestSupportItem`): never a reason to leave a suite out.
 - **`doctor` checks it.** `checkTestRunner` asks for `@testing-library/react-native`,
   `test-renderer` and `jest-expo` once the lock records a render test, and warns, with the snippet,
   when the config lacks the setup file, the resolver or a transform (`renderSetupIssues`).
+
+### `native-components.json` carries a `version`, and `update` brings it up
+
+`CONFIG_VERSION` in `config/schema.ts` is the shape `init` writes; a config with no `version` reads
+as `1`. `update` calls `upgradeConfig` (`commands/config-upgrade.ts`) **before** it plans, so an
+answer applies to the same run. `config/upgrade.ts` is the pure half: `FIELDS` lists each askable
+option with the version that introduced it, and `upgradeStatus` returns the questions for the ones
+the file predates and lacks. Four rules:
+
+- **Adding an option a project should be asked about is three edits:** bump `CONFIG_VERSION`, add a
+  `FIELDS` entry with `since` set to the new number, and a `ConfigQuestion` variant. `applyUpgrade`
+  then records the answer, and `describeConfig` in `mcp.ts` needs a line naming the parameter that
+  answers it (the `Record` is exhaustive, so `tsc` asks for it).
+- **The version is recorded whether or not each question was answered.** Skipping is an answer;
+  asking on every run is noise. That is also why it is **not** recorded with no one to ask and no
+  `--yes`: a pipe, `--json`, CI and the MCP server (`leaveConfig: true`) leave the file alone and
+  return `config: { kind: "pending", fields }`, so the question reaches a person later rather than
+  never. `--yes` means "take the defaults", so it records.
+- **A `prefix` answered over copied files is a rename, not damage.** Every lock entry hashes the old
+  name, so `update` passes `renamedFrom` to `planUpdate` and `fetchBase` re-derives a base under it
+  (`previousConfig`; for a prefix set by hand it tries the library's own name). The new name then
+  reads as an upstream change: an untouched copy is replaced, an edited one merged. The app's own
+  imports of the old provider are listed (`project/provider-references.ts`, `UpdateResult.renamed`),
+  never edited. `init` asks it at a terminal and takes `--prefix`, and `add` forwards it to the
+  `init` it runs. A `--tests` / `--no-tests` flag answers `tests.enabled`, so that is not asked.
+- **A config from a newer CLI is never rewritten** — `newer`, a warning, nothing written. `doctor`'s
+  `checkConfigVersion` warns on both directions.
+
+`UpdateClients.askConfig` is the test seam, beside `askUntracked`, `chooseComponents` and `choosePackages`.
 
 ### `tests.enabled` is remembered
 

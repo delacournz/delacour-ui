@@ -74,6 +74,7 @@ withRegistryOptions(
 		.option("-d, --defaults", "use the default layout without asking")
 		.option("-t, --tests", "also install component tests, and every later add keeps them")
 		.option("--no-tests", "install no component tests, without asking")
+		.option("--prefix <name>", "what components call the library, in place of DelacourUI")
 		.option("-f, --force", `rewrite an existing ${CONFIG_FILENAME}`)
 		.option("-s, --src <dir>", "base directory for source files")
 		.option("--package-name <name>", "put the components in a shared package with this name")
@@ -100,6 +101,7 @@ withRegistryOptions(
 		// and most Expo templates keep their files; `--src .` is for the blank ones
 		// that keep theirs at the project root.
 		.option("-s, --src <dir>", "base directory for source files, when setting the project up")
+		.option("--prefix <name>", "what components call the library, when setting the project up")
 		.option("--install", "install the packages the components need, without asking")
 		.option("--no-install", "write the files and install nothing")
 		// Declared alone, unlike the pair above, and that is the difference: a

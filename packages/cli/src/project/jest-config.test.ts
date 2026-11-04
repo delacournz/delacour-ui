@@ -153,6 +153,15 @@ describe("patchJestSource", () => {
 });
 
 describe("renderSetupIssues", () => {
+	test("names a copied mock the config does not list", () => {
+		const config = JSON.stringify(patchJestJson({}, SETUP).config);
+
+		expect(renderSetupIssues(config, SETUP, ["skia.ts"])).toEqual(["setupFiles does not list the copied mock skia.ts"]);
+		expect(
+			renderSetupIssues(config.replace(SETUP, `${SETUP}", "<rootDir>/src/lib/test/mocks/skia.ts`), SETUP, ["skia.ts"])
+		).toEqual([]);
+	});
+
 	test("names what a Jest config is missing", () => {
 		expect(renderSetupIssues("{}", SETUP)).toEqual([
 			`setupFiles does not list ${SETUP}`,
@@ -216,6 +225,31 @@ describe("ensureJestConfig", () => {
 		await ensureJestConfig(config());
 
 		expect(await ensureJestConfig(config())).toEqual({ status: "unchanged", file: "package.json" });
+	});
+
+	test("lists each copied native mock after the setup file, and nothing for a mock not on disk", async () => {
+		await writeFile(join(root, "package.json"), JSON.stringify({ name: "app" }));
+		await mkdir(join(root, "src/lib/test/mocks"), { recursive: true });
+		await writeFile(join(root, "src/lib/test/mocks/skia.ts"), "");
+
+		await ensureJestConfig(config());
+
+		expect(JSON.parse(await readFile(join(root, "package.json"), "utf-8")).jest.setupFiles).toEqual([
+			SETUP,
+			"<rootDir>/src/lib/test/mocks/skia.ts",
+		]);
+	});
+
+	test("adds a mock copied later to a config that already lists the setup file", async () => {
+		await writeFile(join(root, "jest.config.js"), `module.exports = {\n\tsetupFiles: ["${SETUP}"],\n};\n`);
+		await ensureJestConfig(config());
+		await mkdir(join(root, "src/lib/test/mocks"), { recursive: true });
+		await writeFile(join(root, "src/lib/test/mocks/maplibre.ts"), "");
+
+		expect((await ensureJestConfig(config())).status).toBe("patched");
+		expect(await readFile(join(root, "jest.config.js"), "utf-8")).toContain(
+			`setupFiles: ["${SETUP}", "<rootDir>/src/lib/test/mocks/maplibre.ts"]`
+		);
 	});
 
 	test("hands back the snippet when the config cannot be edited safely", async () => {

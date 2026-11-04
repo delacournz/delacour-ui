@@ -155,6 +155,7 @@ export async function mcp(options: McpOptions): Promise<void> {
 				dryRun: true,
 				yes: true,
 				silent: true,
+				leaveConfig: true,
 			});
 
 			return text(describeUpdate(result).join("\n"));
@@ -194,6 +195,7 @@ export async function mcp(options: McpOptions): Promise<void> {
 				install: install ?? false,
 				yes: true,
 				silent: true,
+				leaveConfig: true,
 			});
 
 			return text(describeUpdate(result).join("\n"));
@@ -291,12 +293,14 @@ function text(body: string) {
 
 /** An update, or a dry run of one, as lines an agent can act on. */
 function describeUpdate(result: UpdateResult): string[] {
+	const config = describeConfig(result.config);
 	const moved = result.files.filter((file) => file.action !== "current" && file.action !== "adopted");
 
-	if (result.files.length === 0) return ["No components from the registry are in this project yet."];
-	if (moved.length === 0) return [`Everything matches the registry at ${result.ref}.`];
+	if (result.files.length === 0) return [...config, "No components from the registry are in this project yet."];
+	if (moved.length === 0) return [...config, `Everything matches the registry at ${result.ref}.`];
 
 	const lines = [
+		...config,
 		result.dryRun ? `An update to ${result.ref} would do this:` : `Updated to ${result.ref}:`,
 		...moved.map((file) => `  ${file.action}: ${file.path}${file.note ? ` — ${file.note}` : ""}`),
 	];
@@ -312,7 +316,44 @@ function describeUpdate(result: UpdateResult): string[] {
 		lines.push("Not installed. Run from the app:", ...groups.map((group) => `  ${commandLine(group)}`));
 	}
 
+	for (const entry of result.missing) {
+		lines.push(
+			`Not added: ${entry.name}, needed by ${entry.neededBy.join(", ")} — the project does not hold it. Ask before calling add_components for it.`
+		);
+	}
+
+	for (const entry of result.testsLeftOut) {
+		lines.push(
+			`Tests left out for ${entry.item}: they render ${entry.needs.join(", ")}, which the project does not hold.`
+		);
+	}
+
 	return lines;
+}
+
+/**
+ * The config half of an update. A field still to choose is the person's call,
+ * not the agent's, so it is named with the parameter that answers it.
+ */
+function describeConfig(config: UpdateResult["config"]): string[] {
+	if (config.kind === "newer") {
+		return [`native-components.json is version ${config.version}, newer than this CLI — run delacour@latest.`];
+	}
+	if (config.kind === "upgraded")
+		return [`Brought native-components.json from version ${config.from} to ${config.to}.`];
+	if (config.kind !== "pending" || config.fields.length === 0) return [];
+
+	const how: Record<(typeof config.fields)[number], string> = {
+		"tests.enabled":
+			"`tests.enabled` — ask the user whether to keep component tests, then call `update_components` with `tests`",
+		prefix:
+			"`prefix` — ask the user what copied components should call the library, then set it in native-components.json and call update_components: it renames the name in every copy, and the app's own imports of the old provider need renaming by hand",
+	};
+
+	return [
+		`native-components.json is version ${config.from} and predates options this CLI has (version ${config.to}). It was left unchanged:`,
+		...config.fields.map((field) => `  ${how[field]}`),
+	];
 }
 
 /**
@@ -352,6 +393,10 @@ function describeAdd(result: AddResult): string[] {
 			`Could not set the Jest config up for the render tests: ${renderTests.jestConfig.reasons.join(" ")} Merge this in:`,
 			renderTests.jestConfig.snippet
 		);
+	}
+
+	if (result.testScripts?.status === "added") {
+		lines.push(`Added ${result.testScripts.scripts.join(", ")} to ${result.testScripts.file} to run the copied tests.`);
 	}
 
 	for (const check of result.testSetup.filter((entry) => entry.status === "warn" || entry.status === "fail")) {

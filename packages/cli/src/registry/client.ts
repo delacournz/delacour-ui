@@ -1,7 +1,9 @@
+import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { join, relative, sep } from "node:path";
+import { promisify } from "node:util";
 import type { z } from "zod";
 import { applyRewrites } from "./rewrite";
 import type { LoadedItem, RegistryFile, RegistryIndex, RegistryItem } from "./schema";
@@ -49,6 +51,15 @@ export type ClientOptions = {
 	ref?: string;
 	/** Skip the network entirely and serve what is already cached. */
 	offline?: boolean;
+	/**
+	 * Read a registry in a local directory as `ref` held it, out of git, rather than the working tree.
+	 *
+	 * A local registry has no refs of its own, so every ref used to read the same files. That is what
+	 * a linked CLI wants for the text it updates *to*, and wrong for the base it merges *from*: the
+	 * base at the commit a project copied came back as today's file, never hashed to the lock, and
+	 * `update` skipped the source while still copying the item's newer tests beside it.
+	 */
+	atRef?: boolean;
 	cacheDir?: string;
 };
 
@@ -77,6 +88,7 @@ export function createRegistryClient(options: ClientOptions): RegistryClient {
 	let index: Promise<RegistryIndex> | undefined;
 
 	async function readText(path: string): Promise<string> {
+		if (source.kind === "local" && options.atRef && options.ref) return readAtRef(source.root, path, options.ref);
 		if (source.kind === "local") return readFile(path, "utf-8");
 		return fetchDocument(path, cacheDir, offline);
 	}
@@ -142,6 +154,15 @@ export function createRegistryClient(options: ClientOptions): RegistryClient {
 	};
 
 	return client;
+}
+
+const run = promisify(execFile);
+
+/** A file under `root` as commit `ref` held it. Throws when git, the ref or the file is not there. */
+async function readAtRef(root: string, path: string, ref: string): Promise<string> {
+	const inRoot = relative(root, path).split(sep).join("/");
+	const { stdout } = await run("git", ["-C", root, "show", `${ref}:./${inRoot}`], { maxBuffer: 64 * 1024 * 1024 });
+	return stdout;
 }
 
 /**

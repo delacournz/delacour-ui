@@ -1,0 +1,118 @@
+---
+title: Updating
+description: Take the registry's fixes into components you copied, keep your edits, and bring native-components.json up to date.
+icon: RefreshCw
+---
+
+A copied component is your code, so nothing upgrades it behind your back. One command brings it up
+to date — the components **and** `native-components.json`:
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest update"] }]} />
+
+**Use `@latest`.** `update` reads the registry at the commit your CLI was published from, so a newer
+CLI is what brings newer components. An `npx delacour update` that resolves a CLI cached months ago
+updates you to months ago.
+
+## The loop
+
+```bash
+# 1. commit or stash first — a merge rewrites files you edited
+git status
+
+# 2. see what would change, and write nothing
+npx delacour@latest diff
+npx delacour@latest update --dry-run
+
+# 3. update
+npx delacour@latest update            # everything
+npx delacour@latest update button     # one component, and what it depends on
+
+# 4. resolve any conflicts, install what it printed, rebuild the dev client if a native module moved
+npx delacour@latest doctor
+```
+
+| The file | What `update` does |
+| --- | --- |
+| Changed in the registry only | Replaces it |
+| Changed by you only | Leaves it alone |
+| Changed by both, on different lines | Merges the two |
+| Changed by both, on the same lines | Writes both sides between conflict markers, and exits `1` |
+| New to the component | Writes it |
+| A component it needs that you removed | Leaves it out, and says so |
+| Dropped from the component | Leaves it and says so. `--prune` deletes it, if you never edited it |
+
+What makes this possible is [`native-components.lock.json`](/docs/native/cli/configuration#the-lock-file):
+the ref each file came from and a hash of the text the registry served. Commit it. The rest —
+your formatter, uncommitted changes, components copied before the lock existed — is covered under
+[`update`](/docs/native/cli/commands#update).
+
+A component that gained a native module needs an `expo install` and a dev-client rebuild
+(`npx expo run:ios`), not just a reload. `update` asks which of the new packages to install, and
+prints the commands for any you leave; `--install` runs them all.
+
+At a terminal, a bare `update` first lists each component it would change — the files it writes,
+adds or merges, with a line count — and asks which to take. Untick one to leave it for later; the
+next `update` offers it again. See [choosing what to take](/docs/native/cli/commands#choosing-what-to-take).
+
+## Updating `native-components.json`
+
+The config grows too. A project set up by an older CLI has no answer for an option that arrived
+later, and an absent key silently reads as a default nobody chose. So the file records the shape it
+was last brought up to:
+
+```json title="native-components.json"
+{
+  "$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/config.schema.json",
+  "version": 2
+}
+```
+
+`init` writes the current version. A config with no `version` was written before versions existed,
+and reads as `1`.
+
+**`update` brings it up first, before it touches a component**, so an answer applies to the same run.
+At a terminal it asks about each option the file predates — once:
+
+```txt
+◇  native-components.json predates some options this CLI has.
+◆  Also keep each component's tests in step with the registry?
+│  ○ Yes / ● No
+```
+
+Then it records the answers and the new `version`, whether you answered or skipped. Skipping a
+question is an answer: the option keeps its default and is not asked about again. Every other key in
+the file is kept as it was.
+
+| Run as | What happens to the config |
+| --- | --- |
+| At a terminal | Asks about each new option, then records the answers and the version |
+| `--yes` | Keeps every default and records the version |
+| `--json`, a pipe, CI | Leaves the file alone and says which options are still to choose |
+| `--dry-run` | Says what it would ask, and writes nothing |
+| Over MCP | Leaves the file alone; `update_components` names each option and the parameter that answers it, so the agent asks you |
+| A config from a newer CLI | Leaves it alone and tells you to run `delacour@latest` |
+
+`--tests` or `--no-tests` on the same run answers the tests question without asking it.
+
+### What it asks about
+
+| Option | Asked when | Why not always |
+| --- | --- | --- |
+| [`tests.enabled`](/docs/native/cli/configuration#tests) | The file has no `tests.enabled` and no `--tests` / `--no-tests` was passed | — |
+| [`prefix`](/docs/native/cli/configuration#prefix) | The file has no `prefix` | — answering renames it through every copied component, merging where you edited, and lists your own files that still import `DelacourProvider` |
+
+`delacour doctor` reports **Config version** as a warning while the file is behind, so a project that
+only ever updates from CI still finds out.
+
+### Editing it by hand
+
+The file is yours. Change a key and the next command reads it:
+
+- **`paths`** — re-run `add` for anything already copied; old files stay where they were.
+- **`tests.runner`** — the next `update` rewrites each copied suite for the new runner.
+- **`prefix`** — the next `update` renames it through every copy, merging where you edited; then
+  rename the provider where your root layout mounts it — `update` lists the files.
+
+`delacour info` prints the resolved paths, the quickest check that an edit landed the way you meant.
+Leave `version` to the CLI: setting it by hand only stops `update` asking about options you have not
+chosen.

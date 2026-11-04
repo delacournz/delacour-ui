@@ -1,6 +1,6 @@
 ---
 title: Troubleshooting
-description: The eleven doctor checks, and the silent failure each one exists to catch.
+description: The doctor checks, and the silent failure each one exists to catch.
 icon: Stethoscope
 ---
 
@@ -147,6 +147,13 @@ nothing to merge it from. At a terminal, `update` asks what to do with those fil
 done. Anywhere else, name the ref it came from with `--base <ref>`, or take the registry's copy
 with `add <name> --overwrite`.
 
+### `native-components.json` predates options, or doctor warns on Config version
+
+The file was written by an older CLI, so options added since have no answer in it. Run
+`npx delacour@latest update` at a terminal: it asks about each one once and records the new
+`version`. Under `--yes` it keeps the defaults instead. See
+[Updating `native-components.json`](/docs/native/cli/updating#updating-native-componentsjson).
+
 ### The registry does not have a component I can see on this site
 
 Your CLI is pinned to the ref it was published from. Take the newest:
@@ -260,6 +267,11 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
       type: "check",
       description:
         "On Jest with chart or bottom-sheet installed, transformIgnorePatterns lets @delacour/.* through, and d3-.* and internmap for chart. The engines ship TypeScript source; untransformed, every suite importing them fails with \"Must use import to load ES Module\". A warning: only the tests break.",
+    },
+    "Lock file": { type: "check", description: "native-components.lock.json exists once components are copied, so update has a base to merge from. A warning." },
+    "Config version": {
+      type: "check",
+      description: "native-components.json is at the version this CLI writes. Behind, it predates options it was never asked about — run delacour@latest update at a terminal. A warning.",
     },
   }}
 />

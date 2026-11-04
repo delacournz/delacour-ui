@@ -3,6 +3,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { type BuildResult, buildRegistry, escapingReads, jestOnlyViolations, runnerSpecificUses } from "./build";
 import { isTest } from "./classify";
+import { RENDER_TEST_MOCKS } from "./config";
 import { PLACEHOLDER_PREFIX, parsePlaceholder } from "./namespaces";
 import { applyRewrites } from "./rewrite";
 import { scanImports } from "./scan-imports";
@@ -200,6 +201,7 @@ describe("buildRegistry", () => {
 
 		expect(kit?.type).toBe("registry:lib");
 		expect(kit?.files.map((file) => `${file.namespace}/${file.target}`)).toEqual([
+			"lib/test/mock-stub.ts",
 			"lib/test/render.tsx",
 			"lib/test/setup.ts",
 		]);
@@ -208,6 +210,38 @@ describe("buildRegistry", () => {
 			expect.arrayContaining(["@jest/globals", "@testing-library/react-native", "test-renderer"])
 		);
 		expect(kit?.tests).toEqual([]);
+	});
+
+	test("a native module only some components bring is mocked in its own item, never in the kit's setup", () => {
+		const setup = delivered.get("packages/react-native-ui/src/test/setup.ts") ?? "";
+
+		for (const [module, mock] of Object.entries(RENDER_TEST_MOCKS)) {
+			expect(`${module}: ${setup.includes(`jest.mock("${module}"`)}`).toBe(`${module}: false`);
+			const item = byName.get(mock);
+			expect(item?.files.map((file) => `${file.namespace}/${file.target}`)).toEqual([
+				`lib/test/mocks/${mock.replace("test-mock-", "")}.ts`,
+			]);
+			for (const dependency of item?.registryDependencies ?? []) expect(dependency).toBe("test-kit");
+		}
+	});
+
+	test("every mock file mocks the module it is registered for", () => {
+		const mocks = [...delivered].filter(([path]) => path.includes("/src/test/mocks/"));
+
+		expect(mocks.length).toBe(new Set(Object.values(RENDER_TEST_MOCKS)).size);
+		for (const [path, content] of mocks) {
+			const mocked = [...content.matchAll(/jest\.mock\("([^"]+)"/g)].map((match) => match[1] as string);
+			const item = `test-mock-${path.split("/").pop()?.replace(/\.ts$/, "")}`;
+			expect(mocked.length).toBeGreaterThan(0);
+			for (const module of mocked) expect(`${module} → ${RENDER_TEST_MOCKS[module]}`).toBe(`${module} → ${item}`);
+		}
+	});
+
+	test("an item that installs a mocked module takes its mock behind its render tests, and no other does", () => {
+		expect(byName.get("chart")?.renderTestRegistryDependencies).toContain("test-mock-skia");
+		expect(byName.get("map")?.renderTestRegistryDependencies).toContain("test-mock-maplibre");
+		expect(byName.get("button")?.renderTestRegistryDependencies).not.toContain("test-mock-skia");
+		expect(byName.get("badge")?.renderTestRegistryDependencies).not.toContain("test-mock-maplibre");
 	});
 
 	test("records what only the tests need apart from what the source needs", () => {
@@ -333,6 +367,9 @@ function everyImport(): { where: string; specifier: string }[] {
 function itemOf(namespace: string | undefined, moduleId: string | undefined): string {
 	if (namespace === "ui") return (moduleId ?? "").split("/")[0] as string;
 	if (namespace === "styles" || namespace === "icons") return namespace;
+	if (namespace === "lib" && moduleId?.startsWith("test/")) {
+		return moduleId.startsWith("test/mocks/") ? `test-mock-${moduleId.slice("test/mocks/".length)}` : "test-kit";
+	}
 	// `cn.test` is a test of `cn`.
 	return (moduleId ?? "").split(".")[0] as string;
 }

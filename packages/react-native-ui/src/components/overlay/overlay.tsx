@@ -12,6 +12,7 @@ import {
 	hasModalOverlay,
 	INITIAL_OVERLAY_REGISTRY,
 	type OverlayLayer,
+	type OverlayRegistryAction,
 	type OverlayRegistryState,
 	reduceOverlayRegistry,
 } from "./overlay-registry";
@@ -32,12 +33,14 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 		setState(current.current);
 	}, []);
 
-	const dismissed = useCallback((id: string) => {
-		const next = reduceOverlayRegistry(current.current, { type: "close", id });
+	const apply = useCallback((action: OverlayRegistryAction) => {
+		const next = reduceOverlayRegistry(current.current, action);
 		if (next === current.current) return;
 		current.current = next;
 		setState(next);
 	}, []);
+	const exiting = useCallback((id: string, isExiting: boolean) => apply({ type: "exiting", id, isExiting }), [apply]);
+	const dismissed = useCallback((id: string) => apply({ type: "close", id }), [apply]);
 
 	const touchListeners = useRef(new Set<() => void>());
 	const subscribeTouchStart = useCallback((listener: () => void) => {
@@ -51,8 +54,8 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 	}, []);
 
 	const value = useMemo<OverlayContextValue>(
-		() => ({ state, present, dismissed, subscribeTouchStart }),
-		[state, present, dismissed, subscribeTouchStart]
+		() => ({ state, present, exiting, dismissed, subscribeTouchStart }),
+		[state, present, exiting, dismissed, subscribeTouchStart]
 	);
 
 	// `onTouchStart` is a bubbling touch event, not a responder claim: it fires
@@ -60,9 +63,10 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 	// included, since teleport leaves the fiber where it was — and never stops
 	// the touch reaching its target or a gesture handler.
 	//
-	// While a modal overlay is presented, the app content is hidden from
-	// VoiceOver and TalkBack. The overlays draw in teleport's host, outside
-	// this view in the native tree, so they stay reachable. Where teleport draws
+	// While a modal overlay is open, the app content is hidden from VoiceOver
+	// and TalkBack. The overlays draw in teleport's host, outside this view in
+	// the native tree, so they stay reachable. An exiting modal no longer hides
+	// it, so focus can return to the trigger in `onExited`. Where teleport draws
 	// inline — the Jest mock does — the overlays are inside this view, so it
 	// stays visible.
 	const isAppHidden = hasModalOverlay(state) && !isTeleportInline();
@@ -100,8 +104,8 @@ const styles = StyleSheet.create({ fill: { flex: 1 } });
  * two native hosts with one name. And the overlay registry, which gives every
  * presented overlay a `zIndex` in its layer's band and tells each one whether it
  * is the top, the one Android's back button closes. While a modal overlay is
- * presented it hides the app content from screen readers, so focus cannot move
- * behind a dialog. It also hears every touch
+ * open, and not animating closed, it hides the app content from screen
+ * readers, so focus cannot move behind a dialog. It also hears every touch
  * that starts beneath it, without claiming one, so a tooltip can close on an
  * outside tap that still lands where it was aimed.
  *

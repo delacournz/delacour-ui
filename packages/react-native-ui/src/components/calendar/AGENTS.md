@@ -120,9 +120,14 @@ sheets.
 
 ## Accessibility
 
-- Each day is a button labelled with the full date (`formatDate(…, { style: "full" })`), hinted
-  "Today" / "Range start" / "Range end", with `selected` and `disabled` state.
-- The grid is `role="grid"`, named by an enclosing `Field.Label` or else the month.
+- Each day is a button labelled with the full date (`formatDate(…, { style: "full" })`) plus
+  "Today" / "Range start" / "Range end" (`resolveDayAccessibilityLabel`), with `selected` and
+  `disabled` state. The state words are in the label, not a hint, so they read with hints off.
+- **A read-only day is not `disabled`** (`isUnavailable`): `select` ignores its tap and it skips
+  the fade and haptic, but a review screen's days never all read "dimmed".
+- The grid is `role="grid"`, but it is not `accessible` and RN gives `grid` no iOS trait, so
+  VoiceOver never reads a label on it. **The enclosing `Field.Label` is read on the caption**
+  instead (`resolveCaptionLabel`): "Date of birth, October 2026".
 - **Paging for screen readers lives on the caption**, as increment/decrement actions. An
   adjustable grid would fold its child buttons into itself on both platforms and make the days
   unreachable.
@@ -139,7 +144,7 @@ sheets.
 ## Field
 
 `resolveCalendarAxes` is the nearest-wins chain: the calendar's own `isDisabled` / `isInvalid` /
-`isReadOnly` / `size` / `variant`, else the `Field`'s. The field's label names the grid. It does
+`isReadOnly` / `size` / `variant`, else the `Field`'s. The caption reads the field's label. It does
 not `registerPress` — there is no single focus target for a row tap to reach.
 
 ## Not here

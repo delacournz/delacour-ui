@@ -383,7 +383,8 @@ function CalendarRoot(props: CalendarProps): ReactElement {
  * `minDate`/`maxDate` bound what can be picked and, unless `startMonth`/`endMonth` say otherwise,
  * how far paging goes. `disabled` takes further matchers: a date, a span, weekdays or a predicate.
  *
- * `isDisabled` and `isInvalid` cascade in from an enclosing `Field`, whose label names the grid.
+ * `isDisabled` and `isInvalid` cascade in from an enclosing `Field`, whose label the caption
+ * reads before the month.
  * The week starts where the locale says, and names come from `Intl`.
  *
  * @example

@@ -158,18 +158,38 @@ export function parseBunSummary(output: string): TestRun {
 	};
 }
 
+/**
+ * The Jest or Vitest command line for the copied suites. `maxWorkers` caps the runner's worker
+ * pool — a count or a percentage of the cores — because each defaults to nearly every core, and
+ * three runners started side by side then starve each other until a 100 ms render blows Jest's
+ * 5 s timeout. `null` keeps the runner's default.
+ */
+export function copiedTestArgs(
+	runner: Exclude<TestRunner, "bun">,
+	outputFile: string,
+	maxWorkers: string | null
+): string[] {
+	const base =
+		runner === "jest"
+			? ["jest", "--json", `--outputFile=${outputFile}`]
+			: ["vitest", "run", "--reporter=json", `--outputFile=${outputFile}`];
+	return maxWorkers === null ? base : [...base, `--maxWorkers=${maxWorkers}`];
+}
+
 /** Runs the copied suites under `runner`, from the package they were copied into. */
-export async function runCopiedTests(cwd: string, runner: TestRunner, reporter: Reporter): Promise<TestRun> {
+export async function runCopiedTests(
+	cwd: string,
+	runner: TestRunner,
+	reporter: Reporter,
+	maxWorkers: string | null = null
+): Promise<TestRun> {
 	if (runner === "bun") {
 		const output = await run("bun", ["test"], { cwd, reporter, label: "bun test", allowFailure: true });
 		return parseBunSummary(output);
 	}
 
 	const outputFile = join(cwd, ".verify-test-report.json");
-	const args =
-		runner === "jest"
-			? ["jest", "--json", `--outputFile=${outputFile}`]
-			: ["vitest", "run", "--reporter=json", `--outputFile=${outputFile}`];
+	const args = copiedTestArgs(runner, outputFile, maxWorkers);
 
 	await rm(outputFile, { force: true });
 	const output = await run("bun", ["x", ...args], { cwd, reporter, label: runner, allowFailure: true });

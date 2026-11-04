@@ -270,6 +270,11 @@ export type CalendarDayState = {
 	isHidden: boolean;
 	/** Takes a tap. */
 	isPressable: boolean;
+	/**
+	 * Announced as disabled: it takes no tap for a reason other than `isReadOnly`. A read-only
+	 * calendar shows an answer, so its days must not all read "dimmed".
+	 */
+	isUnavailable: boolean;
 };
 
 /**
@@ -305,6 +310,7 @@ export function resolveDayState({
 	const isSelected = showsSelection && isDateSelected(selection, date);
 	const rangeRole = showsSelection && selection.mode === "range" ? resolveRangeRole(selection.value, date) : null;
 	const dayDisabled = isDisabled(date);
+	const isUnavailable = isHidden || dayDisabled || isCalendarDisabled || (isOutside && !selectOutsideDays);
 
 	return {
 		isSelected,
@@ -314,8 +320,35 @@ export function resolveDayState({
 		isOutside,
 		isDisabled: dayDisabled,
 		isHidden,
-		isPressable: !isHidden && !dayDisabled && !isCalendarDisabled && !isReadOnly && (!isOutside || selectOutsideDays),
+		isPressable: !isUnavailable && !isReadOnly,
+		isUnavailable,
 	};
+}
+
+/**
+ * What a screen reader says for the caption: the enclosing `Field.Label`, then the caption text —
+ * "Date of birth, October 2026". The caption carries the field's name because it is the
+ * calendar's one accessible heading: the grid view is not `accessible`, and `role="grid"` maps to
+ * no iOS trait, so a label on the grid is never read.
+ */
+export function resolveCaptionLabel(fieldLabel: string | null, text: string): string {
+	return fieldLabel ? `${fieldLabel}, ${text}` : text;
+}
+
+/**
+ * What a screen reader says for a day: the full date, then "Today" and the range end it is —
+ * "Monday 5 October 2026, Today, Range start". The state words sit in the label, not the hint,
+ * because many VoiceOver users turn hints off and would hear only the date.
+ */
+export function resolveDayAccessibilityLabel(
+	dateLabel: string,
+	{ isToday, rangeRole }: Pick<CalendarDayState, "isToday" | "rangeRole">
+): string {
+	const parts = [dateLabel];
+	if (isToday) parts.push("Today");
+	if (rangeRole === "start") parts.push("Range start");
+	if (rangeRole === "end") parts.push("Range end");
+	return parts.join(", ");
 }
 
 /**

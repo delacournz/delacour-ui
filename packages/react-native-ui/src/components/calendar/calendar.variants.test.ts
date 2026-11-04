@@ -13,8 +13,10 @@ import {
 	isDateSelected,
 	reconcileVisibleMonth,
 	resolveCalendarAxes,
+	resolveCaptionLabel,
 	resolveCaptionPage,
 	resolveCommittedPageDirection,
+	resolveDayAccessibilityLabel,
 	resolveDayState,
 	resolveDayTone,
 	resolveMonthBounds,
@@ -317,6 +319,56 @@ describe("resolveDayState", () => {
 			isPressable: false,
 		});
 		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true }).isPressable).toBe(false);
+	});
+
+	test("only a day that cannot be picked is announced disabled; read-only alone is not", () => {
+		const cell = { date: d(2026, 10, 5), isOutside: false, weekIndex: 0, dayIndex: 0 };
+		expect(resolveDayState({ ...base, cell }).isUnavailable).toBe(false);
+		expect(resolveDayState({ ...base, cell, isReadOnly: true }).isUnavailable).toBe(false);
+		expect(resolveDayState({ ...base, cell, isDisabled: () => true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true, isReadOnly: true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell: { ...cell, isOutside: true } }).isUnavailable).toBe(true);
+		expect(
+			resolveDayState({ ...base, cell: { ...cell, isOutside: true }, selectOutsideDays: true }).isUnavailable
+		).toBe(false);
+	});
+});
+
+describe("resolveCaptionLabel", () => {
+	test("the caption reads the field's name before the month, since the grid itself is never read", () => {
+		expect(resolveCaptionLabel("Date of birth", "October 2026")).toBe("Date of birth, October 2026");
+	});
+
+	test("with no field label it is just the month", () => {
+		expect(resolveCaptionLabel(null, "October 2026")).toBe("October 2026");
+		expect(resolveCaptionLabel("", "October 2026")).toBe("October 2026");
+	});
+});
+
+describe("resolveDayAccessibilityLabel", () => {
+	const plain = { isToday: false, rangeRole: null };
+
+	test("a plain day reads as just its date", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", plain)).toBe("Monday 5 October 2026");
+	});
+
+	test("today and the range ends are in the label, so they read with hints off", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { isToday: true, rangeRole: "start" })).toBe(
+			"Monday 5 October 2026, Today, Range start"
+		);
+		expect(resolveDayAccessibilityLabel("Friday 9 October 2026", { ...plain, rangeRole: "end" })).toBe(
+			"Friday 9 October 2026, Range end"
+		);
+	});
+
+	test("a lone or middle range day adds nothing", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { ...plain, rangeRole: "only" })).toBe(
+			"Monday 5 October 2026"
+		);
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { ...plain, rangeRole: "middle" })).toBe(
+			"Monday 5 October 2026"
+		);
 	});
 });
 

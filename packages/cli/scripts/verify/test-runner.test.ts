@@ -5,6 +5,7 @@ import { join } from "node:path";
 import {
 	copiedRenderTests,
 	copiedSuites,
+	copiedTestArgs,
 	parseBunSummary,
 	parseJsonReport,
 	runnerManifest,
@@ -139,5 +140,22 @@ describe("copiedSuites", () => {
 		} finally {
 			await rm(root, { recursive: true, force: true });
 		}
+	});
+});
+
+describe("copiedTestArgs", () => {
+	test("Jest and Vitest write a JSON report to the given file", () => {
+		expect(copiedTestArgs("jest", "/r.json", null)).toEqual(["jest", "--json", "--outputFile=/r.json"]);
+		expect(copiedTestArgs("vitest", "/r.json", null)).toEqual([
+			"vitest",
+			"run",
+			"--reporter=json",
+			"--outputFile=/r.json",
+		]);
+	});
+
+	test("a worker cap reaches both, so runners sharing a machine do not starve each other", () => {
+		expect(copiedTestArgs("jest", "/r.json", "25%")).toContain("--maxWorkers=25%");
+		expect(copiedTestArgs("vitest", "/r.json", "25%")).toContain("--maxWorkers=25%");
 	});
 });

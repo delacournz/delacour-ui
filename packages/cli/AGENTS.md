@@ -252,7 +252,7 @@ builds somewhere else instead, with the CLI bundle, the packed engines and Bun's
 beside it (`<path>.cli`, `<path>.packages`, `<path>.cache`) rather than in `dist`, a shared folder and
 `~/.bun/install/cache` — so runs with different directories share nothing they write and can run at
 once, which is how `signoff/tests` runs its three runners. The cache is the one that bites: two runs
-adding the same engine tarball into Bun's shared cache at once both hung on its lock at no CPU.
+adding the same engine tarball into Bun's shared cache at once both hung on its lock at no CPU. `--max-workers <n>` caps the Jest or Vitest pool under `--tests` — a count or a percentage — so those three, each defaulting to nearly every core, do not starve one another into Jest's 5 s timeout.
 
 <!-- Cleaning up means all of it. -->
 An earlier version kept `node_modules` through cleanup, on the theory that it was only a cache.

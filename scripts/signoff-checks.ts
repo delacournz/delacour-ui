@@ -62,6 +62,13 @@ export type SignoffCheck = {
 /** `packages/cli/.verify/app`, which every `verify:expo` run empties and rebuilds — two at once wreck each other. */
 const VERIFY_APP = "verify-app";
 
+/**
+ * `apps/web/.output`. `build` runs `vite build` into it, and so does `typecheck` through
+ * `@delacour/web#codegen` whenever that misses the cache; two at once fail with `ENOTEMPTY` as one
+ * empties the directory the other is writing.
+ */
+const WEB_OUTPUT = "web-output";
+
 /** The bare context the ruleset requires. Emitted last, and only when everything passed. */
 export const UMBRELLA_CONTEXT = "signoff";
 
@@ -91,6 +98,7 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		paths: [],
 		workflow: "ci.yml",
 		run: [{ argv: ["bunx", "turbo", "typecheck"] }],
+		locks: [WEB_OUTPUT],
 	},
 	{
 		context: "check",
@@ -119,6 +127,7 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		// Scoped to the docs site: it is the only thing Railway deploys, and an unfiltered build would
 		// drag in the Expo playground for nothing.
 		run: [{ argv: ["bunx", "turbo", "build", "--filter=@delacour/web"] }],
+		locks: [WEB_OUTPUT],
 	},
 	{
 		context: "registry",
@@ -179,10 +188,24 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		workflow: "ci.yml",
 		// Each runner in its own `--dir`, which also keeps it off `registry`'s `.verify/app`.
 		//
+		// `--max-workers 25%` because the three run at once, beside `test`'s own Jest run: at their
+		// defaults each takes nearly every core, and a starved worker blows Jest's 5 s test timeout.
+		//
 		// `--keep` leaves each app's `node_modules` in place, so the next signoff re-scaffolds the
 		// project files over a warm install instead of starting from npm. `.verify/` is gitignored.
 		run: TEST_RUNNERS.map((runner) => ({
-			argv: ["bun", "run", "verify:expo", "--tests", runner, "--dir", `.verify/tests-${runner}`, "--keep"],
+			argv: [
+				"bun",
+				"run",
+				"verify:expo",
+				"--tests",
+				runner,
+				"--dir",
+				`.verify/tests-${runner}`,
+				"--keep",
+				"--max-workers",
+				"25%",
+			],
 			cwd: "packages/cli",
 		})),
 		parallel: true,

@@ -6,7 +6,7 @@ import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useCalendarPart } from "./calendar.context";
 import { formatMonthYear, formatYear } from "./calendar.date";
-import { calendarVariants, resolveCaptionPage, resolvePartTestID } from "./calendar.variants";
+import { calendarVariants, resolveCaptionLabel, resolveCaptionPage, resolvePartTestID } from "./calendar.variants";
 
 export type CalendarCaptionProps = Omit<ViewProps, "children"> & {
 	className?: string;
@@ -30,6 +30,9 @@ const PAGE_ACTIONS = [
  * swipe up or down on "October 2026" to move a month. As a plain label it takes the `adjustable`
  * role outright; as a button the two actions sit beside its activation. Like the arrows, they do
  * nothing on a disabled calendar or in the years view.
+ *
+ * **It also carries the field's name** — "Date of birth, October 2026" — since it is the one
+ * accessible heading the calendar has; a label on the grid is never read on iOS.
  */
 export function CalendarCaption({ className, ...props }: CalendarCaptionProps): ReactElement {
 	const {
@@ -39,6 +42,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 		goNext,
 		goPrev,
 		isDisabled,
+		label: fieldLabel,
 		locale,
 		setView,
 		size,
@@ -56,6 +60,8 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 			: view === "months"
 				? formatYear(visibleMonth.year, locale)
 				: `${formatYear(yearSpan.from, locale)} – ${formatYear(yearSpan.to, locale)}`;
+
+	const accessibilityLabel = resolveCaptionLabel(fieldLabel, text);
 
 	const handleAction = useCallback(
 		(event: AccessibilityActionEvent) => {
@@ -82,7 +88,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 		return (
 			<View
 				accessibilityActions={PAGE_ACTIONS}
-				accessibilityLabel={text}
+				accessibilityLabel={accessibilityLabel}
 				accessibilityRole="adjustable"
 				accessible
 				className={slots.caption({ className })}
@@ -106,7 +112,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 		<Pressable
 			accessibilityActions={PAGE_ACTIONS}
 			accessibilityHint={hint}
-			accessibilityLabel={text}
+			accessibilityLabel={accessibilityLabel}
 			className={slots.caption({ className })}
 			disabled={isDisabled}
 			feedback="fade"

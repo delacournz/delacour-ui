@@ -240,6 +240,10 @@
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
 				}
 			]
 		}

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { Field } from "../field";
 import { Calendar } from "./calendar";
 import type { CalendarDate } from "./calendar.date";
 
@@ -28,11 +29,21 @@ describe("Calendar", () => {
 			expect(screen.getByRole("button", { name: "Next month" })).toBeOnTheScreen();
 		});
 
-		test("opens on today's month by the fake clock and marks today in the hint", async () => {
+		test("opens on today's month by the fake clock and marks today in the label", async () => {
 			await renderWithProviders(<Calendar locale="en" testID="cal" />);
 			const today = screen.getByTestId("cal-day-2026-10-14");
-			expect(today).toHaveProp("accessibilityHint", "Today");
-			expect(screen.getByTestId("cal-day-2026-10-15")).not.toHaveProp("accessibilityHint", "Today");
+			expect(today.props.accessibilityLabel).toMatch(/, Today$/);
+			expect(screen.getByTestId("cal-day-2026-10-15").props.accessibilityLabel).not.toMatch(/Today/);
+		});
+
+		test("an enclosing Field.Label is read on the caption, before the month", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Date of birth</Field.Label>
+					<Calendar locale="en" testID="cal" />
+				</Field>
+			);
+			expect(screen.getByRole("button", { name: "Date of birth, October 2026" })).toBeOnTheScreen();
 		});
 
 		test("a day is a button named by its full date", async () => {
@@ -60,7 +71,7 @@ describe("Calendar", () => {
 		test("the today prop overrides the clock", async () => {
 			await renderWithProviders(<Calendar locale="en" testID="cal" today={day(2027, 3, 9)} />);
 			expect(screen.getByRole("button", { name: "March 2027" })).toBeOnTheScreen();
-			expect(screen.getByTestId("cal-day-2027-03-09")).toHaveProp("accessibilityHint", "Today");
+			expect(screen.getByTestId("cal-day-2027-03-09").props.accessibilityLabel).toMatch(/, Today$/);
 		});
 	});
 
@@ -157,8 +168,8 @@ describe("Calendar", () => {
 			expect(onSelect).toHaveBeenLastCalledWith({ end: null, start: day(2026, 10, 5) });
 			await press("2026-10-09");
 			expect(onSelect).toHaveBeenLastCalledWith({ end: day(2026, 10, 9), start: day(2026, 10, 5) });
-			expect(screen.getByTestId("cal-day-2026-10-05")).toHaveProp("accessibilityHint", "Range start");
-			expect(screen.getByTestId("cal-day-2026-10-09")).toHaveProp("accessibilityHint", "Range end");
+			expect(screen.getByTestId("cal-day-2026-10-05").props.accessibilityLabel).toMatch(/, Range start$/);
+			expect(screen.getByTestId("cal-day-2026-10-09").props.accessibilityLabel).toMatch(/, Range end$/);
 		});
 
 		test("tapping an earlier day second makes it the start", async () => {
@@ -250,6 +261,12 @@ describe("Calendar", () => {
 			expect(screen.getByRole("button", { name: "Next month" })).toBeDisabled();
 			await press("2026-10-14");
 			expect(onSelect).not.toHaveBeenCalled();
+		});
+
+		test("isReadOnly days are not announced disabled, the selected one included", async () => {
+			await renderWithProviders(<Calendar isReadOnly locale="en" selected={day(2026, 10, 5)} testID="cal" />);
+			expect(screen.getByTestId("cal-day-2026-10-05")).not.toBeDisabled();
+			expect(screen.getByTestId("cal-day-2026-10-14")).not.toBeDisabled();
 		});
 
 		test("isReadOnly ignores day taps but paging still works", async () => {

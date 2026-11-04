@@ -80,8 +80,8 @@ version.
       description: "Compares the copied components with the registry and writes nothing: which files the registry changed, which the project edited, which would conflict.",
     },
     update_components: {
-      type: "(names?, force?, prune?, install?) => string",
-      description: "Brings copied components up to the registry. Replaces untouched files, three-way merges edited ones, and writes git conflict markers where both changed the same lines. Never discards an edit.",
+      type: "(names?, force?, prune?, tests?, install?) => string",
+      description: "Brings copied components up to the registry. Replaces untouched files, three-way merges edited ones, and writes git conflict markers where both changed the same lines. Never discards an edit. Leaves an older native-components.json unchanged and names each option it predates with the parameter that answers it, so the agent asks the person.",
     },
     init_project: {
       type: "(src?, packageName?, packagePath?, force?, install?) => string",

@@ -44,7 +44,7 @@ the \`expo install\` route for the native modules underneath.
 Copy the real one instead. The CLI resolves the whole dependency closure, rewrites every import
 onto this project's own aliases, and reports what it needs from npm.
 
-## The four commands
+## The five commands
 
 Run them with the project's package manager — \`npx\`, \`pnpm dlx\`, \`yarn dlx\` or \`bunx\`; \`npx\` is written below.
 
@@ -54,6 +54,7 @@ Run them with the project's package manager — \`npx\`, \`pnpm dlx\`, \`yarn dl
 | one component's files, props, closure and packages | \`npx delacour@latest view <name>\` |
 | to add one | \`npx delacour@latest add <name>\` |
 | to find out why something renders wrong with no error | \`npx delacour@latest doctor\` |
+| to take the registry's fixes into copied components, and bring the config up to date | \`npx delacour@latest update\` |
 
 **Always \`list\` before writing any React Native UI in this project.** A component that exists here
 should be added, never reimplemented.
@@ -76,6 +77,33 @@ source directory this project does not call \`src\` — run \`init\` deliberatel
 \`\`\`bash
 npx delacour@latest init --src app --package-name @acme/ui --package-path packages/ui
 \`\`\`
+
+## Updating
+
+Copied components are the project's code, so nothing upgrades them on its own. \`update\` does, and
+keeps the project's edits: a file only the registry changed is replaced, one both changed is merged,
+and where both changed the same lines it writes git conflict markers and exits \`1\` — resolve those,
+never delete the file to make the error go away.
+
+\`\`\`bash
+npx delacour@latest diff                 # what would change; writes nothing
+npx delacour@latest update --dry-run     # the same plan, plus what it would ask about the config
+npx delacour@latest update [names…]      # apply it
+\`\`\`
+
+- **Always \`@latest\`.** \`update\` reads the registry at the commit the CLI was published from; an
+  old CLI updates to old components.
+- **Commit first.** A merge rewrites edited files; it skips one with uncommitted changes unless
+  \`--force\`.
+- **Commit \`native-components.lock.json\`.** It is the base every merge starts from.
+- **\`native-components.json\` is updated too.** It carries a \`version\`. When the file predates an
+  option this CLI has, \`update\` asks the person about it once and records the new version. Under
+  \`--yes\` it keeps the defaults; under \`--json\`, a pipe or MCP it changes nothing and names each
+  option still to choose. **Those choices are the person's** — relay the question (keep component
+  tests? which \`prefix\`?) and pass the answer (\`--tests\` / \`--no-tests\`), rather than running
+  \`--yes\` to make the notice go away. Never set \`version\` by hand.
+- After it, install anything it printed with \`expo install\`, rebuild the dev client if a native
+  module was added, and run \`doctor\`.
 
 ## Six things that fail silently
 
@@ -170,6 +198,6 @@ converts, and what \`doctor\` fails on.
 | something rendering wrong | \`references/troubleshooting.md\` beside this file |
 
 There is also an MCP server — \`npx delacour@latest mcp\` — which exposes \`list_components\`,
-\`get_component\`, \`add_components\`, \`init_project\` and \`check_project\` as tools. Prefer it when the
+\`get_component\`, \`add_components\`, \`check_updates\`, \`update_components\`, \`init_project\` and \`check_project\` as tools. Prefer it when the
 host supports MCP; the commands above are the same functions and need nothing installed.
 `;

@@ -374,6 +374,16 @@ Keep the side you want, delete the markers, and that file is done.
 **It updates to the ref your CLI was published from**, so `npx delacour@latest update` is the
 whole upgrade: the newest CLI, and the registry it shipped against.
 
+The walkthrough — commit, `diff`, update, resolve, `doctor` — is the [Updating](/docs/native/cli/updating) guide.
+
+### Your config
+
+Before it reads a component, `update` brings [`native-components.json`](/docs/native/cli/configuration#version)
+up to the shape this CLI writes. At a terminal it asks about each option the file predates, once,
+then records the answers and the new `version`. `--yes` keeps every default; `--json`, a pipe or CI
+leaves the file alone and names what is still to choose; `--dry-run` says what it would ask. See
+[Updating `native-components.json`](/docs/native/cli/updating#updating-native-componentsjson).
+
 ### Your formatter
 
 A project with a formatter will have run it over the copied files, and after that every line

@@ -154,6 +154,7 @@ running it is how an afternoon goes.
 | Every \`className\` is a type error | \`uniwind-env.d.ts\` is not inside the app's own \`tsconfig\` include. It is one triple-slash reference and only works from there |
 | \`Ref<never>\`, or two copies of React Native's types | Two realpaths for one package. A Bun workspace needs \`linker = "hoisted"\` in \`bunfig.toml\` |
 | \`add\` overwrote something you had edited | A file that differs is a conflict and \`add\` asks; \`--overwrite\` answers yes. To take upstream changes and keep the edits, \`npx delacour@latest update <name>\` — it three-way merges, and marks a conflict rather than picking a side |
+| \`update\` says \`native-components.json\` predates options, or \`doctor\` warns on Config version | An older CLI wrote the file. Run \`npx delacour@latest update\` at a terminal — it asks about each new option once and records the \`version\`. Ask the person rather than passing \`--yes\` |
 | A component on the docs site is not in the registry | The published CLI reads the registry at the commit it shipped against. \`--ref main\` opts into what has landed since |
 
 ## What \`doctor\` checks
@@ -161,7 +162,8 @@ running it is how an afternoon goes.
 Metro's Uniwind wrapper and its position · the Tailwind \`@source\` coverage · whether anything
 actually imports the CSS entry · New Architecture · path aliases and \`tsconfigPaths\` ·
 \`GestureHandlerRootView\` at the root · the shape of \`theme.css\` · the Uniwind type shim · duplicate
-copies of a native module.
+copies of a native module · the test runner's setup · the lock file · whether
+\`native-components.json\` is at this CLI's \`version\`.
 
 \`\`\`bash
 npx delacour@latest doctor          # a report, with a fix per failure

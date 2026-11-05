@@ -529,7 +529,7 @@ describe("drift guard", () => {
 			if (name === "resolve") continue;
 			const needs = [job.needs ?? []].flat();
 			expect({ name, needsResolve: needs.includes("resolve") }).toEqual({ name, needsResolve: true });
-			const checkout = job.steps?.find((step) => step.uses?.startsWith("actions/checkout@"));
+			const checkout = job.steps?.find((step) => step.uses?.startsWith("namespacelabs/nscloud-checkout-action@"));
 			if (checkout) expect({ name, ref: checkout.with?.ref }).toEqual({ name, ref: RESOLVED_SHA });
 		}
 	});

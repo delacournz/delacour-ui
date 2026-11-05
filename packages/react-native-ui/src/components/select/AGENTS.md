@@ -80,7 +80,9 @@ engine. An app that imports no picker still never resolves it.
 - **The title and search ride at the head of the list.** As
   `ListHeaderComponent` they count towards the content height the sheet sizes
   itself to, and the search field is a `BottomSheet.TextInput`, so the keyboard
-  it raises is the sheet's to lift for.
+  it raises is the sheet's to lift for. The close sits in a row of its own with
+  the title (`headerBar`), not in the sheet's absolute corner, so with no title
+  it still never covers the search field or the first row.
 - **A sheet sized to its rows is capped.** `resolveSelectSheetMaxHeight` hands
   the sheet `maxDynamicContentSize` — the lower of 85% of the window and the room
   below the top inset less a 24pt gap — and the list scrolls inside it. Without

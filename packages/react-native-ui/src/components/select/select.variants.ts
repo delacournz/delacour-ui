@@ -139,6 +139,17 @@ export const selectVariants = tv({
 		groupHeading: "pb-1.5 pt-4",
 		/** The sheet's title and search field, above the rows. */
 		header: "gap-3 pb-3",
+		/**
+		 * The close and the optional title, in one row above the search.
+		 *
+		 * The row is always drawn, so the close has room of its own with or
+		 * without a title, and never sits over the search field or a row.
+		 */
+		headerBar: "min-h-10 flex-row items-center gap-3",
+		/** The sheet's close, taken out of its absolute corner and into the bar. */
+		headerClose: "relative top-0 right-0 ml-auto",
+		/** The bar already clears the close, so the title needs no gutter. */
+		headerTitle: "flex-1 pr-0",
 		empty: "items-center justify-center py-8",
 		/** Overrides the sheet's list gutter gap: rows touch, the way a list's do. */
 		sheetBody: "gap-0",

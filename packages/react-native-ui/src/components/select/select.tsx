@@ -278,11 +278,14 @@ function SelectRoot(props: SelectProps): ReactElement {
 	};
 
 	// The title and the search field ride at the head of the list rather than
-	// above it, so they count towards the height the sheet sizes itself to.
+	// above it, so they count towards the height the sheet sizes itself to. The
+	// close sits in the title's row, so it covers nothing when there is no title.
 	const header = (
 		<View className={slots.header()}>
-			<BottomSheet.Close testID={testID ? `${testID}-close` : undefined} />
-			{sheetTitle ? <BottomSheet.Title>{sheetTitle}</BottomSheet.Title> : null}
+			<View className={slots.headerBar()}>
+				{sheetTitle ? <BottomSheet.Title className={slots.headerTitle()}>{sheetTitle}</BottomSheet.Title> : null}
+				<BottomSheet.Close className={slots.headerClose()} testID={testID ? `${testID}-close` : undefined} />
+			</View>
 			{isSearchable ? (
 				<Input.Group size={size}>
 					<Input.Group.Prefix>

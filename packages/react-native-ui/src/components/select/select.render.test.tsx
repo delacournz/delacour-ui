@@ -402,6 +402,13 @@ describe("Select search", () => {
 		expect(screen.getByRole("radio", { name: "Österreich" })).toBeOnTheScreen();
 	});
 
+	test("without a title the close holds its own row above the search", async () => {
+		await renderSelect({ isSearchable: true, options: countries });
+		await openSheet();
+		const close = screen.getByTestId("select-close");
+		expect(close.props.className).not.toContain("absolute");
+	});
+
 	test("a non-searchable sheet has no search field", async () => {
 		await renderSelect({ options: countries });
 		await openSheet();

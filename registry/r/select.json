@@ -275,6 +275,10 @@
 					"to": "@registry/ui/bottom-sheet"
 				},
 				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
 					"from": "../field",
 					"to": "@registry/ui/field"
 				},

@@ -43,13 +43,13 @@ jobs:
     # Medium, not small: typecheck across every workspace was OOM-killed on the small profile.
     runs-on: namespace-profile-linux-medium
     timeout-minutes: 30
+    # `packages: read` for the install's `@delacournz/*` (GitHub Packages, job token). Never
+    # reaches the publish job, which has its own permissions and installs nothing.
     permissions:
       contents: read
+      packages: read
     env:
       TURBO_TELEMETRY_DISABLED: 1
-      # `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
-      # with only `read:packages`. Never reaches the publish job.
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       # The CLI serves components straight out of `registry/` at this ref. The commit, not the tag:
       # a SHA is immutable, and raw.githubusercontent.com serves it.
       DELACOUR_REGISTRY_REF: ${{ github.sha }}
@@ -95,7 +95,12 @@ jobs:
       - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           cache: bun
-      - run: bun install --frozen-lockfile
+      - name: Install
+        # `@delacournz/*` comes from GitHub Packages (see `bunfig.toml`) with this job's own token,
+        # read-only under `packages: read`. Step level: nothing after the install sees it.
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
 
       - uses: namespace-actions/setup-turbocache@3b82149ffb545cab670093f13bc0bad156917e18 # v0.0.4
       - run: bun run typecheck

@@ -20,11 +20,6 @@ concurrency:
   group: alpha
   cancel-in-progress: false
 
-# `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
-# with only `read:packages`, never a broader token.
-env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
 jobs:
   alpha:
     name: Publish alpha snapshot
@@ -33,9 +28,13 @@ jobs:
     # attestation against the runner, and sigstore only attests GitHub-hosted ones.
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # `packages: read` for the install's `@delacournz/*` (GitHub Packages, job token); `id-token` for
+    # npm's OIDC trusted publishing. NPM_TOKEN is set on the install step only, so the publish step
+    # never has a GitHub token to send to registry.npmjs.org.
     permissions:
       contents: read
       id-token: write
+      packages: read
 
     env:
       TURBO_TELEMETRY_DISABLED: 1
@@ -59,7 +58,12 @@ jobs:
       - name: Update npm for OIDC
         run: npm install -g npm@latest
 
-      - run: bun install --frozen-lockfile
+      - name: Install
+        # `@delacournz/*` comes from GitHub Packages (see `bunfig.toml`) with this job's own token,
+        # read-only under `packages: read`. Step level: nothing after the install sees it.
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
 
       - name: Rebuild the registry
         working-directory: packages/cli

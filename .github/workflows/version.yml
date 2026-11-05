@@ -33,10 +33,7 @@ concurrency:
   group: version-pr
   cancel-in-progress: false
 
-# `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
-# with only `read:packages`, never a broader token.
 env:
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   TURBO_TELEMETRY_DISABLED: 1
 
 jobs:
@@ -46,8 +43,11 @@ jobs:
     if: github.repository_owner == 'delacournz' && github.actor != 'delacour-release[bot]'
     runs-on: namespace-profile-linux-medium
     timeout-minutes: 15
+    # `packages: read`: the install and `bun run version`'s lockfile refresh read `@delacournz/*`
+    # from GitHub Packages with this job's token.
     permissions:
       contents: read
+      packages: read
     steps:
       - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
         with:
@@ -118,7 +118,12 @@ jobs:
         with:
           cache: bun
 
-      - if: steps.detect.outputs.skip == 'false'
+      - name: Install
+        if: steps.detect.outputs.skip == 'false'
+        # `@delacournz/*` comes from GitHub Packages (see `bunfig.toml`) with this job's own token,
+        # read-only under `packages: read`. Step level: nothing after the install sees it.
+        env:
+          NPM_TOKEN: ${{ github.token }}
         run: bun install --frozen-lockfile
 
       # The PR title and its squash commit carry the version this release will ship, so a `git log`
@@ -159,3 +164,5 @@ jobs:
           push-git-tags: false
         env:
           GITHUB_TOKEN: ${{ steps.app.outputs.token }}
+          # `bun install --lockfile-only` re-resolves `@delacournz/*` on GitHub Packages.
+          NPM_TOKEN: ${{ github.token }}

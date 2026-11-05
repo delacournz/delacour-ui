@@ -52,8 +52,13 @@ over a built `dist/`; both commands undo a link made that way first (`restoreBun
 src/
 ├── index.ts              the shebang and the parse, and nothing else
 ├── program.ts            commander wiring, and the one place a failure becomes a message
-├── commands/             init, add, update, browse (list/search/view/info), diff, doctor, theme, mcp, skills
+├── version.ts            CLI_VERSION, baked in at build time — program.ts and telemetry/client.ts read it
+├── commands/             init, add, update, browse (list/search/view/info), diff, doctor, theme, mcp, skills, telemetry
 │   └── manifest.ts       the command surface as data — read at test time only
+├── telemetry/            anonymous usage telemetry — see "Telemetry" below
+│   ├── client.ts         the one instance: product, version, channel, TELEMETRY_HOST, TELEMETRY_DOCS_URL
+│   ├── properties.ts     what a `command` event may say, as pure filters (flags, components, registry kind, error kind)
+│   └── tracker.ts        begin (notice, snapshot) and finish (record, bounded flush) around one command
 ├── lock/                 native-components.lock.json — schema.ts (zod), lock.ts (read, write, amend), hash.ts
 ├── update/               what an update means, with no I/O of its own beyond reading
 │   ├── classify.ts       three texts and a lock entry → what happened to one file (pure)
@@ -529,6 +534,44 @@ Two things in `commands/skills.ts` are load-bearing:
   in `.cursor/` in a repository that has never seen Cursor is a file in someone's diff they did not
   ask for. With none found it falls back to Claude Code and says so; writing nothing and exiting
   zero is the outcome nobody can debug.
+
+### Telemetry
+
+On by default, anonymous, opt-out. The client is `@delacournz/cli-telemetry` (delacour-monorepo,
+GitHub Packages) — environment detection, opt-out precedence, the machine-local identity file, the
+project id and the bounded send all live there, and tsdown **bundles** it, so it is a
+`devDependency` like everything else and `check-bundle` stays green. Product `delacour-cli`, sent
+to `telemetry.delacour.co.nz`. The wire contract is that package's `schema.ts`; read its `AGENTS.md`
+before changing anything here.
+
+- **One `command` event per run.** `program.ts`'s `preAction` hook calls `tracker.begin`; `run()`
+  calls `tracker.finish` with the outcome. Properties are `CommandProperties` in
+  `telemetry/properties.ts` and nothing else: `command`, `flags`, `registry`, `components`,
+  `packageManager`, `expoSdk`, `errorKind`, `exitCode`. Adding one means adding it to that type,
+  to `PROPERTY_DISCLOSURE` (a `Record` over its keys, so the compiler insists), to the CLI docs page
+  and to `apps/web/src/lib/privacy.ts` — `privacy.test.ts` fails by phrase if the policy lags.
+- **Filters, not trust.** `flags` are long names whose `getOptionValueSource` is `cli`, never values
+  (`--install` and `--no-install` share an attribute, so the value says which). `components` only
+  for `add`/`update`/`view`/`diff`/`init`, only when `registry` is `official`, only
+  `/^[a-z0-9-]{1,40}$/`, at most 50. `errorKind` is the class name, never the message. A new
+  property that could carry a path, a URL, a query or free text does not belong here.
+- **`run()` exits once, after the flush.** `process.exit` abandons in-flight requests, so the
+  failures — exactly the runs worth counting — would be dropped. The error is printed first, then
+  `await flush({ timeoutMs: 1500 })`, then the exit. `execute()` returns an `Ending` instead of
+  exiting. A new exit path goes through it.
+- **`mcp` records and flushes at the start** (`begin`), because the server may never return. It is
+  not awaited past the 1.5 s bound and `finish` does nothing for it.
+- **`telemetry` is neither noticed nor counted**; it is how you inspect or turn this off.
+- **The notice** goes to stderr, once, never under `--silent` (and then it is not marked shown, so
+  the next run that is not silent shows it). stdout stays clean for `--json` and the MCP stream.
+- **Off** under `DO_NOT_TRACK`, `DELACOUR_TELEMETRY_DISABLED`, `DELACOUR_CLI_TELEMETRY_DISABLED`,
+  `delacour telemetry disable`, `NODE_ENV=test` and any `*-dev` build — a working tree reports
+  `0.0.0-dev`, so none of the tests or `cli:link` sends anything. `DELACOUR_TELEMETRY_DEBUG=1`
+  prints the request to stderr and sends nothing, in a dev build too.
+- **Documented in four places that must agree:** the docs page's `## Telemetry`
+  (`apps/web/content/docs/native/cli/index.mdx`, the anchor the notice links to), `commands.mdx`'s
+  `telemetry` block (pasted `--help`), `README.md`, and `/privacy` (`apps/web/src/lib/privacy.ts`,
+  held to this directory by `privacy.test.ts`).
 
 ### Errors go to stderr, always
 

@@ -1,5 +1,30 @@
 # @delacour/react-native-ui
 
+## 0.8.0
+
+### Patch Changes
+
+- [#331](https://github.com/delacournz/delacour-ui/pull/331) [`7479d30`](https://github.com/delacournz/delacour-ui/commit/7479d30852107ccaa5056f0658a07b0614a09685) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Input.Group` now bleeds only its outermost blocks through the box padding: the first `start` block and the last `end` block. Before, every block in a section took the negative margin, so a second block was pulled over its separator.
+
+- [#331](https://github.com/delacournz/delacour-ui/pull/331) [`7479d30`](https://github.com/delacournz/delacour-ui/commit/7479d30852107ccaa5056f0658a07b0614a09685) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - An inline modal, or one in a custom host, no longer makes `OverlayProvider` hide the app content from VoiceOver and TalkBack. The content `View` can hold that modal, so hiding it hid the modal too. Stacking and the back button are unchanged.
+
+- [#331](https://github.com/delacournz/delacour-ui/pull/331) [`7479d30`](https://github.com/delacournz/delacour-ui/commit/7479d30852107ccaa5056f0658a07b0614a09685) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Drop the `unique symbol` annotation on the overlay teleport flag. A `const` initialised with `Symbol.for` already has a unique symbol type, and the annotation broke source scanners that parse the file with a plain JavaScript grammar.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Select.Trigger asChild` now passes its `className` to the child. Before, the classes were dropped.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Select.Trigger asChild` no longer passes `disabled={false}` to its child when the select is enabled, so a child that is disabled on its own (`<Button isDisabled>`) stays disabled and never opens the sheet.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Select` draws the sheet close button in its own row with the optional title. Before, with no title, the absolutely positioned close sat over the search field or the first option.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A controlled `Select` now clears its search query when the owner sets `isOpen` to false. Before, only a close from inside the sheet cleared it, so the next open showed the old filtered results.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The `Select` search field no longer takes `isDisabled` or `isInvalid` from an enclosing `Field`. An enabled select inside a disabled field can now be searched, and an invalid value no longer marks the query invalid.
+
+- [#331](https://github.com/delacournz/delacour-ui/pull/331) [`7479d30`](https://github.com/delacournz/delacour-ui/commit/7479d30852107ccaa5056f0658a07b0614a09685) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Slot` now throws for a fragment child. A fragment passes `isValidElement` but drops the props it is given, so an `asChild` trigger around a fragment did nothing.
+- Updated dependencies []:
+  - @delacour/react-native-bottom-sheet@0.8.0
+  - @delacour/react-native-charts@0.8.0
+
 ## 0.7.0
 
 ### Minor Changes

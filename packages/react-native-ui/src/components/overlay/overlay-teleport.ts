@@ -6,7 +6,7 @@
  * A symbol on `globalThis` rather than an export the test kit imports, so the test kit needs no
  * Overlay to be installed beside it.
  */
-export const TELEPORT_INLINE: unique symbol = Symbol.for("delacour.overlay.teleportInline");
+export const TELEPORT_INLINE = Symbol.for("delacour.overlay.teleportInline");
 
 /**
  * Whether an overlay draws inside the app content rather than beside it.

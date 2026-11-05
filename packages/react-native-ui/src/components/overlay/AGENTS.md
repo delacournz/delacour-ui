@@ -19,7 +19,7 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, reports `isExiting`, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `bg-overlay`, opacity follows presence, hidden from assistive technology |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext` and their hooks. `bottom-sheet/` imports it |
-| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `topModalOverlay`, `isBelowTopModal`, `OVERLAY_LAYER_BASE` |
+| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `hidesAppContent`, `topModalOverlay`, `isBelowTopModal`, `OVERLAY_LAYER_BASE` |
 | `overlay-presence.ts` | **Pure.** `reducePresence` — `closed → entering → open → exiting → closed`; `isCurrentFinish` |
 | `overlay-teleport.ts` | **Pure.** `TELEPORT_INLINE`, `isTeleportInline` — whether teleport draws an overlay in place, as its Jest mock does |
 | `overlay.variants.ts` | `overlayVariants` (`scrim`), `OVERLAY_MOTION`, `OVERLAY_SCRIM_TOKEN` |
@@ -73,7 +73,7 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 - **A modal overlay hides the app from screen readers.** Teleport's `"root"` host is a sibling of
   the provider's content `View`, so a panel's `accessibilityViewIsModal` hides only its siblings in
   the host, and VoiceOver or TalkBack could still reach the app behind a dialog. While
-  `hasModalOverlay` is true the provider sets `accessibilityElementsHidden` and
+  `hidesAppContent` is true the provider sets `accessibilityElementsHidden` and
   `importantForAccessibility="no-hide-descendants"` on that `View`. Overlays and sheets draw in the
   host, outside it, and stay reachable. **An exiting modal does not count.** Pass
   `isExiting={phase === "exiting"}` to `Overlay.Portal`, as Dialog and Drawer do: the registry keeps
@@ -82,7 +82,9 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   Jest mock renders a portal in place, inside that `View`, so hiding it would hide the dialog too
   and every query for it would fail. The test kit sets the global `TELEPORT_INLINE` symbol to say
   so, and the provider then leaves the app visible. It is a symbol on `globalThis`, not an import, so
-  the test kit installs without Overlay.
+  the test kit installs without Overlay. **Not for a modal drawn in the app.** A portal with
+  `isInline` or a `hostName` other than `"root"` may be inside that `View`, so it registers with
+  `isInApp` and does not hide the app. It still stacks and takes the back button.
 - **Screen readers stay inside the top modal.** Hiding the app content does not hide a dialog under
   another dialog: both draw in the `"root"` host. So each portal reads the registry: the top open modal's frame sets `accessibilityViewIsModal`, and every frame drawn
   under it sets `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`.

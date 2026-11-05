@@ -60,6 +60,9 @@ const SLOT_NAMES = [
 	"rowCheckbox",
 	"groupHeading",
 	"header",
+	"headerBar",
+	"headerClose",
+	"headerTitle",
 	"empty",
 	"sheetBody",
 ] as const;

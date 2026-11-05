@@ -114,9 +114,12 @@ export function SelectTrigger({ asChild = false, className, children, ...props }
 		testID,
 	};
 
+	// Only a disabled select disables the child. An enabled one passes nothing,
+	// so a child that is disabled on its own stays disabled.
 	if (asChild) {
+		const disabled = isDisabled ? { disabled: true } : undefined;
 		return (
-			<Slot {...accessibility} disabled={isDisabled} onPress={open} {...props}>
+			<Slot {...accessibility} {...disabled} className={className} onPress={open} {...props}>
 				{children}
 			</Slot>
 		);

@@ -2,6 +2,7 @@ import { describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
+import { Button } from "../button";
 import { Field } from "../field";
 import { Text } from "../text";
 import { Select, type SelectProps } from "./select";
@@ -21,6 +22,11 @@ const tap = (element: Parameters<typeof fireEvent>[0]) => fireEvent(element, "ac
 const trigger = (name = "Choose") => screen.getByRole("button", { name });
 const valueText = () => trigger().props.accessibilityValue?.text;
 const openSheet = async (name?: string) => tap(trigger(name));
+
+/** Prints the className it receives, so a test can see what a Slot handed it. */
+function ClassProbe({ className }: { className?: string }): ReactElement {
+	return <Text testID="probe">{className ?? ""}</Text>;
+}
 
 function renderSelect(props: SelectProps = {}) {
 	return renderWithProviders(<Select options={OPTIONS} placeholder="Choose" testID="select" {...props} />, {
@@ -88,6 +94,33 @@ describe("Select trigger", () => {
 			{ wrapper: Sheets }
 		);
 		expect(screen.getByRole("button", { name: "Role picker" })).toBeOnTheScreen();
+	});
+
+	test("an enabled select leaves a disabled asChild child disabled and closed", async () => {
+		await renderWithProviders(
+			<Select options={OPTIONS} placeholder="Choose">
+				<Select.Trigger asChild>
+					<Button isDisabled>Sort</Button>
+				</Select.Trigger>
+			</Select>,
+			{ wrapper: Sheets }
+		);
+		const sort = screen.getByRole("button", { name: "Choose" });
+		expect(sort).toBeDisabled();
+		await tap(sort);
+		expect(screen.queryByRole("radio", { name: "Designer" })).not.toBeOnTheScreen();
+	});
+
+	test("an asChild trigger hands its className to the child", async () => {
+		await renderWithProviders(
+			<Select options={OPTIONS} placeholder="Choose">
+				<Select.Trigger asChild className="self-start">
+					<ClassProbe />
+				</Select.Trigger>
+			</Select>,
+			{ wrapper: Sheets }
+		);
+		expect(screen.getByTestId("probe").props.children).toBe("self-start");
 	});
 });
 
@@ -369,6 +402,13 @@ describe("Select search", () => {
 		expect(screen.getByRole("radio", { name: "Österreich" })).toBeOnTheScreen();
 	});
 
+	test("without a title the close holds its own row above the search", async () => {
+		await renderSelect({ isSearchable: true, options: countries });
+		await openSheet();
+		const close = screen.getByTestId("select-close");
+		expect(close.props.className).not.toContain("absolute");
+	});
+
 	test("a non-searchable sheet has no search field", async () => {
 		await renderSelect({ options: countries });
 		await openSheet();
@@ -382,6 +422,17 @@ describe("Select search", () => {
 		await tap(screen.getByRole("radio", { name: "Zurich" }));
 		await waitFor(() => expect(screen.queryByLabelText("Search")).not.toBeOnTheScreen());
 		await openSheet();
+		expect(screen.getByRole("radio", { name: "Austria" })).toBeOnTheScreen();
+	});
+
+	test("the query clears when a controlled sheet is closed by its owner", async () => {
+		const view = await renderSelect({ isOpen: true, isSearchable: true, options: countries });
+		await fireEvent.changeText(screen.getByLabelText("Search"), "zur");
+		await view.rerender(
+			<Select isOpen={false} isSearchable options={countries} placeholder="Choose" testID="select" />
+		);
+		await waitFor(() => expect(screen.queryByLabelText("Search")).not.toBeOnTheScreen());
+		await view.rerender(<Select isOpen isSearchable options={countries} placeholder="Choose" testID="select" />);
 		expect(screen.getByRole("radio", { name: "Austria" })).toBeOnTheScreen();
 	});
 });
@@ -436,6 +487,24 @@ describe("Select in a Field", () => {
 			{ wrapper: Sheets }
 		);
 		expect(screen.getByRole("button", { name: "Opted out" }).props.accessibilityState.disabled).toBe(false);
+	});
+
+	test("the search field takes neither the Field's disabled nor its invalid state", async () => {
+		await renderWithProviders(
+			<Field isDisabled isInvalid>
+				<Field.Label>Role</Field.Label>
+				<Select isDisabled={false} isSearchable options={OPTIONS} placeholder="Choose" />
+			</Field>,
+			{ wrapper: Sheets }
+		);
+		await openSheet("Role");
+		const search = screen.getByLabelText("Search");
+		const group = search.parent?.parent;
+		expect(String(group?.props.className)).toContain("border");
+		expect(String(group?.props.className)).not.toContain("border-destructive");
+		// The test portal renders in place, under the Field's disabled row, so
+		// read the field's own prop rather than the tree's enabled state.
+		expect(search.props.editable).not.toBe(false);
 	});
 
 	test("the Field.Label text titles the sheet", async () => {

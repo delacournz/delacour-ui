@@ -489,6 +489,24 @@ describe("Select in a Field", () => {
 		expect(screen.getByRole("button", { name: "Opted out" }).props.accessibilityState.disabled).toBe(false);
 	});
 
+	test("the search field takes neither the Field's disabled nor its invalid state", async () => {
+		await renderWithProviders(
+			<Field isDisabled isInvalid>
+				<Field.Label>Role</Field.Label>
+				<Select isDisabled={false} isSearchable options={OPTIONS} placeholder="Choose" />
+			</Field>,
+			{ wrapper: Sheets }
+		);
+		await openSheet("Role");
+		const search = screen.getByLabelText("Search");
+		const group = search.parent?.parent;
+		expect(String(group?.props.className)).toContain("border");
+		expect(String(group?.props.className)).not.toContain("border-destructive");
+		// The test portal renders in place, under the Field's disabled row, so
+		// read the field's own prop rather than the tree's enabled state.
+		expect(search.props.editable).not.toBe(false);
+	});
+
 	test("the Field.Label text titles the sheet", async () => {
 		await renderWithProviders(
 			<Field>

@@ -280,6 +280,8 @@ function SelectRoot(props: SelectProps): ReactElement {
 	// The title and the search field ride at the head of the list rather than
 	// above it, so they count towards the height the sheet sizes itself to. The
 	// close sits in the title's row, so it covers nothing when there is no title.
+	// The search group opts out of the enclosing Field's state: the sheet only
+	// opens when the select is enabled, and a query is never the invalid value.
 	const header = (
 		<View className={slots.header()}>
 			<View className={slots.headerBar()}>
@@ -287,7 +289,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 				<BottomSheet.Close className={slots.headerClose()} testID={testID ? `${testID}-close` : undefined} />
 			</View>
 			{isSearchable ? (
-				<Input.Group size={size}>
+				<Input.Group isDisabled={false} isInvalid={false} size={size}>
 					<Input.Group.Prefix>
 						<Icon icon={IconMagnifyingGlass} />
 					</Input.Group.Prefix>

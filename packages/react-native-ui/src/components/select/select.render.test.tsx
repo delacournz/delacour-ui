@@ -23,6 +23,11 @@ const trigger = (name = "Choose") => screen.getByRole("button", { name });
 const valueText = () => trigger().props.accessibilityValue?.text;
 const openSheet = async (name?: string) => tap(trigger(name));
 
+/** Prints the className it receives, so a test can see what a Slot handed it. */
+function ClassProbe({ className }: { className?: string }): ReactElement {
+	return <Text testID="probe">{className ?? ""}</Text>;
+}
+
 function renderSelect(props: SelectProps = {}) {
 	return renderWithProviders(<Select options={OPTIONS} placeholder="Choose" testID="select" {...props} />, {
 		wrapper: Sheets,
@@ -104,6 +109,18 @@ describe("Select trigger", () => {
 		expect(sort).toBeDisabled();
 		await tap(sort);
 		expect(screen.queryByRole("radio", { name: "Designer" })).not.toBeOnTheScreen();
+	});
+
+	test("an asChild trigger hands its className to the child", async () => {
+		await renderWithProviders(
+			<Select options={OPTIONS} placeholder="Choose">
+				<Select.Trigger asChild className="self-start">
+					<ClassProbe />
+				</Select.Trigger>
+			</Select>,
+			{ wrapper: Sheets }
+		);
+		expect(screen.getByTestId("probe").props.children).toBe("self-start");
 	});
 });
 

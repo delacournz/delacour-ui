@@ -119,7 +119,7 @@ export function SelectTrigger({ asChild = false, className, children, ...props }
 	if (asChild) {
 		const disabled = isDisabled ? { disabled: true } : undefined;
 		return (
-			<Slot {...accessibility} {...disabled} onPress={open} {...props}>
+			<Slot {...accessibility} {...disabled} className={className} onPress={open} {...props}>
 				{children}
 			</Slot>
 		);

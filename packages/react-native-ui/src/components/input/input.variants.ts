@@ -484,6 +484,22 @@ export function resolveGroupSegments(kinds: readonly InputGroupChildKind[]): Inp
 }
 
 /**
+ * Which of a group's direct children are the outermost blocks: the first
+ * `start` block and the last `end` block.
+ *
+ * Only these sit against the box's border, so only these take the negative
+ * margin that cancels the box's own padding. A second start block sits under a
+ * separator or another block, and pulling it up would draw it over that.
+ *
+ * Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function resolveOuterBlocks(kinds: readonly InputGroupChildKind[]): boolean[] {
+	const firstStart = kinds.indexOf("block-start");
+	const lastEnd = kinds.lastIndexOf("block-end");
+	return kinds.map((_, index) => index === firstStart || index === lastEnd);
+}
+
+/**
  * The `accent-*` class uniwind resolves the placeholder colour from.
  *
  * Pure, so it is unit-testable. See AGENTS.md.

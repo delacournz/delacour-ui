@@ -9,7 +9,7 @@ import {
 } from "./overlay.context";
 import { OverlayPortal } from "./overlay-portal";
 import {
-	hasModalOverlay,
+	hidesAppContent,
 	INITIAL_OVERLAY_REGISTRY,
 	type OverlayLayer,
 	type OverlayRegistryAction,
@@ -28,8 +28,8 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 	const current = useRef<OverlayRegistryState>(INITIAL_OVERLAY_REGISTRY);
 	const [state, setState] = useState<OverlayRegistryState>(INITIAL_OVERLAY_REGISTRY);
 
-	const present = useCallback((id: string, layer: OverlayLayer) => {
-		current.current = reduceOverlayRegistry(current.current, { type: "open", id, layer });
+	const present = useCallback((id: string, layer: OverlayLayer, isInApp: boolean) => {
+		current.current = reduceOverlayRegistry(current.current, { type: "open", id, layer, isInApp });
 		setState(current.current);
 	}, []);
 
@@ -66,10 +66,12 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 	// While a modal overlay is open, the app content is hidden from VoiceOver
 	// and TalkBack. The overlays draw in teleport's host, outside this view in
 	// the native tree, so they stay reachable. An exiting modal no longer hides
-	// it, so focus can return to the trigger in `onExited`. Where teleport draws
-	// inline — the Jest mock does — the overlays are inside this view, so it
-	// stays visible.
-	const isAppHidden = hasModalOverlay(state) && !isTeleportInline();
+	// it, so focus can return to the trigger in `onExited`. A modal drawn
+	// inside this view — `isInline`, or a host other than `"root"` — does not
+	// hide it, since that would hide the modal too. Where teleport draws inline
+	// — the Jest mock does — every overlay is inside this view, so it stays
+	// visible.
+	const isAppHidden = hidesAppContent(state) && !isTeleportInline();
 	const registry = (
 		<OverlayContext.Provider value={value}>
 			<View

@@ -25,6 +25,8 @@ type DemoProps = {
 	onDismiss?: () => void;
 	onBack?: () => void;
 	onExited?: () => void;
+	isInline?: boolean;
+	hostName?: string;
 };
 
 function Demo({
@@ -34,6 +36,8 @@ function Demo({
 	onDismiss,
 	onBack,
 	onExited,
+	isInline,
+	hostName,
 }: DemoProps): ReactElement | null {
 	const [isOpen, setIsOpen] = useState(defaultOpen);
 	const { isPresent, phase, progress } = useOverlayPresence({ isOpen, enterMs: 1, exitMs: 1, onExited });
@@ -54,7 +58,7 @@ function Demo({
 		<>
 			<Text onPress={() => setIsOpen(true)}>{`open ${name}`}</Text>
 			{isPresent ? (
-				<Overlay.Portal id={name} isExiting={phase === "exiting"} layer={layer}>
+				<Overlay.Portal hostName={hostName} id={name} isExiting={phase === "exiting"} isInline={isInline} layer={layer}>
 					<Overlay.Scrim onDismiss={close} progress={progress} testID={`${name}-scrim`} />
 					<View testID={`${name}-panel`}>
 						<Text>{`${name} panel`}</Text>
@@ -181,6 +185,13 @@ async function withTeleportOutOfTree(body: () => Promise<void>): Promise<void> {
 	}
 }
 
+/** The provider's app content `View`: the parent of a demo's trigger text, hidden or not. */
+function appContent(name: string): { props: { accessibilityElementsHidden?: boolean } } {
+	const parent = screen.getByText(`open ${name}`, { includeHiddenElements: true }).parent;
+	if (parent === null) throw new Error(`No app content around the ${name} trigger`);
+	return parent;
+}
+
 describe("OverlayProvider and screen readers", () => {
 	test("the test kit marks teleport inline, so an open modal and the app stay reachable", async () => {
 		await renderWithProviders(<Demo name="kit" />, { wrapper: Provider });
@@ -244,6 +255,34 @@ describe("OverlayProvider and screen readers", () => {
 		await fireEvent.press(scrim("upper"));
 		expect(frame("lower").props.accessibilityElementsHidden).toBe(false);
 		expect(frame("lower").props.accessibilityViewIsModal).toBe(true);
+	});
+
+	test("an inline modal does not hide the app content that holds it", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<Demo isInline name="dialog" />, { wrapper: Provider });
+			expect(appContent("dialog").props.accessibilityElementsHidden).toBe(false);
+			expect(frame("dialog").props.accessibilityViewIsModal).toBe(true);
+		});
+	});
+
+	test("a modal in a custom host does not hide the app content", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(<Demo hostName="sheet" name="dialog" />, { wrapper: Provider });
+			expect(appContent("dialog").props.accessibilityElementsHidden).toBe(false);
+		});
+	});
+
+	test("a teleported modal still hides the app content beside an inline one", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(
+				<>
+					<Demo isInline name="inline" />
+					<Demo name="teleported" />
+				</>,
+				{ wrapper: Provider }
+			);
+			expect(appContent("teleported").props.accessibilityElementsHidden).toBe(true);
+		});
 	});
 
 	test("a toast does not hide the app content", async () => {

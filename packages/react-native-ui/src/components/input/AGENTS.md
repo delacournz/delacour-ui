@@ -132,7 +132,9 @@ or drops its focus.
   slack under a footer's counter. The block takes a `-mt-*` / `-mb-*` equal to
   the multiline `py-*` (the `blockPosition` compounds), the way a horizontal
   `Separator` bleeds through the horizontal inset, so its own padding is all
-  there is on either side.
+  there is on either side. Only the outermost block takes it — the first `start`
+  block and the last `end` block, picked by the pure `resolveOuterBlocks`. A
+  second block in a section would be pulled over its separator.
 - **A `Block` draws no border.** Divide it from the row with a `Separator`, or
   leave it flush. Bare text and `Icon`s in it take the decorator treatment.
 - **`Separator` has no `orientation` prop.** `InputGroupPlacementProvider` tells

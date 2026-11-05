@@ -44,7 +44,8 @@ let hasWarnedMissingProvider = false;
  *
  * While a modal overlay is open above it, the frame is hidden from screen
  * readers, so VoiceOver and TalkBack cannot leave the top dialog for one under
- * it.
+ * it. A modal with `isInline` or a custom `hostName` still stacks this way, but
+ * does not make `OverlayProvider` hide the app content, which may hold it.
  *
  * Without an `OverlayProvider` above, or with `isInline`, the children render
  * where they are written, in an absolute fill of the nearest positioned
@@ -62,13 +63,17 @@ export function OverlayPortal({
 	const overlayId = id ?? ownId;
 	const registry = useOptionalOverlay();
 
+	// Only the `"root"` host sits beside the provider's app content. Inline, or
+	// in another host, the overlay may be inside that content, so its modal must
+	// not hide it.
+	const isInApp = isInline || hostName !== "root";
 	const present = registry?.present;
 	const dismissed = registry?.dismissed;
 	useEffect(() => {
 		if (present === undefined || dismissed === undefined) return;
-		present(overlayId, layer);
+		present(overlayId, layer, isInApp);
 		return () => dismissed(overlayId);
-	}, [present, dismissed, overlayId, layer]);
+	}, [present, dismissed, overlayId, layer, isInApp]);
 
 	const exiting = registry?.exiting;
 	useEffect(() => {

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
 	hasModalOverlay,
+	hidesAppContent,
 	INITIAL_OVERLAY_REGISTRY,
 	isBelowTopModal,
 	isTopOverlay,
@@ -166,6 +167,51 @@ describe("hasModalOverlay", () => {
 		let state = reduceOverlayRegistry(INITIAL_OVERLAY_REGISTRY, { type: "open", id: "dialog", layer: "modal" });
 		state = reduceOverlayRegistry(state, { type: "close", id: "dialog" });
 		expect(hasModalOverlay(state)).toBe(false);
+	});
+});
+
+describe("hidesAppContent", () => {
+	test("is true while a teleported modal is open", () => {
+		const state = apply({ type: "open", id: "dialog", layer: "modal", isInApp: false });
+		expect(hidesAppContent(state)).toBe(true);
+	});
+
+	test("is false while the only open modal draws inside the app content", () => {
+		const state = apply({ type: "open", id: "dialog", layer: "modal", isInApp: true });
+		expect(hidesAppContent(state)).toBe(false);
+	});
+
+	test("is true when a teleported modal is open beside one drawn in the app", () => {
+		const state = apply(
+			{ type: "open", id: "inline", layer: "modal", isInApp: true },
+			{ type: "open", id: "teleported", layer: "modal", isInApp: false }
+		);
+		expect(hidesAppContent(state)).toBe(true);
+	});
+
+	test("is false while the only teleported modal is exiting", () => {
+		const state = apply(
+			{ type: "open", id: "dialog", layer: "modal", isInApp: false },
+			{ type: "exiting", id: "dialog", isExiting: true }
+		);
+		expect(hidesAppContent(state)).toBe(false);
+	});
+
+	test("ignores anchored overlays and toasts", () => {
+		const state = apply(
+			{ type: "open", id: "pop", layer: "anchored", isInApp: false },
+			{ type: "open", id: "toast", layer: "toast", isInApp: false }
+		);
+		expect(hidesAppContent(state)).toBe(false);
+	});
+
+	test("a modal drawn in the app still stacks as the top modal", () => {
+		const state = apply(
+			{ type: "open", id: "lower", layer: "modal", isInApp: false },
+			{ type: "open", id: "upper", layer: "modal", isInApp: true }
+		);
+		expect(topModalOverlay(state)).toBe("upper");
+		expect(isBelowTopModal(state, "lower")).toBe(true);
 	});
 });
 

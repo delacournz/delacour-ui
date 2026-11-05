@@ -28,6 +28,11 @@ export type OverlayRegistryEntry = {
 	seq: number;
 	/** Playing its exit animation: still drawn, no longer what the screen is about. */
 	isExiting: boolean;
+	/**
+	 * Draws inside the provider's app content `View` — inline, or in a host other
+	 * than `"root"` — rather than in the `"root"` host beside it.
+	 */
+	isInApp: boolean;
 };
 
 export type OverlayRegistryState = {
@@ -38,7 +43,7 @@ export type OverlayRegistryState = {
 export const INITIAL_OVERLAY_REGISTRY: OverlayRegistryState = { nextSeq: 1, open: [] };
 
 export type OverlayRegistryAction =
-	| { type: "open"; id: string; layer: OverlayLayer }
+	| { type: "open"; id: string; layer: OverlayLayer; isInApp?: boolean }
 	| { type: "exiting"; id: string; isExiting: boolean }
 	| { type: "close"; id: string };
 
@@ -47,7 +52,7 @@ export type OverlayRegistryAction =
  *
  * An `open` stamps the next sequence number; an overlay already open is
  * re-stamped rather than duplicated, which brings it forward and keeps its
- * `isExiting`. An `exiting` marks an overlay that is animating closed, and
+ * `isExiting`. `isInApp` defaults to false. An `exiting` marks an overlay that is animating closed, and
  * keeps its place in the z-order. A `close` of an overlay that is not open, or an `exiting` that
  * changes nothing, returns the same state object, so an unmount racing an exit
  * causes no render.
@@ -77,7 +82,10 @@ export function reduceOverlayRegistry(
 			const isExiting = previous?.isExiting ?? false;
 			return {
 				nextSeq: state.nextSeq + 1,
-				open: [...others, { id: action.id, layer: action.layer, seq: state.nextSeq, isExiting }],
+				open: [
+					...others,
+					{ id: action.id, layer: action.layer, seq: state.nextSeq, isExiting, isInApp: action.isInApp ?? false },
+				],
 			};
 		}
 	}
@@ -133,6 +141,18 @@ export function isTopOverlay(state: OverlayRegistryState, id: string): boolean {
  */
 export function hasModalOverlay(state: OverlayRegistryState): boolean {
 	return state.open.some((entry) => entry.layer === "modal" && !entry.isExiting);
+}
+
+/**
+ * Whether `OverlayProvider` must hide its app content from screen readers.
+ *
+ * True while a modal that is not exiting draws in the `"root"` host, beside the
+ * app content. A modal that draws inside the app content — inline, or in another
+ * host — does not count: hiding the content would hide that modal too. It still
+ * stacks and answers the back button like any other modal.
+ */
+export function hidesAppContent(state: OverlayRegistryState): boolean {
+	return state.open.some((entry) => entry.layer === "modal" && !entry.isExiting && !entry.isInApp);
 }
 
 /**

@@ -5,8 +5,11 @@ import type { OverlayLayer, OverlayRegistryState } from "./overlay-registry";
 export type OverlayContextValue = {
 	/** The open set and its z-order. A change re-renders every presented portal. */
 	state: OverlayRegistryState;
-	/** A portal reports that its overlay is presented, and in which layer. */
-	present: (id: string, layer: OverlayLayer) => void;
+	/**
+	 * A portal reports that its overlay is presented, in which layer, and
+	 * whether it draws inside the app content rather than in the `"root"` host.
+	 */
+	present: (id: string, layer: OverlayLayer, isInApp: boolean) => void;
 	/** A portal reports that its overlay started, or stopped, animating closed. */
 	exiting: (id: string, isExiting: boolean) => void;
 	/** The overlay's portal unmounted. */

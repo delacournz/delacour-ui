@@ -2,6 +2,7 @@ import { describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
+import { Button } from "../button";
 import { Field } from "../field";
 import { Text } from "../text";
 import { Select, type SelectProps } from "./select";
@@ -88,6 +89,21 @@ describe("Select trigger", () => {
 			{ wrapper: Sheets }
 		);
 		expect(screen.getByRole("button", { name: "Role picker" })).toBeOnTheScreen();
+	});
+
+	test("an enabled select leaves a disabled asChild child disabled and closed", async () => {
+		await renderWithProviders(
+			<Select options={OPTIONS} placeholder="Choose">
+				<Select.Trigger asChild>
+					<Button isDisabled>Sort</Button>
+				</Select.Trigger>
+			</Select>,
+			{ wrapper: Sheets }
+		);
+		const sort = screen.getByRole("button", { name: "Choose" });
+		expect(sort).toBeDisabled();
+		await tap(sort);
+		expect(screen.queryByRole("radio", { name: "Designer" })).not.toBeOnTheScreen();
 	});
 });
 

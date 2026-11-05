@@ -2,7 +2,12 @@ import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View } from "react-native";
 import { IconDefaultsProvider } from "../icon";
 import { TextClassProvider } from "../text/text.context";
-import { InputGroupPlacementProvider, useInputGroupPart, useInputGroupPlacement } from "./input.context";
+import {
+	InputGroupPlacementProvider,
+	useInputGroupPart,
+	useInputGroupPlacement,
+	useIsOuterInputGroupBlock,
+} from "./input.context";
 import { INPUT_DECORATOR_ICON_TOKEN, INPUT_INVALID_DECORATOR_ICON_TOKEN, inputVariants } from "./input.variants";
 import { wrapTextChildren } from "./input-group-decorator";
 
@@ -41,7 +46,10 @@ export type InputGroupBlockProps = {
 export function InputGroupBlock({ position, className, children }: InputGroupBlockProps): ReactElement {
 	const { isInvalid, size } = useInputGroupPart("Input.Group.Block");
 	const placement = useInputGroupPlacement();
-	const slots = inputVariants({ blockPosition: position, isInvalid, size });
+	// Only the block against the border cancels the box's padding. Another
+	// block in the same section would be pulled over what sits beside it.
+	const isOuter = useIsOuterInputGroupBlock();
+	const slots = inputVariants({ blockPosition: isOuter ? position : "none", isInvalid, size });
 
 	if (process.env.NODE_ENV !== "production" && placement === "row") {
 		console.warn(

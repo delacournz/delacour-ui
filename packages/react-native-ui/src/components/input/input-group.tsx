@@ -13,7 +13,12 @@ import { useButtonGroupItemContext } from "../button/button.context";
 import { resolveButtonSizeStep } from "../button/button.variants";
 import { useFieldContext } from "../field/field.context";
 import { Pressable } from "../pressable";
-import { type InputGroupContextValue, InputGroupPlacementProvider, InputGroupProvider } from "./input.context";
+import {
+	type InputGroupContextValue,
+	InputGroupOuterBlockProvider,
+	InputGroupPlacementProvider,
+	InputGroupProvider,
+} from "./input.context";
 import {
 	type InputGroupChildKind,
 	type InputGroupSegment,
@@ -22,6 +27,7 @@ import {
 	resolveGroupSegments,
 	resolveInputGroupClass,
 	resolveInputGroupRowClass,
+	resolveOuterBlocks,
 } from "./input.variants";
 import { InputGroupBlock, type InputGroupBlockProps } from "./input-group-block";
 import { InputGroupButton } from "./input-group-button";
@@ -137,15 +143,26 @@ function InputGroupRoot({
 /**
  * Sorts a group's direct children into the box's three sections — above the
  * row, in it, and below it. `resolveGroupSegments` holds the rule; this only
- * names what each child is.
+ * names what each child is. The outermost block of each section is marked, so
+ * only it cancels the box's padding (`resolveOuterBlocks`).
  */
 function sortIntoSections(children: ReactNode): Record<InputGroupSegment, ReactNode[]> {
 	const items = Children.toArray(children);
-	const segments = resolveGroupSegments(items.map(classifyGroupChild));
+	const kinds = items.map(classifyGroupChild);
+	const segments = resolveGroupSegments(kinds);
+	const outer = resolveOuterBlocks(kinds);
 	const sections: Record<InputGroupSegment, ReactNode[]> = { end: [], row: [], start: [] };
 
 	for (const [index, child] of items.entries()) {
-		sections[segments[index] ?? "row"].push(child);
+		const placed =
+			outer[index] && isValidElement(child) ? (
+				<InputGroupOuterBlockProvider key={child.key} value>
+					{child}
+				</InputGroupOuterBlockProvider>
+			) : (
+				child
+			);
+		sections[segments[index] ?? "row"].push(placed);
 	}
 
 	return sections;

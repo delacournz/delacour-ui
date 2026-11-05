@@ -24,6 +24,7 @@ import {
 	resolveInputGroupClass,
 	resolveInputGroupRowClass,
 	resolveIsDecorative,
+	resolveOuterBlocks,
 	resolvePlaceholderAccentClass,
 	resolveSelectionAccentClass,
 } from "./input.variants";
@@ -657,6 +658,31 @@ describe("resolveGroupSegments", () => {
 
 	test("handles an empty group", () => {
 		expect(resolveGroupSegments([])).toEqual([]);
+	});
+});
+
+describe("resolveOuterBlocks", () => {
+	test("marks only the first start block and the last end block", () => {
+		expect(
+			resolveOuterBlocks(["block-start", "separator", "block-start", "content", "block-end", "separator", "block-end"])
+		).toEqual([true, false, false, false, false, false, true]);
+	});
+
+	test("follows the written order, not the section order", () => {
+		expect(resolveOuterBlocks(["block-end", "content", "block-start", "block-end"])).toEqual([
+			false,
+			false,
+			true,
+			true,
+		]);
+	});
+
+	test("marks a lone block on each edge", () => {
+		expect(resolveOuterBlocks(["block-start", "content", "block-end"])).toEqual([true, false, true]);
+	});
+
+	test("marks nothing when there are no blocks", () => {
+		expect(resolveOuterBlocks(["content", "separator", "content"])).toEqual([false, false, false]);
 	});
 });
 

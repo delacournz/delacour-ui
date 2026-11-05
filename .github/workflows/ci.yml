@@ -63,10 +63,13 @@ on:
 # points it at Namespace's remote cache with `setup-turbocache`. `.github/workflows.test.ts` fails
 # if a Namespace job drops one, or a GitHub-hosted job (no volume, no instance token) gains one.
 
-# `statuses: write` is for the `signoff` job. The default token is read-only on statuses.
+# `packages: read` lets each job's Install step read `@delacournz/*` from GitHub Packages with the
+# job's own token, set as NPM_TOKEN on that step only. Fork pull requests run none of these jobs (the
+# `if:` gates below, and `resolve` refuses a fork's PR on dispatch), so no fork token ever installs.
+# `statuses: write` is the `signoff` job's alone, granted there.
 permissions:
   contents: read
-  statuses: write
+  packages: read
 
 concurrency:
   # The target is in the key so two dispatches from the same ref for different PRs or SHAs do not
@@ -76,11 +79,8 @@ concurrency:
   # red run on `develop` or a release branch should mean the tree is broken, not superseded.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-# `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
-# with only `read:packages`, never a broader token.
 env:
   TURBO_TELEMETRY_DISABLED: 1
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
   # Picks the one commit every job below checks out and the `signoff` job writes statuses for, and
@@ -134,7 +134,7 @@ jobs:
               --jq '[.state, (.head.repo.full_name // ""), .head.sha] | @tsv') \
               || { echo "::error::#${PR} is not a pull request in ${REPO}"; exit 1; }
             [ "$STATE" = "open" ] || { echo "::error::#${PR} is ${STATE}, not open"; exit 1; }
-            # A fork's head is untrusted code; this run carries NPM_TOKEN and a status-writing token.
+            # A fork's head is untrusted code; this run carries a package-reading and a status-writing token.
             [ "$HEAD_REPO" = "$REPO" ] || { echo "::error::#${PR} is from ${HEAD_REPO:-a deleted fork}; fork pull requests are not run here"; exit 1; }
             if [ -n "$INPUT_SHA" ] && [ "$SHA" != "$HEAD_SHA" ]; then
               echo "::error::#${PR}'s head is ${HEAD_SHA}, not ${SHA}; it moved, or the SHA is from another branch"
@@ -174,7 +174,12 @@ jobs:
       - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           cache: bun
-      - run: bun install --frozen-lockfile
+      - name: Install
+        # `@delacournz/*` comes from GitHub Packages (see `bunfig.toml`) with this job's own token,
+        # read-only under `packages: read`. Step level: nothing after the install sees it.
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
       # `@delacour/web#typecheck` depends on `@delacour/web#codegen` (see turbo.jsonc): TanStack
       # Router generates the gitignored `apps/web/src/routeTree.gen.ts` during that build, and tsc
       # cannot run without it.
@@ -197,7 +202,10 @@ jobs:
       - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           cache: bun
-      - run: bun install --frozen-lockfile
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
       - uses: namespace-actions/setup-turbocache@3b82149ffb545cab670093f13bc0bad156917e18 # v0.0.4
       - run: bun run check
 
@@ -217,7 +225,10 @@ jobs:
       - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           cache: bun
-      - run: bun install --frozen-lockfile
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
       - uses: namespace-actions/setup-turbocache@3b82149ffb545cab670093f13bc0bad156917e18 # v0.0.4
       - run: bun run test
 
@@ -237,7 +248,10 @@ jobs:
       - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           cache: bun
-      - run: bun install --frozen-lockfile
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
       # Scoped to the docs site on purpose. This is the only thing Railway deploys, and an
       # unfiltered `turbo build` would drag in the Expo playground for no benefit.
       #
@@ -274,7 +288,10 @@ jobs:
       - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           cache: bun
-      - run: bun install --frozen-lockfile
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
 
       # The registry is committed, so a component change that does not rebuild
       # it would publish a registry describing the previous version. It holds no
@@ -347,7 +364,10 @@ jobs:
       - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           cache: bun
-      - run: bun install --frozen-lockfile
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
 
       # Scaffolds an Expo app, installs Uniwind and Tailwind, runs init and adds
       # every item, then typechecks the result. A clean tsc is the proof that
@@ -389,7 +409,10 @@ jobs:
       - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
         with:
           cache: bun
-      - run: bun install --frozen-lockfile
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
       - name: Copy every suite and run it
         working-directory: packages/cli
         run: bun run verify:expo --tests ${{ matrix.runner }}
@@ -407,6 +430,9 @@ jobs:
       (github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop')
     runs-on: namespace-profile-linux-medium
     timeout-minutes: 5
+    # The default token is read-only on statuses. Nothing here checks out or installs.
+    permissions:
+      statuses: write
     steps:
       - env:
           GH_TOKEN: ${{ github.token }}

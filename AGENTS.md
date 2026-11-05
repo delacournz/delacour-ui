@@ -260,6 +260,13 @@ with `E422 … Unsupported GitHub Actions runner environment: "self-hosted"`. Mo
 Namespace means either `--provenance=false` (OIDC without the attestation) or an npm token, and
 neither is worth one short job per release.
 
+Every `bun install` in a workflow reads `@delacournz/*` from GitHub Packages with the job's own
+`GITHUB_TOKEN`: the job grants `packages: read` and the install step alone sets
+`NPM_TOKEN: ${{ github.token }}`, so no later step — an `npm publish` least of all — sees it. Each
+package grants this repository read access under **Manage Actions access** on its settings page; a new
+`@delacournz/*` dependency 401s in CI until it does. `.github/workflows.test.ts` fails on a
+`secrets.NPM_TOKEN`, a workflow- or job-wide `NPM_TOKEN`, or an install without `packages: read`.
+
 The required contexts carry no `integration_id` in the ruleset, on purpose: a local signoff is
 written through the GitHub CLI's OAuth app and the version pull request's through GitHub Actions,
 and both have to satisfy the same rule.

@@ -137,3 +137,46 @@ describe("Namespace caching", () => {
 		});
 	}
 });
+
+/**
+ * `bun install` resolves `@delacournz/*` from GitHub Packages with whatever `NPM_TOKEN` holds (see
+ * `bunfig.toml`). In CI that is the job's own token, granted `packages: read`, and only on the step
+ * that installs — never a personal access token from `secrets`, never workflow- or job-wide, and so
+ * never beside an `npm publish` to registry.npmjs.org, which authenticates with OIDC alone.
+ */
+describe("GitHub Packages token", () => {
+	type Permissions = Record<string, string> | string | undefined;
+	type Step = { name?: string; run?: string; env?: Record<string, string>; with?: Record<string, unknown> };
+	type Job = { permissions?: Permissions; env?: Record<string, string>; steps?: Step[] };
+	type Parsed = { permissions?: Permissions; env?: Record<string, string>; jobs: Record<string, Job> };
+	const JOB_TOKEN = "${{ github.token }}";
+	const installs = (step: Step) =>
+		/\bbun install\b/.test(step.run ?? "") || /\bbun run version\b/.test(String(step.with?.["version-script"] ?? ""));
+	const publishes = (step: Step) => /\bnpm publish\b|changeset-alpha\.ts/.test(step.run ?? "");
+	const files = readdirSync(WORKFLOWS).filter((name) => /\.ya?ml$/.test(name));
+
+	for (const file of files) {
+		test(`${file}: NPM_TOKEN is the job token, on install steps only, with packages: read`, async () => {
+			const { text } = await load(file);
+			expect(text).not.toContain("secrets.NPM_TOKEN");
+			const parsed = Bun.YAML.parse(text) as Parsed;
+			expect(parsed.env?.NPM_TOKEN).toBeUndefined();
+			for (const [name, job] of Object.entries(parsed.jobs)) {
+				expect({ file, name, jobEnv: job.env?.NPM_TOKEN }).toEqual({ file, name, jobEnv: undefined });
+				const steps = job.steps ?? [];
+				const effective = job.permissions ?? parsed.permissions;
+				for (const step of steps) {
+					const label = step.name ?? step.run ?? "step";
+					if (installs(step)) {
+						expect({ file, name, label, token: step.env?.NPM_TOKEN }).toEqual({ file, name, label, token: JOB_TOKEN });
+						const packages = typeof effective === "object" ? effective.packages : effective;
+						expect({ file, name, packages }).toEqual({ file, name, packages: "read" });
+					} else {
+						expect({ file, name, label, token: step.env?.NPM_TOKEN }).toEqual({ file, name, label, token: undefined });
+					}
+					if (publishes(step)) expect(installs(step)).toBe(false);
+				}
+			}
+		});
+	}
+});

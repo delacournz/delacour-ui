@@ -4596,6 +4596,12 @@
 			"devDependencies": [],
 			"files": [
 				"lib/slot.tsx"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{

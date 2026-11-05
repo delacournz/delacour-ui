@@ -1,6 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
-import { render } from "@testing-library/react-native";
-import type { ReactElement } from "react";
+import { createElement, Fragment, type ReactElement } from "react";
+import { render } from "../test/render";
 import { Slot } from "./slot";
 
 type OptionalPressChildProps = { onPress?: () => void; onReceive: (onPress: (() => void) | undefined) => void };
@@ -18,15 +18,10 @@ function OptionalPressChild({ onPress, onReceive }: OptionalPressChildProps): Re
 describe("Slot", () => {
 	test("rejects a fragment child, which cannot receive props", async () => {
 		jest.spyOn(console, "error").mockImplementation(() => {});
-		await expect(
-			render(
-				<Slot onPress={jest.fn()}>
-					<>
-						<OptionalPressChild onReceive={() => {}} />
-					</>
-				</Slot>
-			)
-		).rejects.toThrow("Slot expects a single React element child; text and fragments cannot receive props.");
+		const fragment = createElement(Fragment, null, <OptionalPressChild onReceive={() => {}} />);
+		await expect(render(<Slot onPress={jest.fn()}>{fragment}</Slot>)).rejects.toThrow(
+			"Slot expects a single React element child; text and fragments cannot receive props."
+		);
 		jest.restoreAllMocks();
 	});
 });

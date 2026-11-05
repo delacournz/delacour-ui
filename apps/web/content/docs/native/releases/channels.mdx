@@ -1,0 +1,49 @@
+---
+title: Release channels
+description: How a change reaches npm, and how to try it before it is released.
+icon: Tags
+---
+
+<Callout type="warn" title="Pre-1.0">
+Every package is below `1.0`. The API is still moving — component surfaces, prop names and token
+names can all change between releases.
+</Callout>
+
+## One version for every package
+
+`delacour` (the CLI), `@delacour/react-native-ui`, `@delacour/react-native-charts` and
+`@delacour/react-native-bottom-sheet` always share a version. A change to any one of them moves all
+four, so `delacour@x.y.z` copies components that work with `@delacour/react-native-ui@x.y.z`, and a
+release is one tag, `vx.y.z`.
+
+## Two dist-tags
+
+| Tag | Version | Published | Use it for |
+| --- | --- | --- | --- |
+| `latest` | `x.y.z` | When the release pull request is merged | Apps — this is what a bare install resolves to |
+| `alpha` | `x.y.z-alpha.<datetime>` | On every change merged to `develop` | Trying what has landed before it is released |
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button"] }, { verb: "add", packages: ["@delacour/react-native-ui"] }]} />
+
+To follow the alpha line, name the tag. An alpha CLI installs the alpha packages to match:
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button"] }, { verb: "add", packages: ["@delacour/react-native-ui@alpha"] }]} />
+
+```
+ change merged to develop --> x.y.z-alpha.<datetime> --> npm @alpha
+            |                        (every merge)
+            v
+ release pull request merged --> x.y.z --> npm @latest
+                                           + GitHub Release
+                                           + this site updated
+```
+
+Right after a release, `alpha` can name a snapshot older than the new `latest` until the next change
+lands. Prefer `latest` unless you need something that has not shipped yet.
+
+## Where the notes come from
+
+Every change that ships carries a [changeset](https://github.com/changesets/changesets) — a short
+description of what changed for someone using the package. The [release notes](/docs/native/releases)
+are built from them: released versions from each package's `CHANGELOG.md`, and the changesets still
+waiting on `develop` as **Unreleased**, so they are on this site before they are on npm.

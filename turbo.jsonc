@@ -37,7 +37,14 @@
 		// `codegen` is a whole `vite build`; caching it is most of what caching saves.
 		"@delacour/web#codegen": {
 			"dependsOn": ["transit"],
-			"inputs": ["$TURBO_DEFAULT$", "!src/routeTree.gen.ts"],
+			// `release-notes` runs first and reads every published package's changelog and the pending changesets.
+			"inputs": [
+				"$TURBO_DEFAULT$",
+				"!src/routeTree.gen.ts",
+				"$TURBO_ROOT$/packages/*/CHANGELOG.md",
+				"$TURBO_ROOT$/packages/*/package.json",
+				"$TURBO_ROOT$/.changeset/**"
+			],
 			// The route tree alone: it is all `typecheck` needs, and restoring `.output/` from cache
 			// raced `build`'s own `vite build` into the same directory when signoff ran both at once.
 			"outputs": ["src/routeTree.gen.ts"],
@@ -67,7 +74,10 @@
 				"$TURBO_ROOT$/apps/playground/.eas/**",
 				"$TURBO_ROOT$/packages/cli/src/**",
 				"$TURBO_ROOT$/registry/**",
-				"$TURBO_ROOT$/bun.lock"
+				"$TURBO_ROOT$/bun.lock",
+				"$TURBO_ROOT$/packages/*/CHANGELOG.md",
+				"$TURBO_ROOT$/packages/*/package.json",
+				"$TURBO_ROOT$/.changeset/**"
 			],
 			"outputs": []
 		},

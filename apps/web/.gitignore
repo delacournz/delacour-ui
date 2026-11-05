@@ -12,3 +12,7 @@ src/routeTree.gen.ts
 # PR screenshots: captured by `bun run screenshots`, pushed to an `assets/<branch>`
 # branch and linked from the pull request body — never committed to the source tree.
 screenshots/
+
+# Release notes pages, produced by `bun run release-notes` from each published package's
+# CHANGELOG.md + .changeset/ (see scripts/generate-release-notes.ts). channels.mdx is hand-written.
+/content/docs/native/releases/*.md

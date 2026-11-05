@@ -39,7 +39,7 @@ content/docs/native/
 ├── getting-started/       root folder → navbar tab
 ├── components/            root folder → navbar tab
 ├── cli/                   root folder → navbar tab
-└── releases/              root folder → navbar tab
+└── releases/              root folder → navbar tab; *.md generated — see "Release notes"
 content/docs/charts/       the /docs/charts namespace — one root folder, one navbar tab
 
 src/
@@ -1154,7 +1154,27 @@ breaks hooks. Hydration warnings in the console are the first symptom.
   indexed from the package's own `AGENTS.md`. `packages/react-native-ui/src/docs.test.ts` fails the build
   on a component missing either, so that index is a reliable place to start when writing a page
   here — and it is where prose trimmed from a page belongs.
-- `releases/index.mdx` is hand-maintained from `git log --oneline -- packages/react-native-ui`.
+
+## Release notes are generated from Changesets
+
+`content/docs/native/releases/` holds one hand-written page, `channels.mdx`; the rest are
+**generated and gitignored**. `bun run release-notes` (`scripts/generate-release-notes.ts`, run
+first by `dev`, `build` and `codegen`) writes `index.md` — what is pending plus the latest release,
+across every package — and one page per published package (`react-native-ui.md`, `cli.md`,
+`react-native-charts.md`, `react-native-bottom-sheet.md`), which `meta.json` lists under
+`---Packages---`. Ported from warden's docs site.
+
+- **Released versions come from each package's `CHANGELOG.md`**, newest first: PR link kept, commit
+  hash and "Thanks" dropped, `Updated dependencies` items dropped. A version with nothing of its own
+  (it moved with the `fixed` group) says so rather than disappearing.
+- **Pending `.changeset/*.md` files show as Unreleased**, under the packages their frontmatter names,
+  with the version they will ship as. Staging builds from `develop`, so it previews the next release.
+- **GitHub release links** are `vX.Y.Z` from `0.6.0` (the first shared tag) and `<name>@<version>`
+  before it; prereleases are unlinked.
+- `src/lib/release-notes.ts` only transforms text; `release-notes.test.ts` covers it and parses the
+  real changelogs, so a Changesets format change fails a test instead of shipping a blank page.
+  `RELEASE_PACKAGES` must match the `fixed` group, and that test holds them together. The Docker build
+  has the changelogs and `.changeset/` in its context (`COPY . .`), so Railway generates the pages too.
 
 ## Scan to preview
 

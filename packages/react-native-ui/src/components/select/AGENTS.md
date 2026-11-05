@@ -74,8 +74,9 @@ engine. An app that imports no picker still never resolves it.
   reached" (`limitReachedText`).
 - **`onClose` is the sheet's, not the state's.** It is passed straight to `BottomSheet` and runs once the sheet has finished sliding down, later than `onValueChange` or the open state turning false. Move focus from here, never from the pick.
 - **Multiple never closes on a pick.** A sticky `Done` footer closes it; every
-  close path — a pick, Done, a swipe, the overlay, the close button — runs
-  through one `handleOpenChange`, which is where the query is cleared.
+  close path — a pick, Done, a swipe, the overlay, the close button, or a
+  controlled `isOpen` set to false — clears the query, because the clear reads
+  the resolved open state, not the sheet's callback.
 - **The title and search ride at the head of the list.** As
   `ListHeaderComponent` they count towards the content height the sheet sizes
   itself to, and the search field is a `BottomSheet.TextInput`, so the keyboard

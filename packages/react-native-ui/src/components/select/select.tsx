@@ -177,16 +177,13 @@ function SelectRoot(props: SelectProps): ReactElement {
 		if (canOpen) setOpen(true);
 	}, [canOpen, setOpen]);
 
-	// One path for every close — a pick, Done, a swipe, the overlay, the close
-	// button — and each one clears the search, so the next open starts whole.
-	const handleOpenChange = useCallback(
-		(next: boolean) => {
-			setOpen(next);
-			if (!next) setQuery("");
-		},
-		[setOpen]
-	);
-	const close = useCallback(() => handleOpenChange(false), [handleOpenChange]);
+	// Every close clears the search, so the next open starts whole. This reads
+	// the resolved state, not the sheet's callback, so a controlled `isOpen`
+	// that its owner sets to false clears it too.
+	useEffect(() => {
+		if (!isOpen) setQuery("");
+	}, [isOpen]);
+	const close = useCallback(() => setOpen(false), [setOpen]);
 
 	const maxSelected = multiple?.maxSelected;
 	const isClearable = single?.isClearable ?? false;
@@ -328,7 +325,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 				keyboardLiftLimit="maxDynamicContentSize"
 				maxDynamicContentSize={sheetMaxHeight}
 				onClose={onClose}
-				onOpenChange={handleOpenChange}
+				onOpenChange={setOpen}
 				snapPoints={snapPoints}
 			>
 				<BottomSheet.Portal>

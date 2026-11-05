@@ -417,6 +417,17 @@ describe("Select search", () => {
 		await openSheet();
 		expect(screen.getByRole("radio", { name: "Austria" })).toBeOnTheScreen();
 	});
+
+	test("the query clears when a controlled sheet is closed by its owner", async () => {
+		const view = await renderSelect({ isOpen: true, isSearchable: true, options: countries });
+		await fireEvent.changeText(screen.getByLabelText("Search"), "zur");
+		await view.rerender(
+			<Select isOpen={false} isSearchable options={countries} placeholder="Choose" testID="select" />
+		);
+		await waitFor(() => expect(screen.queryByLabelText("Search")).not.toBeOnTheScreen());
+		await view.rerender(<Select isOpen isSearchable options={countries} placeholder="Choose" testID="select" />);
+		expect(screen.getByRole("radio", { name: "Austria" })).toBeOnTheScreen();
+	});
 });
 
 describe("Select states", () => {

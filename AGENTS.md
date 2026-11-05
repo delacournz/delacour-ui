@@ -240,6 +240,19 @@ Windows. The small profiles are not to be reintroduced: `typecheck`'s tsc was OO
 `linux-small`, and its 2 vCPU made every install the critical path of a run. Nothing needs macOS or Windows today, so those two profiles are unused.
 The `ubuntu-latest` / `macos-*` / `windows-*` labels are not to be reintroduced — with one exception, below.
 
+The Linux profile has a 50 GB cache volume and Git mirror caching enabled, and every Namespace job
+uses Namespace's actions rather than GitHub's equivalents:
+
+| Action | In place of | For |
+| --- | --- | --- |
+| [`namespacelabs/nscloud-checkout-action`](https://namespace.so/docs/reference/github-actions/nscloud-checkout-action) | `actions/checkout` | Clones from the profile's Git mirror — `fetch-depth: 0` costs next to nothing |
+| [`namespacelabs/nscloud-cache-action`](https://namespace.so/docs/reference/github-actions/nscloud-cache-action) (`cache: bun`) | `actions/cache` | Bind-mounts Bun's install cache from the volume; nothing is uploaded or downloaded. After `setup-bun` (a cache mode needs its tool installed), before `bun install`. `setup-node` sets `package-manager-cache: false` so it does not cache as well |
+| [`namespace-actions/setup-turbocache`](https://namespace.so/docs/reference/github-actions/setup-turbocache) | no remote cache | Exports `TURBO_API`/`TURBO_TEAM`/`TURBO_TOKEN` from the instance's own credentials, before any `turbo` script. A hit is as trustworthy as a local one — the cache key's `inputs` are the contract (see [Commands](#commands)) |
+
+None of the three works on a GitHub-hosted runner — there is no volume, no mirror and no instance
+token — so `alpha.yml` and `release.yml`'s `publish` keep `actions/checkout`.
+`.github/workflows.test.ts` fails if a Namespace job drops one or a GitHub-hosted job gains one.
+
 The exceptions are `release.yml`'s `publish` job and `alpha.yml`, which stay on `ubuntu-latest`. npm's trusted
 publishing generates a sigstore provenance attestation and verifies it against the runner, and
 sigstore only attests GitHub-hosted runners: on a Namespace runner every `npm publish` fails

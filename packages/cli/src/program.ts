@@ -25,7 +25,7 @@
  * an unconfigured project up rather than refusing it.
  */
 import { resolve } from "node:path";
-import { Command, Option } from "commander";
+import { Argument, Command, Option } from "commander";
 import { add } from "./commands/add";
 import { info, list, search, view } from "./commands/browse";
 import { diff } from "./commands/diff";
@@ -33,6 +33,7 @@ import { doctor } from "./commands/doctor";
 import { init } from "./commands/init";
 import { mcp } from "./commands/mcp";
 import { AGENT_IDS, skills } from "./commands/skills";
+import { runTelemetry, TELEMETRY_ACTIONS } from "./commands/telemetry";
 import { theme } from "./commands/theme";
 import { update } from "./commands/update";
 import { MissingConfigError } from "./config/resolve";
@@ -40,21 +41,25 @@ import { CONFIG_FILENAME } from "./config/schema";
 import { RegistryFetchError } from "./registry/client";
 import { UnknownItemError } from "./registry/resolve";
 import { DEFAULT_REGISTRY_REF } from "./registry/source";
+import { telemetry } from "./telemetry/client";
+import { createTracker, type Finished, type Tracker } from "./telemetry/tracker";
 import { CancelledError, style } from "./ui/output";
-
-declare const __CLI_VERSION__: string | undefined;
-
-/**
- * Replaced at build time from `package.json` (see `tsdown.config.ts`).
- * `npm_package_version` only exists under a package manager running a script,
- * and `bunx delacour` is neither — it would have reported the fallback forever.
- */
-const CLI_VERSION: string = typeof __CLI_VERSION__ === "string" ? __CLI_VERSION__ : "0.0.0-dev";
+import { CLI_VERSION } from "./version";
 
 export const program = new Command()
 	.name("delacour")
 	.description("Add React Native components to your Expo app. You own the code.")
-	.version(CLI_VERSION);
+	.version(CLI_VERSION)
+	.hook("preAction", (_program, actionCommand) => getTracker().begin(actionCommand));
+
+let tracker: Tracker | undefined;
+
+/** Created on first use: the program is also imported just to be read, by `commandManifest`. */
+function getTracker(): Tracker {
+	tracker ??= createTracker({ telemetry: telemetry() });
+
+	return tracker;
+}
 
 /** Shared by every command that reads the registry. */
 function withRegistryOptions(command: Command): Command {
@@ -215,23 +220,58 @@ program
 	.option("--silent", "print nothing but errors")
 	.action((options) => run(() => doctor({ ...options, cwd: resolve(options.cwd) })));
 
+program
+	.command("telemetry")
+	.description("see, enable or disable anonymous usage telemetry")
+	.addArgument(
+		new Argument("[action]", "show the current setting, or switch telemetry on or off")
+			.choices(TELEMETRY_ACTIONS)
+			.default("status")
+	)
+	.option("--json", "print JSON")
+	.action((action, options) => run(async () => runTelemetry(action, options)));
+
 /**
- * One place where a failure becomes a message.
+ * One place where a failure becomes a message, and the one place the process exits.
  *
  * The errors the CLI raises on purpose already say what to do about them, so
  * they are printed as they are. Anything else keeps its stack — an unexpected
  * failure is a bug report, and swallowing the stack costs the person reporting
  * it the only useful part.
+ *
+ * Exiting happens once, at the bottom, **after** the telemetry flush. `process.exit`
+ * abandons whatever is still in flight, so an exit before the flush would drop the
+ * event for exactly the runs that failed. The message is printed first, so a slow
+ * network costs the person the flush's 1.5 s of waiting and not the error.
  */
 async function run(command: () => Promise<unknown>): Promise<void> {
+	const ending = await execute(command);
+
+	await getTracker().finish(ending.result);
+
+	if (ending.exitCode !== 0) process.exit(ending.exitCode);
+	if (ending.rethrow) throw ending.rethrow.error;
+}
+
+type Ending = {
+	exitCode: number;
+	result: Finished;
+	/** A value that is not an `Error`, thrown again once telemetry has flushed. */
+	rethrow?: { error: unknown };
+};
+
+async function execute(command: () => Promise<unknown>): Promise<Ending> {
 	try {
 		// `doctor` returns an exit code; every other command resolves to nothing.
 		const code = await command();
-		if (typeof code === "number" && code !== 0) process.exit(code);
+		if (typeof code === "number" && code !== 0)
+			return { exitCode: code, result: { outcome: "success", exitCode: code } };
+
+		return { exitCode: 0, result: { outcome: "success" } };
 	} catch (error) {
 		if (error instanceof CancelledError) {
 			process.stderr.write(`${style.dim("Cancelled.")}\n`);
-			process.exit(130);
+			return { exitCode: 130, result: { outcome: "cancelled" } };
 		}
 
 		if (
@@ -240,14 +280,14 @@ async function run(command: () => Promise<unknown>): Promise<void> {
 			error instanceof RegistryFetchError
 		) {
 			process.stderr.write(`${style.red("✗")} ${error.message}\n`);
-			process.exit(1);
+			return { exitCode: 1, result: { outcome: "error", error } };
 		}
 
 		if (error instanceof Error) {
 			process.stderr.write(`${style.red("✗")} ${error.message}\n${style.dim(error.stack ?? "")}\n`);
-			process.exit(1);
+			return { exitCode: 1, result: { outcome: "error", error } };
 		}
 
-		throw error;
+		return { exitCode: 0, result: { outcome: "error", error }, rethrow: { error } };
 	}
 }

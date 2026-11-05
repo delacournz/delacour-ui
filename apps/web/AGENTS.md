@@ -332,6 +332,12 @@ listings name, and the playground's home screen links to it.
   — every attribute key and every device or network reading, each mapped to the words the policy
   uses for it. A future version that sends one more field fails by that field's name before a
   binary carrying it reaches a store.
+- **The CLI's telemetry is held to the CLI.** The host is read out of `packages/cli/src/telemetry/client.ts`
+  (`TELEMETRY_HOST`) and the policy must name it beside "discards your IP address"; every property a
+  `command` event can carry comes from `PROPERTY_DISCLOSURE` in `telemetry/properties.ts`, a `Record`
+  over the event's keys, and each phrase must appear in the disclosure; each switch the CLI docs page
+  documents must be in the policy; the policy links `TELEMETRY_DOCS_URL`'s anchor. Add a property to
+  the CLI and this fails by phrase until the policy says so.
 - **Google Fonts and the CLI's `raw.githubusercontent.com` are named** because the files that load
   them still do.
 - **The analytics are named from the code that loads them.** GA is a script tag, not a package, so

@@ -48,7 +48,7 @@ const MAIL = `[${CONTACT}](mailto:${CONTACT})`;
 const HISTORY = `https://github.com/${gitConfig.user}/${gitConfig.repo}/commits/${gitConfig.branch}/apps/web/src/lib/privacy.ts`;
 
 export const PRIVACY = {
-	updated: "2026-10-20",
+	updated: "2026-11-05",
 	controller: "Delacour Limited",
 	contact: CONTACT,
 	eyebrow: "Privacy",
@@ -61,6 +61,7 @@ export const PRIVACY = {
 		"No adverts, no tracking across other companies' apps or websites, and nothing is sold.",
 		"The app tells Expo each time it starts, checks with Expo for updates, and sends Expo reports on its speed, the screens you open and any errors.",
 		"The website counts visits with PostHog without cookies. PostHog and Google Analytics set cookies only if you accept them. Fonts load from Google.",
+		"The command-line tool sends anonymous usage data: which commands and components you run, never your code, file paths or IP address. It tells you the first time, and `delacour telemetry disable` or `DO_NOT_TRACK=1` turns it off.",
 		"Your settings — the site's light or dark choice, the app's theme — stay on your device.",
 	],
 } as const;
@@ -165,8 +166,21 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 	{
 		id: "the-cli",
 		title: "The command-line tool",
-		body: ["The `delacour` CLI collects no telemetry. It only makes the requests its commands need."],
+		body: [
+			"The `delacour` CLI sends anonymous usage data, on by default. The first time it would send anything it prints a notice saying so, and `delacour telemetry` shows whether it is on. Turn it off with `delacour telemetry disable`, or by setting `DO_NOT_TRACK=1`, `DELACOUR_TELEMETRY_DISABLED=1` or `DELACOUR_CLI_TELEMETRY_DISABLED=1`; any of the three also overrides a choice to turn it on. [What it collects, field by field,](/docs/native/cli#telemetry) is in the CLI documentation, and `DELACOUR_TELEMETRY_DEBUG=1` prints a request instead of sending it.",
+			"Besides that, it makes only the requests its commands need.",
+		],
 		disclosures: [
+			{
+				what: "Once per command: its name; the names, never the values, of the flags you typed; whether the registry is ours, your own or a local folder, never its address; the component names you asked for, when the registry is ours; whether it succeeded, failed or was cancelled, its exit code, how long it took, and the class name of any error; your package manager and Expo SDK version; your operating system, CPU, and Node or Bun version; whether it ran in CI or from a coding agent; how it was started; the CLI's version; a random machine ID and a random ID for the run; and a one-way hash of your git remote that stands for the project. Never your code, file names or paths, remote URL, environment variable values, error messages or username",
+				to: "Our own server, `telemetry.delacour.co.nz`, which works out your country from the request, discards your IP address, and passes the event to PostHog",
+				why: "To see which commands and components are used, on which Expo SDKs, package managers and CI systems, and which commands fail. The IP address is used to answer the request and then dropped.",
+			},
+			{
+				what: "A random machine ID, a random salt, your choice to turn telemetry on or off, and when you were shown the notice",
+				to: "Your device only — `~/.config/delacour/telemetry.json`",
+				why: "So the CLI recognises the machine across runs, remembers your choice and shows the notice once. Delete the file at any time; the next run makes a new ID.",
+			},
 			{
 				what: "Requests for component source: your IP address and the files requested",
 				to: "GitHub — `raw.githubusercontent.com` — or a registry you configure",
@@ -189,7 +203,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		title: "Who else handles it",
 		body: [
 			"The companies above process this information for us under their own terms. They are based in the United States, so it is processed there:",
-			"[Expo](https://expo.dev/privacy) for the app's launch pings, performance reports and updates, [Railway](https://railway.com/legal/privacy) for hosting the website, [PostHog](https://posthog.com/privacy) for the website's visit counts, [Google](https://policies.google.com/privacy) for its fonts and Google Analytics, and [GitHub](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement) for the CLI's downloads.",
+			"[Expo](https://expo.dev/privacy) for the app's launch pings, performance reports and updates, [Railway](https://railway.com/legal/privacy) for hosting the website and the telemetry server, [PostHog](https://posthog.com/privacy) for the website's visit counts and the CLI's usage data, [Google](https://policies.google.com/privacy) for its fonts and Google Analytics, and [GitHub](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement) for the CLI's downloads.",
 			"We do not sell or rent anything to anyone, and we do not share it with anyone else unless the law requires us to.",
 		],
 	},
@@ -197,15 +211,15 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		id: "why",
 		title: "Why we use it",
 		body: [
-			"Only to run the website, the app and the CLI, to count how many people use them and on which versions, to see which pages, searches and demos get used, to see how fast the app is, and to fix what breaks. We do not combine it with anything else, and we do not use it to identify, profile or advertise to anyone.",
-			"If UK or EU data protection law applies to you, our lawful basis is our legitimate interest in running and improving these services, which we have weighed against your interests given how little is collected. That covers PostHog's cookieless counting. For Google Analytics, and for PostHog's cookie and local storage, it is your consent, which you can withdraw at any time from Cookie settings.",
+			"Only to run the website, the app and the CLI, to count how many people use them and on which versions, to see which pages, searches, demos, CLI commands and components get used, to see how fast the app is, and to fix what breaks. We do not combine it with anything else, and we do not use it to identify, profile or advertise to anyone.",
+			"If UK or EU data protection law applies to you, our lawful basis is our legitimate interest in running and improving these services, which we have weighed against your interests given how little is collected. That covers PostHog's cookieless counting and the CLI's usage data, which you can switch off in one command. For Google Analytics, and for PostHog's cookie and local storage, it is your consent, which you can withdraw at any time from Cookie settings.",
 		],
 	},
 	{
 		id: "how-long",
 		title: "How long it is kept",
 		body: [
-			"What stays on your device is there until you clear it or delete the app, except the app's copy of its performance reports, which it deletes after seven days. Railway, Expo, PostHog and Google keep what they receive for the periods their own policies set, linked above.",
+			"What stays on your device is there until you clear it or delete the app, except the app's copy of its performance reports, which it deletes after seven days. The CLI's usage events are kept on our server for 180 days, after which only daily totals remain, with no machine or project IDs in them. Railway, Expo, PostHog and Google keep what they receive for the periods their own policies set, linked above.",
 		],
 	},
 	{
@@ -213,7 +227,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		title: "Your rights",
 		body: [
 			`Under New Zealand's Privacy Act 2020 you can ask to see personal information we hold about you and to have it corrected. If you are in the UK or the EU you can also ask us to delete it, to restrict or object to how it is used, or to give you a copy. Write to ${MAIL}.`,
-			"Nothing we receive has your name on it, so we may not be able to find information about you in particular. Deleting the app is the surest way to stop it sending anything.",
+			"Nothing we receive has your name on it, so we may not be able to find information about you in particular. Deleting the app is the surest way to stop it sending anything. For the command-line tool, `delacour telemetry disable` stops it, and deleting `~/.config/delacour/telemetry.json` discards its random machine ID, the only handle we would have to find anything about you.",
 			"If you are unhappy with how we have handled a request, you can complain to New Zealand's [Office of the Privacy Commissioner](https://www.privacy.org.nz), the UK's [Information Commissioner's Office](https://ico.org.uk/make-a-complaint/) or the data protection authority where you live.",
 		],
 	},

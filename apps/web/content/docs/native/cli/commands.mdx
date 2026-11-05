@@ -714,6 +714,31 @@ Options:
   -h, --help          display help for command
 ```
 
+## telemetry
+
+Shows whether anonymous usage telemetry is on and why, and switches it. What is collected, and every
+way to turn it off, is on the [overview](/docs/native/cli#telemetry).
+
+```bash
+delacour telemetry disable
+```
+
+**Options**
+
+```txt
+Usage: delacour telemetry [options] [action]
+
+see, enable or disable anonymous usage telemetry
+
+Arguments:
+  action      show the current setting, or switch telemetry on or off (choices:
+              "status", "enable", "disable", default: "status")
+
+Options:
+  --json      print JSON
+  -h, --help  display help for command
+```
+
 ## Shared options
 
 `--cwd` decides which `native-components.json` applies: the nearest one, walking upwards. The walk

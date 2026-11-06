@@ -190,7 +190,10 @@ function SelectRoot(props: SelectProps): ReactElement {
 	const toggleOptions: SelectToggleOptions =
 		mode === "multiple" ? { max: maxSelected, mode: "multiple" } : { isClearable, mode: "single" };
 
+	// The sheet can stay open while the select turns disabled or read-only, so
+	// the rows lock with it and a press that slips through changes nothing.
 	const toggle = (value: string) => {
+		if (!canOpen) return;
 		const result = toggleSelection(selected, value, toggleOptions);
 		if (result.change === "blocked" || result.change === "limit-reached") playHaptic("warning");
 		if (result.change !== "unchanged" && result.change !== "blocked") setSelected(result.selected);
@@ -266,7 +269,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 		return (
 			<SelectOptionRow
 				description={limitDescription}
-				isDisabled={state.isDisabled}
+				isDisabled={state.isDisabled || !canOpen}
 				isSelected={isSelected}
 				mode={mode}
 				onPress={toggle}

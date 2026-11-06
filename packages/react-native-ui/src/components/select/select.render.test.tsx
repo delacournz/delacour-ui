@@ -156,6 +156,21 @@ describe("Select single", () => {
 		expect(screen.getByRole("radio", { name: "Designer" })).toBeOnTheScreen();
 	});
 
+	test.each([
+		["disabled", { isDisabled: true }],
+		["read-only", { isReadOnly: true }],
+	] as const)("an open sheet locks its options once the select turns %s", async (_, lock) => {
+		const onValueChange = jest.fn();
+		const view = await renderSelect({ isOpen: true, onValueChange });
+		await view.rerender(
+			<Select isOpen onValueChange={onValueChange} options={OPTIONS} placeholder="Choose" testID="select" {...lock} />
+		);
+		const designer = screen.getByRole("radio", { name: "Designer" });
+		expect(designer).toBeDisabled();
+		await tap(designer);
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
 	test("pressing the chosen row again keeps it and closes, without reporting", async () => {
 		const onValueChange = jest.fn();
 		await renderSelect({ defaultValue: "designer", onValueChange });

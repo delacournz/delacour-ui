@@ -142,6 +142,9 @@ engine. An app that imports no picker still never resolves it.
 - **Read-only looks normal and never opens.** The trigger stays enabled for a
   screen reader — it is not disabled, it is fixed — with no press feedback, and
   `open` refuses.
+- **An open sheet locks with the select.** Turn the select disabled or read-only
+  while its sheet is open and every row is announced disabled, and a press that
+  still lands changes nothing — the value and `onValueChange` stay put.
 - **The trigger is a button.** React Native has no combobox role that works on
   both platforms, so it is `button` with the choice as its `accessibilityValue`,
   `expanded` in its state, and a hint. Rows are `radio` or `checkbox` with

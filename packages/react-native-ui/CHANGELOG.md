@@ -1,5 +1,14 @@
 # @delacour/react-native-ui
 
+## 0.8.1
+
+### Patch Changes
+
+- [#339](https://github.com/delacournz/delacour-ui/pull/339) [`7d68f8c`](https://github.com/delacournz/delacour-ui/commit/7d68f8c441230f1c6123db9e7247616394c52cba) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Select: an open sheet's options lock when the select turns disabled or read-only, so a press no longer changes the value or calls `onValueChange`.
+- Updated dependencies []:
+  - @delacour/react-native-bottom-sheet@0.8.1
+  - @delacour/react-native-charts@0.8.1
+
 ## 0.8.0
 
 ### Patch Changes

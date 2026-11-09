@@ -147,6 +147,17 @@ describe("Checkbox", () => {
 		expect(screen.getByRole("checkbox", { name: "Accept the terms" })).toBeOnTheScreen();
 	});
 
+	test("a conditional label that renders nothing still lets the Field.Label name the box", async () => {
+		const showInlineLabel = false as boolean;
+		await renderWithProviders(
+			<Field>
+				<Field.Label>Accept the terms</Field.Label>
+				<Checkbox>{showInlineLabel && <Checkbox.Label>Inline</Checkbox.Label>}</Checkbox>
+			</Field>
+		);
+		expect(screen.getByRole("checkbox", { name: "Accept the terms" })).toBeOnTheScreen();
+	});
+
 	test("a caller's accessibilityState keeps the checked state", async () => {
 		await renderWithProviders(
 			<Checkbox accessibilityState={{ busy: true }} defaultChecked>

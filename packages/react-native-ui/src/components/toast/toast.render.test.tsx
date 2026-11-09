@@ -27,6 +27,20 @@ async function mountViewport(harness: Harness): Promise<void> {
 	await renderWithProviders(<ToastViewport store={harness.store} />, { wrapper: Overlays });
 }
 
+/** The scale a card is drawn at: 1 at the front, smaller further back. */
+function motionScale(id: string): number {
+	const { jestAnimatedStyle } = screen.getByTestId(`toast-${id}-motion`).props as {
+		jestAnimatedStyle?: { value: { transform?: { scale?: number }[] } };
+	};
+	return jestAnimatedStyle?.value.transform?.[2]?.scale ?? 1;
+}
+
+async function advance(ms: number): Promise<void> {
+	await act(async () => {
+		jest.advanceTimersByTime(ms);
+	});
+}
+
 // Swipe-to-dismiss's decision logic (resolveToastDrag / resolveToastRelease) is covered by
 // toast.variants.test.ts; the pan carries `toast-<id>-pan` so a render test can drive a release.
 describe("Toast", () => {
@@ -313,6 +327,44 @@ describe("Toast", () => {
 			harness.toast("Link copied");
 		});
 		expect(screen.getByTestId(/^toast-toast-\d+$/).props.onAccessibilityTap).toBeUndefined();
+	});
+
+	test("hideAll keeps the card behind at its depth while it leaves", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast({ id: "back", title: "Back", duration: 0 });
+			harness.toast({ id: "front", title: "Front", duration: 0 });
+		});
+		await advance(1000);
+		const scaleBehind = motionScale("back");
+		await act(async () => {
+			harness.toast.hideAll();
+		});
+		// Less than the 160 ms exit, so the card is still drawn.
+		await advance(150);
+		expect(scaleBehind).toBeLessThan(1);
+		expect(motionScale("back")).toBeCloseTo(scaleBehind, 3);
+	});
+
+	test("a card hidden while it moves up keeps moving up as it leaves", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast({ id: "back", title: "Back", duration: 0 });
+			harness.toast({ id: "front", title: "Front", duration: 0 });
+		});
+		await advance(1000);
+		await act(async () => {
+			harness.toast.hide("front");
+		});
+		await advance(60);
+		const scaleWhenHidden = motionScale("back");
+		await act(async () => {
+			harness.toast.hide("back");
+		});
+		await advance(60);
+		expect(motionScale("back")).toBeGreaterThanOrEqual(scaleWhenHidden);
 	});
 
 	test("VoiceOver's escape gesture hides the toast", async () => {

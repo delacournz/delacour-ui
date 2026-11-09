@@ -146,9 +146,13 @@ export function ToastViewportItem({
 		presence.value = withDelay(delay, withTiming(1, { duration: OVERLAY_MOTION.enterMs, easing: ENTER_EASING }));
 	}, [isExiting, createdAt, batchIndex, presence, dragX, dragY, remove]);
 
+	// A leaving toast holds the depth it was at, or moving to, when it was hidden.
+	// Its `depth` prop still orders it (zIndex), but the stack's depth for a
+	// leaving toast counts every newer toast, which would slide it back down.
 	useEffect(() => {
+		if (isExiting) return;
 		depthValue.value = withTiming(depth, { duration: DEPTH_MS, easing: ENTER_EASING });
-	}, [depth, depthValue]);
+	}, [depth, isExiting, depthValue]);
 
 	useEffect(() => {
 		if (isFront && height.value > 0) frontHeight.value = height.value;

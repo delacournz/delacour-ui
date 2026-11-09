@@ -77,9 +77,12 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   toasts that are staying, so when one is hidden the ones behind move up and the next queued toast is
   drawn immediately while the hidden one fades out at the depth it left. A queued toast is never
   drawn, so no item can run its exit: hidden while queued, the viewport removes it at once and
-  calls its `onHide`. A leaving toast is drawn only while fewer than three toasts of any kind are newer
-  than it — the slot it held — so `hideAll` over four or more animates out the three on screen and
-  never mounts the queued one, which would otherwise be announced and play its haptic on its way out. Each older toast sits 8pt
+  calls its `onHide`. A leaving toast takes its depth from every newer toast, leaving or not, and is drawn
+  only while that is under three — the slot it held — so `hideAll` fades each drawn card out where it
+  sits (counting only staying toasts, every card had depth 0 and slid to the front as it faded) and
+  never mounts the queued one, which would otherwise be announced and play its haptic on its way out.
+  The item stops animating depth once it is leaving, so a card hidden while it moves up keeps the
+  depth it was moving to rather than sliding back down. Each older toast sits 8pt
   further toward its entry edge, `1 − 0.05·depth` scale and `1 − 0.25·depth` opacity, scaled about
   that edge (`transformOrigin`) so the peek is exactly 8pt. Depth is animated, and linear, so moving
   up is smooth.

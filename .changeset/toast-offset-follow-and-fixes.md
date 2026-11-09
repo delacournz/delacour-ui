@@ -15,3 +15,5 @@ Fixes:
 - A pan the system cancels (the notification shade, an alert) puts the toast back instead of dismissing it.
 - VoiceOver's escape gesture hides the toast.
 - `hideAll` over four or more toasts no longer mounts — and announces — the one that was queued.
+- On iOS a success, info or default toast's announcement waits for VoiceOver to finish speaking instead of cutting it off; a warning or failure still cuts in.
+- `hideAll` fades each card out at the depth it held, instead of sliding every card to the front, and a card hidden while it moves up keeps moving up.

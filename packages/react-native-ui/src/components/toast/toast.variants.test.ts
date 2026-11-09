@@ -200,6 +200,17 @@ describe("resolveToastStack", () => {
 		]);
 	});
 
+	test("hiding every toast at once keeps each card at the depth it held", () => {
+		const items = ["a", "b", "c", "d", "e"].map((id) => stackItem(id, { isExiting: true }));
+		expect(resolveToastStack(items, "bottom").map((entry) => [entry.id, entry.depth, entry.isVisible])).toEqual([
+			["e", 0, true],
+			["d", 1, true],
+			["c", 2, true],
+			["b", 3, false],
+			["a", 4, false],
+		]);
+	});
+
 	test("an exiting toast that was never drawn is not drawn on its way out", () => {
 		const items = [stackItem("a", { isExiting: true }), stackItem("b"), stackItem("c"), stackItem("d")];
 		expect(resolveToastStack(items, "bottom")[3]).toEqual({ id: "a", depth: 3, isVisible: false, isExiting: true });

@@ -153,10 +153,13 @@ function sortIntoSections(children: ReactNode): Record<InputGroupSegment, ReactN
 	const outer = resolveOuterBlocks(kinds);
 	const sections: Record<InputGroupSegment, ReactNode[]> = { end: [], row: [], start: [] };
 
+	// Every block gets the provider, outermost or not. Only its value changes,
+	// so a block that stops being outermost keeps its subtree mounted.
 	for (const [index, child] of items.entries()) {
+		const isBlock = kinds[index] === "block-start" || kinds[index] === "block-end";
 		const placed =
-			outer[index] && isValidElement(child) ? (
-				<InputGroupOuterBlockProvider key={child.key} value>
+			isBlock && isValidElement(child) ? (
+				<InputGroupOuterBlockProvider key={child.key} value={outer[index] ?? false}>
 					{child}
 				</InputGroupOuterBlockProvider>
 			) : (

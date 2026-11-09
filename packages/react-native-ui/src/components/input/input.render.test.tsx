@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { useState } from "react";
+import { TextInput } from "react-native";
 import { fireEvent, renderWithProviders, screen, userEvent } from "../../test/render";
 import { Field } from "../field";
 import { Input } from "./input";
@@ -16,6 +17,12 @@ function ControlledInput({ onChangeText }: { onChangeText: (text: string) => voi
 			value={value}
 		/>
 	);
+}
+
+/** Holds its text in local state, so a remount shows up as an empty field. */
+function StatefulInput() {
+	const [value, setValue] = useState("");
+	return <TextInput accessibilityLabel="Note" onChangeText={setValue} value={value} />;
 }
 
 describe("Input", () => {
@@ -212,6 +219,33 @@ describe("Input", () => {
 			await fireEvent(screen.getByLabelText("Search"), "blur");
 			expect(onFocus).toHaveBeenCalledTimes(1);
 			expect(onBlur).toHaveBeenCalledTimes(1);
+		});
+
+		// A block stops being the outermost one when another is appended after
+		// it. Its subtree must stay mounted, or its controls lose their state.
+		test("a block keeps its state when it stops being the outermost", async () => {
+			const view = await renderWithProviders(
+				<Input.Group>
+					<Input accessibilityLabel="Message" />
+					<Input.Group.Block key="first" position="end">
+						<StatefulInput />
+					</Input.Group.Block>
+				</Input.Group>
+			);
+			await fireEvent.changeText(screen.getByLabelText("Note"), "kept");
+
+			await view.rerender(
+				<Input.Group>
+					<Input accessibilityLabel="Message" />
+					<Input.Group.Block key="first" position="end">
+						<StatefulInput />
+					</Input.Group.Block>
+					<Input.Group.Block key="second" position="end">
+						<Input.Group.Suffix>Last</Input.Group.Suffix>
+					</Input.Group.Block>
+				</Input.Group>
+			);
+			expect(screen.getByLabelText("Note")).toHaveDisplayValue("kept");
 		});
 
 		describe("parts outside a group", () => {

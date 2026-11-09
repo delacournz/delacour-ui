@@ -830,6 +830,7 @@ import * as demo_timeline_numbered from "./timeline/numbered";
 import * as demo_timeline_order_history from "./timeline/order-history";
 import * as demo_timeline_tones from "./timeline/tones";
 import * as demo_timeline_with_aside from "./timeline/with-aside";
+import * as demo_toast_chrome_offset from "./toast/chrome-offset";
 import * as demo_toast_custom from "./toast/custom";
 import * as demo_toast_persistent from "./toast/persistent";
 import * as demo_toast_placement from "./toast/placement";
@@ -1696,6 +1697,7 @@ export const DEMOS = {
 	"timeline/order-history": demo_timeline_order_history,
 	"timeline/tones": demo_timeline_tones,
 	"timeline/with-aside": demo_timeline_with_aside,
+	"toast/chrome-offset": demo_toast_chrome_offset,
 	"toast/custom": demo_toast_custom,
 	"toast/persistent": demo_toast_persistent,
 	"toast/placement": demo_toast_placement,

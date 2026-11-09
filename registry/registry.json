@@ -5750,10 +5750,12 @@
 				"ui/toast/toast-title.tsx",
 				"ui/toast/toast-viewport.tsx",
 				"ui/toast/toast.context.tsx",
+				"ui/toast/toast.offset.ts",
 				"ui/toast/toast.store.ts",
 				"ui/toast/toast.timer.ts",
 				"ui/toast/toast.tsx",
-				"ui/toast/toast.variants.ts"
+				"ui/toast/toast.variants.ts",
+				"ui/toast/use-toast-offset.ts"
 			],
 			"testRegistryDependencies": [
 				"styles"

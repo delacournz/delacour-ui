@@ -1,4 +1,5 @@
 import { defineDemoGroup } from "../define-demo-group";
+import * as chromeOffset from "./chrome-offset";
 import * as custom from "./custom";
 import * as persistent from "./persistent";
 import * as placement from "./placement";
@@ -12,6 +13,7 @@ export const toastDemos = defineDemoGroup("toast", {
 	statuses,
 	"with-action": withAction,
 	placement,
+	"chrome-offset": chromeOffset,
 	promise,
 	stacking,
 	persistent,

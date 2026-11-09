@@ -1,11 +1,14 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { AccessibilityInfo } from "react-native";
+import { makeMutable, type SharedValue } from "react-native-reanimated";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { OverlayProvider } from "../overlay";
 import { Toast } from "./toast";
+import { createToastOffsetStore, type ToastOffsetStore } from "./toast.offset";
 import { createToastApi, createToastStore, type ToastApi, type ToastStore } from "./toast.store";
 import { ToastViewport } from "./toast-viewport";
+import { useToastOffset } from "./use-toast-offset";
 
 function Overlays({ children }: { children: ReactNode }): ReactElement {
 	return <OverlayProvider>{children}</OverlayProvider>;
@@ -241,5 +244,114 @@ describe("Toast", () => {
 		} finally {
 			spy.mockRestore();
 		}
+	});
+});
+
+describe("Toast offset", () => {
+	beforeEach(() => {
+		jest.useFakeTimers();
+	});
+
+	afterEach(() => {
+		jest.useRealTimers();
+	});
+
+	type OffsetHarness = Harness & { offsets: ToastOffsetStore<SharedValue<number>> };
+
+	function makeOffsetHarness(): OffsetHarness {
+		return { ...makeHarness(), offsets: createToastOffsetStore<SharedValue<number>>() };
+	}
+
+	function OffsetViewport({ harness, children }: { harness: OffsetHarness; children?: ReactNode }): ReactElement {
+		return (
+			<>
+				{children}
+				<ToastViewport offsetStore={harness.offsets} store={harness.store} />
+			</>
+		);
+	}
+
+	/** Registers `bottom` through the hook, the way an app's tab bar does. */
+	function TabBarOffset({ bottom, harness }: { bottom: number | null; harness: OffsetHarness }): null {
+		useToastOffset(bottom === null ? null : { bottom }, { store: harness.offsets });
+		return null;
+	}
+
+	async function showToast(harness: Harness, placement: "top" | "bottom" = "bottom"): Promise<void> {
+		await act(async () => {
+			harness.toast.show({ title: "Saved", duration: 0, placement });
+		});
+	}
+
+	/** The translateY a stack is drawn at right now. */
+	function liftOf(testID: string): number {
+		const { jestAnimatedStyle } = screen.getByTestId(testID).props as {
+			jestAnimatedStyle?: { value: { transform?: { translateY?: number }[] } };
+		};
+		// `|| 0` folds -0 into 0.
+		return jestAnimatedStyle?.value.transform?.[0]?.translateY || 0;
+	}
+
+	/** Reanimated's JS mappers run on animation frames, so let them catch up. */
+	async function settle(): Promise<void> {
+		await act(async () => {
+			jest.advanceTimersByTime(1000);
+		});
+	}
+
+	test("the bottom stack lifts by a registered shared value", async () => {
+		const harness = makeOffsetHarness();
+		const source = makeMutable(0);
+		await renderWithProviders(<OffsetViewport harness={harness} />, { wrapper: Overlays });
+		await showToast(harness);
+		await act(async () => {
+			harness.offsets.set({ bottom: source });
+		});
+		await act(async () => {
+			source.value = 84;
+		});
+		await settle();
+		expect(liftOf("toast-stack-bottom")).toBe(-84);
+	});
+
+	test("useToastOffset animates a number in and back to 0 on null", async () => {
+		const harness = makeOffsetHarness();
+		const view = await renderWithProviders(
+			<OffsetViewport harness={harness}>
+				<TabBarOffset bottom={84} harness={harness} />
+			</OffsetViewport>,
+			{ wrapper: Overlays }
+		);
+		await showToast(harness);
+		await settle();
+		expect(liftOf("toast-stack-bottom")).toBe(-84);
+
+		await view.rerender(
+			<OffsetViewport harness={harness}>
+				<TabBarOffset bottom={null} harness={harness} />
+			</OffsetViewport>
+		);
+		await settle();
+		expect(liftOf("toast-stack-bottom")).toBe(0);
+		expect(harness.offsets.getSnapshot().bottom).toBeDefined();
+	});
+
+	test("useToastOffset releases its registration on unmount", async () => {
+		const harness = makeOffsetHarness();
+		const view = await renderWithProviders(<TabBarOffset bottom={84} harness={harness} />, { wrapper: Overlays });
+		expect(harness.offsets.getSnapshot().bottom).toBeDefined();
+		await view.unmount();
+		expect(harness.offsets.getSnapshot().bottom).toBeUndefined();
+	});
+
+	test("the top stack moves down by a top offset", async () => {
+		const harness = makeOffsetHarness();
+		await renderWithProviders(<OffsetViewport harness={harness} />, { wrapper: Overlays });
+		await showToast(harness, "top");
+		await act(async () => {
+			harness.offsets.set({ top: makeMutable(44) });
+		});
+		await settle();
+		expect(liftOf("toast-stack-top")).toBe(44);
 	});
 });

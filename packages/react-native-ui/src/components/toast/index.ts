@@ -6,6 +6,13 @@ export {
 	useToastItemContext,
 } from "./toast.context";
 export {
+	createToastOffsetStore,
+	resolveToastEdgeLift,
+	type ToastOffsetRegistration,
+	type ToastOffsetSources,
+	type ToastOffsetStore,
+} from "./toast.offset";
+export {
 	createToastApi,
 	createToastStore,
 	normalizeToastInput,
@@ -65,10 +72,16 @@ export {
 	toastVariants,
 } from "./toast.variants";
 export type { ToastActionProps } from "./toast-action";
-export { toast, toastStore, useToast } from "./toast-api";
+export { setToastOffset, toast, toastOffsetStore, toastStore, useToast } from "./toast-api";
 export type { ToastCloseProps } from "./toast-close";
 export type { ToastContentProps } from "./toast-content";
 export type { ToastDescriptionProps } from "./toast-description";
 export type { ToastIndicatorProps } from "./toast-indicator";
 export type { ToastTitleProps } from "./toast-title";
 export { ToastViewport, type ToastViewportProps } from "./toast-viewport";
+export {
+	type ToastOffset,
+	type ToastOffsetValue,
+	type UseToastOffsetOptions,
+	useToastOffset,
+} from "./use-toast-offset";

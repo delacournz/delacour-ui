@@ -3,12 +3,10 @@ import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
 /**
  * What a pull request has to pass before it can merge, and which of it a given diff actually needs.
  *
- * Pull requests into `develop` are gated on commit statuses written from the authoring machine by
- * `scripts/signoff.ts`, not on GitHub Actions jobs. Every check here had already run locally — through
- * prek, through `bun test`, or through the agent that wrote the change — and then ran a second time
- * on billed runners. `ci.yml` is now `workflow_dispatch`-only for ordinary pull requests (it still
- * runs on the release pull request, which no person authors; see AGENTS.md § Signoff), so the gate
- * lives here instead, in the one file both halves read.
+ * Pull requests into `develop` are gated on the `signoff/*` commit statuses. `ci.yml` writes them for
+ * every non-draft same-repo pull request, running every check below regardless of path; a local
+ * `scripts/signoff.ts` run writes the same contexts from the authoring machine, path gates applied
+ * (see AGENTS.md § Signoff). This file is what the local half reads.
  *
  * Two kinds of check, and the difference is the whole design:
  *
@@ -25,7 +23,7 @@ import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
  * while a docs-site-only one is never asked for it.
  *
  * `verify-expo` (the CLI against a real, npm-installed Expo app) is absent on purpose. It installs
- * from the registry and takes minutes; it stays a `workflow_dispatch` job in `ci.yml`, and the
+ * from the registry and takes minutes; in `ci.yml` it runs on the version pull request and on dispatch, and the
  * structure-only half of it (`verify:expo --no-install`) runs inside `registry`.
  *
  * `tests` is the one installed verify that does run here: every component's suites copied into a real

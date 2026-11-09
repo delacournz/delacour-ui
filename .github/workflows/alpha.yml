@@ -24,7 +24,7 @@ jobs:
   alpha:
     name: Publish alpha snapshot
     if: github.repository_owner == 'delacournz'
-    # Not a Namespace runner for the same reason as `release.yml`: npm verifies the provenance
+    # GitHub-hosted, like every job here, and it has to be: npm verifies the provenance
     # attestation against the runner, and sigstore only attests GitHub-hosted ones.
     runs-on: ubuntu-latest
     timeout-minutes: 20

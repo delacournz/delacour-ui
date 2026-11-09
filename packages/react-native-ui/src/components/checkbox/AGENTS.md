@@ -167,10 +167,16 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   had to opt out because its animation *is* the status signal.
 - **`hitSlop` is new to this package, and only a bare box gets any.** A bare `md`
   checkbox is a 20pt square against a 44pt minimum, with no padded capsule to
-  absorb the difference the way [`Badge.CloseButton`](../badge/AGENTS.md) has. Once there is a label
-  the row is the target and is already wide, so `resolveCheckboxHitSlop` returns
-  nothing — slop on top of that would overlap the row below and make a tap
-  between two checkboxes ambiguous, which is worse than a merely adequate target.
+  absorb the difference the way [`Badge.CloseButton`](../badge/AGENTS.md) has. A label widens the
+  row but not its height, so a labelled row is padded instead (`hasLabel`:
+  `py-3`/`py-2.5`/`py-2` over 20/24/28pt lines) to reach 44pt, and
+  `resolveCheckboxHitSlop` returns nothing for it. `Checkbox.Group` has no gap:
+  padded rows meet edge to edge, so targets neither overlap nor leave a dead strip.
+- **A bare box takes its name from the field.** A sibling `Field.Label` is outside
+  the box's accessible subtree, so `resolveCheckboxAccessibilityLabel` falls back
+  to `field.label` when there is no inline content and no `accessibilityLabel`.
+- **A caller's `accessibilityState` is merged, not replaced.** `checked` is set
+  after the caller's fields, so `{ busy: true }` cannot drop the checked state.
 - **There is no `Checkbox.Description` and no `Checkbox.Indicator`.**
   `Field.Description` already is the first, and a label defined twice is a type
   scale that can drift. The second has nothing to configure that

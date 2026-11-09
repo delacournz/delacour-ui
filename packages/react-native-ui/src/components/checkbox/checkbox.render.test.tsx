@@ -136,6 +136,34 @@ describe("Checkbox", () => {
 		await tap(screen.getByRole("checkbox"));
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
 	});
+
+	test("a bare box is named by a sibling Field.Label", async () => {
+		await renderWithProviders(
+			<Field>
+				<Field.Label>Accept the terms</Field.Label>
+				<Checkbox />
+			</Field>
+		);
+		expect(screen.getByRole("checkbox", { name: "Accept the terms" })).toBeOnTheScreen();
+	});
+
+	test("a caller's accessibilityState keeps the checked state", async () => {
+		await renderWithProviders(
+			<Checkbox accessibilityState={{ busy: true }} defaultChecked>
+				Newsletter
+			</Checkbox>
+		);
+		expect(screen.getByRole("checkbox").props.accessibilityState).toMatchObject({ busy: true, checked: true });
+	});
+
+	test("a caller's accessibilityState keeps the mixed state", async () => {
+		await renderWithProviders(
+			<Checkbox accessibilityState={{ busy: true }} isIndeterminate>
+				Newsletter
+			</Checkbox>
+		);
+		expect(screen.getByRole("checkbox").props.accessibilityState).toMatchObject({ busy: true, checked: "mixed" });
+	});
 });
 
 describe("Checkbox.Group", () => {

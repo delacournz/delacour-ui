@@ -209,8 +209,12 @@ export const checkboxVariants = tv({
 		label: "shrink",
 		/** Edge length the tick inherits. */
 		glyph: "",
-		/** `Checkbox.Group`'s column. */
-		group: "gap-4",
+		/**
+		 * `Checkbox.Group`'s column. No gap: each labelled row is padded to the
+		 * 44pt touch minimum, so rows meet edge to edge and the padding is the
+		 * spacing. A gap would leave a dead strip between two targets.
+		 */
+		group: "",
 	},
 	variants: {
 		// Paints the fill and nothing else — see the note above on why the box
@@ -252,8 +256,15 @@ export const checkboxVariants = tv({
 		isFilled: { true: {}, false: {} },
 		isInvalid: { true: {}, false: {} },
 		isDisabled: { true: { root: "opacity-50" }, false: {} },
+		// A label widens the target but not its height. The padding per size
+		// below brings a one-line row (20/24/28) to the 44pt touch minimum. A
+		// bare box takes hit slop instead — see `resolveCheckboxHitSlop`.
+		hasLabel: { true: {}, false: {} },
 	},
 	compoundVariants: [
+		{ hasLabel: true, size: "sm", class: { root: "py-3" } },
+		{ hasLabel: true, size: "md", class: { root: "py-2.5" } },
+		{ hasLabel: true, size: "lg", class: { root: "py-2" } },
 		// Invalid outranks the colour on the fill, whether the box is ticked or
 		// not. A checkbox that stayed green while its value was rejected would
 		// drop the only signal it has, exactly while the value is being corrected
@@ -271,6 +282,7 @@ export const checkboxVariants = tv({
 		isFilled: false,
 		isInvalid: false,
 		isDisabled: false,
+		hasLabel: false,
 	},
 });
 
@@ -435,12 +447,35 @@ export function resolveCheckboxLabelColor(isInvalid: boolean): TextColor | undef
 }
 
 /**
+ * The name a screen reader announces for a checkbox.
+ *
+ * An explicit `accessibilityLabel` wins. Inline content (a `Checkbox.Label` or a
+ * bare string) sits inside the target and names it already. A bare box has
+ * neither, and a sibling `Field.Label` sits outside its accessible subtree, so
+ * the field's label is the fallback.
+ *
+ * Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function resolveCheckboxAccessibilityLabel({
+	own,
+	fieldLabel,
+	hasContent,
+}: {
+	own?: string;
+	fieldLabel: string | null | undefined;
+	hasContent: boolean;
+}): string | undefined {
+	if (own !== undefined) return own;
+	if (hasContent) return undefined;
+	return fieldLabel ?? undefined;
+}
+
+/**
  * The slop a checkbox's tap target takes beyond the box itself.
  *
- * Only a bare box gets any. Once there is a label the whole row is the target
- * and is already wide, and slop on top of that would overlap the next row's —
- * making a tap between two checkboxes ambiguous, which is worse than the target
- * being merely adequate.
+ * Only a bare box gets any. A labelled row is padded to the 44pt minimum by
+ * `checkboxVariants`' `hasLabel` instead, and slop on top of that would overlap
+ * the next row's — making a tap between two checkboxes ambiguous.
  *
  * Pure, so it is unit-testable. See AGENTS.md.
  */

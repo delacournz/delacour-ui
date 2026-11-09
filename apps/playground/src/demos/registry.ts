@@ -832,6 +832,7 @@ import * as demo_timeline_tones from "./timeline/tones";
 import * as demo_timeline_with_aside from "./timeline/with-aside";
 import * as demo_toast_chrome_offset from "./toast/chrome-offset";
 import * as demo_toast_custom from "./toast/custom";
+import * as demo_toast_measured_bar from "./toast/measured-bar";
 import * as demo_toast_persistent from "./toast/persistent";
 import * as demo_toast_placement from "./toast/placement";
 import * as demo_toast_promise from "./toast/promise";
@@ -1699,6 +1700,7 @@ export const DEMOS = {
 	"timeline/with-aside": demo_timeline_with_aside,
 	"toast/chrome-offset": demo_toast_chrome_offset,
 	"toast/custom": demo_toast_custom,
+	"toast/measured-bar": demo_toast_measured_bar,
 	"toast/persistent": demo_toast_persistent,
 	"toast/placement": demo_toast_placement,
 	"toast/promise": demo_toast_promise,

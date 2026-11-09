@@ -24,14 +24,14 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 | `toast.context.tsx` | **Leaf.** The card's context (`status`, `hide`, `registerAction`) and the viewport's per-item context |
 | `toast.store.ts` | **Pure.** Types, `reduceToasts`, `normalizeToastInput`, `createToastStore`, `createToastApi` |
 | `toast.offset.ts` | **Pure.** `createToastOffsetStore` (per-edge chrome sources, newest wins) and `resolveToastEdgeLift` (a worklet) |
-| `use-toast-offset.ts` | `useToastOffset` — registers chrome (a number to animate to, or a shared value) while mounted |
+| `use-toast-offset.ts` | `useToastOffset` — registers shared values of its own while mounted: animated to a number, or following a caller's shared value |
 | `toast.timer.ts` | **Pure.** The pausable auto-hide clock |
 | `toast.variants.ts` | **Pure.** The slotted `tv()`, the constants and every resolver — duration, stack, depth, stacked height, stagger, drag, release, haptic, announcement |
 | `toast-api.ts` | `toastStore`, `toast`, `useToast`, `toastOffsetStore`, `setToastOffset` |
 | `toast-viewport.tsx` | `ToastViewport` — two stacks in the overlay `toast` band; insets, keyboard, `AppState`, screen reader |
 | `toast-item.tsx` | One drawn toast: entrance, depth, exit, clock, swipe, announcement, haptic |
 | `*.test.ts` | The store, the clock, the offset registry and the resolvers |
-| `toast.render.test.tsx` | Mounted under Jest — the viewport drawing `toast()` calls, title/description, action and close, alert role and live region, assistive `activate`/`dismiss`, fake-timer auto-dismiss, custom `render`, parts outside a `Toast`, each stack's lift from a shared value and from `useToastOffset` |
+| `toast.render.test.tsx` | Mounted under Jest — the viewport drawing `toast()` calls, title/description, action and close, alert role and live region, assistive `activate`/`dismiss`, fake-timer auto-dismiss and the stagger, revival during an exit and after a swipe, a hidden queued toast, a disabled action, a VoiceOver double-tap, custom `render`, parts outside a `Toast`, each stack's lift from a shared value and from `useToastOffset`, and the hook following a shared value |
 
 ## Design
 
@@ -93,14 +93,18 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 - **Toasts lift clear of app chrome, and follow it.** A tab bar, a bottom toolbar or a custom header
   calls `useToastOffset({ bottom: height })` (or `setToastOffset` outside React) with how much of
   the screen edge it covers, measured from the edge like its layout height. The registry holds
-  Reanimated shared values: a number given to the hook animates its own shared value (220ms, or
-  straight there under reduce motion; a source's first value jumps, so a first measurement does not
-  slide in from 0), and a shared value the caller drives — a bar that hides on scroll — is read on
-  the UI thread every frame, so the toasts follow with no re-render. The newest registration wins
-  per edge and releasing it restores the one before, so a pushed screen's toolbar and the tab bar
-  under it need not know about each other. `null` slides the hook's edges back to 0 but keeps its
-  place, which is what a tab bar passes when its screen loses focus (JS tabs stay mounted under a
-  pushed screen, so focus, not mount, is the signal). `resolveToastEdgeLift` lifts by the part above
+  Reanimated shared values, and the hook always registers its own: a number animates it there
+  (220ms, or straight there under reduce motion; a source's first value jumps, so a first
+  measurement does not slide in from 0), and a shared value the caller drives — a bar's measured
+  height written with `.set()` in `onLayout`, a bar that hides on scroll — is followed on the UI
+  thread (`useAnimatedReaction`, no deps array: Reanimated 4 ignores one on native and warns), so
+  the toasts follow with no state and no re-render. Owning the value is what lets every switch
+  animate: before, a caller's shared value was registered as is, and focus loss dropped it to 0 at
+  once. The newest registration wins per edge and releasing it restores the one before, so a pushed
+  screen's toolbar and the tab bar under it need not know about each other. `null` slides every
+  edge the hook showed back to 0, numeric or followed, but keeps its place, which is what a tab bar passes when its screen loses focus (JS tabs stay mounted under a
+  pushed screen, so focus, not mount, is the signal); a shared value given again animates to its
+  current value and then follows it. `resolveToastEdgeLift` lifts by the part above
   the safe area and takes the larger of chrome and keyboard — the keyboard draws over a tab bar, so
   they never add up. Each stack's animated style lists its source in its dependencies: without it,
   a source registered after the stack mounted was never read. The static `offset` prop still sets
@@ -148,14 +152,16 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 
 `apps/playground/src/app/_layout.tsx` is the reference mount.
 
-Lift toasts above a tab bar from the bar itself, only while its screen is focused:
+Lift toasts above a tab bar from the bar itself, only while its screen is focused. The height lives
+in a shared value, so a layout pass re-renders nothing; write it with `.set()` rather than `.value =`,
+which the React Compiler's lint rejects in a callback created during render:
 
 ```tsx
 function TabBar(props: BottomTabBarProps) {
   const isFocused = useIsFocused();
-  const [height, setHeight] = useState(0);
+  const height = useSharedValue(0);
   useToastOffset(isFocused ? { bottom: height } : null);
-  return <View onLayout={(event) => setHeight(event.nativeEvent.layout.height)}>{tabs}</View>;
+  return <View onLayout={(event) => height.set(event.nativeEvent.layout.height)}>{tabs}</View>;
 }
 ```
 
@@ -163,7 +169,9 @@ function TabBar(props: BottomTabBarProps) {
 
 A unit test reaches the reducer, the store's batching, the api (including `promise` both ways), the
 clock, the offset registry and every resolver. A render test checks each stack's lift from a shared
-value and from `useToastOffset`, including the slide back on `null` and the release on unmount. Motion, gestures, insets, the keyboard and announcements are verified on a
+value and from `useToastOffset`, including the slide back on `null`, a followed shared value, and the
+release on unmount; and the lifecycle edges — a revival during an exit or after a swipe, a hidden
+queued toast, the clock across the entrance stagger, a disabled action and a VoiceOver double-tap. Motion, gestures, insets, the keyboard and announcements are verified on a
 simulator through `/toast`.
 
 ## Preview capture

@@ -501,6 +501,55 @@ describe("Toast offset", () => {
 		expect(harness.offsets.getSnapshot().bottom).toBeDefined();
 	});
 
+	/** Registers a caller-owned shared value through the hook, or `null`. */
+	function SharedBarOffset({
+		source,
+		isActive,
+		harness,
+	}: {
+		source: SharedValue<number>;
+		isActive: boolean;
+		harness: OffsetHarness;
+	}): null {
+		useToastOffset(isActive ? { bottom: source } : null, { store: harness.offsets });
+		return null;
+	}
+
+	/** The bottom offset the hook has registered right now, in points. */
+	function registeredBottom(harness: OffsetHarness): number | undefined {
+		return harness.offsets.getSnapshot().bottom?.value;
+	}
+
+	// Asserts the registered shared value rather than the stack's lift: the viewport's JS mapper
+	// does not redraw after a re-render of a sibling here, while the registered value is exact.
+	test("useToastOffset follows a shared value and slides back to 0 on null", async () => {
+		const harness = makeOffsetHarness();
+		const source = makeMutable(0);
+		const view = await renderWithProviders(<SharedBarOffset harness={harness} isActive source={source} />, {
+			wrapper: Overlays,
+		});
+		await act(async () => {
+			source.value = 84;
+		});
+		await settle();
+		expect(registeredBottom(harness)).toBe(84);
+
+		await view.rerender(<SharedBarOffset harness={harness} isActive={false} source={source} />);
+		await settle();
+		expect(registeredBottom(harness)).toBe(0);
+		expect(harness.offsets.getSnapshot().bottom).toBeDefined();
+
+		await act(async () => {
+			source.value = 120;
+		});
+		await settle();
+		expect(registeredBottom(harness)).toBe(0);
+
+		await view.rerender(<SharedBarOffset harness={harness} isActive source={source} />);
+		await settle();
+		expect(registeredBottom(harness)).toBe(120);
+	});
+
 	test("useToastOffset releases its registration on unmount", async () => {
 		const harness = makeOffsetHarness();
 		const view = await renderWithProviders(<TabBarOffset bottom={84} harness={harness} />, { wrapper: Overlays });

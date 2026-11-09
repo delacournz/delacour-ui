@@ -125,6 +125,23 @@ describe("reduceToasts", () => {
 		expect(ids(state)).toEqual(["b"]);
 	});
 
+	test("remove with a revision drops only the exit of that revision", () => {
+		const exiting: ToastState = [{ ...message("a"), isExiting: true, revision: 0 }];
+		expect(ids(reduceToasts(exiting, { type: "remove", id: "a", revision: 0 }))).toEqual([]);
+	});
+
+	test("a stale remove keeps a toast revived by show with the same id", () => {
+		const hidden = reduceToasts([message("a")], { type: "hide", id: "a" });
+		const revived = reduceToasts(hidden, { type: "add", item: message("a", "Again") });
+		expect(revived[0]?.isExiting).toBe(false);
+		expect(reduceToasts(revived, { type: "remove", id: "a", revision: 0 })).toBe(revived);
+	});
+
+	test("remove with a revision keeps a toast that is not exiting", () => {
+		const state: ToastState = [message("a")];
+		expect(reduceToasts(state, { type: "remove", id: "a", revision: 0 })).toBe(state);
+	});
+
 	test("hideAll marks every toast exiting", () => {
 		const state = reduceToasts([message("a"), message("b")], { type: "hideAll" });
 		expect(state.every((item: ToastItem) => item.isExiting)).toBe(true);

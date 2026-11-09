@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { AccessibilityInfo } from "react-native";
+import { State } from "react-native-gesture-handler";
+import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { makeMutable, type SharedValue } from "react-native-reanimated";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { OverlayProvider } from "../overlay";
@@ -25,8 +27,22 @@ async function mountViewport(harness: Harness): Promise<void> {
 	await renderWithProviders(<ToastViewport store={harness.store} />, { wrapper: Overlays });
 }
 
-// Swipe-to-dismiss is a Gesture Handler pan on the card and carries no testID, so it is not driven here;
-// its decision logic (resolveToastDrag / resolveToastRelease) is covered by toast.variants.test.ts.
+/** The scale a card is drawn at: 1 at the front, smaller further back. */
+function motionScale(id: string): number {
+	const { jestAnimatedStyle } = screen.getByTestId(`toast-${id}-motion`).props as {
+		jestAnimatedStyle?: { value: { transform?: { scale?: number }[] } };
+	};
+	return jestAnimatedStyle?.value.transform?.[2]?.scale ?? 1;
+}
+
+async function advance(ms: number): Promise<void> {
+	await act(async () => {
+		jest.advanceTimersByTime(ms);
+	});
+}
+
+// Swipe-to-dismiss's decision logic (resolveToastDrag / resolveToastRelease) is covered by
+// toast.variants.test.ts; the pan carries `toast-<id>-pan` so a render test can drive a release.
 describe("Toast", () => {
 	beforeEach(() => {
 		jest.useFakeTimers();
@@ -95,6 +111,28 @@ describe("Toast", () => {
 		announceWithOptions.mockRestore();
 	});
 
+	test("on iOS a plain toast queues its announcement behind VoiceOver speech", async () => {
+		const announceWithOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions");
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.success("Saved");
+		});
+		expect(announceWithOptions).toHaveBeenCalledWith("Saved", { queue: true });
+		announceWithOptions.mockRestore();
+	});
+
+	test("on iOS a failure interrupts VoiceOver speech", async () => {
+		const announceWithOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions");
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.error("Upload failed");
+		});
+		expect(announceWithOptions).toHaveBeenCalledWith("Upload failed", { queue: false });
+		announceWithOptions.mockRestore();
+	});
+
 	test("the action runs its callback and hides the toast", async () => {
 		const onPress = jest.fn();
 		const harness = makeHarness();
@@ -142,6 +180,203 @@ describe("Toast", () => {
 		expect(onPress).toHaveBeenCalledTimes(1);
 	});
 
+	test("a toast revived by show after a swipe comes back on screen", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast({ id: "sync", title: "Syncing", duration: 0 });
+		});
+		await act(async () => {
+			jest.advanceTimersByTime(500);
+		});
+		await act(async () => {
+			fireGestureHandler(getByGestureTestId("toast-sync-pan"), [
+				{ state: State.BEGAN, translationX: 0, translationY: 0, velocityX: 0, velocityY: 0 },
+				{ state: State.ACTIVE, translationX: 300, translationY: 0, velocityX: 2000, velocityY: 0 },
+				{ state: State.END, translationX: 300, translationY: 0, velocityX: 2000, velocityY: 0 },
+			]);
+			jest.advanceTimersByTime(16);
+		});
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
+		await act(async () => {
+			harness.toast({ id: "sync", title: "Synced", duration: 0 });
+		});
+		await act(async () => {
+			jest.advanceTimersByTime(1000);
+		});
+		const { jestAnimatedStyle } = screen.getByTestId("toast-sync-motion").props as {
+			jestAnimatedStyle?: { value: { transform?: { translateX?: number }[] } };
+		};
+		// `|| 0` folds -0 into 0.
+		expect(jestAnimatedStyle?.value.transform?.[0]?.translateX || 0).toBe(0);
+		expect(screen.getByText("Synced")).toBeOnTheScreen();
+	});
+
+	test("a cancelled pan puts the toast back instead of dismissing it", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast({ id: "sync", title: "Syncing", duration: 0 });
+		});
+		await act(async () => {
+			jest.advanceTimersByTime(500);
+		});
+		await act(async () => {
+			fireGestureHandler(getByGestureTestId("toast-sync-pan"), [
+				{ state: State.BEGAN, translationX: 0, translationY: 0, velocityX: 0, velocityY: 0 },
+				{ state: State.ACTIVE, translationX: 300, translationY: 0, velocityX: 2000, velocityY: 0 },
+				{ state: State.CANCELLED, translationX: 300, translationY: 0, velocityX: 2000, velocityY: 0 },
+			]);
+			jest.advanceTimersByTime(1000);
+		});
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(false);
+		const { jestAnimatedStyle } = screen.getByTestId("toast-sync-motion").props as {
+			jestAnimatedStyle?: { value: { transform?: { translateX?: number }[] } };
+		};
+		// `|| 0` folds -0 into 0.
+		expect(jestAnimatedStyle?.value.transform?.[0]?.translateX || 0).toBe(0);
+	});
+
+	test("a disabled action is not offered to assistive tech and cannot run", async () => {
+		const onPress = jest.fn();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.show({
+				duration: 0,
+				render: () => (
+					<Toast status="info" testID="custom-toast">
+						<Toast.Content>
+							<Toast.Title>Syncing</Toast.Title>
+						</Toast.Content>
+						<Toast.Action disabled onPress={onPress}>
+							Undo
+						</Toast.Action>
+					</Toast>
+				),
+			});
+		});
+		const card = screen.getByTestId("custom-toast");
+		const names = (card.props.accessibilityActions as { name: string }[]).map((action) => action.name);
+		expect(names).not.toContain("activate");
+
+		await fireEvent(card, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+		await fireEvent(screen.getByRole("button", { name: "Undo" }), "accessibilityTap");
+		expect(onPress).not.toHaveBeenCalled();
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(false);
+	});
+
+	test("a toast shown again with its id while leaving survives the old exit", async () => {
+		const onHide = jest.fn();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.show({ id: "sync", title: "Syncing", duration: 0, onHide });
+		});
+		await act(async () => {
+			harness.toast.hide("sync");
+		});
+		await act(async () => {
+			harness.toast.show({ id: "sync", title: "Synced", duration: 0, onHide });
+		});
+		await act(async () => {
+			jest.advanceTimersByTime(1000);
+		});
+		expect(harness.store.getSnapshot().map((item) => item.id)).toEqual(["sync"]);
+		expect(screen.getByText("Synced")).toBeOnTheScreen();
+		expect(onHide).not.toHaveBeenCalled();
+	});
+
+	test("hiding a queued toast removes it and calls its onHide", async () => {
+		const onHide = jest.fn();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		let oldest: { hide: () => void } | undefined;
+		await act(async () => {
+			oldest = harness.toast({ title: "Oldest", duration: 0, onHide });
+			for (let index = 0; index < 3; index += 1) harness.toast({ title: `Newer ${index}`, duration: 0 });
+		});
+		expect(screen.queryByText("Oldest")).not.toBeOnTheScreen();
+		await act(async () => {
+			oldest?.hide();
+		});
+		expect(harness.store.getSnapshot().map((item) => (item.kind === "message" ? item.title : item.id))).toEqual([
+			"Newer 0",
+			"Newer 1",
+			"Newer 2",
+		]);
+		expect(onHide).toHaveBeenCalledTimes(1);
+	});
+
+	test("a VoiceOver double-tap on the card runs its action", async () => {
+		const onPress = jest.fn();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.show({ title: "Archived", action: { label: "Undo", onPress } });
+		});
+		await fireEvent(screen.getByTestId(/^toast-toast-\d+$/), "accessibilityTap");
+		expect(onPress).toHaveBeenCalledTimes(1);
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
+	});
+
+	test("a double-tap on a card with no action does nothing", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast("Link copied");
+		});
+		expect(screen.getByTestId(/^toast-toast-\d+$/).props.onAccessibilityTap).toBeUndefined();
+	});
+
+	test("hideAll keeps the card behind at its depth while it leaves", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast({ id: "back", title: "Back", duration: 0 });
+			harness.toast({ id: "front", title: "Front", duration: 0 });
+		});
+		await advance(1000);
+		const scaleBehind = motionScale("back");
+		await act(async () => {
+			harness.toast.hideAll();
+		});
+		// Less than the 160 ms exit, so the card is still drawn.
+		await advance(150);
+		expect(scaleBehind).toBeLessThan(1);
+		expect(motionScale("back")).toBeCloseTo(scaleBehind, 3);
+	});
+
+	test("a card hidden while it moves up keeps moving up as it leaves", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast({ id: "back", title: "Back", duration: 0 });
+			harness.toast({ id: "front", title: "Front", duration: 0 });
+		});
+		await advance(1000);
+		await act(async () => {
+			harness.toast.hide("front");
+		});
+		await advance(60);
+		const scaleWhenHidden = motionScale("back");
+		await act(async () => {
+			harness.toast.hide("back");
+		});
+		await advance(60);
+		expect(motionScale("back")).toBeGreaterThanOrEqual(scaleWhenHidden);
+	});
+
+	test("VoiceOver's escape gesture hides the toast", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast("Link copied");
+		});
+		await fireEvent(screen.getByTestId(/^toast-toast-\d+$/), "accessibilityEscape");
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
+	});
+
 	test("a screen reader's dismiss action hides the toast", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);
@@ -171,6 +406,45 @@ describe("Toast", () => {
 		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
 	});
 
+	test("a staggered toast's clock starts once it has entered", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			for (let index = 0; index < 6; index += 1) harness.toast({ title: `Toast ${index}`, duration: 1000 });
+		});
+		const newest = harness.store.getSnapshot()[5];
+		expect(newest?.batchIndex).toBe(5);
+		// The newest enters after 5 × 220 ms, so at 1500 ms it has been up for 400 ms.
+		await act(async () => {
+			jest.advanceTimersByTime(1500);
+		});
+		expect(harness.store.getSnapshot().find((item) => item.id === newest?.id)?.isExiting).toBe(false);
+		await act(async () => {
+			jest.advanceTimersByTime(700);
+		});
+		expect(harness.store.getSnapshot().find((item) => item.id === newest?.id)?.isExiting ?? true).toBe(true);
+	});
+
+	test("an update during the stagger still waits for the entrance", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			for (let index = 0; index < 6; index += 1) harness.toast({ title: `Toast ${index}`, duration: 0 });
+		});
+		const newest = harness.store.getSnapshot()[5];
+		await act(async () => {
+			jest.advanceTimersByTime(100);
+		});
+		await act(async () => {
+			if (newest) harness.toast.update(newest.id, { duration: 500 });
+		});
+		// The newest enters at 1100 ms, so a 500 ms clock runs until 1600 ms.
+		await act(async () => {
+			jest.advanceTimersByTime(1300);
+		});
+		expect(harness.store.getSnapshot().find((item) => item.id === newest?.id)?.isExiting).toBe(false);
+	});
+
 	test("duration 0 stays until hidden", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);
@@ -195,6 +469,23 @@ describe("Toast", () => {
 			harness.toast.hideAll();
 		});
 		expect(harness.store.getSnapshot().every((item) => item.isExiting)).toBe(true);
+	});
+
+	test("hideAll with a queued toast never draws or announces it", async () => {
+		const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility");
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			for (let index = 0; index < 4; index += 1) harness.toast.info(`Toast ${index}`, { duration: 0 });
+		});
+		const announced = announce.mock.calls.length;
+		await act(async () => {
+			harness.toast.hideAll();
+		});
+		expect(screen.queryByText("Toast 0")).not.toBeOnTheScreen();
+		expect(announce.mock.calls.length).toBe(announced);
+		expect(harness.store.getSnapshot().some((item) => item.kind === "message" && item.title === "Toast 0")).toBe(false);
+		announce.mockRestore();
 	});
 
 	test("toast.update changes the text in place", async () => {
@@ -334,6 +625,55 @@ describe("Toast offset", () => {
 		await settle();
 		expect(liftOf("toast-stack-bottom")).toBe(0);
 		expect(harness.offsets.getSnapshot().bottom).toBeDefined();
+	});
+
+	/** Registers a caller-owned shared value through the hook, or `null`. */
+	function SharedBarOffset({
+		source,
+		isActive,
+		harness,
+	}: {
+		source: SharedValue<number>;
+		isActive: boolean;
+		harness: OffsetHarness;
+	}): null {
+		useToastOffset(isActive ? { bottom: source } : null, { store: harness.offsets });
+		return null;
+	}
+
+	/** The bottom offset the hook has registered right now, in points. */
+	function registeredBottom(harness: OffsetHarness): number | undefined {
+		return harness.offsets.getSnapshot().bottom?.value;
+	}
+
+	// Asserts the registered shared value rather than the stack's lift: the viewport's JS mapper
+	// does not redraw after a re-render of a sibling here, while the registered value is exact.
+	test("useToastOffset follows a shared value and slides back to 0 on null", async () => {
+		const harness = makeOffsetHarness();
+		const source = makeMutable(0);
+		const view = await renderWithProviders(<SharedBarOffset harness={harness} isActive source={source} />, {
+			wrapper: Overlays,
+		});
+		await act(async () => {
+			source.value = 84;
+		});
+		await settle();
+		expect(registeredBottom(harness)).toBe(84);
+
+		await view.rerender(<SharedBarOffset harness={harness} isActive={false} source={source} />);
+		await settle();
+		expect(registeredBottom(harness)).toBe(0);
+		expect(harness.offsets.getSnapshot().bottom).toBeDefined();
+
+		await act(async () => {
+			source.value = 120;
+		});
+		await settle();
+		expect(registeredBottom(harness)).toBe(0);
+
+		await view.rerender(<SharedBarOffset harness={harness} isActive source={source} />);
+		await settle();
+		expect(registeredBottom(harness)).toBe(120);
 	});
 
 	test("useToastOffset releases its registration on unmount", async () => {

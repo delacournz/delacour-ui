@@ -119,6 +119,20 @@ export function ToastViewport({
 		[chromeTop, insetTop]
 	);
 
+	// A queued toast is never drawn, so no item runs an exit for it. Hidden, it
+	// leaves the store here at once, and its `onHide` still fires.
+	useEffect(() => {
+		for (const placement of TOAST_PLACEMENTS) {
+			for (const entry of resolveToastStack(items, placement)) {
+				if (!entry.isExiting || entry.isVisible) continue;
+				const item = items.find((candidate) => candidate.id === entry.id);
+				if (!item) continue;
+				store.dispatch({ type: "remove", id: item.id, revision: item.revision });
+				item.onHide?.();
+			}
+		}
+	}, [items, store]);
+
 	if (items.length === 0) return null;
 
 	const byId = new Map<string, ToastItem>(items.map((item) => [item.id, item]));

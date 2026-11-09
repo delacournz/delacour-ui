@@ -88,7 +88,8 @@ function renderMessage(item: ToastItem & { kind: "message" }, handle: ToastHandl
  *   fainter, animated as depth changes. Hidden, it fades back toward its edge
  *   and only then leaves the store. Under reduce motion the entrance is a fade.
  * - **Clock.** The auto-hide clock restarts on every update (a promise toast's
- *   success gets a full duration) and pauses while the app is in the
+ *   success gets a full duration), covers what is left of the entrance
+ *   stagger, and pauses while the app is in the
  *   background and while a finger is on the toast.
  * - **Swipe.** A pan follows the finger sideways and toward the edge and
  *   rubber-bands toward the centre; `resolveToastRelease` decides on release.
@@ -121,10 +122,14 @@ export function ToastViewportItem({
 	const handle = useMemo<ToastHandle>(() => ({ id, hide }), [id, hide]);
 	const itemContext = useMemo(() => ({ id, hide }), [id, hide]);
 
+	// The exit callback reaches the JS thread a frame later, and by then `show`
+	// may have revived this id. Remove and call `onHide` only for the exit that ran.
 	const remove = useCallback(() => {
-		store.dispatch({ type: "remove", id });
+		const current = store.getSnapshot().find((entry) => entry.id === id);
+		if (!current?.isExiting || current.revision !== revision) return;
+		store.dispatch({ type: "remove", id, revision });
 		onHide?.();
-	}, [store, id, onHide]);
+	}, [store, id, revision, onHide]);
 
 	useEffect(() => {
 		if (isExiting) {
@@ -133,13 +138,21 @@ export function ToastViewportItem({
 			});
 			return;
 		}
+		// A toast revived while a swipe was carrying it off starts back at rest;
+		// assigning cancels the swipe-out animation.
+		dragX.value = 0;
+		dragY.value = 0;
 		const delay = resolveToastEnterDelay({ createdAt, batchIndex, now: Date.now() });
 		presence.value = withDelay(delay, withTiming(1, { duration: OVERLAY_MOTION.enterMs, easing: ENTER_EASING }));
-	}, [isExiting, createdAt, batchIndex, presence, remove]);
+	}, [isExiting, createdAt, batchIndex, presence, dragX, dragY, remove]);
 
+	// A leaving toast holds the depth it was at, or moving to, when it was hidden.
+	// Its `depth` prop still orders it (zIndex), but the stack's depth for a
+	// leaving toast counts every newer toast, which would slide it back down.
 	useEffect(() => {
+		if (isExiting) return;
 		depthValue.value = withTiming(depth, { duration: DEPTH_MS, easing: ENTER_EASING });
-	}, [depth, depthValue]);
+	}, [depth, isExiting, depthValue]);
 
 	useEffect(() => {
 		if (isFront && height.value > 0) frontHeight.value = height.value;
@@ -158,7 +171,13 @@ export function ToastViewportItem({
 	useEffect(() => {
 		if (isExiting) return;
 		const key = `${revision}:${duration}`;
-		if (clock.current?.key !== key) clock.current = { key, timer: createToastTimer(duration) };
+		if (clock.current?.key !== key) {
+			// Every new clock also covers what is left of the entrance stagger, so a
+			// toast — or an update to one — is up for its full duration even while
+			// it waits to enter. Once it has entered the wait is 0.
+			const wait = resolveToastEnterDelay({ createdAt, batchIndex, now: Date.now() });
+			clock.current = { key, timer: createToastTimer(duration > 0 ? duration + wait : duration) };
+		}
 		if (isPaused) return;
 		const running = clock.current;
 		running.timer = startToastTimer(running.timer, Date.now());
@@ -168,7 +187,7 @@ export function ToastViewportItem({
 			if (timeout !== null) clearTimeout(timeout);
 			running.timer = pauseToastTimer(running.timer, Date.now());
 		};
-	}, [revision, duration, isPaused, isExiting, hide]);
+	}, [revision, duration, isPaused, isExiting, hide, createdAt, batchIndex]);
 
 	const status = item.kind === "message" ? item.status : "default";
 	const announcement =
@@ -180,8 +199,9 @@ export function ToastViewportItem({
 	useEffect(() => {
 		if (haptic !== false) scheduleOnUI(playHaptic, haptic);
 		if (announcement === null) return;
-		if (Platform.OS === "ios" && resolveToastInterrupts(status)) {
-			AccessibilityInfo.announceForAccessibilityWithOptions(announcement, { queue: false });
+		// iOS queues behind VoiceOver speech only when asked to; a failure or warning cuts in.
+		if (Platform.OS === "ios") {
+			AccessibilityInfo.announceForAccessibilityWithOptions(announcement, { queue: !resolveToastInterrupts(status) });
 		} else {
 			AccessibilityInfo.announceForAccessibility(announcement);
 		}
@@ -190,6 +210,7 @@ export function ToastViewportItem({
 	const pan = useMemo(
 		() =>
 			Gesture.Pan()
+				.withTestId(`toast-${id}-pan`)
 				.activeOffsetX([-10, 10])
 				.activeOffsetY([-10, 10])
 				.onBegin(() => {
@@ -206,8 +227,15 @@ export function ToastViewportItem({
 					dragX.value = drag.x;
 					dragY.value = drag.y;
 				})
-				.onEnd((event) => {
+				.onEnd((event, success) => {
 					"worklet";
+					// A pan the system cancelled (a notification shade, an alert) is not a
+					// release: the toast goes back to rest, however far it was dragged.
+					if (!success) {
+						dragX.value = withSpring(0, SETTLE_SPRING);
+						dragY.value = withSpring(0, SETTLE_SPRING);
+						return;
+					}
 					const release = resolveToastRelease({
 						placement,
 						translationX: event.translationX,
@@ -235,7 +263,7 @@ export function ToastViewportItem({
 					"worklet";
 					scheduleOnRN(setTouched, false);
 				}),
-		[placement, dragX, dragY, width, height, edgeOffset, hide]
+		[id, placement, dragX, dragY, width, height, edgeOffset, hide]
 	);
 
 	const animatedStyle = useAnimatedStyle(() => {
@@ -284,6 +312,7 @@ export function ToastViewportItem({
 				<Animated.View
 					onLayout={onLayout}
 					pointerEvents={isExiting ? "none" : "auto"}
+					testID={`toast-${id}-motion`}
 					style={[
 						{
 							width: "100%",

@@ -34,6 +34,8 @@ function ToastRoot({
 	children,
 	accessibilityActions,
 	onAccessibilityAction,
+	onAccessibilityTap,
+	onAccessibilityEscape,
 	...props
 }: ToastProps): ReactElement {
 	const item = useToastItemContext();
@@ -67,6 +69,24 @@ function ToastRoot({
 		[action, hide, onAccessibilityAction]
 	);
 
+	// A VoiceOver double-tap calls `onAccessibilityTap`, not the `activate`
+	// action, so it runs the registered action too. With no action and no
+	// caller handler it stays unset and the double-tap does nothing.
+	const handleAccessibilityTap = useMemo(() => {
+		if (!action && !onAccessibilityTap) return undefined;
+		return () => {
+			action?.run();
+			onAccessibilityTap?.();
+		};
+	}, [action, onAccessibilityTap]);
+
+	// VoiceOver's two-finger escape (the "Z" scrub) calls `onAccessibilityEscape`,
+	// not the `escape` action, so it hides the toast here too.
+	const handleAccessibilityEscape = useCallback(() => {
+		hide();
+		onAccessibilityEscape?.();
+	}, [hide, onAccessibilityEscape]);
+
 	// One accessible element: VoiceOver and TalkBack read the title and the
 	// description as one message, and the action and ✕ are its actions rather
 	// than two more stops. It never takes focus — it is announced instead.
@@ -79,6 +99,8 @@ function ToastRoot({
 				accessible
 				className={slots.root({ className })}
 				onAccessibilityAction={handleAccessibilityAction}
+				onAccessibilityEscape={handleAccessibilityEscape}
+				onAccessibilityTap={handleAccessibilityTap}
 				{...props}
 			>
 				<IconDefaultsProvider value={iconDefaults}>{children}</IconDefaultsProvider>
@@ -98,7 +120,8 @@ function ToastRoot({
  * and an alert saying the same thing read as one family.
  *
  * One accessible element: the title and the description are read as one
- * message, the action is its `activate` and the ✕ its `escape` and "Dismiss".
+ * message, the action is its `activate` (and a VoiceOver double-tap) and the ✕
+ * its `escape` (and VoiceOver's escape gesture) and "Dismiss".
  * `role="alert"` for a failure; a polite live region on Android.
  *
  * @example

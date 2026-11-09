@@ -142,16 +142,24 @@ export type ToastStackEntry = {
  * the toasts behind it move up and the next queued toast is drawn — while the
  * hidden one is still animating out, at the depth it left. A toast that was
  * queued when it was hidden was never drawn and is not drawn leaving.
+ *
+ * An exiting toast is drawn only while fewer than three toasts are newer than
+ * it, counting every toast, leaving or not. That is the slot it held before it
+ * was hidden, so `hideAll` animates out the three it can see and never mounts a
+ * queued one — whose mount would announce it and play its haptic on the way out.
  */
 export function resolveToastStack(items: readonly ToastStackInput[], placement: Placement): ToastStackEntry[] {
 	const entries: ToastStackEntry[] = [];
 	let staying = 0;
+	let newer = 0;
 	for (let index = items.length - 1; index >= 0; index--) {
 		const item = items[index] as ToastStackInput;
 		if (item.placement !== placement) continue;
-		const isVisible = staying < TOAST_STACK.maxVisible;
+		const slot = item.isExiting ? newer : staying;
+		const isVisible = slot < TOAST_STACK.maxVisible;
 		entries.push({ id: item.id, depth: staying, isVisible, isExiting: item.isExiting });
 		if (!item.isExiting) staying += 1;
+		newer += 1;
 	}
 	return entries;
 }

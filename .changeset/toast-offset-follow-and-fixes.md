@@ -12,3 +12,6 @@ Fixes:
 - A toast hidden while still queued leaves the store at once and calls its `onHide`.
 - A VoiceOver double-tap on the card runs its action.
 - A toast revived after a swipe comes back on screen instead of staying where the swipe left it.
+- A pan the system cancels (the notification shade, an alert) puts the toast back instead of dismissing it.
+- VoiceOver's escape gesture hides the toast.
+- `hideAll` over four or more toasts no longer mounts — and announces — the one that was queued.

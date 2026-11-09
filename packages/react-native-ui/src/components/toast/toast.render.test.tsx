@@ -397,6 +397,23 @@ describe("Toast", () => {
 		expect(harness.store.getSnapshot().every((item) => item.isExiting)).toBe(true);
 	});
 
+	test("hideAll with a queued toast never draws or announces it", async () => {
+		const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility");
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			for (let index = 0; index < 4; index += 1) harness.toast.info(`Toast ${index}`, { duration: 0 });
+		});
+		const announced = announce.mock.calls.length;
+		await act(async () => {
+			harness.toast.hideAll();
+		});
+		expect(screen.queryByText("Toast 0")).not.toBeOnTheScreen();
+		expect(announce.mock.calls.length).toBe(announced);
+		expect(harness.store.getSnapshot().some((item) => item.kind === "message" && item.title === "Toast 0")).toBe(false);
+		announce.mockRestore();
+	});
+
 	test("toast.update changes the text in place", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);

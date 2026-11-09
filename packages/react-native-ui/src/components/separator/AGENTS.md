@@ -11,10 +11,14 @@ carries nothing a screen reader can use, and announcing them buries the rows.
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/separator` |
 | `separator.tsx` | The `tv()` and the component, in one file |
-| `separator.render.test.tsx` | Mounted under Jest — hidden from assistive technology on both axes, props forwarded, siblings stay readable |
+| `separator.render.test.tsx` | Mounted under Jest — hidden from assistive technology on both axes, caller overrides ignored, props forwarded, siblings stay readable |
 
 ## Design
 
+- **The accessibility props are fixed.** `accessible`,
+  `accessibilityElementsHidden` and `importantForAccessibility` are omitted from
+  `SeparatorProps`, and the component spreads `{...props}` before it sets them,
+  so a caller cannot unhide the line.
 - **`separatorVariants` lives in `separator.tsx`**, above the component, not in a
   `*.variants.ts` sibling — the pattern C carve-out. That file imports React
   Native, so the `tv()` is not unit-testable; the exclusive-axis and

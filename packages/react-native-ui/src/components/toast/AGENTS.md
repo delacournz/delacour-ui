@@ -112,7 +112,8 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 - **Swipe toward the entry edge or sideways dismisses; toward the centre rubber-bands.** Past 40% of
   the toast's own height or width, or a fling over 800pt/s. Toward the centre it follows the finger
   to at most 24pt and never dismisses — that is not where a toast goes. The pan activates only past
-  10pt, so a tap still reaches the action and the ✕. Under reduce motion the entrance is a fade; the
+  10pt, so a tap still reaches the action and the ✕. A pan the system cancels — the notification shade, an alert — is
+  not a release: the toast springs back to rest, however far it was dragged. Under reduce motion the entrance is a fade; the
   drag still follows the finger, which is direct manipulation, not decoration.
 - **The viewport is `box-none` all the way down.** Two absolute stacks in `Overlay.Portal
   layer="toast"` — above every sheet, dialog and popover — and only a card takes a touch, so the app

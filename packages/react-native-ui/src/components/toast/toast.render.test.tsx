@@ -176,6 +176,31 @@ describe("Toast", () => {
 		expect(screen.getByText("Synced")).toBeOnTheScreen();
 	});
 
+	test("a cancelled pan puts the toast back instead of dismissing it", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast({ id: "sync", title: "Syncing", duration: 0 });
+		});
+		await act(async () => {
+			jest.advanceTimersByTime(500);
+		});
+		await act(async () => {
+			fireGestureHandler(getByGestureTestId("toast-sync-pan"), [
+				{ state: State.BEGAN, translationX: 0, translationY: 0, velocityX: 0, velocityY: 0 },
+				{ state: State.ACTIVE, translationX: 300, translationY: 0, velocityX: 2000, velocityY: 0 },
+				{ state: State.CANCELLED, translationX: 300, translationY: 0, velocityX: 2000, velocityY: 0 },
+			]);
+			jest.advanceTimersByTime(1000);
+		});
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(false);
+		const { jestAnimatedStyle } = screen.getByTestId("toast-sync-motion").props as {
+			jestAnimatedStyle?: { value: { transform?: { translateX?: number }[] } };
+		};
+		// `|| 0` folds -0 into 0.
+		expect(jestAnimatedStyle?.value.transform?.[0]?.translateX || 0).toBe(0);
+	});
+
 	test("a disabled action is not offered to assistive tech and cannot run", async () => {
 		const onPress = jest.fn();
 		const harness = makeHarness();

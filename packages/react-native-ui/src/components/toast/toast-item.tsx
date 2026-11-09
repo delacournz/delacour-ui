@@ -222,8 +222,15 @@ export function ToastViewportItem({
 					dragX.value = drag.x;
 					dragY.value = drag.y;
 				})
-				.onEnd((event) => {
+				.onEnd((event, success) => {
 					"worklet";
+					// A pan the system cancelled (a notification shade, an alert) is not a
+					// release: the toast goes back to rest, however far it was dragged.
+					if (!success) {
+						dragX.value = withSpring(0, SETTLE_SPRING);
+						dragY.value = withSpring(0, SETTLE_SPRING);
+						return;
+					}
 					const release = resolveToastRelease({
 						placement,
 						translationX: event.translationX,

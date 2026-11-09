@@ -293,6 +293,16 @@ describe("Toast", () => {
 		expect(screen.getByTestId(/^toast-toast-\d+$/).props.onAccessibilityTap).toBeUndefined();
 	});
 
+	test("VoiceOver's escape gesture hides the toast", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast("Link copied");
+		});
+		await fireEvent(screen.getByTestId(/^toast-toast-\d+$/), "accessibilityEscape");
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
+	});
+
 	test("a screen reader's dismiss action hides the toast", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);

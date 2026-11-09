@@ -126,7 +126,8 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   `Toast.Action` under its label, and not at all while it is `disabled`) and the ✕ is `escape` plus a
   custom "Dismiss". A VoiceOver double-tap calls `onAccessibilityTap`, not `activate`, so the card
   sets it to the registered action as well (and still calls a caller's own); with no action it stays
-  unset. `role="alert"` for a
+  unset. Likewise VoiceOver's two-finger escape (the "Z" scrub) calls `onAccessibilityEscape`,
+  not the `escape` action, so the card sets it to `hide` and still calls a caller's own. `role="alert"` for a
   failure, a polite live region on Android. On show, and on every revision, the item announces
   `title. description` — on iOS a warning or failure with `queue: false`, so it cuts in. A toast
   never moves focus.

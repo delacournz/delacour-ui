@@ -492,18 +492,24 @@ describe("drift guard", () => {
 		expect(contexts.sort()).toEqual([...REQUIRED_CONTEXTS].sort());
 	});
 
-	test("ci.yml no longer runs on an ordinary pull request or a push to develop", async () => {
-		// The reason this file exists: those runs were billed twice for work already verified locally.
+	test("ci.yml signs off every non-draft same-repo pull request, and never runs on a push to develop", async () => {
+		// Every push to a pull request, and marking a draft ready, runs the checks; a draft or a fork's
+		// pull request runs nothing (a fork's token can neither install `@delacournz/*` nor write a status).
 		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
-			on: Record<string, { branches?: string[] } | null>;
-			jobs: Record<string, { if?: string }>;
+			on: { push?: { branches?: string[] }; pull_request?: { types?: string[] } };
+			jobs: Record<string, { if?: string; needs?: string | string[] }>;
 		};
 		expect(workflow.on.push?.branches ?? []).not.toContain("develop");
-		if ("pull_request" in workflow.on) {
-			for (const [name, job] of Object.entries(workflow.jobs)) {
-				expect({ name, gated: job.if?.includes("changeset-release/develop") ?? false }).toEqual({ name, gated: true });
-			}
-		}
+		expect([...(workflow.on.pull_request?.types ?? [])].sort()).toEqual(
+			["opened", "ready_for_review", "reopened", "synchronize"].sort()
+		);
+		const gate = workflow.jobs.resolve?.if ?? "";
+		expect(gate).toContain("github.event.pull_request.draft == false");
+		expect(gate).toContain("github.event.pull_request.head.repo.full_name == github.repository");
+		expect(gate).not.toContain("changeset-release/develop");
+		const signoff = workflow.jobs.signoff?.if ?? "";
+		expect(signoff).toContain("needs.resolve.result == 'success'");
+		expect(signoff).toContain("needs.resolve.outputs.sign == 'true'");
 	});
 
 	test("ci.yml's dispatch picks report or signoff from a dropdown, with an optional PR and SHA", async () => {
@@ -529,7 +535,7 @@ describe("drift guard", () => {
 			if (name === "resolve") continue;
 			const needs = [job.needs ?? []].flat();
 			expect({ name, needsResolve: needs.includes("resolve") }).toEqual({ name, needsResolve: true });
-			const checkout = job.steps?.find((step) => step.uses?.startsWith("namespacelabs/nscloud-checkout-action@"));
+			const checkout = job.steps?.find((step) => step.uses?.startsWith("actions/checkout@"));
 			if (checkout) expect({ name, ref: checkout.with?.ref }).toEqual({ name, ref: RESOLVED_SHA });
 		}
 	});

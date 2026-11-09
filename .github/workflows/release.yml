@@ -33,15 +33,14 @@ concurrency:
 # Build and publish are split so dependency code never runs next to publish
 # credentials: `build` installs/compiles with a read-only token and no registry secret;
 # `publish` holds the OIDC + release write permissions but never installs or
-# executes repo dependencies. `build` runs on Namespace like CI; `publish` stays
-# on a GitHub-hosted runner — npm trusted publishing + provenance refuse
-# self-hosted ones (`E422 Unsupported GitHub Actions runner environment: "self-hosted"`),
-# which is what a Namespace profile is to GitHub.
+# executes repo dependencies. Both run on GitHub-hosted runners (free on a public
+# repo). `publish` has to: npm trusted publishing + provenance refuse self-hosted
+# ones (`E422 Unsupported GitHub Actions runner environment: "self-hosted"`).
 jobs:
   build:
     if: github.repository_owner == 'delacournz'
     # Medium, not small: typecheck across every workspace was OOM-killed on the small profile.
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     # `packages: read` for the install's `@delacournz/*` (GitHub Packages, job token). Never
     # reaches the publish job, which has its own permissions and installs nothing.
@@ -55,7 +54,7 @@ jobs:
       DELACOUR_REGISTRY_REF: ${{ github.sha }}
     steps:
       # fetch-depth 0: the ancestry check below needs origin/main, not just the tagged commit.
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -89,12 +88,8 @@ jobs:
           node-version: 24
           package-manager-cache: false
 
-      # Bun's install cache lives on the profile's cache volume (bind-mounted, nothing uploaded), and
-      # turbo reads and writes Namespace's remote cache. A hit replays a run over byte-identical
-      # inputs (see AGENTS.md § Commands), so the release still reflects this tree.
-      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
-        with:
-          cache: bun
+      # No caches: a tag run cannot restore another tag's, and a release never replays a turbo green
+      # or installs from a cache a pull request or dispatched ci.yml run wrote.
       - name: Install
         # `@delacournz/*` comes from GitHub Packages (see `bunfig.toml`) with this job's own token,
         # read-only under `packages: read`. Step level: nothing after the install sees it.
@@ -102,7 +97,6 @@ jobs:
           NPM_TOKEN: ${{ github.token }}
         run: bun install --frozen-lockfile
 
-      - uses: namespace-actions/setup-turbocache@3b82149ffb545cab670093f13bc0bad156917e18 # v0.0.4
       - run: bun run typecheck
       - run: bun run check
       - run: bun run test

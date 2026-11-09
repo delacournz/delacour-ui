@@ -23,7 +23,7 @@ jobs:
   retarget:
     name: retarget to develop
     if: github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Move the base to develop

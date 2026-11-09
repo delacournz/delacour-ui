@@ -1,36 +1,37 @@
 name: CI
 
-# NOT THE MERGE GATE FOR ORDINARY PULL REQUESTS. `bun run signoff` runs these checks on the machine
-# that authored the change — where they had already run once — and writes the `signoff/*` commit
-# statuses `.github/rulesets/develop.json` requires. See AGENTS.md § Signoff. The path gate for the
-# registry check lives in scripts/signoff-checks.ts, the single copy both halves read.
+# The merge gate for every pull request. Each non-draft pull request from a branch in this repository
+# runs the signoff checks here and, when they all pass, the `signoff` job writes the `signoff/*`
+# commit statuses `.github/rulesets/develop.json` requires — the same ones `bun run signoff` writes
+# from a laptop (see AGENTS.md § Signoff). The repository is public, so GitHub-hosted runners cost
+# nothing, and the checks run on every push rather than only when someone remembers to sign off.
 #
-# What still runs here, and why:
+# When it runs:
 #
-# - The version pull request (`changeset-release/develop`). No person authors it — `version.yml`
-#   force-pushes it with the release app's token on every merge — so nobody is at a laptop to sign it
-#   off. Every job is gated to that head branch on `pull_request`, and the `signoff` job writes the
-#   same statuses `bun run signoff` would, for the head SHA it tested. It is also the one run that
-#   includes `verify-expo` before a release reaches npm.
-# - `workflow_dispatch`, the escape hatch for a check a laptop cannot run. The `mode` dropdown picks
-#   `report` (run only) or `signoff` (a green run writes the statuses itself). `pr` and `signoff-sha`
-#   are both optional and pick the commit: a PR number tests that PR's head, a SHA tests that commit,
-#   both pins the PR to that exact head, neither tests the tip of the dispatched ref. The `resolve`
-#   job turns that into one SHA, and every job checks that SHA out — the workflow file is always the
-#   dispatched ref's, the tree tested is the target's.
+# - `pull_request` — `opened`, `synchronize` (every push), `reopened` and `ready_for_review`. A
+#   draft runs nothing; marking it ready for review starts the run. A fork's pull request runs
+#   nothing either: its token can neither read `@delacournz/*` nor write a status, so a maintainer
+#   dispatches it (below) after reading the diff. `verify-expo` (installs from npm, minutes) runs
+#   only on the version pull request (`changeset-release/develop`), before a release reaches npm.
+# - `workflow_dispatch`, the escape hatch. The `mode` dropdown picks `report` (run only) or
+#   `signoff` (a green run writes the statuses itself). `pr` and `signoff-sha` are both optional and
+#   pick the commit: a PR number tests that PR's head, a SHA tests that commit, both pins the PR to
+#   that exact head, neither tests the tip of the dispatched ref. The `resolve` job turns that into
+#   one SHA, and every job checks that SHA out — the workflow file is always the dispatched ref's,
+#   the tree tested is the target's.
 # - A push to `release/playground/*`, which triggers the EAS `release:prod` workflow that ships the
 #   app to the stores. GitHub and EAS run independently, so these checks cannot hold that release
 #   back — they only mean a push that shipped something broken is visibly red rather than silently
 #   green. Railway does not deploy from these branches.
 #
-# Not on push to `develop` any more. Every commit there is a squash of a pull request that was
-# signed off at its head and up to date with `develop` (`strict_required_status_checks_policy`), so
-# the tree is the one that was verified; a run there only repeated the answer, billed.
+# Not on push to `develop`. Every commit there is the squash of a pull request signed off at its
+# head; the next pull request's run covers whatever the squash changed.
 
 on:
   push:
     branches: [release/playground/*]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
       mode:
@@ -48,24 +49,19 @@ on:
         required: false
         type: string
 
-# No `paths:` filter. On a pull request the jobs are gated by `if:` to the release pull request
-# instead: a skipped job bills nothing, and the gate itself is the signoff statuses, not these jobs.
+# No `paths:` filter: every check runs on every pull request, and the path gates of a local signoff
+# (scripts/signoff-checks.ts) do not apply here. Only `resolve` carries the draft and fork gate;
+# every other job needs it, so a skipped `resolve` skips the run.
 #
-# Runners are Namespace profiles, not GitHub-hosted labels. `namespace-profile-linux-medium` (4 vCPU,
-# 8 GB) is the default for everything here — the small profile's 2 vCPU made every install and tsc
-# the critical path; a job that needs macOS (Xcode, a simulator) must use `namespace-profile-mac-medium`
-# instead, and one that needs Windows `namespace-profile-windows-medium`.
-# Nothing in this workflow needs either — `previews` is deliberately kept out of CI (see the build job).
-#
-# The profile has a cache volume and Git mirror caching enabled, so every job checks out with
-# `nscloud-checkout-action` (from the mirror), mounts Bun's install cache with `nscloud-cache-action`
-# (`cache: bun`, after setup-bun — a cache mode needs its tool installed), and a job that runs turbo
-# points it at Namespace's remote cache with `setup-turbocache`. `.github/workflows.test.ts` fails
-# if a Namespace job drops one, or a GitHub-hosted job (no volume, no instance token) gains one.
+# Runners are GitHub-hosted (`ubuntu-latest`), free on a public repository. Checkout and caches are
+# GitHub's own actions: Bun's install cache is keyed on `bun.lock`, and each job that runs turbo
+# keeps its local cache (`.turbo/cache`) keyed per commit and restored from the newest entry, so a
+# second push to a pull request replays every task whose inputs did not change.
+# `.github/workflows.test.ts` fails if a Namespace runner or action comes back.
 
 # `packages: read` lets each job's Install step read `@delacournz/*` from GitHub Packages with the
 # job's own token, set as NPM_TOKEN on that step only. Fork pull requests run none of these jobs (the
-# `if:` gates below, and `resolve` refuses a fork's PR on dispatch), so no fork token ever installs.
+# `if:` gate on `resolve`, which also refuses a fork's PR on dispatch), so no fork token ever installs.
 # `statuses: write` is the `signoff` job's alone, granted there.
 permissions:
   contents: read
@@ -88,8 +84,12 @@ jobs:
   # sign whatever a PR's head had moved to while the checks ran.
   resolve:
     name: resolve
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-medium
+    # Pull requests: not a draft, and from a branch in this repository.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
       contents: read
@@ -97,6 +97,8 @@ jobs:
     outputs:
       sha: ${{ steps.resolve.outputs.sha }}
       sign: ${{ steps.resolve.outputs.sign }}
+      # Whether `verify-expo` runs: everywhere but an ordinary pull request.
+      expo: ${{ steps.resolve.outputs.expo }}
     steps:
       - id: resolve
         env:
@@ -104,6 +106,7 @@ jobs:
           REPO: ${{ github.repository }}
           EVENT: ${{ github.event_name }}
           EVENT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          HEAD_REF: ${{ github.head_ref }}
           MODE: ${{ inputs.mode }}
           PR: ${{ inputs.pr }}
           INPUT_SHA: ${{ inputs.signoff-sha }}
@@ -113,10 +116,15 @@ jobs:
           set -euo pipefail
           if [ "$EVENT" != "workflow_dispatch" ]; then
             SIGN=false
-            [ "$EVENT" = "pull_request" ] && SIGN=true
+            EXPO=true
+            if [ "$EVENT" = "pull_request" ]; then
+              SIGN=true
+              [ "$HEAD_REF" = "changeset-release/develop" ] || EXPO=false
+            fi
             echo "sha=${EVENT_SHA}" >> "$GITHUB_OUTPUT"
             echo "sign=${SIGN}" >> "$GITHUB_OUTPUT"
-            echo "→ ${EVENT}: ${EVENT_SHA} (sign: ${SIGN})"
+            echo "expo=${EXPO}" >> "$GITHUB_OUTPUT"
+            echo "→ ${EVENT}: ${EVENT_SHA} (sign: ${SIGN}, verify-expo: ${EXPO})"
             exit 0
           fi
 
@@ -147,6 +155,7 @@ jobs:
           [ "$MODE" = "signoff" ] && SIGN=true
           echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
           echo "sign=${SIGN}" >> "$GITHUB_OUTPUT"
+          echo "expo=true" >> "$GITHUB_OUTPUT"
           {
             echo "### ${MODE}: \`${SHA}\`"
             [ -n "$PR" ] && echo "Pull request #${PR}"
@@ -156,24 +165,25 @@ jobs:
   typecheck:
     name: typecheck
     needs: resolve
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    # tsc over every workspace at once outgrew the small profile: with the component stack applied,
-    # the playground's tsc was OOM-killed (exit 137) on every run.
-    runs-on: namespace-profile-linux-medium
-    # No job here has ever taken more than a minute. The default is 360, which on a private repo
-    # bills six hours against the plan's minutes if a runner ever wedges.
+    runs-on: ubuntu-latest
+    # No job here has ever taken more than a minute. The default is 360: a wedged runner would hold
+    # a pull request's gate for six hours.
     timeout-minutes: 15
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           # Matches `packageManager` in package.json — Railpack reads the same field to pick Bun.
           bun-version: 1.4.4
-      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          cache: bun
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
       - name: Install
         # `@delacournz/*` comes from GitHub Packages (see `bunfig.toml`) with this job's own token,
         # read-only under `packages: read`. Step level: nothing after the install sees it.
@@ -183,71 +193,95 @@ jobs:
       # `@delacour/web#typecheck` depends on `@delacour/web#codegen` (see turbo.jsonc): TanStack
       # Router generates the gitignored `apps/web/src/routeTree.gen.ts` during that build, and tsc
       # cannot run without it.
-      - uses: namespace-actions/setup-turbocache@3b82149ffb545cab670093f13bc0bad156917e18 # v0.0.4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .turbo/cache
+          key: turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ needs.resolve.outputs.sha }}
+          restore-keys: |
+            turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-
       - run: bun run typecheck
 
   check:
     name: check (lint + format)
     needs: resolve
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.4
-      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          cache: bun
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
       - name: Install
         env:
           NPM_TOKEN: ${{ github.token }}
         run: bun install --frozen-lockfile
-      - uses: namespace-actions/setup-turbocache@3b82149ffb545cab670093f13bc0bad156917e18 # v0.0.4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .turbo/cache
+          key: turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ needs.resolve.outputs.sha }}
+          restore-keys: |
+            turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-
       - run: bun run check
 
   test:
     name: test
     needs: resolve
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.4
-      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          cache: bun
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
       - name: Install
         env:
           NPM_TOKEN: ${{ github.token }}
         run: bun install --frozen-lockfile
-      - uses: namespace-actions/setup-turbocache@3b82149ffb545cab670093f13bc0bad156917e18 # v0.0.4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .turbo/cache
+          key: turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ needs.resolve.outputs.sha }}
+          restore-keys: |
+            turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-
       - run: bun run test
 
   build:
     name: build
     needs: resolve
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.4
-      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          cache: bun
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
       - name: Install
         env:
           NPM_TOKEN: ${{ github.token }}
@@ -262,32 +296,40 @@ jobs:
       # Never add `bun run previews` here. It drives an iOS simulator and needs a Mac with Xcode;
       # its outputs (apps/web/public/previews/**, apps/web/src/previews/manifest.ts) are committed
       # precisely so this builds on a simulator-less runner. See apps/web/AGENTS.md.
-      - uses: namespace-actions/setup-turbocache@3b82149ffb545cab670093f13bc0bad156917e18 # v0.0.4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .turbo/cache
+          key: turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ needs.resolve.outputs.sha }}
+          restore-keys: |
+            turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-
       - run: bun run build --filter=@delacour/web
 
   registry:
     name: registry
     needs: resolve
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.4
       # tsdown's bin runs under Node, and it picks its config loader from that Node: one with
       # native TypeScript (>= 22.18) loads tsdown.config.ts itself, an older one falls back to
-      # the optional `unrun` package, which is not installed. The Namespace image ships an older
-      # Node than GitHub's did, so pin one rather than depend on the image.
+      # the optional `unrun` package, which is not installed. Pin one rather than depend on the
+      # runner image's.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           package-manager-cache: false
-      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          cache: bun
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
       - name: Install
         env:
           NPM_TOKEN: ${{ github.token }}
@@ -337,8 +379,8 @@ jobs:
   verify-expo:
     name: CLI against a real Expo app (${{ matrix.layout }})
     needs: resolve
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-medium
+    if: needs.resolve.outputs.expo == 'true'
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
     strategy:
@@ -347,23 +389,27 @@ jobs:
         layout: [standalone, monorepo]
 
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.4
       # tsdown's bin runs under Node, and it picks its config loader from that Node: one with
       # native TypeScript (>= 22.18) loads tsdown.config.ts itself, an older one falls back to
-      # the optional `unrun` package, which is not installed. The Namespace image ships an older
-      # Node than GitHub's did, so pin one rather than depend on the image.
+      # the optional `unrun` package, which is not installed. Pin one rather than depend on the
+      # runner image's.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           package-manager-cache: false
-      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          cache: bun
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
       - name: Install
         env:
           NPM_TOKEN: ${{ github.token }}
@@ -386,8 +432,7 @@ jobs:
   copied-tests:
     name: copied tests (${{ matrix.runner }})
     needs: resolve
-    if: github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop'
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
     strategy:
@@ -396,9 +441,10 @@ jobs:
         runner: [bun, jest, vitest]
 
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.4
@@ -406,9 +452,12 @@ jobs:
         with:
           node-version: 24
           package-manager-cache: false
-      - uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          cache: bun
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
       - name: Install
         env:
           NPM_TOKEN: ${{ github.token }}
@@ -417,18 +466,22 @@ jobs:
         working-directory: packages/cli
         run: bun run verify:expo --tests ${{ matrix.runner }}
 
-  # Writes what `bun run signoff` would have, for the commit these jobs tested: every always-on
-  # sub-context, then the umbrella last. `needs` covers every job above, so the umbrella is earned
-  # only when all of them — registry, both verify-expo legs and both copied-tests legs included — passed.
+  # Writes what `bun run signoff` would have, for the commit these jobs tested: every sub-context,
+  # then the umbrella last. `needs` covers every job above, so the umbrella is earned only when all of
+  # them passed — `verify-expo` included wherever it ran, and skipped only on an ordinary pull request.
   signoff:
     name: signoff
     needs: [resolve, typecheck, check, test, build, registry, verify-expo, copied-tests]
-    # `sign` is true only for the version pull request and a dispatch with mode `signoff`. The
-    # head-branch clause stays so the drift test can see this job is gated on `pull_request` too.
+    # `sign` is true for every pull request `resolve` let through and a dispatch with mode `signoff`.
+    # `always()` so a skipped `verify-expo` does not skip this job; every other result is checked.
     if: >-
-      success() && needs.resolve.outputs.sign == 'true' &&
-      (github.event_name != 'pull_request' || github.head_ref == 'changeset-release/develop')
-    runs-on: namespace-profile-linux-medium
+      always() && needs.resolve.result == 'success' && needs.resolve.outputs.sign == 'true' &&
+      needs.typecheck.result == 'success' && needs.check.result == 'success' &&
+      needs.test.result == 'success' && needs.build.result == 'success' &&
+      needs.registry.result == 'success' && needs.copied-tests.result == 'success' &&
+      (needs.verify-expo.result == 'success' ||
+      (needs.verify-expo.result == 'skipped' && needs.resolve.outputs.expo != 'true'))
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     # The default token is read-only on statuses. Nothing here checks out or installs.
     permissions:
@@ -437,14 +490,15 @@ jobs:
       - env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ needs.resolve.outputs.sha }}
-          PR: ${{ inputs.pr }}
+          PR: ${{ inputs.pr || github.event.pull_request.number }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           ACTOR: ${{ github.actor }}
-        # Same contexts as REQUIRED_CONTEXTS in scripts/signoff-checks.ts, which signoff.test.ts pins
-        # against `.github/rulesets/develop.json`.
+        # REQUIRED_CONTEXTS in scripts/signoff-checks.ts (which signoff.test.ts pins against
+        # `.github/rulesets/develop.json`), plus the two path-gated ones, which ran here too. The
+        # umbrella is last.
         run: |
           BY="passed in CI, triggered by ${ACTOR}${PR:+ for #${PR}}"
-          for CONTEXT in signoff/typecheck signoff/check signoff/test signoff/build signoff; do
+          for CONTEXT in signoff/typecheck signoff/check signoff/test signoff/build signoff/registry signoff/tests signoff; do
             gh api "repos/${{ github.repository }}/statuses/${SHA}" --method POST \
               -f state=success \
               -f "context=${CONTEXT}" \

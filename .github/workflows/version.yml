@@ -41,7 +41,7 @@ jobs:
     # Loop guard 1: never react to the App's own pushes (it writes only changeset-release/*, `main`
     # and tags, but a stray write to develop must not start a second version run).
     if: github.repository_owner == 'delacournz' && github.actor != 'delacour-release[bot]'
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     # `packages: read`: the install and `bun run version`'s lockfile refresh read `@delacournz/*`
     # from GitHub Packages with this job's token.
@@ -49,7 +49,7 @@ jobs:
       contents: read
       packages: read
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@66f2dc6f6c42a8ac6c4e53473c4840006822831e # v9.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -111,12 +111,14 @@ jobs:
           node-version: 24
           package-manager-cache: false
 
-      # Bun's install cache on the profile's cache volume. After setup-bun: a cache mode needs its
-      # tool installed first.
+      # Bun's global install cache, keyed on the lockfile; a changed lockfile restores the newest entry.
       - if: steps.detect.outputs.skip == 'false'
-        uses: namespacelabs/nscloud-cache-action@1124a6f3ce44e5cf84cc22111530961f4d2a15f9 # v1.7.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          cache: bun
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Install
         if: steps.detect.outputs.skip == 'false'

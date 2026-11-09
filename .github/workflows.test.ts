@@ -80,59 +80,21 @@ describe("pipeline wiring", () => {
 });
 
 /**
- * Namespace runners carry a cache volume and a Git mirror (the `namespace-profile-linux-medium` profile
- * has both enabled), so a job there checks out from the mirror, keeps Bun's install cache on the
- * volume, and points turbo at Namespace's remote cache. A GitHub-hosted job has neither the volume
- * nor the instance token, so it must not use any of the three: each one fails outright there.
+ * The repository is public, so GitHub-hosted runners are free, and every job runs on one. Namespace
+ * profiles and their actions (mirror checkout, cache volume, remote turbo cache) are gone: a
+ * `namespace-profile-*` label queues forever once the profile is deleted, and the actions fail
+ * outright without a Namespace instance. Checkout and caches are GitHub's own actions.
  */
-describe("Namespace caching", () => {
-	type Step = { uses?: string; run?: string; with?: Record<string, string | number | boolean> };
-	type Job = { "runs-on"?: string; steps?: Step[] };
-	const TURBO_SCRIPT = /\bbun run (typecheck|check|test|build)\b/;
-	const uses = (name: string) => (step: Step) => step.uses?.startsWith(`${name}@`) ?? false;
-	const runs = (pattern: RegExp) => (step: Step) => pattern.test(step.run ?? "");
-	const bunCache = (step: Step) =>
-		uses("namespacelabs/nscloud-cache-action")(step) &&
-		String(step.with?.cache ?? "")
-			.split("\n")
-			.includes("bun");
-
-	function githubHostedViolations(steps: Step[]): string[] {
-		return steps
-			.filter((step) => /^namespace(labs|-actions)\//.test(step.uses ?? ""))
-			.map((step) => `GitHub-hosted job uses ${step.uses}`);
-	}
-
-	function namespaceViolations(steps: Step[]): string[] {
-		const at = (predicate: (step: Step) => boolean) => steps.findIndex(predicate);
-		const found: string[] = [];
-		if (at(uses("actions/checkout")) !== -1) found.push("uses actions/checkout, not nscloud-checkout-action");
-
-		const bun = at(uses("oven-sh/setup-bun"));
-		const cache = at(bunCache);
-		if (bun !== -1 && !(cache > bun && cache < at(runs(/\bbun install\b/))))
-			found.push("no `cache: bun` nscloud-cache-action between setup-bun and bun install");
-
-		const nodeCached = steps
-			.filter(uses("actions/setup-node"))
-			.some((step) => step.with?.["package-manager-cache"] !== false);
-		if (nodeCached) found.push("setup-node without package-manager-cache: false");
-
-		const turbo = at(runs(TURBO_SCRIPT));
-		const remote = at(uses("namespace-actions/setup-turbocache"));
-		if (turbo !== -1 && !(remote !== -1 && remote < turbo)) found.push("runs turbo before setup-turbocache");
-		return found;
-	}
+describe("GitHub-hosted runners", () => {
+	type Job = { "runs-on"?: string };
 
 	for (const file of readdirSync(WORKFLOWS).filter((name) => /\.ya?ml$/.test(name))) {
-		test(`${file}: Namespace jobs use the mirror checkout, the bun cache volume and the turbo cache`, async () => {
+		test(`${file}: no Namespace runner or action`, async () => {
 			const { text } = await load(file);
+			expect(text).not.toMatch(/namespace-profile-|namespacelabs\/|namespace-actions\//);
 			const { jobs } = Bun.YAML.parse(text) as { jobs: Record<string, Job> };
 			for (const [name, job] of Object.entries(jobs)) {
-				const steps = job.steps ?? [];
-				const namespace = job["runs-on"]?.startsWith("namespace-profile-") ?? false;
-				const violations = namespace ? namespaceViolations(steps) : githubHostedViolations(steps);
-				expect({ file, name, violations }).toEqual({ file, name, violations: [] });
+				expect({ file, name, runsOn: job["runs-on"] }).toEqual({ file, name, runsOn: "ubuntu-latest" });
 			}
 		});
 	}

@@ -14109,7 +14109,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 81,
+		fileCount: 83,
 		groups: [
 			{
 				name: "toast",
@@ -14128,10 +14128,12 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/toast/toast-title.tsx", target: "src/components/ui/toast/toast-title.tsx" },
 					{ source: "packages/react-native-ui/src/components/toast/toast-viewport.tsx", target: "src/components/ui/toast/toast-viewport.tsx" },
 					{ source: "packages/react-native-ui/src/components/toast/toast.context.tsx", target: "src/components/ui/toast/toast.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/toast/toast.offset.ts", target: "src/components/ui/toast/toast.offset.ts" },
 					{ source: "packages/react-native-ui/src/components/toast/toast.store.ts", target: "src/components/ui/toast/toast.store.ts" },
 					{ source: "packages/react-native-ui/src/components/toast/toast.timer.ts", target: "src/components/ui/toast/toast.timer.ts" },
 					{ source: "packages/react-native-ui/src/components/toast/toast.tsx", target: "src/components/ui/toast/toast.tsx" },
 					{ source: "packages/react-native-ui/src/components/toast/toast.variants.ts", target: "src/components/ui/toast/toast.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/toast/use-toast-offset.ts", target: "src/components/ui/toast/use-toast-offset.ts" },
 				],
 			},
 			{

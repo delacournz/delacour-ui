@@ -97,6 +97,28 @@ describe("Toast", () => {
 		announceWithOptions.mockRestore();
 	});
 
+	test("on iOS a plain toast queues its announcement behind VoiceOver speech", async () => {
+		const announceWithOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions");
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.success("Saved");
+		});
+		expect(announceWithOptions).toHaveBeenCalledWith("Saved", { queue: true });
+		announceWithOptions.mockRestore();
+	});
+
+	test("on iOS a failure interrupts VoiceOver speech", async () => {
+		const announceWithOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions");
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.error("Upload failed");
+		});
+		expect(announceWithOptions).toHaveBeenCalledWith("Upload failed", { queue: false });
+		announceWithOptions.mockRestore();
+	});
+
 	test("the action runs its callback and hides the toast", async () => {
 		const onPress = jest.fn();
 		const harness = makeHarness();

@@ -195,8 +195,9 @@ export function ToastViewportItem({
 	useEffect(() => {
 		if (haptic !== false) scheduleOnUI(playHaptic, haptic);
 		if (announcement === null) return;
-		if (Platform.OS === "ios" && resolveToastInterrupts(status)) {
-			AccessibilityInfo.announceForAccessibilityWithOptions(announcement, { queue: false });
+		// iOS queues behind VoiceOver speech only when asked to; a failure or warning cuts in.
+		if (Platform.OS === "ios") {
+			AccessibilityInfo.announceForAccessibilityWithOptions(announcement, { queue: !resolveToastInterrupts(status) });
 		} else {
 			AccessibilityInfo.announceForAccessibility(announcement);
 		}

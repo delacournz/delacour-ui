@@ -131,7 +131,9 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   unset. Likewise VoiceOver's two-finger escape (the "Z" scrub) calls `onAccessibilityEscape`,
   not the `escape` action, so the card sets it to `hide` and still calls a caller's own. `role="alert"` for a
   failure, a polite live region on Android. On show, and on every revision, the item announces
-  `title. description` — on iOS a warning or failure with `queue: false`, so it cuts in. A toast
+  `title. description`. On iOS a warning or failure uses `queue: false`, so it cuts in, and any other
+  status uses `queue: true`, so it waits for VoiceOver to finish speaking — the plain
+  `announceForAccessibility` joins no queue there, so toasts shown together cut each other off. A toast
   never moves focus.
 - **Haptics follow the status.** Success, warning and destructive play their notification preset
   (`playHaptic`, on the UI thread); default and info are silent; `haptic` overrides, `false` silences.

@@ -1,8 +1,23 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
+import { Pressable } from "../pressable";
 import { Checkbox } from "./checkbox";
 import { useCheckbox, useCheckboxGroup } from "./checkbox.context";
+
+/** A custom control that flips two values in one handler, before a render. */
+function ToggleBoth() {
+	const group = useCheckboxGroup();
+	return (
+		<Pressable
+			accessibilityLabel="Both"
+			onPress={() => {
+				group.toggle("email");
+				group.toggle("sms");
+			}}
+		/>
+	);
+}
 
 const tap = (element: Parameters<typeof fireEvent>[0]) => fireEvent(element, "accessibilityTap");
 
@@ -178,6 +193,37 @@ describe("Checkbox", () => {
 });
 
 describe("Checkbox.Group", () => {
+	test("toggles made before the next render build on each other", async () => {
+		const onChecked = jest.fn();
+		await renderWithProviders(
+			<Checkbox.Group onChecked={onChecked}>
+				<ToggleBoth />
+				<Checkbox value="email">Email</Checkbox>
+				<Checkbox value="sms">SMS</Checkbox>
+			</Checkbox.Group>
+		);
+		await tap(screen.getByRole("button", { name: "Both" }));
+		expect(onChecked).toHaveBeenNthCalledWith(1, ["email"]);
+		expect(onChecked).toHaveBeenNthCalledWith(2, ["email", "sms"]);
+		expect(screen.getByRole("checkbox", { name: "Email" })).toBeChecked();
+		expect(screen.getByRole("checkbox", { name: "SMS" })).toBeChecked();
+	});
+
+	test("a grouped box still reports its own change", async () => {
+		const onCheckedChange = jest.fn();
+		await renderWithProviders(
+			<Checkbox.Group defaultChecked={["email"]}>
+				<Checkbox onCheckedChange={onCheckedChange} value="email">
+					Email
+				</Checkbox>
+			</Checkbox.Group>
+		);
+		await tap(screen.getByRole("checkbox", { name: "Email" }));
+		expect(onCheckedChange).toHaveBeenLastCalledWith(false);
+		await tap(screen.getByRole("checkbox", { name: "Email" }));
+		expect(onCheckedChange).toHaveBeenLastCalledWith(true);
+	});
+
 	test("uncontrolled: defaultChecked ticks matching children and toggling reports the whole list", async () => {
 		const onChecked = jest.fn();
 		await renderWithProviders(

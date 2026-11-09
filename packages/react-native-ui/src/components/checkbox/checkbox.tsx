@@ -27,6 +27,7 @@ export type CheckboxProps = Omit<PressableProps, "asChild" | "busy" | "disabled"
 	isChecked?: boolean;
 	/** Starting state while uncontrolled. */
 	defaultChecked?: boolean;
+	/** Fired with the box's next state on every toggle, inside a `Checkbox.Group` too. */
 	onCheckedChange?: (isChecked: boolean) => void;
 	/**
 	 * Draws a dash rather than a tick and reports `mixed` to a screen reader, for
@@ -89,11 +90,14 @@ function CheckboxRoot({
 	const toggle = useCallback(() => {
 		if (axes.isDisabled) return;
 		if (group && groupValue !== undefined) {
+			// The group owns the state, so `setOwnChecked` is skipped — and with
+			// it the only path that calls `onCheckedChange`. Report it here.
 			group.toggle(groupValue);
+			onCheckedChange?.(!checked);
 			return;
 		}
 		setOwnChecked(!checked);
-	}, [axes.isDisabled, checked, group, groupValue, setOwnChecked]);
+	}, [axes.isDisabled, checked, group, groupValue, onCheckedChange, setOwnChecked]);
 
 	// Offered to an enclosing `Field` so tapping the label or the description
 	// beside the box ticks it. A checkbox in a form is a small square next to a

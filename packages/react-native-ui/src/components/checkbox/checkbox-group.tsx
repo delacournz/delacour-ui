@@ -1,4 +1,4 @@
-import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
+import { type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
 import { View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { type CheckboxGroupContextValue, CheckboxGroupProvider } from "./checkbox.context";
@@ -46,7 +46,21 @@ function CheckboxGroupRoot({
 		value: checked,
 	});
 
-	const toggle = useCallback((value: string) => setValues(toggleCheckedValue(values, value)), [setValues, values]);
+	// Toggles build on the latest pending list, not the render's `values`: two
+	// toggles in one handler would otherwise both start from the same list and
+	// the second would drop the first. Each render resets it to the settled
+	// value, so a controlled parent that rejects a change still wins.
+	const pending = useRef(values);
+	pending.current = values;
+
+	const toggle = useCallback(
+		(value: string) => {
+			const next = toggleCheckedValue(pending.current, value);
+			pending.current = next;
+			setValues(next);
+		},
+		[setValues]
+	);
 
 	const context = useMemo<CheckboxGroupContextValue>(
 		() => ({ alignment, checked: values, color, isDisabled, isInvalid, size, toggle }),

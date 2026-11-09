@@ -213,6 +213,27 @@ describe("Toast", () => {
 		expect(onHide).toHaveBeenCalledTimes(1);
 	});
 
+	test("a VoiceOver double-tap on the card runs its action", async () => {
+		const onPress = jest.fn();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.show({ title: "Archived", action: { label: "Undo", onPress } });
+		});
+		await fireEvent(screen.getByTestId(/^toast-toast-\d+$/), "accessibilityTap");
+		expect(onPress).toHaveBeenCalledTimes(1);
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
+	});
+
+	test("a double-tap on a card with no action does nothing", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast("Link copied");
+		});
+		expect(screen.getByTestId(/^toast-toast-\d+$/).props.onAccessibilityTap).toBeUndefined();
+	});
+
 	test("a screen reader's dismiss action hides the toast", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);

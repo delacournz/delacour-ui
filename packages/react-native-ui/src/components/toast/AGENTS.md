@@ -118,7 +118,10 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   `offset` adds a fixed gap to either; chrome that can change registers with `useToastOffset`.
 - **One accessible element, never focused.** The card is `accessible`, so VoiceOver and TalkBack read
   the title and description as one message; the action is its `activate` action (registered by
-  `Toast.Action` under its label) and the ✕ is `escape` plus a custom "Dismiss". `role="alert"` for a
+  `Toast.Action` under its label, and not at all while it is `disabled`) and the ✕ is `escape` plus a
+  custom "Dismiss". A VoiceOver double-tap calls `onAccessibilityTap`, not `activate`, so the card
+  sets it to the registered action as well (and still calls a caller's own); with no action it stays
+  unset. `role="alert"` for a
   failure, a polite live region on Android. On show, and on every revision, the item announces
   `title. description` — on iOS a warning or failure with `queue: false`, so it cuts in. A toast
   never moves focus.

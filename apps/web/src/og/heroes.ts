@@ -327,7 +327,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	},
 	"time-picker/basic-sheet": { cut: "9608fcbeeb1d", load: () => import("./frames/time-picker/basic-sheet.png?inline") },
 	"timeline/horizontal": { load: () => import("../../public/previews/timeline/horizontal/dark.png?inline") },
-	"toast/statuses": { cut: "ebbb56630c98", load: () => import("./frames/toast/statuses.png?inline") },
+	"toast/statuses": { cut: "80a40f41f026", load: () => import("./frames/toast/statuses.png?inline") },
 	"toggle-button/variants": { load: () => import("../../public/previews/toggle-button/variants/dark.png?inline") },
 	"tooltip/icon-buttons": { cut: "98365e2d4e0f", load: () => import("./frames/tooltip/icon-buttons.png?inline") },
 	"tour/interactive": { load: () => import("../../public/previews/tour/interactive/dark.png?inline") },

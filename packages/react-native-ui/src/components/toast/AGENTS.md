@@ -44,7 +44,11 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   `isExiting`, so the viewport can animate it out; `remove` drops it once the exit has run, and is
   the moment `onHide` fires. An action that changes nothing returns the same array, so nobody is
   notified. Showing with an existing `id` replaces that toast in place — and revives it if it was
-  leaving.
+  leaving. The exit's callback reaches the JS thread a frame after it finishes, by when `show` may
+  have revived the id, so the item dispatches `remove` with the `revision` it exited at: the
+  reducer drops the toast only while it is still exiting at that revision, and the item calls
+  `onHide` only when it did. A revived toast also resets its drag, which cancels a swipe-out that
+  was carrying it off screen.
 - **`revision` is how an update reaches the screen.** Every update bumps it; the item restarts its
   clock, plays the haptic and announces again on a new revision. That is what makes
   `toast.promise` one toast: shown loading (a spinner for the glyph, `duration` 0), then updated in
@@ -64,12 +68,16 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   (WCAG 2.2.1), so `resolveToastDuration` stretches any timed toast to ten seconds while VoiceOver or
   TalkBack runs; `0` stays `0`.
 - **The clock is data and pauses exactly.** `toast.timer.ts` keeps `{ remaining, startedAt }` and
-  every function takes `now`. The item runs one `setTimeout` per run and pauses — keeping what is
+  every function takes `now`. Each new clock (a new `revision` or duration) adds what is left of the
+  entrance stagger, so a toast late in a batch — or updated while it waits — is up for its full
+  duration; once it has entered that wait is 0. The item runs one `setTimeout` per run and pauses — keeping what is
   left — while the app is not `active` and while a finger is on the toast (the pan's `onBegin`, which
   fires on touch-down, before the pan activates, so pressing the action pauses too).
 - **Three drawn per edge, the rest queued.** `resolveToastStack` walks newest first; depth counts only
   toasts that are staying, so when one is hidden the ones behind move up and the next queued toast is
-  drawn immediately while the hidden one fades out at the depth it left. Each older toast sits 8pt
+  drawn immediately while the hidden one fades out at the depth it left. A queued toast is never
+  drawn, so no item can run its exit: hidden while queued, the viewport removes it at once and
+  calls its `onHide`. Each older toast sits 8pt
   further toward its entry edge, `1 − 0.05·depth` scale and `1 − 0.25·depth` opacity, scaled about
   that edge (`transformOrigin`) so the peek is exactly 8pt. Depth is animated, and linear, so moving
   up is smooth.

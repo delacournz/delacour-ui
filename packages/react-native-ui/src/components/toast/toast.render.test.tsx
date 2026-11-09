@@ -192,6 +192,27 @@ describe("Toast", () => {
 		expect(onHide).not.toHaveBeenCalled();
 	});
 
+	test("hiding a queued toast removes it and calls its onHide", async () => {
+		const onHide = jest.fn();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		let oldest: { hide: () => void } | undefined;
+		await act(async () => {
+			oldest = harness.toast({ title: "Oldest", duration: 0, onHide });
+			for (let index = 0; index < 3; index += 1) harness.toast({ title: `Newer ${index}`, duration: 0 });
+		});
+		expect(screen.queryByText("Oldest")).not.toBeOnTheScreen();
+		await act(async () => {
+			oldest?.hide();
+		});
+		expect(harness.store.getSnapshot().map((item) => (item.kind === "message" ? item.title : item.id))).toEqual([
+			"Newer 0",
+			"Newer 1",
+			"Newer 2",
+		]);
+		expect(onHide).toHaveBeenCalledTimes(1);
+	});
+
 	test("a screen reader's dismiss action hides the toast", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);

@@ -9,6 +9,7 @@ import {
 	type CheckboxColor,
 	type CheckboxSize,
 	checkboxVariants,
+	resolveCheckboxAccessibilityLabel,
 	resolveCheckboxAxes,
 	resolveCheckboxHitSlop,
 } from "./checkbox.variants";
@@ -26,6 +27,7 @@ export type CheckboxProps = Omit<PressableProps, "asChild" | "busy" | "disabled"
 	isChecked?: boolean;
 	/** Starting state while uncontrolled. */
 	defaultChecked?: boolean;
+	/** Fired with the box's next state on every toggle, inside a `Checkbox.Group` too. */
 	onCheckedChange?: (isChecked: boolean) => void;
 	/**
 	 * Draws a dash rather than a tick and reports `mixed` to a screen reader, for
@@ -59,6 +61,8 @@ function CheckboxRoot({
 	feedback = "fade",
 	haptic = "selection",
 	className,
+	accessibilityLabel,
+	accessibilityState,
 	children,
 	...props
 }: CheckboxProps): ReactElement {
@@ -86,11 +90,14 @@ function CheckboxRoot({
 	const toggle = useCallback(() => {
 		if (axes.isDisabled) return;
 		if (group && groupValue !== undefined) {
+			// The group owns the state, so `setOwnChecked` is skipped — and with
+			// it the only path that calls `onCheckedChange`. Report it here.
 			group.toggle(groupValue);
+			onCheckedChange?.(!checked);
 			return;
 		}
 		setOwnChecked(!checked);
-	}, [axes.isDisabled, checked, group, groupValue, setOwnChecked]);
+	}, [axes.isDisabled, checked, group, groupValue, onCheckedChange, setOwnChecked]);
 
 	// Offered to an enclosing `Field` so tapping the label or the description
 	// beside the box ticks it. A checkbox in a form is a small square next to a
@@ -124,20 +131,29 @@ function CheckboxRoot({
 	);
 
 	const content = useMemo(() => wrapTextChildren(children), [children]);
+	// From the normalized content, not `children`: `Children.count` counts a
+	// `false` from `{cond && <Checkbox.Label />}`, which renders nothing and
+	// would suppress the field-label fallback.
+	const hasLabel = content.length > 0;
 	// The box draws itself, including everything the fill state changes, so the
 	// root is left with the row and nothing else.
-	const rootClassName = checkboxVariants(axes).root({ className });
+	const rootClassName = checkboxVariants({ ...axes, hasLabel }).root({ className });
 
 	return (
 		<CheckboxProvider value={context}>
 			<Pressable
+				accessibilityLabel={resolveCheckboxAccessibilityLabel({
+					fieldLabel: field?.label,
+					hasContent: hasLabel,
+					own: accessibilityLabel,
+				})}
 				accessibilityRole="checkbox"
-				accessibilityState={{ checked: isIndeterminate ? "mixed" : checked }}
+				accessibilityState={{ ...accessibilityState, checked: isIndeterminate ? "mixed" : checked }}
 				className={rootClassName}
 				disabled={axes.isDisabled}
 				feedback={feedback}
 				haptic={haptic}
-				hitSlop={resolveCheckboxHitSlop({ hasLabel: Children.count(children) > 0, size: axes.size })}
+				hitSlop={resolveCheckboxHitSlop({ hasLabel, size: axes.size })}
 				onPress={toggle}
 				{...props}
 			>
@@ -172,7 +188,7 @@ function requireValue(value: string | undefined): string {
  * gap would otherwise space the parts of one sentence apart, the same rule and
  * the same reason as `Badge`.
  */
-function wrapTextChildren(children: ReactNode): ReactNode {
+function wrapTextChildren(children: ReactNode): ReactNode[] {
 	const items = Children.toArray(children);
 	const output: ReactNode[] = [];
 	let run: (string | number)[] = [];

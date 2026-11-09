@@ -46,16 +46,24 @@ function CheckboxGroupRoot({
 		value: checked,
 	});
 
-	// Toggles build on the latest pending list, not the render's `values`: two
-	// toggles in one handler would otherwise both start from the same list and
-	// the second would drop the first. Each render resets it to the settled
-	// value, so a controlled parent that rejects a change still wins.
-	const pending = useRef(values);
-	pending.current = values;
+	// Two toggles in one handler must build on each other, or the second would
+	// start from the same render's list and drop the first. So toggles in the
+	// same task share a pending list, and a microtask clears it once the
+	// handler returns. The next interaction starts from `settled` again, so a
+	// controlled parent that rejects a change (and never re-renders) does not
+	// see the rejected value carried into the next proposal.
+	const settled = useRef(values);
+	settled.current = values;
+	const pending = useRef<string[] | null>(null);
 
 	const toggle = useCallback(
 		(value: string) => {
-			const next = toggleCheckedValue(pending.current, value);
+			if (pending.current === null) {
+				queueMicrotask(() => {
+					pending.current = null;
+				});
+			}
+			const next = toggleCheckedValue(pending.current ?? settled.current, value);
 			pending.current = next;
 			setValues(next);
 		},

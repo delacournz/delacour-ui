@@ -209,6 +209,21 @@ describe("Checkbox.Group", () => {
 		expect(screen.getByRole("checkbox", { name: "SMS" })).toBeChecked();
 	});
 
+	test("a change a controlled parent rejects does not carry into the next tap", async () => {
+		const onChecked = jest.fn();
+		await renderWithProviders(
+			<Checkbox.Group checked={[]} onChecked={onChecked}>
+				<Checkbox value="email">Email</Checkbox>
+				<Checkbox value="sms">SMS</Checkbox>
+			</Checkbox.Group>
+		);
+		await tap(screen.getByRole("checkbox", { name: "Email" }));
+		expect(onChecked).toHaveBeenLastCalledWith(["email"]);
+		await tap(screen.getByRole("checkbox", { name: "SMS" }));
+		expect(onChecked).toHaveBeenLastCalledWith(["sms"]);
+		expect(screen.getByRole("checkbox", { name: "Email" })).not.toBeChecked();
+	});
+
 	test("a grouped box still reports its own change", async () => {
 		const onCheckedChange = jest.fn();
 		await renderWithProviders(

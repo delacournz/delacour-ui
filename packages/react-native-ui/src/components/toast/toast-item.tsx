@@ -88,7 +88,8 @@ function renderMessage(item: ToastItem & { kind: "message" }, handle: ToastHandl
  *   fainter, animated as depth changes. Hidden, it fades back toward its edge
  *   and only then leaves the store. Under reduce motion the entrance is a fade.
  * - **Clock.** The auto-hide clock restarts on every update (a promise toast's
- *   success gets a full duration) and pauses while the app is in the
+ *   success gets a full duration), covers what is left of the entrance
+ *   stagger, and pauses while the app is in the
  *   background and while a finger is on the toast.
  * - **Swipe.** A pan follows the finger sideways and toward the edge and
  *   rubber-bands toward the centre; `resolveToastRelease` decides on release.
@@ -162,7 +163,13 @@ export function ToastViewportItem({
 	useEffect(() => {
 		if (isExiting) return;
 		const key = `${revision}:${duration}`;
-		if (clock.current?.key !== key) clock.current = { key, timer: createToastTimer(duration) };
+		if (clock.current?.key !== key) {
+			// Every new clock also covers what is left of the entrance stagger, so a
+			// toast — or an update to one — is up for its full duration even while
+			// it waits to enter. Once it has entered the wait is 0.
+			const wait = resolveToastEnterDelay({ createdAt, batchIndex, now: Date.now() });
+			clock.current = { key, timer: createToastTimer(duration > 0 ? duration + wait : duration) };
+		}
 		if (isPaused) return;
 		const running = clock.current;
 		running.timer = startToastTimer(running.timer, Date.now());
@@ -172,7 +179,7 @@ export function ToastViewportItem({
 			if (timeout !== null) clearTimeout(timeout);
 			running.timer = pauseToastTimer(running.timer, Date.now());
 		};
-	}, [revision, duration, isPaused, isExiting, hide]);
+	}, [revision, duration, isPaused, isExiting, hide, createdAt, batchIndex]);
 
 	const status = item.kind === "message" ? item.status : "default";
 	const announcement =

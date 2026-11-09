@@ -221,6 +221,45 @@ describe("Toast", () => {
 		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
 	});
 
+	test("a staggered toast's clock starts once it has entered", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			for (let index = 0; index < 6; index += 1) harness.toast({ title: `Toast ${index}`, duration: 1000 });
+		});
+		const newest = harness.store.getSnapshot()[5];
+		expect(newest?.batchIndex).toBe(5);
+		// The newest enters after 5 × 220 ms, so at 1500 ms it has been up for 400 ms.
+		await act(async () => {
+			jest.advanceTimersByTime(1500);
+		});
+		expect(harness.store.getSnapshot().find((item) => item.id === newest?.id)?.isExiting).toBe(false);
+		await act(async () => {
+			jest.advanceTimersByTime(700);
+		});
+		expect(harness.store.getSnapshot().find((item) => item.id === newest?.id)?.isExiting ?? true).toBe(true);
+	});
+
+	test("an update during the stagger still waits for the entrance", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			for (let index = 0; index < 6; index += 1) harness.toast({ title: `Toast ${index}`, duration: 0 });
+		});
+		const newest = harness.store.getSnapshot()[5];
+		await act(async () => {
+			jest.advanceTimersByTime(100);
+		});
+		await act(async () => {
+			if (newest) harness.toast.update(newest.id, { duration: 500 });
+		});
+		// The newest enters at 1100 ms, so a 500 ms clock runs until 1600 ms.
+		await act(async () => {
+			jest.advanceTimersByTime(1300);
+		});
+		expect(harness.store.getSnapshot().find((item) => item.id === newest?.id)?.isExiting).toBe(false);
+	});
+
 	test("duration 0 stays until hidden", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);

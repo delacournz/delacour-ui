@@ -142,6 +142,35 @@ describe("Toast", () => {
 		expect(onPress).toHaveBeenCalledTimes(1);
 	});
 
+	test("a disabled action is not offered to assistive tech and cannot run", async () => {
+		const onPress = jest.fn();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.show({
+				duration: 0,
+				render: () => (
+					<Toast status="info" testID="custom-toast">
+						<Toast.Content>
+							<Toast.Title>Syncing</Toast.Title>
+						</Toast.Content>
+						<Toast.Action disabled onPress={onPress}>
+							Undo
+						</Toast.Action>
+					</Toast>
+				),
+			});
+		});
+		const card = screen.getByTestId("custom-toast");
+		const names = (card.props.accessibilityActions as { name: string }[]).map((action) => action.name);
+		expect(names).not.toContain("activate");
+
+		await fireEvent(card, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+		await fireEvent(screen.getByRole("button", { name: "Undo" }), "accessibilityTap");
+		expect(onPress).not.toHaveBeenCalled();
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(false);
+	});
+
 	test("a toast shown again with its id while leaving survives the old exit", async () => {
 		const onHide = jest.fn();
 		const harness = makeHarness();

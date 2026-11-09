@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { AccessibilityInfo } from "react-native";
+import { State } from "react-native-gesture-handler";
+import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { makeMutable, type SharedValue } from "react-native-reanimated";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { OverlayProvider } from "../overlay";
@@ -25,8 +27,8 @@ async function mountViewport(harness: Harness): Promise<void> {
 	await renderWithProviders(<ToastViewport store={harness.store} />, { wrapper: Overlays });
 }
 
-// Swipe-to-dismiss is a Gesture Handler pan on the card and carries no testID, so it is not driven here;
-// its decision logic (resolveToastDrag / resolveToastRelease) is covered by toast.variants.test.ts.
+// Swipe-to-dismiss's decision logic (resolveToastDrag / resolveToastRelease) is covered by
+// toast.variants.test.ts; the pan carries `toast-<id>-pan` so a render test can drive a release.
 describe("Toast", () => {
 	beforeEach(() => {
 		jest.useFakeTimers();
@@ -140,6 +142,38 @@ describe("Toast", () => {
 
 		await fireEvent(card, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
 		expect(onPress).toHaveBeenCalledTimes(1);
+	});
+
+	test("a toast revived by show after a swipe comes back on screen", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast({ id: "sync", title: "Syncing", duration: 0 });
+		});
+		await act(async () => {
+			jest.advanceTimersByTime(500);
+		});
+		await act(async () => {
+			fireGestureHandler(getByGestureTestId("toast-sync-pan"), [
+				{ state: State.BEGAN, translationX: 0, translationY: 0, velocityX: 0, velocityY: 0 },
+				{ state: State.ACTIVE, translationX: 300, translationY: 0, velocityX: 2000, velocityY: 0 },
+				{ state: State.END, translationX: 300, translationY: 0, velocityX: 2000, velocityY: 0 },
+			]);
+			jest.advanceTimersByTime(16);
+		});
+		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
+		await act(async () => {
+			harness.toast({ id: "sync", title: "Synced", duration: 0 });
+		});
+		await act(async () => {
+			jest.advanceTimersByTime(1000);
+		});
+		const { jestAnimatedStyle } = screen.getByTestId("toast-sync-motion").props as {
+			jestAnimatedStyle?: { value: { transform?: { translateX?: number }[] } };
+		};
+		// `|| 0` folds -0 into 0.
+		expect(jestAnimatedStyle?.value.transform?.[0]?.translateX || 0).toBe(0);
+		expect(screen.getByText("Synced")).toBeOnTheScreen();
 	});
 
 	test("a disabled action is not offered to assistive tech and cannot run", async () => {

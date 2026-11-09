@@ -138,9 +138,13 @@ export function ToastViewportItem({
 			});
 			return;
 		}
+		// A toast revived while a swipe was carrying it off starts back at rest;
+		// assigning cancels the swipe-out animation.
+		dragX.value = 0;
+		dragY.value = 0;
 		const delay = resolveToastEnterDelay({ createdAt, batchIndex, now: Date.now() });
 		presence.value = withDelay(delay, withTiming(1, { duration: OVERLAY_MOTION.enterMs, easing: ENTER_EASING }));
-	}, [isExiting, createdAt, batchIndex, presence, remove]);
+	}, [isExiting, createdAt, batchIndex, presence, dragX, dragY, remove]);
 
 	useEffect(() => {
 		depthValue.value = withTiming(depth, { duration: DEPTH_MS, easing: ENTER_EASING });
@@ -201,6 +205,7 @@ export function ToastViewportItem({
 	const pan = useMemo(
 		() =>
 			Gesture.Pan()
+				.withTestId(`toast-${id}-pan`)
 				.activeOffsetX([-10, 10])
 				.activeOffsetY([-10, 10])
 				.onBegin(() => {
@@ -246,7 +251,7 @@ export function ToastViewportItem({
 					"worklet";
 					scheduleOnRN(setTouched, false);
 				}),
-		[placement, dragX, dragY, width, height, edgeOffset, hide]
+		[id, placement, dragX, dragY, width, height, edgeOffset, hide]
 	);
 
 	const animatedStyle = useAnimatedStyle(() => {
@@ -295,6 +300,7 @@ export function ToastViewportItem({
 				<Animated.View
 					onLayout={onLayout}
 					pointerEvents={isExiting ? "none" : "auto"}
+					testID={`toast-${id}-motion`}
 					style={[
 						{
 							width: "100%",

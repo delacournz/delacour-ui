@@ -94,7 +94,8 @@ export type ToastStoreAction =
 	| { type: "add"; item: ToastItem }
 	| { type: "update"; id: string; patch: ToastPatch }
 	| { type: "hide"; id: string }
-	| { type: "remove"; id: string }
+	/** With `revision`, drops the toast only while it is still leaving at that revision — a stale exit cannot remove a revived toast. */
+	| { type: "remove"; id: string; revision?: number }
 	| { type: "hideAll" };
 
 function isCustomInput(input: ToastOptions | ToastCustomOptions): input is ToastCustomOptions {
@@ -198,7 +199,9 @@ export function reduceToasts(state: ToastState, action: ToastStoreAction): Toast
 			return state.map((item, at) => (at === index ? { ...item, isExiting: true } : item));
 		}
 		case "remove": {
-			const next = state.filter((item) => item.id !== action.id);
+			const { id, revision } = action;
+			const isStale = (item: ToastItem) => revision !== undefined && (!item.isExiting || item.revision !== revision);
+			const next = state.filter((item) => item.id !== id || isStale(item));
 			return next.length === state.length ? state : next;
 		}
 		case "hideAll": {

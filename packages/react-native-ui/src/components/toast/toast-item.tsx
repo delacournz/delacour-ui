@@ -121,10 +121,14 @@ export function ToastViewportItem({
 	const handle = useMemo<ToastHandle>(() => ({ id, hide }), [id, hide]);
 	const itemContext = useMemo(() => ({ id, hide }), [id, hide]);
 
+	// The exit callback reaches the JS thread a frame later, and by then `show`
+	// may have revived this id. Remove and call `onHide` only for the exit that ran.
 	const remove = useCallback(() => {
-		store.dispatch({ type: "remove", id });
+		const current = store.getSnapshot().find((entry) => entry.id === id);
+		if (!current?.isExiting || current.revision !== revision) return;
+		store.dispatch({ type: "remove", id, revision });
 		onHide?.();
-	}, [store, id, onHide]);
+	}, [store, id, revision, onHide]);
 
 	useEffect(() => {
 		if (isExiting) {

@@ -142,6 +142,27 @@ describe("Toast", () => {
 		expect(onPress).toHaveBeenCalledTimes(1);
 	});
 
+	test("a toast shown again with its id while leaving survives the old exit", async () => {
+		const onHide = jest.fn();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.show({ id: "sync", title: "Syncing", duration: 0, onHide });
+		});
+		await act(async () => {
+			harness.toast.hide("sync");
+		});
+		await act(async () => {
+			harness.toast.show({ id: "sync", title: "Synced", duration: 0, onHide });
+		});
+		await act(async () => {
+			jest.advanceTimersByTime(1000);
+		});
+		expect(harness.store.getSnapshot().map((item) => item.id)).toEqual(["sync"]);
+		expect(screen.getByText("Synced")).toBeOnTheScreen();
+		expect(onHide).not.toHaveBeenCalled();
+	});
+
 	test("a screen reader's dismiss action hides the toast", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);

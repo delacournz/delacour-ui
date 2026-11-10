@@ -1,5 +1,11 @@
 # @delacour/react-native-bottom-sheet
 
+## 0.9.0
+
+### Patch Changes
+
+- [#346](https://github.com/delacournz/delacour-ui/pull/346) [`4f7eee0`](https://github.com/delacournz/delacour-ui/commit/4f7eee09f97e453e7026172b0d79c45d43ad1181) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - BottomSheet: a `Trigger` (or `ref.open()`) pressed while the sheet animates closed is no longer dropped. The sheet turns round and animates back open at once, instead of waiting for the close to settle. A swipe, an overlay press or `Close` left `isOpen` true until the settle, so the open was read as a no-op.
+
 ## 0.8.0
 
 No changes in this release.

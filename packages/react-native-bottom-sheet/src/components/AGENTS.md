@@ -57,6 +57,12 @@ path — swipe, overlay, `Close`, the ref, a controlled `isOpen: false` —
 animates to the closed height, and the settle at `-1` is what flips `isOpen`
 back and unmounts the children. Closing a sheet that is not open is nothing.
 
+Opening a sheet that is still closing turns it round. A swipe, an overlay
+press or a `Close` leaves `isOpen` true until the close settles, so the ref's
+`open()` (and so `Trigger`) dispatches an `open` intent when `isOpen` is
+already true, instead of a `setOpen(true)` that would change nothing. The
+interrupted close never settles, so `onClose` does not fire.
+
 The ref's `close()` checks the sheet's effective openness on the JS thread
 before dispatching, so a `close()` while a queued open is still waiting on
 layout clears the queue rather than racing it.

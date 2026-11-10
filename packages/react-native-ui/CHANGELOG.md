@@ -1,5 +1,46 @@
 # @delacour/react-native-ui
 
+## 0.9.0
+
+### Minor Changes
+
+- [#344](https://github.com/delacournz/delacour-ui/pull/344) [`2cdcafc`](https://github.com/delacournz/delacour-ui/commit/2cdcafcc6af96d13780909bc32aa05675ae73b34) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Toast: `useToastOffset` follows a shared value. The hook now registers shared values of its own and follows a caller's shared value into them on the UI thread, so a tab bar can keep its measured height in a shared value, write it with `.set()` in `onLayout`, and lift the toasts with no re-render — while `null` on focus loss still slides them down and back up.
+
+  Fixes:
+
+  - A toast shown again with its `id` while leaving is no longer removed by the old exit, and `onHide` fires only for the exit that ran (`remove` takes an optional `revision`).
+  - A disabled `Toast.Action` is no longer offered to a screen reader and cannot run.
+  - The auto-hide clock waits out the entrance stagger, so a toast late in a batch — or updated while it waits — is shown for its full duration.
+  - A toast hidden while still queued leaves the store at once and calls its `onHide`.
+  - A VoiceOver double-tap on the card runs its action.
+  - A toast revived after a swipe comes back on screen instead of staying where the swipe left it.
+  - A pan the system cancels (the notification shade, an alert) puts the toast back instead of dismissing it.
+  - VoiceOver's escape gesture hides the toast.
+  - `hideAll` over four or more toasts no longer mounts — and announces — the one that was queued.
+  - On iOS a success, info or default toast's announcement waits for VoiceOver to finish speaking instead of cutting it off; a warning or failure still cuts in.
+  - `hideAll` fades each card out at the depth it held, instead of sliding every card to the front, and a card hidden while it moves up keeps moving up.
+
+- [#343](https://github.com/delacournz/delacour-ui/pull/343) [`e23f207`](https://github.com/delacournz/delacour-ui/commit/e23f2074bdc6634d59a0be11b11f3300a0c0ef04) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Toast: `useToastOffset` (and `setToastOffset` outside React) lifts each toast stack clear of app chrome — a tab bar, a bottom toolbar, a custom header — and follows it live on the UI thread. Pass a number to animate to or a Reanimated shared value you drive; the newest registration wins per edge, `null` slides back to 0, and the keyboard and chrome never add up. `ToastViewport` takes an `offsetStore` prop.
+
+### Patch Changes
+
+- [#342](https://github.com/delacournz/delacour-ui/pull/342) [`289aeef`](https://github.com/delacournz/delacour-ui/commit/289aeef80316ddae8b74f75f082145c9baca8135) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Checkbox: a caller's `accessibilityState` no longer drops the checked or mixed state, a bare box inside a `Field` takes the field's label as its accessible name, and a labelled row is padded to the 44pt touch minimum (`Checkbox.Group` drops its gap so rows do not overlap).
+
+  Checkbox.Group: two toggles in one handler keep both values, a change a controlled parent rejects is not proposed again on the next tap, and a grouped checkbox now calls its own `onCheckedChange`.
+
+- [#340](https://github.com/delacournz/delacour-ui/pull/340) [`9ecf637`](https://github.com/delacournz/delacour-ui/commit/9ecf637cfe13fbed0eb5335272e6e7091971ed42) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Input.Group: a block keeps its state and focus when another block is added after it, instead of remounting when it stops being the outermost one.
+
+- [#339](https://github.com/delacournz/delacour-ui/pull/339) [`7d68f8c`](https://github.com/delacournz/delacour-ui/commit/7d68f8c441230f1c6123db9e7247616394c52cba) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Select: an open sheet's options lock when the select turns disabled or read-only, so a press no longer changes the value or calls `onValueChange`.
+
+- [#341](https://github.com/delacournz/delacour-ui/pull/341) [`a80073c`](https://github.com/delacournz/delacour-ui/commit/a80073cda369176b0efef009e22d7724990f01cf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Separator` can no longer be unhidden from assistive technology:
+
+  - `SeparatorProps` omits `accessible`, `accessibilityElementsHidden` and `importantForAccessibility`.
+  - Caller props are spread before the hidden props, so a cast cannot override them.
+
+- Updated dependencies [[`4f7eee0`](https://github.com/delacournz/delacour-ui/commit/4f7eee09f97e453e7026172b0d79c45d43ad1181)]:
+  - @delacour/react-native-bottom-sheet@0.9.0
+  - @delacour/react-native-charts@0.9.0
+
 ## 0.8.0
 
 ### Patch Changes

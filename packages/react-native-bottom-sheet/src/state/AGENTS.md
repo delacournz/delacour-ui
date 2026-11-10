@@ -44,6 +44,10 @@ The resolver is told the sheet's **effective** index: the settled one, or the
 running animation's target. Without that a `close()` during the open animation
 would see a closed sheet, resolve to nothing, and let the sheet finish opening.
 
+It is also told whether a close animation is running (`closing`). Mid-close
+`base` is still above the closed height, so without it an `open` would read
+the sheet as open and be dropped.
+
 The first open a sheet resolves is reported as `"mount"` and, with
 `animateOnMount: false`, jumps. `mountPending` is that flag.
 

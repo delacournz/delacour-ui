@@ -21,6 +21,12 @@ export type IntentState = {
 	maxHeight: number;
 	/** The index `open` targets. */
 	initialIndex: number;
+	/**
+	 * A close animation is running. The sheet is still visible, so `base` says
+	 * open, but an `open` must turn it round rather than read it as open and
+	 * do nothing.
+	 */
+	closing: boolean;
 };
 
 /**
@@ -64,7 +70,7 @@ export function resolveIntent(state: IntentState, intent: SheetIntent): IntentRe
 	if (intent.kind === "forceClose") {
 		return isOpen ? { action: "jump", target: state.closedHeight } : null;
 	}
-	if (intent.kind === "open" && isOpen) return null;
+	if (intent.kind === "open" && isOpen && !state.closing) return null;
 	if (!state.layoutReady) return { action: "wait" };
 
 	if (intent.kind === "open") {

@@ -10,10 +10,13 @@ const ready: IntentState = {
 	closedHeight: 0,
 	maxHeight: 800,
 	initialIndex: 0,
+	closing: false,
 };
 const open: IntentState = { ...ready, currentIndex: 1, base: 400 };
 /** A sheet visibly open whose settled index never caught up — a release the list owned. */
 const staleClosed: IntentState = { ...ready, currentIndex: -1, base: 800 };
+/** Part-way down a close animation: still visible, on its way to the closed height. */
+const closing: IntentState = { ...ready, currentIndex: -1, base: 150, closing: true };
 const unmeasured: IntentState = { ...ready, layoutReady: false, snapPoints: [] };
 
 const intent = (kind: SheetIntent["kind"], extra: Record<string, unknown> = {}): SheetIntent =>
@@ -37,6 +40,18 @@ describe("resolveIntent", () => {
 		test("is a no-op on a sheet that is already open", () => {
 			expect(resolveIntent(open, intent("open"))).toBeNull();
 			expect(resolveIntent(staleClosed, intent("open"))).toBeNull();
+		});
+
+		test("turns a closing sheet round to its initial index", () => {
+			expect(resolveIntent(closing, intent("open"))).toEqual({ action: "animate", target: 200 });
+			expect(resolveIntent({ ...closing, initialIndex: 2 }, intent("open"))).toEqual({
+				action: "animate",
+				target: 800,
+			});
+		});
+
+		test("a closing sheet above its initial snap point still reopens", () => {
+			expect(resolveIntent({ ...closing, base: 600 }, intent("open"))).toEqual({ action: "animate", target: 200 });
 		});
 
 		test("with nothing to open to there is nothing to do", () => {

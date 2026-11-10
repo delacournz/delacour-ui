@@ -302,7 +302,14 @@ function BottomSheetRoot({
 			dispatch(request);
 		};
 		return {
-			open: () => setOpen(true),
+			// A swipe, an overlay press or a `Close` leaves `isOpen` true until the
+			// close settles, so `setOpen(true)` mid-close changes nothing and the
+			// press would be lost. Dispatch the intent instead: the resolver turns
+			// a closing sheet round, and does nothing to one that is open.
+			open: () => {
+				if (latestOpen.current) dispatch({ kind: "open" });
+				else setOpen(true);
+			},
 			close,
 			dismiss: close,
 			forceClose: () => {

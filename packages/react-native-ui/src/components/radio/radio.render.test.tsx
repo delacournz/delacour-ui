@@ -4,6 +4,11 @@ import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Radio } from "./radio";
 
+/** Option content whose words only exist after render — the hook cannot read them. */
+function PlanName({ name }: { name: string }): ReactElement {
+	return <Radio.Label>{name}</Radio.Label>;
+}
+
 const ACTIVATE = { nativeEvent: { actionName: "activate" } };
 
 function Plans({ onSelected }: { onSelected?: (value: string) => void }): ReactElement {
@@ -256,6 +261,27 @@ describe("Radio", () => {
 	});
 
 	describe("Field", () => {
+		test("content the hook cannot read still names each radio, not the field's label", async () => {
+			await renderWithProviders(
+				<Field isInvalid>
+					<Field.Label>Which plan?</Field.Label>
+					<Radio.Group defaultSelected="free">
+						<Radio value="free">
+							<PlanName name="Free" />
+						</Radio>
+						<Radio value="pro">
+							<PlanName name="Pro" />
+						</Radio>
+					</Radio.Group>
+					<Field.Error>Pick a plan</Field.Error>
+				</Field>
+			);
+			const pro = screen.getByRole("radio", { name: "Pro" });
+			expect(pro.props.accessibilityLabel).toBeUndefined();
+			expect(pro).toHaveProp("accessibilityHint", "Invalid: Pick a plan");
+			expect(screen.getByText("Which plan?")).toBeOnTheScreen();
+		});
+
 		test("a disabled Field disables a standalone radio and ignores activation", async () => {
 			const onSelected = jest.fn();
 			await renderWithProviders(

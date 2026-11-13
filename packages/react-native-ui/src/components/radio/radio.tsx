@@ -110,20 +110,24 @@ function RadioRoot({
 	// as the heading above the set, and "required" joins each radio's own name.
 	// A text-less radio inside a group takes no field name either — every
 	// option would read the same — so it needs its own `accessibilityLabel`.
+	// Content whose words cannot be read before render — a custom component —
+	// names the radio through the tree, so no label is set over it at all.
+	const ownText = extractRadioText(content);
+	const namedByContent = ownText === undefined && accessibilityLabel === undefined && hasOwnContent(children);
 	const fieldA11y = useFieldControlAccessibility({
 		accessibilityHint,
 		accessibilityLabel,
-		defaultLabel: extractRadioText(content),
+		defaultLabel: ownText,
 		isInvalid: state.isInvalid,
-		takesFieldLabel: group === null,
+		takesFieldLabel: group === null && !namedByContent,
 	});
 
 	return (
 		<RadioProvider value={context}>
 			<Pressable
 				accessibilityHint={fieldA11y.accessibilityHint}
-				accessibilityLabel={fieldA11y.accessibilityLabel}
-				accessibilityLabelledBy={fieldA11y.accessibilityLabelledBy}
+				accessibilityLabel={namedByContent ? undefined : fieldA11y.accessibilityLabel}
+				accessibilityLabelledBy={namedByContent ? undefined : fieldA11y.accessibilityLabelledBy}
 				accessibilityRole="radio"
 				accessibilityState={{ checked: state.isSelected }}
 				className={radioVariants({
@@ -141,6 +145,11 @@ function RadioRoot({
 			</Pressable>
 		</RadioProvider>
 	);
+}
+
+/** Whether a radio's children hold anything besides an indicator — a name of its own, readable or not. */
+function hasOwnContent(children: ReactNode): boolean {
+	return Children.toArray(children).some((child) => !(isValidElement(child) && child.type === RadioIndicator));
 }
 
 /**

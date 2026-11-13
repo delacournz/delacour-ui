@@ -220,7 +220,10 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   any radio inside a group, never claims the label, so `Field.Label` is not
   hidden and is still read as the heading above the set. A standalone text-less
   radio does claim it, like any single control. A text-less radio in a group
-  needs its own `accessibilityLabel`.
+  needs its own `accessibilityLabel`. Content whose words cannot be read before
+  render — a custom component, like `Questionnaire`'s option label — names the
+  radio through the tree, so no label is set over it and the field's label is
+  not claimed; it still gets the field's hint.
 - **`selected` takes `value ?? null`.** `null` means "controlled, nothing
   selected". Omitting the prop entirely is what makes the group uncontrolled, so a
   `useState<string>()` seeded with `undefined` would silently hand the group its

@@ -1,3 +1,11 @@
+export {
+	firstFocusTarget,
+	isModalOnTop,
+	type ModalContainerAccessibility,
+	type ModalFocusTarget,
+	type ResolveModalContainerAccessibilityInput,
+	resolveModalContainerAccessibility,
+} from "./modal-accessibility";
 export { Overlay, OverlayProvider, type OverlayProviderProps } from "./overlay";
 export {
 	OverlayContext,
@@ -25,5 +33,11 @@ export {
 	zIndexOfOverlay,
 } from "./overlay-registry";
 export type { OverlayScrimProps } from "./overlay-scrim";
+export {
+	focusAccessibilityTarget,
+	type ModalAccessibility,
+	type UseModalAccessibilityOptions,
+	useModalAccessibility,
+} from "./use-modal-accessibility";
 export { type UseOverlayBackHandlerOptions, useOverlayBackHandler } from "./use-overlay-back-handler";
 export { type OverlayPresence, type UseOverlayPresenceOptions, useOverlayPresence } from "./use-overlay-presence";

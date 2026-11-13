@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { type ReactElement, type ReactNode, useState } from "react";
-import { BackHandler, Text, View } from "react-native";
+import { type ComponentRef, type ReactElement, type ReactNode, type RefObject, useRef, useState } from "react";
+import { AccessibilityInfo, BackHandler, Text, View } from "react-native";
 import { useSharedValue, withTiming } from "react-native-reanimated";
 import { act, fireEvent, renderHook, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Overlay, OverlayProvider } from "./overlay";
@@ -8,6 +8,7 @@ import { useOptionalOverlay } from "./overlay.context";
 import { OVERLAY_MOTION } from "./overlay.variants";
 import { type OverlayLayer, zIndexOfOverlay } from "./overlay-registry";
 import { TELEPORT_INLINE } from "./overlay-teleport";
+import { useModalAccessibility } from "./use-modal-accessibility";
 import { useOverlayBackHandler } from "./use-overlay-back-handler";
 import { useOverlayPresence } from "./use-overlay-presence";
 
@@ -535,5 +536,137 @@ describe("OverlayProvider touch fan-out", () => {
 		await renderWithProviders(<Listener />, { wrapper: Provider });
 		await fireEvent(screen.getByText("target"), "touchStart");
 		expect(heard).toHaveBeenCalledTimes(1);
+	});
+});
+
+/** The refs a `ModalDemo` hands the hook, so a test can tell which one took focus. */
+type ModalProbe = {
+	trigger?: RefObject<ComponentRef<typeof View> | null>;
+	title?: RefObject<ComponentRef<typeof Text> | null>;
+	item?: RefObject<ComponentRef<typeof Text> | null>;
+};
+
+type ModalDemoProps = {
+	name: string;
+	layer?: OverlayLayer;
+	hasTitle?: boolean;
+	onEscape?: () => void;
+	probe?: ModalProbe;
+};
+
+/** A modal wired through `useModalAccessibility`: trigger, title, first item. */
+function ModalDemo({ name, layer = "modal", hasTitle = true, onEscape, probe }: ModalDemoProps): ReactElement | null {
+	const [isOpen, setIsOpen] = useState(true);
+	const triggerRef = useRef<ComponentRef<typeof View>>(null);
+	const titleRef = useRef<ComponentRef<typeof Text>>(null);
+	const itemRef = useRef<ComponentRef<typeof Text>>(null);
+	if (probe !== undefined) {
+		probe.trigger = triggerRef;
+		probe.title = titleRef;
+		probe.item = itemRef;
+	}
+	const modal = useModalAccessibility({
+		id: name,
+		isOpen,
+		initialFocus: [titleRef, itemRef],
+		returnFocus: triggerRef,
+		onEscape,
+	});
+	const { isPresent, phase } = useOverlayPresence({
+		isOpen,
+		enterMs: 1,
+		exitMs: 1,
+		onEntered: modal.focusInitial,
+		onExited: modal.restoreFocus,
+	});
+
+	return (
+		<>
+			<View ref={triggerRef} testID={`${name}-trigger`}>
+				<Text onPress={() => setIsOpen((current) => !current)}>{`toggle ${name}`}</Text>
+			</View>
+			{isPresent ? (
+				<Overlay.Portal id={name} isExiting={phase === "exiting"} layer={layer}>
+					<View testID={`${name}-container`} {...modal.containerProps}>
+						{hasTitle ? <Text ref={titleRef}>{`${name} title`}</Text> : null}
+						<Text ref={itemRef}>{`${name} item`}</Text>
+					</View>
+				</Overlay.Portal>
+			) : null}
+		</>
+	);
+}
+
+const container = (name: string) => screen.getByTestId(`${name}-container`, { includeHiddenElements: true });
+
+/**
+ * Which of this demo's parts `sendAccessibilityEvent` focused, in order.
+ *
+ * Filtered to the probe's refs: an earlier test's entrance can finish after it
+ * unmounts and land in this test's spy.
+ */
+function focusSpy(probe: ModalProbe): () => string[] {
+	const parts: string[] = [];
+	jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation((target, event) => {
+		if (event !== "focus") return;
+		const part = (["trigger", "title", "item"] as const).find((key) => {
+			const node = probe[key]?.current;
+			return node !== null && node !== undefined && node === target;
+		});
+		if (part !== undefined) parts.push(part);
+	});
+	return () => [...parts];
+}
+
+describe("useModalAccessibility", () => {
+	test("the open container is modal and escapes", async () => {
+		const onEscape = jest.fn();
+		await renderWithProviders(<ModalDemo name="a" onEscape={onEscape} />, { wrapper: Provider });
+		expect(container("a").props.accessibilityViewIsModal).toBe(true);
+		await act(() => container("a").props.onAccessibilityEscape());
+		expect(onEscape).toHaveBeenCalledTimes(1);
+	});
+
+	test("a container with no onEscape is modal but has no escape", async () => {
+		await renderWithProviders(<ModalDemo name="a" />, { wrapper: Provider });
+		expect(container("a").props.accessibilityViewIsModal).toBe(true);
+		expect(container("a").props.onAccessibilityEscape).toBeUndefined();
+	});
+
+	test("focus moves to the title once the container has entered", async () => {
+		const probe: ModalProbe = {};
+		const focused = focusSpy(probe);
+		await renderWithProviders(<ModalDemo name="a" probe={probe} />, { wrapper: Provider });
+		await waitFor(() => expect(focused()).toEqual(["title"]));
+	});
+
+	test("focus falls back to the first item when there is no title", async () => {
+		const probe: ModalProbe = {};
+		const focused = focusSpy(probe);
+		await renderWithProviders(<ModalDemo hasTitle={false} name="a" probe={probe} />, { wrapper: Provider });
+		await waitFor(() => expect(focused()).toEqual(["item"]));
+	});
+
+	test("the container lets go on close, and focus returns to the trigger once it has gone", async () => {
+		const probe: ModalProbe = {};
+		const focused = focusSpy(probe);
+		await renderWithProviders(<ModalDemo name="a" onEscape={() => {}} probe={probe} />, { wrapper: Provider });
+		await waitFor(() => expect(focused()).toEqual(["title"]));
+		await fireEvent.press(screen.getByText("toggle a"));
+		await waitFor(() => expect(screen.queryByTestId("a-container", { includeHiddenElements: true })).toBeNull());
+		expect(focused()).toEqual(["title", "trigger"]);
+	});
+
+	test("a modal under an anchored overlay lets go, and the anchored one holds focus", async () => {
+		await renderWithProviders(
+			<>
+				<ModalDemo name="dialog" onEscape={() => {}} />
+				<ModalDemo layer="anchored" name="menu" onEscape={() => {}} />
+			</>,
+			{ wrapper: Provider }
+		);
+		expect(container("dialog").props.accessibilityViewIsModal).toBe(false);
+		expect(container("dialog").props.onAccessibilityEscape).toBeUndefined();
+		expect(container("menu").props.accessibilityViewIsModal).toBe(true);
 	});
 });

@@ -13,6 +13,7 @@ import {
 import type { ViewInstance } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import type { ModalFocusTarget } from "../overlay/modal-accessibility";
 import type { HapticFeedback } from "../pressable/pressable";
 import type { MenuAnchorRect } from "./menu.variants";
 
@@ -159,6 +160,43 @@ export function useMenuRootValue({
 		() => ({ anchor, close, haptic, isOpen, open, toggle, triggerRef }),
 		[anchor, close, haptic, isOpen, open, toggle]
 	);
+}
+
+export type MenuPanelContextValue = {
+	/**
+	 * Records a part focus may land on when the panel has entered, in the order the
+	 * parts mount. Returns the function that forgets it.
+	 */
+	registerFocusable: (ref: RefObject<ModalFocusTarget | null>) => () => void;
+};
+
+const MenuPanelContext = createContext<MenuPanelContextValue | null>(null);
+
+export function MenuPanelProvider({
+	value,
+	children,
+}: {
+	value: MenuPanelContextValue;
+	children: ReactNode;
+}): ReactElement {
+	return <MenuPanelContext value={value}>{children}</MenuPanelContext>;
+}
+MenuPanelProvider.displayName = "DelacourUI.Menu.PanelProvider";
+
+/**
+ * A ref for a part of the panel that screen-reader focus may land on — a
+ * heading, or an enabled row. The panel focuses the first one that mounted.
+ * Outside a panel, or with `isEnabled` false, it registers nothing.
+ */
+export function useMenuFocusable<T extends ModalFocusTarget>(isEnabled = true): RefObject<T | null> {
+	const ref = useRef<T | null>(null);
+	const panel = use(MenuPanelContext);
+	const register = panel?.registerFocusable;
+	useEffect(() => {
+		if (!register || !isEnabled) return;
+		return register(ref);
+	}, [isEnabled, register]);
+	return ref;
 }
 
 export type MenuSubContextValue = {

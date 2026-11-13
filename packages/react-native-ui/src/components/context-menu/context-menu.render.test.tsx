@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { ContextMenu, type ContextMenuProps } from "./context-menu";
 import { ContextMenuContent } from "./context-menu-content";
 import { ContextMenuTrigger } from "./context-menu-trigger";
@@ -179,5 +179,23 @@ describe("ContextMenu", () => {
 			)
 		).rejects.toThrow("must be used inside");
 		spy.mockRestore();
+	});
+	test("an open menu is modal, its trigger announces expanded, and the escape scrub closes it", async () => {
+		const onOpenChange = jest.fn();
+		await renderWithProviders(
+			<ContextMenu defaultOpen onOpenChange={onOpenChange}>
+				<ContextMenu.Trigger accessibilityLabel="Message" onPress={() => {}}>
+					<Text>Hello there</Text>
+				</ContextMenu.Trigger>
+				<ContextMenu.Content testID="panel">
+					<ContextMenu.Item>Share</ContextMenu.Item>
+				</ContextMenu.Content>
+			</ContextMenu>
+		);
+		expect(screen.getByLabelText("Message")).toBeExpanded();
+		const panel = screen.getByTestId("panel", { includeHiddenElements: true });
+		expect(panel.props.accessibilityViewIsModal).toBe(true);
+		await act(() => panel.props.onAccessibilityEscape());
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
 	});
 });

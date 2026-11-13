@@ -1,11 +1,14 @@
 import {
 	Children,
+	type ComponentRef,
 	isValidElement,
 	type ReactElement,
 	type ReactNode,
+	type RefObject,
 	useCallback,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 } from "react";
 import { I18nManager, Modal, ScrollView, useWindowDimensions, View, type ViewProps } from "react-native";
@@ -13,8 +16,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
+import type { ModalFocusTarget } from "../overlay/modal-accessibility";
+import { focusAccessibilityTarget, useModalAccessibility } from "../overlay/use-modal-accessibility";
 import { Pressable } from "../pressable";
-import { useMenuPart } from "./menu.context";
+import { type MenuPanelContextValue, MenuPanelProvider, useMenuPart } from "./menu.context";
 import {
 	MENU_DEFAULT_OFFSET,
 	MENU_EDGE_MARGIN,
@@ -79,6 +84,12 @@ export type MenuContentProps = Omit<ViewProps, "children"> & {
  * side, approximated with a translate. Under reduced motion, opacity alone. The
  * `Modal` unmounts when the exit finishes.
  *
+ * **Accessibility goes through `useModalAccessibility`**, without a portal id —
+ * the `Modal` is the layer, so the panel is its own top. The escape scrub
+ * closes it. Once the enter has run, focus lands on the first heading or enabled
+ * row (the panel itself when there is neither); once the exit has run, it goes
+ * back to the trigger.
+ *
  * A caller's `Menu.Background` child is lifted out and drawn behind the
  * scroller in place of the default one.
  */
@@ -97,7 +108,7 @@ export function MenuContent({
 	backdrop,
 	...props
 }: MenuContentProps): ReactElement | null {
-	const { anchor: contextAnchor, close, isOpen } = useMenuPart("Menu.Content");
+	const { anchor: contextAnchor, close, isOpen, triggerRef } = useMenuPart("Menu.Content");
 	const anchor = anchorProp ?? contextAnchor;
 	const window = useWindowDimensions();
 	const insets = useSafeAreaInsets();
@@ -146,18 +157,52 @@ export function MenuContent({
 
 	const handleContentSize = useCallback((_width: number, height: number) => setMeasuredHeight(height), []);
 
+	// Parts register as they mount, in tree order, so the first is the menu's first
+	// heading or enabled row. The panel itself is the fallback for a menu with neither.
+	const panelRef = useRef<ComponentRef<typeof Animated.View>>(null);
+	const focusables = useRef<RefObject<ModalFocusTarget | null>[]>([]);
+	const panelContext = useMemo<MenuPanelContextValue>(
+		() => ({
+			registerFocusable: (ref) => {
+				focusables.current.push(ref);
+				return () => {
+					focusables.current = focusables.current.filter((candidate) => candidate !== ref);
+				};
+			},
+		}),
+		[]
+	);
+
+	const modal = useModalAccessibility({
+		initialFocus: [panelRef],
+		isOpen,
+		onEscape: close,
+		returnFocus: triggerRef as RefObject<ModalFocusTarget | null>,
+	});
+	const { focusInitial, restoreFocus } = modal;
+
+	const handleEntered = useCallback(() => {
+		const first = focusables.current.find((ref) => ref.current !== null);
+		if (first?.current) focusAccessibilityTarget(first.current);
+		else focusInitial();
+	}, [focusInitial]);
+
 	const handleExited = useCallback(() => {
 		setPresent(false);
 		setLocked(null);
 		setMeasuredHeight(null);
-	}, []);
+		restoreFocus();
+	}, [restoreFocus]);
 
 	const progress = useSharedValue(0);
 
 	useEffect(() => {
 		if (isOpen) {
 			if (!locked) return;
-			progress.value = withTiming(1, { duration: MENU_MOTION.enterMs });
+			progress.value = withTiming(1, { duration: MENU_MOTION.enterMs }, (isFinished) => {
+				"worklet";
+				if (isFinished) scheduleOnRN(handleEntered);
+			});
 			return;
 		}
 		if (!isPresent) return;
@@ -165,7 +210,7 @@ export function MenuContent({
 			"worklet";
 			if (isFinished) scheduleOnRN(handleExited);
 		});
-	}, [handleExited, isOpen, isPresent, locked, progress]);
+	}, [handleEntered, handleExited, isOpen, isPresent, locked, progress]);
 
 	const { cap, origin, position } = resolvePanelFrame({
 		align,
@@ -220,25 +265,28 @@ export function MenuContent({
 				) : null}
 				<Animated.View
 					accessibilityRole="menu"
-					accessibilityViewIsModal
 					className={slots.panel()}
 					pointerEvents={locked ? "auto" : "none"}
+					ref={panelRef}
 					style={[position, panelStyle]}
+					{...modal.containerProps}
 					{...props}
 				>
-					<View className={slots.content({ className })}>
-						{background ?? <MenuBackground />}
-						<ScrollView
-							bounces={false}
-							contentContainerClassName={slots.scroll()}
-							onContentSizeChange={handleContentSize}
-							scrollEnabled={isScrollable}
-							showsVerticalScrollIndicator
-							style={{ flexGrow: 0, maxHeight: cap }}
-						>
-							{rows}
-						</ScrollView>
-					</View>
+					<MenuPanelProvider value={panelContext}>
+						<View className={slots.content({ className })}>
+							{background ?? <MenuBackground />}
+							<ScrollView
+								bounces={false}
+								contentContainerClassName={slots.scroll()}
+								onContentSizeChange={handleContentSize}
+								scrollEnabled={isScrollable}
+								showsVerticalScrollIndicator
+								style={{ flexGrow: 0, maxHeight: cap }}
+							>
+								{rows}
+							</ScrollView>
+						</View>
+					</MenuPanelProvider>
 				</Animated.View>
 			</GestureHandlerRootView>
 		</Modal>

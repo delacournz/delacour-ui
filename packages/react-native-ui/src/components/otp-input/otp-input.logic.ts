@@ -199,11 +199,6 @@ export function resolveAccessibilityHint(length: number, pattern: OtpPattern): s
 	return `Enter the ${length} ${unitOf(pattern)} code`;
 }
 
-/** The accessible name: the caller's, else the enclosing `Field.Label`'s text, else the default. */
-export function resolveAccessibilityLabel(own: string | undefined, fieldLabel: string | null | undefined): string {
-	return own ?? fieldLabel ?? OTP_DEFAULT_LABEL;
-}
-
 export type OtpStateAxes = { isInvalid: boolean; isDisabled: boolean };
 
 /**

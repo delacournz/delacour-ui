@@ -104,6 +104,12 @@ keeps a type with one consumer in that consumer's file.
   reader never walks six boxes.
 - **Its name falls back through the field.** `accessibilityLabel`, else the enclosing `Field.Label`'s
   text, else "Verification code". A tap on the label focuses the field through `registerPress`.
+- **Validity is spoken from the same element.** `useFieldControlAccessibility` is called once, and its
+  name, hint and `accessibilityLabelledBy` land on the hidden `TextInput` alone: the cells are hidden
+  from AT, so one element carries everything and `Field.Label` is not read twice (the hook claims it).
+  `isRequired` (own, else the Field's) makes the name "Sign-in code, required". With `isInvalid`, the
+  hint becomes "Invalid: <Field.Error>. <Field.Description>. Enter the 6 digit code" — the "Enter the N
+  digit code" hint (or an own `accessibilityHint`) follows the field's words.
 - **The value is spelled out, or counted.** Unmasked, "1 2 3" — spaced so it is never read as "one
   hundred and twenty-three". Masked, "2 of 4 digits entered", because reading a PIN aloud defeats the
   mask. Empty is counted in both modes so the reader hears the length. The hint is "Enter the 6

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { Platform, View } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
 import { Menu, type MenuProps } from "./menu";
@@ -39,6 +39,7 @@ const originalOS = Platform.OS;
 const checked = (name: string) => screen.getByRole("menuitem", { name }).props.accessibilityState?.checked;
 const press = (name: string) => fireEvent(screen.getByRole("button", { name }), "accessibilityTap");
 const choose = (name: string) => fireEvent(screen.getByRole("menuitem", { name }), "accessibilityTap");
+const chooseRadio = (name: string) => fireEvent(screen.getByRole("radio", { name }), "accessibilityTap");
 
 /**
  * The panel measures its trigger with `measureInWindow` and the rows with layout, and Jest has
@@ -253,10 +254,10 @@ describe("Menu", () => {
 			);
 		}
 
-		test("announces the selected item", async () => {
+		test("each option is a radio, announced checked while selected", async () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" />, { wrapper: Overlays });
-			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
-			expect(screen.getByRole("menuitem", { name: "Comfortable" })).not.toBeSelected();
+			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
+			expect(screen.getByRole("radio", { name: "Comfortable" })).not.toBeChecked();
 		});
 
 		test("uncontrolled: choosing moves the selection, reports the value and closes", async () => {
@@ -267,7 +268,7 @@ describe("Menu", () => {
 				{ wrapper: Overlays }
 			);
 
-			await choose("Comfortable");
+			await chooseRadio("Comfortable");
 			expect(onValueChange).toHaveBeenCalledWith("comfortable");
 			expect(onOpenChange).toHaveBeenLastCalledWith(false);
 		});
@@ -276,17 +277,17 @@ describe("Menu", () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" isClosedOnSelect={false} />, {
 				wrapper: Overlays,
 			});
-			await choose("Comfortable");
-			expect(screen.getByRole("menuitem", { name: "Comfortable" })).toBeSelected();
-			expect(screen.getByRole("menuitem", { name: "Compact" })).not.toBeSelected();
+			await chooseRadio("Comfortable");
+			expect(screen.getByRole("radio", { name: "Comfortable" })).toBeChecked();
+			expect(screen.getByRole("radio", { name: "Compact" })).not.toBeChecked();
 		});
 
 		test("re-choosing the selected item keeps it selected", async () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" isClosedOnSelect={false} />, {
 				wrapper: Overlays,
 			});
-			await choose("Compact");
-			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
+			await chooseRadio("Compact");
+			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
 		});
 
 		test("controlled: waits for the prop before the selection moves", async () => {
@@ -298,12 +299,12 @@ describe("Menu", () => {
 				}
 			);
 
-			await choose("Comfortable");
+			await chooseRadio("Comfortable");
 			expect(onValueChange).toHaveBeenCalledWith("comfortable");
-			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
+			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
 
 			await view.rerender(<DensityMenu isClosedOnSelect={false} onValueChange={onValueChange} value="comfortable" />);
-			expect(screen.getByRole("menuitem", { name: "Comfortable" })).toBeSelected();
+			expect(screen.getByRole("radio", { name: "Comfortable" })).toBeChecked();
 		});
 
 		test("a RadioItem outside a RadioGroup throws", async () => {
@@ -419,6 +420,30 @@ describe("Menu", () => {
 		expect(screen.getByRole("button", { name: "Options" })).toBeCollapsed();
 	});
 
+	test("the panel is modal, and the accessibility escape closes the menu", async () => {
+		const onOpenChange = jest.fn();
+		const onAccessibilityEscape = jest.fn();
+		await renderWithProviders(
+			<Menu defaultOpen onOpenChange={onOpenChange}>
+				<Menu.Trigger asChild>
+					<Button>Options</Button>
+				</Menu.Trigger>
+				<Menu.Content onAccessibilityEscape={onAccessibilityEscape} testID="panel">
+					<Menu.Item>Rename</Menu.Item>
+				</Menu.Content>
+			</Menu>,
+			{ wrapper: Overlays }
+		);
+		const panel = screen.getByTestId("panel");
+		expect(panel.props.accessibilityViewIsModal).toBe(true);
+		await act(async () => {
+			panel.props.onAccessibilityEscape();
+		});
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		expect(onAccessibilityEscape).toHaveBeenCalledTimes(1);
+		expect(screen.getByRole("button", { name: "Options" })).toBeCollapsed();
+	});
+
 	describe("on Android", () => {
 		beforeEach(() => {
 			Platform.OS = "android";
@@ -435,6 +460,25 @@ describe("Menu", () => {
 				nativeEvent: { actionName: "activate" },
 			});
 			expect(onRename).toHaveBeenCalledTimes(1);
+		});
+
+		test("a radio row is activated through the activate accessibility action", async () => {
+			const onValueChange = jest.fn();
+			await renderWithProviders(
+				<Menu defaultOpen>
+					<Menu.Content>
+						<Menu.RadioGroup defaultValue="compact" onValueChange={onValueChange}>
+							<Menu.RadioItem value="comfortable">Comfortable</Menu.RadioItem>
+							<Menu.RadioItem value="compact">Compact</Menu.RadioItem>
+						</Menu.RadioGroup>
+					</Menu.Content>
+				</Menu>,
+				{ wrapper: Overlays }
+			);
+			await fireEvent(screen.getByRole("radio", { name: "Comfortable" }), "accessibilityAction", {
+				nativeEvent: { actionName: "activate" },
+			});
+			expect(onValueChange).toHaveBeenCalledWith("comfortable");
 		});
 
 		test("a disabled row ignores the activate action", async () => {

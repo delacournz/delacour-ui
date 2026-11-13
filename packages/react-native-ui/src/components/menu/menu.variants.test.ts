@@ -14,6 +14,7 @@ import {
 	resolveMenuOrigin,
 	resolveMenuPhysicalAlign,
 	resolveMenuPlacement,
+	resolveMenuRowRole,
 	resolveMenuWidth,
 	resolveRadioNext,
 } from "./menu.variants";
@@ -273,10 +274,14 @@ describe("resolveMenuItemAccessibility", () => {
 		});
 	});
 
-	test("a radio announces selected", () => {
+	test("a radio announces checked, the state a radio role reads", () => {
 		expect(resolveMenuItemAccessibility({ isDisabled: false, isSelected: false, kind: "radio" })).toEqual({
+			checked: false,
 			disabled: false,
-			selected: false,
+		});
+		expect(resolveMenuItemAccessibility({ isDisabled: true, isSelected: true, kind: "radio" })).toEqual({
+			checked: true,
+			disabled: true,
 		});
 	});
 
@@ -285,6 +290,18 @@ describe("resolveMenuItemAccessibility", () => {
 			disabled: false,
 			expanded: true,
 		});
+	});
+});
+
+describe("resolveMenuRowRole", () => {
+	test("a radio row is a radio, so its checked state is read as a choice", () => {
+		expect(resolveMenuRowRole("radio")).toBe("radio");
+	});
+
+	test("every other row is a menuitem", () => {
+		expect(resolveMenuRowRole("item")).toBe("menuitem");
+		expect(resolveMenuRowRole("checkbox")).toBe("menuitem");
+		expect(resolveMenuRowRole("sub-trigger")).toBe("menuitem");
 	});
 });
 

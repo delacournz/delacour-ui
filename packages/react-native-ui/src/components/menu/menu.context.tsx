@@ -10,7 +10,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import type { ViewInstance } from "react-native";
+import { AccessibilityInfo, findNodeHandle, type ViewInstance } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import type { HapticFeedback } from "../pressable/pressable";
@@ -18,6 +18,16 @@ import type { MenuAnchorRect } from "./menu.variants";
 
 /** Anything `measureInWindow` can be called on — a host view, or an animated one. */
 export type MenuMeasurable = Pick<ViewInstance, "measureInWindow">;
+
+/** Anything `AccessibilityInfo.setAccessibilityFocus` can be pointed at through `findNodeHandle`. */
+export type MenuFocusTarget = NonNullable<Parameters<typeof findNodeHandle>[0]>;
+
+/** Moves VoiceOver / TalkBack focus to a mounted element. A no-op when it has gone. */
+export function focusMenuTarget(target: MenuFocusTarget | MenuMeasurable | null): void {
+	if (target === null) return;
+	const handle = findNodeHandle(target as MenuFocusTarget);
+	if (handle !== null && handle !== undefined) AccessibilityInfo.setAccessibilityFocus(handle);
+}
 
 export type MenuContextValue = {
 	isOpen: boolean;
@@ -31,8 +41,10 @@ export type MenuContextValue = {
 	close: () => void;
 	/** Closes an open menu, opens a closed one from the trigger. */
 	toggle: () => void;
-	/** The trigger's node, measured on open. */
+	/** The trigger's node, measured on open — and focused again once the panel has gone. */
 	triggerRef: RefObject<MenuMeasurable | null>;
+	/** The first row mounted in the panel, focused once the panel has entered. */
+	firstRowRef: RefObject<MenuFocusTarget | null>;
 	/** Played when a row is chosen. */
 	haptic: false | HapticFeedback;
 };
@@ -97,6 +109,7 @@ export function useMenuRootValue({
 
 	const [anchor, setAnchor] = useState<MenuAnchorRect | null>(null);
 	const triggerRef = useRef<MenuMeasurable | null>(null);
+	const firstRowRef = useRef<MenuFocusTarget | null>(null);
 
 	const openRef = useRef(isOpen);
 	openRef.current = isOpen;
@@ -156,7 +169,7 @@ export function useMenuRootValue({
 	}, [close, open]);
 
 	return useMemo<MenuContextValue>(
-		() => ({ anchor, close, haptic, isOpen, open, toggle, triggerRef }),
+		() => ({ anchor, close, firstRowRef, haptic, isOpen, open, toggle, triggerRef }),
 		[anchor, close, haptic, isOpen, open, toggle]
 	);
 }

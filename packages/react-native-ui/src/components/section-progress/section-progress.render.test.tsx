@@ -1,12 +1,15 @@
 import { describe, expect, jest, test } from "@jest/globals";
-import type { ReactElement } from "react";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { type ComponentRef, type ReactElement, type RefObject, useRef } from "react";
+import { AccessibilityInfo } from "react-native";
+import type Animated from "react-native-reanimated";
+import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { SectionProgress, type SectionProgressProps } from "./section-progress";
+import { useSectionProgress } from "./section-progress.context";
 import { SectionProgressItem } from "./section-progress-item";
 
 // Not testable under Jest: the ring fill (Skia is stubbed), the label slide/resize, the panel grow
-// and the reveal latch (all UI-thread worklets), the screen-reader focus jump and the Android
-// back handler's real hardware path. Items stay mounted while closed, hidden from assistive
+// and the reveal latch (all UI-thread worklets), the real screen-reader focus (the spy below only sees the
+// target) and the Android back handler's real hardware path. Items stay mounted while closed, hidden from assistive
 // technology, so item queries pass `includeHiddenElements`.
 
 type Props = Partial<Omit<SectionProgressProps, "children">>;
@@ -182,5 +185,101 @@ describe("SectionProgress", () => {
 		} finally {
 			console.error = original;
 		}
+	});
+
+	describe("modal accessibility", () => {
+		type HostView = ComponentRef<typeof Animated.View>;
+		type Probe = {
+			pill?: RefObject<HostView | null>;
+			intro?: RefObject<HostView | null>;
+			faq?: RefObject<HostView | null>;
+		};
+
+		function PillRef({ probe }: { probe: Probe }): null {
+			probe.pill = useSectionProgress().pillRef;
+			return null;
+		}
+
+		function Focusable({ probe, ...props }: Props & { probe: Probe }): ReactElement {
+			const intro = useRef<HostView>(null);
+			const faq = useRef<HostView>(null);
+			probe.intro = intro;
+			probe.faq = faq;
+			return (
+				<SectionProgress {...props}>
+					<PillRef probe={probe} />
+					<SectionProgress.Item ref={intro} value="intro">
+						Introduction
+					</SectionProgress.Item>
+					<SectionProgress.Item value="pricing">Pricing</SectionProgress.Item>
+					<SectionProgress.Item ref={faq} value="faq">
+						FAQ
+					</SectionProgress.Item>
+				</SectionProgress>
+			);
+		}
+
+		function focusSpy(probe: Probe): () => string[] {
+			const parts: string[] = [];
+			jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation((target, event) => {
+				if (event !== "focus") return;
+				const part = (["pill", "intro", "faq"] as const).find((key) => {
+					const node = probe[key]?.current;
+					return node !== null && node !== undefined && node === target;
+				});
+				if (part !== undefined) parts.push(part);
+			});
+			return () => [...parts];
+		}
+
+		/** The panel — the nearest ancestor of the pill that carries the modal prop. */
+		function panel() {
+			let node = pill().parent;
+			while (node !== null && node.props.accessibilityViewIsModal === undefined) node = node.parent;
+			if (node === null) throw new Error("no modal container above the pill");
+			return node;
+		}
+
+		test("the panel is modal only while open", async () => {
+			await renderWithProviders(<Pill defaultValue="intro" />);
+			expect(panel().props.accessibilityViewIsModal).toBe(false);
+			expect(panel().props.onAccessibilityEscape).toBeUndefined();
+			await activate(pill());
+			expect(panel().props.accessibilityViewIsModal).toBe(true);
+		});
+
+		test("the escape gesture closes the panel", async () => {
+			const onOpenChange = jest.fn();
+			await renderWithProviders(<Pill defaultOpen defaultValue="intro" onOpenChange={onOpenChange} />);
+			await act(() => panel().props.onAccessibilityEscape());
+			expect(onOpenChange).toHaveBeenLastCalledWith(false);
+			expect(pill()).toBeCollapsed();
+		});
+
+		test("opening moves focus to the active item", async () => {
+			const probe: Probe = {};
+			const focused = focusSpy(probe);
+			await renderWithProviders(<Focusable defaultValue="faq" probe={probe} />);
+			await activate(pill());
+			await waitFor(() => expect(focused()).toEqual(["faq"]));
+		});
+
+		test("with no active section focus falls back to the first item", async () => {
+			const probe: Probe = {};
+			const focused = focusSpy(probe);
+			await renderWithProviders(<Focusable defaultOpen probe={probe} />);
+			await waitFor(() => expect(focused()).toEqual(["intro"]));
+		});
+
+		test("closing returns focus to the pill, and mounting closed does not", async () => {
+			const probe: Probe = {};
+			const focused = focusSpy(probe);
+			await renderWithProviders(<Focusable defaultValue="intro" probe={probe} />);
+			expect(focused()).toEqual([]);
+			await activate(pill());
+			await waitFor(() => expect(focused()).toEqual(["intro"]));
+			await activate(item("FAQ"));
+			await waitFor(() => expect(focused()).toEqual(["intro", "pill"]));
+		});
 	});
 });

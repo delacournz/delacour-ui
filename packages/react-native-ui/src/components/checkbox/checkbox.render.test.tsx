@@ -347,4 +347,46 @@ describe("Checkbox.Group", () => {
 			);
 		});
 	});
+
+	describe("accessibility inside a Field", () => {
+		test("a bare box is named by the field, required, with the error and description as its hint", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Terms</Field.Label>
+					<Checkbox />
+					<Field.Description>Read them first.</Field.Description>
+					<Field.Error>Accept to continue</Field.Error>
+				</Field>
+			);
+			const control = screen.getByRole("checkbox");
+			expect(control).toHaveProp("accessibilityLabel", "Terms, required");
+			expect(control).toHaveProp("accessibilityHint", "Invalid: Accept to continue. Read them first.");
+		});
+
+		test("inline text names the box and takes the required state; Field.Label stays visible to a reader", async () => {
+			await renderWithProviders(
+				<Field isRequired>
+					<Field.Label>Terms</Field.Label>
+					<Checkbox>Accept terms</Checkbox>
+				</Field>
+			);
+			expect(screen.getByRole("checkbox")).toHaveProp("accessibilityLabel", "Accept terms, required");
+			expect(screen.getByLabelText("Terms, required")).toBeOnTheScreen();
+		});
+
+		test("a group's isInvalid reaches each box's hint", async () => {
+			await renderWithProviders(
+				<Checkbox.Group isInvalid>
+					<Checkbox value="a">Email</Checkbox>
+				</Checkbox.Group>
+			);
+			expect(screen.getByRole("checkbox")).toHaveProp("accessibilityHint", "Invalid");
+		});
+
+		test("outside a Field the name and hint are the caller's own", async () => {
+			await renderWithProviders(<Checkbox accessibilityHint="Toggles it">Remember me</Checkbox>);
+			const control = screen.getByRole("checkbox", { name: "Remember me" });
+			expect(control).toHaveProp("accessibilityHint", "Toggles it");
+		});
+	});
 });

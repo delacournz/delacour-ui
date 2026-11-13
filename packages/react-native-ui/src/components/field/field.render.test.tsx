@@ -1,6 +1,7 @@
-import { describe, expect, jest, test } from "@jest/globals";
-import { Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Platform, Text } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Checkbox } from "../checkbox";
 import { Slider } from "../slider";
 import { Switch } from "../switch";
@@ -260,16 +261,72 @@ describe("Field", () => {
 			expect(screen.queryByRole("adjustable", { name: "Volume" })).not.toBeOnTheScreen();
 		});
 
-		test("the error is announced politely as an alert", async () => {
-			await renderWithProviders(
+		describe("announcing the error", () => {
+			const originalOS = Platform.OS;
+			const setPlatform = (os: typeof Platform.OS) =>
+				Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+			let announce: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+			let announceWithOptions: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+			beforeEach(() => {
+				resetAnnouncer();
+				announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+				announceWithOptions = jest
+					.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+					.mockImplementation(() => {});
+				announce.mockClear();
+				announceWithOptions.mockClear();
+			});
+			afterEach(() => {
+				setPlatform(originalOS);
+				announce.mockRestore();
+				announceWithOptions.mockRestore();
+			});
+
+			const Form = ({ error, announceIt = true }: { error: string; announceIt?: boolean }) => (
 				<Field isInvalid>
 					<Field.Label>Email</Field.Label>
-					<Field.Error>Enter a valid email.</Field.Error>
+					<Field.Error announce={announceIt}>{error}</Field.Error>
 				</Field>
 			);
-			const error = screen.getByRole("alert");
-			expect(error).toHaveTextContent("Enter a valid email.");
-			expect(error).toHaveProp("accessibilityLiveRegion", "polite");
+
+			test("it is an alert with no live region beside its announcement", async () => {
+				setPlatform("android");
+				await renderWithProviders(<Form error="Enter a valid email." />);
+				const error = screen.getByRole("alert");
+				expect(error).toHaveTextContent("Enter a valid email.");
+				expect(error).toHaveProp("accessibilityLiveRegion", "none");
+			});
+
+			test("Android: spoken once when it appears, and again only when the text changes", async () => {
+				jest.useFakeTimers();
+				setPlatform("android");
+				const view = await renderWithProviders(<Form error="Enter a valid email." />);
+				expect(announce).toHaveBeenCalledTimes(1);
+				expect(announce).toHaveBeenCalledWith("Enter a valid email.");
+				await view.rerender(<Form error="Enter a valid email." />);
+				expect(announce).toHaveBeenCalledTimes(1);
+				await view.rerender(<Form error="That email is taken." />);
+				await act(async () => {
+					jest.advanceTimersByTime(600);
+				});
+				expect(announce).toHaveBeenLastCalledWith("That email is taken.");
+				jest.useRealTimers();
+			});
+
+			test("iOS: announced when it appears, which a live region never did", async () => {
+				setPlatform("ios");
+				await renderWithProviders(<Form error="Enter a valid email." />);
+				expect(announceWithOptions).toHaveBeenCalledTimes(1);
+				expect(announceWithOptions).toHaveBeenCalledWith("Enter a valid email.", { queue: true });
+			});
+
+			test("announce={false} stays silent", async () => {
+				setPlatform("ios");
+				await renderWithProviders(<Form announceIt={false} error="Enter a valid email." />);
+				expect(announceWithOptions).not.toHaveBeenCalled();
+				expect(announce).not.toHaveBeenCalled();
+			});
 		});
 
 		test("an error with no children renders nothing", async () => {

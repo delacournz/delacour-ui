@@ -232,6 +232,29 @@ export function resolveCountdownAccessibilityLabel(
 	return `${words.join(", ")} left`;
 }
 
+/** Seconds left at which a countdown speaks: an hour, ten and five minutes, one minute, 30 s and 10 s. */
+export const COUNTDOWN_ANNOUNCE_MILESTONES: readonly number[] = [3600, 600, 300, 60, 30, 10];
+
+/**
+ * What a countdown says aloud at this second, or `null` for silence.
+ *
+ * The spoken label changes every second in the final minute, so a live region carrying it would
+ * read every tick. A countdown instead speaks at sparse milestones (`COUNTDOWN_ANNOUNCE_MILESTONES`)
+ * and once more when time is up. A seconds milestone is skipped when seconds are not shown — the
+ * label would round it up to a minute and say something untrue. A milestone is the same coarse
+ * label a screen reader reads on focus.
+ */
+export function resolveCountdownAnnouncement(
+	seconds: number,
+	units: readonly CountdownUnit[],
+	labels: Partial<Record<CountdownUnit, string>> = {}
+): string | null {
+	if (seconds <= 0) return resolveCountdownAccessibilityLabel(0, units, labels);
+	if (!COUNTDOWN_ANNOUNCE_MILESTONES.includes(seconds)) return null;
+	if (seconds < 60 && !resolveCountdownUnits(units).includes("seconds")) return null;
+	return resolveCountdownAccessibilityLabel(seconds, units, labels);
+}
+
 /**
  * Milliseconds until the seconds left next change — the next whole-second boundary of `to - now`,
  * not a fixed interval from whenever the timer happened to start — or `null` once time is up.

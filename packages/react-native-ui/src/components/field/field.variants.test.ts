@@ -6,6 +6,7 @@ import {
 	FIELD_TEXT_PARTS,
 	type FieldTextPart,
 	fieldVariants,
+	resolveFieldErrorMessage,
 	resolveFieldInteractive,
 	resolveFieldLabelText,
 	resolveFieldTextColor,
@@ -236,5 +237,31 @@ describe("resolveFieldLabelText", () => {
 		expect(resolveFieldLabelText(false)).toBeNull();
 		expect(resolveFieldLabelText({ type: "Text", props: {} })).toBeNull();
 		expect(resolveFieldLabelText(["a", "b"])).toBeNull();
+	});
+});
+
+describe("resolveFieldErrorMessage", () => {
+	test("a string or number is the message, trimmed", () => {
+		expect(resolveFieldErrorMessage("  Enter a valid email. ")).toBe("Enter a valid email.");
+		expect(resolveFieldErrorMessage(404)).toBe("404");
+	});
+
+	test("an array of strings and numbers is joined", () => {
+		expect(resolveFieldErrorMessage(["Enter ", "a valid ", "email."])).toBe("Enter a valid email.");
+		expect(resolveFieldErrorMessage(["At least ", 8, " characters."])).toBe("At least 8 characters.");
+	});
+
+	test("empty, absent or element children carry no message to speak", () => {
+		expect(resolveFieldErrorMessage("")).toBeNull();
+		expect(resolveFieldErrorMessage("   ")).toBeNull();
+		expect(resolveFieldErrorMessage(null)).toBeNull();
+		expect(resolveFieldErrorMessage(undefined)).toBeNull();
+		expect(resolveFieldErrorMessage(false)).toBeNull();
+		expect(resolveFieldErrorMessage({ type: "span" })).toBeNull();
+		expect(resolveFieldErrorMessage(["Enter ", { type: "b" }])).toBeNull();
+	});
+
+	test("conditional gaps in an array are skipped", () => {
+		expect(resolveFieldErrorMessage([null, "Too short.", false])).toBe("Too short.");
 	});
 });

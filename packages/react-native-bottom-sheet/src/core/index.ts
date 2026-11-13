@@ -64,6 +64,13 @@ export {
 	stepOverride,
 	transition,
 } from "./machine";
+export {
+	firstFocusTarget,
+	type ResolveSheetModalAccessibilityInput,
+	resolveSheetModalAccessibility,
+	type SheetModalAccessibility,
+	type SheetOverlayKind,
+} from "./modal-accessibility";
 export { type ErrorResult, err, ok, type Result, type SuccessResult } from "./result";
 export { type ContentPanInput, contentPanDrivesSheet, shouldLockScroll } from "./scroll/scroll-lock";
 export {

@@ -76,3 +76,15 @@ export function isTop(state: SheetRegistryState, id: string): boolean {
 	if (entry === undefined) return false;
 	return topOf(state, entry.host) === id;
 }
+
+/**
+ * Whether `id` is the sheet a screen reader should be held inside: on top of
+ * its own host. A sheet the registry has not recorded — no provider, or the
+ * first render before the portal presents it — is its own top.
+ */
+export function isModalTop(state: SheetRegistryState | null, id: string): boolean {
+	if (state === null) return true;
+	const entry = state.open.find((candidate) => candidate.id === id);
+	if (entry === undefined) return true;
+	return topOf(state, entry.host) === id;
+}

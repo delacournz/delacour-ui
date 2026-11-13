@@ -36,14 +36,14 @@ export function BottomSheetOverlay({
 	ref,
 	...props
 }: BottomSheetOverlayProps): ReactElement {
-	const { geometry, setHasOverlay, stepOverride } = useBottomSheetInternal();
+	const { geometry, setOverlay, stepOverride } = useBottomSheetInternal();
 	const { isOpen, close, collapse, snapToIndex } = useBottomSheet();
 	const index = geometry.index;
 
 	useEffect(() => {
-		setHasOverlay(true);
-		return () => setHasOverlay(false);
-	}, [setHasOverlay]);
+		setOverlay(enableTouchThrough ? "touch-through" : "blocking");
+		return () => setOverlay("none");
+	}, [setOverlay, enableTouchThrough]);
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		opacity: backdropOpacity(index.value, disappearsOnIndex, appearsOnIndex, opacity),

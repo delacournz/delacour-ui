@@ -133,10 +133,17 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   sets it to the registered action as well (and still calls a caller's own); with no action it stays
   unset. Likewise VoiceOver's two-finger escape (the "Z" scrub) calls `onAccessibilityEscape`,
   not the `escape` action, so the card sets it to `hide` and still calls a caller's own. `role="alert"` for a
-  failure, a polite live region on Android. On show, and on every revision, the item announces
-  `title. description`. On iOS a warning or failure uses `queue: false`, so it cuts in, and any other
-  status uses `queue: true`, so it waits for VoiceOver to finish speaking — the plain
-  `announceForAccessibility` joins no queue there, so toasts shown together cut each other off. A toast
+  failure. **One announcement route per platform.** On show, and on every revision, the item speaks
+  `title. description` through the shared announcer (`useAnnounce`) on iOS and Android alike, and the
+  message card's own live region is `none`: a live region beside `announceForAccessibility` is heard
+  twice on Android. On iOS a warning or failure is assertive (`queue: false`, cuts in) and any other
+  status queues behind VoiceOver speech, so toasts shown together do not cut each other off (the
+  plain `announceForAccessibility` joins no queue). The announcer key is the item instance, so a
+  promise toast's "Saving" and "Saved" are two revisions and neither is dropped — one landing inside
+  the 500 ms window is held until it closes — while pending speech dies with the toast. `announce:
+  false` (on `toast()` or `toast.update`) is the opt-out and silences every platform. A custom
+  `render` toast is not announced by the item; its `<Toast>` keeps a polite live region (Android
+  only — iOS needs the caller to announce). A toast
   never moves focus.
 - **Haptics follow the status.** Success, warning and destructive play their notification preset
   (`playHaptic`, on the UI thread); default and info are silent; `haptic` overrides, `false` silences.

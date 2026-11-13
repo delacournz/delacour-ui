@@ -308,6 +308,11 @@ export function resolveToastInterrupts(status: Status): boolean {
 	return status === "destructive" || status === "warning";
 }
 
+/** The politeness `announce` speaks a toast at: assertive when it interrupts, else polite. */
+export function resolveToastPoliteness(status: Status): "assertive" | "polite" {
+	return resolveToastInterrupts(status) ? "assertive" : "polite";
+}
+
 /** A failure is an `alert`; anything else is a plain group. */
 export function resolveToastRole(status: Status): "alert" | "none" {
 	return status === "destructive" ? "alert" : "none";

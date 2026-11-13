@@ -29,6 +29,8 @@ type ToastCommonOptions = {
 	placement?: ToastPlacement;
 	/** A haptic played as it appears. Defaults to the status's: success, warning, error, or none. `false` for none. */
 	haptic?: HapticFeedback | false;
+	/** Speak the title and description as it appears and on every update. Default `true`; `false` for an app that speaks the event itself. */
+	announce?: boolean;
 	/** Called once the toast has left the screen, however it was hidden. */
 	onHide?: () => void;
 };
@@ -59,6 +61,7 @@ type ToastItemBase = {
 	placement: ToastPlacement;
 	duration: number | undefined;
 	haptic: HapticFeedback | false | undefined;
+	announce: boolean;
 	onHide: (() => void) | undefined;
 	/** Hidden, and animating out. The viewport removes it once the exit ends. */
 	isExiting: boolean;
@@ -113,6 +116,7 @@ export function normalizeToastInput(
 		placement: options.placement ?? "bottom",
 		duration: options.duration,
 		haptic: options.haptic,
+		announce: options.announce ?? true,
 		onHide: options.onHide,
 		isExiting: false,
 		revision: 0,
@@ -131,12 +135,18 @@ export function normalizeToastInput(
 	};
 }
 
+/** An update keeps the toast's announce setting unless it names one. */
+function patchedAnnounce(item: ToastItem, patch: ToastPatch): boolean {
+	return patch.announce ?? item.announce;
+}
+
 function patchItem(item: ToastItem, patch: ToastPatch): ToastItem {
 	const base: ToastItemBase = {
 		id: item.id,
 		placement: patch.placement ?? item.placement,
 		duration: "duration" in patch ? patch.duration : item.duration,
 		haptic: "haptic" in patch ? patch.haptic : item.haptic,
+		announce: patchedAnnounce(item, patch),
 		onHide: patch.onHide ?? item.onHide,
 		isExiting: item.isExiting,
 		revision: item.revision + 1,

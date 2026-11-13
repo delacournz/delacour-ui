@@ -52,6 +52,7 @@ export {
 	resolveToastEnterDelay,
 	resolveToastHaptic,
 	resolveToastInterrupts,
+	resolveToastPoliteness,
 	resolveToastRelease,
 	resolveToastRole,
 	resolveToastStack,

@@ -172,6 +172,35 @@ export function resolveSkeletonAccessibility({
 }
 
 /**
+ * What to say when a labelled skeleton's content arrives, or `null` for silence.
+ *
+ * Speaks only on the loading to loaded edge of a skeleton that has a `label`:
+ * an unlabelled one is hidden from screen readers, so its arrival is nobody's
+ * news, and a mount that is already loaded is not a transition. A "Loading
+ * inbox" label becomes "Inbox loaded"; `loadedLabel` replaces the whole phrase.
+ */
+export function resolveSkeletonLoadedMessage({
+	label,
+	loadedLabel,
+	wasLoading,
+	isLoading,
+}: {
+	label?: string;
+	loadedLabel?: string;
+	wasLoading: boolean;
+	isLoading: boolean;
+}): string | null {
+	if (!label || !wasLoading || isLoading) return null;
+	if (loadedLabel) return loadedLabel;
+	const subject = label
+		.replace(/^loading\b[\s.…]*/i, "")
+		.replace(/[\s.…]+$/, "")
+		.trim();
+	if (!subject) return "Loaded";
+	return `${subject.charAt(0).toUpperCase()}${subject.slice(1)} loaded`;
+}
+
+/**
  * Styling for every part of a skeleton.
  *
  * `isEmpty` is whether the skeleton wraps content. A wrapping skeleton is sized

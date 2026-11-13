@@ -16,6 +16,7 @@ import {
 } from "./skeleton.variants";
 import { useSkeletonClock } from "./skeleton-clock";
 import { SkeletonGroup } from "./skeleton-group";
+import { useSkeletonLoadedAnnouncement } from "./skeleton-loaded";
 import { SkeletonShimmer } from "./skeleton-shimmer";
 
 export type SkeletonProps = Omit<ViewProps, "children"> & {
@@ -39,6 +40,10 @@ export type SkeletonProps = Omit<ViewProps, "children"> & {
 	 * accessibility tree. Label the one skeleton standing for a region, not all of them.
 	 */
 	label?: string;
+	/** What to say when the content arrives. Defaults to the label made past tense: "Loading inbox" becomes "Inbox loaded". */
+	loadedLabel?: string;
+	/** Whether a labelled skeleton announces that its content has loaded. Defaults to `true`. */
+	announce?: boolean;
 	className?: string;
 	/**
 	 * The real content. Rendered invisibly underneath while loading, so the
@@ -52,6 +57,8 @@ function SkeletonRoot({
 	animation,
 	isLoading,
 	label,
+	loadedLabel,
+	announce,
 	className,
 	style,
 	children,
@@ -61,6 +68,7 @@ function SkeletonRoot({
 	const isCalm = useCalmMotion();
 
 	const loading = isLoading ?? group?.isLoading ?? true;
+	useSkeletonLoadedAnnouncement({ announce, isLoading: loading, label, loadedLabel });
 	const resolvedAnimation = resolveSkeletonAnimation(animation ?? group?.animation, isCalm);
 	const isAnimating = loading && resolvedAnimation !== "none";
 
@@ -138,12 +146,15 @@ function SkeletonLines({
 	animation,
 	isLoading,
 	label,
+	loadedLabel,
+	announce,
 	className,
 	children,
 	...props
 }: SkeletonLinesProps): ReactElement {
 	const group = useSkeletonGroup();
 	const loading = isLoading ?? group?.isLoading ?? true;
+	useSkeletonLoadedAnnouncement({ announce, isLoading: loading, label, loadedLabel });
 
 	if (!loading) {
 		return (
@@ -181,7 +192,7 @@ function SkeletonLines({
 	}
 
 	return (
-		<SkeletonGroup animation={animation} className={containerClassName} label={label} {...props}>
+		<SkeletonGroup animation={animation} announce={false} className={containerClassName} label={label} {...props}>
 			{content}
 		</SkeletonGroup>
 	);

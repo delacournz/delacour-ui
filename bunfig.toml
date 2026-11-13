@@ -5,10 +5,11 @@
 # this, Metro fails to resolve @expo/metro-runtime and the bundle never builds.
 linker = "hoisted"
 
-# `@delacournz/*` is published to GitHub Packages, not npm, and is read with whatever token is in
-# NPM_TOKEN. Every install of the workspace needs it, not only `apps/web`'s, because the lockfile is
-# shared. In GitHub Actions it is the job's own `GITHUB_TOKEN` (`packages: read`, set on the install
-# step only), which reads each package because the package grants this repository Actions access.
+# `@delacournz/*` — delacour-monorepo's shared packages: the OpenTelemetry family and the
+# `@delacournz/ui` / `@delacournz/apogee` design systems — is published to GitHub Packages, not
+# npm, and is read with whatever token is in NPM_TOKEN. Every install of the workspace needs it,
+# not only `apps/web`'s, because the lockfile is shared. In GitHub Actions it is the job's own
+# `GITHUB_TOKEN` (`packages: read`, set on the install step only), which reads each package because the package grants this repository Actions access.
 # Everywhere else it is a CLASSIC personal access token with `read:packages`, owned by a machine
 # user — GitHub's npm registry rejects fine-grained tokens: on Railway a preserved variable on
 # `ui-web`, on EAS a secret env var in all three environments; locally, export it in your shell.

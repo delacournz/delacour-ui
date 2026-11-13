@@ -3,6 +3,7 @@ import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import {
 	isSpinnerSize,
 	resolveSpinnerColor,
+	resolveSpinnerLabel,
 	resolveSpinnerRootClass,
 	SPINNER_ARC_HEAD_OPACITY,
 	SPINNER_ARC_JOINT_OPACITY,
@@ -11,6 +12,7 @@ import {
 	SPINNER_ARC_TAIL_OPACITY,
 	SPINNER_COLOR_TOKEN,
 	SPINNER_COLORS,
+	SPINNER_DEFAULT_LABEL,
 	SPINNER_FALLBACK_SIZE_CLASS,
 	SPINNER_GLYPH_SIZE_CLASS,
 	SPINNER_SIZES,
@@ -269,5 +271,17 @@ describe("SPINNER_ARC_STROKE_WIDTH", () => {
 	// so an over-wide stroke would clip against the viewBox rather than warn.
 	test("leaves the ring inside the 24-unit viewBox", () => {
 		expect(ARC_RADIUS + SPINNER_ARC_STROKE_WIDTH / 2).toBeLessThanOrEqual(ARC_CENTRE);
+	});
+});
+
+describe("resolveSpinnerLabel", () => {
+	test("falls back to the default name when none is given", () => {
+		expect(resolveSpinnerLabel(undefined)).toBe(SPINNER_DEFAULT_LABEL);
+		expect(SPINNER_DEFAULT_LABEL).toBe("Loading");
+	});
+
+	test("a caller's label wins, including an empty one", () => {
+		expect(resolveSpinnerLabel("Saving")).toBe("Saving");
+		expect(resolveSpinnerLabel("")).toBe("");
 	});
 });

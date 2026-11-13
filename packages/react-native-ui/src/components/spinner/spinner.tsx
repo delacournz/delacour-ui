@@ -5,6 +5,7 @@ import { IconDefaultsProvider, useIconDefaults } from "../icon";
 import { type SpinnerContextValue, SpinnerProvider } from "./spinner.context";
 import {
 	resolveSpinnerColor,
+	resolveSpinnerLabel,
 	resolveSpinnerRootClass,
 	SPINNER_GLYPH_SIZE_CLASS,
 	type SpinnerColor,
@@ -39,6 +40,7 @@ function SpinnerRoot({
 	speed = 1,
 	className,
 	children,
+	accessibilityLabel,
 	...props
 }: SpinnerProps): ReactElement | null {
 	// One inheritance path, not two. A Button wraps its whole subtree — the
@@ -71,6 +73,7 @@ function SpinnerRoot({
 	return (
 		<SpinnerProvider value={context}>
 			<Animated.View
+				accessibilityLabel={resolveSpinnerLabel(accessibilityLabel)}
 				accessible
 				accessibilityRole="progressbar"
 				accessibilityState={{ busy: true }}
@@ -110,6 +113,11 @@ function wrapSpinnerChildren(children: ReactNode): ReactNode {
  * reads that button's context and comes out at its icon size in its variant's
  * foreground; elsewhere it falls back to the nearest `IconDefaultsProvider`,
  * then to `md` on `foreground`. An explicit `size` or `color` always wins.
+ *
+ * The root is a busy `progressbar` named "Loading" unless `accessibilityLabel`
+ * says what is loading. It is silent when it appears: a status message the
+ * surrounding screen already speaks would be doubled, so a caller who wants it
+ * heard uses `announce` from the announce helper.
  *
  * Any child becomes the glyph and is wrapped in a `Spinner.Content` so it still
  * rotates, so a custom icon or asset needs nothing but to be passed in.

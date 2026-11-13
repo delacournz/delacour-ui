@@ -185,3 +185,16 @@ export function resolveSpinnerColor(color: string | undefined, inherited?: strin
 	const value = color ?? inherited ?? SPINNER_FALLBACK_COLOR;
 	return isSpinnerColor(value) ? SPINNER_COLOR_TOKEN[value] : value;
 }
+
+/**
+ * The accessible name a spinner carries when the caller gives none.
+ *
+ * A progressbar with no name is read as an unlabelled "progress bar" by
+ * VoiceOver and TalkBack, which says work is happening but not what kind.
+ */
+export const SPINNER_DEFAULT_LABEL = "Loading";
+
+/** The spinner's accessible name: the caller's, even when empty, else {@link SPINNER_DEFAULT_LABEL}. */
+export function resolveSpinnerLabel(label: unknown): string {
+	return typeof label === "string" ? label : SPINNER_DEFAULT_LABEL;
+}

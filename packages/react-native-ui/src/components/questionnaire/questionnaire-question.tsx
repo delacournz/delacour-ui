@@ -119,12 +119,16 @@ export function QuestionnaireQuestion({
 	const slide = direction === "forward" ? FORWARD : BACKWARD;
 	const entering = !hasNavigated ? undefined : isCalm ? CALM : slide;
 
+	// The heading names itself. The `Field.Label` inside it leaves the
+	// accessibility tree once the control claims its text, and an accessible
+	// view whose only text is hidden would be an empty heading — the one focus
+	// moves to on navigation.
 	return (
 		<Animated.View className={slots.body({ className })} layout={isCalm ? undefined : RESIZE} {...props}>
 			<Animated.View entering={entering} exiting={hasNavigated ? EXIT : undefined} key={current.id}>
 				<Field isDisabled={isInert} isInvalid={errorMessage !== null}>
 					<View className={slots.question()}>
-						<View accessibilityRole="header" accessible ref={headingRef}>
+						<View accessibilityLabel={current.title} accessibilityRole="header" accessible ref={headingRef}>
 							<Field.Label className={slots.heading()} size={axes.headingSize}>
 								{current.title}
 							</Field.Label>

@@ -102,7 +102,9 @@ Compound root plus `Questionnaire.Title`, `.Progress`, `.Question`, `.Footer`, `
 - After every move the question is announced as "Question 2 of 5: <title>" and focus moves to its
   heading once the transition ends. The first question is neither announced nor animated.
 - The heading is the `Field.Label`, promoted up the type scale (`headingSize`) and wrapped in an
-  `accessibilityRole="header"` view.
+  `accessibilityRole="header"` view that carries the title as its own `accessibilityLabel`. The
+  control takes the label's text as its name and `Field.Label` then leaves the accessibility tree,
+  so without its own label the header would be empty — and it is where focus lands on navigation.
 - Progress reads "Question 2 of 5" in every variant: the bar through `Progress`'s `progressbar`,
   the stepper as one `progressbar` element with its circles hidden, the count as a polite live
   region.

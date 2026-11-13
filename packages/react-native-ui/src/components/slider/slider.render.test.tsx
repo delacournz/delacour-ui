@@ -251,4 +251,65 @@ describe("Slider", () => {
 			await expect(renderWithProviders(element)).rejects.toThrow(`${name} must be rendered inside a <Slider>.`);
 		});
 	});
+
+	describe("inside a Field", () => {
+		test("a lone thumb reads required in its name and invalid, error and description in its hint", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Volume</Field.Label>
+					<Slider defaultValue={30}>
+						<Slider.Track>
+							<Slider.Fill />
+							<Slider.Thumb />
+						</Slider.Track>
+					</Slider>
+					<Field.Description>Keep it low.</Field.Description>
+					<Field.Error>Too loud</Field.Error>
+				</Field>
+			);
+			const thumb = screen.getByRole("adjustable");
+			expect(thumb).toHaveProp("accessibilityLabel", "Volume, required");
+			expect(thumb).toHaveProp("accessibilityHint", "Invalid: Too loud. Keep it low.");
+		});
+
+		test("each thumb of a range carries the name, the end it holds and the hint", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Price</Field.Label>
+					<Slider defaultValue={[20, 60]}>
+						<Slider.Track>
+							<Slider.Fill />
+							<Slider.Thumb index={0} />
+							<Slider.Thumb index={1} />
+						</Slider.Track>
+					</Slider>
+					<Field.Error>Too wide</Field.Error>
+				</Field>
+			);
+			const [low, high] = screen.getAllByRole("adjustable");
+			expect(low).toHaveProp("accessibilityLabel", "Price, minimum, required");
+			expect(high).toHaveProp("accessibilityLabel", "Price, maximum, required");
+			expect(low).toHaveProp("accessibilityHint", "Invalid: Too wide");
+			expect(high).toHaveProp("accessibilityHint", "Invalid: Too wide");
+		});
+
+		test("an explicit thumb label stays verbatim and the hint is still added", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Volume</Field.Label>
+					<Single />
+				</Field>
+			);
+			const thumb = screen.getByRole("adjustable");
+			expect(thumb).toHaveProp("accessibilityLabel", "Volume");
+			expect(thumb).toHaveProp("accessibilityHint", "Invalid");
+		});
+
+		test("outside a Field the name is the thumb's own and there is no hint", async () => {
+			await renderWithProviders(<Single />);
+			const thumb = screen.getByRole("adjustable");
+			expect(thumb).toHaveProp("accessibilityLabel", "Volume");
+			expect(thumb.props.accessibilityHint).toBeUndefined();
+		});
+	});
 });

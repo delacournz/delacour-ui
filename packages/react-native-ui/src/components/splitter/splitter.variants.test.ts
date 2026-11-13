@@ -19,6 +19,7 @@ import {
 	resolveInitialLayout,
 	resolveKeyboardStep,
 	resolveSplitterAction,
+	resolveSplitterAnnouncement,
 	resolveSplitterStep,
 	SPLITTER_DEFAULT_ORIENTATION,
 	SPLITTER_DEFAULT_STEP,
@@ -611,5 +612,13 @@ describe("worklet declaration order", () => {
 			}
 		}
 		expect([...new Set(late)]).toEqual([]);
+	});
+});
+
+describe("resolveSplitterAnnouncement", () => {
+	test("says what a reset, a collapse and an expand did", () => {
+		expect(resolveSplitterAnnouncement("reset")).toBe("Sizes reset");
+		expect(resolveSplitterAnnouncement("collapse")).toBe("Pane collapsed");
+		expect(resolveSplitterAnnouncement("expand")).toBe("Pane expanded");
 	});
 });

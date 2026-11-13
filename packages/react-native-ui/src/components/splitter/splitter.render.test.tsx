@@ -1,9 +1,15 @@
-import { describe, expect, jest, test } from "@jest/globals";
-import { Text } from "react-native";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Platform, Text } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Splitter, type SplitterLayout } from "./index";
 import { useSplitter } from "./splitter.context";
+
+const originalOS = Platform.OS;
+function setPlatform(os: typeof Platform.OS) {
+	Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+}
 
 const action = (actionName: string) => ({ nativeEvent: { actionName } });
 
@@ -302,6 +308,75 @@ describe("Splitter", () => {
 				fireGestureHandler(getByGestureTestId("splitter-handle-0-reset"), [{ state: 2 }, { state: 4 }, { state: 5 }]);
 			});
 			expect(onLayoutChange).toHaveBeenLastCalledWith([30, 70]);
+		});
+	});
+
+	describe("announcements", () => {
+		let spoken: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+		let spokenWithOptions: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+		beforeEach(() => {
+			resetAnnouncer();
+			spoken = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+			spokenWithOptions = jest
+				.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+				.mockImplementation(() => {});
+			spoken.mockClear();
+			spokenWithOptions.mockClear();
+		});
+
+		afterEach(() => {
+			setPlatform(originalOS);
+			jest.restoreAllMocks();
+		});
+
+		test("iOS: a reset action is spoken once", async () => {
+			setPlatform("ios");
+			await renderWithProviders(<Two defaultLayout={[30, 70]} />);
+			await fireEvent(screen.getByRole("adjustable"), "accessibilityAction", action("increment"));
+			expect(spokenWithOptions).not.toHaveBeenCalled();
+			await fireEvent(screen.getByRole("adjustable"), "accessibilityAction", action("reset"));
+			expect(spokenWithOptions).toHaveBeenCalledTimes(1);
+			expect(spokenWithOptions).toHaveBeenCalledWith("Sizes reset", { queue: true });
+		});
+
+		test("Android: a collapse is spoken once", async () => {
+			setPlatform("android");
+			await renderWithProviders(<Two collapsible defaultLayout={[30, 70]} />);
+			await fireEvent(screen.getByRole("adjustable"), "accessibilityAction", action("collapse"));
+			expect(spoken).toHaveBeenCalledTimes(1);
+			expect(spoken).toHaveBeenLastCalledWith("Pane collapsed");
+		});
+
+		test("Android: an expand is spoken once", async () => {
+			setPlatform("android");
+			await renderWithProviders(<Two collapsible defaultLayout={[0, 100]} />);
+			await fireEvent(screen.getByRole("adjustable"), "accessibilityAction", action("expand"));
+			expect(spoken).toHaveBeenCalledTimes(1);
+			expect(spoken).toHaveBeenLastCalledWith("Pane expanded");
+		});
+
+		test("a double tap reset is spoken", async () => {
+			setPlatform("android");
+			await renderWithProviders(<Two defaultLayout={[30, 70]} />);
+			await act(async () => {
+				fireGestureHandler(getByGestureTestId("splitter-handle-0-reset"), [{ state: 2 }, { state: 4 }, { state: 5 }]);
+			});
+			expect(spoken).toHaveBeenCalledWith("Sizes reset");
+		});
+
+		test("announce={false} keeps it silent", async () => {
+			setPlatform("android");
+			await renderWithProviders(
+				<Splitter defaultLayout={[30, 70]}>
+					<Splitter.Pane isCollapsible minSize={20} />
+					<Splitter.Handle announce={false} />
+					<Splitter.Pane minSize={20} />
+				</Splitter>
+			);
+			await fireEvent(screen.getByRole("adjustable"), "accessibilityAction", action("collapse"));
+			await fireEvent(screen.getByRole("adjustable"), "accessibilityAction", action("reset"));
+			expect(spoken).not.toHaveBeenCalled();
 		});
 	});
 });

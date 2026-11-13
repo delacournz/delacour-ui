@@ -1,11 +1,18 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { useState } from "react";
+import { AccessibilityInfo, Platform } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { NumberInput } from "./number-input";
 import type { NumberInputValue } from "./number-input.format";
 
 const FIELD = "Quantity";
+
+const originalOS = Platform.OS;
+function setPlatform(os: typeof Platform.OS) {
+	Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+}
 
 function adjust(name: "increment" | "decrement") {
 	return fireEvent(screen.getByRole("adjustable"), "accessibilityAction", { nativeEvent: { actionName: name } });
@@ -422,5 +429,77 @@ describe("NumberInput", () => {
 				"step must be greater than 0"
 			);
 		});
+	});
+});
+
+describe("NumberInput announcements", () => {
+	let spoken: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+	beforeEach(() => {
+		resetAnnouncer();
+		setPlatform("ios");
+		jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		spoken = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		spoken.mockClear();
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	test("a stepper activation speaks the formatted value", async () => {
+		await renderWithProviders(<NumberInput accessibilityLabel={FIELD} defaultValue={1233} />);
+		await pressStepper("Increase");
+		expect(spoken).toHaveBeenCalledTimes(1);
+		expect(spoken).toHaveBeenCalledWith("1,234", { queue: true });
+	});
+
+	test("reaching a bound names it", async () => {
+		await renderWithProviders(<NumberInput accessibilityLabel={FIELD} defaultValue={9} max={10} />);
+		await pressStepper("Increase");
+		expect(spoken).toHaveBeenLastCalledWith("10, maximum", { queue: true });
+	});
+
+	test("a burst of steps is heard as its first and last value", async () => {
+		jest.useFakeTimers();
+		try {
+			await renderWithProviders(<NumberInput accessibilityLabel={FIELD} defaultValue={0} />);
+			await pressStepper("Increase");
+			await pressStepper("Increase");
+			await pressStepper("Increase");
+			expect(spoken).toHaveBeenCalledTimes(1);
+			await jest.advanceTimersByTimeAsync(600);
+			expect(spoken.mock.calls.map(([message]) => message)).toEqual(["1", "3"]);
+		} finally {
+			jest.useRealTimers();
+		}
+	});
+
+	test("the field's own adjustable actions are not announced", async () => {
+		await renderWithProviders(<NumberInput accessibilityLabel={FIELD} defaultValue={2} />);
+		await adjust("increment");
+		expect(spoken).not.toHaveBeenCalled();
+	});
+
+	test("a controlled value change is not announced", async () => {
+		const { rerender } = await renderWithProviders(<NumberInput accessibilityLabel={FIELD} value={1} />);
+		await rerender(<NumberInput accessibilityLabel={FIELD} value={5} />);
+		expect(spoken).not.toHaveBeenCalled();
+	});
+
+	test("announce={false} is silent", async () => {
+		await renderWithProviders(<NumberInput accessibilityLabel={FIELD} announce={false} defaultValue={1} />);
+		await pressStepper("Increase");
+		expect(spoken).not.toHaveBeenCalled();
+	});
+
+	test("Android speaks through announceForAccessibility", async () => {
+		setPlatform("android");
+		const android = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		android.mockClear();
+		await renderWithProviders(<NumberInput accessibilityLabel={FIELD} defaultValue={1} />);
+		await pressStepper("Increase");
+		expect(android).toHaveBeenCalledWith("2");
 	});
 });

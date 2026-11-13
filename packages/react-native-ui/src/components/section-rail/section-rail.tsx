@@ -3,6 +3,7 @@ import { BackHandler, I18nManager, type LayoutChangeEvent, View, type ViewProps 
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import type { ModalFocusTarget } from "../overlay/modal-accessibility";
 import type { HapticFeedback } from "../pressable";
 import { type SectionRailContextValue, SectionRailProvider } from "./section-rail.context";
 import {
@@ -178,6 +179,10 @@ function SectionRailRoot(rootProps: SectionRailProps): ReactElement {
 			});
 	}, []);
 
+	const triggerRef = useRef<ModalFocusTarget | null>(null);
+	const committedRowRef = useRef<ModalFocusTarget | null>(null);
+	const firstRowRef = useRef<ModalFocusTarget | null>(null);
+
 	const step = useCallback(
 		(direction: 1 | -1) => {
 			const next = resolveAdjacentSection(order, value, direction);
@@ -218,6 +223,9 @@ function SectionRailRoot(rootProps: SectionRailProps): ReactElement {
 			registerItem,
 			setOpen,
 			step,
+			triggerRef,
+			committedRowRef,
+			firstRowRef,
 			value,
 		}),
 		[

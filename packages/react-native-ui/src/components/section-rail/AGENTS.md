@@ -20,9 +20,9 @@ and `onValueChange={sections.scrollTo}`.
 | `section-rail-content.tsx` | `SectionRail.Content` — the panel, its fade and scale, always mounted |
 | `section-rail-item.tsx` | `SectionRail.Item` — one row; registers its title with the root |
 | `section-rail-scrim.tsx` | The transparent outside-tap layer — internal |
-| `section-rail.context.tsx` | The context, `useSectionRail`, and the part guard |
+| `section-rail.context.tsx` | The context (including the trigger, committed-row and first-row refs), `useSectionRail`, and the part guard |
 | `section-rail.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
-| `section-rail.render.test.tsx` | Mounted under Jest — the adjustable trigger (value, expanded, increment/decrement/activate), controlled and uncontrolled value and open, row picks and the `closeDelay` linger, `value={undefined}`, the escape gesture, part guards. Touch, scrub and outside-tap run through Gesture Handler and are not reachable from Jest |
+| `section-rail.render.test.tsx` | Mounted under Jest — the adjustable trigger (value, expanded, increment/decrement/activate), controlled and uncontrolled value and open, row picks and the `closeDelay` linger, `value={undefined}`, the escape gesture, focus in on open and back to the trigger on close, part guards. Touch, scrub and outside-tap run through Gesture Handler and are not reachable from Jest |
 | `section-rail.variants.test.ts` | |
 
 ## Design
@@ -82,8 +82,16 @@ and `onValueChange={sections.scrollTo}`.
   stops at the ends rather than wrapping); double-tap toggles the panel; `expanded` reflects it.
 - **Bars are hidden from assistive technology.** The trigger speaks for them.
 - **Rows are `button`s, `selected` when active.** When the panel opens, focus moves to the
-  committed row after the 160ms fade, so the reader starts where they are.
-- **The open panel is modal to VoiceOver** and closes on the escape gesture; closed, it is hidden.
+  committed row (else the first row, else the panel) 200ms later — past the 160ms fade — so the
+  reader starts where they are. Rows only offer their node to the root's `committedRowRef` and
+  `firstRowRef`; the panel moves focus through `useModalAccessibility`.
+- **Focus returns to the trigger** once the panel has faded out, however it closed (pick, escape,
+  outside tap, back). A rail that never opened never moves focus.
+- **The open panel is modal to VoiceOver** (`modal.containerProps`: `accessibilityViewIsModal` and
+  the escape scrub, only while open) and closes on the escape gesture; closed, it is hidden. The
+  panel is not drawn through `Overlay.Portal`, so it passes no overlay id and Android's containment
+  (hiding the app behind it from TalkBack) does not apply. The hook is imported from its own module
+  so the rail does not pull in the overlay's optional teleport peer.
 - **Titles wrap to two lines, then truncate.** Rows are at least 44pt tall; the trigger is at
   least 44pt wide however thin its bars.
 

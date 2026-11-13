@@ -149,6 +149,10 @@
 					"to": "@registry/ui/button/button.variants"
 				},
 				{
+					"from": "../field/field-control",
+					"to": "@registry/ui/field/field-control"
+				},
+				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
 				}

@@ -1,0 +1,28 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "modal-accessibility",
+	"type": "registry:lib",
+	"title": "modalAccessibility",
+	"description": "Where focus lands in a modal container, and when it holds a screen reader and takes the escape scrub.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/modal-accessibility.ts",
+			"target": "modal-accessibility.ts",
+			"namespace": "lib"
+		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/modal-accessibility.test.ts",
+			"target": "modal-accessibility.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
+	]
+}

@@ -4,7 +4,7 @@ The layer under every overlay in this library — Dialog, Drawer, Popover, Toolt
 Feedback. Not a component anyone renders on its own: the provider an app mounts once, and the
 parts and hooks an overlay is drawn with.
 
-`import { Overlay, OverlayProvider, useModalAccessibility, useOverlayBackHandler, useOverlayPresence } from "@delacour/react-native-ui/overlay";`
+`import { Overlay, OverlayProvider, useOverlayBackHandler, useOverlayModalAccessibility, useOverlayPresence } from "@delacour/react-native-ui/overlay";`
 
 `react-native-teleport` is an **optional peer**, as it is for `BottomSheet`: an app that never
 imports an overlay never resolves it. The consequence is the same one thing to do — **mount
@@ -19,16 +19,15 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, reports `isExiting`, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `bg-overlay`, opacity follows presence, hidden from assistive technology |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext` and their hooks. `bottom-sheet/` imports it |
-| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `hidesAppContent`, `topModalOverlay`, `isBelowTopModal`, `OVERLAY_LAYER_BASE` |
+| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `hidesAppContent`, `topModalOverlay`, `isBelowTopModal`, `isModalOnTop`, `OVERLAY_LAYER_BASE` |
 | `overlay-presence.ts` | **Pure.** `reducePresence` — `closed → entering → open → exiting → closed`; `isCurrentFinish` |
 | `overlay-teleport.ts` | **Pure.** `TELEPORT_INLINE`, `isTeleportInline` — whether teleport draws an overlay in place, as its Jest mock does |
 | `overlay.variants.ts` | `overlayVariants` (`scrim`), `OVERLAY_MOTION`, `OVERLAY_SCRIM_TOKEN` |
 | `use-overlay-presence.ts` | `useOverlayPresence` — keeps an overlay mounted through its exit, drives `progress` 0 → 1 |
-| `modal-accessibility.ts` | **Pure.** `firstFocusTarget`, `isModalOnTop`, `resolveModalContainerAccessibility` — which container holds a screen reader, and where focus lands |
-| `use-modal-accessibility.ts` | `useModalAccessibility` — a modal container's `accessibilityViewIsModal` and escape, focus to its title on enter and back to its trigger on exit; `focusAccessibilityTarget` |
+| `use-overlay-modal-accessibility.ts` | `useOverlayModalAccessibility` — `hooks/use-modal-accessibility` with `isOnTop` read from the registry by `isModalOnTop` |
 | `use-overlay-back-handler.ts` | `useOverlayBackHandler` — Android back, only while the overlay is the top |
 | `overlay.render.test.tsx` | Mounted under Jest — provider and portal mounting, registry entry and z-order while mounted, scrim semantics and dismiss, app content hidden behind a modal only when teleport moves it out and reachable again while it exits, a dialog under another dialog hidden, presence unmount after exit and one timing per transition under owner re-renders, back handler (top-only, toast excluded), touch fan-out |
-| `*.test.ts` | The registry, the presence machine, the modal-accessibility resolvers, the scrim token and the motion constants |
+| `*.test.ts` | The registry, the presence machine, the scrim token and the motion constants |
 
 ## Design
 
@@ -93,29 +92,30 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   A popover or toast above the top dialog is in a higher band and stays reachable. When the top
   dialog starts to exit, the one under it is the top again. A bottom sheet is not in this registry,
   so a sheet under a dialog is not hidden yet.
-- **Every modal container goes through `useModalAccessibility`.** Dialog, Drawer, Menu,
-  Popover, Fab.Group, SectionProgress, SectionRail, Tour and ImageViewer each held VoiceOver,
-  wired the escape scrub and moved focus in and out by hand, and each had drifted: one used the
-  deprecated `setAccessibilityFocus`, one forgot to restore focus, one had no escape. The hook
-  owns the three things they share. `containerProps` sets `accessibilityViewIsModal` and
-  `onAccessibilityEscape` only while the owner's `isOpen` is true **and** `isModalOnTop` says the
-  container is the top `modal`/`anchored` overlay that is not exiting — a dialog under its own
-  menu lets go, and two modal siblings never fight over VoiceOver. A container with no `id`, or
-  one the registry has not recorded, is its own top. `focusInitial` moves focus to the first
-  mounted of its `initialFocus` refs (title, then first item, then the container) — call it from
-  `onEntered`, after the entrance, when the view is focusable. `restoreFocus` returns focus to
-  the trigger — call it from `onExited`, which is why an exiting modal stops hiding the app.
-  Both read their refs when they run and are stable, so `useOverlayPresence` never restarts a
-  timing for them. Focus moves through `sendAccessibilityEvent(node, "focus")`, not the deprecated
-  `setAccessibilityFocus` + `findNodeHandle`. Android containment is not the hook's job: the
-  provider and portal already hide everything outside the top modal. The bottom-sheet engine
-  cannot import this package, so it carries the same three rules in its own code.
-- **`use-modal-accessibility.ts` and `modal-accessibility.ts` are leaves.** They import React,
-  React Native, `overlay.context.tsx` and the pure registry — never `overlay.tsx`, which pulls in
-  `react-native-teleport`. A component that does not draw through `Overlay.Portal` (Menu in a
-  React Native `Modal`, Fab.Group and SectionProgress inline) imports the hook from
-  `../overlay/use-modal-accessibility` rather than `../overlay`, so using it does not make an app
-  resolve the optional teleport peer (package rule 3's leaf exception).
+- **Every modal container goes through `useModalAccessibility`; an overlay through
+  `useOverlayModalAccessibility`.** Dialog, Drawer, Menu, Popover, Fab.Group, SectionProgress,
+  SectionRail, Tour and ImageViewer each held VoiceOver, wired the escape scrub and moved focus in
+  and out by hand, and each had drifted: one used the deprecated `setAccessibilityFocus`, one
+  forgot to restore focus, one had no escape. `hooks/use-modal-accessibility.ts` owns the three
+  things they share — `containerProps` (`accessibilityViewIsModal` and `onAccessibilityEscape`,
+  only while the owner's `isOpen` and `isOnTop` are both true), `focusInitial` (the first mounted
+  of its `initialFocus` refs: title, first item, container) and `restoreFocus` (the trigger).
+  Focus moves through `sendAccessibilityEvent(node, "focus")`, not the deprecated
+  `setAccessibilityFocus` + `findNodeHandle`. Both callbacks read their refs when they run and are
+  stable, so `useOverlayPresence` never restarts a timing for them; pass them as `onEntered` and
+  `onExited`, which is why an exiting modal stops hiding the app.
+- **`isOnTop` is the registry's, and only a portal needs it.** `useOverlayModalAccessibility`
+  takes the portal `id` and reads `isModalOnTop`: the top `modal`/`anchored` overlay that is not
+  exiting holds VoiceOver, so a dialog lets go while its own popover is up and two modal siblings
+  never fight. An id the registry has not recorded yet is its own top. Android containment is not
+  the hook's job — the provider and portal already hide everything outside the top modal.
+- **The hook lives in `hooks/` and its pure parts in `lib/modal-accessibility.ts`, not here,** so
+  Menu (a React Native `Modal`), Fab.Group, SectionProgress, SectionRail, Tour and ImageViewer —
+  none drawn through `Overlay.Portal` — use it without depending on this folder. A component here
+  imports `react-native-teleport`, a native optional peer, and a copied component takes every
+  folder it imports: had the hook lived here, adding a Menu would install teleport. The
+  bottom-sheet engine cannot import this package at all, so it carries the same three rules in its
+  own code.
 - **The portal's wrapper is `box-none`.** An overlay with no scrim — a toast, a tooltip — leaves
   the app under it interactive.
 - **The provider hears every touch that starts beneath it, and claims none.** Its children sit in a

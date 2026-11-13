@@ -11,7 +11,7 @@ import {
 } from "react";
 import { Pressable as NativePressable, ScrollView, View, type ViewProps } from "react-native";
 import Animated from "react-native-reanimated";
-import { Overlay, useModalAccessibility, useOverlayBackHandler } from "../overlay";
+import { Overlay, useOverlayBackHandler, useOverlayModalAccessibility } from "../overlay";
 import { PopoverContentContext, type PopoverContentContextValue, usePopoverContext } from "./popover.context";
 import type { PopoverAlign, PopoverPlacement, PopoverWidth } from "./popover.position";
 import {
@@ -113,7 +113,7 @@ export function PopoverContent({
 	const panelNode = useRef<MeasurableNode | null>(null);
 	const titleNode = useRef<MeasurableNode | null>(null);
 
-	const modal = useModalAccessibility({
+	const modal = useOverlayModalAccessibility({
 		id: overlayId,
 		isOpen,
 		initialFocus: [titleNode, panelNode],

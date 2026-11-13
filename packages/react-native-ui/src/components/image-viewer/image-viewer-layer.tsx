@@ -21,8 +21,8 @@ import Animated, {
 import { SafeAreaInsetsContext, useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import { resolvePanOrigin, resolvePanPosition, resolveSettleTarget, resolveVisibleRange } from "../../lib/paging";
-import { useModalAccessibility } from "../overlay/use-modal-accessibility";
 import type { ImageViewerOrigin } from "./image-viewer.context";
 import type { ImageViewerImage, ImageViewerRenderImage } from "./image-viewer.types";
 import {

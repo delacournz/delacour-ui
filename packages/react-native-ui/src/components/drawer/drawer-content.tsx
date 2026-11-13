@@ -3,13 +3,8 @@ import { I18nManager, useWindowDimensions, View, type ViewProps } from "react-na
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedReaction, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-	type ModalFocusTarget,
-	Overlay,
-	useModalAccessibility,
-	useOverlayBackHandler,
-	useOverlayPresence,
-} from "../overlay";
+import type { ModalFocusTarget } from "../../lib/modal-accessibility";
+import { Overlay, useOverlayBackHandler, useOverlayModalAccessibility, useOverlayPresence } from "../overlay";
 import { DrawerPanelProvider, type DrawerPanelValue, useDrawerPart } from "./drawer.context";
 import {
 	type DrawerSide,
@@ -53,7 +48,7 @@ export type DrawerContentProps = ViewProps & {
  * - **Dismissal.** A scrim tap, Android back, the iOS escape gesture and the
  *   swipe close a dismissible drawer. With `isDismissible={false}` the scrim
  *   still takes the touch and only the drawer's own actions close it.
- * - **Accessibility.** `useModalAccessibility` makes the panel modal to
+ * - **Accessibility.** `useOverlayModalAccessibility` makes the panel modal to
  *   assistive technology (while it is the top overlay), a `dialog` labelled by
  *   the title, with the escape scrub closing it when dismissible. Focus moves to
  *   the title once it has entered — the panel itself when there is no title — and
@@ -94,7 +89,7 @@ export function DrawerContent({
 	const setPanelRef = useCallback((node: ModalFocusTarget | null) => {
 		panelRef.current = node;
 	}, []);
-	const modal = useModalAccessibility({
+	const modal = useOverlayModalAccessibility({
 		id,
 		initialFocus: [titleRef, panelRef],
 		isOpen,

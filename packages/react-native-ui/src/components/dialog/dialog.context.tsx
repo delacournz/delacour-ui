@@ -1,5 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
-import type { ModalFocusTarget } from "../overlay";
+import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import type { DialogSize } from "./dialog.variants";
 
 /** Anything accessibility focus can be sent to. */

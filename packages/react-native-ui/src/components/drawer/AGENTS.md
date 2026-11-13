@@ -95,7 +95,7 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   content short, or use a `BottomSheet`.
 - **It draws in the `modal` band**, over the navigator's header and over an open bottom sheet.
 - **Triggers and closes donate the press** with `asChild`, for `BottomSheet.Trigger`'s reason.
-- **Accessibility.** `Drawer.Content` goes through `useModalAccessibility`: `containerProps` makes
+- **Accessibility.** `Drawer.Content` goes through `useOverlayModalAccessibility`: `containerProps` makes
   the panel `accessibilityViewIsModal` (while open and the top overlay) and wires
   `onAccessibilityEscape` to close it when dismissible; the panel is `role="dialog"`, labelled by the
   title's `nativeID`. Focus moves to the title once the entrance finishes — the panel itself when

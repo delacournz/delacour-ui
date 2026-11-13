@@ -22,8 +22,8 @@ import Animated, {
 import { SafeAreaInsetsContext } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import { Icon, type IconComponent } from "../icon";
-import { useModalAccessibility } from "../overlay/use-modal-accessibility";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { FabActionItemProvider, type FabGroupContextValue, FabGroupProvider } from "./fab.context";

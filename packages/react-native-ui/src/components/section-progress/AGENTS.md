@@ -141,7 +141,7 @@ rule keeps such a type in its consumer's file.
   current means a render per percent; with no screen reader listening there is nobody to read it,
   so the root subscribes to `screenReaderChanged` and only then crosses each whole-percent change
   over with `scheduleOnRN`. Scrolling with VoiceOver off renders nothing.
-- **The panel goes through `useModalAccessibility`** (`overlay/`). The root calls it and hands
+- **The panel goes through `useModalAccessibility`** (`hooks/`). The root calls it and hands
   `containerProps` to the panel through the context: `accessibilityViewIsModal` and
   `onAccessibilityEscape` (closes it), both only while open. **It is not drawn through
   `Overlay.Portal`**, so there is no `id` and the card is always its own top overlay, and Android

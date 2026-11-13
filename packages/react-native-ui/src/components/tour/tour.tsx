@@ -2,7 +2,7 @@ import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, use
 import { Modal, StyleSheet, View, type ViewInstance } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useControllableState } from "../../hooks/use-controllable-state";
-import { focusAccessibilityTarget } from "../overlay/use-modal-accessibility";
+import { focusAccessibilityTarget } from "../../hooks/use-modal-accessibility";
 import type { HapticFeedback } from "../pressable";
 import { type TourContextValue, TourProvider, TourRegistryProvider, type TourRegistryValue } from "./tour.context";
 import type { TourGeometryProps, TourStepEntry } from "./tour.types";

@@ -116,9 +116,8 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
 - **The card's text is one element**, labelled by `resolveTourAnnouncement` — "Step 2 of 5.
   Search. Find anything in your library." — and focus moves to it once the card is placed
   through `useModalAccessibility`'s `focusInitial` (header, then the card). The card spreads its
-  `containerProps` (`accessibilityViewIsModal`, `onAccessibilityEscape`). The hook is imported from
-  `../overlay/use-modal-accessibility`, not the overlay index, which would pull in an optional
-  peer. The tour draws in a `Modal` or inline, never `Overlay.Portal`, so no `id` is passed and
+  `containerProps` (`accessibilityViewIsModal`, `onAccessibilityEscape`). The hook lives in `hooks/`,
+  not `overlay/`, so the tour takes no dependency on Overlay or its optional teleport peer. The tour draws in a `Modal` or inline, never `Overlay.Portal`, so no `id` is passed and
   the app is hidden by the wrapper below.
 - **Focus returns on close** (finish, skip, escape, dim tap) to the control the last step
   spotlit — the tour has no trigger of its own, and that is where a reader resumes. It is moved

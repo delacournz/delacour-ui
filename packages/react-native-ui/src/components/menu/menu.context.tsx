@@ -13,7 +13,7 @@ import {
 import type { ViewInstance } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import { useControllableState } from "../../hooks/use-controllable-state";
-import type { ModalFocusTarget } from "../overlay/modal-accessibility";
+import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import type { HapticFeedback } from "../pressable/pressable";
 import type { MenuAnchorRect } from "./menu.variants";
 

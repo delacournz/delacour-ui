@@ -3,7 +3,7 @@ import { BackHandler, I18nManager, type LayoutChangeEvent, View, type ViewProps 
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useControllableState } from "../../hooks/use-controllable-state";
-import type { ModalFocusTarget } from "../overlay/modal-accessibility";
+import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import type { HapticFeedback } from "../pressable";
 import { type SectionRailContextValue, SectionRailProvider } from "./section-rail.context";
 import {

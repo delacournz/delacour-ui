@@ -3,7 +3,7 @@ import { type LayoutChangeEvent, useWindowDimensions, View, type ViewProps } fro
 import { useReanimatedKeyboardAnimation } from "react-native-keyboard-controller";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Overlay, useModalAccessibility, useOverlayBackHandler, useOverlayPresence } from "../overlay";
+import { Overlay, useOverlayBackHandler, useOverlayModalAccessibility, useOverlayPresence } from "../overlay";
 import { DialogSizeProvider, useDialogPart } from "./dialog.context";
 import {
 	DIALOG_ENTER_SCALE,
@@ -64,7 +64,7 @@ export function DialogContent({
 
 	const cardRef = useRef<ComponentRef<typeof Animated.View>>(null);
 	const onEscape = isDismissible ? close : undefined;
-	const modal = useModalAccessibility({
+	const modal = useOverlayModalAccessibility({
 		id,
 		isOpen,
 		initialFocus: [titleRef, cardRef],

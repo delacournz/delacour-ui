@@ -81,7 +81,7 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   `useReanimatedKeyboardAnimation`'s height, so it rides the keyboard's own frames. The card's
   edges come from `onLayout`, which ignores transforms, so the lift never feeds back into itself.
   The positioner fills the portal host, which fills the window, so layout `y` is window `y`.
-- **Accessibility.** `useModalAccessibility` (from `overlay`) owns the card's containment and
+- **Accessibility.** `useOverlayModalAccessibility` (from `overlay`) owns the card's containment and
   focus. `accessibilityViewIsModal` and `onAccessibilityEscape` are spread from its
   `containerProps`: set only while the dialog is open and the top overlay — a popover or menu
   opened from it takes VoiceOver and the escape scrub, and the card lets go — and no escape with

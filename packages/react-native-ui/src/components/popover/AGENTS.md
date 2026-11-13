@@ -118,7 +118,7 @@ half-initialised.
 - **`Popover.Anchor` takes the measuring from the trigger while it is mounted.** The root keeps one
   `useAnchorMeasure` per candidate and enables only the one in use; the trigger still opens the
   panel and still takes focus back.
-- **Modal for assistive technology.** The panel goes through the overlay's `useModalAccessibility`:
+- **Modal for assistive technology.** The panel goes through the overlay's `useOverlayModalAccessibility`:
   `accessibilityViewIsModal` while it is open and the top overlay (a popover opened inside a dialog
   holds VoiceOver and the dialog lets go; a popover inside a popover likewise), `role="dialog"`,
   labelled by the title's `nativeID`; on entry focus goes to the title (or the panel), on exit back

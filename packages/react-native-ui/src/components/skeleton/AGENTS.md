@@ -19,6 +19,7 @@ with a glint sweeping across it, or a pulse, on the UI thread. Compound root plu
 | `skeleton.context.tsx` | `SkeletonGroupProvider`, `useSkeletonGroup()` |
 | `skeleton.variants.ts` | Pure `tv()` slots + resolvers + worklets, no RN imports |
 | `skeleton.variants.test.ts` | Pure suite for the variants, resolvers and worklets |
+| `skeleton-loaded.ts` | `useSkeletonLoadedAnnouncement` — speaks the loading to loaded edge of a labelled skeleton, group or paragraph |
 | `skeleton.render.test.tsx` | Mounted under Jest — accessibility (hidden / busy progressbar / content), group and per-skeleton `isLoading`, children kept mounted and inert while loading, `Skeleton.Lines` labelling |
 
 ## Design
@@ -104,6 +105,16 @@ with a glint sweeping across it, or a pulse, on the UI thread. Compound root plu
   and the content speaks for itself. `resolveSkeletonAccessibility` returns a
   discriminated union (`hidden` / `status` / `content`) so the three cases are
   pinned by a unit test.
+- **A labelled region announces that it has loaded.** A busy status going away is
+  silent, so a screen-reader user who heard "Loading inbox" never learns the
+  inbox arrived (WCAG 4.1.3). `useSkeletonLoadedAnnouncement` speaks once on the
+  loading to loaded edge through `useAnnounce` — nothing on screen carries the
+  text, so no live region is involved and Android never speaks it twice. Never on
+  mount, never for an unlabelled skeleton, and a group of skeletons flipping
+  together says it once because only the labelled one speaks. A "Loading inbox"
+  label is spoken "Inbox loaded"; `loadedLabel` replaces the phrase and
+  `announce={false}` opts out. `Skeleton.Lines` announces itself and gives its
+  inner group `announce={false}`. `resolveSkeletonLoadedMessage` decides.
 - **An unlabelled group takes no role.** It may hold real content beside its
   placeholders, and hiding the group would hide that too; each skeleton already
   hides itself.

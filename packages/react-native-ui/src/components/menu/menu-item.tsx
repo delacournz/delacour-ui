@@ -1,4 +1,4 @@
-import { type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
+import { type ComponentRef, type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
 import { type AccessibilityActionEvent, type AccessibilityState, Platform, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
@@ -7,7 +7,7 @@ import { Icon } from "../icon";
 import { playHaptic } from "../pressable/pressable";
 import { dispatchPressableAccessibilityAction, resolvePressableActivation } from "../pressable/pressable.variants";
 import { Text } from "../text";
-import { type MenuFocusTarget, useMenuPart } from "./menu.context";
+import { useMenuFocusable, useMenuPart } from "./menu.context";
 import type { MenuItemProps } from "./menu.types";
 import {
 	MENU_ICON_TOKEN,
@@ -17,7 +17,6 @@ import {
 	menuVariants,
 	resolveCloseOnSelect,
 	resolveMenuItemAccessibility,
-	resolveMenuRowRole,
 } from "./menu.variants";
 
 export type { MenuItemProps } from "./menu.types";
@@ -93,10 +92,11 @@ export function MenuRow({
 	accessibilityState,
 	...props
 }: MenuRowProps): ReactElement {
-	const { close, firstRowRef, haptic } = useMenuPart("Menu.Item");
+	const { close, haptic } = useMenuPart("Menu.Item");
 	const isReducedMotion = useReducedMotion();
 	const slots = menuVariants({ isDisabled, isInset, variant });
 	const shouldClose = resolveCloseOnSelect(kind, isClosedOnSelect);
+	const focusRef = useMenuFocusable<ComponentRef<typeof Animated.View>>(!isDisabled);
 
 	const selectRef = useRef(onSelect);
 	selectRef.current = onSelect;
@@ -137,18 +137,6 @@ export function MenuRow({
 		handleSelect
 	);
 
-	// The first row to mount claims the panel's initial focus, and gives it up when it unmounts.
-	const claimFirstRow = useCallback(
-		(node: MenuFocusTarget | null) => {
-			if (node === null) return;
-			if (firstRowRef.current === null) firstRowRef.current = node;
-			return () => {
-				if (firstRowRef.current === node) firstRowRef.current = null;
-			};
-		},
-		[firstRowRef]
-	);
-
 	const rowStyle = useAnimatedStyle(() => ({
 		transform: [{ scale: 1 - pressed.value * (1 - pressedScale) }],
 	}));
@@ -170,14 +158,14 @@ export function MenuRow({
 	return (
 		<GestureDetector gesture={gesture}>
 			<Animated.View
-				accessibilityRole={resolveMenuRowRole(kind)}
+				accessibilityRole="menuitem"
 				accessibilityState={accessibilityState ?? resolveMenuItemAccessibility({ isDisabled, kind: "item" })}
 				accessibilityActions={accessibilityActions}
 				accessible
 				className={slots.item({ className })}
 				onAccessibilityAction={onAccessibilityAction}
 				onAccessibilityTap={onAccessibilityTap}
-				ref={claimFirstRow}
+				ref={focusRef}
 				style={rowStyle}
 				{...props}
 			>

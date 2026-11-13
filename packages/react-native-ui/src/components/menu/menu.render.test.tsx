@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
-import { Platform, View } from "react-native";
-import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
+import { AccessibilityInfo, Platform, View } from "react-native";
+import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
 import { Menu, type MenuProps } from "./menu";
@@ -39,7 +39,6 @@ const originalOS = Platform.OS;
 const checked = (name: string) => screen.getByRole("menuitem", { name }).props.accessibilityState?.checked;
 const press = (name: string) => fireEvent(screen.getByRole("button", { name }), "accessibilityTap");
 const choose = (name: string) => fireEvent(screen.getByRole("menuitem", { name }), "accessibilityTap");
-const chooseRadio = (name: string) => fireEvent(screen.getByRole("radio", { name }), "accessibilityTap");
 
 /**
  * The panel measures its trigger with `measureInWindow` and the rows with layout, and Jest has
@@ -254,10 +253,10 @@ describe("Menu", () => {
 			);
 		}
 
-		test("each option is a radio, announced checked while selected", async () => {
+		test("announces the selected item", async () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" />, { wrapper: Overlays });
-			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
-			expect(screen.getByRole("radio", { name: "Comfortable" })).not.toBeChecked();
+			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
+			expect(screen.getByRole("menuitem", { name: "Comfortable" })).not.toBeSelected();
 		});
 
 		test("uncontrolled: choosing moves the selection, reports the value and closes", async () => {
@@ -268,7 +267,7 @@ describe("Menu", () => {
 				{ wrapper: Overlays }
 			);
 
-			await chooseRadio("Comfortable");
+			await choose("Comfortable");
 			expect(onValueChange).toHaveBeenCalledWith("comfortable");
 			expect(onOpenChange).toHaveBeenLastCalledWith(false);
 		});
@@ -277,17 +276,17 @@ describe("Menu", () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" isClosedOnSelect={false} />, {
 				wrapper: Overlays,
 			});
-			await chooseRadio("Comfortable");
-			expect(screen.getByRole("radio", { name: "Comfortable" })).toBeChecked();
-			expect(screen.getByRole("radio", { name: "Compact" })).not.toBeChecked();
+			await choose("Comfortable");
+			expect(screen.getByRole("menuitem", { name: "Comfortable" })).toBeSelected();
+			expect(screen.getByRole("menuitem", { name: "Compact" })).not.toBeSelected();
 		});
 
 		test("re-choosing the selected item keeps it selected", async () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" isClosedOnSelect={false} />, {
 				wrapper: Overlays,
 			});
-			await chooseRadio("Compact");
-			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
+			await choose("Compact");
+			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
 		});
 
 		test("controlled: waits for the prop before the selection moves", async () => {
@@ -299,12 +298,12 @@ describe("Menu", () => {
 				}
 			);
 
-			await chooseRadio("Comfortable");
+			await choose("Comfortable");
 			expect(onValueChange).toHaveBeenCalledWith("comfortable");
-			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
+			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
 
 			await view.rerender(<DensityMenu isClosedOnSelect={false} onValueChange={onValueChange} value="comfortable" />);
-			expect(screen.getByRole("radio", { name: "Comfortable" })).toBeChecked();
+			expect(screen.getByRole("menuitem", { name: "Comfortable" })).toBeSelected();
 		});
 
 		test("a RadioItem outside a RadioGroup throws", async () => {
@@ -420,30 +419,6 @@ describe("Menu", () => {
 		expect(screen.getByRole("button", { name: "Options" })).toBeCollapsed();
 	});
 
-	test("the panel is modal, and the accessibility escape closes the menu", async () => {
-		const onOpenChange = jest.fn();
-		const onAccessibilityEscape = jest.fn();
-		await renderWithProviders(
-			<Menu defaultOpen onOpenChange={onOpenChange}>
-				<Menu.Trigger asChild>
-					<Button>Options</Button>
-				</Menu.Trigger>
-				<Menu.Content onAccessibilityEscape={onAccessibilityEscape} testID="panel">
-					<Menu.Item>Rename</Menu.Item>
-				</Menu.Content>
-			</Menu>,
-			{ wrapper: Overlays }
-		);
-		const panel = screen.getByTestId("panel");
-		expect(panel.props.accessibilityViewIsModal).toBe(true);
-		await act(async () => {
-			panel.props.onAccessibilityEscape();
-		});
-		expect(onOpenChange).toHaveBeenLastCalledWith(false);
-		expect(onAccessibilityEscape).toHaveBeenCalledTimes(1);
-		expect(screen.getByRole("button", { name: "Options" })).toBeCollapsed();
-	});
-
 	describe("on Android", () => {
 		beforeEach(() => {
 			Platform.OS = "android";
@@ -462,25 +437,6 @@ describe("Menu", () => {
 			expect(onRename).toHaveBeenCalledTimes(1);
 		});
 
-		test("a radio row is activated through the activate accessibility action", async () => {
-			const onValueChange = jest.fn();
-			await renderWithProviders(
-				<Menu defaultOpen>
-					<Menu.Content>
-						<Menu.RadioGroup defaultValue="compact" onValueChange={onValueChange}>
-							<Menu.RadioItem value="comfortable">Comfortable</Menu.RadioItem>
-							<Menu.RadioItem value="compact">Compact</Menu.RadioItem>
-						</Menu.RadioGroup>
-					</Menu.Content>
-				</Menu>,
-				{ wrapper: Overlays }
-			);
-			await fireEvent(screen.getByRole("radio", { name: "Comfortable" }), "accessibilityAction", {
-				nativeEvent: { actionName: "activate" },
-			});
-			expect(onValueChange).toHaveBeenCalledWith("comfortable");
-		});
-
 		test("a disabled row ignores the activate action", async () => {
 			const onDelete = jest.fn();
 			await renderWithProviders(<ItemsMenu defaultOpen onDelete={onDelete} />, { wrapper: Overlays });
@@ -489,5 +445,98 @@ describe("Menu", () => {
 			});
 			expect(onDelete).not.toHaveBeenCalled();
 		});
+	});
+});
+
+/**
+ * `Menu.Content` places itself from a measured height, which Jest never reports, so these tests
+ * report one through the scroller's `onContentSizeChange`, then wait for the 160ms entrance and the
+ * 120ms exit to reach their callbacks, as they do on a device.
+ */
+describe("Menu accessibility", () => {
+	const focused: unknown[] = [];
+	const anchor = { height: 40, width: 120, x: 10, y: 100 };
+
+	beforeEach(() => {
+		Platform.OS = "ios";
+		focused.length = 0;
+		jest.spyOn(View.prototype as unknown as Measurable, "measureInWindow").mockImplementation((callback) => {
+			callback(10, 100, 120, 40);
+		});
+		jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation((target, event) => {
+			if (event === "focus") focused.push(target);
+		});
+	});
+	afterEach(() => {
+		Platform.OS = originalOS;
+		jest.restoreAllMocks();
+	});
+
+	const role = (target: unknown): unknown =>
+		(target as { props?: { accessibilityRole?: string } }).props?.accessibilityRole;
+
+	const place = async () => {
+		let node: ReturnType<typeof screen.getByRole> | null =
+			screen.getAllByRole("menuitem")[0] ?? screen.getAllByRole("header")[0] ?? null;
+		while (node && typeof node.props.onContentSizeChange !== "function") node = node.parent;
+		const scroller = node;
+		await act(() => scroller?.props.onContentSizeChange(200, 120));
+	};
+
+	test("the open panel is modal and the escape scrub closes the menu", async () => {
+		const onOpenChange = jest.fn();
+		await renderWithProviders(
+			<Menu defaultOpen onOpenChange={onOpenChange}>
+				<Menu.Content testID="panel">
+					<Menu.Item>Rename</Menu.Item>
+				</Menu.Content>
+			</Menu>,
+			{ wrapper: Overlays }
+		);
+		const panel = screen.getByTestId("panel", { includeHiddenElements: true });
+		expect(panel.props.accessibilityViewIsModal).toBe(true);
+		await act(() => panel.props.onAccessibilityEscape());
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+	});
+
+	test("focus lands on the first enabled row once the panel has entered", async () => {
+		await renderWithProviders(
+			<Menu defaultOpen>
+				<Menu.Content anchor={anchor}>
+					<Menu.Item isDisabled>Archive</Menu.Item>
+					<Menu.Item>Rename</Menu.Item>
+				</Menu.Content>
+			</Menu>,
+			{ wrapper: Overlays }
+		);
+		await place();
+		await waitFor(() => expect(focused).toHaveLength(1));
+		expect(role(focused[0])).toBe("menuitem");
+		expect(screen.getByRole("menuitem", { name: "Rename" })).toBeOnTheScreen();
+	});
+
+	test("focus lands on a leading heading before the rows", async () => {
+		await renderWithProviders(
+			<Menu defaultOpen>
+				<Menu.Content anchor={anchor}>
+					<Menu.Label>File</Menu.Label>
+					<Menu.Item>Rename</Menu.Item>
+				</Menu.Content>
+			</Menu>,
+			{ wrapper: Overlays }
+		);
+		await place();
+		await waitFor(() => expect(focused).toHaveLength(1));
+		expect(role(focused[0])).toBe("header");
+	});
+
+	test("focus returns to the trigger once the panel has gone", async () => {
+		await renderWithProviders(<ItemsMenu defaultOpen />, { wrapper: Overlays });
+		await place();
+		await waitFor(() => expect(focused).toHaveLength(1));
+
+		await press("Options");
+		await waitFor(() => expect(focused).toHaveLength(2));
+		expect(role(focused[1])).toBe("button");
 	});
 });

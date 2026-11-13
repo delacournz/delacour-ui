@@ -52,9 +52,7 @@ export function useFieldControlAccessibility(
 	const field = useFieldContext();
 	const claimLabel = field?.claimLabel;
 	const takesFieldLabel =
-		(options.takesFieldLabel ?? true) &&
-		options.accessibilityLabel === undefined &&
-		options.defaultLabel === undefined;
+		(options.takesFieldLabel ?? true) && options.accessibilityLabel === undefined && options.defaultLabel === undefined;
 
 	useEffect(() => {
 		if (!claimLabel || !takesFieldLabel) return;

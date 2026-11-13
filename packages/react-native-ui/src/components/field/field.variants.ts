@@ -151,4 +151,20 @@ export function resolveFieldLabelText(children: unknown): string | null {
 	return text === "" ? null : text;
 }
 
+/** What a `Field.Error` draws: its message, an empty line held open, or nothing. */
+export type FieldErrorSlot = "message" | "reserved" | "none";
+
+/**
+ * Whether a `Field.Error` renders its message, holds its line, or collapses.
+ *
+ * A message always renders. With none, the line collapses by default — so a
+ * form with no errors carries no gaps — or, under `<Field reserveError>`, stays
+ * as one invisible caption line, so a message arriving or clearing moves nothing
+ * below or around the field. Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function resolveFieldErrorSlot(hasMessage: boolean, reserve: boolean): FieldErrorSlot {
+	if (hasMessage) return "message";
+	return reserve ? "reserved" : "none";
+}
+
 export type FieldVariantProps = VariantProps<typeof fieldVariants>;

@@ -1,5 +1,5 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AccessibilityInfo, type LayoutChangeEvent, Platform, View } from "react-native";
+import { type LayoutChangeEvent, Platform, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
 	Easing,
@@ -12,6 +12,8 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
+import { useAnnounce } from "../../hooks/use-announce";
+import { type AnnounceLiveRegion, resolveAnnounceRoute, resolveLiveRegion } from "../../lib/announce";
 import { OVERLAY_MOTION } from "../overlay/overlay.variants";
 import { playHaptic } from "../pressable";
 import { Spinner } from "../spinner";
@@ -32,7 +34,7 @@ import {
 	resolveToastDuration,
 	resolveToastEnterDelay,
 	resolveToastHaptic,
-	resolveToastInterrupts,
+	resolveToastPoliteness,
 	resolveToastRelease,
 	resolveToastStackedHeight,
 	TOAST_ENTER_DISTANCE,
@@ -60,11 +62,18 @@ export type ToastViewportItemProps = {
 	frontHeight: SharedValue<number>;
 };
 
-/** The default card for a message toast. */
-function renderMessage(item: ToastItem & { kind: "message" }, handle: ToastHandle): ReactNode {
+/**
+ * The default card for a message toast. `liveRegion` is `none` wherever the item announces itself,
+ * and the live region only where there is no announcement API (the web).
+ */
+function renderMessage(
+	item: ToastItem & { kind: "message" },
+	handle: ToastHandle,
+	liveRegion: AnnounceLiveRegion
+): ReactNode {
 	const { action } = item;
 	return (
-		<Toast onHide={handle.hide} status={item.status} testID={`toast-${item.id}`}>
+		<Toast accessibilityLiveRegion={liveRegion} onHide={handle.hide} status={item.status} testID={`toast-${item.id}`}>
 			<Toast.Indicator>{item.isLoading ? <Spinner /> : undefined}</Toast.Indicator>
 			<Toast.Content>
 				<Toast.Title>{item.title}</Toast.Title>
@@ -194,17 +203,22 @@ export function ToastViewportItem({
 		item.kind === "message" ? resolveToastAnnouncement({ title: item.title, description: item.description }) : null;
 	const haptic = resolveToastHaptic(status, item.haptic);
 
+	const speak = useAnnounce();
+	// One route per platform: iOS and Android announce (queued, or cutting in for a failure or
+	// warning, once per revision); the web has no announcement API and keeps the live region.
+	const route = resolveAnnounceRoute({
+		channel: "announcement",
+		enabled: item.announce !== false,
+		platform: Platform.OS,
+		politeness: resolveToastPoliteness(status),
+	});
+
 	// Once per revision: a promise toast is announced loading and again when it settles.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: revision is the trigger; the rest only changes with it
 	useEffect(() => {
 		if (haptic !== false) scheduleOnUI(playHaptic, haptic);
-		if (announcement === null) return;
-		// iOS queues behind VoiceOver speech only when asked to; a failure or warning cuts in.
-		if (Platform.OS === "ios") {
-			AccessibilityInfo.announceForAccessibilityWithOptions(announcement, { queue: !resolveToastInterrupts(status) });
-		} else {
-			AccessibilityInfo.announceForAccessibility(announcement);
-		}
+		if (announcement === null || route.kind !== "announcement") return;
+		speak(announcement, { politeness: resolveToastPoliteness(status) });
 	}, [revision]);
 
 	const pan = useMemo(
@@ -326,7 +340,7 @@ export function ToastViewportItem({
 				>
 					<View onLayout={onCardLayout} style={{ flexShrink: 0 }}>
 						<ToastItemProvider value={itemContext}>
-							{item.kind === "message" ? renderMessage(item, handle) : item.render(handle)}
+							{item.kind === "message" ? renderMessage(item, handle, resolveLiveRegion(route)) : item.render(handle)}
 						</ToastItemProvider>
 					</View>
 				</Animated.View>

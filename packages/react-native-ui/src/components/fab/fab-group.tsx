@@ -1,5 +1,6 @@
 import {
 	Children,
+	type ComponentRef,
 	isValidElement,
 	type ReactElement,
 	type ReactNode,
@@ -7,6 +8,7 @@ import {
 	useCallback,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 } from "react";
 import { BackHandler, type LayoutChangeEvent, View, type ViewProps } from "react-native";
@@ -21,6 +23,7 @@ import { SafeAreaInsetsContext } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { Icon, type IconComponent } from "../icon";
+import { useModalAccessibility } from "../overlay/use-modal-accessibility";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { FabActionItemProvider, type FabGroupContextValue, FabGroupProvider } from "./fab.context";
@@ -73,6 +76,14 @@ export type FabGroupProps = Omit<ViewProps, "children"> &
  * closing halfway through opening runs the same cascade backwards. Actions are
  * unmounted once the close settles, so a screen reader can never walk into a
  * button nobody can see.
+ *
+ * Accessibility. The dial is drawn inline, not through `Overlay.Portal`, so it
+ * holds VoiceOver with `accessibilityViewIsModal` — which hides only the
+ * layer's siblings — and does nothing for TalkBack: `OverlayProvider`'s
+ * hiding does not reach it. Write the group in the screen's root container so
+ * its siblings are the screen's content. When the open spring settles, focus
+ * moves to the first action; when the dial is closed it returns to the
+ * trigger. The escape scrub and Android back both close it.
  */
 export function FabGroup({
 	children,
@@ -104,6 +115,17 @@ export function FabGroup({
 	const progress = useSharedValue(isOpen ? 1 : 0);
 	const triggerCenterY = useSharedValue(0);
 	const [isMounted, setIsMounted] = useState(isOpen);
+	const triggerRef = useRef<ComponentRef<typeof Animated.View>>(null);
+	const firstActionRef = useRef<ComponentRef<typeof Animated.View>>(null);
+	const wasOpenRef = useRef(isOpen);
+	const close = useCallback(() => setIsOpen(false), [setIsOpen]);
+	const modal = useModalAccessibility({
+		isOpen,
+		initialFocus: [firstActionRef, triggerRef],
+		returnFocus: triggerRef,
+		onEscape: close,
+	});
+	const { focusInitial, restoreFocus } = modal;
 
 	// Mount before the open spring starts, in the same render that opened it,
 	// so the first frame of the dial already has its actions.
@@ -111,14 +133,19 @@ export function FabGroup({
 
 	useEffect(() => {
 		const target = isOpen ? 1 : 0;
+		const isChange = wasOpenRef.current !== isOpen;
+		wasOpenRef.current = isOpen;
+		if (isChange && !isOpen) restoreFocus();
 		const onSettled = (isFinished?: boolean) => {
 			"worklet";
-			if (isFinished && target === 0) scheduleOnRN(setIsMounted, false);
+			if (!isFinished) return;
+			if (target === 0) scheduleOnRN(setIsMounted, false);
+			else if (isChange) scheduleOnRN(focusInitial);
 		};
 		progress.value = isReducedMotion
 			? withTiming(target, { duration: FAB_REDUCED_MOTION_MS }, onSettled)
 			: withSpring(target, DIAL_SPRING, onSettled);
-	}, [isOpen, isReducedMotion, progress]);
+	}, [isOpen, isReducedMotion, progress, focusInitial, restoreFocus]);
 
 	useEffect(() => {
 		if (!isOpen) return;
@@ -133,7 +160,6 @@ export function FabGroup({
 	const count = actions.length;
 	const labelSide = resolveLabelSide(placement);
 
-	const close = useCallback(() => setIsOpen(false), [setIsOpen]);
 	const toggle = () => setIsOpen(!isOpen);
 	const handleTriggerLayout = (event: LayoutChangeEvent) => {
 		const { y, height } = event.nativeEvent.layout;
@@ -141,7 +167,18 @@ export function FabGroup({
 	};
 
 	const context = useMemo<FabGroupContextValue>(
-		() => ({ progress, triggerCenterY, isOpen, count, labelSide, size, haptic, isReducedMotion, close }),
+		() => ({
+			progress,
+			triggerCenterY,
+			isOpen,
+			count,
+			labelSide,
+			size,
+			haptic,
+			isReducedMotion,
+			close,
+			firstActionRef,
+		}),
 		[progress, triggerCenterY, isOpen, count, labelSide, size, haptic, isReducedMotion, close]
 	);
 
@@ -177,7 +214,7 @@ export function FabGroup({
 
 	return (
 		<FabGroupProvider value={context}>
-			<View accessibilityViewIsModal={isOpen} className="absolute inset-0" pointerEvents="box-none">
+			<View {...modal.containerProps} className="absolute inset-0" pointerEvents="box-none">
 				{isMounted ? (
 					<Animated.View className={slots.scrim()} style={scrimStyle}>
 						<Pressable
@@ -201,6 +238,7 @@ export function FabGroup({
 						haptic={haptic}
 						onLayout={handleTriggerLayout}
 						onPress={toggle}
+						ref={triggerRef}
 						testID={testID}
 					>
 						<Animated.View style={glyphStyle}>

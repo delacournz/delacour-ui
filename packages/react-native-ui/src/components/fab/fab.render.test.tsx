@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { BackHandler } from "react-native";
+import { AccessibilityInfo, BackHandler } from "react-native";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Icon, type IconComponent } from "../icon";
 import { Fab } from "./fab";
@@ -261,6 +261,50 @@ describe("Fab.Group", () => {
 				expect(onOpenChange).toHaveBeenLastCalledWith(false);
 			} finally {
 				add.mockRestore();
+			}
+		});
+	});
+
+	describe("accessibility", () => {
+		function layer() {
+			let node = screen.getByRole("button", { name: "Add something" }).parent;
+			while (node && node.props.accessibilityViewIsModal === undefined) node = node.parent;
+			return node;
+		}
+
+		test("the layer is modal only while open", async () => {
+			await renderWithProviders(<Dial />);
+			const closed = screen.getByRole("button", { name: "Add something" });
+			expect(closed).toBeOnTheScreen();
+			expect(layer()?.props.accessibilityViewIsModal).toBe(false);
+			await activate(closed);
+			expect(layer()?.props.accessibilityViewIsModal).toBe(true);
+		});
+
+		test("the escape scrub closes the dial", async () => {
+			const onOpenChange = jest.fn();
+			await renderWithProviders(<Dial defaultOpen onOpenChange={onOpenChange} />);
+			const onEscape = layer()?.props.onAccessibilityEscape as (() => void) | undefined;
+			expect(onEscape).toBeDefined();
+			await act(async () => {
+				onEscape?.();
+			});
+			expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		});
+
+		test("focus returns to the trigger when the dial closes", async () => {
+			const spy = jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation(() => {});
+			try {
+				await renderWithProviders(<Dial defaultOpen />);
+				spy.mockClear();
+				await activate(screen.getByRole("button", { name: "Add something" }));
+				const targets = spy.mock.calls.filter(([, event]) => event === "focus").map(([target]) => target);
+				expect(targets).toHaveLength(1);
+				expect((targets[0] as unknown as { props: { accessibilityLabel: string } }).props.accessibilityLabel).toBe(
+					"Add something"
+				);
+			} finally {
+				spy.mockRestore();
 			}
 		});
 	});

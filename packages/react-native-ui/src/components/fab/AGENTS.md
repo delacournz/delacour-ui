@@ -107,8 +107,17 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
   the dial still appears, because appearing is the information. The glyph
   still turns, on the same timing.
 - **A11y.** Every fab and action is a `button`. The group trigger carries
-  `accessibilityState={{ expanded }}` and a required `accessibilityLabel`; the
-  layer is `accessibilityViewIsModal` while open. A round `Fab` with no
+  `accessibilityState={{ expanded }}` and a required `accessibilityLabel`. The
+  group goes through `useModalAccessibility` (no `id`): the layer spreads its
+  `containerProps` — `accessibilityViewIsModal` while open, and
+  `onAccessibilityEscape` closing the dial. Focus moves to the first action when
+  the open spring settles and back to the trigger as soon as the dial is asked
+  to close; neither fires for a dial that mounts open. The dial is drawn
+  **inline**, not through `Overlay.Portal`, so it is not in the overlay registry:
+  `accessibilityViewIsModal` hides only the layer's siblings from VoiceOver, and
+  TalkBack is not contained (`OverlayProvider`'s hiding does not reach it) — write
+  the group in the screen's root container. Android back is the group's own
+  `BackHandler` while open. A round `Fab` with no
   `accessibilityLabel` warns in development — there is no text to fall back on.
 - **The group trigger extends with `label` while closed.** Open, it is a
   circle again: the label names what the dial is for, and the cross that

@@ -18,6 +18,11 @@ describe("Spinner", () => {
 		expect(bar).toBeBusy();
 	});
 
+	test("is named Loading when no label is given, and does not announce on mount", async () => {
+		await renderWithProviders(<Spinner />);
+		expect(screen.getByRole("progressbar", { name: "Loading" })).toBeBusy();
+	});
+
 	test("forwards testID and accessibility props to the root", async () => {
 		await renderWithProviders(<Spinner accessibilityLabel="Loading results" testID="spin" />);
 		expect(screen.getByTestId("spin")).toBe(screen.getByLabelText("Loading results"));

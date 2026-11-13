@@ -28,7 +28,6 @@ export {
 	resolveGroupButtonClass,
 	resolveGroupButtonSize,
 	resolveGroupSegments,
-	resolveInputAccessibilityLabel,
 	resolveInputFieldClass,
 	resolveInputGroupClass,
 	resolveInputGroupRowClass,

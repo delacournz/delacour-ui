@@ -246,6 +246,15 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   The increment steps by `step`, or by a tenth of the range when the slider is
   continuous. `updateValue` is the one way into the value that has no gesture
   behind it, and it runs the same snap and the same clamp the pan does.
+- **Field validity is spoken, on every thumb.** Each thumb is its own focus stop, so
+  each calls `useFieldControlAccessibility` and carries the name and hint: the name is
+  `resolveThumbAccessibilityLabel` ("Price, minimum, required" — required goes after
+  the end), the hint is the Field's "Invalid: {error}. {description}", and an element
+  `Field.Label` becomes `accessibilityLabelledBy` on Android for a lone thumb. The label
+  claim is a counter, so two thumbs are fine and `Field.Label` hides from screen readers
+  until the last unmounts. An explicit `accessibilityLabel` on a thumb is verbatim and
+  skips the claim; a thumb's own `accessibilityHint` is kept, last. A slider has no
+  `isRequired` of its own — it reads the Field's.
 
 ## Worklets
 

@@ -124,6 +124,12 @@ list.
   and the field registers its focus as the `Field`'s press, so tapping the label
   focuses it. The box is a `Pressable` with `feedback="none"` for the same
   reason as `Input.Group`: a tap between chips must reach the field.
+- **The text field alone carries the Field's name and hint.** It calls
+  `useFieldControlAccessibility` once, with the box's resolved `isInvalid`, so
+  overflowing `max` also reads as "Invalid" in the hint, plus the Field's
+  required state, error and description. Chips keep their own names and get no
+  hint. Overflow adds no spoken reason of its own: the count is visible only
+  when `showCount`, and no text is invented here — put a `Field.Error` on it.
 - **Every part derives its `testID` from the root's** — `-input`,
   `-tag-${index}`, `-tag-${index}-remove`, `-clear`, `-count` — so a flow can
   type, remove and clear with one id passed.

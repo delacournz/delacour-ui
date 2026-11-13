@@ -846,6 +846,19 @@ describe("resolveThumbAccessibilityLabel", () => {
 
 	// An empty override is an absence, not a name — the `??`-not-`||` rule read the
 	// other way round, because a screen reader given "" reads nothing at all.
+	test("says required after the end a range thumb holds", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "Volume", index: 0, count: 1, isRequired: true })).toBe(
+			"Volume, required"
+		);
+		expect(resolveThumbAccessibilityLabel({ label: "Price", index: 1, count: 2, isRequired: true })).toBe(
+			"Price, maximum, required"
+		);
+		expect(resolveThumbAccessibilityLabel({ index: 0, count: 1, isRequired: true })).toBeUndefined();
+		expect(
+			resolveThumbAccessibilityLabel({ label: "Price", index: 0, count: 2, isRequired: true, override: "Low" })
+		).toBe("Low");
+	});
+
 	test("treats an empty override as no override", () => {
 		expect(resolveThumbAccessibilityLabel({ label: "Volume", index: 0, count: 1, override: "" })).toBe("Volume");
 	});

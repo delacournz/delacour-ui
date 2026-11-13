@@ -4,6 +4,11 @@ import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Radio } from "./radio";
 
+/** Option content whose words only exist after render — the hook cannot read them. */
+function PlanName({ name }: { name: string }): ReactElement {
+	return <Radio.Label>{name}</Radio.Label>;
+}
+
 const ACTIVATE = { nativeEvent: { actionName: "activate" } };
 
 function Plans({ onSelected }: { onSelected?: (value: string) => void }): ReactElement {
@@ -256,6 +261,27 @@ describe("Radio", () => {
 	});
 
 	describe("Field", () => {
+		test("content the hook cannot read still names each radio, not the field's label", async () => {
+			await renderWithProviders(
+				<Field isInvalid>
+					<Field.Label>Which plan?</Field.Label>
+					<Radio.Group defaultSelected="free">
+						<Radio value="free">
+							<PlanName name="Free" />
+						</Radio>
+						<Radio value="pro">
+							<PlanName name="Pro" />
+						</Radio>
+					</Radio.Group>
+					<Field.Error>Pick a plan</Field.Error>
+				</Field>
+			);
+			const pro = screen.getByRole("radio", { name: "Pro" });
+			expect(pro.props.accessibilityLabel).toBeUndefined();
+			expect(pro).toHaveProp("accessibilityHint", "Invalid: Pick a plan");
+			expect(screen.getByText("Which plan?")).toBeOnTheScreen();
+		});
+
 		test("a disabled Field disables a standalone radio and ignores activation", async () => {
 			const onSelected = jest.fn();
 			await renderWithProviders(
@@ -294,6 +320,62 @@ describe("Radio", () => {
 				</Field>
 			);
 			expect(screen.getByRole("radio")).not.toBeDisabled();
+		});
+	});
+
+	describe("Field validity", () => {
+		test("each radio is named by its text plus required, and carries the error and description", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Plan</Field.Label>
+					<Radio.Group>
+						<Radio value="free">Free</Radio>
+						<Radio value="pro">Pro</Radio>
+					</Radio.Group>
+					<Field.Description>Billed monthly.</Field.Description>
+					<Field.Error>Pick a plan</Field.Error>
+				</Field>
+			);
+			const radio = screen.getByRole("radio", { name: "Free, required" });
+			expect(radio).toHaveProp("accessibilityHint", "Invalid: Pick a plan. Billed monthly.");
+			expect(screen.getByRole("radio", { name: "Pro, required" })).toBeOnTheScreen();
+		});
+
+		test("Field.Label stays readable as the group's heading", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Plan</Field.Label>
+					<Radio.Group>
+						<Radio value="free">Free</Radio>
+					</Radio.Group>
+				</Field>
+			);
+			const label = screen.getByText("Plan");
+			expect(label.props.importantForAccessibility).not.toBe("no-hide-descendants");
+		});
+
+		test("a standalone text-less radio takes the field's label and hides it", async () => {
+			await renderWithProviders(
+				<Field isRequired>
+					<Field.Label>Express</Field.Label>
+					<Radio isSelected={false} />
+				</Field>
+			);
+			expect(screen.getByRole("radio", { name: "Express, required" })).toBeOnTheScreen();
+			expect(screen.getByText(/Express/, { includeHiddenElements: true })).toHaveProp(
+				"importantForAccessibility",
+				"no-hide-descendants"
+			);
+		});
+
+		test("outside a Field the name and hint are the caller's own", async () => {
+			await renderWithProviders(
+				<Radio accessibilityHint="Ships tomorrow" isSelected={false}>
+					Express
+				</Radio>
+			);
+			const radio = screen.getByRole("radio", { name: "Express" });
+			expect(radio).toHaveProp("accessibilityHint", "Ships tomorrow");
 		});
 	});
 

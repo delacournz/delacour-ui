@@ -35,8 +35,9 @@ export function TimePickerTrigger({ children, className, ...props }: TimePickerT
 
 	return (
 		<Pressable
-			accessibilityHint={isInert ? undefined : "Opens time picker"}
+			accessibilityHint={picker.accessibilityHint}
 			accessibilityLabel={picker.accessibilityLabel}
+			accessibilityLabelledBy={picker.accessibilityLabelledBy}
 			accessibilityRole="button"
 			accessibilityState={{ disabled: picker.isDisabled, expanded: picker.isOpen }}
 			accessibilityValue={{ text: picker.display || "not set" }}

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { createElement } from "react";
 import { declaredTokens, RADIUS_BASE_PX, radiusMultiplier, radiusPx } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { TEXT_SIZES } from "../text/text.variants";
@@ -17,7 +18,7 @@ import {
 	CHECKBOX_SIZES,
 	CHECKBOX_SURFACE_TOKEN,
 	checkboxVariants,
-	resolveCheckboxAccessibilityLabel,
+	extractCheckboxText,
 	resolveCheckboxAxes,
 	resolveCheckboxBorderTokens,
 	resolveCheckboxFilled,
@@ -586,23 +587,30 @@ describe("resolveCheckboxHitSlop", () => {
 	});
 });
 
-describe("resolveCheckboxAccessibilityLabel", () => {
-	test("an explicit label wins", () => {
-		expect(resolveCheckboxAccessibilityLabel({ fieldLabel: "Terms", hasContent: false, own: "Consent" })).toBe(
-			"Consent"
+describe("extractCheckboxText", () => {
+	test("is undefined for no content", () => {
+		expect(extractCheckboxText(undefined)).toBeUndefined();
+		expect(extractCheckboxText(false)).toBeUndefined();
+		expect(extractCheckboxText(null)).toBeUndefined();
+	});
+
+	test("reads a bare string or number", () => {
+		expect(extractCheckboxText("Remember me")).toBe("Remember me");
+		expect(extractCheckboxText(3)).toBe("3");
+	});
+
+	test("reads the text inside an element, however deep", () => {
+		expect(extractCheckboxText(createElement("label", null, createElement("b", null, "Accept terms")))).toBe(
+			"Accept terms"
 		);
 	});
 
-	test("a bare box takes the field's label", () => {
-		expect(resolveCheckboxAccessibilityLabel({ fieldLabel: "Terms", hasContent: false })).toBe("Terms");
+	test("joins several pieces with nothing between them", () => {
+		expect(extractCheckboxText(["Accept ", createElement("b", null, "terms")])).toBe("Accept terms");
 	});
 
-	test("inline content names the box itself, so the field's label is not used", () => {
-		expect(resolveCheckboxAccessibilityLabel({ fieldLabel: "Terms", hasContent: true })).toBeUndefined();
-	});
-
-	test("is undefined with nothing to go on", () => {
-		expect(resolveCheckboxAccessibilityLabel({ fieldLabel: null, hasContent: false })).toBeUndefined();
+	test("is undefined when the content holds no text, such as an icon", () => {
+		expect(extractCheckboxText(createElement("icon", { name: "x" }))).toBeUndefined();
 	});
 });
 

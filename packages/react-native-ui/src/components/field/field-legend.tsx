@@ -21,14 +21,17 @@ export type FieldLegendProps = FieldTextProps & {
  * invalid and disabled belong to each `Field` inside it. That is also why it
  * takes no `isInvalid`; a whole section turning destructive says less than the one
  * field that is wrong.
+ *
+ * Announced as a header, so a screen reader's headings rotor jumps between the
+ * sections of a long form — the `<legend>` of a `<fieldset>` does that on the web.
  */
 export function FieldLegend({ className, variant = "legend", ...props }: FieldLegendProps): ReactElement {
 	const legendClassName = fieldVariants({ variant }).legend({ className });
 
 	if (variant === "label") {
-		return <Text.Label className={legendClassName} {...props} />;
+		return <Text.Label accessibilityRole="header" className={legendClassName} {...props} />;
 	}
 
-	return <Text.Paragraph className={legendClassName} {...props} />;
+	return <Text.Paragraph accessibilityRole="header" className={legendClassName} {...props} />;
 }
 FieldLegend.displayName = "DelacourUI.Field.Legend";

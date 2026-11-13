@@ -75,7 +75,7 @@ SelectChevron.displayName = "DelacourUI.Select.Chevron";
  *
  * The box is Input's own — see `resolveSelectTriggerClass` — and it rings while
  * the sheet is open, so it is clear which field the sheet belongs to. A screen
- * reader hears a button named by the enclosing `Field.Label`, with the current
+ * reader hears a button named by the enclosing `Field.Label` ("…, required" when required, hint carrying the Field's error and description), with the current
  * choice as its value and whether the sheet is expanded. Read-only looks normal,
  * answers no press and never opens.
  *
@@ -89,7 +89,9 @@ SelectChevron.displayName = "DelacourUI.Select.Chevron";
 export function SelectTrigger({ asChild = false, className, children, ...props }: SelectTriggerProps): ReactElement {
 	const select = useSelectPart("Select.Trigger");
 	const {
+		accessibilityHint,
 		accessibilityLabel,
+		accessibilityLabelledBy,
 		isDisabled,
 		isInvalid,
 		isLoading,
@@ -106,8 +108,9 @@ export function SelectTrigger({ asChild = false, className, children, ...props }
 	} = select;
 
 	const accessibility = {
-		accessibilityHint: isReadOnly ? undefined : "Opens a list of options",
-		accessibilityLabel: accessibilityLabel ?? placeholder,
+		accessibilityHint,
+		accessibilityLabel,
+		accessibilityLabelledBy,
 		accessibilityRole: "button" as const,
 		accessibilityState: { expanded: isOpen },
 		accessibilityValue: { text: triggerText ?? "" },

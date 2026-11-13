@@ -142,9 +142,15 @@ Root plus `NumberInput.Field`, `.Decrement` and `.Increment`, and
   Typing `"12,5"` in an English locale reads 125 — a deliberate trade for
   accepting a typed thousands separator.
 - **Joins a `Field`.** `isInvalid` and `isDisabled` cascade through the group,
-  `Field.Label`'s text is the field's accessibility label, and the label's press
-  focuses the field through `registerPress` — unless the field cannot be typed
-  into, when it offers nothing.
+  the label's press focuses the field through `registerPress` — unless the
+  field cannot be typed into, when it offers nothing. A screen reader focuses
+  the field part only, so it alone carries the name and hint: the root passes
+  just the caller's `accessibilityLabel` down, and the `Input` inside
+  `NumberInput.Field` calls `useFieldControlAccessibility` once — name
+  "Label, required", hint "Invalid: error. description", and it claims the label
+  so `Field.Label` is not read twice. The steppers keep "Increase"/"Decrease".
+  `commitMode="validate"` out-of-range state is visual only; it adds no spoken
+  error (no `Field.Error` text to say).
 - **`isEditable={false}` and `isReadOnly` are different.** The first makes the
   steppers the only way in; the second leaves the number readable and the
   steppers off.

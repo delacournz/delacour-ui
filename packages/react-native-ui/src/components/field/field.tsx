@@ -1,4 +1,4 @@
-import { type ReactElement, useCallback, useMemo, useState } from "react";
+import { type ReactElement, useCallback, useId, useMemo, useState } from "react";
 import { View, type ViewProps } from "react-native";
 import { Pressable } from "../pressable";
 import { type FieldContextValue, FieldProvider } from "./field.context";
@@ -19,6 +19,11 @@ export type FieldProps = ViewProps & {
 	isInvalid?: boolean;
 	/** The control inside is unavailable. Fades the label and disables the control. */
 	isDisabled?: boolean;
+	/**
+	 * The control must hold a value. `Field.Label` draws an asterisk and the
+	 * control is announced as "Email, required". Validation stays the caller's.
+	 */
+	isRequired?: boolean;
 	className?: string;
 };
 
@@ -26,6 +31,7 @@ function FieldRoot({
 	orientation = "vertical",
 	isInvalid = false,
 	isDisabled = false,
+	isRequired = false,
 	className,
 	...props
 }: FieldProps): ReactElement {
@@ -43,9 +49,56 @@ function FieldRoot({
 	const [label, setLabel] = useState<string | null>(null);
 	const registerLabel = useCallback((next: string | null) => setLabel(next), []);
 
+	// The error and the description reach the control as its hint, so they are
+	// state for the same reason the label is.
+	const [error, setError] = useState<string | null>(null);
+	const registerError = useCallback((next: string | null) => setError(next), []);
+	const [description, setDescription] = useState<string | null>(null);
+	const registerDescription = useCallback((next: string | null) => setDescription(next), []);
+
+	// A count rather than a flag, so a control remounting under a key change
+	// releases its old claim after the new one is made without unhiding the label.
+	const [labelClaims, setLabelClaims] = useState(0);
+	const claimLabel = useCallback(() => {
+		setLabelClaims((count) => count + 1);
+		return () => setLabelClaims((count) => count - 1);
+	}, []);
+
+	const labelNativeID = `delacour-field-label-${useId()}`;
+
 	const context = useMemo<FieldContextValue>(
-		() => ({ isDisabled, isInvalid, label, orientation, registerLabel, registerPress }),
-		[isDisabled, isInvalid, label, orientation, registerLabel, registerPress]
+		() => ({
+			claimLabel,
+			description,
+			error,
+			isDisabled,
+			isInvalid,
+			isLabelClaimed: labelClaims > 0,
+			isRequired,
+			label,
+			labelNativeID,
+			orientation,
+			registerDescription,
+			registerError,
+			registerLabel,
+			registerPress,
+		}),
+		[
+			claimLabel,
+			description,
+			error,
+			isDisabled,
+			isInvalid,
+			isRequired,
+			label,
+			labelClaims,
+			labelNativeID,
+			orientation,
+			registerDescription,
+			registerError,
+			registerLabel,
+			registerPress,
+		]
 	);
 
 	const rootClassName = fieldVariants({ isDisabled, isInvalid, orientation }).root({ className });
@@ -97,7 +150,15 @@ function FieldRoot({
  * `Switch` — reads "Volume" to a screen reader rather than a bare number. React
  * Native has no `<label for>`; this is that association. Only a plain string or
  * number label is lent, since a label built from elements has no text to read
- * before it renders.
+ * before it renders. Once a control has taken that name the label leaves the
+ * accessibility tree, so a swipe does not stop on "Email" twice.
+ *
+ * **Validity reaches the control too.** `isRequired` joins the control's name
+ * ("Email, required"), and `isInvalid`, the `Field.Error` text and the
+ * `Field.Description` text become its hint ("Invalid: Enter a valid email. We
+ * never share it."). React Native has no `aria-invalid`, `aria-required` or
+ * `aria-describedby`, so speech is the channel. A control wires all of it with
+ * one call to `useFieldControlAccessibility`.
  *
  * **The whole row drives the control**, once one offers a press through the same
  * context — so tapping "Accept the terms", or the description under it, ticks

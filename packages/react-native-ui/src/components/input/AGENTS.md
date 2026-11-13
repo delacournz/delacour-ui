@@ -98,12 +98,20 @@ Root plus `Input.Group` and its parts: `Prefix`, `Suffix`, `Button`,
   [`Text.Label`](../text/AGENTS.md) and `Text.Caption` already are those, and a label defined twice is
   a type scale that can drift. `apps/playground`'s `/input/form` is what the
   trade looks like at a call site.
-- **A `Field.Label` names the field.** `resolveInputAccessibilityLabel` takes an
-  explicit `accessibilityLabel` first and the enclosing [`Field`](../field/AGENTS.md)'s
-  `field.label` second, so the documented `<Field><Field.Label>Email</Field.Label><Input /></Field>`
-  announces "Email" under VoiceOver rather than an unnamed text field. The
-  same fallback [`OtpInput`](../otp-input/AGENTS.md) makes; `Textarea` renders
-  an `Input`, so it gets it too. With neither it stays `undefined`, not `""`.
+- **A `Field` names, and qualifies, the field.** `Input` makes the one
+  `useFieldControlAccessibility` call (see [`Field`](../field/AGENTS.md)) and
+  spreads its `accessibilityLabel`, `accessibilityHint` and
+  `accessibilityLabelledBy` on the `TextInput`. An explicit `accessibilityLabel`
+  wins verbatim; otherwise the `Field.Label` text names it, with ", required"
+  when `isRequired` (own, else the field's), so the documented
+  `<Field><Field.Label>Email</Field.Label><Input /></Field>` announces "Email"
+  rather than an unnamed text field, and `Field.Label` steps out of the tree so it
+  is not read twice. Invalid, the `Field.Error` text and the `Field.Description`
+  text become the hint — "Invalid: Enter a valid email. We never share it." The
+  invalid ladder is the visual one: group → own → field. Only the inner `Input`
+  calls the hook, so an `Input.Group` makes one claim. `Textarea` renders an
+  `Input`, so it gets all of it. With no name at all the label stays `undefined`,
+  not `""`.
 - **`--spacing-input-*` is its own scale**, matching `--spacing-button-*` in
   value and not in name — this is the case [Sizing](../../../AGENTS.md#sizing)
   anticipated. A token test asserts the two stay level, so either can be retuned

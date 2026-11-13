@@ -172,9 +172,18 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   `py-3`/`py-2.5`/`py-2` over 20/24/28pt lines) to reach 44pt, and
   `resolveCheckboxHitSlop` returns nothing for it. `Checkbox.Group` has no gap:
   padded rows meet edge to edge, so targets neither overlap nor leave a dead strip.
-- **A bare box takes its name from the field.** A sibling `Field.Label` is outside
-  the box's accessible subtree, so `resolveCheckboxAccessibilityLabel` falls back
-  to `field.label` when there is no inline content and no `accessibilityLabel`.
+- **The box carries the Field's validity by speech.** `useFieldControlAccessibility` runs once per
+  box, with the inline text (`extractCheckboxText`) as `defaultLabel`, so the name is `own label ??
+  inline text ?? field.label`, joined with ", required" when the field is required, and the hint is
+  `Invalid: <error>. <description>. <own hint>`. A bare box takes the field's label and claims
+  `Field.Label` (hidden from AT, no double reading); a box with inline text does not, so
+  `Field.Label` stays. Inline content with no text (an icon) keeps naming the box through the tree
+  and the field's name is dropped — the hook is told `takesFieldLabel: false`, so `Field.Label`
+  is not claimed and stays readable beside it. Spread on the `Pressable` only, the one focusable element.
+  React Native has no `aria-invalid`/`aria-required`, so speech is the only channel.
+- **A `Checkbox.Group`'s `isInvalid` is carried by each box, not the group.** The group renders no
+  focusable element of its own, and a reader lands on boxes, so each box's hint says "Invalid"
+  (`axes.isInvalid` is `own ?? group ?? field`). The Field's error/description sit on every box too.
 - **A caller's `accessibilityState` is merged, not replaced.** `checked` is set
   after the caller's fields, so `{ busy: true }` cannot drop the checked state.
 - **There is no `Checkbox.Description` and no `Checkbox.Indicator`.**

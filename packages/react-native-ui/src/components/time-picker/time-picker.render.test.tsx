@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import type { ReactElement, ReactNode } from "react";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
+import { Field } from "../field";
 import { OverlayProvider } from "../overlay";
 import { type HourCycle, TimePicker, TimePickerWheel, type TimeValue } from "./index";
 
@@ -461,6 +462,58 @@ describe("TimePicker", () => {
 			expect(screen.getByText("Custom")).toBeOnTheScreen();
 			expect(screen.getByRole("button", { name: "Clear" })).toBeOnTheScreen();
 			expect(screen.queryByRole("button", { name: "Done" })).not.toBeOnTheScreen();
+		});
+	});
+	describe("field validity", () => {
+		test("the trigger reads required and the field's error and description, then what a press does", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Reminder</Field.Label>
+					<TimePicker />
+					<Field.Description>Pick a time.</Field.Description>
+					<Field.Error>Choose a time</Field.Error>
+				</Field>,
+				sheets
+			);
+			const trigger = screen.getByRole("button", { name: "Reminder, required" });
+			expect(trigger).toHaveProp("accessibilityHint", "Invalid: Choose a time. Pick a time. Opens time picker");
+		});
+
+		test("stays named Time with only the press hint outside a Field", async () => {
+			await renderWithProviders(<TimePicker />, sheets);
+			const trigger = screen.getByRole("button", { name: "Time" });
+			expect(trigger).toHaveProp("accessibilityHint", "Opens time picker");
+		});
+
+		test("an explicit accessibilityLabel wins and keeps Field.Label readable", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Reminder</Field.Label>
+					<TimePicker accessibilityLabel="Alarm time" />
+				</Field>,
+				sheets
+			);
+			expect(screen.getByRole("button", { name: "Alarm time" })).toBeOnTheScreen();
+			expect(screen.getByText("Reminder")).toHaveProp("importantForAccessibility", "auto");
+		});
+
+		test("inline, every column leads with the field's name and carries the hint", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Reminder</Field.Label>
+					<TimePicker hourCycle={12} presentation="inline" />
+					<Field.Error>Choose a time</Field.Error>
+				</Field>
+			);
+			for (const column of ["Hour", "Minute", "AM or PM"]) {
+				const wheel = screen.getByRole("adjustable", { name: `Reminder, ${column}, required` });
+				expect(wheel).toHaveProp("accessibilityHint", "Invalid: Choose a time");
+			}
+		});
+
+		test("an inline picker outside a Field keeps the bare column names", async () => {
+			await renderWithProviders(<TimePicker hourCycle={24} presentation="inline" />);
+			expect(screen.getByRole("adjustable", { name: "Hour" })).toBeOnTheScreen();
 		});
 	});
 });

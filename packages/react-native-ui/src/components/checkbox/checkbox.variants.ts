@@ -1,3 +1,4 @@
+import { isValidElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 import type { TextColor, TextSize } from "../text/text.variants";
@@ -447,27 +448,26 @@ export function resolveCheckboxLabelColor(isInvalid: boolean): TextColor | undef
 }
 
 /**
- * The name a screen reader announces for a checkbox.
+ * The text of a checkbox's inline content, or `undefined` when it holds none.
  *
- * An explicit `accessibilityLabel` wins. Inline content (a `Checkbox.Label` or a
- * bare string) sits inside the target and names it already. A bare box has
- * neither, and a sibling `Field.Label` sits outside its accessible subtree, so
- * the field's label is the fallback.
+ * Inline content (a `Checkbox.Label` or a bare string) names the box already,
+ * but only as a node: the Field's accessibility resolver needs the name as a
+ * string to join "required" onto it. Walks strings, numbers and any element's
+ * `children`, so it needs no knowledge of which component rendered the words.
+ * Content with no text in it (an icon) yields `undefined`.
  *
  * Pure, so it is unit-testable. See AGENTS.md.
  */
-export function resolveCheckboxAccessibilityLabel({
-	own,
-	fieldLabel,
-	hasContent,
-}: {
-	own?: string;
-	fieldLabel: string | null | undefined;
-	hasContent: boolean;
-}): string | undefined {
-	if (own !== undefined) return own;
-	if (hasContent) return undefined;
-	return fieldLabel ?? undefined;
+export function extractCheckboxText(node: ReactNode): string | undefined {
+	const text = collectText(node);
+	return text.trim() === "" ? undefined : text;
+}
+
+function collectText(node: ReactNode): string {
+	if (typeof node === "string" || typeof node === "number") return String(node);
+	if (Array.isArray(node)) return node.map(collectText).join("");
+	if (isValidElement<{ children?: ReactNode }>(node)) return collectText(node.props.children);
+	return "";
 }
 
 /**

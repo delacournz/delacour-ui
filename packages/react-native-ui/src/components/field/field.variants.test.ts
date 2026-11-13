@@ -6,7 +6,9 @@ import {
 	FIELD_TEXT_PARTS,
 	type FieldTextPart,
 	fieldVariants,
+	resolveFieldControlAccessibility,
 	resolveFieldInteractive,
+	resolveFieldLabelHidden,
 	resolveFieldLabelText,
 	resolveFieldTextColor,
 } from "./field.variants";
@@ -236,5 +238,141 @@ describe("resolveFieldLabelText", () => {
 		expect(resolveFieldLabelText(false)).toBeNull();
 		expect(resolveFieldLabelText({ type: "Text", props: {} })).toBeNull();
 		expect(resolveFieldLabelText(["a", "b"])).toBeNull();
+	});
+});
+
+describe("resolveFieldControlAccessibility", () => {
+	const field = {
+		description: null,
+		error: null,
+		isInvalid: false,
+		isRequired: false,
+		label: "Email",
+		labelNativeID: "field-label-1",
+	};
+
+	test("outside a Field, a control keeps only what it was given", () => {
+		expect(resolveFieldControlAccessibility({ field: null, platform: "ios" })).toEqual({
+			accessibilityHint: undefined,
+			accessibilityLabel: undefined,
+			accessibilityLabelledBy: undefined,
+			isInvalid: false,
+			isRequired: false,
+		});
+	});
+
+	test("the field's label names the control", () => {
+		expect(resolveFieldControlAccessibility({ field, platform: "ios" }).accessibilityLabel).toBe("Email");
+	});
+
+	test("the control's own name beats the field's label, and a fallback comes last", () => {
+		expect(
+			resolveFieldControlAccessibility({ defaultLabel: "Accept", field, platform: "ios" }).accessibilityLabel
+		).toBe("Accept");
+		expect(
+			resolveFieldControlAccessibility({ fallbackLabel: "Time", field: { ...field, label: null }, platform: "ios" })
+				.accessibilityLabel
+		).toBe("Time");
+		expect(resolveFieldControlAccessibility({ fallbackLabel: "Time", field, platform: "ios" }).accessibilityLabel).toBe(
+			"Email"
+		);
+	});
+
+	test("a required field is announced as required, the way Label says it", () => {
+		const result = resolveFieldControlAccessibility({ field: { ...field, isRequired: true }, platform: "ios" });
+		expect(result.accessibilityLabel).toBe("Email, required");
+		expect(result.isRequired).toBe(true);
+	});
+
+	test("an explicit accessibilityLabel is used verbatim", () => {
+		expect(
+			resolveFieldControlAccessibility({
+				accessibilityLabel: "Work email",
+				field: { ...field, isRequired: true },
+				platform: "ios",
+			}).accessibilityLabel
+		).toBe("Work email");
+	});
+
+	test("the own isInvalid and isRequired beat the field's", () => {
+		const result = resolveFieldControlAccessibility({
+			field: { ...field, isInvalid: true, isRequired: true },
+			isInvalid: false,
+			isRequired: false,
+			platform: "ios",
+		});
+		expect(result.isInvalid).toBe(false);
+		expect(result.isRequired).toBe(false);
+		expect(result.accessibilityLabel).toBe("Email");
+		expect(result.accessibilityHint).toBeUndefined();
+	});
+
+	test("an invalid field puts its error first in the hint, then the description", () => {
+		const result = resolveFieldControlAccessibility({
+			field: { ...field, description: "We never share it.", error: "Enter a valid email", isInvalid: true },
+			platform: "ios",
+		});
+		expect(result.isInvalid).toBe(true);
+		expect(result.accessibilityHint).toBe("Invalid: Enter a valid email. We never share it.");
+	});
+
+	test("an invalid field with no error text still says it is invalid", () => {
+		expect(
+			resolveFieldControlAccessibility({ field: { ...field, isInvalid: true }, platform: "android" }).accessibilityHint
+		).toBe("Invalid");
+	});
+
+	test("an error on a valid field is not read as a validity state", () => {
+		expect(
+			resolveFieldControlAccessibility({ field: { ...field, error: "Too short" }, platform: "ios" }).accessibilityHint
+		).toBe("Too short");
+	});
+
+	test("a description alone becomes the hint, and the control's own hint is kept last", () => {
+		expect(
+			resolveFieldControlAccessibility({
+				accessibilityHint: "Double tap to edit",
+				field: { ...field, description: "Shown on invoices" },
+				platform: "ios",
+			}).accessibilityHint
+		).toBe("Shown on invoices. Double tap to edit");
+	});
+
+	test("hint parts already ending in punctuation are not given a second stop", () => {
+		expect(
+			resolveFieldControlAccessibility({
+				field: { ...field, description: "Shown on invoices.", error: "Required!", isInvalid: true },
+				platform: "ios",
+			}).accessibilityHint
+		).toBe("Invalid: Required! Shown on invoices.");
+	});
+
+	test("Android links an element label by nativeID when there is no text to read", () => {
+		const unnamed = { ...field, label: null };
+		expect(resolveFieldControlAccessibility({ field: unnamed, platform: "android" }).accessibilityLabelledBy).toBe(
+			"field-label-1"
+		);
+		expect(
+			resolveFieldControlAccessibility({ field: unnamed, platform: "ios" }).accessibilityLabelledBy
+		).toBeUndefined();
+		expect(resolveFieldControlAccessibility({ field, platform: "android" }).accessibilityLabelledBy).toBeUndefined();
+	});
+
+	test("the spoken words can be replaced, for localisation", () => {
+		const result = resolveFieldControlAccessibility({
+			field: { ...field, error: "Requis", isInvalid: true, isRequired: true },
+			labels: { invalid: "Invalide", required: "obligatoire" },
+			platform: "ios",
+		});
+		expect(result.accessibilityLabel).toBe("Email, obligatoire");
+		expect(result.accessibilityHint).toBe("Invalide: Requis");
+	});
+});
+
+describe("resolveFieldLabelHidden", () => {
+	test("a label is hidden from a screen reader only once a control reads its text", () => {
+		expect(resolveFieldLabelHidden({ isClaimed: true, labelText: "Email" })).toBe(true);
+		expect(resolveFieldLabelHidden({ isClaimed: false, labelText: "Email" })).toBe(false);
+		expect(resolveFieldLabelHidden({ isClaimed: true, labelText: null })).toBe(false);
 	});
 });

@@ -134,6 +134,10 @@
 					"to": "@registry/lib/compose-refs"
 				},
 				{
+					"from": "../field/field-control",
+					"to": "@registry/ui/field/field-control"
+				},
+				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
 				},

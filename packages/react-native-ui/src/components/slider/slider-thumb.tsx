@@ -2,6 +2,7 @@ import { type ComponentProps, type ReactElement, useCallback } from "react";
 import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
 import Animated, { useAnimatedStyle, useDerivedValue, withSpring } from "react-native-reanimated";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import { useSliderPart } from "./slider.context";
 import {
 	formatSliderValue,
@@ -74,9 +75,16 @@ export type SliderThumbProps = Omit<ViewProps, "children" | "style"> & {
  * label's text down and `resolveThumbAccessibilityLabel` turns it into a name:
  * the label itself for a lone thumb, the label plus the end it holds for a
  * range. An `accessibilityLabel` written here wins over all of it.
+ *
+ * **Every thumb is its own focus stop, so every thumb carries the name and the
+ * hint** — "Price range, minimum, required" and the field's "Invalid: …" error
+ * and description. `useFieldControlAccessibility` runs once per thumb; its label
+ * claim is a counter, so the `Field.Label` stays hidden until the last thumb
+ * unmounts. The required word goes after the end it names, not before it.
  */
 export function SliderThumb({
 	index = 0,
+	accessibilityHint,
 	accessibilityLabel,
 	className,
 	knobProps,
@@ -143,11 +151,18 @@ export function SliderThumb({
 	const knobStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
 	const value = values[index] ?? minValue;
+	const explicitLabel = accessibilityLabel?.trim() || undefined;
+	const fieldAccessibility = useFieldControlAccessibility({
+		accessibilityHint,
+		accessibilityLabel: explicitLabel,
+		isInvalid,
+	});
 	const label = resolveThumbAccessibilityLabel({
 		count: values.length,
 		index,
+		isRequired: fieldAccessibility.isRequired,
 		label: field?.label,
-		override: accessibilityLabel,
+		override: explicitLabel,
 	});
 	const nudge = step > 0 ? step : (maxValue - minValue) / CONTINUOUS_ACCESSIBILITY_STEPS;
 
@@ -163,7 +178,9 @@ export function SliderThumb({
 	return (
 		<Animated.View
 			accessibilityActions={ACCESSIBILITY_ACTIONS}
+			accessibilityHint={fieldAccessibility.accessibilityHint}
 			accessibilityLabel={label}
+			accessibilityLabelledBy={label === undefined ? fieldAccessibility.accessibilityLabelledBy : undefined}
 			accessibilityRole="adjustable"
 			accessibilityState={{ disabled: isDisabled }}
 			accessibilityValue={{

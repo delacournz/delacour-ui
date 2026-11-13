@@ -334,6 +334,42 @@ describe("NumberInput", () => {
 	});
 
 	describe("inside a Field", () => {
+		test("a required, invalid Field reaches the field as name and hint", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Guests</Field.Label>
+					<NumberInput defaultValue={2} />
+					<Field.Description>Up to 10.</Field.Description>
+					<Field.Error>Too many</Field.Error>
+				</Field>
+			);
+			const field = screen.getByRole("adjustable");
+			expect(field).toHaveProp("accessibilityLabel", "Guests, required");
+			expect(field).toHaveProp("accessibilityHint", "Invalid: Too many. Up to 10.");
+			expect(screen.getByText(/Guests/, { includeHiddenElements: true })).toHaveProp(
+				"importantForAccessibility",
+				"no-hide-descendants"
+			);
+		});
+
+		test("its own accessibilityLabel wins and the label stays readable", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Guests</Field.Label>
+					<NumberInput accessibilityLabel="Party size" defaultValue={2} />
+				</Field>
+			);
+			expect(screen.getByRole("adjustable")).toHaveProp("accessibilityLabel", "Party size");
+			expect(screen.getByText("Guests")).toHaveProp("importantForAccessibility", "auto");
+		});
+
+		test("outside a Field the name is the one given and there is no hint", async () => {
+			await renderWithProviders(<NumberInput accessibilityLabel={FIELD} defaultValue={2} />);
+			const field = screen.getByRole("adjustable");
+			expect(field).toHaveProp("accessibilityLabel", FIELD);
+			expect(field.props.accessibilityHint).toBeUndefined();
+		});
+
 		test("the Field.Label text becomes the accessible name", async () => {
 			await renderWithProviders(
 				<Field>

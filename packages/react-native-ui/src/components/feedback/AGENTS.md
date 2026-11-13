@@ -77,6 +77,11 @@ Not for confirmations or warnings — those are a `Dialog`. Like every overlay i
   they are a plain string, and `Feedback.Field` uses that as its default `accessibilityLabel`, so
   a screen reader announces the question rather than only the placeholder. A non-string title
   publishes nothing; pass `accessibilityLabel` then.
+- **Inside a `Field`, the field is the control.** `Feedback.Field` calls
+  `useFieldControlAccessibility` once, with the title (else the placeholder) as `fallbackLabel`: an
+  enclosing `Field.Label` outranks it and is claimed, and required, error and description are spoken
+  as the label suffix and hint. `isInvalid` / `isRequired` props override the `Field`'s. Nothing
+  here touches the send announcement or the dialog.
 - **Close sits in the well, not the shell.** `Feedback.Close` is `Dialog.Close` with its slot
   re-pinned to the well's corner (`top-3 right-3`, against the panel's `p-4`); the title keeps
   Dialog's `pr-8` clearance.

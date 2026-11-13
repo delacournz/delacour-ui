@@ -10,6 +10,7 @@ import {
 	useState,
 } from "react";
 import { BackHandler } from "react-native";
+import { type SheetAccessibilityRefs, useSheetAccessibility } from "../accessibility/use-sheet-accessibility";
 import { useAnimateTo } from "../animation/use-animate-to";
 import { useSettleCallbacks } from "../animation/use-settle-callbacks";
 import {
@@ -19,6 +20,7 @@ import {
 	SCROLLABLE_TYPE,
 	type ScrollableType,
 	type SheetEvent,
+	type SheetOverlayKind,
 	type SheetStepOverride,
 } from "../core";
 import { useSheetPan } from "../gesture/use-sheet-pan";
@@ -27,7 +29,7 @@ import { useContainerLayout } from "../layout/use-container-layout";
 import { useControllableState } from "../lib/use-controllable-state";
 import { BottomSheetHost } from "../portal/bottom-sheet-host";
 import { BottomSheetProvider } from "../portal/bottom-sheet-provider";
-import { isTop } from "../portal/sheet-registry";
+import { isModalTop, isTop } from "../portal/sheet-registry";
 import { useOptionalSheetRegistry } from "../portal/sheet-registry.context";
 import { BottomSheetFlatList } from "../scrollable/bottom-sheet-flat-list";
 import { BottomSheetScrollView } from "../scrollable/bottom-sheet-scroll-view";
@@ -104,6 +106,7 @@ function BottomSheetRoot({
 	bottomInset = 0,
 	detached,
 	enablePanDownToClose = true,
+	modal = true,
 	enableHandlePanningGesture = true,
 	enableContentPanningGesture = true,
 	enableOverDrag = true,
@@ -131,7 +134,7 @@ function BottomSheetRoot({
 	const [presented, setPresented] = useState(isOpen);
 	const [index, setIndex] = useState(CLOSED_INDEX);
 	const [snapPointCount, setSnapPointCount] = useState(0);
-	const [hasOverlay, setHasOverlay] = useState(false);
+	const [overlay, setOverlay] = useState<SheetOverlayKind>("none");
 	const [hasFooter, setHasFooter] = useState(false);
 	const handleMounted = useRef(false);
 	const titleId = useId();
@@ -344,6 +347,23 @@ function BottomSheetRoot({
 	const latestMethods = useRef(methods);
 	latestMethods.current = methods;
 	const registryTop = registry === null ? true : isTop(registry.state, sheetId);
+
+	// Containment and escape hold for the top sheet of a host only, and focus
+	// moves on the settled index: in to the title, back to the trigger.
+	const accessibilityRefs = useRef<SheetAccessibilityRefs>({
+		title: { current: null },
+		container: { current: null },
+		trigger: { current: null },
+	}).current;
+	const { isModal, canEscape } = useSheetAccessibility({
+		isOpen,
+		index,
+		modal,
+		overlay,
+		isTop: isModalTop(registry?.state ?? null, sheetId),
+		dismissible: effectivePanDownToClose,
+		refs: accessibilityRefs,
+	});
 	useEffect(() => {
 		if (!presented || !closeOnBack || !registryTop) return;
 		const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
@@ -386,8 +406,12 @@ function BottomSheetRoot({
 			keepMounted,
 			topInset,
 			bottomInset,
-			hasOverlay,
-			setHasOverlay,
+			overlay,
+			setOverlay,
+			isModal,
+			canEscape,
+			dismissible: effectivePanDownToClose,
+			accessibilityRefs,
 			hasFooter,
 			setHasFooter,
 			keyboard,
@@ -422,7 +446,11 @@ function BottomSheetRoot({
 			keepMounted,
 			topInset,
 			bottomInset,
-			hasOverlay,
+			overlay,
+			isModal,
+			canEscape,
+			effectivePanDownToClose,
+			accessibilityRefs,
 			hasFooter,
 			keyboard,
 			enableHandlePanningGesture,

@@ -136,6 +136,7 @@ is copied into `core/result.ts` rather than depended on.
 | `src/core` | Every number the sheet computes — snap points, keyboard, footer, geometry, backdrop, intents, haptics, scroll lock, animation defaults and the step machine. Its own `AGENTS.md` indexes it and carries the formulas |
 | `src/state` | The shared values, the derived geometry (each formula as a `useDerivedValue`) and the intent queue |
 | `src/animation` | `animateTo` / `jumpTo`, the Reanimated config mapping, the settle listeners |
+| `src/accessibility` | `useSheetAccessibility` — modal and escape flags, focus in on open and back to the trigger on close; the rules themselves are `core/modal-accessibility.ts` |
 | `src/gesture` | The handle and content pans, and the haptic worklet props |
 | `src/keyboard` | keyboard-controller's values into the sheet's, who owns the keyboard, the `extend` / `fillParent` snaps, `useBottomSheetTextInput`, the stale-keyboard guard |
 | `src/layout` | Measuring the frame, the handle and the content into shared values |

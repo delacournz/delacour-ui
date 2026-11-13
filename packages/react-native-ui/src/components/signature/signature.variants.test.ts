@@ -201,6 +201,15 @@ describe("describeSignature", () => {
 		expect(describeSignature({ label: null, strokeCount: 1 })).toBe("Signature, drawn, 1 stroke");
 		expect(describeSignature({ label: null, strokeCount: 3 })).toBe("Signature, drawn, 3 strokes");
 	});
+
+	test("required ends the name, empty or drawn", () => {
+		expect(describeSignature({ isRequired: true, label: "Witness", strokeCount: 0 })).toBe(
+			"Witness pad, empty, required"
+		);
+		expect(describeSignature({ isRequired: true, label: null, strokeCount: 2 })).toBe(
+			"Signature, drawn, 2 strokes, required"
+		);
+	});
 });
 
 describe("resolveSignatureAccessibilityActions", () => {

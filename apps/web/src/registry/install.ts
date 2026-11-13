@@ -752,7 +752,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 62,
+		fileCount: 64,
 		groups: [
 			{
 				name: "stack-card",
@@ -921,6 +921,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -939,7 +955,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 42,
+		fileCount: 44,
 		groups: [
 			{
 				name: "slide-button",
@@ -1071,6 +1087,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -1287,7 +1319,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 35,
+		fileCount: 37,
 		groups: [
 			{
 				name: "progress-button",
@@ -1405,6 +1437,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -1741,7 +1789,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 36,
+		fileCount: 38,
 		groups: [
 			{
 				name: "field",
@@ -1842,6 +1890,22 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
 		],
 	},
 	"input": {
@@ -1853,7 +1917,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 76,
+		fileCount: 78,
 		groups: [
 			{
 				name: "input",
@@ -2043,6 +2107,22 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
 		],
 	},
 	"textarea": {
@@ -2054,7 +2134,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 80,
+		fileCount: 82,
 		groups: [
 			{
 				name: "textarea",
@@ -2255,6 +2335,22 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
 		],
 	},
 	"theme-selector": {
@@ -2266,7 +2362,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 81,
+		fileCount: 83,
 		groups: [
 			{
 				name: "theme-selector",
@@ -2443,6 +2539,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "color",
 				title: "isLiteralColor",
 				kind: "shared",
@@ -2493,7 +2605,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 114,
+		fileCount: 116,
 		groups: [
 			{
 				name: "tag-input",
@@ -2762,6 +2874,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -2788,7 +2916,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 88,
+		fileCount: 90,
 		groups: [
 			{
 				name: "otp-input",
@@ -2971,6 +3099,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "color",
 				title: "isLiteralColor",
 				kind: "shared",
@@ -3029,7 +3173,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 90,
+		fileCount: 92,
 		groups: [
 			{
 				name: "number-input",
@@ -3215,6 +3359,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "color",
 				title: "isLiteralColor",
 				kind: "shared",
@@ -3265,7 +3425,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 118,
+		fileCount: 120,
 		groups: [
 			{
 				name: "markdown-editor",
@@ -3522,6 +3682,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -3629,7 +3805,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 56,
 		groups: [
 			{
 				name: "checkbox",
@@ -3756,6 +3932,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -3980,7 +4172,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 169,
+		fileCount: 171,
 		groups: [
 			{
 				name: "combobox",
@@ -4314,6 +4506,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -4372,7 +4580,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 45,
+		fileCount: 47,
 		groups: [
 			{
 				name: "radio",
@@ -4489,6 +4697,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -4507,7 +4731,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 56,
 		groups: [
 			{
 				name: "switch",
@@ -4635,6 +4859,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -5006,7 +5246,7 @@ export const install = {
 		expo: ["react-native-reanimated", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 22,
+		fileCount: 24,
 		groups: [
 			{
 				name: "countdown",
@@ -5061,6 +5301,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -5343,7 +5599,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 161,
+		fileCount: 163,
 		groups: [
 			{
 				name: "questionnaire",
@@ -5678,6 +5934,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -5720,7 +5992,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 140,
+		fileCount: 142,
 		groups: [
 			{
 				name: "color-picker",
@@ -5997,6 +6269,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -6213,7 +6501,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 155,
+		fileCount: 157,
 		groups: [
 			{
 				name: "planner",
@@ -6521,6 +6809,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -6728,7 +7032,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 86,
+		fileCount: 88,
 		groups: [
 			{
 				name: "calendar",
@@ -6932,6 +7236,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -6974,7 +7294,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 151,
+		fileCount: 153,
 		groups: [
 			{
 				name: "date-picker",
@@ -7276,6 +7596,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -7334,7 +7670,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 196,
+		fileCount: 198,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -7702,6 +8038,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -7760,7 +8112,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 47,
+		fileCount: 49,
 		groups: [
 			{
 				name: "rating",
@@ -7877,6 +8229,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -7911,7 +8279,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 82,
+		fileCount: 84,
 		groups: [
 			{
 				name: "signature",
@@ -8105,6 +8473,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -8139,7 +8523,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 130,
+		fileCount: 132,
 		groups: [
 			{
 				name: "select",
@@ -8406,6 +8790,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -8464,7 +8864,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 117,
+		fileCount: 119,
 		groups: [
 			{
 				name: "search-bar",
@@ -8736,6 +9136,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -8762,7 +9178,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 47,
+		fileCount: 49,
 		groups: [
 			{
 				name: "slider",
@@ -8881,6 +9297,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -8899,7 +9331,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 135,
+		fileCount: 137,
 		groups: [
 			{
 				name: "time-picker",
@@ -9168,6 +9600,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -10634,7 +11082,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 113,
+		fileCount: 115,
 		groups: [
 			{
 				name: "support",
@@ -10895,6 +11343,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -10921,7 +11385,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 78,
+		fileCount: 80,
 		groups: [
 			{
 				name: "scroll-text",
@@ -11090,6 +11554,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -11831,7 +12311,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 46,
+		fileCount: 48,
 		groups: [
 			{
 				name: "alert",
@@ -11967,6 +12447,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -12319,7 +12815,7 @@ export const install = {
 		expo: ["expo-linear-gradient", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 56,
 		groups: [
 			{
 				name: "post",
@@ -12471,6 +12967,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 		],
@@ -12642,7 +13154,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 57,
+		fileCount: 59,
 		groups: [
 			{
 				name: "compare",
@@ -12770,6 +13282,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -13312,7 +13840,7 @@ export const install = {
 		expo: ["react-native-reanimated", "react-native-svg", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 20,
+		fileCount: 23,
 		groups: [
 			{
 				name: "skeleton",
@@ -13323,6 +13851,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/skeleton/index.ts", target: "src/components/ui/skeleton/index.ts" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-clock.ts", target: "src/components/ui/skeleton/skeleton-clock.ts" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-group.tsx", target: "src/components/ui/skeleton/skeleton-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-loaded.ts", target: "src/components/ui/skeleton/skeleton-loaded.ts" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-shimmer.tsx", target: "src/components/ui/skeleton/skeleton-shimmer.tsx" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton.context.tsx", target: "src/components/ui/skeleton/skeleton.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton.tsx", target: "src/components/ui/skeleton/skeleton.tsx" },
@@ -13356,6 +13885,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -13501,7 +14046,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 116,
+		fileCount: 118,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -13747,6 +14292,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -14447,7 +15008,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 83,
+		fileCount: 85,
 		groups: [
 			{
 				name: "toast",
@@ -14641,6 +15202,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -15405,7 +15982,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 119,
+		fileCount: 121,
 		groups: [
 			{
 				name: "feedback",
@@ -15678,6 +16255,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 		],
@@ -16344,7 +16937,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 69,
+		fileCount: 71,
 		groups: [
 			{
 				name: "screen",
@@ -16499,6 +17092,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -17117,7 +17726,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 35,
+		fileCount: 37,
 		groups: [
 			{
 				name: "split-view",
@@ -17210,6 +17819,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -17228,7 +17853,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 25,
+		fileCount: 27,
 		groups: [
 			{
 				name: "splitter",
@@ -17304,6 +17929,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -17322,7 +17963,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 96,
+		fileCount: 98,
 		groups: [
 			{
 				name: "sketch",
@@ -17553,6 +18194,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -17571,7 +18228,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 98,
+		fileCount: 100,
 		groups: [
 			{
 				name: "page-header",
@@ -17784,6 +18441,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{

@@ -8,6 +8,8 @@ import {
 	ALERT_TINTED_STATUSES,
 	ALERT_VARIANTS,
 	alertVariants,
+	extractAlertText,
+	resolveAlertAnnouncement,
 	resolveAlertLiveRegion,
 	resolveAlertSurfaceVariant,
 	resolveAlertTinted,
@@ -213,5 +215,40 @@ describe("resolveAlertLiveRegion", () => {
 		expect(resolveAlertLiveRegion("default")).toBe("polite");
 		expect(resolveAlertLiveRegion("info")).toBe("polite");
 		expect(resolveAlertLiveRegion("success")).toBe("polite");
+	});
+});
+
+describe("extractAlertText", () => {
+	test("reads strings and numbers, joining arrays", () => {
+		expect(extractAlertText("Card expiring")).toBe("Card expiring");
+		expect(extractAlertText(["Card ", 4242, " expires"])).toBe("Card 4242 expires");
+	});
+
+	test("reads through element-shaped children and ignores booleans and null", () => {
+		expect(extractAlertText({ props: { children: ["Hi ", { props: { children: "there" } }] } })).toBe("Hi there");
+		expect(extractAlertText([null, false, undefined, "ok"])).toBe("ok");
+		expect(extractAlertText(undefined)).toBe("");
+	});
+
+	test("trims and collapses whitespace", () => {
+		expect(extractAlertText("  a \n b  ")).toBe("a b");
+	});
+});
+
+describe("resolveAlertAnnouncement", () => {
+	test("joins title and description as sentences", () => {
+		expect(resolveAlertAnnouncement({ title: "Payment failed", description: "Your bank declined it." })).toBe(
+			"Payment failed. Your bank declined it."
+		);
+	});
+
+	test("does not double the title's own punctuation", () => {
+		expect(resolveAlertAnnouncement({ title: "Failed!", description: "Try again" })).toBe("Failed! Try again");
+	});
+
+	test("speaks whichever part exists, and null when neither does", () => {
+		expect(resolveAlertAnnouncement({ title: "Saved", description: "" })).toBe("Saved");
+		expect(resolveAlertAnnouncement({ title: "", description: "Body only" })).toBe("Body only");
+		expect(resolveAlertAnnouncement({ title: "", description: "" })).toBeNull();
 	});
 });

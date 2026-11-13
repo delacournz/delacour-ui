@@ -177,3 +177,42 @@ export function resolveAlertSurfaceVariant({
 export function resolveAlertLiveRegion(status: AlertStatus): "polite" | "assertive" {
 	return status === "destructive" || status === "warning" ? "assertive" : "polite";
 }
+
+/**
+ * The plain text inside a part's children — what a screen reader would say for it.
+ *
+ * Reads strings and numbers, recurses into arrays and into anything shaped like an element
+ * (`{ props: { children } }`), and drops booleans and null. Whitespace is collapsed. A child that
+ * renders its text some other way (a custom component taking a prop) contributes nothing.
+ */
+export function extractAlertText(children: unknown): string {
+	return collectAlertText(children).replace(/\s+/g, " ").trim();
+}
+
+function collectAlertText(node: unknown): string {
+	if (typeof node === "string") return node;
+	if (typeof node === "number") return String(node);
+	if (Array.isArray(node)) return node.map(collectAlertText).join("");
+	if (typeof node === "object" && node !== null && "props" in node) {
+		const props = (node as { props?: { children?: unknown } }).props;
+		return collectAlertText(props?.children);
+	}
+	return "";
+}
+
+/**
+ * The one sentence an alert speaks when it appears or changes: the title, then the description.
+ *
+ * The title is closed with a full stop unless it already ends in punctuation, so the two do not run
+ * together. `null` when neither part has text — silence, never an empty announcement.
+ */
+export function resolveAlertAnnouncement({
+	title,
+	description,
+}: {
+	title: string;
+	description: string;
+}): string | null {
+	if (title && description) return /[.!?…:]$/.test(title) ? `${title} ${description}` : `${title}. ${description}`;
+	return title || description || null;
+}

@@ -20,11 +20,11 @@ plus `Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`,
 | `alert-description.tsx` | `Alert.Description` |
 | `alert-action.tsx` | `Alert.Action` |
 | `alert-close-button.tsx` | `Alert.CloseButton`, the dismiss pressable |
-| `alert.context.tsx` | `AlertProvider`, `useAlert()`, `useAlertContext()`, `useAlertPart()` |
+| `alert.context.tsx` | `AlertProvider`, `useAlert()`, `useAlertContext()`, `useAlertPart()`; the context carries `registerText` |
 | `alert.types.ts` | `AlertSlotProps`, shared by `Content` and `Action` |
-| `alert.variants.ts` | The slotted `tv()`, `ALERT_FOREGROUND_TOKEN`, `ALERT_SURFACE_PADDING` and three pure resolvers — no RN imports |
+| `alert.variants.ts` | The slotted `tv()`, `ALERT_FOREGROUND_TOKEN`, `ALERT_SURFACE_PADDING` and the pure resolvers (tint, surface variant, live region, `extractAlertText`, `resolveAlertAnnouncement`) — no RN imports |
 | `alert.variants.test.ts` | |
-| `alert.render.test.tsx` | Mounted under Jest — alert role and live region, hidden indicator, dismiss button, controlled and uncontrolled open, `useAlert().dismiss`, parts outside a root throw |
+| `alert.render.test.tsx` | Mounted under Jest — alert role, per-platform announcements (iOS, Android, web), change, re-open and opt-out, hidden indicator, dismiss button, controlled and uncontrolled open, `useAlert().dismiss`, parts outside a root throw |
 
 ## Design
 
@@ -74,10 +74,29 @@ plus `Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`,
   happened; "image" announced before it adds nothing. Children replace the
   glyph and inherit the alert's icon size and colour — a `Spinner` for a
   pending state needs nothing else.
-- **Announced as an `alert`, and as a live region on Android.**
-  `resolveAlertLiveRegion` makes a `warning` or `destructive` alert assertive
-  and anything else polite. The root is not made `accessible`: grouping it
-  would swallow the close control and any action into one element.
+- **Spoken once per platform, through the announcer — a live region alone is silent on iOS.**
+  VoiceOver ignores `accessibilityLiveRegion`, and Android's live region does not reliably speak a
+  view that has only just mounted, so an alert that appeared said nothing on iOS and often nothing
+  on Android. The root calls `useAnnouncement` with `channel: "announcement"` and `onMount`: iOS and
+  Android speak through the announcement API (live region `none`, so Android never speaks it
+  twice), the web keeps the live region. The root keeps `accessibilityRole="alert"`.
+  `resolveAlertLiveRegion` still picks the politeness — assertive for `warning` and `destructive`,
+  polite (queued behind current speech) for the rest. The root is not made `accessible`: grouping
+  it would swallow the close control and any action into one element.
+- **The parts register their text; the alert speaks it.** `Alert.Title` and `Alert.Description`
+  pass `extractAlertText(children)` to the context's `registerText` in an effect and clear it on
+  unmount; `resolveAlertAnnouncement` joins the two ("Title. Description"). A change to either text
+  is a new message and speaks again; a dismissed alert's parts unmount, so its message returns to
+  null (closing says nothing) and re-opening speaks again. A part whose children are not plain text
+  (a custom component fed by a prop) contributes nothing — put the words in `Title` and
+  `Description` children, or pass `announce={false}` and speak it yourself.
+- **It speaks on mount by default; `announce={false}` is for static content.** An alert that
+  appears in response to something — a failed save, an expiring card — is a status message that
+  WCAG 4.1.3 requires be perceivable without moving focus, so speaking on appearance is the point.
+  An alert rendered as part of a screen's initial content is not a status change; it would
+  interrupt the screen's own first read-out, so pass `announce={false}` there. The opt-out sets no
+  live region either, on any platform. A burst of changes is coalesced by the announcer (first
+  and last message heard), not spoken step by step.
 - **Dismissal is controllable.** `isDismissible` composes an
   `Alert.CloseButton` in at the end. Uncontrolled, the alert hides itself when
   dismissed (`defaultOpen`); pass `isOpen` with `onOpenChange` to own it.

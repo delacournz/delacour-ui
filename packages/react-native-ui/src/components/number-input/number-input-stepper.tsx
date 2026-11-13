@@ -58,18 +58,19 @@ export function NumberInputStepper({
 	position: NonNullable<NumberInputStepperProps["position"]>;
 }): ReactElement {
 	const context = useNumberInputPart(part);
-	const { haptic, largeStepMultiplier, size, stepBy } = context;
+	const { announceStep, haptic, largeStepMultiplier, size, stepBy } = context;
 	const canStep = direction === 1 ? context.canIncrement : context.canDecrement;
 
 	const tick = useCallback(
 		(count: number): StepRepeatTick => {
 			const result = stepBy(direction, resolveRepeatMultiplier(count, largeStepMultiplier));
+			announceStep(result, direction);
 			const outcome: StepOutcome = result.blocked ? "blocked" : result.reachedLimit ? "reached-limit" : "applied";
 			const feedback = haptic === false ? null : resolveStepHaptic({ outcome, tick: count });
 			if (haptic !== false && feedback !== null) scheduleOnUI(playHaptic, feedback === "limit" ? "light" : haptic);
 			return outcome === "applied" ? "continue" : "stop";
 		},
-		[direction, haptic, largeStepMultiplier, stepBy]
+		[announceStep, direction, haptic, largeStepMultiplier, stepBy]
 	);
 
 	const { start, stop } = useStepRepeat(tick);
@@ -108,9 +109,9 @@ export function NumberInputStepper({
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
-			if (event.nativeEvent.actionName === "activate" && canStep) stepBy(direction);
+			if (event.nativeEvent.actionName === "activate" && canStep) announceStep(stepBy(direction), direction);
 		},
-		[canStep, direction, stepBy]
+		[announceStep, canStep, direction, stepBy]
 	);
 
 	const slots = numberInputVariants({ isDisabled: !canStep, position, size });

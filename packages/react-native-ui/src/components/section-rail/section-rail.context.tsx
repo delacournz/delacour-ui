@@ -1,6 +1,7 @@
-import { createContext, type ReactElement, type ReactNode, use } from "react";
+import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import type { LayoutChangeEvent } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
+import type { ModalFocusTarget } from "../overlay/modal-accessibility";
 import type { HapticFeedback } from "../pressable/pressable";
 import type {
 	SectionRailAlign,
@@ -38,6 +39,12 @@ export type SectionRailContextValue = {
 	registerItem: (value: string, label: string) => () => void;
 	/** Each section's title, by value. */
 	labels: Readonly<Record<string, string>>;
+	/** The trigger's node — where focus returns to when the panel has closed. */
+	triggerRef: RefObject<ModalFocusTarget | null>;
+	/** The committed row's node, where focus lands on open. Set by the row itself. */
+	committedRowRef: RefObject<ModalFocusTarget | null>;
+	/** The first row to mount, where focus lands when no row is committed. Set by the row itself. */
+	firstRowRef: RefObject<ModalFocusTarget | null>;
 };
 
 const SectionRailContext = createContext<SectionRailContextValue | null>(null);

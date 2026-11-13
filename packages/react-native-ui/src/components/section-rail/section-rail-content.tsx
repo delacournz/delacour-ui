@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect } from "react";
+import { type ComponentRef, type ReactElement, type Ref, useEffect, useRef } from "react";
 import { I18nManager, ScrollView, View, type ViewProps } from "react-native";
 import Animated, {
 	Easing,
@@ -7,6 +7,8 @@ import Animated, {
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
+import { composeRefs } from "../../lib/compose-refs";
+import { useModalAccessibility } from "../overlay/use-modal-accessibility";
 import { useSectionRailPart } from "./section-rail.context";
 import {
 	resolvePanelAnchor,
@@ -18,11 +20,14 @@ import {
 export type SectionRailContentProps = ViewProps & {
 	/** How wide the panel may grow, in points or as a share of the screen inside its insets. */
 	maxWidth?: number | `${number}%`;
+	ref?: Ref<ComponentRef<typeof Animated.View>>;
 	className?: string;
 };
 
 /** How long the panel takes to open or close, in ms. */
 const PANEL_MS = 160;
+/** How long after opening focus moves into the panel, in ms — past the 160ms fade, when its rows are focusable. */
+const FOCUS_DELAY_MS = 200;
 /** The scale a closed panel shrinks to, toward its anchor corner. */
 const PANEL_CLOSED_SCALE = 0.92;
 
@@ -33,7 +38,9 @@ const PANEL_CLOSED_SCALE = 0.92;
  * row registers its title with the rail — the value the trigger speaks — and
  * because a panel that mounted on open would have nothing to fade from. Closed,
  * it is hidden from assistive technology; open, it is modal to VoiceOver and
- * the escape gesture closes it.
+ * the escape gesture closes it. Focus moves to the committed row (else the
+ * first, else the panel) once the fade is over, and back to the rail once the
+ * panel has closed.
  *
  * It fades and scales from its anchor corner — the rail's edge, at its middle
  * or, aligned to the bottom, its bottom corner — over 160ms. Reduce motion keeps
@@ -44,18 +51,42 @@ const PANEL_CLOSED_SCALE = 0.92;
  * the panel rather than running off the screen; the scroller is `grow-0`, since
  * React Native's default `flexGrow: 1` stretched a short outline's panel down to
  * the frame's edge.
+ *
+ * Because it is not portalled it has no overlay id, so Android containment
+ * (hiding the content behind it from TalkBack) does not apply; VoiceOver's
+ * `accessibilityViewIsModal` does.
  */
 export function SectionRailContent({
 	maxWidth = SECTION_RAIL_DEFAULT_MAX_WIDTH,
 	className,
 	children,
 	style,
+	ref,
 	...props
 }: SectionRailContentProps): ReactElement {
-	const { align, frameStyle, isOpen, placement, setOpen } = useSectionRailPart("SectionRail.Content");
+	const { align, committedRowRef, firstRowRef, frameStyle, isOpen, placement, setOpen, triggerRef } =
+		useSectionRailPart("SectionRail.Content");
 	const isReducedMotion = useReducedMotion();
 	const slots = sectionRailVariants({ align, placement });
 	const transformOrigin = resolvePanelTransformOrigin(resolvePanelAnchor(placement, align), I18nManager.isRTL);
+
+	const panel = useRef<ComponentRef<typeof Animated.View>>(null);
+	const modal = useModalAccessibility({
+		initialFocus: [committedRowRef, firstRowRef, panel],
+		isOpen,
+		onEscape: () => setOpen(false),
+		returnFocus: triggerRef,
+	});
+
+	const { focusInitial, restoreFocus } = modal;
+	const hasOpened = useRef(isOpen);
+	useEffect(() => {
+		const delay = isOpen ? FOCUS_DELAY_MS : PANEL_MS;
+		if (!isOpen && !hasOpened.current) return;
+		hasOpened.current = true;
+		const timer = setTimeout(isOpen ? focusInitial : restoreFocus, delay);
+		return () => clearTimeout(timer);
+	}, [focusInitial, isOpen, restoreFocus]);
 
 	const progress = useSharedValue(isOpen ? 1 : 0);
 	useEffect(() => {
@@ -76,9 +107,9 @@ export function SectionRailContent({
 			style={frameStyle}
 		>
 			<Animated.View
-				accessibilityViewIsModal={isOpen}
+				{...modal.containerProps}
 				className={slots.content({ className })}
-				onAccessibilityEscape={() => setOpen(false)}
+				ref={composeRefs(panel, ref)}
 				style={[{ maxWidth, transformOrigin }, animatedStyle, style]}
 				{...props}
 			>

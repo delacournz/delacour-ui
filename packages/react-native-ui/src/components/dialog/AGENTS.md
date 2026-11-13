@@ -81,12 +81,18 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   `useReanimatedKeyboardAnimation`'s height, so it rides the keyboard's own frames. The card's
   edges come from `onLayout`, which ignores transforms, so the lift never feeds back into itself.
   The positioner fills the portal host, which fills the window, so layout `y` is window `y`.
-- **Accessibility.** The card is `accessibilityViewIsModal` with `role="dialog"` (or
-  `"alertdialog"`, `resolveDialogRole`) and `accessibilityLabelledBy` the title's `nativeID` for
-  Android. Once the entrance finishes (`onEntered`) focus moves to the title; once the exit
-  finishes, to the trigger, if one is still mounted. `findNodeHandle` of a ref that has gone is
-  null, and focus is then left where the system puts it. `Dialog.Title` takes no `ref` for that
-  reason — the dialog holds it.
+- **Accessibility.** `useModalAccessibility` (from `overlay`) owns the card's containment and
+  focus. `accessibilityViewIsModal` and `onAccessibilityEscape` are spread from its
+  `containerProps`: set only while the dialog is open and the top overlay — a popover or menu
+  opened from it takes VoiceOver and the escape scrub, and the card lets go — and no escape with
+  `isDismissible={false}`. The card has `role="dialog"` (or `"alertdialog"`, `resolveDialogRole`)
+  and `accessibilityLabelledBy` the title's `nativeID` for Android. Once the entrance finishes
+  (`onEntered`) focus moves to the title, or the card when there is no title; once the exit
+  finishes, to the trigger, if one is still mounted. `Dialog.Title` takes no `ref` for that
+  reason — the dialog holds it. `Dialog.Trigger` carries `accessibilityState.expanded` while the
+  dialog is open (merged with the caller's state), the screen-reader counterpart of
+  `aria-expanded`. Android containment (app content and overlays under the top modal hidden) is
+  `OverlayProvider`'s and `Overlay.Portal`'s, which the card draws through.
 - **No blur backdrop.** Frosted scrims need `expo-blur`, which is not a peer; recorded as a
   follow-up for every overlay.
 

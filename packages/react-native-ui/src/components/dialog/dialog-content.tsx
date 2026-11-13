@@ -1,17 +1,10 @@
-import { type ReactElement, useCallback, useId } from "react";
-import {
-	AccessibilityInfo,
-	findNodeHandle,
-	type LayoutChangeEvent,
-	useWindowDimensions,
-	View,
-	type ViewProps,
-} from "react-native";
+import { type ComponentRef, type ReactElement, useCallback, useId, useRef } from "react";
+import { type LayoutChangeEvent, useWindowDimensions, View, type ViewProps } from "react-native";
 import { useReanimatedKeyboardAnimation } from "react-native-keyboard-controller";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Overlay, useOverlayBackHandler, useOverlayPresence } from "../overlay";
-import { type DialogFocusTarget, DialogSizeProvider, useDialogPart } from "./dialog.context";
+import { Overlay, useModalAccessibility, useOverlayBackHandler, useOverlayPresence } from "../overlay";
+import { DialogSizeProvider, useDialogPart } from "./dialog.context";
 import {
 	DIALOG_ENTER_SCALE,
 	DIALOG_ENTER_TRANSLATE_Y,
@@ -29,13 +22,6 @@ export type DialogContentProps = ViewProps & {
 	/** The card's width cap: `sm` 320, `md` 400, `lg` 520, `full` the gutter. Default `md`. */
 	size?: DialogSize;
 };
-
-/** Moves VoiceOver / TalkBack focus to a mounted element. A no-op when it has gone. */
-function focus(target: DialogFocusTarget | null): void {
-	if (target === null) return;
-	const handle = findNodeHandle(target as Parameters<typeof findNodeHandle>[0]);
-	if (handle !== undefined) AccessibilityInfo.setAccessibilityFocus(handle);
-}
 
 /**
  * The card, its scrim and the portal they draw through.
@@ -76,12 +62,19 @@ export function DialogContent({
 	const { isOpen, close, isDismissible, titleId, titleRef, triggerRef } = useDialogPart("Dialog.Content");
 	const id = useId();
 
-	const handleEntered = useCallback(() => focus(titleRef.current), [titleRef]);
-	const handleExited = useCallback(() => focus(triggerRef.current), [triggerRef]);
+	const cardRef = useRef<ComponentRef<typeof Animated.View>>(null);
+	const onEscape = isDismissible ? close : undefined;
+	const modal = useModalAccessibility({
+		id,
+		isOpen,
+		initialFocus: [titleRef, cardRef],
+		onEscape,
+		returnFocus: triggerRef,
+	});
 	const { isPresent, isReduced, phase, progress } = useOverlayPresence({
 		isOpen,
-		onEntered: handleEntered,
-		onExited: handleExited,
+		onEntered: modal.focusInitial,
+		onExited: modal.restoreFocus,
 	});
 
 	useOverlayBackHandler({ id, isEnabled: isPresent && isDismissible, onBack: close });
@@ -128,7 +121,6 @@ export function DialogContent({
 	if (!isPresent) return null;
 
 	const slots = dialogVariants({ size });
-	const onEscape = isDismissible ? close : undefined;
 
 	return (
 		<Overlay.Portal id={id} isExiting={phase === "exiting"} layer="modal">
@@ -136,10 +128,10 @@ export function DialogContent({
 			<View className={slots.positioner()} pointerEvents="box-none">
 				<Animated.View
 					accessibilityLabelledBy={titleId}
-					accessibilityViewIsModal
+					{...modal.containerProps}
 					className={slots.content({ className })}
-					onAccessibilityEscape={onEscape}
 					onLayout={handleLayout}
+					ref={cardRef}
 					role={resolveDialogRole(isDismissible)}
 					style={[cardStyle, style]}
 					{...props}

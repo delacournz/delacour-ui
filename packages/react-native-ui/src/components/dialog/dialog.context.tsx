@@ -1,8 +1,9 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
+import type { ModalFocusTarget } from "../overlay";
 import type { DialogSize } from "./dialog.variants";
 
-/** Anything `AccessibilityInfo.setAccessibilityFocus` can be pointed at through `findNodeHandle`. */
-export type DialogFocusTarget = object;
+/** Anything accessibility focus can be sent to. */
+export type DialogFocusTarget = ModalFocusTarget;
 
 export type DialogContextValue = {
 	/** Whether the dialog is open — the owner's state, not the exit animation's. */

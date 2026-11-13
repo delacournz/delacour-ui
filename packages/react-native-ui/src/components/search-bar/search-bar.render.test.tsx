@@ -47,6 +47,47 @@ describe("SearchBar", () => {
 		expect(await screen.findByLabelText("Directory")).toBeOnTheScreen();
 	});
 
+	test("inside an invalid, required Field it reads the label, the error and the description", async () => {
+		await renderWithProviders(
+			<Field isInvalid isRequired>
+				<Field.Label>Directory</Field.Label>
+				<SearchBar defaultValue="ab" />
+				<Field.Description>Names only.</Field.Description>
+				<Field.Error>Too short</Field.Error>
+			</Field>
+		);
+		const input = await screen.findByLabelText("Directory, required");
+		expect(input).toHaveProp("accessibilityHint", "Invalid: Too short. Names only.");
+		expect(screen.getByRole("button", { name: "Clear search" }).props.accessibilityHint).toBeUndefined();
+		expect(screen.getByText("Directory", { exact: false, includeHiddenElements: true })).toBeOnTheScreen();
+	});
+
+	test("Field.Label is hidden from assistive tech once the bar takes its name", async () => {
+		await renderWithProviders(
+			<Field>
+				<Field.Label>Directory</Field.Label>
+				<SearchBar />
+			</Field>
+		);
+		expect(screen.queryByText("Directory")).not.toBeOnTheScreen();
+	});
+
+	test("an own accessibilityLabel still beats the Field and keeps Field.Label readable", async () => {
+		await renderWithProviders(
+			<Field isRequired>
+				<Field.Label>Directory</Field.Label>
+				<SearchBar accessibilityLabel="Find people" />
+			</Field>
+		);
+		expect(screen.getByLabelText("Find people")).toBeOnTheScreen();
+		expect(screen.getByText("Directory", { exact: false })).toBeOnTheScreen();
+	});
+
+	test("outside a Field it has no hint", async () => {
+		await renderWithProviders(<SearchBar />);
+		expect(screen.getByLabelText("Search").props.accessibilityHint).toBeUndefined();
+	});
+
 	test("search keyboard defaults are set and overridable", async () => {
 		await renderWithProviders(<SearchBar returnKeyType="done" />);
 		const input = screen.getByLabelText("Search");

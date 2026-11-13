@@ -1,13 +1,14 @@
-import { type ReactElement, useCallback, useMemo } from "react";
+import { type ComponentRef, type ReactElement, type Ref, useCallback, useMemo } from "react";
 import { type AccessibilityActionEvent, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { composeRefs } from "../../lib/compose-refs";
 import { playHaptic } from "../pressable";
 import { useSectionRailPart } from "./section-rail.context";
 import { resolveScrubIndex, sectionRailVariants } from "./section-rail.variants";
 
-export type SectionRailTriggerProps = ViewProps & { className?: string };
+export type SectionRailTriggerProps = ViewProps & { className?: string; ref?: Ref<ComponentRef<typeof View>> };
 
 /** Points of vertical travel before a touch on the rail becomes a scrub. */
 const SCRUB_ACTIVE_OFFSET = 4;
@@ -39,9 +40,21 @@ const SCRUB_FAIL_OFFSET = 16;
  * active row's title; a swipe up or down moves to the next or previous section,
  * and a double-tap opens the panel.
  */
-export function SectionRailTrigger({ className, children, ...props }: SectionRailTriggerProps): ReactElement {
-	const { activeValue, bars, frameStyle, haptic, highlight, isOpen, labels, pick, placement, setOpen, step } =
-		useSectionRailPart("SectionRail.Trigger");
+export function SectionRailTrigger({ className, children, ref, ...props }: SectionRailTriggerProps): ReactElement {
+	const {
+		activeValue,
+		bars,
+		frameStyle,
+		haptic,
+		highlight,
+		isOpen,
+		labels,
+		pick,
+		placement,
+		setOpen,
+		step,
+		triggerRef,
+	} = useSectionRailPart("SectionRail.Trigger");
 	const scrubbed = useSharedValue<string | undefined>(undefined);
 
 	const open = useCallback(() => setOpen(true), [setOpen]);
@@ -132,6 +145,7 @@ export function SectionRailTrigger({ className, children, ...props }: SectionRai
 					accessible
 					className={slots.trigger({ className })}
 					onAccessibilityAction={handleAccessibilityAction}
+					ref={composeRefs(triggerRef, ref)}
 					{...props}
 				>
 					{children}

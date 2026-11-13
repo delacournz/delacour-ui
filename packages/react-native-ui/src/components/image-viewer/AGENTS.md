@@ -139,7 +139,12 @@ derived — `media` is `foreground` in light and `background` in dark, and
   "2 of 5". Swipe up/down pages. Custom actions **Zoom in / Zoom out / Reset
   zoom** step 1 → `doubleTapScale` → `maxScale`, so a screen-reader or switch user
   reaches detail without a pinch — double-tap is VoiceOver's activate gesture.
-- Focus moves to the pager on open and back to the Trigger on close.
+- The stage is modal to VoiceOver and its escape scrub (two-finger Z) closes the viewer,
+  through `useModalAccessibility`. The layer is a React Native `Modal` — its own native
+  window, not an `Overlay.Portal` — so the hook gets no `id` and Android containment is the
+  window's own.
+- Focus moves to the pager once the entrance has run (`focusInitial`) and back to the
+  Trigger of the image showing on close (`focusAccessibilityTarget`, from `onExited`).
 - Close is always a visible, labelled 44 pt button; gestures are never the only
   way out. Android back closes.
 - Reduce motion / `useCalmMotion()`: no flight — the image sits at its fitted

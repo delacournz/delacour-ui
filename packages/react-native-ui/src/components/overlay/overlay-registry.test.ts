@@ -4,6 +4,7 @@ import {
 	hidesAppContent,
 	INITIAL_OVERLAY_REGISTRY,
 	isBelowTopModal,
+	isModalOnTop,
 	isTopOverlay,
 	OVERLAY_LAYER_BASE,
 	type OverlayRegistryState,
@@ -253,5 +254,47 @@ describe("topModalOverlay / isBelowTopModal", () => {
 	test("an overlay that is not open is not below anything", () => {
 		const state = apply({ type: "open", id: "dialog", layer: "modal" });
 		expect(isBelowTopModal(state, "nope")).toBe(false);
+	});
+});
+
+describe("isModalOnTop", () => {
+	test("is true with no registry or no id: the container is its own top", () => {
+		expect(isModalOnTop(null, "a")).toBe(true);
+		expect(isModalOnTop(INITIAL_OVERLAY_REGISTRY, undefined)).toBe(true);
+	});
+
+	test("is true for an id the registry has not heard of yet", () => {
+		expect(isModalOnTop(INITIAL_OVERLAY_REGISTRY, "a")).toBe(true);
+	});
+
+	test("is true for the top modal and false for one under it", () => {
+		const state = apply({ type: "open", id: "a", layer: "modal" }, { type: "open", id: "b", layer: "modal" });
+		expect(isModalOnTop(state, "b")).toBe(true);
+		expect(isModalOnTop(state, "a")).toBe(false);
+	});
+
+	test("an anchored overlay over a dialog is the top, and the dialog is not", () => {
+		const state = apply(
+			{ type: "open", id: "dialog", layer: "modal" },
+			{ type: "open", id: "menu", layer: "anchored" }
+		);
+		expect(isModalOnTop(state, "menu")).toBe(true);
+		expect(isModalOnTop(state, "dialog")).toBe(false);
+	});
+
+	test("an exiting overlay is not on top, and the one under it is again", () => {
+		const state = apply(
+			{ type: "open", id: "a", layer: "modal" },
+			{ type: "open", id: "b", layer: "modal" },
+			{ type: "exiting", id: "b", isExiting: true }
+		);
+		expect(isModalOnTop(state, "b")).toBe(false);
+		expect(isModalOnTop(state, "a")).toBe(true);
+	});
+
+	test("a toast above a dialog does not take the top from it", () => {
+		const state = apply({ type: "open", id: "dialog", layer: "modal" }, { type: "open", id: "toast", layer: "toast" });
+		expect(isModalOnTop(state, "dialog")).toBe(true);
+		expect(isModalOnTop(state, "toast")).toBe(false);
 	});
 });

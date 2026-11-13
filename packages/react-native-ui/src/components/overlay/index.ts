@@ -12,6 +12,7 @@ export { isPresent, type PresenceEvent, type PresencePhase, presenceTarget, redu
 export {
 	INITIAL_OVERLAY_REGISTRY,
 	isBelowTopModal,
+	isModalOnTop,
 	isTopOverlay,
 	OVERLAY_LAYER_BASE,
 	OVERLAY_LAYERS,
@@ -26,4 +27,9 @@ export {
 } from "./overlay-registry";
 export type { OverlayScrimProps } from "./overlay-scrim";
 export { type UseOverlayBackHandlerOptions, useOverlayBackHandler } from "./use-overlay-back-handler";
+export {
+	type OverlayModalAccessibility,
+	type UseOverlayModalAccessibilityOptions,
+	useOverlayModalAccessibility,
+} from "./use-overlay-modal-accessibility";
 export { type OverlayPresence, type UseOverlayPresenceOptions, useOverlayPresence } from "./use-overlay-presence";

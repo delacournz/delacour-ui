@@ -11,12 +11,14 @@
 		"compose-refs",
 		"icon",
 		"icons",
+		"modal-accessibility",
 		"pressable",
 		"separator",
 		"slot",
 		"text",
 		"tv",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-modal-accessibility"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -74,6 +76,14 @@
 			"target": "menu/menu-content.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-modal-accessibility",
+					"to": "@registry/hooks/use-modal-accessibility"
+				},
+				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
+				},
 				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
@@ -209,6 +219,10 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
 				},
 				{
 					"from": "../pressable/pressable",

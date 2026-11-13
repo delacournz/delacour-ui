@@ -1,17 +1,11 @@
-import { type ReactElement, useCallback, useEffect, useId, useMemo } from "react";
-import {
-	AccessibilityInfo,
-	findNodeHandle,
-	I18nManager,
-	useWindowDimensions,
-	View,
-	type ViewProps,
-} from "react-native";
+import { type ReactElement, useCallback, useEffect, useId, useMemo, useRef } from "react";
+import { I18nManager, useWindowDimensions, View, type ViewProps } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedReaction, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Overlay, useOverlayBackHandler, useOverlayPresence } from "../overlay";
-import { type DrawerFocusTarget, DrawerPanelProvider, type DrawerPanelValue, useDrawerPart } from "./drawer.context";
+import type { ModalFocusTarget } from "../../lib/modal-accessibility";
+import { Overlay, useOverlayBackHandler, useOverlayModalAccessibility, useOverlayPresence } from "../overlay";
+import { DrawerPanelProvider, type DrawerPanelValue, useDrawerPart } from "./drawer.context";
 import {
 	type DrawerSide,
 	type DrawerSize,
@@ -37,13 +31,6 @@ export type DrawerContentProps = ViewProps & {
 	isSwipeDismissible?: boolean;
 };
 
-/** Moves VoiceOver / TalkBack focus to a mounted element. A no-op when it has gone. */
-function focus(target: DrawerFocusTarget | null): void {
-	if (target === null) return;
-	const handle = findNodeHandle(target as Parameters<typeof findNodeHandle>[0]);
-	if (handle !== undefined) AccessibilityInfo.setAccessibilityFocus(handle);
-}
-
 /**
  * The panel, its scrim and the portal they draw through.
  *
@@ -61,8 +48,10 @@ function focus(target: DrawerFocusTarget | null): void {
  * - **Dismissal.** A scrim tap, Android back, the iOS escape gesture and the
  *   swipe close a dismissible drawer. With `isDismissible={false}` the scrim
  *   still takes the touch and only the drawer's own actions close it.
- * - **Accessibility.** The panel is modal to assistive technology, a `dialog`
- *   labelled by the title; focus moves to the title once it has entered and
+ * - **Accessibility.** `useOverlayModalAccessibility` makes the panel modal to
+ *   assistive technology (while it is the top overlay), a `dialog` labelled by
+ *   the title, with the escape scrub closing it when dismissible. Focus moves to
+ *   the title once it has entered — the panel itself when there is no title — and
  *   back to the trigger, if still mounted, once it has gone.
  *
  * @example
@@ -96,12 +85,21 @@ export function DrawerContent({
 		insets
 	);
 
-	const handleEntered = useCallback(() => focus(titleRef.current), [titleRef]);
-	const handleExited = useCallback(() => focus(triggerRef.current), [triggerRef]);
+	const panelRef = useRef<ModalFocusTarget | null>(null);
+	const setPanelRef = useCallback((node: ModalFocusTarget | null) => {
+		panelRef.current = node;
+	}, []);
+	const modal = useOverlayModalAccessibility({
+		id,
+		initialFocus: [titleRef, panelRef],
+		isOpen,
+		onEscape: isDismissible ? close : undefined,
+		returnFocus: triggerRef,
+	});
 	const { isPresent, isReduced, phase, progress } = useOverlayPresence({
 		isOpen,
-		onEntered: handleEntered,
-		onExited: handleExited,
+		onEntered: modal.focusInitial,
+		onExited: modal.restoreFocus,
 	});
 
 	useOverlayBackHandler({ id, isEnabled: isPresent && isDismissible, onBack: close });
@@ -166,11 +164,11 @@ export function DrawerContent({
 				<GestureDetector gesture={pan}>
 					<Animated.View
 						accessibilityLabelledBy={titleId}
-						accessibilityViewIsModal
 						className={slots.content({ className })}
-						onAccessibilityEscape={onEscape}
+						ref={setPanelRef}
 						role="dialog"
 						style={[frame, panelStyle, style]}
+						{...modal.containerProps}
 						{...props}
 					>
 						<View className={slots.inner()} style={{ direction: isRTL ? "rtl" : "ltr" }}>

@@ -55,7 +55,7 @@ export function FabAction({
 	labelClassName,
 	testID,
 }: FabActionProps): ReactElement {
-	const { progress, triggerCenterY, count, labelSide, size, haptic, isReducedMotion, close } =
+	const { progress, triggerCenterY, count, labelSide, size, haptic, isReducedMotion, close, firstActionRef } =
 		useFabGroupPart("Fab.Action");
 	const { index } = useFabActionItem("Fab.Action");
 	const slots = fabVariants({ size, labelSide, isDisabled });
@@ -117,6 +117,7 @@ export function FabAction({
 					feedback="scale"
 					haptic={haptic}
 					onPress={handlePress}
+					ref={index === count - 1 ? firstActionRef : undefined}
 					testID={testID}
 				>
 					<Icon

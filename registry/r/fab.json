@@ -12,7 +12,8 @@
 		"pressable",
 		"text",
 		"tv",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-modal-accessibility"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -62,6 +63,10 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-modal-accessibility",
+					"to": "@registry/hooks/use-modal-accessibility"
 				},
 				{
 					"from": "../icon",

@@ -18,8 +18,8 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
 | `index.ts` | → `@delacour/react-native-ui/drawer` |
 | `drawer.tsx` | Root — the open state, the ids and the focus refs — and the `Object.assign` compound surface |
 | `drawer.context.tsx` | **Leaf.** `DrawerProvider`, `DrawerPanelProvider`, `useDrawer()`, `useDrawerContext()`, `useDrawerPart()`, `useDrawerPanel()` |
-| `drawer-trigger.tsx` | `Drawer.Trigger` — donates the open with `asChild`, keeps the trigger's ref for focus return |
-| `drawer-content.tsx` | `Drawer.Content` — presence, portal, scrim, edge and extent, insets, slide, swipe, back button, focus |
+| `drawer-trigger.tsx` | `Drawer.Trigger` — donates the open with `asChild`, keeps the trigger's ref for focus return, `expanded` while open |
+| `drawer-content.tsx` | `Drawer.Content` — presence, portal, scrim, edge and extent, insets, slide, swipe, back button, modal accessibility |
 | `drawer-header.tsx` | `Drawer.Header` — the title column and a ✕ at the trailing edge |
 | `drawer-title.tsx` | `Drawer.Title` — a `Text.Header` carrying the title `nativeID` and the focus ref |
 | `drawer-description.tsx` | `Drawer.Description` — a muted `Text.Paragraph` |
@@ -95,10 +95,14 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   content short, or use a `BottomSheet`.
 - **It draws in the `modal` band**, over the navigator's header and over an open bottom sheet.
 - **Triggers and closes donate the press** with `asChild`, for `BottomSheet.Trigger`'s reason.
-- **Accessibility.** The panel is `accessibilityViewIsModal`, `role="dialog"`, labelled by the title's
-  `nativeID`; focus moves to the title once the entrance finishes and back to the trigger once the
-  exit does. `onAccessibilityEscape` and the back button close it when dismissible. The scrim is not
-  accessible. The ✕ is labelled `"Close"`.
+- **Accessibility.** `Drawer.Content` goes through `useOverlayModalAccessibility`: `containerProps` makes
+  the panel `accessibilityViewIsModal` (while open and the top overlay) and wires
+  `onAccessibilityEscape` to close it when dismissible; the panel is `role="dialog"`, labelled by the
+  title's `nativeID`. Focus moves to the title once the entrance finishes — the panel itself when
+  there is no `Drawer.Title` — and back to the trigger once the exit does. The back button also
+  closes it when dismissible. `Drawer.Trigger` carries `accessibilityState.expanded` while open. The
+  scrim is not accessible. The ✕ is labelled `"Close"`. Android containment comes from
+  `Overlay.Portal`/`OverlayProvider`, which the drawer draws through.
 - **No blur backdrop.** Frosted scrims need `expo-blur`, not a peer; a follow-up for every overlay.
 
 ## Preview capture

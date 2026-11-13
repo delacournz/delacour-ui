@@ -1,5 +1,4 @@
 import { type ComponentRef, type ReactElement, useEffect, useRef } from "react";
-import { AccessibilityInfo, findNodeHandle } from "react-native";
 import type Animated from "react-native-reanimated";
 import { composeRefs } from "../../lib/compose-refs";
 import { Pressable, type PressableProps } from "../pressable";
@@ -17,9 +16,6 @@ export type SectionRailItemProps = Omit<PressableProps, "children"> & {
 	className?: string;
 };
 
-/** How long after opening the active row takes focus, in ms — past the panel's 160ms fade. */
-const FOCUS_DELAY_MS = 200;
-
 /**
  * One row of the panel: a section's title, indented by its level.
  *
@@ -28,8 +24,10 @@ const FOCUS_DELAY_MS = 200;
  * is drawn in the foreground at medium weight and announced `selected`. Titles
  * wrap to two lines and then truncate.
  *
- * When the panel opens, VoiceOver focus moves to the active row, so the reader
- * starts where they are rather than at the top of the outline.
+ * When the panel opens, VoiceOver focus moves to the committed row (the first
+ * row when none is committed), so the reader starts where they are rather than
+ * at the top of the outline. The panel does that, through the rail; the row only
+ * offers its node.
  */
 export function SectionRailItem({
 	value,
@@ -41,7 +39,14 @@ export function SectionRailItem({
 	ref,
 	...props
 }: SectionRailItemProps): ReactElement {
-	const { activeValue, isOpen, pick, registerItem, value: committed } = useSectionRailPart("SectionRail.Item");
+	const {
+		activeValue,
+		committedRowRef,
+		firstRowRef,
+		pick,
+		registerItem,
+		value: committed,
+	} = useSectionRailPart("SectionRail.Item");
 	const isActive = activeValue === value;
 	const slots = sectionRailVariants({ isActive });
 	const node = useRef<ComponentRef<typeof Animated.View>>(null);
@@ -50,13 +55,15 @@ export function SectionRailItem({
 
 	const isCommitted = committed === value;
 	useEffect(() => {
-		if (!isOpen || !isCommitted) return;
-		const timer = setTimeout(() => {
-			const handle = findNodeHandle(node.current);
-			if (handle !== undefined) AccessibilityInfo.setAccessibilityFocus(handle);
-		}, FOCUS_DELAY_MS);
-		return () => clearTimeout(timer);
-	}, [isCommitted, isOpen]);
+		const row = node.current;
+		if (row === null) return;
+		if (firstRowRef.current === null) firstRowRef.current = row;
+		if (isCommitted) committedRowRef.current = row;
+		return () => {
+			if (firstRowRef.current === row) firstRowRef.current = null;
+			if (committedRowRef.current === row) committedRowRef.current = null;
+		};
+	}, [committedRowRef, firstRowRef, isCommitted]);
 
 	return (
 		<Pressable

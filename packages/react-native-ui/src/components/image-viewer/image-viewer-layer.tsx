@@ -8,14 +8,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import {
-	type AccessibilityActionEvent,
-	AccessibilityInfo,
-	Modal,
-	StatusBar,
-	useWindowDimensions,
-	View,
-} from "react-native";
+import { type AccessibilityActionEvent, Modal, StatusBar, useWindowDimensions, View } from "react-native";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
@@ -28,6 +21,7 @@ import Animated, {
 import { SafeAreaInsetsContext, useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import { resolvePanOrigin, resolvePanPosition, resolveSettleTarget, resolveVisibleRange } from "../../lib/paging";
 import type { ImageViewerOrigin } from "./image-viewer.context";
 import type { ImageViewerImage, ImageViewerRenderImage } from "./image-viewer.types";
@@ -502,14 +496,15 @@ export function ImageViewerLayer({
 
 	const stageStyle = useAnimatedStyle(() => ({ opacity: fade.value }));
 
+	// A Modal is its own native window and is not drawn through `Overlay.Portal`,
+	// so there is no `id`: it is its own top, and Android containment is the window's.
 	const pagerRef = useRef<ComponentRef<typeof View>>(null);
+	const modal = useModalAccessibility({ initialFocus: [pagerRef], isOpen, onEscape: onClose });
+	const { focusInitial } = modal;
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			const node = pagerRef.current;
-			if (node) AccessibilityInfo.sendAccessibilityEvent(node, "focus");
-		}, VIEWER_CLOSE_DURATION_MS);
+		const timer = setTimeout(focusInitial, VIEWER_CLOSE_DURATION_MS);
 		return () => clearTimeout(timer);
-	}, []);
+	}, [focusInitial]);
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
@@ -569,7 +564,7 @@ export function ImageViewerLayer({
 					<StatusBar animated barStyle="light-content" />
 					<Animated.View className={slots.backdrop()} style={backdropStyle} />
 					<GestureDetector gesture={gesture}>
-						<Animated.View accessibilityViewIsModal style={[ABSOLUTE_FILL, stageStyle]}>
+						<Animated.View {...modal.containerProps} style={[ABSOLUTE_FILL, stageStyle]}>
 							<View
 								accessibilityActions={ZOOM_ACTIONS}
 								accessibilityLabel={label}

@@ -12,6 +12,7 @@
 		"compose-refs",
 		"icon",
 		"icons",
+		"modal-accessibility",
 		"overlay",
 		"pressable",
 		"slot",
@@ -138,7 +139,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/dialog/dialog.context.tsx",
 			"target": "dialog/dialog.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/dialog/dialog.tsx",

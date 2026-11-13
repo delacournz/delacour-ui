@@ -1,4 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { type ComponentRef, createRef } from "react";
+import { AccessibilityInfo } from "react-native";
+import type Animated from "react-native-reanimated";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { SectionRail, type SectionRailProps } from "./section-rail";
 
@@ -7,6 +10,8 @@ const SECTIONS = [
 	{ id: "pricing", title: "Pricing", level: 0 },
 	{ id: "details", title: "Pricing details", level: 1 },
 ] as const;
+
+type HostNode = ComponentRef<typeof Animated.View>;
 
 function Rail(props: Omit<SectionRailProps, "children">) {
 	return (
@@ -140,6 +145,121 @@ describe("SectionRail", () => {
 		});
 		expect(onOpenChange).toHaveBeenLastCalledWith(false);
 		expect(trigger()).not.toBeExpanded();
+	});
+
+	test("closed, the panel is not modal and has no escape", async () => {
+		await renderWithProviders(
+			<SectionRail>
+				<SectionRail.Trigger>
+					<SectionRail.Bar value="a" />
+				</SectionRail.Trigger>
+				<SectionRail.Content testID="panel">
+					<SectionRail.Item value="a">Alpha</SectionRail.Item>
+				</SectionRail.Content>
+			</SectionRail>
+		);
+		const panel = screen.getByTestId("panel", ANY);
+		expect(panel.props.accessibilityViewIsModal).toBeFalsy();
+		expect(panel.props.onAccessibilityEscape).toBeUndefined();
+	});
+
+	describe("focus", () => {
+		type Parts = {
+			trigger: ReturnType<typeof createRef<HostNode>>;
+			panel: ReturnType<typeof createRef<HostNode>>;
+			rows: Record<string, ReturnType<typeof createRef<HostNode>>>;
+		};
+
+		function Focusable({ parts, defaultValue }: { parts: Parts; defaultValue?: string }) {
+			return (
+				<SectionRail defaultValue={defaultValue}>
+					<SectionRail.Trigger ref={parts.trigger}>
+						<SectionRail.Bar value="a" />
+					</SectionRail.Trigger>
+					<SectionRail.Content ref={parts.panel}>
+						<SectionRail.Item ref={parts.rows.a} value="a">
+							Alpha
+						</SectionRail.Item>
+						<SectionRail.Item ref={parts.rows.b} value="b">
+							Beta
+						</SectionRail.Item>
+					</SectionRail.Content>
+				</SectionRail>
+			);
+		}
+
+		function makeParts(): Parts {
+			return {
+				trigger: createRef<HostNode>(),
+				panel: createRef<HostNode>(),
+				rows: { a: createRef<HostNode>(), b: createRef<HostNode>() },
+			};
+		}
+
+		function focusSpy(parts: Parts): () => string[] {
+			const named: [string, { current: unknown }][] = [
+				["trigger", parts.trigger],
+				["panel", parts.panel],
+				["a", parts.rows.a],
+				["b", parts.rows.b],
+			];
+			const focused: string[] = [];
+			jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation((target, event) => {
+				if (event !== "focus") return;
+				const hit = named.find(([, ref]) => ref.current === target);
+				if (hit) focused.push(hit[0]);
+			});
+			return () => [...focused];
+		}
+
+		test("opening moves focus to the committed row after the fade", async () => {
+			const parts = makeParts();
+			const focused = focusSpy(parts);
+			await renderWithProviders(<Focusable defaultValue="b" parts={parts} />);
+			await activate(trigger());
+			expect(focused()).toEqual([]);
+			await act(async () => {
+				jest.advanceTimersByTime(250);
+			});
+			expect(focused()).toEqual(["b"]);
+		});
+
+		test("with no committed row, focus lands on the first row", async () => {
+			const parts = makeParts();
+			const focused = focusSpy(parts);
+			await renderWithProviders(<Focusable parts={parts} />);
+			await activate(trigger());
+			await act(async () => {
+				jest.advanceTimersByTime(250);
+			});
+			expect(focused()).toEqual(["a"]);
+		});
+
+		test("closing returns focus to the trigger once the panel has faded", async () => {
+			const parts = makeParts();
+			const focused = focusSpy(parts);
+			await renderWithProviders(<Focusable defaultValue="a" parts={parts} />);
+			await activate(trigger());
+			await act(async () => {
+				jest.advanceTimersByTime(250);
+			});
+			await activate(trigger());
+			expect(focused()).toEqual(["a"]);
+			await act(async () => {
+				jest.advanceTimersByTime(250);
+			});
+			expect(focused()).toEqual(["a", "trigger"]);
+		});
+
+		test("a rail that never opened never steals focus", async () => {
+			const parts = makeParts();
+			const focused = focusSpy(parts);
+			await renderWithProviders(<Focusable parts={parts} />);
+			await act(async () => {
+				jest.advanceTimersByTime(500);
+			});
+			expect(focused()).toEqual([]);
+		});
 	});
 
 	test("increment and decrement step through the bars in layout order and stop at the ends", async () => {

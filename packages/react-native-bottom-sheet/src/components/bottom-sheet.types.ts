@@ -92,6 +92,15 @@ export type BottomSheetProps = SheetHaptics & {
 	detached?: DetachedProp;
 	/** @default true */
 	enablePanDownToClose?: boolean;
+	/**
+	 * Whether the sheet is a modal surface to a screen reader while open: the
+	 * panel holds VoiceOver, answers the escape gesture (unless it is not
+	 * dismissible), and focus moves to the `Title` on open and back to the
+	 * `Trigger` on close. Only the top sheet of its host is modal. Pass `false`
+	 * for a persistent drawer that leaves the app behind it reachable.
+	 * @default true
+	 */
+	modal?: boolean;
 	/** @default true */
 	enableHandlePanningGesture?: boolean;
 	/** @default true */

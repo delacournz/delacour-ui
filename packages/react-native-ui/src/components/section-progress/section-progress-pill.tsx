@@ -88,7 +88,7 @@ export type SectionProgressPillProps = {
  * VoiceOver reads it as "Sections, Pricing, 42 percent, button, collapsed".
  */
 export function SectionProgressPill({ labelWidth, onLayout }: SectionProgressPillProps): ReactElement {
-	const { accessibilityLabel, accessibilityValue, index, isOpen, label, pillTestID, setOpen, value } =
+	const { accessibilityLabel, accessibilityValue, index, isOpen, label, pillRef, pillTestID, setOpen, value } =
 		useSectionProgressPart("SectionProgress.Pill");
 	const { width } = useWindowDimensions();
 	const maxWidth = resolveLabelMaxWidth(width);
@@ -126,6 +126,7 @@ export function SectionProgressPill({ labelWidth, onLayout }: SectionProgressPil
 			feedback="fade"
 			onLayout={onLayout}
 			onPress={toggle}
+			ref={pillRef}
 			testID={pillTestID}
 		>
 			<SectionProgressRing />

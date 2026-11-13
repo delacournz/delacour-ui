@@ -60,11 +60,11 @@ export type SectionProgressPanelProps = {
  * each frame, so a title's width easing while closed moves the capsule with it in the same frame.
  * Reduce motion: the size snaps and the list only fades.
  *
- * VoiceOver is confined to it while open, and the escape gesture closes it. Closed, the list is
+ * VoiceOver is confined to it while open (`useModalAccessibility`), and the escape gesture closes it. Closed, the list is
  * hidden from assistive technology and takes no touches.
  */
 export function SectionProgressPanel({ availableWidth, children }: SectionProgressPanelProps): ReactElement {
-	const { isOpen, placement, setOpen } = useSectionProgressPart("SectionProgress.Panel");
+	const { containerProps, isOpen, placement } = useSectionProgressPart("SectionProgress.Panel");
 	const isReducedMotion = useReducedMotion();
 	const slots = sectionProgressVariants({ placement });
 	const isBottom = placement.startsWith("bottom");
@@ -115,7 +115,6 @@ export function SectionProgressPanel({ availableWidth, children }: SectionProgre
 		},
 		[listHeight]
 	);
-	const close = useCallback(() => setOpen(false), [setOpen]);
 
 	const surfaceStyle = useAnimatedStyle(() => {
 		const pill = resolvePillSize(chrome, labelWidth.value, rowHeight.value);
@@ -148,12 +147,7 @@ export function SectionProgressPanel({ availableWidth, children }: SectionProgre
 	const divider = <View className={slots.divider()} />;
 
 	return (
-		<Animated.View
-			accessibilityViewIsModal={isOpen}
-			className={slots.panel()}
-			onAccessibilityEscape={isOpen ? close : undefined}
-			style={surfaceStyle}
-		>
+		<Animated.View {...containerProps} className={slots.panel()} style={surfaceStyle}>
 			<SectionProgressPill labelWidth={labelWidth} onLayout={measureRow} />
 			<Animated.View
 				accessibilityElementsHidden={!isOpen}

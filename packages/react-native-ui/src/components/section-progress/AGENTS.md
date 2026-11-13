@@ -32,10 +32,10 @@ const sections = useScrollSections({ readingLine: 96 });
 | `section-progress-pill.tsx` | The pill's row — ring and label, one button. No chrome of its own. Internal |
 | `section-progress-panel.tsx` | The one surface — the capsule closed, the card open — with the row, a rule and the scrolling list. Internal |
 | `section-progress-ring.tsx` | The Skia ring — a track circle and a trimmed fill path, driven by a shared value. Internal |
-| `section-progress.context.tsx` | The root's context and `useSectionProgress` |
+| `section-progress.context.tsx` | The root's context — including the focus refs and modal `containerProps` — and `useSectionProgress` |
 | `section-progress.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `section-progress.variants.test.ts` | |
-| `section-progress.render.test.tsx` | Mounted under Jest — pill name/value/expanded, open state (controlled and not), item selection and picks, disabled item, part-outside-root error |
+| `section-progress.render.test.tsx` | Mounted under Jest — pill name/value/expanded, open state (controlled and not), item selection and picks, disabled item, part-outside-root error, modal container props and escape, focus in (active, else first item) and back to the pill |
 
 There is no `section-progress.types.ts`: every prop type has exactly one consumer, and the house
 rule keeps such a type in its consumer's file.
@@ -141,8 +141,20 @@ rule keeps such a type in its consumer's file.
   current means a render per percent; with no screen reader listening there is nobody to read it,
   so the root subscribes to `screenReaderChanged` and only then crosses each whole-percent change
   over with `scheduleOnRN`. Scrolling with VoiceOver off renders nothing.
-- **Opening moves focus to the active item** (`AccessibilityInfo.setAccessibilityFocus`, after the
-  panel has laid out). The panel is `accessibilityViewIsModal`, and `onAccessibilityEscape` closes it.
+- **The panel goes through `useModalAccessibility`** (`hooks/`). The root calls it and hands
+  `containerProps` to the panel through the context: `accessibilityViewIsModal` and
+  `onAccessibilityEscape` (closes it), both only while open. **It is not drawn through
+  `Overlay.Portal`**, so there is no `id` and the card is always its own top overlay, and Android
+  containment does not apply — TalkBack can still leave the card, because nothing outside it is
+  hidden. The scrim and the closed list are already hidden from assistive technology.
+- **Opening moves focus to the active item** (`focusInitial`: the active item, else the first),
+  250ms after open. The panel is always mounted, so there is no entrance to hang `onEntered` on;
+  the delay lets the card grow and lay out first.
+- **Closing returns focus to the pill** (`restoreFocus`) as soon as `isOpen` goes false — a pick,
+  the scrim, escape or Android back — not after the shrink, because the row never leaves its edge
+  and is focusable throughout. A pick returns there too rather than to the section it scrolled to:
+  a section is plain content with nothing to focus, and WCAG 2.4.3 wants focus back at the control
+  that opened the panel. Mounting closed restores nothing.
 - **Items are buttons, the active one `selected`.** The ring and the marker dots are hidden.
 - **Android back closes the panel** — a `BackHandler` subscription held only while it is open.
 - **The pill takes `${testID}-pill`** from the root's `testID`, through the context — it is internal,

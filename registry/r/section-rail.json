@@ -9,10 +9,12 @@
 	],
 	"registryDependencies": [
 		"compose-refs",
+		"modal-accessibility",
 		"pressable",
 		"text",
 		"tv",
 		"use-controllable-state",
+		"use-modal-accessibility",
 		"use-scroll-sections"
 	],
 	"dependencies": [
@@ -50,7 +52,17 @@
 		{
 			"path": "packages/react-native-ui/src/components/section-rail/section-rail-content.tsx",
 			"target": "section-rail/section-rail-content.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-modal-accessibility",
+					"to": "@registry/hooks/use-modal-accessibility"
+				},
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/section-rail/section-rail-item.tsx",
@@ -88,6 +100,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
 				}
@@ -98,6 +114,10 @@
 			"target": "section-rail/section-rail.context.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
+				},
 				{
 					"from": "../pressable/pressable",
 					"to": "@registry/ui/pressable/pressable"
@@ -112,6 +132,10 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
 				},
 				{
 					"from": "../pressable",

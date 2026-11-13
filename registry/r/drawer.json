@@ -12,6 +12,7 @@
 		"compose-refs",
 		"icon",
 		"icons",
+		"modal-accessibility",
 		"overlay",
 		"pressable",
 		"slot",
@@ -82,6 +83,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
+				},
+				{
 					"from": "../overlay",
 					"to": "@registry/ui/overlay"
 				}
@@ -149,7 +154,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/drawer/drawer.context.tsx",
 			"target": "drawer/drawer.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/drawer/drawer.tsx",

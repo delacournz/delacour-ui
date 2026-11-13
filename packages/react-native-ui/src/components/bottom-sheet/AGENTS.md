@@ -22,10 +22,10 @@ navigator. `DelacourProvider` cannot mount it without importing the engine. See
 | `bottom-sheet.tsx` | `BottomSheet` — the engine's root with this library's defaults: `bottomInset` from the safe area, the two haptics, the stale-keyboard guard. The `Object.assign` names every part |
 | `bottom-sheet.variants.ts` | The slotted `tv()` — `overlay`, `background` (with a `detached` variant), `handle`, `handleIndicator`, `content`, `scrollContent`, `steps`, `step`, `footer`, `stickyFooter`, `close`, `title` — and the numeric constants the engine's props take |
 | `bottom-sheet.variants.test.ts` | Every token the slots name exists in both themes; the rules below, pinned |
-| `bottom-sheet.render.test.tsx` | Mounted under Jest — trigger and Close open/shut it, defaultOpen, controlled isOpen, handle's adjustable role and escape, title, scrim semantics, parts outside the root throw, a fragment-wrapped handle, the app hidden under a modal sheet, back left to an open overlay |
+| `bottom-sheet.render.test.tsx` | Mounted under Jest — trigger and Close open/shut it, defaultOpen, controlled isOpen, handle's adjustable role and escape, title, scrim semantics, parts outside the root throw, a fragment-wrapped handle, the app hidden under a modal sheet (scrim or not), panel modal and escape, trigger expanded, back left to an open overlay |
 | `bottom-sheet-trigger.tsx` | `BottomSheet.Trigger` — this library's `Pressable`, or `asChild` to donate the press |
 | `bottom-sheet-portal.tsx` | `BottomSheet.Portal` — the engine's portal, plus whether it teleports to `"root"` |
-| `bottom-sheet-overlay.tsx` | `BottomSheet.Overlay` — the engine's scrim in `bg-overlay`, opacity 1; registers the sheet as modal for screen readers |
+| `bottom-sheet-overlay.tsx` | `BottomSheet.Overlay` — the engine's scrim in `bg-overlay`, opacity 1; the scrim: visual and touch only |
 | `bottom-sheet-provider.tsx` | `BottomSheetProvider` — the engine's provider, sharing teleport with `OverlayProvider`, hiding the app under a modal sheet |
 | `bottom-sheet-modal.context.tsx` | **Leaf.** The modal-sheet registry context, the root-host context and `useHideAppWhileModal` |
 | `bottom-sheet-container.tsx` | `BottomSheet.Container` — the panel; writes `Background` and `Handle` when the caller writes neither |
@@ -139,16 +139,21 @@ read those before touching behaviour, because behaviour is not here.
   than a class, so the padding is inside the box the snap point measures; the
   `stickyFooter` slot carries the gutter, the surface and the hairline, and
   the test asserts it carries no vertical padding.
-- **A scrim makes the sheet modal for screen readers.** The panel's
-  `accessibilityViewIsModal` hides only its siblings in the teleport host, not
-  the app, and sheets are not in `OverlayProvider`'s registry. So while a sheet
-  with an `Overlay` is presented in the `"root"` host, the overlay registers
-  with `BottomSheetProvider`, which sets `accessibilityElementsHidden` and
+- **A modal sheet hides the app from screen readers, scrim or not.** The engine's
+  panel `accessibilityViewIsModal` hides only its siblings in the teleport host,
+  not the app, and sheets are not in `OverlayProvider`'s registry. So while a
+  sheet is open, `modal` (the engine's root prop, default true) and the top of its
+  host, and presented in the `"root"` host, `Container` registers with
+  `BottomSheetProvider`, which sets `accessibilityElementsHidden` and
   `importantForAccessibility="no-hide-descendants"` on the view around its
   children. The `"root"` host draws beside that view, so the sheet stays
   reachable. An inline sheet, a sheet in another `BottomSheet.Host` (inside the
-  app view) and `enableTouchThrough` do not register. Under Jest's inline
-  teleport (`isTeleportInline()`) it hides nothing, as `OverlayProvider` does.
+  app view), `modal={false}` and an `Overlay` with `enableTouchThrough` (the
+  overlay registers its kind with the engine, which makes the sheet non-modal)
+  do not hide anything. Under Jest's
+  inline teleport (`isTeleportInline()`) it hides nothing, as `OverlayProvider`
+  does. Focus in (title) and out (trigger), the escape scrub and the trigger's
+  `expanded` state are the engine's; see its components `AGENTS.md`.
 - **The overlay's opacity is 1**, because `--overlay` carries its own alpha and
   the two theme variants carry different ones. `BOTTOM_SHEET_OVERLAY_OPACITY`
   and `BOTTOM_SHEET_BACKDROP_INDICES` restate the engine's defaults so a test

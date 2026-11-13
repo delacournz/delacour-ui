@@ -1,6 +1,7 @@
 import { type ComponentRef, createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import type Animated from "react-native-reanimated";
 import type { SharedValue } from "react-native-reanimated";
+import type { ModalContainerAccessibility } from "../../lib/modal-accessibility";
 import type { SectionProgressColor, SectionProgressPlacement } from "./section-progress.variants";
 
 export type SectionProgressContextValue = {
@@ -27,6 +28,14 @@ export type SectionProgressContextValue = {
 	accessibilityValue: string;
 	/** The active item's view, so opening the panel can move screen-reader focus to it. */
 	activeItemRef: RefObject<ComponentRef<typeof Animated.View> | null>;
+	/** The first item's view — where focus lands when no item is active yet. */
+	firstItemRef: RefObject<ComponentRef<typeof Animated.View> | null>;
+	/** The first item's `value`, or null with no items. */
+	firstValue: string | null;
+	/** The pill's view — where screen-reader focus returns when the panel closes. */
+	pillRef: RefObject<ComponentRef<typeof Animated.View> | null>;
+	/** `accessibilityViewIsModal` and the escape scrub for the panel, from `useModalAccessibility`. */
+	containerProps: ModalContainerAccessibility;
 	/** `${testID}-pill` when the root has a `testID` — the pill, closed or as the open panel's edge row. */
 	pillTestID: string | undefined;
 };

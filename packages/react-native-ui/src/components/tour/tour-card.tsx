@@ -1,5 +1,5 @@
 import { type ReactElement, useEffect, useRef } from "react";
-import { AccessibilityInfo, I18nManager, type LayoutChangeEvent, View, type ViewInstance } from "react-native";
+import { I18nManager, type LayoutChangeEvent, View, type ViewInstance } from "react-native";
 import Animated, {
 	Easing,
 	ReduceMotion,
@@ -9,6 +9,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { Button } from "../button";
+import { useModalAccessibility } from "../overlay/use-modal-accessibility";
 import type { HapticFeedback } from "../pressable";
 import { Text } from "../text";
 import {
@@ -63,7 +64,9 @@ type TourCardProps = {
  *
  * **The text is one accessibility element** whose label is the announcement — "Step 2 of 5.
  * Search. Find anything." — and focus moves to it once the card is placed. The card is
- * `accessibilityViewIsModal`, so VoiceOver stays inside it.
+ * modal to VoiceOver through `useModalAccessibility` (`accessibilityViewIsModal`, and the escape scrub
+ * skipping only when the tour is dismissible). The tour draws in a `Modal` or inline, not through
+ * `Overlay.Portal`, so the hook is given no `id`.
  *
  * The overlay lays out left-to-right, because window coordinates are physical; the card restores
  * the app's direction so its own content mirrors in a right-to-left locale.
@@ -96,6 +99,13 @@ export function TourCard({
 	const width = useSharedValue(placement.width);
 	const rise = useSharedValue(0);
 	const isShown = useRef(false);
+	const container = useRef<ViewInstance>(null);
+	const modal = useModalAccessibility({
+		isOpen: true,
+		initialFocus: [header, container],
+		onEscape,
+	});
+	const { focusInitial } = modal;
 
 	// Until it is first shown, the card follows its placement exactly, so it is measured at the
 	// width it will be drawn at.
@@ -129,10 +139,10 @@ export function TourCard({
 	useEffect(() => {
 		if (!isPlaced) return;
 		const frame = requestAnimationFrame(() => {
-			if (header.current) AccessibilityInfo.sendAccessibilityEvent(header.current, "focus");
+			focusInitial();
 		});
 		return () => cancelAnimationFrame(frame);
-	}, [isPlaced]);
+	}, [isPlaced, focusInitial]);
 
 	const position = useAnimatedStyle(() => ({
 		opacity: opacity.value,
@@ -152,9 +162,9 @@ export function TourCard({
 
 	return (
 		<Animated.View
-			accessibilityViewIsModal
+			{...modal.containerProps}
 			className={slots.card({ className })}
-			onAccessibilityEscape={onEscape}
+			ref={container}
 			onLayout={handleLayout}
 			testID={testIDs.card}
 			style={[{ direction: I18nManager.isRTL ? "rtl" : "ltr" }, position]}

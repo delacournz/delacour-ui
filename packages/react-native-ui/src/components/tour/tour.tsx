@@ -1,7 +1,8 @@
-import { type ReactElement, type ReactNode, useCallback, useMemo, useRef, useState } from "react";
+import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, StyleSheet, View, type ViewInstance } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { focusAccessibilityTarget } from "../overlay/use-modal-accessibility";
 import type { HapticFeedback } from "../pressable";
 import { type TourContextValue, TourProvider, TourRegistryProvider, type TourRegistryValue } from "./tour.context";
 import type { TourGeometryProps, TourStepEntry } from "./tour.types";
@@ -124,6 +125,19 @@ function TourRoot({
 	const index = current === undefined ? -1 : resolveStepIndex(orders, current);
 	const entry = index === -1 ? undefined : sorted[index];
 	const total = orders.length;
+
+	// The tour has no trigger of its own — `start()` can be called from anywhere — so when it closes
+	// focus goes to the control the last step spotlit, the most useful place for a reader to resume.
+	const lastTarget = useRef<ViewInstance | null>(null);
+	if (entry) lastTarget.current = entry.ref.current;
+	const wasOpen = useRef(false);
+	useEffect(() => {
+		const hadBeenOpen = wasOpen.current;
+		wasOpen.current = isOpen;
+		if (isOpen || !hadBeenOpen) return;
+		const frame = requestAnimationFrame(() => focusAccessibilityTarget(lastTarget.current));
+		return () => cancelAnimationFrame(frame);
+	}, [isOpen]);
 
 	const finish = useCallback(() => {
 		setOpen(false);

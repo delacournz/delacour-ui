@@ -115,8 +115,14 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
 
 - **The card's text is one element**, labelled by `resolveTourAnnouncement` — "Step 2 of 5.
   Search. Find anything in your library." — and focus moves to it once the card is placed
-  (`AccessibilityInfo.sendAccessibilityEvent(…, "focus")`). The card is
-  `accessibilityViewIsModal`.
+  through `useModalAccessibility`'s `focusInitial` (header, then the card). The card spreads its
+  `containerProps` (`accessibilityViewIsModal`, `onAccessibilityEscape`). The hook is imported from
+  `../overlay/use-modal-accessibility`, not the overlay index, which would pull in an optional
+  peer. The tour draws in a `Modal` or inline, never `Overlay.Portal`, so no `id` is passed and
+  the app is hidden by the wrapper below.
+- **Focus returns on close** (finish, skip, escape, dim tap) to the control the last step
+  spotlit — the tour has no trigger of its own, and that is where a reader resumes. It is moved
+  a frame after the tour closes, once the `Modal` has gone.
 - **The app is hidden only in non-interactive mode** (`importantForAccessibility=
   "no-hide-descendants"` and `accessibilityElementsHidden` on the wrapper around `children`). An
   interactive tour's spotlit control has to stay reachable.

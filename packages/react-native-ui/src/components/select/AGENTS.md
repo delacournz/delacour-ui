@@ -139,6 +139,13 @@ engine. An app that imports no picker still never resolves it.
   The select registers its `open` with the `Field`, so tapping the label opens
   the sheet, and reads `Field.Label`'s text as its accessible name and its
   default sheet title.
+- **Validity is spoken, once.** `SelectRoot` calls `useFieldControlAccessibility`
+  a single time (fallback name: `title`, then `placeholder`; own hint "Opens a
+  list of options", dropped when read-only) and hands the result to the trigger
+  through context, so a custom `Select.Trigger` and `asChild` get it too. Name
+  is "Role, required"; hint is "Invalid: <error>. <description>. Opens a list of
+  options". `isRequired` is own prop, then the `Field`. The hook claims the label,
+  so `Field.Label` is not read twice. Android also gets `accessibilityLabelledBy`.
 - **Read-only looks normal and never opens.** The trigger stays enabled for a
   screen reader — it is not disabled, it is fixed — with no press feedback, and
   `open` refuses.

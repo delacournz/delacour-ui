@@ -478,9 +478,28 @@ describe("Select in a Field", () => {
 			{ wrapper: Sheets }
 		);
 		expect(screen.getByRole("button", { name: "Role" })).toBeOnTheScreen();
-		await tap(screen.getByText("Role"));
+		await tap(screen.getByText("Role", { includeHiddenElements: true }));
 		expect(screen.getByRole("button", { name: "Role" })).toBeExpanded();
 		expect(screen.getByRole("radio", { name: "Designer" })).toBeOnTheScreen();
+	});
+
+	test("reads required, the error and the description from the Field", async () => {
+		await renderWithProviders(
+			<Field isInvalid isRequired>
+				<Field.Label>Role</Field.Label>
+				<Select options={OPTIONS} placeholder="Choose" />
+				<Field.Description>Pick one.</Field.Description>
+				<Field.Error>Role is required</Field.Error>
+			</Field>,
+			{ wrapper: Sheets }
+		);
+		const trigger = screen.getByRole("button", { name: "Role, required" });
+		expect(trigger).toHaveProp("accessibilityHint", "Invalid: Role is required. Pick one. Opens a list of options");
+	});
+
+	test("outside a Field the name stays the placeholder and the hint stays its own", async () => {
+		await renderWithProviders(<Select options={OPTIONS} placeholder="Choose" />, { wrapper: Sheets });
+		expect(screen.getByRole("button", { name: "Choose" })).toHaveProp("accessibilityHint", "Opens a list of options");
 	});
 
 	test("inherits disabled from the Field, and an explicit false opts out", async () => {
@@ -531,7 +550,7 @@ describe("Select in a Field", () => {
 			{ wrapper: Sheets }
 		);
 		await openSheet("Role");
-		expect(screen.getAllByText("Role").length).toBeGreaterThan(1);
+		expect(screen.getAllByText("Role", { includeHiddenElements: true }).length).toBeGreaterThan(1);
 	});
 });
 

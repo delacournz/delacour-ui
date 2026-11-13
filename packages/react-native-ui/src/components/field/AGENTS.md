@@ -21,10 +21,11 @@ A form field's layout, and the one place its state is written down. Root plus
 | `field-error.tsx` | `Field.Error` |
 | `field-separator.tsx` | `Field.Separator` |
 | `field.context.tsx` | `FieldProvider`, `useField()`, `useFieldContext()` |
+| `field-control.ts` | `useFieldControlAccessibility()` — the one call a control makes to read the field's name, validity, error and description |
 | `field.types.ts` | Prop types shared by two or more parts |
 | `field.variants.ts` | Pure `tv()` slots + resolvers, no RN imports |
 | `field.variants.test.ts` | |
-| `field.render.test.tsx` | Mounted under Jest — label press reaching Checkbox/Switch (and refused when disabled), state cascade, Slider thumb naming, Error alert, parts outside a Field |
+| `field.render.test.tsx` | Mounted under Jest — label press reaching Checkbox/Switch (and refused when disabled), state cascade, Slider thumb naming, validity reaching a control through the hook, label hidden once claimed, Error live region, Legend header, parts outside a Field |
 
 ## Design
 
@@ -65,6 +66,41 @@ A form field's layout, and the one place its state is written down. Root plus
   icon's key, say — would name the control after the wrong thing. State rather
   than a ref for the same reason as the press: the control renders differently
   for it, and the label registers in an effect, so it costs one render on mount.
+- **Validity reaches the control by speech, because React Native has nothing
+  else.** RN 0.88 has no `aria-invalid`, `aria-required`, `aria-describedby` or
+  `accessibilityErrorMessage`, and `accessibilityState` holds none of them — do
+  not go looking again. `Field` takes `isRequired`; `Field.Error` and
+  `Field.Description` register their text (plain text only, via `labelText`)
+  the way `Field.Label` does. `resolveFieldControlAccessibility` turns it into:
+  - **name**: explicit `accessibilityLabel` verbatim → the control's own
+    `defaultLabel` → the field's label → the control's `fallbackLabel`, with
+    ", required" appended when required — the words [`Label`](../label/AGENTS.md)
+    already speaks for its own `isRequired`.
+  - **hint**: "Invalid: {error}" (or "Invalid" with no error text), then the
+    description, then the control's own hint. VoiceOver reads it after a pause;
+    TalkBack reads it as tooltip text. An error on a valid field is read without
+    the "Invalid" lead.
+  - **`accessibilityLabelledBy`** (Android only) at the label's `nativeID`,
+    when the label is an element with no text to lend.
+  The spoken words are `FIELD_ACCESSIBILITY_LABELS`, overridable per call for
+  localisation. **A control wires all of it with `useFieldControlAccessibility`**
+  (`field-control.ts`): spread `accessibilityLabel`, `accessibilityHint` and
+  `accessibilityLabelledBy` on the focusable element and render with the
+  returned `isInvalid`. The own `isInvalid`/`isRequired` beat the field's.
+- **`Field.Label` leaves the accessibility tree once a control takes its
+  name.** The hook claims the label when the control has no name of its own;
+  `resolveFieldLabelHidden` then hides the label (`accessibilityElementsHidden`
+  + `importantForAccessibility="no-hide-descendants"`), so a swipe does not stop
+  on "Email" and then on the "Email" text field. An element label lends nothing,
+  so it stays readable. A claim is a count, so a remounting control never
+  unhides the label for a frame. A required field's label draws `Label`'s
+  asterisk and reads "Email, required" while it is visible to a screen reader.
+- **`Field.Error` announces through one mechanism**: an Android polite live
+  region. `role="alert"` was dropped — on Android it only adds a spoken "alert"
+  to every visit, on iOS it maps to no trait. VoiceOver hears the error as part
+  of the control's hint. An iOS on-appearance announcement is the shared
+  announce helper's job, not this part's.
+- **`Field.Legend` is a header**, so the headings rotor jumps between sections.
 - **A data-attribute class would also hide the decision from unit tests.** Even for a part styling
   itself, `data-invalid:text-destructive` moves the decision from `field.variants.ts`
   into uniwind's runtime matcher, where no unit test can see it. The parts style
@@ -109,8 +145,8 @@ A form field's layout, and the one place its state is written down. Root plus
   `accessibilityState.disabled`, so wrapping it would change this part's public
   surface. The two colour and fade identically instead, and
   they must stay in step with `fieldVariants`' label slot
-  and `resolveFieldTextColor`. A required field uses `Label` directly, since
-  `Field.Label` has no `isRequired`.
+  and `resolveFieldTextColor`. A required field sets `<Field isRequired>`;
+  `Field.Label` reuses `Label`'s mark and its announcement.
 - **There is no `Field.Title`.** On the web it exists because a `<div>` is not a
   `<label>` — label-styled text with nothing to point `htmlFor` at. React Native
   has neither element nor association, so it and `Field.Label` would render the

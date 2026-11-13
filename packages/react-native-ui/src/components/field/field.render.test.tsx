@@ -1,11 +1,29 @@
 import { describe, expect, jest, test } from "@jest/globals";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Checkbox } from "../checkbox";
 import { Slider } from "../slider";
 import { Switch } from "../switch";
 import { Field } from "./field";
 import { useField } from "./field.context";
+import { useFieldControlAccessibility } from "./field-control";
+
+/**
+ * The smallest control that wires a field's accessibility the documented way,
+ * so the parts are tested against the hook rather than against one component.
+ */
+function ProbeControl({ accessibilityLabel }: { accessibilityLabel?: string }) {
+	const a11y = useFieldControlAccessibility({ accessibilityLabel });
+	return (
+		<View
+			accessibilityHint={a11y.accessibilityHint}
+			accessibilityLabel={a11y.accessibilityLabel}
+			accessibilityRole="button"
+			accessible
+			testID="probe"
+		/>
+	);
+}
 
 /**
  * Touches go through Gesture Handler, which Jest cannot drive, so the label
@@ -260,16 +278,16 @@ describe("Field", () => {
 			expect(screen.queryByRole("adjustable", { name: "Volume" })).not.toBeOnTheScreen();
 		});
 
-		test("the error is announced politely as an alert", async () => {
+		test("the error is announced through one mechanism: a polite live region, no alert role", async () => {
 			await renderWithProviders(
 				<Field isInvalid>
 					<Field.Label>Email</Field.Label>
 					<Field.Error>Enter a valid email.</Field.Error>
 				</Field>
 			);
-			const error = screen.getByRole("alert");
-			expect(error).toHaveTextContent("Enter a valid email.");
+			const error = screen.getByText("Enter a valid email.");
 			expect(error).toHaveProp("accessibilityLiveRegion", "polite");
+			expect(screen.queryByRole("alert")).not.toBeOnTheScreen();
 		});
 
 		test("an error with no children renders nothing", async () => {
@@ -281,7 +299,7 @@ describe("Field", () => {
 					<Field.Error>{false}</Field.Error>
 				</Field>
 			);
-			expect(screen.queryByRole("alert")).not.toBeOnTheScreen();
+			expect(screen.getAllByText(/./)).toHaveLength(1);
 		});
 
 		test("an error appears and clears as its message changes", async () => {
@@ -290,13 +308,13 @@ describe("Field", () => {
 					<Field.Error>Too short.</Field.Error>
 				</Field>
 			);
-			expect(screen.getByRole("alert")).toBeOnTheScreen();
+			expect(screen.getByText("Too short.")).toBeOnTheScreen();
 			await view.rerender(
 				<Field>
 					<Field.Error>{undefined}</Field.Error>
 				</Field>
 			);
-			expect(screen.queryByRole("alert")).not.toBeOnTheScreen();
+			expect(screen.queryByText("Too short.")).not.toBeOnTheScreen();
 		});
 
 		test("an error is shown even when the field is not marked invalid", async () => {
@@ -305,7 +323,7 @@ describe("Field", () => {
 					<Field.Error>Required.</Field.Error>
 				</Field>
 			);
-			expect(screen.getByRole("alert")).toHaveTextContent("Required.");
+			expect(screen.getByText("Required.")).toBeOnTheScreen();
 		});
 
 		test("the description and the label are plain text, not controls", async () => {
@@ -315,13 +333,97 @@ describe("Field", () => {
 					<Field.Description>Shown on invoices.</Field.Description>
 				</Field>
 			);
-			expect(screen.queryByRole("alert")).not.toBeOnTheScreen();
 			expect(screen.queryByRole("button")).not.toBeOnTheScreen();
 			expect(screen.getByText("Shown on invoices.")).toBeOnTheScreen();
 		});
 	});
 
+	describe("validity reaching the control", () => {
+		test("a control reads the label, the required state, the error and the description", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Email</Field.Label>
+					<ProbeControl />
+					<Field.Description>We never share it.</Field.Description>
+					<Field.Error>Enter a valid email</Field.Error>
+				</Field>
+			);
+			const control = screen.getByTestId("probe");
+			expect(control).toHaveProp("accessibilityLabel", "Email, required");
+			expect(control).toHaveProp("accessibilityHint", "Invalid: Enter a valid email. We never share it.");
+		});
+
+		test("the hint follows the error as it clears", async () => {
+			const view = await renderWithProviders(
+				<Field isInvalid>
+					<Field.Label>Email</Field.Label>
+					<ProbeControl />
+					<Field.Error>Enter a valid email</Field.Error>
+				</Field>
+			);
+			await view.rerender(
+				<Field>
+					<Field.Label>Email</Field.Label>
+					<ProbeControl />
+					<Field.Error>{null}</Field.Error>
+				</Field>
+			);
+			expect(screen.getByTestId("probe").props.accessibilityHint).toBeUndefined();
+		});
+
+		test("the label leaves the accessibility tree once a control takes its name", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Email</Field.Label>
+					<ProbeControl />
+				</Field>
+			);
+			const label = screen.getByText("Email", { includeHiddenElements: true });
+			expect(label).toHaveProp("importantForAccessibility", "no-hide-descendants");
+			expect(label).toHaveProp("accessibilityElementsHidden", true);
+		});
+
+		test("the label stays readable when the control names itself", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Email</Field.Label>
+					<ProbeControl accessibilityLabel="Work email" />
+				</Field>
+			);
+			expect(screen.getByText("Email")).toHaveProp("importantForAccessibility", "auto");
+		});
+
+		test("the label carries the field's nativeID", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Email</Field.Label>
+				</Field>
+			);
+			expect(screen.getByText("Email").props.nativeID).toMatch(/^delacour-field-label-/);
+		});
+
+		test("a required field's label draws the asterisk and is read as required", async () => {
+			await renderWithProviders(
+				<Field isRequired>
+					<Field.Label>Email</Field.Label>
+				</Field>
+			);
+			const label = screen.getByLabelText("Email, required");
+			expect(label).toHaveTextContent("Email\u00a0*");
+		});
+	});
+
 	describe("compound parts", () => {
+		test("Legend is a header", async () => {
+			await renderWithProviders(
+				<Field.Set>
+					<Field.Legend>Profile</Field.Legend>
+					<Field.Legend variant="label">Address</Field.Legend>
+				</Field.Set>
+			);
+			expect(screen.getByRole("header", { name: "Profile" })).toBeOnTheScreen();
+			expect(screen.getByRole("header", { name: "Address" })).toBeOnTheScreen();
+		});
 		test("Set, Legend, Group, Content and Separator render without a Field", async () => {
 			await renderWithProviders(
 				<Field.Set>
@@ -355,7 +457,7 @@ describe("Field", () => {
 			);
 			expect(screen.getByText("Loose")).toBeOnTheScreen();
 			expect(screen.getByText("Described.")).toBeOnTheScreen();
-			expect(screen.getByRole("alert")).toBeOnTheScreen();
+			expect(screen.getByText("Broken.")).toBeOnTheScreen();
 		});
 	});
 });

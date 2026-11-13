@@ -1,0 +1,45 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-announce",
+	"type": "registry:hook",
+	"title": "useAnnounce",
+	"description": "announce(), useAnnounce() and useAnnouncement() — heard once on iOS, Android and the web.",
+	"registryDependencies": [
+		"announce"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-announce.ts",
+			"target": "use-announce.ts",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/announce",
+					"to": "@registry/lib/announce"
+				}
+			]
+		}
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-announce.render.test.tsx",
+			"target": "use-announce.render.test.tsx",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
+	]
+}

@@ -10,7 +10,8 @@
 	"registryDependencies": [
 		"input",
 		"text",
-		"tv"
+		"tv",
+		"use-announce"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -39,6 +40,10 @@
 			"target": "textarea/textarea.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../input",
 					"to": "@registry/ui/input"
@@ -98,6 +103,10 @@
 			"target": "textarea/textarea.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

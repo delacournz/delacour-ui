@@ -244,9 +244,22 @@ export type MenuItemAccessibilityInput =
 export type MenuItemAccessibilityState = {
 	disabled: boolean;
 	checked?: boolean;
-	selected?: boolean;
 	expanded?: boolean;
 };
+
+/** The role a menu row announces. */
+export type MenuRowRole = "menuitem" | "radio";
+
+/**
+ * The role a row announces. React Native has no `menuitemradio`, and a
+ * `menuitem` with `selected` reads as a highlighted row rather than as one
+ * choice of several, so a radio row is a `radio` and announces `checked` —
+ * "Compact, radio button, checked" on VoiceOver and TalkBack alike. Every other
+ * row is a `menuitem`.
+ */
+export function resolveMenuRowRole(kind: MenuRowKind): MenuRowRole {
+	return kind === "radio" ? "radio" : "menuitem";
+}
 
 /** The `accessibilityState` a row announces — one source, so the matrix is testable. */
 export function resolveMenuItemAccessibility(input: MenuItemAccessibilityInput): MenuItemAccessibilityState {
@@ -256,7 +269,7 @@ export function resolveMenuItemAccessibility(input: MenuItemAccessibilityInput):
 		case "checkbox":
 			return { checked: input.isChecked, disabled: input.isDisabled };
 		case "radio":
-			return { disabled: input.isDisabled, selected: input.isSelected };
+			return { checked: input.isSelected, disabled: input.isDisabled };
 		case "sub-trigger":
 			return { disabled: input.isDisabled, expanded: input.isExpanded };
 		default:

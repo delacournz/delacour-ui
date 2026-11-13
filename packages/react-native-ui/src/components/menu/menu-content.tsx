@@ -14,7 +14,7 @@ import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTimin
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { Pressable } from "../pressable";
-import { useMenuPart } from "./menu.context";
+import { focusMenuTarget, useMenuPart } from "./menu.context";
 import {
 	MENU_DEFAULT_OFFSET,
 	MENU_EDGE_MARGIN,
@@ -95,9 +95,10 @@ export function MenuContent({
 	hasScrim = false,
 	anchor: anchorProp,
 	backdrop,
+	onAccessibilityEscape,
 	...props
 }: MenuContentProps): ReactElement | null {
-	const { anchor: contextAnchor, close, isOpen } = useMenuPart("Menu.Content");
+	const { anchor: contextAnchor, close, firstRowRef, isOpen, triggerRef } = useMenuPart("Menu.Content");
 	const anchor = anchorProp ?? contextAnchor;
 	const window = useWindowDimensions();
 	const insets = useSafeAreaInsets();
@@ -146,18 +147,29 @@ export function MenuContent({
 
 	const handleContentSize = useCallback((_width: number, height: number) => setMeasuredHeight(height), []);
 
+	const handleEntered = useCallback(() => focusMenuTarget(firstRowRef.current), [firstRowRef]);
+
 	const handleExited = useCallback(() => {
 		setPresent(false);
 		setLocked(null);
 		setMeasuredHeight(null);
-	}, []);
+		focusMenuTarget(triggerRef.current);
+	}, [triggerRef]);
+
+	const handleEscape = useCallback(() => {
+		close();
+		onAccessibilityEscape?.();
+	}, [close, onAccessibilityEscape]);
 
 	const progress = useSharedValue(0);
 
 	useEffect(() => {
 		if (isOpen) {
 			if (!locked) return;
-			progress.value = withTiming(1, { duration: MENU_MOTION.enterMs });
+			progress.value = withTiming(1, { duration: MENU_MOTION.enterMs }, (isFinished) => {
+				"worklet";
+				if (isFinished) scheduleOnRN(handleEntered);
+			});
 			return;
 		}
 		if (!isPresent) return;
@@ -165,7 +177,7 @@ export function MenuContent({
 			"worklet";
 			if (isFinished) scheduleOnRN(handleExited);
 		});
-	}, [handleExited, isOpen, isPresent, locked, progress]);
+	}, [handleEntered, handleExited, isOpen, isPresent, locked, progress]);
 
 	const { cap, origin, position } = resolvePanelFrame({
 		align,
@@ -222,6 +234,7 @@ export function MenuContent({
 					accessibilityRole="menu"
 					accessibilityViewIsModal
 					className={slots.panel()}
+					onAccessibilityEscape={handleEscape}
 					pointerEvents={locked ? "auto" : "none"}
 					style={[position, panelStyle]}
 					{...props}

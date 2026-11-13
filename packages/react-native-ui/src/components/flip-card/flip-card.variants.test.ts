@@ -18,6 +18,7 @@ import {
 	normalizeRotation,
 	oppositeFace,
 	resolveFaceA11y,
+	resolveFaceMode,
 	resolveFaceOpacity,
 	resolveFaceTransform,
 	resolveFlipCardActions,
@@ -320,6 +321,23 @@ describe("resolveFlipCardActions", () => {
 	test("every gesture trigger has a non-gesture path", () => {
 		for (const trigger of FLIP_CARD_TRIGGERS.filter((value) => value !== "manual")) {
 			expect(resolveFlipCardActions(trigger).length).toBeGreaterThan(0);
+		}
+	});
+});
+
+describe("resolveFaceMode", () => {
+	test("press: the visible face stays a container and gets a Flip card button behind its content", () => {
+		expect(resolveFaceMode({ hidden: false, trigger: "press" })).toBe("flip-button");
+	});
+
+	test("swipe: the visible face is one grouped element", () => {
+		expect(resolveFaceMode({ hidden: false, trigger: "swipe" })).toBe("grouped");
+	});
+
+	test("manual and any hidden face are plain containers", () => {
+		expect(resolveFaceMode({ hidden: false, trigger: "manual" })).toBe("container");
+		for (const trigger of FLIP_CARD_TRIGGERS) {
+			expect(resolveFaceMode({ hidden: true, trigger })).toBe("container");
 		}
 	});
 });

@@ -49,6 +49,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
+				},
+				{
 					"from": "../surface",
 					"to": "@registry/ui/surface"
 				}

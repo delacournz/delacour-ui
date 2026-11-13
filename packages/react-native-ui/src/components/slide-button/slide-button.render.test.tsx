@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { Text } from "react-native";
+import { AccessibilityInfo, Platform, Text } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { SLIDE_BUTTON_GESTURE_TEST_ID, SlideButton } from "./slide-button";
 import { useSlideButton } from "./slide-button.context";
@@ -350,5 +351,84 @@ describe("SlideButton", () => {
 			);
 			spy.mockRestore();
 		});
+	});
+});
+
+describe("SlideButton announcements", () => {
+	const originalOS = Platform.OS;
+	let spy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+	let optionsSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+	function setPlatform(os: typeof Platform.OS) {
+		Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+	}
+
+	beforeEach(() => {
+		resetAnnouncer();
+		spy = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		optionsSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		spy.mockClear();
+		optionsSpy.mockClear();
+		setPlatform("android");
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	const slide = (props: Partial<React.ComponentProps<typeof SlideButton>> = {}) => (
+		<SlideButton {...props}>
+			<SlideButton.Label>Slide</SlideButton.Label>
+		</SlideButton>
+	);
+
+	test("a screen reader's activation says Confirmed once", async () => {
+		await renderWithProviders(slide());
+		await fireEvent(screen.getByRole("button"), "accessibilityTap");
+		await waitFor(() => expect(spy).toHaveBeenCalledWith("Confirmed"));
+		expect(spy).toHaveBeenCalledTimes(1);
+	});
+
+	test("a resolving promise says Working then Confirmed, once each", async () => {
+		await renderWithProviders(slide({ onComplete: () => Promise.resolve() }));
+		await fireEvent(screen.getByRole("button"), "accessibilityTap");
+		await waitFor(() => expect(spy).toHaveBeenCalledWith("Confirmed"));
+		expect(spy.mock.calls.map(([message]) => message)).toEqual(["Working", "Confirmed"]);
+	});
+
+	test("a rejecting promise says Failed, assertively on iOS", async () => {
+		setPlatform("ios");
+		await renderWithProviders(slide({ onComplete: () => Promise.reject(new Error("no")) }));
+		await fireEvent(screen.getByRole("button"), "accessibilityTap");
+		await waitFor(() => expect(optionsSpy).toHaveBeenCalledWith("Failed. Slide to try again", { queue: false }));
+		expect(optionsSpy.mock.calls.map(([message]) => message)).not.toContain("Confirmed");
+	});
+
+	test("controlled: Confirmed is said when isCompleted answers, not on the request", async () => {
+		const view = await renderWithProviders(slide({ isCompleted: false }));
+		await fireEvent(screen.getByRole("button"), "accessibilityTap");
+		expect(spy).not.toHaveBeenCalled();
+		await view.rerender(slide({ isCompleted: true }));
+		await waitFor(() => expect(spy).toHaveBeenCalledWith("Confirmed"));
+		expect(spy).toHaveBeenCalledTimes(1);
+	});
+
+	test("isLoading turning on says Working", async () => {
+		const view = await renderWithProviders(slide());
+		await view.rerender(slide({ isLoading: true }));
+		await waitFor(() => expect(spy).toHaveBeenCalledWith("Working"));
+	});
+
+	test("a slide that starts completed is silent on mount", async () => {
+		await renderWithProviders(slide({ defaultCompleted: true }));
+		expect(spy).not.toHaveBeenCalled();
+	});
+
+	test("announce={false} is silent", async () => {
+		await renderWithProviders(slide({ announce: false, onComplete: () => Promise.reject(new Error("no")) }));
+		await fireEvent(screen.getByRole("button"), "accessibilityTap");
+		await waitFor(() => expect(isChecked(screen.getByRole("button"))).toBe(false));
+		expect(spy).not.toHaveBeenCalled();
 	});
 });

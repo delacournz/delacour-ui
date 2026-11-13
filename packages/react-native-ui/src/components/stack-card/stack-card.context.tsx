@@ -10,6 +10,12 @@ export type StackCardContextValue = StackCardState & {
 	labelFor: (direction: StackCardDirection) => string;
 	/** The colour of the stamp answering for each direction, which tints its action. */
 	stampColors: Partial<Record<StackCardDirection, StackCardStampColor>>;
+	/** Throws as the top card's own accessibility action does: focus follows to the new top card. */
+	swipeFromCard: (direction: StackCardDirection) => void;
+	/** Undoes as the top card's own accessibility action does: focus follows to the restored card. */
+	undoFromCard: () => void;
+	/** Counts up each time the card's own action moved the top card, asking the new one for focus. */
+	focusToken: number;
 	isDisabled: boolean;
 	layout: StackCardLayout;
 	/** Cards drawn behind the top, already clamped to 0..4. */

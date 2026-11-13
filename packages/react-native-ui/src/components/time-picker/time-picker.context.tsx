@@ -33,8 +33,17 @@ export type TimePickerContextValue = {
 	doneLabel: string;
 	clearLabel: string;
 	clearable: boolean;
-	/** The trigger's accessible name, already resolved through the field. */
-	accessibilityLabel: string;
+	/** The trigger's accessible name, already resolved through the field, with ", required" when it is. */
+	accessibilityLabel: string | undefined;
+	/** The trigger's hint: the field's invalid state, error and description, then what a press does. */
+	accessibilityHint: string | undefined;
+	/** Android's pointer at `Field.Label`, only when there is no `accessibilityLabel`. */
+	accessibilityLabelledBy: string | undefined;
+	/**
+	 * What each inline wheel column speaks beside its own name, or `null` in a
+	 * sheet, where the trigger carries it and the sheet has its own title.
+	 */
+	wheelAccessibility: { label: string | undefined; hint: string | undefined; isRequired: boolean } | null;
 	/** What the bare wheel needs, gathered once so `TimePicker.Wheel` can spread it. */
 	wheel: Required<Pick<TimePickerWheelOptions, "minuteStep" | "showSeconds" | "visibleRows">> &
 		Pick<TimePickerWheelOptions, "minTime" | "maxTime">;

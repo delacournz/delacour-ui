@@ -33,6 +33,16 @@ export type TimePickerWheelProps = TimePickerWheelOptions & {
 	value: TimeValue | null;
 	/** Fires each time a wheel comes to rest, with the time pulled onto the step and inside the bounds. */
 	onValueChange: (value: TimeValue) => void;
+	/**
+	 * The name each column leads with — "Reminder, Hour". Set when the wheel is a
+	 * whole field's control; `TimePicker presentation="inline"` sets it from the
+	 * `Field.Label`. Bare columns read "Hour", "Minute".
+	 */
+	accessibilityLabel?: string;
+	/** Spoken on every column — the field's error and description. */
+	accessibilityHint?: string;
+	/** Ends each column's name with ", required". Needs `accessibilityLabel`. */
+	isRequired?: boolean;
 	className?: string;
 	testID?: string;
 };

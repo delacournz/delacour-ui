@@ -19,7 +19,6 @@ import {
 	resolveColumnAccessibilityValue,
 	resolveWheelPadding,
 	resolveWheelRowAppearance,
-	TIME_WHEEL_COLUMN_LABELS,
 	type TimeWheelColumnKind,
 	type TimeWheelRow,
 	timePickerVariants,
@@ -32,6 +31,10 @@ import {
 const STILL_RELEASE_VELOCITY = 0.05;
 
 export type TimeWheelColumnProps = {
+	/** The column's spoken name, already resolved — "Hour", or "Reminder, Hour, required". */
+	accessibilityLabel: string;
+	/** Spoken after the value, on every column of a field. */
+	accessibilityHint?: string;
 	kind: TimeWheelColumnKind;
 	rows: readonly TimeWheelRow[];
 	/** The row the column should rest on. A change scrolls to it. */
@@ -74,6 +77,8 @@ export type TimeWheelColumnProps = {
  * hidden; swiping up or down steps one row and settles exactly as a scroll does.
  */
 export function TimeWheelColumn({
+	accessibilityHint,
+	accessibilityLabel,
 	kind,
 	rows,
 	selectedIndex,
@@ -163,7 +168,8 @@ export function TimeWheelColumn({
 	return (
 		<View
 			accessibilityActions={isDisabled ? undefined : ACCESSIBILITY_ACTIONS}
-			accessibilityLabel={TIME_WHEEL_COLUMN_LABELS[kind]}
+			accessibilityHint={accessibilityHint}
+			accessibilityLabel={accessibilityLabel}
 			accessibilityRole="adjustable"
 			accessibilityState={{ disabled: isDisabled }}
 			accessibilityValue={{ text: current ? resolveColumnAccessibilityValue(kind, current.label) : "" }}

@@ -5,6 +5,7 @@ import {
 	indexToOffset,
 	nearestEnabledIndex,
 	offsetToIndex,
+	resolveColumnAccessibilityLabel,
 	resolveColumnAccessibilityValue,
 	resolveTimeFromColumn,
 	resolveTimePickerTriggerClass,
@@ -320,5 +321,30 @@ describe("resolveColumnAccessibilityValue", () => {
 		expect(resolveColumnAccessibilityValue("second", "15")).toBe("15 seconds");
 		expect(resolveColumnAccessibilityValue("hour", "3")).toBe("3 o'clock");
 		expect(resolveColumnAccessibilityValue("period", "PM")).toBe("PM");
+	});
+});
+
+describe("resolveColumnAccessibilityLabel", () => {
+	test("is the bare column name with no group name", () => {
+		expect(resolveColumnAccessibilityLabel({ kind: "hour" })).toBe("Hour");
+		expect(resolveColumnAccessibilityLabel({ kind: "period" })).toBe("AM or PM");
+	});
+
+	test("leads with the group name, then the column", () => {
+		expect(resolveColumnAccessibilityLabel({ kind: "minute", label: "Reminder" })).toBe("Reminder, Minute");
+	});
+
+	test("puts required after the column it names", () => {
+		expect(resolveColumnAccessibilityLabel({ kind: "hour", label: "Reminder", isRequired: true })).toBe(
+			"Reminder, Hour, required"
+		);
+	});
+
+	test("ignores required with no group name", () => {
+		expect(resolveColumnAccessibilityLabel({ kind: "hour", isRequired: true })).toBe("Hour");
+	});
+
+	test("treats a blank group name as none", () => {
+		expect(resolveColumnAccessibilityLabel({ kind: "hour", label: "  " })).toBe("Hour");
 	});
 });

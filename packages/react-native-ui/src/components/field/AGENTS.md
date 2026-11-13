@@ -88,7 +88,9 @@ A form field's layout, and the one place its state is written down. Root plus
   `accessibilityLabelledBy` on the focusable element and render with the
   returned `isInvalid`. The own `isInvalid`/`isRequired` beat the field's.
 - **`Field.Label` leaves the accessibility tree once a control takes its
-  name.** The hook claims the label when the control has no name of its own;
+  name.** The hook claims the label when the control has no name of its own
+  (`takesFieldLabel: false` opts out, for a control named some way the hook
+  cannot see — a `Checkbox` whose inline content is an element);
   `resolveFieldLabelHidden` then hides the label (`accessibilityElementsHidden`
   + `importantForAccessibility="no-hide-descendants"`), so a swipe does not stop
   on "Email" and then on the "Email" text field. An element label lends nothing,

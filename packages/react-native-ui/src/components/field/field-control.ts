@@ -22,6 +22,12 @@ export type UseFieldControlAccessibilityOptions = {
 	isRequired?: boolean;
 	/** The spoken words, for localisation. */
 	labels?: FieldAccessibilityLabels;
+	/**
+	 * Set `false` when the control is named some other way the hook cannot see —
+	 * a `Checkbox` whose inline content is an element names itself through the
+	 * tree — so the field's label is not claimed and stays readable.
+	 */
+	takesFieldLabel?: boolean;
 };
 
 /**
@@ -45,7 +51,10 @@ export function useFieldControlAccessibility(
 ): FieldControlAccessibility {
 	const field = useFieldContext();
 	const claimLabel = field?.claimLabel;
-	const takesFieldLabel = options.accessibilityLabel === undefined && options.defaultLabel === undefined;
+	const takesFieldLabel =
+		(options.takesFieldLabel ?? true) &&
+		options.accessibilityLabel === undefined &&
+		options.defaultLabel === undefined;
 
 	useEffect(() => {
 		if (!claimLabel || !takesFieldLabel) return;

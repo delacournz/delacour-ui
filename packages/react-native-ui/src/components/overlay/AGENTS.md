@@ -110,6 +110,12 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   `setAccessibilityFocus` + `findNodeHandle`. Android containment is not the hook's job: the
   provider and portal already hide everything outside the top modal. The bottom-sheet engine
   cannot import this package, so it carries the same three rules in its own code.
+- **`use-modal-accessibility.ts` and `modal-accessibility.ts` are leaves.** They import React,
+  React Native, `overlay.context.tsx` and the pure registry — never `overlay.tsx`, which pulls in
+  `react-native-teleport`. A component that does not draw through `Overlay.Portal` (Menu in a
+  React Native `Modal`, Fab.Group and SectionProgress inline) imports the hook from
+  `../overlay/use-modal-accessibility` rather than `../overlay`, so using it does not make an app
+  resolve the optional teleport peer (package rule 3's leaf exception).
 - **The portal's wrapper is `box-none`.** An overlay with no scrim — a toast, a tooltip — leaves
   the app under it interactive.
 - **The provider hears every touch that starts beneath it, and claims none.** Its children sit in a

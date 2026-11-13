@@ -136,7 +136,8 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   failure. **One announcement route per platform.** On show, and on every revision, the item speaks
   `title. description` through the shared announcer (`useAnnounce`) on iOS and Android alike, and the
   message card's own live region is `none`: a live region beside `announceForAccessibility` is heard
-  twice on Android. On iOS a warning or failure is assertive (`queue: false`, cuts in) and any other
+  twice on Android. The web has no announcement API, so there the card keeps its live region and the
+  item announces nothing — `resolveAnnounceRoute` decides both. On iOS a warning or failure is assertive (`queue: false`, cuts in) and any other
   status queues behind VoiceOver speech, so toasts shown together do not cut each other off (the
   plain `announceForAccessibility` joins no queue). The announcer key is the item instance, so a
   promise toast's "Saving" and "Saved" are two revisions and neither is dropped — one landing inside

@@ -51,9 +51,9 @@ describe("Field", () => {
 				<Field.Description>Push alerts for new messages.</Field.Description>
 			</Field>
 		);
-		expect(screen.getByText("Notifications")).toBeOnTheScreen();
+		expect(screen.getByText("Notifications", { includeHiddenElements: true })).toBeOnTheScreen();
 		expect(screen.getByText("Push alerts for new messages.")).toBeOnTheScreen();
-		expect(screen.getByRole("switch")).toBeOnTheScreen();
+		expect(screen.getByRole("switch", { name: "Notifications" })).toBeOnTheScreen();
 	});
 
 	test("a field of static text is layout, not an interactive row", async () => {

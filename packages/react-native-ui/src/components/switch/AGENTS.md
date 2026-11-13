@@ -193,6 +193,14 @@ section to read first — what follows is only where a switch differs.
   tap on the pill means. A switch is a binary preference, not one of a set, so
   there is nothing for a group to own; the axis ladder is two rungs, the switch's
   own props then an enclosing `Field`.
+- **The switch is named and described by its `Field` through
+  `useFieldControlAccessibility`**, called once on the root (the one focusable
+  element). Its own `accessibilityLabel` wins; otherwise the `Field.Label` text
+  becomes the name ("Notifications, required") and `Field.Label` steps out of the
+  tree so it is not read twice, with an invalid state, `Field.Error` and
+  `Field.Description` spoken as the hint ("Invalid: ..."). Android also gets
+  `accessibilityLabelledBy`. React Native has no `aria-invalid`/`aria-required`,
+  so validity is spoken, not flagged. Outside a `Field` nothing changes.
 - **A part is recognised by its `displayName`, never by reference alone.** The
   root composes a `Switch.Thumb` in when the children hold none, which means it
   has to *ask* whether a child is one — and `child.type === SwitchThumb` is not a

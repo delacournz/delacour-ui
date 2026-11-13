@@ -37,6 +37,7 @@ export function Demo(): ReactElement {
 					defaultOpen
 					dynamicSizing={false}
 					enablePanDownToClose={false}
+					modal={false}
 					onIndexChange={setIndex}
 					snapPoints={SNAP_POINTS}
 				>

@@ -1,5 +1,6 @@
+import { useBottomSheetInternal } from "@delacour/react-native-bottom-sheet";
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { Fragment, type ReactElement, type ReactNode } from "react";
+import { Fragment, type ReactElement, type ReactNode, useState } from "react";
 import { BackHandler } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
@@ -251,9 +252,54 @@ describe("BottomSheetProvider and screen readers", () => {
 		});
 	});
 
-	test("a sheet with no scrim leaves the app reachable", async () => {
+	test("a modal sheet with no scrim still hides the app", async () => {
 		await withTeleportOutOfTree(async () => {
 			await renderWithProviders(<App overlay={false} />, { wrapper: Providers });
+			expect(screen.queryByText("app behind")).toBeNull();
+		});
+	});
+
+	test("a touch-through overlay leaves the app reachable and the panel non-modal", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(
+				<>
+					<Text>app behind</Text>
+					<BottomSheet defaultOpen>
+						<BottomSheet.Portal>
+							<BottomSheet.Overlay enableTouchThrough />
+							<BottomSheet.Container testID="tt-panel">
+								<BottomSheet.Content>
+									<BottomSheet.Title>Sheet</BottomSheet.Title>
+								</BottomSheet.Content>
+							</BottomSheet.Container>
+						</BottomSheet.Portal>
+					</BottomSheet>
+				</>,
+				{ wrapper: Providers }
+			);
+			expect(screen.getByText("app behind")).toBeOnTheScreen();
+			expect(screen.getByTestId("tt-panel")).toHaveProp("accessibilityViewIsModal", false);
+		});
+	});
+
+	test("a non-modal sheet leaves the app reachable", async () => {
+		await withTeleportOutOfTree(async () => {
+			await renderWithProviders(
+				<>
+					<Text>app behind</Text>
+					<BottomSheet defaultOpen modal={false}>
+						<BottomSheet.Portal>
+							<BottomSheet.Overlay />
+							<BottomSheet.Container>
+								<BottomSheet.Content>
+									<BottomSheet.Title>Sheet</BottomSheet.Title>
+								</BottomSheet.Content>
+							</BottomSheet.Container>
+						</BottomSheet.Portal>
+					</BottomSheet>
+				</>,
+				{ wrapper: Providers }
+			);
 			expect(screen.getByText("app behind")).toBeOnTheScreen();
 		});
 	});
@@ -316,5 +362,124 @@ describe("BottomSheet and Android back", () => {
 		);
 		expect(screen.getByText("dialog")).toBeOnTheScreen();
 		expect(subscriptions.count()).toBe(0);
+	});
+});
+
+describe("BottomSheet modal accessibility", () => {
+	function Sheet(props: Omit<BottomSheetProps, "children"> & { overlay?: boolean }): ReactElement {
+		const { overlay = false, ...rest } = props;
+		return (
+			<BottomSheet {...rest}>
+				<BottomSheet.Trigger asChild>
+					<Button>Filters</Button>
+				</BottomSheet.Trigger>
+				<BottomSheet.Portal>
+					{overlay ? <BottomSheet.Overlay /> : null}
+					<BottomSheet.Container testID="panel">
+						<BottomSheet.Content>
+							<BottomSheet.Title>Filter results</BottomSheet.Title>
+							<Text>A row inside the sheet</Text>
+						</BottomSheet.Content>
+					</BottomSheet.Container>
+				</BottomSheet.Portal>
+			</BottomSheet>
+		);
+	}
+
+	test("the panel is modal while open, with or without a scrim", async () => {
+		await renderWithProviders(<Sheet defaultOpen />, { wrapper: Providers });
+		expect(screen.getByTestId("panel")).toHaveProp("accessibilityViewIsModal", true);
+	});
+
+	test("a non-modal sheet's panel is not modal and does not answer escape", async () => {
+		await renderWithProviders(<Sheet defaultOpen modal={false} />, { wrapper: Providers });
+		const panel = screen.getByTestId("panel");
+		expect(panel).toHaveProp("accessibilityViewIsModal", false);
+		expect(panel.props.onAccessibilityEscape).toBeUndefined();
+	});
+
+	test("the escape gesture on the panel closes a dismissible sheet", async () => {
+		const onOpenChange = jest.fn();
+		await renderWithProviders(<Sheet defaultOpen onOpenChange={onOpenChange} />, { wrapper: Providers });
+		await fireEvent(screen.getByTestId("panel"), "accessibilityEscape");
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+	});
+
+	test("a sheet that cannot be pan-dismissed ignores escape on the panel and the handle", async () => {
+		const onOpenChange = jest.fn();
+		await renderWithProviders(<Sheet defaultOpen enablePanDownToClose={false} onOpenChange={onOpenChange} />, {
+			wrapper: Providers,
+		});
+		expect(screen.getByTestId("panel").props.onAccessibilityEscape).toBeUndefined();
+		expect(screen.getByTestId("panel")).toHaveProp("accessibilityViewIsModal", true);
+		await fireEvent(screen.getByRole("adjustable", { name: "Bottom sheet" }), "accessibilityEscape");
+		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
+	test("the title and the trigger hand their nodes to the engine for focus", async () => {
+		let nodes: { title: unknown; trigger: unknown } | null = null;
+		function Probe(): ReactElement {
+			const { accessibilityRefs } = useBottomSheetInternal();
+			nodes = { title: accessibilityRefs.title.current, trigger: accessibilityRefs.trigger.current };
+			return <Text>probe</Text>;
+		}
+		function WithProbe(): ReactElement {
+			const [, force] = useState(0);
+			return (
+				<BottomSheet defaultOpen>
+					<BottomSheet.Trigger asChild>
+						<Button onPress={() => force((n) => n + 1)}>Filters</Button>
+					</BottomSheet.Trigger>
+					<BottomSheet.Portal>
+						<BottomSheet.Container>
+							<BottomSheet.Content>
+								<BottomSheet.Title>Filter results</BottomSheet.Title>
+								<Probe />
+							</BottomSheet.Content>
+						</BottomSheet.Container>
+					</BottomSheet.Portal>
+				</BottomSheet>
+			);
+		}
+		await renderWithProviders(<WithProbe />, { wrapper: Providers });
+		await press("Filters");
+		expect((nodes as { title: unknown; trigger: unknown } | null)?.title).not.toBeNull();
+		expect((nodes as { title: unknown; trigger: unknown } | null)?.trigger).not.toBeNull();
+	});
+
+	test("a closed sheet's panel is not modal", async () => {
+		await renderWithProviders(<Sheet />, { wrapper: Providers });
+		expect(screen.queryByTestId("panel")).not.toBeOnTheScreen();
+	});
+
+	test("the trigger reports expanded while the sheet is open", async () => {
+		await renderWithProviders(<Sheet />, { wrapper: Providers });
+		expect(screen.getByRole("button", { name: "Filters" })).toHaveProp("accessibilityState", {
+			busy: false,
+			disabled: false,
+			expanded: false,
+		});
+		await press("Filters");
+		expect(screen.getByRole("button", { name: "Filters" })).toBeExpanded();
+	});
+
+	test("the second sheet is the only modal one while two are open", async () => {
+		await renderWithProviders(
+			<>
+				<Sheet defaultOpen />
+				<BottomSheet defaultOpen>
+					<BottomSheet.Portal>
+						<BottomSheet.Container testID="top-panel">
+							<BottomSheet.Content>
+								<BottomSheet.Title>Top</BottomSheet.Title>
+							</BottomSheet.Content>
+						</BottomSheet.Container>
+					</BottomSheet.Portal>
+				</BottomSheet>
+			</>,
+			{ wrapper: Providers }
+		);
+		expect(screen.getByTestId("top-panel")).toHaveProp("accessibilityViewIsModal", true);
+		expect(screen.getByTestId("panel")).toHaveProp("accessibilityViewIsModal", false);
 	});
 });

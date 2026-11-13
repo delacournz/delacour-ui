@@ -1,12 +1,14 @@
 import {
 	BottomSheet as Headless,
 	type BottomSheetContainerProps as HeadlessProps,
+	useBottomSheetInternal,
 } from "@delacour/react-native-bottom-sheet";
 import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 import { withUniwind } from "uniwind";
 import { cn } from "../../lib/cn";
 import { BottomSheetBackground } from "./bottom-sheet-background";
 import { BottomSheetHandle } from "./bottom-sheet-handle";
+import { useHideAppWhileModal, useIsInRootHost } from "./bottom-sheet-modal.context";
 
 /**
  * The engine's panel, taught `className`.
@@ -58,6 +60,12 @@ export function hasSurfaceParts(children: ReactNode): boolean {
  * and no surface is a decision, not an omission. The three `*ClassName` props
  * reach the parts it writes; a part you write takes its own `className`.
  *
+ * **A modal sheet hides the app from screen readers.** While the sheet is
+ * open, `modal` and the top of its host, and is presented in the `"root"` host,
+ * the panel registers with `BottomSheetProvider`, which hides the app — with or
+ * without a scrim. An `Overlay` with `enableTouchThrough`, or `modal={false}`,
+ * makes the sheet non-modal and leaves the app reachable.
+ *
  * **Sizing and behaviour live on the root, not here.** `snapPoints`,
  * `dynamicSizing`, `maxDynamicContentSize`, `keyboardBehavior` and the rest
  * are `BottomSheet`'s props: the engine resolves them once for every part, and
@@ -84,6 +92,10 @@ export function BottomSheetContainer({
 	handleIndicatorClassName,
 	...props
 }: BottomSheetContainerProps): ReactElement {
+	const { presented, isModal } = useBottomSheetInternal();
+	const isInRootHost = useIsInRootHost();
+	useHideAppWhileModal(presented && isModal && isInRootHost);
+
 	const surface = hasSurfaceParts(children) ? null : (
 		<>
 			<BottomSheetBackground className={backgroundClassName} />

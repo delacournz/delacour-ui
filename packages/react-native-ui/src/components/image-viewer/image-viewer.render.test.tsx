@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
-import { View } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { AccessibilityInfo, View } from "react-native";
+import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { ImageViewer, type ImageViewerProps } from "./image-viewer";
 import { useImageViewer } from "./image-viewer.context";
@@ -101,6 +101,29 @@ describe("ImageViewer", () => {
 				expect.objectContaining({ label: "Reset zoom", name: "resetZoom" }),
 			])
 		);
+	});
+
+	test("the stage holds VoiceOver, and the escape scrub closes the viewer", async () => {
+		const onOpenChange = jest.fn();
+		await renderWithProviders(<Gallery defaultOpen onOpenChange={onOpenChange} />);
+		const viewer = await pager();
+		let stage = viewer.parent;
+		while (stage && stage.props.accessibilityViewIsModal === undefined) stage = stage.parent;
+		if (!stage) throw new Error("no modal stage above the pager");
+		expect(stage.props.accessibilityViewIsModal).toBe(true);
+		expect(viewer.props.accessibilityViewIsModal).toBeUndefined();
+
+		await fireEvent(stage, "accessibilityEscape");
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+	});
+
+	test("focus goes to the pager after the entrance", async () => {
+		const spy = jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation(() => {});
+		await renderWithProviders(<Gallery defaultOpen />);
+		const viewer = await pager();
+		await waitFor(() => expect(spy).toHaveBeenCalledWith(expect.anything(), "focus"), { timeout: 3000 });
+		expect(viewer).toBeTruthy();
+		spy.mockRestore();
 	});
 
 	test("uncontrolled: increment and decrement page and report once per change", async () => {

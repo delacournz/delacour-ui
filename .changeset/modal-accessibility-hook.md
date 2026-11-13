@@ -2,7 +2,7 @@
 "@delacour/react-native-ui": minor
 ---
 
-Overlay: new `useModalAccessibility` hook, and every modal container now goes through it. It makes a container modal to VoiceOver and gives it the escape scrub only while it is open and the top overlay, moves focus to its title or first item once it has entered, and returns focus to its trigger once it has gone — through `sendAccessibilityEvent` rather than the deprecated `setAccessibilityFocus`. The pure parts (`isModalOnTop`, `firstFocusTarget`, `resolveModalContainerAccessibility`) are exported too.
+New `useModalAccessibility` hook (`@delacour/react-native-ui/hooks/use-modal-accessibility`), and every modal container now goes through it. It makes a container modal to VoiceOver and gives it the escape scrub only while it is open and on top, moves focus to its title or first item once it has entered, and returns focus to its trigger once it has gone — through `sendAccessibilityEvent` rather than the deprecated `setAccessibilityFocus`. Overlay adds `useOverlayModalAccessibility`, which reads "on top" from the overlay registry (`isModalOnTop`), and the pure parts are in `lib/modal-accessibility`.
 
 - Dialog, Drawer, Popover: a container under a popover or menu opened from it lets go of VoiceOver. Dialog and Drawer triggers report `expanded`.
 - Menu and ContextMenu: VoiceOver's escape scrub closes the menu, focus lands on the first heading or enabled row, and returns to the trigger.

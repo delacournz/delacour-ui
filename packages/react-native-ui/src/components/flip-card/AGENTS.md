@@ -77,15 +77,25 @@ the back, a profile with details behind it. A compound root plus `FlipCard.Front
   card, so a `FlipCard.Trigger` written beside the faces would be covered by it; the root splits
   its children and stacks the rest under the card with a gap. A face must be a direct child to be
   recognised — wrapped in a fragment or a component of its own, it lands beneath the card.
-- **Screen readers always have a non-gesture path.** The card is a container
-  (`accessible={false}`), so controls on its faces stay reachable one by one. `"press"` exposes
-  `activate` on the root and a screen reader's double-tap on any face content lands the tap.
-  `"swipe"` has no tap, and iOS only runs an action on an accessibility element, so the
-  **visible face** becomes one element holding `activate` ("Flip card") and the card's
-  `accessibilityLabel` — its content still reads as its label. `"manual"` leaves the path to the
-  author's `FlipCard.Trigger`. `resolveFlipCardActions` is tested to never return nothing for a
-  gesture trigger. After a turn settles, `AccessibilityInfo.announceForAccessibility` speaks
-  `faceLabels[face]`; the card never moves focus itself — `onFaceChange` is where an author does.
+- **Screen readers always have a non-gesture path.** The card root is a container
+  (`accessible={false}`) and lists no action — a container is never focused — so controls on its
+  faces stay reachable one by one. `resolveFaceMode` decides each face's part:
+  - **`"press"`** — the visible face stays a container, and its first child is a transparent,
+    absolutely-filling, `pointerEvents="none"` accessible **"Flip card" button** (hint "Shows the
+    back" / "Shows the front"). It sits behind the content, so explore-by-touch over a control
+    lands on the control. Its activation goes through `resolvePressableActivation`:
+    `onAccessibilityTap` on iOS, an `activate` action on Android. A disabled card keeps the
+    button, marks it disabled and consumes the activation without flipping. A hidden face has no
+    button.
+  - **`"swipe"`** — has no tap, and iOS only runs an action on an accessibility element, so the
+    **visible face** becomes one element holding `activate` ("Flip card") and the card's
+    `accessibilityLabel`; its content still reads as its label. Controls on a swipe face are
+    grouped into it, so use a `FlipCard.Trigger` beside the card to reach one separately.
+  - **`"manual"`** — leaves the path to the author's `FlipCard.Trigger`.
+
+  `resolveFlipCardActions` is tested to never return nothing for a gesture trigger. After a turn
+  settles, `AccessibilityInfo.announceForAccessibility` speaks `faceLabels[face]`; the card never
+  moves focus itself — `onFaceChange` is where an author does.
 - **`FlipCard.Trigger` is a `Pressable` under every trigger.** A "Flip" button beneath a swipe
   card is the accessible alternative to dragging. With no children it is an icon-only square on
   the button scale with Central Icons' `IconArrowRotateLeftRight`, labelled "Flip card"; its hint

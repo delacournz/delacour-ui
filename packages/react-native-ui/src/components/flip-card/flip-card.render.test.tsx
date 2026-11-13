@@ -1,11 +1,25 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { createRef } from "react";
-import { Text } from "react-native";
+import { Platform, Pressable, Text } from "react-native";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { FlipCard, type FlipCardHandle, type FlipCardProps } from "./flip-card";
 import { useFlipCard } from "./flip-card.context";
 
 const activate = { nativeEvent: { actionName: "activate" } };
+
+function flipButton() {
+	return screen.getByRole("button", { name: "Flip card" });
+}
+
+async function withPlatform(os: "ios" | "android", run: () => Promise<void>) {
+	const original = Platform.OS;
+	Platform.OS = os;
+	try {
+		await run();
+	} finally {
+		Platform.OS = original;
+	}
+}
 
 function Faces() {
 	return (
@@ -51,35 +65,70 @@ describe("FlipCard", () => {
 		expectBack();
 	});
 
-	test("an activation action turns an uncontrolled card and reports the face", async () => {
+	test("press: the Flip card button turns the card on Android's activate", async () => {
 		const onFaceChange = jest.fn();
-		await renderWithProviders(<Card onFaceChange={onFaceChange} />);
+		await withPlatform("android", async () => {
+			await renderWithProviders(<Card onFaceChange={onFaceChange} />);
+			expect(flipButton()).toHaveProp("accessibilityActions", [{ name: "activate" }]);
+			expect(flipButton()).not.toHaveProp("onAccessibilityTap");
+			expect(flipButton()).toHaveProp("accessibilityHint", "Shows the back");
 
-		await fireEvent(screen.getByLabelText("Flashcard"), "accessibilityAction", activate);
-		expectBack();
-		expect(onFaceChange).toHaveBeenLastCalledWith("back");
+			await fireEvent(flipButton(), "accessibilityAction", activate);
+			expectBack();
+			expect(onFaceChange).toHaveBeenLastCalledWith("back");
 
-		await fireEvent(screen.getByLabelText("Flashcard"), "accessibilityAction", activate);
-		expectFront();
-		expect(onFaceChange).toHaveBeenLastCalledWith("front");
-		expect(onFaceChange).toHaveBeenCalledTimes(2);
+			await fireEvent(flipButton(), "accessibilityAction", activate);
+			expectFront();
+			expect(onFaceChange).toHaveBeenCalledTimes(2);
+		});
 	});
 
-	test("offers a Flip card action under press, and none under manual", async () => {
+	test("press: VoiceOver's double-tap on the Flip card button turns the card on iOS", async () => {
+		const onFaceChange = jest.fn();
+		await withPlatform("ios", async () => {
+			await renderWithProviders(<Card onFaceChange={onFaceChange} />);
+			expect(flipButton()).not.toHaveProp("accessibilityActions", expect.arrayContaining([{ name: "activate" }]));
+			await fireEvent(flipButton(), "accessibilityTap");
+			expectBack();
+			expect(onFaceChange).toHaveBeenCalledWith("back");
+		});
+	});
+
+	test("press: the root and the face stay containers; only the button is a new element", async () => {
 		const view = await renderWithProviders(<Card />);
-		expect(screen.getByLabelText("Flashcard")).toHaveProp("accessibilityActions", [
-			{ label: "Flip card", name: "activate" },
-		]);
+		const root = screen.getByLabelText("Flashcard");
+		expect(root).toHaveProp("accessible", false);
+		expect(root).not.toHaveProp("accessibilityActions");
+		expect(flipButton()).toHaveProp("pointerEvents", "none");
 
 		await view.rerender(<Card trigger="manual" />);
-		expect(screen.getByLabelText("Flashcard")).toHaveProp("accessibilityActions", []);
+		expect(screen.queryByRole("button", { name: "Flip card" })).not.toBeOnTheScreen();
+	});
+
+	test("press: a control on a face is still its own element, and only the visible face has the button", async () => {
+		const onCopy = jest.fn();
+		await renderWithProviders(
+			<FlipCard accessibilityLabel="Flashcard" defaultFace="back">
+				<FlipCard.Front>
+					<Text>Bonjour</Text>
+				</FlipCard.Front>
+				<FlipCard.Back>
+					<Pressable accessibilityRole="button" onPress={onCopy}>
+						<Text>Copy</Text>
+					</Pressable>
+				</FlipCard.Back>
+			</FlipCard>
+		);
+		expect(screen.getByRole("button", { name: "Copy" })).toBeOnTheScreen();
+		expect(screen.getAllByRole("button")).toHaveLength(2);
+		expect(flipButton()).toHaveProp("accessibilityHint", "Shows the front");
 	});
 
 	test("controlled: reports the turn and waits for the face prop", async () => {
 		const onFaceChange = jest.fn();
 		const view = await renderWithProviders(<Card face="front" onFaceChange={onFaceChange} />);
 
-		await fireEvent(screen.getByLabelText("Flashcard"), "accessibilityAction", activate);
+		await fireEvent(flipButton(), "accessibilityTap");
 		expect(onFaceChange).toHaveBeenCalledWith("back");
 		expectFront();
 
@@ -87,14 +136,23 @@ describe("FlipCard", () => {
 		expectBack();
 	});
 
-	test("isDisabled is announced, offers no action and ignores activation", async () => {
+	test("isDisabled is announced and the Flip card button consumes Android's activate without flipping", async () => {
 		const onFaceChange = jest.fn();
-		await renderWithProviders(<Card isDisabled onFaceChange={onFaceChange} />);
-		const card = screen.getByLabelText("Flashcard");
-		expect(card).toBeDisabled();
-		expect(card).toHaveProp("accessibilityActions", []);
+		await withPlatform("android", async () => {
+			await renderWithProviders(<Card isDisabled onFaceChange={onFaceChange} />);
+			expect(flipButton()).toBeDisabled();
+			await fireEvent(flipButton(), "accessibilityAction", activate);
+		});
+		expect(onFaceChange).not.toHaveBeenCalled();
+		expectFront();
+	});
 
-		await fireEvent(card, "accessibilityAction", activate);
+	test("a disabled card consumes VoiceOver's double-tap without flipping", async () => {
+		const onFaceChange = jest.fn();
+		await withPlatform("ios", async () => {
+			await renderWithProviders(<Card isDisabled onFaceChange={onFaceChange} />);
+			await fireEvent(flipButton(), "accessibilityTap");
+		});
 		expect(onFaceChange).not.toHaveBeenCalled();
 		expectFront();
 	});

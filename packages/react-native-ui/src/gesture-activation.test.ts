@@ -45,6 +45,8 @@ const COMPONENTS = join(SRC, "components");
 const EXEMPT: Record<string, string> = {
 	"circular-text/circular-text.tsx":
 		"The hold only pauses the ring's turn while a finger rests on it; the text is read whole and nothing is activated. Pausing looping motion for a screen reader is the calm-motion work, not an activation.",
+	"flip-card/flip-card.tsx":
+		"The root is a container a screen reader never focuses. A press card's activation is the Flip card button its visible face renders, wired through resolvePressableActivation in flip-card-face.tsx; a swipe card's is the grouped visible face's activate action.",
 	"image-viewer/image-viewer-layer.tsx":
 		"The double-tap zoom is mirrored by the adjustable stage's zoomIn, zoomOut and resetZoom actions, and the single tap only hides chrome that starts visible and stays reachable.",
 	"splitter/splitter-handle.tsx":

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
-import { Text } from "react-native";
+import { AccessibilityInfo, Platform, Text } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Screen } from "./screen";
@@ -305,5 +306,77 @@ describe("parts outside a Screen", () => {
 		await expect(renderWithProviders(<Screen.View />)).rejects.toThrow(
 			"Screen.View must be rendered inside a <Screen>."
 		);
+	});
+});
+
+describe("Screen.Loading and Screen.Error announcements", () => {
+	const originalOS = Platform.OS;
+	const setPlatform = (os: string) => Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+	let announceSpy: ReturnType<typeof jest.spyOn>;
+	let withOptionsSpy: ReturnType<typeof jest.spyOn>;
+
+	beforeEach(() => {
+		resetAnnouncer();
+		announceSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		withOptionsSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		announceSpy.mockClear();
+		withOptionsSpy.mockClear();
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	test("Loading is one busy progressbar named Loading, announced once on iOS", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Screen.Loading />);
+		expect(screen.getAllByRole("progressbar")).toHaveLength(1);
+		expect(screen.getByRole("progressbar", { name: "Loading" })).toBeBusy();
+		expect(withOptionsSpy).toHaveBeenCalledTimes(1);
+		expect(withOptionsSpy).toHaveBeenCalledWith("Loading", { queue: true });
+	});
+
+	test("Loading on Android announces once through the announcer, not a live region", async () => {
+		setPlatform("android");
+		await renderWithProviders(<Screen.Loading label="Loading inbox" />);
+		expect(announceSpy).toHaveBeenCalledTimes(1);
+		expect(announceSpy).toHaveBeenCalledWith("Loading inbox");
+		expect(screen.getByRole("progressbar", { name: "Loading inbox" })).toBeOnTheScreen();
+	});
+
+	test("Loading announce={false} is silent", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Screen.Loading announce={false} />);
+		expect(withOptionsSpy).not.toHaveBeenCalled();
+	});
+
+	test("Error is an alert announced assertively once, title then message", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Screen.Error message="The request timed out." />);
+		expect(withOptionsSpy).toHaveBeenCalledTimes(1);
+		expect(withOptionsSpy).toHaveBeenCalledWith("Something went wrong. The request timed out.", { queue: false });
+		expect(JSON.stringify(screen.toJSON())).toContain('"accessibilityRole":"alert"');
+	});
+
+	test("Error on Android is announced once", async () => {
+		setPlatform("android");
+		await renderWithProviders(<Screen.Error message="Gone." title="Not found" />);
+		expect(announceSpy).toHaveBeenCalledTimes(1);
+		expect(announceSpy).toHaveBeenCalledWith("Not found. Gone.");
+	});
+
+	test("Error announce={false} is silent", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Screen.Error announce={false} message="Quiet." />);
+		expect(withOptionsSpy).not.toHaveBeenCalled();
+	});
+
+	test("Loading settling into Error speaks only the error afterwards", async () => {
+		setPlatform("ios");
+		const view = await renderWithProviders(<Screen.Loading />);
+		await view.rerender(<Screen.Error message="Offline." />);
+		expect(withOptionsSpy).toHaveBeenCalledTimes(2);
+		expect(withOptionsSpy).toHaveBeenLastCalledWith("Something went wrong. Offline.", { queue: false });
 	});
 });

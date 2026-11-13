@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
+import { AccessibilityInfo } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Tour, type TourProps } from "./tour";
@@ -189,6 +190,33 @@ describe("Tour", () => {
 		await renderWithProviders(<Steps defaultOpen isInteractive />);
 		expect(screen.getByTestId("tour-card")).toBeOnTheScreen();
 		expect(screen.getByRole("button", { name: "Next" })).toBeOnTheScreen();
+	});
+
+	test("the card is modal to VoiceOver and its escape scrub skips", async () => {
+		const onSkip = jest.fn();
+		await renderWithProviders(<Steps defaultOpen onSkip={onSkip} />);
+		const card = screen.getByTestId("tour-card");
+		expect(card.props.accessibilityViewIsModal).toBe(true);
+		await fireEvent(card, "accessibilityEscape");
+		expect(onSkip).toHaveBeenCalledTimes(1);
+	});
+
+	test("escape is inert when the tour is not dismissible", async () => {
+		await renderWithProviders(<Steps defaultOpen isDismissible={false} />);
+		expect(screen.getByTestId("tour-card").props.onAccessibilityEscape).toBeUndefined();
+	});
+
+	test("focus returns to the last step's target when the tour closes", async () => {
+		const spy = jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation(() => undefined);
+		try {
+			await renderWithProviders(<Steps defaultOpen />);
+			spy.mockClear();
+			await press("tour-skip");
+			jest.runOnlyPendingTimers();
+			expect(spy).toHaveBeenCalledWith(expect.anything(), "focus");
+		} finally {
+			spy.mockRestore();
+		}
 	});
 
 	test("Tour.Step outside a Tour throws its documented error", async () => {

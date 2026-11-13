@@ -15,8 +15,8 @@ export type DrawerTriggerProps = PressableProps;
  * wrapped in a pressable trigger would win the touch and the drawer would never
  * open. With `asChild` the open is chained ahead of the child's own `onPress`.
  *
- * The trigger's ref is kept so accessibility focus can return to it when the
- * drawer closes.
+ * Announced `expanded` while the drawer is open. The trigger's ref is kept so
+ * accessibility focus can return to it when the drawer closes.
  *
  * @example
  * <Drawer.Trigger asChild>
@@ -25,8 +25,15 @@ export type DrawerTriggerProps = PressableProps;
  *   </Button>
  * </Drawer.Trigger>
  */
-export function DrawerTrigger({ asChild = false, children, onPress, ref, ...props }: DrawerTriggerProps): ReactElement {
-	const { setOpen, triggerRef } = useDrawerPart("Drawer.Trigger");
+export function DrawerTrigger({
+	asChild = false,
+	accessibilityState,
+	children,
+	onPress,
+	ref,
+	...props
+}: DrawerTriggerProps): ReactElement {
+	const { isOpen, setOpen, triggerRef } = useDrawerPart("Drawer.Trigger");
 
 	const handlePress = useCallback(() => {
 		setOpen(true);
@@ -37,16 +44,18 @@ export function DrawerTrigger({ asChild = false, children, onPress, ref, ...prop
 		triggerRef.current = node;
 	});
 
+	const state = { ...accessibilityState, expanded: isOpen };
+
 	if (asChild) {
 		return (
-			<Slot onPress={handlePress} ref={composedRef} {...props}>
+			<Slot accessibilityState={state} onPress={handlePress} ref={composedRef} {...props}>
 				{children}
 			</Slot>
 		);
 	}
 
 	return (
-		<Pressable accessibilityRole="button" onPress={handlePress} ref={composedRef} {...props}>
+		<Pressable accessibilityRole="button" accessibilityState={state} onPress={handlePress} ref={composedRef} {...props}>
 			{children}
 		</Pressable>
 	);

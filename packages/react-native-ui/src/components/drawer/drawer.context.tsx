@@ -1,9 +1,10 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import { I18nManager } from "react-native";
+import type { ModalFocusTarget } from "../overlay";
 import { type DrawerEdge, type DrawerSide, resolveDrawerEdge } from "./drawer.variants";
 
-/** Anything `AccessibilityInfo.setAccessibilityFocus` can be pointed at through `findNodeHandle`. */
-export type DrawerFocusTarget = object;
+/** Anything accessibility focus can be sent to — the overlay's `ModalFocusTarget`. */
+export type DrawerFocusTarget = ModalFocusTarget;
 
 export type DrawerContextValue = {
 	/** Whether the drawer is open — the owner's state, not the exit animation's. */

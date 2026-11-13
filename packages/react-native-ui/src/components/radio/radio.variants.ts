@@ -1,3 +1,4 @@
+import { isValidElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 import type { TextSize } from "../text/text.variants";
@@ -269,3 +270,22 @@ export function shouldEmitSelection(current: string | null, next: string): boole
 }
 
 export type RadioVariantProps = VariantProps<typeof radioVariants>;
+
+/**
+ * The text of a radio's inline content, or `undefined` when it holds none.
+ *
+ * The row's text names the radio already, but as a node; the Field's resolver
+ * needs a string to join "required" onto. Walks strings, numbers and any
+ * element's `children`. Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function extractRadioText(node: ReactNode): string | undefined {
+	const text = collectText(node);
+	return text.trim() === "" ? undefined : text;
+}
+
+function collectText(node: ReactNode): string {
+	if (typeof node === "string" || typeof node === "number") return String(node);
+	if (Array.isArray(node)) return node.map(collectText).join("");
+	if (isValidElement<{ children?: ReactNode }>(node)) return collectText(node.props.children);
+	return "";
+}

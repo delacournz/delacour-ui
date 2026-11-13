@@ -297,6 +297,62 @@ describe("Radio", () => {
 		});
 	});
 
+	describe("Field validity", () => {
+		test("each radio is named by its text plus required, and carries the error and description", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Plan</Field.Label>
+					<Radio.Group>
+						<Radio value="free">Free</Radio>
+						<Radio value="pro">Pro</Radio>
+					</Radio.Group>
+					<Field.Description>Billed monthly.</Field.Description>
+					<Field.Error>Pick a plan</Field.Error>
+				</Field>
+			);
+			const radio = screen.getByRole("radio", { name: "Free, required" });
+			expect(radio).toHaveProp("accessibilityHint", "Invalid: Pick a plan. Billed monthly.");
+			expect(screen.getByRole("radio", { name: "Pro, required" })).toBeOnTheScreen();
+		});
+
+		test("Field.Label stays readable as the group's heading", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Plan</Field.Label>
+					<Radio.Group>
+						<Radio value="free">Free</Radio>
+					</Radio.Group>
+				</Field>
+			);
+			const label = screen.getByText("Plan");
+			expect(label.props.importantForAccessibility).not.toBe("no-hide-descendants");
+		});
+
+		test("a standalone text-less radio takes the field's label and hides it", async () => {
+			await renderWithProviders(
+				<Field isRequired>
+					<Field.Label>Express</Field.Label>
+					<Radio isSelected={false} />
+				</Field>
+			);
+			expect(screen.getByRole("radio", { name: "Express, required" })).toBeOnTheScreen();
+			expect(screen.getByText(/Express/, { includeHiddenElements: true })).toHaveProp(
+				"importantForAccessibility",
+				"no-hide-descendants"
+			);
+		});
+
+		test("outside a Field the name and hint are the caller's own", async () => {
+			await renderWithProviders(
+				<Radio accessibilityHint="Ships tomorrow" isSelected={false}>
+					Express
+				</Radio>
+			);
+			const radio = screen.getByRole("radio", { name: "Express" });
+			expect(radio).toHaveProp("accessibilityHint", "Ships tomorrow");
+		});
+	});
+
 	describe("compound parts", () => {
 		test("Radio.Label and Radio.Indicator render inside a Radio", async () => {
 			await renderWithProviders(

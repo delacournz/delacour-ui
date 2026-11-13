@@ -209,6 +209,18 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   so pass `accessibilityLabel`. The group is a `View` carrying
   `accessibilityRole="radiogroup"`, where `Checkbox.Group` carries no role at
   all.
+- **Field validity is spoken per radio, and `Field.Label` stays the group's
+  heading.** A radio group is one control made of several focusable radios, and
+  React Native has no container that is both named and non-swallowing: an
+  `accessible` View hides its radios on iOS, and a non-accessible one with a
+  label is not announced. So the group carries only `accessibilityRole="radiogroup"`
+  and each radio calls `useFieldControlAccessibility` once, with its own text as
+  `defaultLabel` (`extractRadioText`) — "Free, required" — and the Field's
+  invalid state, error and description as the hint. A radio with inline text, or
+  any radio inside a group, never claims the label, so `Field.Label` is not
+  hidden and is still read as the heading above the set. A standalone text-less
+  radio does claim it, like any single control. A text-less radio in a group
+  needs its own `accessibilityLabel`.
 - **`selected` takes `value ?? null`.** `null` means "controlled, nothing
   selected". Omitting the prop entirely is what makes the group uncontrolled, so a
   `useState<string>()` seeded with `undefined` would silently hand the group its

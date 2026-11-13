@@ -64,7 +64,7 @@ export function FlipCardFaceBody({
 	}));
 
 	const handleAction = (event: AccessibilityActionEvent) => {
-		if (event.nativeEvent.actionName === "activate") flip();
+		if (event.nativeEvent.actionName === "activate" && !isDisabled) flip();
 	};
 
 	const activation = resolvePressableActivation({
@@ -89,9 +89,10 @@ export function FlipCardFaceBody({
 
 	return (
 		<Animated.View
-			accessibilityActions={isElement ? resolveFlipCardActions(trigger) : undefined}
+			accessibilityActions={isElement ? (isDisabled ? [] : resolveFlipCardActions(trigger)) : undefined}
 			accessibilityElementsHidden={isHidden}
 			accessibilityLabel={isElement ? accessibilityLabel : undefined}
+			accessibilityState={isElement ? { disabled: isDisabled } : undefined}
 			accessible={isElement}
 			className={classes.wrapper}
 			importantForAccessibility={isHidden ? "no-hide-descendants" : "auto"}

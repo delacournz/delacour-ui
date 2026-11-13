@@ -190,6 +190,17 @@ describe("FlipCard", () => {
 		expectBack();
 	});
 
+	test("swipe: a disabled card's face lists no action and ignores activate", async () => {
+		const onFaceChange = jest.fn();
+		await renderWithProviders(<Card isDisabled trigger="swipe" onFaceChange={onFaceChange} />);
+
+		const [, front] = screen.getAllByLabelText("Flashcard");
+		expect(front).toHaveProp("accessibilityActions", []);
+		expect(front).toBeDisabled();
+		await fireEvent(front, "accessibilityAction", activate);
+		expect(onFaceChange).not.toHaveBeenCalled();
+	});
+
 	test("FlipCard.Trigger turns to the other face and names itself", async () => {
 		const onFaceChange = jest.fn();
 		await renderWithProviders(

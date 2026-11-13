@@ -41,11 +41,12 @@ src/
 │                         use-scroll-source, use-reduce-transparency,
 │                         use-minimum-hit-target, use-announce,
 │                         use-labels
+│                         use-modal-accessibility
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion, labels,
 │                         paging, scroll-sections, scroll-maths, scroll-edges,
-│                         wrap-text-children, announce
+│                         wrap-text-children, announce, modal-accessibility
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── test/                 the render-test kit — Jest setup and renderWithProviders
 ├── display-name.test.ts  The package-wide displayName check — see rule 12

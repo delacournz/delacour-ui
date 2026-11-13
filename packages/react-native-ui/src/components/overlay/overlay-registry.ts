@@ -189,3 +189,24 @@ export function isBelowTopModal(state: OverlayRegistryState, id: string): boolea
 	const z = zIndexOfOverlay(state, id);
 	return z !== 0 && z < zIndexOfOverlay(state, top);
 }
+
+/**
+ * Whether the overlay `id` is the one a screen reader should be held inside.
+ *
+ * True for the top `modal` or `anchored` overlay that is not animating closed:
+ * a menu opened from a dialog holds focus, and the dialog under it does not
+ * until the menu starts to exit. A toast never does.
+ *
+ * True as well when there is nothing to compare against — no `OverlayProvider`,
+ * no `id`, or an id the registry has not recorded yet (a container drawn
+ * without `Overlay.Portal`, or the first render before the portal registers).
+ * Such a container is its own top.
+ */
+export function isModalOnTop(state: OverlayRegistryState | null, id: string | undefined): boolean {
+	if (state === null || id === undefined) return true;
+	const entry = state.open.find((candidate) => candidate.id === id);
+	if (entry === undefined) return true;
+	if (entry.isExiting) return false;
+	const live: OverlayRegistryState = { ...state, open: state.open.filter((candidate) => !candidate.isExiting) };
+	return topOverlay(live) === id;
+}

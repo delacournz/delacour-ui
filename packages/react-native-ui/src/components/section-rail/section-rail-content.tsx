@@ -7,8 +7,8 @@ import Animated, {
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
+import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import { composeRefs } from "../../lib/compose-refs";
-import { useModalAccessibility } from "../overlay/use-modal-accessibility";
 import { useSectionRailPart } from "./section-rail.context";
 import {
 	resolvePanelAnchor,

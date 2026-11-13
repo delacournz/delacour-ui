@@ -1,7 +1,7 @@
 import { type ComponentRef, createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import type Animated from "react-native-reanimated";
 import type { SharedValue } from "react-native-reanimated";
-import type { ModalContainerAccessibility } from "../overlay/modal-accessibility";
+import type { ModalContainerAccessibility } from "../../lib/modal-accessibility";
 import type { SectionProgressColor, SectionProgressPlacement } from "./section-progress.variants";
 
 export type SectionProgressContextValue = {

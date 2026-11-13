@@ -8,8 +8,8 @@ import Animated, {
 	withDelay,
 	withTiming,
 } from "react-native-reanimated";
+import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import { Button } from "../button";
-import { useModalAccessibility } from "../overlay/use-modal-accessibility";
 import type { HapticFeedback } from "../pressable";
 import { Text } from "../text";
 import {

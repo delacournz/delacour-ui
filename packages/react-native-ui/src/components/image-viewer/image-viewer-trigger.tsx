@@ -9,8 +9,8 @@ import {
 } from "react";
 import { View } from "react-native";
 import { useResolveClassNames } from "uniwind";
+import { focusAccessibilityTarget } from "../../hooks/use-modal-accessibility";
 import { cn } from "../../lib/cn";
-import { focusAccessibilityTarget } from "../overlay/use-modal-accessibility";
 import { Pressable, type PressableProps } from "../pressable";
 import { useImageViewerInternalPart } from "./image-viewer.context";
 import type { ImageViewerImage } from "./image-viewer.types";

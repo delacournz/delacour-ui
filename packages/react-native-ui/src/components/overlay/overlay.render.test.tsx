@@ -8,8 +8,8 @@ import { useOptionalOverlay } from "./overlay.context";
 import { OVERLAY_MOTION } from "./overlay.variants";
 import { type OverlayLayer, zIndexOfOverlay } from "./overlay-registry";
 import { TELEPORT_INLINE } from "./overlay-teleport";
-import { useModalAccessibility } from "./use-modal-accessibility";
 import { useOverlayBackHandler } from "./use-overlay-back-handler";
+import { useOverlayModalAccessibility } from "./use-overlay-modal-accessibility";
 import { useOverlayPresence } from "./use-overlay-presence";
 
 jest.mock("react-native-reanimated", () => {
@@ -554,7 +554,7 @@ type ModalDemoProps = {
 	probe?: ModalProbe;
 };
 
-/** A modal wired through `useModalAccessibility`: trigger, title, first item. */
+/** A modal wired through `useOverlayModalAccessibility`: trigger, title, first item. */
 function ModalDemo({ name, layer = "modal", hasTitle = true, onEscape, probe }: ModalDemoProps): ReactElement | null {
 	const [isOpen, setIsOpen] = useState(true);
 	const triggerRef = useRef<ComponentRef<typeof View>>(null);
@@ -565,7 +565,7 @@ function ModalDemo({ name, layer = "modal", hasTitle = true, onEscape, probe }: 
 		probe.title = titleRef;
 		probe.item = itemRef;
 	}
-	const modal = useModalAccessibility({
+	const modal = useOverlayModalAccessibility({
 		id: name,
 		isOpen,
 		initialFocus: [titleRef, itemRef],
@@ -618,7 +618,7 @@ function focusSpy(probe: ModalProbe): () => string[] {
 	return () => [...parts];
 }
 
-describe("useModalAccessibility", () => {
+describe("useOverlayModalAccessibility", () => {
 	test("the open container is modal and escapes", async () => {
 		const onEscape = jest.fn();
 		await renderWithProviders(<ModalDemo name="a" onEscape={onEscape} />, { wrapper: Provider });

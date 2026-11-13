@@ -22,8 +22,8 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import type { UseScrollSectionsResult } from "../../hooks/use-scroll-sections";
-import { useModalAccessibility } from "../overlay/use-modal-accessibility";
 import { type HapticFeedback, Pressable, playHaptic } from "../pressable";
 import { type SectionProgressContextValue, SectionProgressProvider } from "./section-progress.context";
 import {

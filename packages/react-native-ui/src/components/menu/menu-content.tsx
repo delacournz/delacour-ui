@@ -16,8 +16,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
-import type { ModalFocusTarget } from "../overlay/modal-accessibility";
-import { focusAccessibilityTarget, useModalAccessibility } from "../overlay/use-modal-accessibility";
+import { focusAccessibilityTarget, useModalAccessibility } from "../../hooks/use-modal-accessibility";
+import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import { Pressable } from "../pressable";
 import { type MenuPanelContextValue, MenuPanelProvider, useMenuPart } from "./menu.context";
 import {

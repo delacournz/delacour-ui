@@ -101,14 +101,20 @@ above the composer and the closing question. Compound root plus seventeen option
   `useValidAriaRole`. The spec said `role`; the collision is why it is not.
 - **`Agent` while `typing` replaces its status line** with three dots and "Omar is typing" — the
   two answer the same question and the live one wins. The spoken label becomes
-  `"Omar Haddad is typing"` and is announced **once**: a polite live region on Android and
-  `announceForAccessibility` on iOS, which has no live regions. Never per dot frame.
+  `"Omar Haddad is typing"` and is announced **once** through `useAnnouncement` on the announcement channel
+  (a live region would also speak the label when typing stops, and iOS has none). Never per dot
+  frame. `announce={false}` opts out.
+- **`Status` speaks a change of availability on both platforms.** A live region alone left iOS
+  silent, so it uses `useAnnouncement` (live region on Android, announcement on iOS), changes only,
+  never on mount; `announce={false}` opts out.
 - **The typing dots are the only loop**, and decorative. Under `useCalmMotion()` (reduce motion or
   `isMotionCalm`) they hold still at `1, 0.6, 0.3`, which still reads as typing. The timings run with
   `ReduceMotion.Never` on purpose: under `System` a `withTiming` completes instantly while reduce
   motion is on, and `withRepeat(-1)` would spin a zero-length animation forever. Calm is honoured
   one level up, by never starting the loop.
-- **`Handoff` announces on mount** so a screen-reader user hears the change of hands exactly when it
+- **`Handoff` announces on mount, by one route per platform** (`useAnnouncement`, announcement
+  channel, `onMount`) — it used to be `announceForAccessibility` beside a polite live region, which
+  Android spoke twice. So a screen-reader user hears the change of hands exactly when it
   happens in the transcript. `announce={false}` is for a handoff loaded as history, so opening a
   thread does not read every past one. It fades in once.
 - **`Note` sits above the composer, not in the transcript**, because it describes the next message,

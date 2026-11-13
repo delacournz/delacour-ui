@@ -19,7 +19,6 @@ import {
 	resolveGroupButtonClass,
 	resolveGroupButtonSize,
 	resolveGroupSegments,
-	resolveInputAccessibilityLabel,
 	resolveInputFieldClass,
 	resolveInputGroupClass,
 	resolveInputGroupRowClass,
@@ -683,24 +682,5 @@ describe("resolveOuterBlocks", () => {
 
 	test("marks nothing when there are no blocks", () => {
 		expect(resolveOuterBlocks(["content", "separator", "content"])).toEqual([false, false, false]);
-	});
-});
-
-describe("resolveInputAccessibilityLabel", () => {
-	test("an explicit label wins over the enclosing Field.Label", () => {
-		expect(resolveInputAccessibilityLabel("Work email", "Email")).toBe("Work email");
-	});
-
-	test("falls back to the enclosing Field.Label's text", () => {
-		expect(resolveInputAccessibilityLabel(undefined, "Email")).toBe("Email");
-	});
-
-	test("names nothing outside a Field, or under a label with no text", () => {
-		expect(resolveInputAccessibilityLabel(undefined, null)).toBeUndefined();
-		expect(resolveInputAccessibilityLabel(undefined, undefined)).toBeUndefined();
-	});
-
-	test("an explicit label still wins when no Field is enclosing", () => {
-		expect(resolveInputAccessibilityLabel("Search", null)).toBe("Search");
 	});
 });

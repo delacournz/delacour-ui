@@ -118,9 +118,12 @@ half-initialised.
 - **`Popover.Anchor` takes the measuring from the trigger while it is mounted.** The root keeps one
   `useAnchorMeasure` per candidate and enables only the one in use; the trigger still opens the
   panel and still takes focus back.
-- **Modal for assistive technology.** The panel is `accessibilityViewIsModal`, `role="dialog"`,
+- **Modal for assistive technology.** The panel goes through the overlay's `useModalAccessibility`:
+  `accessibilityViewIsModal` while it is open and the top overlay (a popover opened inside a dialog
+  holds VoiceOver and the dialog lets go; a popover inside a popover likewise), `role="dialog"`,
   labelled by the title's `nativeID`; on entry focus goes to the title (or the panel), on exit back
-  to the trigger, and `onAccessibilityEscape` closes it. Android back closes it while it is the top
+  to the trigger, and `onAccessibilityEscape` closes it when dismissible. It stays modal with
+  `hasScrim={false}`: the dismiss layer still swallows outside taps. Android back closes it while it is the top
   overlay (`useOverlayBackHandler`).
 - **Draws in the `anchored` band.** Over every sheet and over the dialog it was opened from — the
   foundation's z-order.

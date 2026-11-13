@@ -9,9 +9,9 @@ import {
 	useMemo,
 	useRef,
 } from "react";
-import { AccessibilityInfo, Pressable as NativePressable, ScrollView, View, type ViewProps } from "react-native";
+import { Pressable as NativePressable, ScrollView, View, type ViewProps } from "react-native";
 import Animated from "react-native-reanimated";
-import { Overlay, useOverlayBackHandler } from "../overlay";
+import { Overlay, useModalAccessibility, useOverlayBackHandler } from "../overlay";
 import { PopoverContentContext, type PopoverContentContextValue, usePopoverContext } from "./popover.context";
 import type { PopoverAlign, PopoverPlacement, PopoverWidth } from "./popover.position";
 import {
@@ -113,14 +113,13 @@ export function PopoverContent({
 	const panelNode = useRef<MeasurableNode | null>(null);
 	const titleNode = useRef<MeasurableNode | null>(null);
 
-	const focusIn = useCallback(() => {
-		const target = titleNode.current ?? panelNode.current;
-		if (target !== null) AccessibilityInfo.sendAccessibilityEvent(target, "focus");
-	}, []);
-
-	const focusBack = useCallback(() => {
-		if (triggerNode.current !== null) AccessibilityInfo.sendAccessibilityEvent(triggerNode.current, "focus");
-	}, [triggerNode]);
+	const modal = useModalAccessibility({
+		id: overlayId,
+		isOpen,
+		initialFocus: [titleNode, panelNode],
+		returnFocus: triggerNode,
+		onEscape: isDismissible ? close : undefined,
+	});
 
 	const anchored = useAnchoredContent({
 		isOpen,
@@ -136,8 +135,8 @@ export function PopoverContent({
 		maxHeight,
 		enterDistance: POPOVER_ENTER_DISTANCE,
 		enterScale: POPOVER_ENTER_SCALE,
-		onEntered: focusIn,
-		onExited: focusBack,
+		onEntered: modal.focusInitial,
+		onExited: modal.restoreFocus,
 	});
 
 	const resolvedPlacement = anchored.position?.placement ?? placement;
@@ -200,9 +199,8 @@ export function PopoverContent({
 			>
 				<View
 					accessibilityLabelledBy={titleId}
-					accessibilityViewIsModal
+					{...modal.containerProps}
 					className={slots.content({ className })}
-					onAccessibilityEscape={isDismissible ? close : undefined}
 					ref={panelRef}
 					role="dialog"
 					style={[anchored.frameStyle, style]}

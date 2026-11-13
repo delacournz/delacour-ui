@@ -73,7 +73,7 @@ export type NumberInputProps = {
 	placeholder?: string;
 	/** Merged onto the `Input.Group` row. */
 	className?: string;
-	/** Read by a screen reader. Defaults to an enclosing `Field.Label`'s text. */
+	/** Read by a screen reader. Defaults to an enclosing `Field.Label`'s text, with "required" when the `Field` is. */
 	accessibilityLabel?: string;
 	/** Forwarded to the `TextInput` — `testID`, `returnKeyType`, focus and submit handlers. */
 	inputProps?: NumberInputFieldOwnProps;
@@ -245,7 +245,10 @@ function NumberInputRoot({
 
 	const context = useMemo<NumberInputInternalContextValue>(
 		() => ({
-			accessibilityLabel: accessibilityLabel ?? field?.label ?? undefined,
+			// Only the caller's own name. An enclosing `Field`'s label, required state,
+			// error and description reach the `Input` inside the field part itself,
+			// which claims the label once.
+			accessibilityLabel,
 			// A screen reader reads what is on screen: the draft while editing, so a
 			// half-typed entry is not announced as the value it replaces.
 			accessibilityText: displayText,
@@ -284,7 +287,6 @@ function NumberInputRoot({
 			config,
 			displayText,
 			draft,
-			field?.label,
 			haptic,
 			inputProps,
 			isEditable,

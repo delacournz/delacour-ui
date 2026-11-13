@@ -1,5 +1,6 @@
-import { type ReactElement, useEffect } from "react";
-import { AccessibilityInfo, View, type ViewProps } from "react-native";
+import type { ReactElement } from "react";
+import { View, type ViewProps } from "react-native";
+import { useAnnouncement } from "../../hooks/use-announce";
 import { Text } from "../text";
 import { useSupport } from "./support.context";
 import type { SupportAvailability } from "./support.types";
@@ -22,6 +23,11 @@ export type SupportAgentProps = Omit<ViewProps, "children"> & {
 	availability?: SupportAvailability;
 	/** `testID` for the typing dots, so a test can wait on them. */
 	typingTestID?: string;
+	/**
+	 * Announce "Omar Haddad is typing" when typing starts. Default `true` — pass `false` for an app
+	 * that speaks typing itself.
+	 */
+	announce?: boolean;
 	className?: string;
 };
 
@@ -30,9 +36,9 @@ export type SupportAgentProps = Omit<ViewProps, "children"> & {
  * `typing`, three dots and "Omar is typing".
  *
  * One element to a screen reader, `"Omar Haddad, Support, online"`. When typing starts the label
- * becomes `"Omar Haddad is typing"` and is announced once — through a polite live region on
- * Android and an explicit announcement on iOS, which has no live regions — never on every dot
- * frame. Works on a thread route with no `<Support>` root: availability then defaults to
+ * becomes `"Omar Haddad is typing"` and is announced once, by one route per platform
+ * (`useAnnouncement`: an announcement, because a live region would also speak the label when
+ * typing stops) — never on every dot frame. Works on a thread route with no `<Support>` root: availability then defaults to
  * `offline`.
  */
 export function SupportAgent({
@@ -42,6 +48,7 @@ export function SupportAgent({
 	typing = false,
 	availability: availabilityProp,
 	typingTestID,
+	announce = true,
 	className,
 	...props
 }: SupportAgentProps): ReactElement {
@@ -51,18 +58,10 @@ export function SupportAgent({
 	const label = resolveAgentA11yLabel({ name, title, availability, typing });
 	const slots = supportVariants();
 
-	useEffect(() => {
-		if (typing) AccessibilityInfo.announceForAccessibility(label);
-	}, [typing, label]);
+	const live = useAnnouncement(typing ? label : null, { channel: "announcement", onMount: true, enabled: announce });
 
 	return (
-		<View
-			accessibilityLabel={label}
-			accessibilityLiveRegion={status.live ? "polite" : "none"}
-			accessible
-			className={slots.agent({ className })}
-			{...props}
-		>
+		<View accessibilityLabel={label} accessible className={slots.agent({ className })} {...live} {...props}>
 			{avatar}
 			<View className={slots.agentText()}>
 				<Text className={slots.agentName()} numberOfLines={1}>

@@ -1,6 +1,7 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 import type { AvatarSize } from "../avatar/avatar.variants";
+import { formatGroupedNumber } from "./post.utils";
 
 export const POST_VARIANTS = ["feed", "vote", "compact", "media"] as const;
 export const POST_SIZES = ["default", "sm"] as const;
@@ -101,6 +102,15 @@ export function resolveScrimStops(scrim: PostMediaScrim): { top: boolean; bottom
  */
 export function resolveNextVote(current: PostVote, pressed: "up" | "down"): PostVote {
 	return current === pressed ? null : pressed;
+}
+
+/**
+ * What is spoken after the caller's own vote lands: the state and the new score,
+ * `Upvoted, score 1,241`. The score is spoken in full, never `1.2K`.
+ */
+export function resolveVoteAnnouncement(vote: PostVote, score: number | string): string {
+	const state = vote === "up" ? "Upvoted" : vote === "down" ? "Downvoted" : "Vote removed";
+	return `${state}, score ${typeof score === "number" ? formatGroupedNumber(score) : score}`;
 }
 
 /**

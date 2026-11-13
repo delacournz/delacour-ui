@@ -49,6 +49,8 @@ export type NumberInputInternalContextValue = NumberInputContextValue & {
 	isEditable: boolean;
 	placeholder: string | undefined;
 	haptic: false | HapticFeedback;
+	/** Speaks the value a stepper just produced. The field's own adjustable actions do not call it: the platform speaks those. */
+	announceStep: (result: StepResult, direction: 1 | -1) => void;
 	largeStepMultiplier: number;
 	fieldRef: RefObject<TextInputInstance | null>;
 	inputProps: NumberInputFieldOwnProps | undefined;

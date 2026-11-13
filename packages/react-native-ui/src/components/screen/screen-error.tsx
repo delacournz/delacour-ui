@@ -1,7 +1,8 @@
 import type { ReactElement, ReactNode } from "react";
 import { View } from "react-native";
+import { useAnnouncement } from "../../hooks/use-announce";
 import { Text } from "../text";
-import { screenVariants } from "./screen.variants";
+import { resolveScreenErrorAnnouncement, screenVariants } from "./screen.variants";
 import { ScreenContent } from "./screen-content";
 import { ScreenNavbar } from "./screen-navbar";
 import { ScreenRoot } from "./screen-root";
@@ -15,6 +16,8 @@ export type ScreenErrorProps = {
 	onBack?: () => void;
 	/** Show the navbar at all. On by default — a dead end the user cannot leave is worse than the error. */
 	showNavbar?: boolean;
+	/** Speak the title and message when the screen appears. On by default; `false` leaves the error to be found by focus. */
+	announce?: boolean;
 	/** A retry button, or anything else worth offering below the message. */
 	children?: ReactNode;
 };
@@ -24,6 +27,10 @@ export type ScreenErrorProps = {
  *
  * The title and message carry their own colour: a `View` does not cascade one
  * to a `Text` descendant.
+ *
+ * The content is an `alert` region, and the title and message are announced assertively once when
+ * the screen appears — one route per platform, so Android does not hear them twice. Replacing a
+ * `Screen.Loading` with this unmounts the loading announcement before it can overlap.
  *
  * Deliberately plain. A richer empty state — illustration, media slot, its own
  * compound surface — is its own component, and building one into this would
@@ -39,15 +46,26 @@ export function ScreenError({
 	message,
 	onBack,
 	showNavbar = true,
+	announce = true,
 	children,
 }: ScreenErrorProps): ReactElement {
 	const slots = screenVariants();
+	const { accessibilityLiveRegion } = useAnnouncement(resolveScreenErrorAnnouncement(title, message), {
+		channel: "announcement",
+		onMount: true,
+		politeness: "assertive",
+		enabled: announce,
+	});
 
 	return (
 		<ScreenRoot>
 			{showNavbar ? <ScreenNavbar>{onBack ? <ScreenNavbar.BackButton onPress={onBack} /> : null}</ScreenNavbar> : null}
 			<ScreenContent insets={["bottom"]}>
-				<View className={slots.errorContent()}>
+				<View
+					accessibilityLiveRegion={accessibilityLiveRegion}
+					accessibilityRole="alert"
+					className={slots.errorContent()}
+				>
 					<View className="gap-1">
 						<Text accessibilityRole="header" className={slots.errorTitle()}>
 							{title}

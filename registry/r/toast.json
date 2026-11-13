@@ -9,13 +9,15 @@
 	],
 	"registryDependencies": [
 		"alert",
+		"announce",
 		"icon",
 		"icons",
 		"overlay",
 		"pressable",
 		"spinner",
 		"text",
-		"tv"
+		"tv",
+		"use-announce"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -121,6 +123,14 @@
 			"target": "toast/toast-item.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
+				{
+					"from": "../../lib/announce",
+					"to": "@registry/lib/announce"
+				},
 				{
 					"from": "../overlay/overlay.variants",
 					"to": "@registry/ui/overlay/overlay.variants"
@@ -267,6 +277,10 @@
 			"target": "toast/toast.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

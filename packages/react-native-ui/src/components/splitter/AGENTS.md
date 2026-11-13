@@ -137,6 +137,14 @@ imports this folder's maths leaf rather than copying it.
   step grid; `reset` ("Reset sizes"); and `collapse` / `expand` when a pane beside
   the handle is collapsible. `resolveSplitterAction` maps an action to what the
   root does, as a discriminated union, so the mapping is unit-testable.
+- **A reset, collapse or expand is announced once.** Custom actions and the double
+  tap re-read nothing, so a screen reader user would hear silence after them.
+  `Splitter.Handle` speaks "Sizes reset", "Pane collapsed" or "Pane expanded"
+  through `useAnnounce` (`resolveSplitterAnnouncement` holds the strings), one
+  route per platform. A collapse nothing can absorb moves nothing and says
+  nothing. Increment and decrement stay silent — the platform reads the new
+  `accessibilityValue` itself — and a drag never speaks frame by frame.
+  `announce={false}` on the handle opts out for an app that speaks it itself.
 - **`accessibilityState.expanded`** reports the adjacent collapsible pane;
   `disabled` reports a frozen seam.
 - **A collapsed pane is hidden from screen readers**, with everything in it —

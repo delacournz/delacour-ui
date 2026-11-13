@@ -1,8 +1,9 @@
 import { Children, type ReactElement, type ReactNode } from "react";
+import { useAnnouncement } from "../../hooks/use-announce";
 import { Text } from "../text";
 import { useFieldContext } from "./field.context";
 import type { FieldTextProps } from "./field.types";
-import { fieldVariants, resolveFieldTextColor } from "./field.variants";
+import { fieldVariants, resolveFieldErrorMessage, resolveFieldTextColor } from "./field.variants";
 
 /**
  * `Text` renders `Animated.Text`, so its `children` may also be a Reanimated
@@ -10,7 +11,14 @@ import { fieldVariants, resolveFieldTextColor } from "./field.variants";
  * count its children to know whether to render at all, so the narrower type is
  * both the honest one and the one that can be counted.
  */
-export type FieldErrorProps = Omit<FieldTextProps, "children"> & { children?: ReactNode };
+export type FieldErrorProps = Omit<FieldTextProps, "children"> & {
+	children?: ReactNode;
+	/**
+	 * Speak the message when it appears or changes. Default `true` — pass `false` for an app that
+	 * announces validation itself, or moves focus to the error.
+	 */
+	announce?: boolean;
+};
 
 /**
  * What is wrong with the value.
@@ -24,22 +32,39 @@ export type FieldErrorProps = Omit<FieldTextProps, "children"> & { children?: Re
  * a part whose absence is unexplainable from the call site — and pairing the two
  * is the caller's own `isInvalid={!!error}`, which is one expression, in view.
  *
+ * Heard once per platform when it appears and whenever its text changes (`useAnnouncement`: iOS
+ * has no live regions, so it announces; Android announces too, because a live region may not
+ * speak a line that has only just mounted). Only a string or number message is spoken — an error
+ * built from elements is shown but silent. `announce={false}` opts out.
+ *
  * Always destructive, in a valid field as much as an invalid one: an error message is
  * never the calm case.
  */
-export function FieldError({ className, color, children, ...props }: FieldErrorProps): ReactElement | null {
+export function FieldError({
+	className,
+	color,
+	children,
+	announce = true,
+	...props
+}: FieldErrorProps): ReactElement | null {
 	const field = useFieldContext();
 	const isInvalid = field?.isInvalid ?? false;
 	const isDisabled = field?.isDisabled ?? false;
+	const hasMessage = hasContent(children);
+	const live = useAnnouncement(hasMessage ? resolveFieldErrorMessage(children) : null, {
+		channel: "announcement",
+		onMount: true,
+		enabled: announce,
+	});
 
-	if (!hasContent(children)) return null;
+	if (!hasMessage) return null;
 
 	return (
 		<Text.Caption
-			accessibilityLiveRegion="polite"
 			className={fieldVariants({ isDisabled, isInvalid }).error({ className })}
 			color={color ?? resolveFieldTextColor("error", isInvalid)}
 			role="alert"
+			{...live}
 			{...props}
 		>
 			{children}

@@ -69,6 +69,7 @@
 				"surface",
 				"text",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -151,6 +152,22 @@
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
+			]
+		},
+		{
+			"name": "announce",
+			"type": "registry:lib",
+			"title": "announce",
+			"description": "Screen-reader announcements by one route per platform, throttled and coalesced per key.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/announce.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1220,6 +1237,7 @@
 				"cn",
 				"text",
 				"tv",
+				"use-announce",
 				"use-calm-motion"
 			],
 			"dependencies": [
@@ -1642,6 +1660,7 @@
 				"dialog",
 				"input",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -1694,7 +1713,8 @@
 				"pressable",
 				"separator",
 				"text",
-				"tv"
+				"tv",
+				"use-announce"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2845,6 +2865,7 @@
 				"input",
 				"pressable",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -3243,6 +3264,7 @@
 				"pressable",
 				"text",
 				"tv",
+				"use-announce",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -3387,6 +3409,7 @@
 				"pressable",
 				"text",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -3679,6 +3702,7 @@
 				"spinner",
 				"text",
 				"tv",
+				"use-announce",
 				"use-keyboard-state-sync",
 				"use-scroll-source",
 				"use-theme-color"
@@ -4394,6 +4418,7 @@
 			"registryDependencies": [
 				"cn",
 				"tv",
+				"use-announce",
 				"use-calm-motion",
 				"use-theme-color"
 			],
@@ -4408,6 +4433,7 @@
 				"ui/skeleton/index.ts",
 				"ui/skeleton/skeleton-clock.ts",
 				"ui/skeleton/skeleton-group.tsx",
+				"ui/skeleton/skeleton-loaded.ts",
 				"ui/skeleton/skeleton-shimmer.tsx",
 				"ui/skeleton/skeleton.context.tsx",
 				"ui/skeleton/skeleton.tsx",
@@ -4499,6 +4525,7 @@
 				"spinner",
 				"text",
 				"tv",
+				"use-announce",
 				"use-controllable-state",
 				"use-theme-color"
 			],
@@ -4753,6 +4780,7 @@
 			"registryDependencies": [
 				"pressable",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -4804,6 +4832,7 @@
 				"pressable",
 				"text",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -4937,6 +4966,7 @@
 				"separator",
 				"text",
 				"tv",
+				"use-announce",
 				"use-calm-motion",
 				"use-controllable-state"
 			],
@@ -5510,7 +5540,8 @@
 			"registryDependencies": [
 				"input",
 				"text",
-				"tv"
+				"tv",
+				"use-announce"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -5717,13 +5748,15 @@
 			],
 			"registryDependencies": [
 				"alert",
+				"announce",
 				"icon",
 				"icons",
 				"overlay",
 				"pressable",
 				"spinner",
 				"text",
-				"tv"
+				"tv",
+				"use-announce"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -5980,6 +6013,27 @@
 			"devDependencies": [],
 			"files": [
 				"lib/tv.ts"
+			]
+		},
+		{
+			"name": "use-announce",
+			"type": "registry:hook",
+			"title": "useAnnounce",
+			"description": "announce(), useAnnounce() and useAnnouncement() — heard once on iOS, Android and the web.",
+			"registryDependencies": [
+				"announce"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-announce.ts"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{

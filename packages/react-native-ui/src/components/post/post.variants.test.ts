@@ -17,6 +17,7 @@ import {
 	resolveStatDirection,
 	resolveStatFillPath,
 	resolveStatTone,
+	resolveVoteAnnouncement,
 	resolveVoteTone,
 } from "./post.variants";
 
@@ -324,5 +325,16 @@ describe("postVariants", () => {
 		const slots = postVariants({ tone: "like", active: true });
 		expect(slots.stat()).not.toMatch(/\btext-/);
 		expect(slots.votes()).not.toMatch(/\btext-(?!xs|sm|base)/);
+	});
+});
+
+describe("resolveVoteAnnouncement", () => {
+	test.each([
+		["up", 1241, "Upvoted, score 1,241"],
+		["down", 3, "Downvoted, score 3"],
+		[null, 5, "Vote removed, score 5"],
+		["up", "1.2K", "Upvoted, score 1.2K"],
+	] as const)("%p %p -> %p", (vote, score, expected) => {
+		expect(resolveVoteAnnouncement(vote, score)).toBe(expected);
 	});
 });

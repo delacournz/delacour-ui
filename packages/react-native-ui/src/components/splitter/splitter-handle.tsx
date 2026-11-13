@@ -3,6 +3,7 @@ import { type AccessibilityActionEvent, View, type ViewProps } from "react-nativ
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { useAnnounce } from "../../hooks/use-announce";
 import { playHaptic } from "../pressable";
 import { useSplitterIndex, useSplitterPart } from "./splitter.context";
 import type { SplitterSlotProps } from "./splitter.types";
@@ -11,9 +12,11 @@ import {
 	formatSplitterValue,
 	isPaneCollapsed,
 	isSeamHeld,
+	resolveCollapseToggle,
 	resolveDrag,
 	resolveDragEnd,
 	resolveSplitterAction,
+	resolveSplitterAnnouncement,
 	SPLITTER_DRAWS_LINE,
 	SPLITTER_HANDLE_SIZE,
 	seamOffset,
@@ -34,6 +37,11 @@ export type SplitterHandleProps = Omit<ViewProps, "children" | "style" | "hitSlo
 		accessibilityLabel?: string;
 		/** Cross-axis touch padding is fixed at 44pt total; this widens it along the axis, in points. Default 0. */
 		hitSlop?: number;
+		/**
+		 * Speak the result of a reset, collapse or expand — assistive actions and the double tap.
+		 * Default true. Pass false when the app announces it itself.
+		 */
+		announce?: boolean;
 	};
 
 /**
@@ -66,6 +74,12 @@ export type SplitterHandleProps = Omit<ViewProps, "children" | "style" | "hitSlo
  * whether the last frame was stopped by a bound or collapsed, and only the
  * change from free to stopped plays — once per bound, never once per frame.
  *
+ * **A reset, collapse or expand is spoken once.** Those arrive as custom actions
+ * (or a double tap), which re-read nothing, so the handle announces the result
+ * through `useAnnounce`; `announce={false}` opts out. Increment and decrement are
+ * silent here because the platform reads the new value itself, and a drag never
+ * speaks frame by frame.
+ *
  * Assistively it is `adjustable`: its value is the pane before it, increment and
  * decrement move the seam by `step`, and there are actions to reset and — when a
  * pane beside it is collapsible — to collapse or expand that pane.
@@ -75,6 +89,7 @@ export function SplitterHandle({
 	withGrip = true,
 	accessibilityLabel,
 	hitSlop = 0,
+	announce = true,
 	className,
 	...props
 }: SplitterHandleProps): ReactElement {
@@ -99,6 +114,12 @@ export function SplitterHandle({
 	} = useSplitterPart("Splitter.Handle");
 	const isDisabled = rootDisabled || ownDisabled;
 	const isVertical = orientation === "vertical";
+
+	const speak = useAnnounce();
+	const resetAndAnnounce = useCallback(() => {
+		reset();
+		speak(resolveSplitterAnnouncement("reset"), { enabled: announce });
+	}, [announce, reset, speak]);
 
 	const start = useSharedValue<number[]>([]);
 	const delta = useSharedValue(0);
@@ -168,7 +189,7 @@ export function SplitterHandle({
 			.numberOfTaps(2)
 			.onEnd(() => {
 				"worklet";
-				scheduleOnRN(reset);
+				scheduleOnRN(resetAndAnnounce);
 			});
 
 		return Gesture.Simultaneous(pan, doubleTap);
@@ -185,7 +206,7 @@ export function SplitterHandle({
 		isDisabled,
 		isHeld,
 		isVertical,
-		reset,
+		resetAndAnnounce,
 		settle,
 		sizes,
 		start,
@@ -226,10 +247,17 @@ export function SplitterHandle({
 				step,
 			});
 			if (action?.kind === "apply") apply(action.layout);
-			else if (action?.kind === "reset") reset();
-			else if (action?.kind === "toggle") togglePane(action.index);
+			else if (action?.kind === "reset") resetAndAnnounce();
+			else if (action?.kind === "toggle") {
+				const moved = resolveCollapseToggle({ constraints, index: action.index, layout }) !== layout;
+				togglePane(action.index);
+				if (moved) {
+					const kind = event.nativeEvent.actionName === "collapse" ? "collapse" : "expand";
+					speak(resolveSplitterAnnouncement(kind), { enabled: announce });
+				}
+			}
 		},
-		[apply, constraints, index, isDisabled, layout, reset, step, togglePane]
+		[announce, apply, constraints, index, isDisabled, layout, resetAndAnnounce, speak, step, togglePane]
 	);
 
 	const slots = splitterVariants({ isActive, isDisabled, orientation, variant });

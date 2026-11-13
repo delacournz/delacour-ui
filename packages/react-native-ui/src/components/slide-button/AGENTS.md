@@ -18,7 +18,7 @@ be too much ceremony. Compound root plus `SlideButton.Label` and
 | `slide-button.context.tsx` | `SlideButtonContext`, `useSlideButton` |
 | `slide-button.variants.ts` | The slotted `tv()`, the motion constants and the pure resolvers |
 | `slide-button.variants.test.ts` | |
-| `slide-button.render.test.tsx` | Mounted under Jest — accessible name, state and activate action, the drag through `fireGestureHandler`, controlled and uncontrolled, auto-reset, disabled and loading refusals, parts outside the root |
+| `slide-button.render.test.tsx` | Mounted under Jest — accessible name, state and activate action, the drag through `fireGestureHandler`, controlled and uncontrolled, auto-reset, announcements, disabled and loading refusals, parts outside the root |
 
 There is no `slide-button.types.ts`: every prop type has exactly one consumer.
 
@@ -128,6 +128,15 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
   pass an imperative that names the outcome, "Ship order". Activating moves the
   handle to the end and fires `onComplete`. `accessibilityState` carries
   `disabled` and `checked: isCompleted`.
+- **The outcome is spoken, once per platform.** A slide's result is otherwise silent: the tick is
+  drawn and `checked` changes on a view no screen reader announces. The root speaks through
+  `useAnnounce` (`resolveSlideAnnouncement` holds the English): "Working" when a returned promise is
+  pending or `isLoading` turns on, "Confirmed" on success, and an assertive "Failed. Slide to try
+  again" when the promise rejects. There is no live region on the rail, so Android is never spoken
+  to twice. Success is said once: on the promise's resolution when there is one, else when
+  `completed` goes true (so a controlled parent's answer is what is heard, not the request), and
+  never on mount for `defaultCompleted`. The activate action runs the same `complete`, so it is
+  announced the same way. `announce={false}` is the opt-out.
 - **The thumb is drawn last however it was written**, and composed in when the
   children hold none — `Switch`'s rule. Part detection checks `displayName` as
   well as identity, for the reason `Switch` documents.

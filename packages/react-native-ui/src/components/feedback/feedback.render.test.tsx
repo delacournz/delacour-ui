@@ -1,5 +1,7 @@
-import { describe, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
+import { AccessibilityInfo, Platform } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
@@ -252,6 +254,43 @@ describe("Feedback", () => {
 				return null;
 			}
 			await silenced(<Probe />, /useFeedback must be called inside a <Feedback>/);
+		});
+	});
+
+	describe("result announcement", () => {
+		const originalOS = Platform.OS;
+		let withOptions: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+		let plain: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+
+		beforeEach(() => {
+			resetAnnouncer();
+			Object.defineProperty(Platform, "OS", { configurable: true, get: () => "ios" });
+			plain = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+			withOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+			plain.mockClear();
+			withOptions.mockClear();
+		});
+
+		afterEach(() => {
+			Object.defineProperty(Platform, "OS", { configurable: true, get: () => originalOS });
+			jest.restoreAllMocks();
+		});
+
+		test("a resolved send is announced polite, once", async () => {
+			await renderWithProviders(<Harness defaultOpen defaultValue="hi" onSubmit={async () => undefined} />, {
+				wrapper: Overlays,
+			});
+			await press("Send");
+			await waitFor(() => expect(withOptions).toHaveBeenCalledTimes(1));
+			expect(withOptions).toHaveBeenCalledWith("Feedback sent", { queue: true });
+		});
+
+		test("a synchronous send announces nothing", async () => {
+			await renderWithProviders(<Harness defaultOpen defaultValue="hi" onSubmit={() => undefined} />, {
+				wrapper: Overlays,
+			});
+			await press("Send");
+			expect(withOptions).not.toHaveBeenCalled();
 		});
 	});
 });

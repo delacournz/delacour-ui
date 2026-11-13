@@ -1,5 +1,6 @@
-import { describe, expect, jest, test } from "@jest/globals";
-import { Platform } from "react-native";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Platform } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { IconBubble2, IconHeart } from "../../icons/central";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Post } from "./post";
@@ -451,6 +452,68 @@ describe("Post", () => {
 			await fireEvent(screen.getByRole("button", { name: "Upvote" }), "accessibilityTap");
 			await fireEvent(screen.getByRole("button", { name: "Downvote" }), "accessibilityTap");
 			expect(onVote).not.toHaveBeenCalled();
+		});
+
+		describe("announcing", () => {
+			const original = Object.getOwnPropertyDescriptor(Platform, "OS");
+			const setOS = (os: "ios" | "android") =>
+				Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+			let polite: ReturnType<typeof jest.spyOn>;
+			let withOptions: ReturnType<typeof jest.spyOn>;
+
+			beforeEach(() => {
+				resetAnnouncer();
+				polite = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+				withOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+				polite.mockClear();
+				withOptions.mockClear();
+			});
+
+			afterEach(() => {
+				if (original) Object.defineProperty(Platform, "OS", original);
+			});
+
+			const tree = (props: { score: number; vote?: "up" | "down" | null; announce?: boolean }) => (
+				<Post variant="vote">
+					<Post.Votes {...props} />
+				</Post>
+			);
+
+			test("iOS speaks the new state and score once after a press", async () => {
+				setOS("ios");
+				const view = await renderWithProviders(tree({ score: 5 }));
+				await fireEvent(screen.getByRole("button", { name: "Upvote" }), "accessibilityTap");
+				await view.rerender(tree({ score: 6, vote: "up" }));
+				expect(withOptions).toHaveBeenCalledTimes(1);
+				expect(withOptions).toHaveBeenCalledWith("Upvoted, score 6", expect.anything());
+			});
+
+			test("Android speaks through the announcer once, with no live region", async () => {
+				setOS("android");
+				const view = await renderWithProviders(tree({ score: 5 }));
+				expect(screen.getByLabelText("Score 5").props.accessibilityLiveRegion).toBeUndefined();
+				const onDownvote = screen.getByRole("button", { name: "Downvote" });
+				await fireEvent.press(onDownvote);
+				await view.rerender(tree({ score: 4, vote: "down" }));
+				expect(polite).toHaveBeenCalledTimes(1);
+				expect(polite).toHaveBeenCalledWith("Downvoted, score 4");
+			});
+
+			test("a score that changes without a press is silent", async () => {
+				setOS("ios");
+				const view = await renderWithProviders(tree({ score: 5 }));
+				await view.rerender(tree({ score: 9 }));
+				expect(withOptions).not.toHaveBeenCalled();
+				expect(polite).not.toHaveBeenCalled();
+			});
+
+			test("announce={false} opts out", async () => {
+				setOS("ios");
+				const view = await renderWithProviders(tree({ score: 5, announce: false }));
+				await fireEvent(screen.getByRole("button", { name: "Upvote" }), "accessibilityTap");
+				await view.rerender(tree({ score: 6, vote: "up", announce: false }));
+				expect(withOptions).not.toHaveBeenCalled();
+			});
 		});
 	});
 });

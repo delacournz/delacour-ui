@@ -1,6 +1,7 @@
-import { type ReactElement, useEffect } from "react";
-import { AccessibilityInfo, type ViewProps } from "react-native";
+import type { ReactElement } from "react";
+import type { ViewProps } from "react-native";
 import Animated, { FadeIn, ReduceMotion } from "react-native-reanimated";
+import { useAnnouncement } from "../../hooks/use-announce";
 import { Separator } from "../separator";
 import { Text } from "../text";
 import { supportVariants } from "./support.variants";
@@ -23,23 +24,22 @@ export type SupportHandoffProps = Omit<ViewProps, "children"> & {
  * in the transcript, fading in once on mount.
  *
  * Read out as it appears, so a screen-reader user hears the change of hands exactly when it
- * happens: a polite live region on Android, an explicit announcement on iOS.
+ * happens, by one route per platform (`useAnnouncement`, on mount — a live region may not speak an
+ * appearance, so Android announces).
  */
 export function SupportHandoff({ children, announce = true, className, ...props }: SupportHandoffProps): ReactElement {
 	const slots = supportVariants();
 
-	useEffect(() => {
-		if (announce) AccessibilityInfo.announceForAccessibility(children);
-	}, [announce, children]);
+	const live = useAnnouncement(children, { channel: "announcement", onMount: true, enabled: announce });
 
 	return (
 		<Animated.View
 			accessibilityLabel={children}
-			accessibilityLiveRegion="polite"
 			accessibilityRole="text"
 			accessible
 			className={slots.handoff({ className })}
 			entering={ENTERING}
+			{...live}
 			{...props}
 		>
 			<Separator className={slots.handoffRule()} />

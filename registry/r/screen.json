@@ -17,6 +17,7 @@
 		"spinner",
 		"text",
 		"tv",
+		"use-announce",
 		"use-keyboard-state-sync",
 		"use-scroll-source",
 		"use-theme-color"
@@ -76,6 +77,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
+				{
 					"from": "../text",
 					"to": "@registry/ui/text"
 				}
@@ -134,6 +139,10 @@
 			"target": "screen/screen-loading.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../spinner",
 					"to": "@registry/ui/spinner"
@@ -307,6 +316,10 @@
 			"target": "screen/screen.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

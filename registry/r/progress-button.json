@@ -14,6 +14,7 @@
 		"pressable",
 		"text",
 		"tv",
+		"use-announce",
 		"use-controllable-state"
 	],
 	"dependencies": [
@@ -83,6 +84,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
+				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
 				},
@@ -138,6 +143,10 @@
 			"target": "progress-button/progress-button.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

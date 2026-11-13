@@ -14,7 +14,16 @@ export type AlertContextValue = {
 	 * dismiss it without the caller threading a setter down.
 	 */
 	dismiss: () => void;
+	/**
+	 * Tells the alert what a part says, so the alert can speak it. `Title` and `Description` call this
+	 * with their text and clear it on unmount; a dismissed alert's parts unmount, so re-opening it
+	 * registers them again and the alert is heard again.
+	 */
+	registerText: (part: AlertTextPart, text: string) => void;
 };
+
+/** The parts whose text the alert speaks. */
+export type AlertTextPart = "title" | "description";
 
 const AlertContext = createContext<AlertContextValue | null>(null);
 

@@ -1,5 +1,7 @@
-import { describe, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { useState } from "react";
+import { AccessibilityInfo, Platform } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Input } from "../input";
@@ -98,9 +100,9 @@ describe("Textarea", () => {
 			expect(screen.getByLabelText("3 of 10 characters")).toBeOnTheScreen();
 		});
 
-		test("the count is a polite live region", async () => {
+		test("the count is not a live region", async () => {
 			await renderWithProviders(<Textarea accessibilityLabel="Notes" maxLength={10} showCount />);
-			expect(screen.getByLabelText("0 of 10 characters").props.accessibilityLiveRegion).toBe("polite");
+			expect(screen.getByLabelText("0 of 10 characters").props.accessibilityLiveRegion).toBeUndefined();
 		});
 
 		test("uncontrolled: the count follows typing", async () => {
@@ -188,5 +190,76 @@ describe("Textarea", () => {
 			expect(onChangeText).toHaveBeenCalledWith("hey");
 			expect(screen.getByRole("button", { name: "Send" })).toBeOnTheScreen();
 		});
+	});
+});
+
+const originalOS = Platform.OS;
+function setPlatform(os: typeof Platform.OS) {
+	Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+}
+
+describe("Textarea threshold announcements", () => {
+	let iosSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+	let androidSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+
+	beforeEach(() => {
+		resetAnnouncer();
+		iosSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		androidSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		iosSpy.mockClear();
+		androidSpy.mockClear();
+		setPlatform("ios");
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	test("typing far from the limit is silent, and so is the first render", async () => {
+		await renderWithProviders(
+			<Textarea accessibilityLabel="Notes" defaultValue="0123456789" maxLength={100} showCount />
+		);
+		await fireEvent.changeText(screen.getByLabelText("Notes"), "01234567890");
+		expect(iosSpy).not.toHaveBeenCalled();
+	});
+
+	test("entering the warning band speaks once, politely, and not again inside it", async () => {
+		await renderWithProviders(<Textarea accessibilityLabel="Notes" maxLength={10} showCount />);
+		await fireEvent.changeText(screen.getByLabelText("Notes"), "012345678");
+		expect(iosSpy).toHaveBeenCalledTimes(1);
+		expect(iosSpy).toHaveBeenCalledWith("1 character remaining", { queue: true });
+	});
+
+	test("the limit is assertive, and deleting back out re-arms it", async () => {
+		await renderWithProviders(<Textarea accessibilityLabel="Notes" maxLength={10} showCount />);
+		await fireEvent.changeText(screen.getByLabelText("Notes"), "0123456789");
+		expect(iosSpy).toHaveBeenLastCalledWith("Character limit reached", { queue: false });
+		await fireEvent.changeText(screen.getByLabelText("Notes"), "01234");
+		const calls = iosSpy.mock.calls.length;
+		await new Promise((resolve) => setTimeout(resolve, 600));
+		await fireEvent.changeText(screen.getByLabelText("Notes"), "0123456789");
+		expect(iosSpy.mock.calls.length).toBe(calls + 1);
+	});
+
+	test("Android speaks through the announcement route, with no live region", async () => {
+		setPlatform("android");
+		await renderWithProviders(<Textarea accessibilityLabel="Notes" maxLength={10} showCount />);
+		await fireEvent.changeText(screen.getByLabelText("Notes"), "0123456789");
+		expect(androidSpy).toHaveBeenCalledWith("Character limit reached");
+		expect(screen.getByLabelText("10 of 10 characters").props.accessibilityLiveRegion).toBeUndefined();
+	});
+
+	test("announce={false} is silent and the count stays readable", async () => {
+		await renderWithProviders(<Textarea accessibilityLabel="Notes" announce={false} maxLength={10} showCount />);
+		await fireEvent.changeText(screen.getByLabelText("Notes"), "0123456789");
+		expect(iosSpy).not.toHaveBeenCalled();
+		expect(screen.getByLabelText("10 of 10 characters")).toBeOnTheScreen();
+	});
+
+	test("without showCount nothing is spoken", async () => {
+		await renderWithProviders(<Textarea accessibilityLabel="Notes" maxLength={10} />);
+		await fireEvent.changeText(screen.getByLabelText("Notes"), "0123456789");
+		expect(iosSpy).not.toHaveBeenCalled();
 	});
 });

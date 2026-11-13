@@ -151,4 +151,24 @@ export function resolveFieldLabelText(children: unknown): string | null {
 	return text === "" ? null : text;
 }
 
+/**
+ * The text a `Field.Error` speaks when it appears or changes, or `null` when it has none.
+ *
+ * Strings and numbers, alone or in an array, are joined and trimmed; `null`, `undefined` and
+ * booleans a conditional leaves behind are skipped. Anything built from elements has no text this
+ * side of a render, so it is silent rather than guessed at — the caller still sees it, and can
+ * speak it themselves. Pure, so it is unit-testable.
+ */
+export function resolveFieldErrorMessage(children: unknown): string | null {
+	const parts = Array.isArray(children) ? children : [children];
+	let text = "";
+	for (const part of parts) {
+		if (part === null || part === undefined || typeof part === "boolean") continue;
+		if (typeof part === "string" || typeof part === "number") text += String(part);
+		else return null;
+	}
+	text = text.trim();
+	return text === "" ? null : text;
+}
+
 export type FieldVariantProps = VariantProps<typeof fieldVariants>;

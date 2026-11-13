@@ -1,6 +1,7 @@
 import { type ReactElement, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
 import { LayoutAnimationConfig } from "react-native-reanimated";
+import { useAnnouncement } from "../../hooks/use-announce";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
 import { Text } from "../text";
@@ -16,6 +17,7 @@ import {
 	formatCountdownInline,
 	isCountdownUrgent,
 	resolveCountdownAccessibilityLabel,
+	resolveCountdownAnnouncement,
 	resolveCountdownUnits,
 	splitCountdown,
 	trimCountdownUnits,
@@ -42,6 +44,8 @@ export type CountdownProps = Omit<ViewProps, "children"> & {
 	onTick?: (secondsLeft: number) => void;
 	/** Called once when time is up. A new `to` in the future arms it again. */
 	onComplete?: () => void;
+	/** Speak milestones and expiry to a screen reader. Defaults to `true`; `false` when the app announces them itself. */
+	announce?: boolean;
 	className?: string;
 };
 
@@ -56,6 +60,7 @@ function CountdownRoot({
 	now,
 	onTick,
 	onComplete,
+	announce = true,
 	className,
 	accessibilityLabel,
 	...props
@@ -72,14 +77,21 @@ function CountdownRoot({
 
 	const spoken = useMemo(() => resolveCountdownAccessibilityLabel(seconds, units, labels), [seconds, units, labels]);
 
+	// The label changes every second in the final minute, so it is not a live region: the
+	// announcement channel speaks the sparse milestone message instead — on iOS (no live regions)
+	// and on Android alike, and exactly once at expiry.
+	const { accessibilityLiveRegion } = useAnnouncement(resolveCountdownAnnouncement(seconds, units, labels), {
+		channel: "announcement",
+		enabled: announce,
+	});
+
 	// One accessible element: the role and the coarse label live on the root, and the digits
-	// beneath are hidden so a screen reader never walks them one by one. The label changes at
-	// most once a minute until the final minute, so the polite live region does not chatter.
+	// beneath are hidden so a screen reader never walks them one by one.
 	// `skipEntering` keeps the first render still; after that only a changed digit slides.
 	return (
 		<View
 			accessibilityLabel={accessibilityLabel ?? spoken}
-			accessibilityLiveRegion="polite"
+			accessibilityLiveRegion={accessibilityLiveRegion}
 			accessibilityRole="timer"
 			accessible
 			className={cn(slots.root(), className)}
@@ -125,7 +137,9 @@ function CountdownRoot({
  * in from above; `inline` is one run of text — `2d 14:03:22`.
  *
  * It is one accessible element with the `timer` role and a coarse label — days, hours and minutes,
- * then seconds only in the final minute — so a screen reader is not told every second.
+ * then seconds only in the final minute. It is not a live region: it announces at sparse milestones
+ * (an hour, 10 and 5 minutes, 1 minute, 30 s, 10 s) and once when time is up, on both platforms;
+ * `announce={false}` silences that.
  *
  * @example
  * <Countdown to={endsAt} />

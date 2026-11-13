@@ -6,6 +6,8 @@ import {
 	resolveFooterBorderOpacity,
 	resolveNavbarBorderOpacity,
 	resolveScreenEdgePadding,
+	resolveScreenErrorAnnouncement,
+	resolveScreenLoadingLabel,
 	resolveScreenViewPadding,
 	resolveScrollBottomInset,
 	resolveScrollTopInset,
@@ -598,5 +600,32 @@ describe("resolveScrollTopInset", () => {
 				expect(scroll).toBe(view.paddingTop);
 			}
 		}
+	});
+});
+
+describe("resolveScreenLoadingLabel", () => {
+	test("defaults to Loading", () => {
+		expect(resolveScreenLoadingLabel(undefined)).toBe("Loading");
+		expect(resolveScreenLoadingLabel("  ")).toBe("Loading");
+	});
+	test("keeps the caller's label", () => {
+		expect(resolveScreenLoadingLabel("Loading settings")).toBe("Loading settings");
+	});
+});
+
+describe("resolveScreenErrorAnnouncement", () => {
+	test("joins title and message into one sentence-separated string", () => {
+		expect(resolveScreenErrorAnnouncement("Something went wrong", "The request timed out.")).toBe(
+			"Something went wrong. The request timed out."
+		);
+	});
+	test("does not double punctuation", () => {
+		expect(resolveScreenErrorAnnouncement("Offline!", "Check your connection.")).toBe(
+			"Offline! Check your connection."
+		);
+	});
+	test("falls back to whichever part exists", () => {
+		expect(resolveScreenErrorAnnouncement("", "Gone.")).toBe("Gone.");
+		expect(resolveScreenErrorAnnouncement("Gone", " ")).toBe("Gone");
 	});
 });

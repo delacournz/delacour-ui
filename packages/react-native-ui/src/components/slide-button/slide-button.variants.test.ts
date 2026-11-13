@@ -3,6 +3,7 @@ import { aliasedTokens } from "../../styles/theme-tokens.test";
 import {
 	isSlideArmed,
 	isSlideDraggable,
+	resolveSlideAnnouncement,
 	resolveSlideHandleWidth,
 	resolveSlideLabelGutter,
 	resolveSlideRelease,
@@ -319,5 +320,22 @@ describe("isSlideDraggable", () => {
 		expect(isSlideDraggable({ isDisabled: true, isLoading: false, isPinned: false })).toBe(false);
 		expect(isSlideDraggable({ isDisabled: false, isLoading: true, isPinned: false })).toBe(false);
 		expect(isSlideDraggable({ isDisabled: false, isLoading: false, isPinned: true })).toBe(false);
+	});
+});
+
+describe("resolveSlideAnnouncement", () => {
+	test("a request in flight is polite and says it is working", () => {
+		expect(resolveSlideAnnouncement("pending")).toEqual({ message: "Working", politeness: "polite" });
+	});
+
+	test("a confirmed slide is polite", () => {
+		expect(resolveSlideAnnouncement("success")).toEqual({ message: "Confirmed", politeness: "polite" });
+	});
+
+	test("a failed slide is assertive and says the handle is back", () => {
+		expect(resolveSlideAnnouncement("failure")).toEqual({
+			message: "Failed. Slide to try again",
+			politeness: "assertive",
+		});
 	});
 });

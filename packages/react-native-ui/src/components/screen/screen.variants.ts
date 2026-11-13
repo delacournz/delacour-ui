@@ -472,4 +472,24 @@ export function resolveScreenViewPadding(state: {
 	return { paddingBottom, paddingTop: paddingTop };
 }
 
+/** What `Screen.Loading` is named and says when no `label` is given. */
+export const SCREEN_LOADING_LABEL = "Loading";
+
+/** The loading screen's name and announcement: the caller's label, else {@link SCREEN_LOADING_LABEL}. */
+export function resolveScreenLoadingLabel(label: string | undefined): string {
+	return label === undefined || label.trim() === "" ? SCREEN_LOADING_LABEL : label;
+}
+
+/**
+ * What a screen reader hears when `Screen.Error` appears: the title, then the message, as one
+ * sentence-separated string so it is a single announcement rather than two that interrupt each other.
+ */
+export function resolveScreenErrorAnnouncement(title: string, message: string): string {
+	const head = title.trim();
+	const body = message.trim();
+	if (head === "") return body;
+	if (body === "") return head;
+	return /[.!?]$/.test(head) ? `${head} ${body}` : `${head}. ${body}`;
+}
+
 export type ScreenVariantProps = VariantProps<typeof screenVariants>;

@@ -21,8 +21,8 @@ Root plus `NumberInput.Field`, `.Decrement` and `.Increment`, and
 | `number-input.types.ts` | Prop types shared by two or more modules |
 | `number-input.format.ts` | Pure parse, format, step and repeat-schedule maths, no RN imports |
 | `number-input.format.test.ts` | |
-| `number-input.render.test.tsx` | Mounted under Jest — adjustable role and value, step/min/max clamping through the actions and stepper buttons, typing drafts, controlled and uncontrolled, disabled and read-only refusing every path, Field label press, parts outside the root |
-| `number-input.variants.ts` | Pure `tv()` slots for the steppers + resolvers, no RN imports |
+| `number-input.render.test.tsx` | Mounted under Jest — adjustable role and value, step/min/max clamping through the actions and stepper buttons, typing drafts, controlled and uncontrolled, disabled and read-only refusing every path, Field label press, parts outside the root, stepper announcements <!-- registry:omit -->(first/last coalescing, bounds, opt-out, iOS and Android routes)<!-- /registry:omit --> |
+| `number-input.variants.ts` | Pure `tv()` slots for the steppers + resolvers (incl. the spoken step message), no RN imports |
 | `number-input.variants.test.ts` | |
 | `use-step-repeat.ts` | The hold-to-repeat timer. Imports React only; its schedule is in `.format.ts` |
 
@@ -124,6 +124,16 @@ Root plus `NumberInput.Field`, `.Decrement` and `.Increment`, and
   formatted `text`, and `min`/`max` when finite; `increment` and `decrement`
   actions step it. That is a VoiceOver or TalkBack swipe up or down, without
   finding the buttons. The buttons stay reachable for anyone who cannot swipe.
+- **A stepper speaks the value it just produced.** Focus stays on the button, whose
+  label is `Increase`, so a screen-reader user otherwise hears nothing of the new
+  number. The root owns one `useAnnounce` and hands the stepper `announceStep`; the
+  announcer coalesces a hold to its first and last value, and a step that reaches a
+  bound says `10, maximum` (`resolveStepAnnouncement`). Text is the on-screen
+  formatting, so a currency is spoken as `$19.50`. Only the steppers call it: the
+  adjustable field's own `increment` / `decrement` already speak the new
+  `accessibilityValue` natively, so announcing there would double the speech; typing
+  is echoed by the `TextInput`; a controlled value moving is the parent's to say.
+  `announce={false}` silences it.
 - **A stepper declares `activate`.** VoiceOver's double-tap then runs the
   stepper's handler rather than synthesising a touch the hold gesture would read
   as a press-in with no press-out.

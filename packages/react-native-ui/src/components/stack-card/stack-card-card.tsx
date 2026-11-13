@@ -1,5 +1,12 @@
-import { type ReactElement, useCallback, useMemo } from "react";
-import { type AccessibilityActionEvent, type AccessibilityActionInfo, View, type ViewProps } from "react-native";
+import { type ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import {
+	type AccessibilityActionEvent,
+	type AccessibilityActionInfo,
+	AccessibilityInfo,
+	View,
+	type ViewInstance,
+	type ViewProps,
+} from "react-native";
 import { useStackCardPart, useStackCardSlot } from "./stack-card.context";
 import { STACK_CARD_DIRECTIONS, type StackCardDirection, stackCardVariants } from "./stack-card.variants";
 
@@ -28,9 +35,13 @@ function actionName(direction: StackCardDirection): string {
  * deck from the actions rotor rather than by dragging. Because the card is one
  * element, a control inside it is not separately reachable: put the deck's
  * controls in `StackCard.Actions`, not on the card.
+ *
+ * When one of those actions throws or undoes, the card that held screen-reader
+ * focus has gone, so the card now on top asks for it (unless the deck's
+ * `announce` is `false`).
  */
 export function StackCardCard({ className, children, ...props }: StackCardCardProps): ReactElement {
-	const { directions, labelFor, swipe, undo, canUndo } = useStackCardPart("StackCard.Card");
+	const { directions, labelFor, swipeFromCard, undoFromCard, canUndo, focusToken } = useStackCardPart("StackCard.Card");
 	const slot = useStackCardSlot();
 	const isTop = slot?.isTop ?? false;
 
@@ -43,17 +54,28 @@ export function StackCardCard({ className, children, ...props }: StackCardCardPr
 		return list;
 	}, [canUndo, directions, labelFor]);
 
+	// Asks for screen-reader focus when the card's own action moved the top card and this card is
+	// now on top. The token is read at mount, so a card mounting later never focuses itself.
+	const viewRef = useRef<ViewInstance>(null);
+	const handledToken = useRef(focusToken);
+	useEffect(() => {
+		if (handledToken.current === focusToken) return;
+		handledToken.current = focusToken;
+		if (!isTop || viewRef.current === null) return;
+		AccessibilityInfo.sendAccessibilityEvent(viewRef.current, "focus");
+	}, [focusToken, isTop]);
+
 	const handleAction = useCallback(
 		(event: AccessibilityActionEvent) => {
 			const name = event.nativeEvent.actionName;
 			if (name === UNDO_ACTION) {
-				undo();
+				undoFromCard();
 				return;
 			}
 			const direction = STACK_CARD_DIRECTIONS.find((candidate) => actionName(candidate) === name);
-			if (direction) swipe(direction);
+			if (direction) swipeFromCard(direction);
 		},
-		[swipe, undo]
+		[swipeFromCard, undoFromCard]
 	);
 
 	return (
@@ -62,6 +84,7 @@ export function StackCardCard({ className, children, ...props }: StackCardCardPr
 			accessible={isTop}
 			className={stackCardVariants().card({ className })}
 			onAccessibilityAction={isTop ? handleAction : undefined}
+			ref={viewRef}
 			{...props}
 		>
 			{children}

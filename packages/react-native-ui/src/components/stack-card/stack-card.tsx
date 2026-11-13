@@ -15,6 +15,7 @@ import { type LayoutChangeEvent, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useReducedMotion, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
+import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { cn } from "../../lib/cn";
 import { type HapticFeedback, playHaptic } from "../pressable";
@@ -25,6 +26,7 @@ import {
 	resolveDragOffset,
 	resolveExitOffset,
 	resolveMountedWindow,
+	resolveStackCardAnnouncement,
 	resolveStackDepth,
 	resolveStackRelease,
 	STACK_CARD_DEFAULT_DIRECTION_LABELS,
@@ -79,13 +81,20 @@ export type StackCardProps = Omit<ViewProps, "children"> & {
 	haptic?: false | HapticFeedback;
 	/** What a screen reader and an action button call each direction. */
 	directionLabels?: Partial<Record<StackCardDirection, string>>;
+	/**
+	 * Speaks what a throw or an undo did and the card now on top ("Like. Next: Grace"), or that the
+	 * deck is empty, and — when the card's own accessibility action threw it — moves screen-reader
+	 * focus to the new top card. A card is named by its `accessibilityLabel`, else its place ("Card 2
+	 * of 3"). `false` silences both. Defaults to `true`.
+	 */
+	announce?: boolean;
 	ref?: Ref<StackCardHandle>;
 };
 
 /** A throw or an undo the deck asked for, waiting to see whether the index moved. */
 type StackCardPending =
-	| { kind: "throw"; from: number; direction: StackCardDirection }
-	| { kind: "undo"; from: number; direction: StackCardDirection };
+	| { kind: "throw"; from: number; direction: StackCardDirection; isFromCard: boolean }
+	| { kind: "undo"; from: number; direction: StackCardDirection; isFromCard: boolean };
 
 /**
  * The spring a card returns to the pile on. Critically damped — damping is
@@ -123,6 +132,7 @@ function StackCardRoot({
 	isDisabled = false,
 	haptic = "selection",
 	directionLabels,
+	announce: shouldAnnounce = true,
 	ref,
 	...props
 }: StackCardProps): ReactElement {
@@ -138,6 +148,8 @@ function StackCardRoot({
 	});
 	const [history, setHistory] = useState<StackCardDirection[]>([]);
 	const [pending, setPending] = useState<StackCardPending | null>(null);
+	const [focusToken, setFocusToken] = useState(0);
+	const speak = useAnnounce();
 
 	const x = useSharedValue(0);
 	const y = useSharedValue(0);
@@ -156,17 +168,17 @@ function StackCardRoot({
 		latest.current = { onEmpty, onSwipe, setIndex };
 	});
 
-	const advance = useCallback((direction: StackCardDirection, from: number) => {
+	const advance = useCallback((direction: StackCardDirection, from: number, isFromCard: boolean) => {
 		latest.current.onSwipe?.(direction, from);
 		latest.current.setIndex(from + 1);
-		setPending({ direction, from, kind: "throw" });
+		setPending({ direction, from, isFromCard, kind: "throw" });
 	}, []);
 
 	// Throws the top card. Runs on the UI thread, from the pan's release or from
 	// a JS call through `scheduleOnUI`. The top moves the frame the throw lands,
 	// before React hears of it, so the card behind is already the top.
 	const fling = useCallback(
-		(direction: StackCardDirection, vx: number, vy: number) => {
+		(direction: StackCardDirection, vx: number, vy: number, isFromCard: boolean) => {
 			"worklet";
 			if (isBusy.value) return;
 			const from = top.value;
@@ -181,7 +193,7 @@ function StackCardRoot({
 				y.value = 0;
 				fade.value = 1;
 				isBusy.value = false;
-				scheduleOnRN(advance, direction, from);
+				scheduleOnRN(advance, direction, from, isFromCard);
 			};
 			if (isReducedMotion) {
 				fade.value = withTiming(0, { duration: FADE_MS }, () => land());
@@ -232,29 +244,82 @@ function StackCardRoot({
 
 	const swipe = useCallback(
 		(direction: StackCardDirection) => {
-			scheduleOnUI(fling, direction, 0, 0);
+			scheduleOnUI(fling, direction, 0, 0, false);
+		},
+		[fling]
+	);
+
+	const swipeFromCard = useCallback(
+		(direction: StackCardDirection) => {
+			scheduleOnUI(fling, direction, 0, 0, true);
 		},
 		[fling]
 	);
 
 	const canUndo = !isDisabled && pending === null && index > 0 && history.length > 0;
 
-	const undo = useCallback(() => {
-		const direction = history.at(-1);
-		if (!canUndo || direction === undefined) return;
-		const to = index - 1;
-		setPending({ direction, from: index, kind: "undo" });
-		setIndex(to);
-		scheduleOnUI(() => {
-			"worklet";
-			isBusy.value = true;
-			top.value = to;
-			const exit = resolveExitOffset({ direction, height: height.value, width: width.value });
-			settle(exit.x, exit.y, true);
-		});
-	}, [canUndo, height, history, index, isBusy, setIndex, settle, top, width]);
+	const undoWith = useCallback(
+		(isFromCard: boolean) => {
+			const direction = history.at(-1);
+			if (!canUndo || direction === undefined) return;
+			const to = index - 1;
+			setPending({ direction, from: index, isFromCard, kind: "undo" });
+			setIndex(to);
+			scheduleOnUI(() => {
+				"worklet";
+				isBusy.value = true;
+				top.value = to;
+				const exit = resolveExitOffset({ direction, height: height.value, width: width.value });
+				settle(exit.x, exit.y, true);
+			});
+		},
+		[canUndo, height, history, index, isBusy, setIndex, settle, top, width]
+	);
+
+	const undo = useCallback(() => undoWith(false), [undoWith]);
+	const undoFromCard = useCallback(() => undoWith(true), [undoWith]);
 
 	useImperativeHandle(ref, () => ({ swipe, undo }), [swipe, undo]);
+
+	const emptyChildren = isValidElement<{ children?: ReactNode }>(empty) ? empty.props.children : undefined;
+	const emptyLabel = typeof emptyChildren === "string" ? emptyChildren : undefined;
+
+	const labelFor = useCallback(
+		(direction: StackCardDirection) => directionLabels?.[direction] ?? STACK_CARD_DEFAULT_DIRECTION_LABELS[direction],
+		[directionLabels]
+	);
+
+	// Speaks what a landed throw or undo did, and — only when the card's own accessibility action
+	// did it — moves focus to the card now on top: that action's target just flew away, so focus
+	// would be lost. A button keeps the focus it has, a drag or a `ref` call never takes it.
+	const announceLanded = useCallback(
+		(
+			landed:
+				| { kind: "throw"; direction: StackCardDirection; isFromCard: boolean }
+				| { kind: "undo"; isFromCard: boolean }
+		) => {
+			if (!shouldAnnounce) return;
+			const next = cards[index];
+			const nextProps = isValidElement<{ accessibilityLabel?: string }>(next) ? next.props : undefined;
+			const cardLabel = nextProps?.accessibilityLabel;
+			if (landed.kind === "throw") {
+				speak(
+					resolveStackCardAnnouncement({
+						cardLabel,
+						count,
+						directionLabel: labelFor(landed.direction),
+						emptyLabel,
+						index,
+						kind: "throw",
+					})
+				);
+			} else {
+				speak(resolveStackCardAnnouncement({ cardLabel, count, index, kind: "undo" }));
+			}
+			if (landed.isFromCard) setFocusToken((token) => token + 1);
+		},
+		[cards, count, emptyLabel, index, labelFor, shouldAnnounce, speak]
+	);
 
 	// Settles a throw or an undo once React has the index the caller chose. A
 	// controlled deck that left `index` where it was declined it: a thrown card
@@ -267,6 +332,7 @@ function StackCardRoot({
 			syncedIndex.current = index;
 			if (pending.kind === "throw") {
 				if (index !== pending.from) {
+					announceLanded({ direction: pending.direction, isFromCard: pending.isFromCard, kind: "throw" });
 					setHistory((current) => [...current, pending.direction]);
 					scheduleOnUI(() => {
 						"worklet";
@@ -285,6 +351,7 @@ function StackCardRoot({
 				return;
 			}
 			if (index !== pending.from) {
+				announceLanded({ isFromCard: pending.isFromCard, kind: "undo" });
 				setHistory((current) => current.slice(0, -1));
 				return;
 			}
@@ -309,7 +376,7 @@ function StackCardRoot({
 			fade.value = 1;
 			isBusy.value = false;
 		});
-	}, [fade, height, index, isBusy, pending, settle, top, width, x, y]);
+	}, [announceLanded, fade, height, index, isBusy, pending, settle, top, width, x, y]);
 
 	// `onEmpty` fires on the step that empties the deck, once — not on mount for
 	// a deck that starts empty, and not again until it has been refilled.
@@ -377,7 +444,7 @@ function StackCardRoot({
 					y: y.value,
 				});
 				if (direction !== null) {
-					fling(direction, event.velocityX, event.velocityY);
+					fling(direction, event.velocityX, event.velocityY, false);
 					return;
 				}
 				settle(x.value, y.value, false);
@@ -421,11 +488,6 @@ function StackCardRoot({
 		return colors;
 	}, [stamps]);
 
-	const labelFor = useCallback(
-		(direction: StackCardDirection) => directionLabels?.[direction] ?? STACK_CARD_DEFAULT_DIRECTION_LABELS[direction],
-		[directionLabels]
-	);
-
 	const context = useMemo<StackCardContextValue>(
 		() => ({
 			canUndo,
@@ -433,6 +495,7 @@ function StackCardRoot({
 			depth,
 			directions,
 			fade,
+			focusToken,
 			height,
 			index,
 			isDisabled,
@@ -441,9 +504,11 @@ function StackCardRoot({
 			layout,
 			stampColors,
 			swipe,
+			swipeFromCard,
 			threshold,
 			top,
 			undo,
+			undoFromCard,
 			width,
 			x,
 			y,
@@ -454,6 +519,7 @@ function StackCardRoot({
 			depth,
 			directions,
 			fade,
+			focusToken,
 			height,
 			index,
 			isDisabled,
@@ -462,9 +528,11 @@ function StackCardRoot({
 			layout,
 			stampColors,
 			swipe,
+			swipeFromCard,
 			threshold,
 			top,
 			undo,
+			undoFromCard,
 			width,
 			x,
 			y,

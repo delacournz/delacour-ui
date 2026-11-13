@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Platform } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { ProgressButton } from "./progress-button";
 import { useProgressButton } from "./progress-button.context";
@@ -247,5 +249,72 @@ describe("ProgressButton", () => {
 		} finally {
 			spy.mockRestore();
 		}
+	});
+});
+
+const originalOS = Platform.OS;
+function setPlatform(os: typeof Platform.OS) {
+	Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+}
+
+describe("ProgressButton announcement", () => {
+	let announceSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+	let announceWithOptionsSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+	beforeEach(() => {
+		resetAnnouncer();
+		announceSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		announceWithOptionsSpy = jest
+			.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+			.mockImplementation(() => {});
+		announceSpy.mockClear();
+		announceWithOptionsSpy.mockClear();
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	test("iOS: an activation speaks Done once through the options route", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<ProgressButton>Pay</ProgressButton>);
+		expect(announceWithOptionsSpy).not.toHaveBeenCalled();
+		await fireEvent(screen.getByRole("button"), "accessibilityAction", activate);
+		expect(announceWithOptionsSpy).toHaveBeenCalledTimes(1);
+		expect(announceWithOptionsSpy).toHaveBeenCalledWith("Done", { queue: true });
+		expect(announceSpy).not.toHaveBeenCalled();
+	});
+
+	test("Android: speaks once through announceForAccessibility, with no live region on the button", async () => {
+		setPlatform("android");
+		await renderWithProviders(<ProgressButton completedAnnouncement="Paid">Pay</ProgressButton>);
+		await fireEvent(screen.getByRole("button"), "accessibilityAction", activate);
+		expect(announceSpy).toHaveBeenCalledTimes(1);
+		expect(announceSpy).toHaveBeenCalledWith("Paid");
+		expect(screen.getByRole("button").props.accessibilityLiveRegion).toBeUndefined();
+	});
+
+	test("a controlled completion speaks, and the reset after it does not", async () => {
+		setPlatform("ios");
+		const view = await renderWithProviders(<ProgressButton isCompleted={false}>Pay</ProgressButton>);
+		await view.rerender(<ProgressButton isCompleted>Pay</ProgressButton>);
+		expect(announceWithOptionsSpy).toHaveBeenCalledTimes(1);
+		await view.rerender(<ProgressButton isCompleted={false}>Pay</ProgressButton>);
+		expect(announceWithOptionsSpy).toHaveBeenCalledTimes(1);
+	});
+
+	test("mounting already completed is silent", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<ProgressButton defaultCompleted>Pay</ProgressButton>);
+		expect(announceWithOptionsSpy).not.toHaveBeenCalled();
+	});
+
+	test("announce={false} is silent", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<ProgressButton announce={false}>Pay</ProgressButton>);
+		await fireEvent(screen.getByRole("button"), "accessibilityAction", activate);
+		expect(announceWithOptionsSpy).not.toHaveBeenCalled();
+		expect(announceSpy).not.toHaveBeenCalled();
 	});
 });

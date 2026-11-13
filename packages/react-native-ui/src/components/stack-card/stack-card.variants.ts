@@ -358,3 +358,32 @@ export function resolveStackDepth(depth?: number): number {
 	if (depth === undefined || Number.isNaN(depth)) return 2;
 	return Math.min(4, Math.max(0, Math.round(depth)));
 }
+
+/** Spoken when a throw empties a deck that has no `Empty` text to read. */
+export const STACK_CARD_ANNOUNCE_EMPTY = "No more cards";
+
+/** Spoken ahead of the restored card after an undo. */
+export const STACK_CARD_ANNOUNCE_UNDO = "Undone";
+
+/** Spoken ahead of the card that is now on top after a throw. */
+export const STACK_CARD_ANNOUNCE_NEXT = "Next";
+
+/** What a card with no `accessibilityLabel` is called: its place in the deck. */
+export function resolveStackCardPosition(index: number, count: number): string {
+	return `Card ${index + 1} of ${count}`;
+}
+
+/**
+ * What a screen reader hears after a throw or an undo lands: the answer given and the card now on
+ * top — or that the deck is empty. `index` is the new top card's index.
+ */
+export function resolveStackCardAnnouncement(
+	input:
+		| { kind: "throw"; directionLabel: string; index: number; count: number; cardLabel?: string; emptyLabel?: string }
+		| { kind: "undo"; index: number; count: number; cardLabel?: string }
+): string {
+	const card = input.cardLabel ?? resolveStackCardPosition(input.index, input.count);
+	if (input.kind === "undo") return `${STACK_CARD_ANNOUNCE_UNDO}. ${card}`;
+	if (input.index >= input.count) return `${input.directionLabel}. ${input.emptyLabel ?? STACK_CARD_ANNOUNCE_EMPTY}`;
+	return `${input.directionLabel}. ${STACK_CARD_ANNOUNCE_NEXT}: ${card}`;
+}

@@ -8,6 +8,7 @@ import {
 	useCallback,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 } from "react";
 import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
@@ -21,6 +22,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { IconDefaultsProvider } from "../icon";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
@@ -42,6 +44,7 @@ import {
 	type ProgressButtonVariant,
 	progressButtonVariants,
 	resolveAutoResetDelay,
+	resolveCompletionAnnouncement,
 	resolveHoldDuration,
 	resolveProgressButtonAccessibilityState,
 	resolveRemainingDuration,
@@ -79,6 +82,10 @@ export type ProgressButtonProps = Omit<ViewProps, "children"> & {
 	haptic?: false | HapticFeedback;
 	/** Defaults to saying the button has to be held. */
 	accessibilityHint?: string;
+	/** Speak the completion to a screen reader. On by default; `false` is the opt-out. */
+	announce?: boolean;
+	/** What is spoken on completion. Defaults to "Done"; pass the `Done` content's text when it says more. */
+	completedAnnouncement?: string;
 	ref?: Ref<ComponentRef<typeof Animated.View>>;
 };
 
@@ -134,6 +141,8 @@ function ProgressButtonRoot({
 	isDisabled = false,
 	haptic = false,
 	accessibilityHint = PROGRESS_BUTTON_DEFAULT_HINT,
+	announce: shouldAnnounce = true,
+	completedAnnouncement,
 	onLayout,
 	ref,
 	...props
@@ -208,6 +217,21 @@ function ProgressButtonRoot({
 			});
 		}
 	}, [completion, holdCount, isCompleted, isLocked, progress]);
+
+	// Speaks the completion once, whichever side moved it: a hold, a screen reader's activation or a
+	// controlled `isCompleted`. The root renders no live region, so this is the only route and Android
+	// hears it once; progress ticks while holding are never spoken.
+	const speak = useAnnounce();
+	const wasCompleted = useRef(isCompleted);
+	useEffect(() => {
+		const message = resolveCompletionAnnouncement({
+			isCompleted,
+			message: completedAnnouncement,
+			wasCompleted: wasCompleted.current,
+		});
+		wasCompleted.current = isCompleted;
+		if (message !== null) speak(message, { enabled: shouldAnnounce });
+	}, [completedAnnouncement, isCompleted, shouldAnnounce, speak]);
 
 	useEffect(() => {
 		if (!isCompleted || !isAutoReset) return;

@@ -3,6 +3,7 @@ import { declaredTokens } from "../../styles/theme-tokens.test";
 import { buttonVariants } from "../button/button.variants";
 import {
 	PROGRESS_BUTTON_DEFAULT_AUTO_RESET_MS,
+	PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE,
 	PROGRESS_BUTTON_DEFAULT_HINT,
 	PROGRESS_BUTTON_DEFAULT_HOLD_MS,
 	PROGRESS_BUTTON_FILL_FOREGROUND_TOKEN,
@@ -15,6 +16,7 @@ import {
 	PROGRESS_BUTTON_VARIANTS,
 	progressButtonVariants,
 	resolveAutoResetDelay,
+	resolveCompletionAnnouncement,
 	resolveHoldDuration,
 	resolveProgressButtonAccessibilityState,
 	resolveRemainingDuration,
@@ -310,5 +312,24 @@ describe("progressButtonVariants — theme tokens", () => {
 		for (const variant of PROGRESS_BUTTON_VARIANTS) {
 			expect(PROGRESS_BUTTON_FILL_TOKEN[variant]).not.toBe(PROGRESS_BUTTON_FILL_FOREGROUND_TOKEN[variant]);
 		}
+	});
+});
+
+describe("resolveCompletionAnnouncement", () => {
+	test("speaks the default message when a hold completes", () => {
+		expect(resolveCompletionAnnouncement({ isCompleted: true, wasCompleted: false })).toBe(
+			PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE
+		);
+	});
+
+	test("speaks the caller's message instead", () => {
+		expect(resolveCompletionAnnouncement({ isCompleted: true, message: "Paid", wasCompleted: false })).toBe("Paid");
+	});
+
+	test("is silent on a reset, at rest and for an empty message", () => {
+		expect(resolveCompletionAnnouncement({ isCompleted: false, wasCompleted: true })).toBeNull();
+		expect(resolveCompletionAnnouncement({ isCompleted: false, wasCompleted: false })).toBeNull();
+		expect(resolveCompletionAnnouncement({ isCompleted: true, wasCompleted: true })).toBeNull();
+		expect(resolveCompletionAnnouncement({ isCompleted: true, message: "", wasCompleted: false })).toBeNull();
 	});
 });

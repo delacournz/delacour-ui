@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { createRef, type ReactElement } from "react";
+import { AccessibilityInfo, Platform } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Text } from "../text";
 import { StackCard, type StackCardHandle, type StackCardProps, useStackCard } from "./index";
@@ -305,5 +307,94 @@ describe("StackCard", () => {
 		} finally {
 			spy.mockRestore();
 		}
+	});
+});
+
+describe("StackCard announcements", () => {
+	const originalOS = Platform.OS;
+	let spoken: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+	let focus: jest.SpiedFunction<typeof AccessibilityInfo.sendAccessibilityEvent>;
+
+	function LabelledDeck(props: TestProps): ReactElement {
+		return (
+			<StackCard haptic={false} {...props}>
+				{NAMES.map((name) => (
+					<StackCard.Card accessibilityLabel={`Profile of ${name}`} key={name} testID={`card-${name}`}>
+						<Text>{name}</Text>
+					</StackCard.Card>
+				))}
+				<StackCard.Empty>All caught up</StackCard.Empty>
+				<StackCard.Actions>
+					<StackCard.Action action="left" icon={() => null} label="Skip" />
+					<StackCard.Action action="undo" icon={() => null} />
+					<StackCard.Action action="right" icon={() => null} label="Save" />
+				</StackCard.Actions>
+			</StackCard>
+		);
+	}
+
+	beforeEach(() => {
+		resetAnnouncer();
+		Object.defineProperty(Platform, "OS", { configurable: true, get: () => "ios" });
+		spoken = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		focus = jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation(() => {});
+		spoken.mockClear();
+		focus.mockClear();
+	});
+
+	afterEach(() => {
+		Object.defineProperty(Platform, "OS", { configurable: true, get: () => originalOS });
+		jest.restoreAllMocks();
+	});
+
+	test("a throw speaks the answer and the next card by its label, once", async () => {
+		await renderWithProviders(<LabelledDeck directionLabels={{ right: "Like" }} />);
+		await cardAction("Ada", "swipe-right");
+		expect(spoken).toHaveBeenCalledTimes(1);
+		expect(spoken).toHaveBeenCalledWith("Like. Next: Profile of Grace", { queue: true });
+	});
+
+	test("a card without a label is named by its place", async () => {
+		await renderWithProviders(<Deck />);
+		await cardAction("Ada", "swipe-left");
+		expect(spoken).toHaveBeenCalledWith("Swipe left. Next: Card 2 of 3", { queue: true });
+	});
+
+	test("the last throw says the deck is empty in the Empty text", async () => {
+		await renderWithProviders(<Deck defaultIndex={2} />);
+		await cardAction("Linus", "swipe-right");
+		expect(spoken).toHaveBeenCalledWith("Swipe right. All caught up", { queue: true });
+	});
+
+	test("an undo speaks the restored card", async () => {
+		await renderWithProviders(<LabelledDeck />);
+		await cardAction("Ada", "swipe-left");
+		spoken.mockClear();
+		await cardAction("Grace", "undo");
+		expect(spoken).toHaveBeenCalledWith("Undone. Profile of Ada", { queue: true });
+	});
+
+	test("a card action moves focus to the new top card; a button does not", async () => {
+		await renderWithProviders(<LabelledDeck />);
+		await press("Skip");
+		expect(spoken).toHaveBeenCalledTimes(1);
+		expect(focus).not.toHaveBeenCalled();
+
+		await cardAction("Grace", "swipe-right");
+		expect(focus).toHaveBeenCalledTimes(1);
+	});
+
+	test("a declined controlled throw says nothing", async () => {
+		await renderWithProviders(<LabelledDeck index={0} onIndexChange={() => undefined} />);
+		await cardAction("Ada", "swipe-left");
+		expect(spoken).not.toHaveBeenCalled();
+		expect(focus).not.toHaveBeenCalled();
+	});
+
+	test("announce={false} is silent and leaves focus alone", async () => {
+		await renderWithProviders(<LabelledDeck announce={false} />);
+		await cardAction("Ada", "swipe-left");
+		expect(spoken).not.toHaveBeenCalled();
+		expect(focus).not.toHaveBeenCalled();
 	});
 });

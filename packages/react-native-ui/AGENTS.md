@@ -38,12 +38,13 @@ src/
 ├── hooks/                use-controllable-state, use-theme-color,
 │                         use-keyboard-state-sync, use-navigation-theme,
 │                         use-calm-motion, use-scroll-sections,
-│                         use-scroll-source, use-reduce-transparency
+│                         use-scroll-source, use-reduce-transparency,
+│                         use-announce
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
 │                         paging, scroll-sections, scroll-maths, scroll-edges,
-│                         wrap-text-children
+│                         wrap-text-children, announce
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── test/                 the render-test kit — Jest setup and renderWithProviders
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
@@ -93,6 +94,30 @@ failure each rule prevents. It also carries the folder's file map, so the list
 of parts is documented beside the parts rather than in a tree here that drifts
 the moment a file is added. This document holds only what every component
 shares.
+
+### Announcements
+
+A component that has to be *heard* — a result, a value after a step, a loading state settling —
+goes through one helper rather than calling `AccessibilityInfo` itself, because the platforms
+disagree and getting it wrong is either silence or double speech:
+
+| Module | What it holds |
+| --- | --- |
+| `lib/announce.ts` | The pure half: `resolveAnnounceRoute` (one route per platform — iOS announces, Android uses a live region **or** an announcement, the web a live region), `resolveLiveRegion`, and `createAnnouncer`, which throttles and coalesces per key |
+| `hooks/use-announce.ts` | The platform binding: `announce(message, options)`, `useAnnounce()` (keyed to the instance, pending speech dropped on unmount) and `useAnnouncement(message, options)`, which returns the `accessibilityLiveRegion` to spread and announces only where that live region does not |
+
+Four rules:
+
+- **Never both on Android.** A live region and `announceForAccessibility` carrying the same text are
+  heard twice. `useAnnouncement` picks one; a hand-written `accessibilityLiveRegion` beside an
+  `announce()` call is the bug this exists to remove.
+- **iOS has no live regions.** VoiceOver ignores `accessibilityLiveRegion`, so a component relying on
+  one alone is silent there. That is why `useAnnouncement` announces on iOS whatever the channel.
+- **A stream takes the announcement channel.** A live region speaks every change and cannot be
+  throttled; a stepper held down or a clock ticking passes `channel: "announcement"` so the
+  announcer coalesces the burst to its first and last message.
+- **Every announcing component takes an opt-out** — an `announce` prop (or the component's own
+  equivalent) passed through as `enabled`, for an app that speaks the same event itself.
 
 ## Components
 

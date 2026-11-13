@@ -71,6 +71,26 @@ describe("Signature", () => {
 		expect(screen.getByLabelText("Witness, drawn, 1 stroke")).toBeOnTheScreen();
 	});
 
+	test("inside an invalid, required Field the pad says so and speaks the error and description", async () => {
+		await renderWithProviders(
+			<Field isInvalid isRequired>
+				<Field.Label>Witness</Field.Label>
+				<Signature defaultValue={ONE_STROKE} />
+				<Field.Description>Sign inside the box.</Field.Description>
+				<Field.Error>Signature needed.</Field.Error>
+			</Field>
+		);
+		const pad = screen.getByLabelText("Witness, drawn, 1 stroke, required");
+		expect(pad.props.accessibilityHint).toContain("Invalid: Signature needed.");
+		expect(pad.props.accessibilityHint).toContain("Sign inside the box.");
+	});
+
+	test("outside a Field the pad carries no validity", async () => {
+		await renderWithProviders(<Signature defaultValue={ONE_STROKE} />);
+		const pad = screen.getByLabelText("Signature, drawn, 1 stroke");
+		expect(pad.props.accessibilityHint).not.toContain("Invalid");
+	});
+
 	test("the toolbar disables what would do nothing", async () => {
 		await renderWithProviders(
 			<Signature>

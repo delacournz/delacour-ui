@@ -54,6 +54,12 @@ section to read first — what follows is only where a switch differs.
   release.** The root tracks the furthest the finger got on either axis, resets
   it in `onBegin`, and passes it at release. A slow drag out and back to near its
   start is still a drag, and it settles by position instead of toggling.
+- **A swipe that never moved along the track keeps the state.** The root also
+  tracks the peak horizontal displacement and passes it as `horizontalDistance`.
+  Past the tap slop but under it horizontally, the release returns the state it
+  started in, without reading the position. A swipe caught while the thumb is
+  still springing towards a new state would otherwise settle by a position that
+  has not caught up, and flip the switch back.
 - **The value is settled in `onFinalize`, and only there.** Unlike a slider there
   is nothing to write on `onBegin`: a switch has no position to move a handle to,
   only a state to end up in. `onFinalize` is still the callback because it is the

@@ -520,8 +520,12 @@ describe("resolveSwitchRelease", () => {
 	test("a release that barely moved is a tap, and toggles", () => {
 		// This is what lets one Gesture.Pan() serve both gestures rather than
 		// racing a Tap against it.
-		expect(resolveSwitchRelease({ progress: 0, distance: 0, velocity: 0, wasSelected: false })).toBe(true);
-		expect(resolveSwitchRelease({ progress: 1, distance: 0, velocity: 0, wasSelected: true })).toBe(false);
+		expect(
+			resolveSwitchRelease({ progress: 0, distance: 0, horizontalDistance: 0, velocity: 0, wasSelected: false })
+		).toBe(true);
+		expect(
+			resolveSwitchRelease({ progress: 1, distance: 0, horizontalDistance: 0, velocity: 0, wasSelected: true })
+		).toBe(false);
 	});
 
 	test("a vertical swipe over the switch is not a tap and changes nothing", () => {
@@ -529,45 +533,95 @@ describe("resolveSwitchRelease", () => {
 		// but it did move, so reading the along-track translation alone would have
 		// called this a tap and toggled on every attempt to scroll past.
 		const scroll = SWITCH_TAP_SLOP + 30;
-		expect(resolveSwitchRelease({ progress: 0, distance: scroll, velocity: 0, wasSelected: false })).toBe(false);
-		expect(resolveSwitchRelease({ progress: 1, distance: scroll, velocity: 0, wasSelected: true })).toBe(true);
+		expect(
+			resolveSwitchRelease({ progress: 0, distance: scroll, horizontalDistance: 0, velocity: 0, wasSelected: false })
+		).toBe(false);
+		expect(
+			resolveSwitchRelease({ progress: 1, distance: scroll, horizontalDistance: 0, velocity: 0, wasSelected: true })
+		).toBe(true);
 	});
 
 	test("the tap slop is a tolerance, and a hair past it is not a tap", () => {
-		expect(resolveSwitchRelease({ progress: 0, distance: SWITCH_TAP_SLOP - 1, velocity: 0, wasSelected: false })).toBe(
-			true
-		);
-		expect(resolveSwitchRelease({ progress: 0, distance: SWITCH_TAP_SLOP, velocity: 0, wasSelected: false })).toBe(
-			false
-		);
+		expect(
+			resolveSwitchRelease({
+				progress: 0,
+				distance: SWITCH_TAP_SLOP - 1,
+				horizontalDistance: SWITCH_TAP_SLOP - 1,
+				velocity: 0,
+				wasSelected: false,
+			})
+		).toBe(true);
+		expect(
+			resolveSwitchRelease({
+				progress: 0,
+				distance: SWITCH_TAP_SLOP,
+				horizontalDistance: SWITCH_TAP_SLOP,
+				velocity: 0,
+				wasSelected: false,
+			})
+		).toBe(false);
 	});
 
 	test("a drag past the slop is settled by position, not by the state it started in", () => {
 		const past = SWITCH_TAP_SLOP + 1;
-		expect(resolveSwitchRelease({ progress: 0.2, distance: past, velocity: 0, wasSelected: false })).toBe(false);
-		expect(resolveSwitchRelease({ progress: 0.8, distance: past, velocity: 0, wasSelected: false })).toBe(true);
+		expect(
+			resolveSwitchRelease({ progress: 0.2, distance: past, horizontalDistance: past, velocity: 0, wasSelected: false })
+		).toBe(false);
+		expect(
+			resolveSwitchRelease({ progress: 0.8, distance: past, horizontalDistance: past, velocity: 0, wasSelected: false })
+		).toBe(true);
 	});
 
 	test("a drag out and back commits nothing", () => {
 		// It travelled, so it is not a tap; it came back, so position says off.
-		expect(resolveSwitchRelease({ progress: 0.05, distance: 40, velocity: 0, wasSelected: false })).toBe(false);
+		expect(
+			resolveSwitchRelease({ progress: 0.05, distance: 40, horizontalDistance: 40, velocity: 0, wasSelected: false })
+		).toBe(false);
 	});
 
 	test("a flick beats the position it stopped at", () => {
 		// The one case where position is the wrong question: let go fast enough and
 		// the switch goes the way the finger was going.
 		const fling = SWITCH_FLING_VELOCITY + 1;
-		expect(resolveSwitchRelease({ progress: 0.1, distance: 10, velocity: fling, wasSelected: false })).toBe(true);
-		expect(resolveSwitchRelease({ progress: 0.9, distance: 10, velocity: -fling, wasSelected: true })).toBe(false);
+		expect(
+			resolveSwitchRelease({ progress: 0.1, distance: 10, horizontalDistance: 10, velocity: fling, wasSelected: false })
+		).toBe(true);
+		expect(
+			resolveSwitchRelease({ progress: 0.9, distance: 10, horizontalDistance: 10, velocity: -fling, wasSelected: true })
+		).toBe(false);
 	});
 
 	test("a slow release below the fling threshold is left to the position", () => {
 		const slow = SWITCH_FLING_VELOCITY - 1;
-		expect(resolveSwitchRelease({ progress: 0.1, distance: 10, velocity: slow, wasSelected: false })).toBe(false);
+		expect(
+			resolveSwitchRelease({ progress: 0.1, distance: 10, horizontalDistance: 10, velocity: slow, wasSelected: false })
+		).toBe(false);
+	});
+
+	test("a vertical swipe keeps the state even when the thumb is caught mid-animation", () => {
+		// Grabbed while springing on (progress still 0.2) or off (still 0.8): the
+		// position has not caught up with the state, so settling by position would
+		// flip it. With no movement along the track there is no intent to change it.
+		const scroll = SWITCH_TAP_SLOP + 30;
+		expect(
+			resolveSwitchRelease({ progress: 0.2, distance: scroll, horizontalDistance: 0, velocity: 0, wasSelected: true })
+		).toBe(true);
+		expect(
+			resolveSwitchRelease({ progress: 0.8, distance: scroll, horizontalDistance: 0, velocity: 0, wasSelected: false })
+		).toBe(false);
+	});
+
+	test("a horizontal drag out and back is still settled by position", () => {
+		const out = SWITCH_TAP_SLOP + 10;
+		expect(
+			resolveSwitchRelease({ progress: 0.05, distance: out, horizontalDistance: out, velocity: 0, wasSelected: true })
+		).toBe(false);
 	});
 
 	test("exactly half way settles off, so the midpoint is not a coin toss", () => {
-		expect(resolveSwitchRelease({ progress: 0.5, distance: 20, velocity: 0, wasSelected: false })).toBe(false);
+		expect(
+			resolveSwitchRelease({ progress: 0.5, distance: 20, horizontalDistance: 20, velocity: 0, wasSelected: false })
+		).toBe(false);
 	});
 });
 

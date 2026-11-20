@@ -274,4 +274,27 @@ describe("Switch gesture", () => {
 
 		expect(onSelectedChange).not.toHaveBeenCalled();
 	});
+
+	test.each([
+		["springing on", false, true],
+		["springing off", true, false],
+	])("a vertical swipe caught while %s keeps the state", async (_, from, to) => {
+		const onSelectedChange = jest.fn();
+		const view = await renderWithProviders(
+			<Switch isSelected={from} onSelectedChange={onSelectedChange} testID="switch" />
+		);
+		await fireEvent(track(), "layout", layout(52));
+
+		// The prop flips and the thumb starts springing; the swipe lands before it
+		// has crossed half way, so its position still says the old state.
+		await view.rerender(<Switch isSelected={to} onSelectedChange={onSelectedChange} testID="switch" />);
+		await pan([
+			{ state: State.BEGAN },
+			{ state: State.ACTIVE },
+			{ state: State.ACTIVE, translationY: 30 },
+			{ state: State.END, translationY: 30 },
+		]);
+
+		expect(onSelectedChange).not.toHaveBeenCalled();
+	});
 });

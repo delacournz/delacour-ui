@@ -105,6 +105,9 @@ function SwitchRoot({
 	// whole gesture. Read at release rather than the final translation, so a drag
 	// out and back to its start is still a drag and not a tap.
 	const peakDistance = useSharedValue(0);
+	// The same peak along the track only. A swipe that never moved along it has
+	// no intent to change the state, whatever the thumb's position says.
+	const peakHorizontal = useSharedValue(0);
 
 	// A ref rather than state: the pan reads it twice a drag and nothing renders
 	// differently for it, so a re-render on touch-down would be pure cost.
@@ -159,6 +162,7 @@ function SwitchRoot({
 				"worklet";
 				grabbed.value = progress.value;
 				peakDistance.value = 0;
+				peakHorizontal.value = 0;
 				isPressed.value = withSpring(1, SWITCH_PRESS_SPRING);
 				scheduleOnRN(setDragging, true);
 			})
@@ -167,6 +171,7 @@ function SwitchRoot({
 				// Before the travel check: a vertical swipe moves no thumb but still
 				// counts as movement.
 				peakDistance.value = Math.max(peakDistance.value, Math.abs(event.translationX), Math.abs(event.translationY));
+				peakHorizontal.value = Math.max(peakHorizontal.value, Math.abs(event.translationX));
 
 				const travel = switchTravel({
 					inset: SWITCH_THUMB_INSET,
@@ -197,6 +202,7 @@ function SwitchRoot({
 				// returns near its start does not read as a tap either.
 				const target = resolveSwitchRelease({
 					distance: Math.max(peakDistance.value, Math.abs(event.translationX), Math.abs(event.translationY)),
+					horizontalDistance: Math.max(peakHorizontal.value, Math.abs(event.translationX)),
 					progress: progress.value,
 					velocity: event.velocityX,
 					wasSelected: selected,
@@ -225,6 +231,7 @@ function SwitchRoot({
 		isGestureDisabled,
 		isPressed,
 		peakDistance,
+		peakHorizontal,
 		progress,
 		selected,
 		setDragging,

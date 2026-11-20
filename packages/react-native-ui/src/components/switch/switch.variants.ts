@@ -453,10 +453,13 @@ export function switchTravel({
  * translation: a vertical swipe that began on the switch moves nothing
  * horizontally, and reading only that axis would turn every attempt to scroll
  * past the control into a toggle. It is also the peak over the gesture, not the
- * translation at release, so a drag out and back is not a tap. A release
- * travelling fast is a **flick**, and goes the way the finger was going however
- * short of half way it stopped.
- * Anything else is settled by position.
+ * translation at release, so a drag out and back is not a tap. A gesture past
+ * the slop that never moved **along the track** (`horizontalDistance` under the
+ * slop) is a scroll, not a drag, and keeps the state: grabbed mid-animation, the
+ * thumb's position can still say the old state, and settling by it would flip
+ * the switch. A release travelling fast is a **flick**, and goes the way the
+ * finger was going however short of half way it stopped. Anything else is
+ * settled by position.
  *
  * Marked `"worklet"` and written flat — it calls nothing, not even to clamp.
  * A module-scope worklet is rewritten into a factory call that runs at import
@@ -469,17 +472,21 @@ export function switchTravel({
 export function resolveSwitchRelease({
 	progress,
 	distance,
+	horizontalDistance,
 	velocity,
 	wasSelected,
 }: {
 	progress: number;
 	/** The furthest the finger got over the gesture, in points, on whichever axis moved further. */
 	distance: number;
+	/** The furthest the finger got along the track over the gesture, in points. */
+	horizontalDistance: number;
 	velocity: number;
 	wasSelected: boolean;
 }): boolean {
 	"worklet";
 	if (distance < SWITCH_TAP_SLOP) return !wasSelected;
+	if (horizontalDistance < SWITCH_TAP_SLOP) return wasSelected;
 	if (velocity > SWITCH_FLING_VELOCITY) return true;
 	if (velocity < -SWITCH_FLING_VELOCITY) return false;
 	return progress > 0.5;

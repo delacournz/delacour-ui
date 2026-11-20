@@ -1,7 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { State } from "react-native-gesture-handler";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
-import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
+import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Field } from "../field";
 import { Switch } from "./switch";
 import { SWITCH_THUMB_INSET } from "./switch.variants";
@@ -103,8 +103,9 @@ describe("Switch.Thumb", () => {
 		expect(onLayout).toHaveBeenCalledTimes(1);
 		// An on-state thumb sits one travel along. With its own width unmeasured
 		// the travel would be the whole track less the insets, and the knob would
-		// slide out past the clipped end.
-		expect(translateX(screen.getByTestId("thumb"))).toBe(52 - 24 - 2 * SWITCH_THUMB_INSET);
+		// slide out past the clipped end. Waited for, because under Jest Reanimated
+		// runs the style mapper on the next animation frame, not inside the event.
+		await waitFor(() => expect(translateX(screen.getByTestId("thumb"))).toBe(52 - 24 - 2 * SWITCH_THUMB_INSET));
 	});
 });
 

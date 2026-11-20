@@ -21,7 +21,7 @@ section to read first — what follows is only where a switch differs.
 | `switch.types.ts` | Prop types shared by two or more parts |
 | `switch.variants.ts` | Pure `tv()` slots + the release worklet, no RN imports |
 | `switch.variants.test.ts` | |
-| `switch.render.test.tsx` | Mounted under Jest — role, checked and disabled state, controlled and uncontrolled, assistive activation |
+| `switch.render.test.tsx` | Mounted under Jest — role, checked and disabled state, controlled and uncontrolled, assistive activation, the `Field.Label` name, a caller's `accessibilityState` and `Switch.Thumb` `onLayout`. The pan is driven with `fireGestureHandler` — tap, drag out and back on either axis, cancel, disabled |
 
 ## Design
 
@@ -50,11 +50,24 @@ section to read first — what follows is only where a switch differs.
   the control a tap and toggle it. Reading both means such a swipe is movement
   with no travel, which settles back to the state it started in — the switch is
   left alone.
+- **`distance` is the peak over the whole gesture, not the translation at
+  release.** The root tracks the furthest the finger got on either axis, resets
+  it in `onBegin`, and passes it at release. A slow drag out and back to near its
+  start is still a drag, and it settles by position instead of toggling.
 - **The value is settled in `onFinalize`, and only there.** Unlike a slider there
   is nothing to write on `onBegin`: a switch has no position to move a handle to,
   only a state to end up in. `onFinalize` is still the callback because it is the
   one that fires on every path, the never-activated one included — which is
   exactly the path a stationary tap takes.
+- **A cancelled pan commits nothing.** `onFinalize` also runs when the system,
+  a parent, or a disable under the finger cancels the pan. On `CANCELLED`, or
+  when the switch is disabled, it springs the thumb back to the current state,
+  releases the press scale and clears the drag flag, with no haptic and no
+  change. It checks `CANCELLED` only, never `success`: on iOS a stationary press
+  never activates the pan and finalizes as `FAILED`, and that press is the tap.
+- **The pan carries ``.withTestId(`${testID}-pan`)``** when the root has a
+  `testID`, so a render test can drive it with `fireGestureHandler`. No visual
+  effect.
 - **`isDisabled` is checked in `toggle`, not only on the pan.** `.enabled()` gates
   the gesture, but a screen reader's activation and an enclosing `Field`'s label
   press both arrive through `toggle`, so a guard on the pan alone let a disabled
@@ -188,8 +201,10 @@ section to read first — what follows is only where a switch differs.
   and its layers into the single element a control should be.
 - **There is no `Switch.Label` and no `Switch.Group`.** The track is a fixed pill
   and a label cannot sit inside it, so the name is a `Field.Label` or a
-  `ListGroup.ItemTitle` a row away — and unlike `Slider`, the switch **does**
-  register `field.registerPress`, because a row-wide press means exactly what a
+  `ListGroup.ItemTitle` a row away. Inside a `Field`, the switch takes the
+  `Field.Label` text as its `accessibilityLabel` unless one is passed, because a
+  sibling label is outside the switch's accessibility element. Unlike `Slider`,
+  the switch **does** register `field.registerPress`, because a row-wide press means exactly what a
   tap on the pill means. A switch is a binary preference, not one of a set, so
   there is nothing for a group to own; the axis ladder is two rungs, the switch's
   own props then an enclosing `Field`.

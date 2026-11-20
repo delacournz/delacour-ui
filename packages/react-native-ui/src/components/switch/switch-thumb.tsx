@@ -52,14 +52,18 @@ export type SwitchThumbProps = Omit<ViewProps, "children" | "style"> & {
  * of the knob rather than an acknowledgement of the press. The outermost node is
  * the one thing nothing can crop, so that is where the press feedback lives.
  */
-export function SwitchThumb({ className, children, ...props }: SwitchThumbProps): ReactElement {
+export function SwitchThumb({ className, children, onLayout, ...props }: SwitchThumbProps): ReactElement {
 	const { color, size, isInvalid, isDisabled, progress, trackWidth, thumbWidth } = useSwitchPart("Switch.Thumb");
 
+	// The caller's handler runs as well as the measurement, never instead of it:
+	// with the width left at zero the travel is the whole track, and an on-state
+	// knob slides out past the clipped end.
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {
 			thumbWidth.value = event.nativeEvent.layout.width;
+			onLayout?.(event);
 		},
-		[thumbWidth]
+		[onLayout, thumbWidth]
 	);
 
 	const tokens = resolveSwitchThumbTokens({ color, isInvalid });

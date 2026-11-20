@@ -444,8 +444,10 @@ export function switchTravel({
  * racing a `Tap` against it. `distance` is deliberately not the along-track
  * translation: a vertical swipe that began on the switch moves nothing
  * horizontally, and reading only that axis would turn every attempt to scroll
- * past the control into a toggle. A release travelling fast is a **flick**, and
- * goes the way the finger was going however short of half way it stopped.
+ * past the control into a toggle. It is also the peak over the gesture, not the
+ * translation at release, so a drag out and back is not a tap. A release
+ * travelling fast is a **flick**, and goes the way the finger was going however
+ * short of half way it stopped.
  * Anything else is settled by position.
  *
  * Marked `"worklet"` and written flat — it calls nothing, not even to clamp.
@@ -463,7 +465,7 @@ export function resolveSwitchRelease({
 	wasSelected,
 }: {
 	progress: number;
-	/** How far the finger moved, in points, on whichever axis moved further. */
+	/** The furthest the finger got over the gesture, in points, on whichever axis moved further. */
 	distance: number;
 	velocity: number;
 	wasSelected: boolean;

@@ -10,7 +10,7 @@ import {
 	useState,
 } from "react";
 import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { Gesture, GestureDetector, State } from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
 	interpolateColor,
@@ -71,6 +71,8 @@ function SwitchRoot({
 	isInvalid,
 	haptic = "selection",
 	className,
+	accessibilityLabel,
+	accessibilityState,
 	children,
 	...props
 }: SwitchProps): ReactElement {
@@ -96,6 +98,10 @@ function SwitchRoot({
 	// rather than state: nothing renders differently for it, so a commit on every
 	// touch would be pure cost.
 	const isPressed = useSharedValue(0);
+	// The furthest the finger got from where it landed, on either axis, over the
+	// whole gesture. Read at release rather than the final translation, so a drag
+	// out and back to its start is still a drag and not a tap.
+	const peakDistance = useSharedValue(0);
 
 	// A ref rather than state: the pan reads it twice a drag and nothing renders
 	// differently for it, so a re-render on touch-down would be pure cost.
@@ -139,56 +145,90 @@ function SwitchRoot({
 		[trackWidth]
 	);
 
-	const gesture = useMemo(
-		() =>
-			Gesture.Pan()
-				.enabled(!axes.isDisabled)
-				.minDistance(0)
-				.shouldCancelWhenOutside(false)
-				.onBegin(() => {
-					"worklet";
-					grabbed.value = progress.value;
-					isPressed.value = withSpring(1, SWITCH_PRESS_SPRING);
-					scheduleOnRN(setDragging, true);
-				})
-				.onUpdate((event) => {
-					"worklet";
-					const travel = switchTravel({
-						inset: SWITCH_THUMB_INSET,
-						thumbWidth: thumbWidth.value,
-						trackWidth: trackWidth.value,
-					});
-					if (travel <= 0) return;
+	const testID = props.testID;
+	const isGestureDisabled = axes.isDisabled;
+	const gesture = useMemo(() => {
+		const pan = Gesture.Pan()
+			.enabled(!isGestureDisabled)
+			.minDistance(0)
+			.shouldCancelWhenOutside(false)
+			.onBegin(() => {
+				"worklet";
+				grabbed.value = progress.value;
+				peakDistance.value = 0;
+				isPressed.value = withSpring(1, SWITCH_PRESS_SPRING);
+				scheduleOnRN(setDragging, true);
+			})
+			.onUpdate((event) => {
+				"worklet";
+				// Before the travel check: a vertical swipe moves no thumb but still
+				// counts as movement.
+				peakDistance.value = Math.max(peakDistance.value, Math.abs(event.translationX), Math.abs(event.translationY));
 
-					progress.value = Math.min(1, Math.max(0, grabbed.value + event.translationX / travel));
-				})
-				.onFinalize((event) => {
-					"worklet";
-					// Whichever axis moved further. A vertical swipe that began on the
-					// switch has to count as movement, or every attempt to scroll past
-					// the control would read as a tap and toggle it.
-					const target = resolveSwitchRelease({
-						distance: Math.max(Math.abs(event.translationX), Math.abs(event.translationY)),
-						progress: progress.value,
-						velocity: event.velocityX,
-						wasSelected: selected,
-					});
+				const travel = switchTravel({
+					inset: SWITCH_THUMB_INSET,
+					thumbWidth: thumbWidth.value,
+					trackWidth: trackWidth.value,
+				});
+				if (travel <= 0) return;
 
-					progress.value = withSpring(target ? 1 : 0, SWITCH_THUMB_SPRING);
+				progress.value = Math.min(1, Math.max(0, grabbed.value + event.translationX / travel));
+			})
+			.onFinalize((event) => {
+				"worklet";
+				// A cancelled pan (the system took the touch, a parent claimed it, or
+				// the switch was disabled under the finger) commits nothing. Only
+				// CANCELLED: on iOS a stationary press never activates the pan and
+				// finalizes as FAILED, and that press is the tap.
+				if (event.state === PAN_CANCELLED || isGestureDisabled) {
+					progress.value = withSpring(selected ? 1 : 0, SWITCH_THUMB_SPRING);
 					isPressed.value = withSpring(0, SWITCH_PRESS_SPRING);
-					// At the commit, never at the grab. A drag taken half way and
-					// released back has changed nothing, and a switch that buzzed for it
-					// would be reporting a state change that did not happen.
-					if (haptic !== false && target !== selected) playHaptic(haptic);
-
-					// Order matters: the root must have stopped treating this as a live
-					// drag before `commit` asks it to re-sync. `scheduleOnRN` keeps them
-					// in the order they were queued.
 					scheduleOnRN(setDragging, false);
-					scheduleOnRN(commit, target);
-				}),
-		[axes.isDisabled, commit, grabbed, haptic, isPressed, progress, selected, setDragging, thumbWidth, trackWidth]
-	);
+					return;
+				}
+
+				// The furthest the gesture got on whichever axis moved further. A
+				// vertical swipe that began on the switch has to count as movement, or
+				// every attempt to scroll past the control would read as a tap and
+				// toggle it. The peak, not the final translation, so a slow drag that
+				// returns near its start does not read as a tap either.
+				const target = resolveSwitchRelease({
+					distance: Math.max(peakDistance.value, Math.abs(event.translationX), Math.abs(event.translationY)),
+					progress: progress.value,
+					velocity: event.velocityX,
+					wasSelected: selected,
+				});
+
+				progress.value = withSpring(target ? 1 : 0, SWITCH_THUMB_SPRING);
+				isPressed.value = withSpring(0, SWITCH_PRESS_SPRING);
+				// At the commit, never at the grab. A drag taken half way and
+				// released back has changed nothing, and a switch that buzzed for it
+				// would be reporting a state change that did not happen.
+				if (haptic !== false && target !== selected) playHaptic(haptic);
+
+				// Order matters: the root must have stopped treating this as a live
+				// drag before `commit` asks it to re-sync. `scheduleOnRN` keeps them
+				// in the order they were queued.
+				scheduleOnRN(setDragging, false);
+				scheduleOnRN(commit, target);
+			});
+
+		// Lets a render test drive the pan through `fireGestureHandler`.
+		return testID ? pan.withTestId(`${testID}-pan`) : pan;
+	}, [
+		commit,
+		grabbed,
+		haptic,
+		isGestureDisabled,
+		isPressed,
+		peakDistance,
+		progress,
+		selected,
+		setDragging,
+		testID,
+		thumbWidth,
+		trackWidth,
+	]);
 
 	// Guarded here rather than at each caller: the pan is gated by `.enabled()`,
 	// but a screen reader's activation and an enclosing `Field`'s label press
@@ -264,13 +304,20 @@ function SwitchRoot({
 		[toggle]
 	);
 
+	// `accessibilityState` is merged, not replaced: a caller's `busy` must not
+	// drop the checked and disabled state a screen reader announces.
+	//
+	// The name falls back to the enclosing `Field.Label`. That label is a sibling,
+	// outside this element, so `accessible` alone would leave the switch unnamed.
+	// An explicit `accessibilityLabel` still wins.
 	return (
 		<SwitchProvider value={context}>
 			<GestureDetector gesture={gesture}>
 				<Animated.View
 					accessibilityActions={ACCESSIBILITY_ACTIONS}
+					accessibilityLabel={accessibilityLabel ?? field?.label ?? undefined}
 					accessibilityRole="switch"
-					accessibilityState={{ checked: selected, disabled: axes.isDisabled }}
+					accessibilityState={{ ...accessibilityState, checked: selected, disabled: axes.isDisabled }}
 					// Without this the view is not an accessibility element on iOS, and
 					// the role and the state above never reach VoiceOver. It also merges
 					// the parts into one element, which is what a control should be.
@@ -301,6 +348,9 @@ function SwitchRoot({
  * is the iOS half of the same gap.
  */
 const ACCESSIBILITY_ACTIONS = [{ name: "activate" }] as const;
+
+/** Read inside the pan's worklets, so it is a plain number captured once. */
+const PAN_CANCELLED = State.CANCELLED;
 
 /**
  * Composes a `Switch.Thumb` in, and puts it last however it was written.
@@ -386,6 +436,8 @@ function isSwitchThumbElement(child: ReactNode): boolean {
  *
  * There is no `Switch.Label`: the track is a fixed pill and a label cannot sit
  * inside it, so the name is a `Field.Label` or a `ListGroup.ItemTitle` a row away.
+ * Inside a `Field`, the `Field.Label` text becomes the switch's accessible name
+ * unless an `accessibilityLabel` is passed.
  * A switch with no label anywhere near it needs an `accessibilityLabel`, the same
  * rule an icon-sized `Button` follows.
  *

@@ -4,6 +4,7 @@ import { Text } from "@delacour/react-native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
 import { TextInput, View } from "react-native";
+import { KeyboardToolbar } from "react-native-keyboard-controller";
 
 const FIELDS = [
 	"Full name",
@@ -19,12 +20,22 @@ const FIELDS = [
 ] as const;
 
 /**
- * A form screen: `keyboardAware` scrolls the focused field clear of both the
- * keyboard and the sticky footer.
+ * `KeyboardToolbar`'s height. keyboard-controller declares it as
+ * `KEYBOARD_TOOLBAR_HEIGHT` but does not export it, so it is named once here.
+ */
+const TOOLBAR_HEIGHT = 42;
+
+/**
+ * A form screen: `keyboardAware` scrolls the focused field clear of the
+ * keyboard, the toolbar riding it, and the sticky footer on top of both.
  *
  * The last fields are the ones worth tapping — a plain scroll area would leave
  * them behind the keyboard, and one that only reserved keyboard height would
  * still leave them behind the footer riding on top of it.
+ *
+ * `KeyboardToolbar` adds previous / next / done above the keyboard, and the
+ * footer's `keyboardOffset` is its height: without it the Save button sits
+ * behind the toolbar.
  */
 export default function ScreenFormDemo(): ReactElement {
 	const router = useRouter();
@@ -37,7 +48,9 @@ export default function ScreenFormDemo(): ReactElement {
 			</Screen.Navbar>
 
 			<Screen.ScrollArea contentContainerClassName="gap-4" keyboardAware>
-				<Text.Caption>Tap the last field. It should sit directly above the Save button, not behind it.</Text.Caption>
+				<Text.Caption>
+					Tap the last field. It should sit directly above the Save button, and the button above the toolbar.
+				</Text.Caption>
 
 				{FIELDS.map((field) => (
 					<View className="gap-1.5" key={field}>
@@ -53,11 +66,13 @@ export default function ScreenFormDemo(): ReactElement {
 				))}
 			</Screen.ScrollArea>
 
-			<Screen.Footer sticky>
+			<Screen.Footer keyboardOffset={TOOLBAR_HEIGHT} sticky>
 				<Button haptic="medium" onPress={() => router.back()}>
 					Save
 				</Button>
 			</Screen.Footer>
+
+			<KeyboardToolbar />
 		</Screen>
 	);
 }

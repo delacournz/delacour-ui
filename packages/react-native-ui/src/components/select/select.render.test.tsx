@@ -1,6 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
-import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
+import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
 import { Button } from "../button";
 import { Field } from "../field";
@@ -22,6 +22,34 @@ const tap = (element: Parameters<typeof fireEvent>[0]) => fireEvent(element, "ac
 const trigger = (name = "Choose") => screen.getByRole("button", { name });
 const valueText = () => trigger().props.accessibilityValue?.text;
 const openSheet = async (name?: string) => tap(trigger(name));
+
+/** `settleList` waits 40 passes of 60ms by design; Jest's 5s default leaves no room on a loaded runner. */
+const SETTLE_TIMEOUT_MS = 20_000;
+
+/**
+ * Lays the open sheet's list out as a device would, pass by pass: the viewport
+ * and content size on the scroll view, then a height on each mounted cell,
+ * until the list has had time to mount every batch it wants.
+ */
+async function settleList({ rowHeight, viewportHeight }: { rowHeight: number; viewportHeight: number }) {
+	let list = screen.getAllByRole("radio")[0]?.parent ?? null;
+	while (list && !list.props.onContentSizeChange) list = list.parent;
+	if (!list) throw new Error("No list is open.");
+	await fireEvent(list, "layout", { nativeEvent: { layout: { height: viewportHeight, width: 400, x: 0, y: 0 } } });
+	await fireEvent(list, "contentSizeChange", 400, rowHeight * 250);
+	for (let pass = 0; pass < 40; pass++) {
+		for (const [index, row] of screen.queryAllByRole("radio").entries()) {
+			let cell = row.parent;
+			while (cell && cell !== list && !cell.props.onLayout) cell = cell.parent;
+			if (!cell || cell === list) continue;
+			const layout = { height: rowHeight, width: 400, x: 0, y: index * rowHeight };
+			await fireEvent(cell, "layout", { nativeEvent: { layout } });
+		}
+		await act(async () => {
+			await new Promise((resolve) => setTimeout(resolve, 60));
+		});
+	}
+}
 
 /** Prints the className it receives, so a test can see what a Slot handed it. */
 function ClassProbe({ className }: { className?: string }): ReactElement {
@@ -429,6 +457,20 @@ describe("Select search", () => {
 		await openSheet();
 		expect(screen.queryByLabelText("Search")).not.toBeOnTheScreen();
 	});
+
+	test(
+		"a long list mounts the rows near the viewport, not the whole list",
+		async () => {
+			const many = Array.from({ length: 250 }, (_, index) => ({ label: `Option ${index}`, value: `o${index}` }));
+			await renderSelect({ isSearchable: true, options: many });
+			await openSheet();
+			await settleList({ rowHeight: 64, viewportHeight: 700 });
+			const mounted = screen.queryAllByRole("radio").length;
+			expect(mounted).toBeGreaterThan(10);
+			expect(mounted).toBeLessThanOrEqual(60);
+		},
+		SETTLE_TIMEOUT_MS
+	);
 
 	test("the query clears when the sheet closes", async () => {
 		await renderSelect({ isSearchable: true, options: countries });

@@ -12,11 +12,14 @@ import {
 	normalizeSearchText,
 	resolveSelectIconToken,
 	resolveSelectListMinHeight,
+	resolveSelectListWindow,
 	resolveSelectRowState,
 	resolveSelectSheetMaxHeight,
 	resolveSelectTriggerClass,
 	resolveSelectTriggerText,
 	SELECT_DEFAULT_MAX_LABELS,
+	SELECT_LIST_WINDOW_SIZE,
+	SELECT_ROW_MIN_HEIGHT,
 	SELECT_SHEET_MAX_FRACTION,
 	SELECT_SHEET_TOP_GAP,
 	selectVariants,
@@ -573,5 +576,33 @@ describe("resolveSelectListMinHeight", () => {
 
 	test("steps aside for caller snap points, which replace dynamic sizing", () => {
 		expect(resolveSelectListMinHeight({ isSearchable: true, maxHeight, snapPoints: ["50%"] })).toBeUndefined();
+	});
+});
+
+describe("resolveSelectListWindow", () => {
+	const maxHeight = resolveSelectSheetMaxHeight({ topInset: 62, windowHeight: 874 });
+
+	test.each(INPUT_SIZES)("a %s row floor matches the row slot's min-h class", (size) => {
+		expect(selectVariants({ size }).row()).toContain(`min-h-${SELECT_ROW_MIN_HEIGHT[size] / 4}`);
+	});
+
+	test.each(INPUT_SIZES)("the first paint fills a %s sheet at its cap and no more", (size) => {
+		const { initialNumToRender } = resolveSelectListWindow({ maxHeight, size });
+		expect(initialNumToRender * SELECT_ROW_MIN_HEIGHT[size]).toBeGreaterThanOrEqual(maxHeight);
+		expect((initialNumToRender - 1) * SELECT_ROW_MIN_HEIGHT[size]).toBeLessThan(maxHeight);
+	});
+
+	test("each later batch is one sheet of rows", () => {
+		const window = resolveSelectListWindow({ maxHeight, size: "lg" });
+		expect(window.maxToRenderPerBatch).toBe(window.initialNumToRender);
+	});
+
+	test("keeps a few viewports mounted, not React Native's default of 21", () => {
+		expect(resolveSelectListWindow({ maxHeight, size: "md" }).windowSize).toBe(SELECT_LIST_WINDOW_SIZE);
+		expect(SELECT_LIST_WINDOW_SIZE).toBeLessThan(21);
+	});
+
+	test("a zero cap still paints one row", () => {
+		expect(resolveSelectListWindow({ maxHeight: 0, size: "md" }).initialNumToRender).toBe(1);
 	});
 });

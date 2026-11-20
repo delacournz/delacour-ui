@@ -21,6 +21,7 @@ import {
 	normalizeOptions,
 	resolveSelectedOptions,
 	resolveSelectListMinHeight,
+	resolveSelectListWindow,
 	resolveSelectRowState,
 	resolveSelectSheetMaxHeight,
 	resolveSelectTriggerText,
@@ -243,6 +244,8 @@ function SelectRoot(props: SelectProps): ReactElement {
 		[listMinHeight]
 	);
 
+	const listWindow = resolveSelectListWindow({ maxHeight: sheetMaxHeight, size });
+
 	const rows = buildSelectRows(isSearchable ? filterGroups(entries, query) : entries);
 	const slots = selectVariants({ size, variant });
 
@@ -344,12 +347,15 @@ function SelectRoot(props: SelectProps): ReactElement {
 							contentContainerStyle={listContentStyle}
 							data={rows}
 							extraData={selected}
+							initialNumToRender={listWindow.initialNumToRender}
 							keyboardDismissMode={isSearchable ? "none" : undefined}
 							keyboardShouldPersistTaps="handled"
 							keyExtractor={(row) => row.key}
 							ListEmptyComponent={empty}
 							ListHeaderComponent={header}
+							maxToRenderPerBatch={listWindow.maxToRenderPerBatch}
 							renderItem={renderRow}
+							windowSize={listWindow.windowSize}
 						/>
 						{multiple ? (
 							<BottomSheet.Footer sticky>

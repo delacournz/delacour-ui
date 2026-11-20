@@ -1,6 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
-import { type InputBoxState, resolveInputGroupClass } from "../input/input.variants";
+import { type InputBoxState, type InputSize, resolveInputGroupClass } from "../input/input.variants";
 import type {
 	SelectEntry,
 	SelectHighlightRange,
@@ -87,6 +87,33 @@ export function resolveSelectListMinHeight({
 	snapPoints: readonly unknown[] | undefined;
 }): number | undefined {
 	return isSearchable && snapPoints === undefined ? maxHeight : undefined;
+}
+
+/** A row's floor in points at each size — the `row` slot's `min-h-12/14/16`. The test pins the pair. */
+export const SELECT_ROW_MIN_HEIGHT: Record<InputSize, number> = { sm: 48, md: 56, lg: 64 };
+
+/** How many viewports of rows the list keeps mounted: the visible one and two either side. */
+export const SELECT_LIST_WINDOW_SIZE = 5;
+
+/**
+ * How the sheet's list virtualises.
+ *
+ * On React Native's defaults — 10 rows first, 10 more every 50ms, a window of
+ * 21 viewports — a list of about 250 options mounted nearly every row, batch by
+ * batch, while the sheet was still opening, and every row carries an animated
+ * indicator of its own. The JS thread stayed busy for the whole open and the
+ * sheet stuttered. The first paint fills the sheet at its cap, each later batch
+ * is one more sheet, and the window keeps the rows a quick fling reaches
+ * without mounting the rest. A row's floor is the smallest it can measure, so
+ * the count never comes up short of the viewport.
+ */
+export function resolveSelectListWindow({ maxHeight, size }: { maxHeight: number; size: InputSize }): {
+	initialNumToRender: number;
+	maxToRenderPerBatch: number;
+	windowSize: number;
+} {
+	const rows = Math.max(1, Math.ceil(maxHeight / SELECT_ROW_MIN_HEIGHT[size]));
+	return { initialNumToRender: rows, maxToRenderPerBatch: rows, windowSize: SELECT_LIST_WINDOW_SIZE };
 }
 
 /**

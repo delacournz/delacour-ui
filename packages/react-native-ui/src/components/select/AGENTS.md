@@ -24,8 +24,8 @@ engine. An app that imports no picker still never resolves it.
 | `select.collect.ts` | `collectOptions` / `findChildOfType` — reads the markers into the `options` shape |
 | `select.context.tsx` | `SelectProvider`, `useSelect()`, `useSelectContext()`, `useSelectPart()` |
 | `select.types.ts` | `SelectOption`, `SelectOptionGroup`, `SelectRowOption`, `SelectEntry`, `SelectListRow`, `SelectHighlightRange` |
-| `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports — the sheet cap and the searchable list's floor among them |
-| `select.render.test.tsx` | Mounted under Jest inside `BottomSheetProvider` — trigger role, expanded and value, single and multiple picks, controlled and uncontrolled, limit, search, `Field` inheritance, parts outside a root |
+| `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports — the sheet cap, the searchable list's floor and the list's virtualisation window among them |
+| `select.render.test.tsx` | Mounted under Jest inside `BottomSheetProvider` — trigger role, expanded and value, single and multiple picks, controlled and uncontrolled, limit, search, long-list virtualisation, `Field` inheritance, parts outside a root |
 | `select.variants.test.ts` | |
 | `select.collect.test.ts` | |
 
@@ -109,6 +109,15 @@ engine. An app that imports no picker still never resolves it.
   short searchable list sits at the top of a full-height sheet, as `Combobox`'s
   does. Without search the rows cannot change while it is open, so it keeps
   sizing to them.
+- **A long list mounts the rows near its viewport, not all of them.**
+  `resolveSelectListWindow` sizes `BottomSheet.FlatList`'s virtualisation from
+  the sheet's cap: the first paint and every later batch are one sheet of rows
+  at the row floor (`SELECT_ROW_MIN_HEIGHT`, pinned to the `row` slot's
+  `min-h-*` by the test), and `windowSize` is `SELECT_LIST_WINDOW_SIZE` (5)
+  viewports. On React Native's defaults — 10 rows first, 10 more every 50ms, a
+  window of 21 — a searchable Select with ~250 options mounted 120-odd rows,
+  each with an animated indicator, while the sheet was still opening, and the
+  open stuttered. On a simulator it now mounts 32.
 - **Scrolling a searchable list keeps the keyboard up**, as in `Combobox`. The
   engine puts the keyboard away the moment any pan starts on the sheet
   (`enableBlurKeyboardOnGesture`), and its lists dismiss interactively, so

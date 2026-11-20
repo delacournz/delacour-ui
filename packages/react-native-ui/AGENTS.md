@@ -38,12 +38,13 @@ src/
 ├── hooks/                use-controllable-state, use-theme-color,
 │                         use-keyboard-state-sync, use-navigation-theme,
 │                         use-calm-motion, use-scroll-sections,
-│                         use-scroll-source, use-reduce-transparency
+│                         use-scroll-source, use-reduce-transparency,
+│                         use-modal-accessibility
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
 │                         paging, scroll-sections, scroll-maths, scroll-edges,
-│                         wrap-text-children
+│                         wrap-text-children, modal-accessibility
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── test/                 the render-test kit — Jest setup and renderWithProviders
 ├── display-name.test.ts  The package-wide displayName check — see rule 12

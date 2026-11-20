@@ -17,7 +17,8 @@
 		"text",
 		"tv",
 		"use-calm-motion",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-modal-accessibility"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -87,6 +88,10 @@
 					"to": "@registry/hooks/use-calm-motion"
 				},
 				{
+					"from": "../../hooks/use-modal-accessibility",
+					"to": "@registry/hooks/use-modal-accessibility"
+				},
+				{
 					"from": "../../lib/paging",
 					"to": "@registry/lib/paging"
 				}
@@ -116,6 +121,10 @@
 			"target": "image-viewer/image-viewer-trigger.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-modal-accessibility",
+					"to": "@registry/hooks/use-modal-accessibility"
+				},
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"

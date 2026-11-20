@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
-import { Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { AccessibilityInfo, Text } from "react-native";
+import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
 import { Drawer, type DrawerProps, useDrawer } from "./index";
@@ -19,7 +19,7 @@ function Menu({ isHeaderCloseHidden = false, isSwipeDismissible, ...props }: Men
 	return (
 		<Drawer {...props}>
 			<Drawer.Trigger asChild>
-				<Button>Open menu</Button>
+				<Button testID="trigger">Open menu</Button>
 			</Drawer.Trigger>
 			<Drawer.Content isSwipeDismissible={isSwipeDismissible} testID="panel">
 				<Drawer.Header isCloseHidden={isHeaderCloseHidden}>
@@ -336,5 +336,75 @@ describe("Drawer", () => {
 
 		await press("Done");
 		expect(await screen.findByRole("button", { name: "Open" })).toBeOnTheScreen();
+	});
+});
+
+/** The testID (or "title") of each host view `sendAccessibilityEvent` focused, in order. */
+function focusSpy(): () => string[] {
+	const focused: string[] = [];
+	jest.spyOn(AccessibilityInfo, "sendAccessibilityEvent").mockImplementation((target, event) => {
+		if (event !== "focus") return;
+		const props = (target as { props?: { testID?: string; accessibilityRole?: string } }).props;
+		if (props?.accessibilityRole === "header") focused.push("title");
+		else if (props?.testID !== undefined) focused.push(props.testID);
+	});
+	return () => [...focused];
+}
+
+describe("Drawer accessibility", () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	test("focus moves to the title once the drawer has entered", async () => {
+		const focused = focusSpy();
+		await renderWithProviders(<Menu defaultOpen />, { wrapper: Overlays });
+		await waitFor(() => expect(focused()).toEqual(["title"]));
+	});
+
+	test("with no title, focus lands on the panel", async () => {
+		const focused = focusSpy();
+		await renderWithProviders(
+			<Drawer defaultOpen>
+				<Drawer.Content testID="panel">
+					<Text>Inbox</Text>
+				</Drawer.Content>
+			</Drawer>,
+			{ wrapper: Overlays }
+		);
+		await waitFor(() => expect(focused()).toEqual(["panel"]));
+	});
+
+	test("focus returns to the trigger once the drawer has gone", async () => {
+		const focused = focusSpy();
+		await renderWithProviders(<Menu />, { wrapper: Overlays });
+		await press("Open menu");
+		await waitFor(() => expect(focused()).toEqual(["title"]));
+		await press("Sign out");
+		await waitFor(() => expect(screen.queryByTestId("panel")).not.toBeOnTheScreen());
+		await waitFor(() => expect(focused()).toEqual(["title", "trigger"]));
+	});
+
+	test("the panel lets go of VoiceOver and the escape scrub once it is closing", async () => {
+		await renderWithProviders(<Menu defaultOpen />, { wrapper: Overlays });
+		await press("Sign out");
+		const panel = screen.queryByTestId("panel", { includeHiddenElements: true });
+		if (panel) expect(panel.props.accessibilityViewIsModal).toBe(false);
+	});
+
+	test("a non-dismissible panel is modal but has no escape", async () => {
+		await renderWithProviders(<Menu defaultOpen isDismissible={false} />, { wrapper: Overlays });
+		const panel = screen.getByTestId("panel");
+		expect(panel.props.accessibilityViewIsModal).toBe(true);
+		expect(panel.props.onAccessibilityEscape).toBeUndefined();
+	});
+
+	test("the trigger is expanded only while the drawer is open", async () => {
+		await renderWithProviders(<Menu />, { wrapper: Overlays });
+		expect(screen.getByTestId("trigger").props.accessibilityState).toMatchObject({ expanded: false });
+		await press("Open menu");
+		expect(screen.getByTestId("trigger", { includeHiddenElements: true }).props.accessibilityState).toMatchObject({
+			expanded: true,
+		});
 	});
 });

@@ -802,6 +802,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "tv",
 		description: "tailwind-variants, taught the library's semantic size tokens.",
 	},
+	"modal-accessibility": {
+		title: "modalAccessibility",
+		description:
+			"Where focus lands in a modal container, and when it holds a screen reader and takes the escape scrub.",
+	},
 	"wrap-text-children": {
 		title: "wrapTextChildren",
 		description: "Wraps bare text children in an element React Native can render; asChild is left alone.",
@@ -810,6 +815,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	"use-calm-motion": {
 		title: "useCalmMotion",
 		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+	},
+	"use-modal-accessibility": {
+		title: "useModalAccessibility",
+		description:
+			"A modal container's VoiceOver containment and escape, with focus moved in on open and back to the trigger on close.",
 	},
 	"use-reduce-transparency": {
 		title: "useReduceTransparency",

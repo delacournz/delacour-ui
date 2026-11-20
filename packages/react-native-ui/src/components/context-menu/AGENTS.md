@@ -91,7 +91,7 @@ because the target is the content. Compound root plus `ContextMenu.Trigger`,
   `activate` runs `onPress`, or opens when there is none; `longpress` opens
   against the target rect. `resolveContextMenuAccessibility` holds the matrix.
 - Disabled: announced, and neither the gesture nor either action does anything.
-- The panel is Menu's: `menu` / `menuitem` roles and modal containment. The
+- The panel is Menu's: `menu` / `menuitem` roles, modal containment, the escape scrub, focus onto the first row on open and back to the trigger on close. The
   preview is hidden from the accessibility tree.
 
 ## Out of scope

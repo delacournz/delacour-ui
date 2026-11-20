@@ -1,5 +1,13 @@
 import { describe, expect, test } from "bun:test";
-import { INITIAL_REGISTRY, isTop, reduceRegistry, type SheetRegistryState, topOf, zIndexOf } from "./sheet-registry";
+import {
+	INITIAL_REGISTRY,
+	isModalTop,
+	isTop,
+	reduceRegistry,
+	type SheetRegistryState,
+	topOf,
+	zIndexOf,
+} from "./sheet-registry";
 
 function open(state: SheetRegistryState, id: string, host = "root", behavior: "push" | "replace" = "push") {
 	return reduceRegistry(state, { type: "open", id, host, behavior });
@@ -83,5 +91,25 @@ describe("sheet registry", () => {
 		expect(isTop(m.state, "b")).toBe(true);
 		expect(isTop(m.state, "m")).toBe(true);
 		expect(isTop(m.state, "nope")).toBe(false);
+	});
+});
+
+describe("isModalTop", () => {
+	test("is true with no registry or an unrecorded sheet", () => {
+		expect(isModalTop(null, "a")).toBe(true);
+		expect(isModalTop(INITIAL_REGISTRY, "a")).toBe(true);
+	});
+
+	test("only the sheet on top of its host is modal", () => {
+		const a = open(INITIAL_REGISTRY, "a");
+		const b = open(a.state, "b");
+		expect(isModalTop(b.state, "b")).toBe(true);
+		expect(isModalTop(b.state, "a")).toBe(false);
+	});
+
+	test("sheets in other hosts do not compete", () => {
+		const a = open(INITIAL_REGISTRY, "a", "root");
+		const b = open(a.state, "b", "modal");
+		expect(isModalTop(b.state, "a")).toBe(true);
 	});
 });

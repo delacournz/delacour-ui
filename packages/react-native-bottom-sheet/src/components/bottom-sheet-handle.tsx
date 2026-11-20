@@ -17,7 +17,7 @@ const ACTIONS = [{ name: "increment" }, { name: "decrement" }, { name: "escape" 
  *
  * For a screen reader it is the sheet: `adjustable`, with the snap point as its
  * value, increment and decrement moving one snap point either way, and the escape
- * gesture closing. Nothing else in the sheet has to know about snap points.
+ * gesture closing a dismissible sheet. Nothing else in the sheet has to know about snap points.
  */
 export function BottomSheetHandle({
 	style,
@@ -26,7 +26,7 @@ export function BottomSheetHandle({
 	accessibilityLabel = "Bottom sheet",
 	...props
 }: BottomSheetHandleProps): ReactElement {
-	const { state, pans, handleMounted, enableHandlePanningGesture } = useBottomSheetInternal();
+	const { state, pans, handleMounted, enableHandlePanningGesture, dismissible } = useBottomSheetInternal();
 	const { index, snapPointCount: count, snapToIndex, close } = useBottomSheet();
 	const onLayout = useMeasureHeight(state.handleHeight);
 
@@ -42,9 +42,9 @@ export function BottomSheetHandle({
 			const action = event.nativeEvent.actionName;
 			if (action === "increment") snapToIndex(index + 1);
 			else if (action === "decrement") snapToIndex(index - 1);
-			else if (action === "escape") close();
+			else if (action === "escape" && dismissible) close();
 		},
-		[index, snapToIndex, close]
+		[index, snapToIndex, close, dismissible]
 	);
 
 	// The pan is shared with every handle written in this sheet, and a gesture
@@ -59,7 +59,7 @@ export function BottomSheetHandle({
 			accessibilityValue={{ text: index < 0 ? "Closed" : `Snap point ${index + 1} of ${count}` }}
 			accessible
 			onAccessibilityAction={onAccessibilityAction}
-			onAccessibilityEscape={close}
+			onAccessibilityEscape={dismissible ? close : undefined}
 			onLayout={onLayout}
 			ref={ref}
 			style={style}

@@ -23,7 +23,8 @@ export type SectionProgressItemProps = Omit<PressableProps, "asChild" | "childre
  * `useScrollSections().scrollTo` — and closes the panel.
  *
  * The active section is `selected` and tinted; when the panel opens,
- * screen-reader focus lands on it.
+ * screen-reader focus lands on it, or on the first
+ * item when none is active yet.
  */
 export function SectionProgressItem({
 	value,
@@ -45,11 +46,14 @@ export function SectionProgressItem({
 		onPress?.();
 	}, [onPress, root.select, value]);
 
-	const activeRef = isActive
-		? (node: ComponentRef<typeof Animated.View> | null) => {
-				root.activeItemRef.current = node;
-			}
-		: undefined;
+	const isFirst = root.firstValue === value;
+	const focusRef =
+		isActive || isFirst
+			? (node: ComponentRef<typeof Animated.View> | null) => {
+					if (isActive) root.activeItemRef.current = node;
+					if (isFirst) root.firstItemRef.current = node;
+				}
+			: undefined;
 
 	return (
 		<Pressable
@@ -57,7 +61,7 @@ export function SectionProgressItem({
 			className={slots.item({ className })}
 			feedback={feedback}
 			onPress={handlePress}
-			ref={composeRefs(ref, activeRef)}
+			ref={composeRefs(ref, focusRef)}
 			{...props}
 		>
 			<View className={slots.itemMarker()} />

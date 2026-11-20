@@ -204,7 +204,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 59,
+		fileCount: 61,
 		groups: [
 			{
 				name: "context-menu",
@@ -354,6 +354,14 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -377,6 +385,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
 		],
 	},
 	"menu": {
@@ -388,7 +404,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 50,
+		fileCount: 52,
 		groups: [
 			{
 				name: "menu",
@@ -522,6 +538,14 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -543,6 +567,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 		],
@@ -1576,7 +1608,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 36,
+		fileCount: 38,
 		groups: [
 			{
 				name: "fab",
@@ -1696,6 +1728,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 		],
@@ -3860,7 +3908,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 163,
+		fileCount: 166,
 		groups: [
 			{
 				name: "combobox",
@@ -4018,6 +4066,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -4171,6 +4220,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -5550,7 +5615,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 139,
+		fileCount: 142,
 		groups: [
 			{
 				name: "color-picker",
@@ -5715,6 +5780,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -5816,6 +5882,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -6035,7 +6117,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 154,
+		fileCount: 157,
 		groups: [
 			{
 				name: "planner",
@@ -6200,6 +6282,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -6332,6 +6415,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -6780,7 +6879,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 150,
+		fileCount: 153,
 		groups: [
 			{
 				name: "date-picker",
@@ -6937,6 +7036,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -7074,6 +7174,22 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -7132,7 +7248,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 195,
+		fileCount: 198,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -7291,6 +7407,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -7489,6 +7606,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -7921,7 +8054,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 129,
+		fileCount: 132,
 		groups: [
 			{
 				name: "select",
@@ -8076,6 +8209,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -8177,6 +8311,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -8653,7 +8803,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 134,
+		fileCount: 137,
 		groups: [
 			{
 				name: "time-picker",
@@ -8813,6 +8963,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -8914,6 +9065,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -13171,7 +13338,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 115,
+		fileCount: 118,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -13339,6 +13506,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -13412,6 +13580,22 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -13446,7 +13630,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 32,
+		fileCount: 34,
 		groups: [
 			{
 				name: "section-rail",
@@ -13497,6 +13681,14 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -13542,6 +13734,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "scroll-sections",
 				title: "scrollSections",
 				kind: "shared",
@@ -13568,7 +13768,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 33,
+		fileCount: 35,
 		groups: [
 			{
 				name: "section-progress",
@@ -13618,6 +13818,14 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -13660,6 +13868,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -14109,7 +14325,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 83,
+		fileCount: 86,
 		groups: [
 			{
 				name: "toast",
@@ -14219,6 +14435,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -14313,6 +14530,22 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
 		],
 	},
 	"dialog": {
@@ -14324,7 +14557,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 57,
 		groups: [
 			{
 				name: "dialog",
@@ -14374,6 +14607,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -14462,6 +14696,22 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -14496,7 +14746,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 59,
 		groups: [
 			{
 				name: "popover",
@@ -14548,6 +14798,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -14625,6 +14876,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -14670,7 +14937,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 67,
+		fileCount: 70,
 		groups: [
 			{
 				name: "tooltip",
@@ -14706,6 +14973,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -14785,6 +15053,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -14862,7 +15146,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 55,
+		fileCount: 58,
 		groups: [
 			{
 				name: "drawer",
@@ -14913,6 +15197,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -15001,6 +15286,22 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -15035,7 +15336,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 118,
+		fileCount: 121,
 		groups: [
 			{
 				name: "feedback",
@@ -15153,6 +15454,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -15284,6 +15586,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -15764,7 +16082,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 60,
+		fileCount: 62,
 		groups: [
 			{
 				name: "tour",
@@ -15929,6 +16247,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 		],
@@ -17983,7 +18317,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 65,
+		fileCount: 67,
 		groups: [
 			{
 				name: "image-viewer",
@@ -18183,6 +18517,22 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
 		],
 	},
 	"provider": {
@@ -18249,7 +18599,7 @@ export const install = {
 		expo: ["react-native-reanimated", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 19,
+		fileCount: 22,
 		groups: [
 			{
 				name: "overlay",
@@ -18267,6 +18617,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -18289,6 +18640,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 		],

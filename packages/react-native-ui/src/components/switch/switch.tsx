@@ -1,5 +1,7 @@
 import {
 	Children,
+	cloneElement,
+	Fragment,
 	isValidElement,
 	type ReactElement,
 	type ReactNode,
@@ -9,7 +11,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
+import { type AccessibilityActionEvent, type LayoutChangeEvent, Platform, type ViewProps } from "react-native";
 import { Gesture, GestureDetector, State } from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
@@ -26,6 +28,7 @@ import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SwitchContextValue, SwitchProvider } from "./switch.context";
 import {
 	hasThumbChild,
+	resolveSwitchAccessibilityActions,
 	resolveSwitchAxes,
 	resolveSwitchRelease,
 	resolveSwitchTrackTokens,
@@ -337,17 +340,16 @@ function SwitchRoot({
 }
 
 /**
- * The one action an assistive double-tap on a `switch` maps to.
+ * `activate` on Android only, where a TalkBack double-tap needs it to reach the
+ * toggle. iOS lists nothing: `onAccessibilityTap` answers VoiceOver, and a
+ * listed action would show as a literal "activate" in the rotor. See
+ * {@link resolveSwitchAccessibilityActions}.
  *
- * Module scope on purpose: a fresh array each render is a new prop every commit,
- * and React Native sends the whole accessibility config across on any change.
- *
- * It exists at all because the root is not a `Pressable` — there is no touch
- * responder for TalkBack's activation to land on, so without this the switch
- * would announce its state and offer no way to change it. `onAccessibilityTap`
- * is the iOS half of the same gap.
+ * Module scope on purpose: the platform never changes, and a fresh array each
+ * render would be a new prop every commit — React Native sends the whole
+ * accessibility config across on any change.
  */
-const ACCESSIBILITY_ACTIONS = [{ name: "activate" }] as const;
+const ACCESSIBILITY_ACTIONS = resolveSwitchAccessibilityActions(Platform.OS);
 
 /** Read inside the pan's worklets, so it is a plain number captured once. */
 const PAN_CANCELLED = State.CANCELLED;
@@ -372,12 +374,32 @@ const PAN_CANCELLED = State.CANCELLED;
  * children, and importing it from a part would close a cycle. See AGENTS.md.
  */
 function withThumb(children: ReactNode): ReactNode {
-	const items = Children.toArray(children);
+	const items = flattenFragments(children);
 	const isThumb = items.map(isSwitchThumbElement);
 
 	if (!hasThumbChild(isThumb)) return [...items, <SwitchThumb key="thumb" />];
 
 	return [...items.filter((_, index) => !isThumb[index]), ...items.filter((_, index) => isThumb[index])];
+}
+
+/**
+ * The children with every fragment opened up, at any depth.
+ *
+ * `Children.toArray` stops at a fragment, so a `Switch.Thumb` written inside
+ * `<>…</>` would go undetected: a second thumb would be composed in over it,
+ * hiding anything inside the caller's knob, and both would write the one
+ * measured width. Opening fragments here lets {@link withThumb} see every part.
+ *
+ * A child taken out of a fragment is re-keyed with the fragment's key in front,
+ * so keys stay unique across the flattened list and stable between renders.
+ */
+function flattenFragments(children: ReactNode, keyPrefix = ""): ReactNode[] {
+	return Children.toArray(children).flatMap((child) => {
+		if (!isValidElement<{ children?: ReactNode }>(child)) return [child];
+		const key = `${keyPrefix}${String(child.key)}`;
+		if (child.type === Fragment) return flattenFragments(child.props.children, key);
+		return keyPrefix ? [cloneElement(child, { key })] : [child];
+	});
 }
 
 /**

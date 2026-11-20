@@ -128,11 +128,10 @@ export const SWITCH_TRACK_TOKEN: Record<SwitchColor, string> = {
 /**
  * The track a switch that is off wears.
  *
- * `input` rather than `secondary`, and it is the token that makes the knob
- * legible without a border: it is the chrome a field's own box wears, a step
- * darker than the page in light and a step lighter in dark, so a knob painted
- * the page's own colour reads against it at either end of the theme. `secondary`
- * sits too close to the surface behind it for that.
+ * `input` rather than `secondary`: it is the chrome a field's own box wears, a
+ * step away from the page, so the off pill still has a shape. `secondary` sits
+ * too close to the surface behind it for that. The knob, not the track, carries
+ * the contrast: see {@link SWITCH_THUMB_REST_TOKEN}.
  */
 export const SWITCH_TRACK_REST_TOKEN = "input";
 
@@ -159,8 +158,17 @@ export const SWITCH_THUMB_TOKEN: Record<SwitchColor, string> = {
 	info: "info-foreground",
 };
 
-/** The thumb a switch that is off wears. */
-export const SWITCH_THUMB_REST_TOKEN = "background";
+/**
+ * The thumb a switch that is off wears.
+ *
+ * `muted-foreground`, not `background`. With no On/Off text beside it, the knob
+ * is the only sign of the state, so it must meet the 3:1 non-text contrast
+ * minimum (WCAG 1.4.11) against the resting track and the surface behind it. A
+ * knob in the page's own colour reached 1.21:1 on the light `input` track and
+ * 1.47:1 on the dark one; this reaches 3.76:1 and 4.39:1 at the least. A test
+ * computes the ratios from `theme.css`.
+ */
+export const SWITCH_THUMB_REST_TOKEN = "muted-foreground";
 
 /** The thumb, on or off, once the switch is reporting an invalid value. */
 export const SWITCH_INVALID_THUMB_TOKEN = "destructive-foreground";
@@ -279,7 +287,7 @@ export const switchVariants = tv({
 		/** The capsule. Its colour is an animated style, never a class. */
 		track: "relative justify-center overflow-hidden rounded-full bg-input",
 		/** The knob. Its position and its colour are one animated style. */
-		thumb: "absolute left-0.75 items-center justify-center rounded-full bg-background",
+		thumb: "absolute left-0.75 items-center justify-center rounded-full bg-muted-foreground",
 		/** Behind the thumb at the leading edge. Revealed as the switch turns on. */
 		startContent: "absolute left-0.75 items-center justify-center",
 		/** Behind the thumb at the trailing edge. Revealed as the switch turns off. */
@@ -511,3 +519,26 @@ export function resolveSwitchContentTreatment({
 }
 
 export type SwitchVariantProps = VariantProps<typeof switchVariants>;
+
+/** The action list Android gets. Module scope, so the prop keeps one identity. */
+const SWITCH_ANDROID_ACCESSIBILITY_ACTIONS = [{ name: "activate" }] as const;
+
+/**
+ * The custom accessibility actions the root lists, by platform.
+ *
+ * **Android** lists `activate`. The root is not a `Pressable`, so a TalkBack
+ * double-tap reaches `onAccessibilityAction` only when `activate` is listed.
+ * Without it the switch would announce its state and offer no way to change it.
+ *
+ * **iOS** lists nothing. `onAccessibilityTap` already answers a VoiceOver
+ * double-tap, and Fabric shows every listed action as a rotor custom action, so
+ * `activate` would add a literal "activate" entry. `Pressable` makes the same
+ * split for the same reason (`resolvePressableActivation`).
+ *
+ * Takes the platform rather than reading `Platform.OS`, so the file stays pure.
+ */
+export function resolveSwitchAccessibilityActions(
+	platform: string
+): typeof SWITCH_ANDROID_ACCESSIBILITY_ACTIONS | undefined {
+	return platform === "android" ? SWITCH_ANDROID_ACCESSIBILITY_ACTIONS : undefined;
+}

@@ -1,8 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { declarationCount, TOKENS_CSS } from "../../styles/theme-tokens.test";
+import { declarationCount, type ThemeVariant, TOKENS_CSS, tokenValue } from "../../styles/theme-tokens.test";
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
 	hasThumbChild,
+	resolveSwitchAccessibilityActions,
 	resolveSwitchAxes,
 	resolveSwitchContentTreatment,
 	resolveSwitchRelease,
@@ -34,6 +35,77 @@ import {
 
 /** The minimum a touch target may be, in points. Apple's number, and Android's. */
 const MINIMUM_TARGET = 44;
+
+/** An sRGB colour, gamma-encoded, each channel 0–1, with its alpha. */
+type Srgba = { rgb: [number, number, number]; alpha: number };
+
+/** A CSS number that may be written as a percentage, as a fraction of `whole`. */
+function cssNumber(value: string, whole: number): number {
+	return value.endsWith("%") ? (Number.parseFloat(value) / 100) * whole : Number.parseFloat(value);
+}
+
+/**
+ * An `oklch(L C H / A)` value as gamma-encoded sRGB, clamped into gamut.
+ *
+ * OKLCH to OKLab to linear sRGB, with Björn Ottosson's published matrices, then
+ * the sRGB transfer curve. `theme.css` writes every colour this way, so this is
+ * the one form the contrast check has to read.
+ */
+function parseOklch(value: string): Srgba {
+	const match = value.match(/^oklch\(\s*([\d.]+%?)\s+([\d.]+%?)\s+([\d.]+)(?:\s*\/\s*([\d.]+%?))?\s*\)$/);
+	if (!match) throw new Error(`not an oklch() colour: ${value}`);
+	const [, lightness = "0", chroma = "0", hue = "0", alpha] = match;
+	const l = cssNumber(lightness, 1);
+	const c = cssNumber(chroma, 0.4);
+	const h = (Number.parseFloat(hue) * Math.PI) / 180;
+	const a = c * Math.cos(h);
+	const b = c * Math.sin(h);
+
+	const lms = [
+		(l + 0.3963377774 * a + 0.2158037573 * b) ** 3,
+		(l - 0.1055613458 * a - 0.0638541728 * b) ** 3,
+		(l - 0.0894841775 * a - 1.291485548 * b) ** 3,
+	] as const;
+	const linear = [
+		4.0767416621 * lms[0] - 3.3077115913 * lms[1] + 0.2309699292 * lms[2],
+		-1.2684380046 * lms[0] + 2.6097574011 * lms[1] - 0.3413193965 * lms[2],
+		-0.0041960863 * lms[0] - 0.7034186147 * lms[1] + 1.707614701 * lms[2],
+	] as const;
+	const encode = (channel: number): number => {
+		const clamped = Math.min(1, Math.max(0, channel));
+		return clamped <= 0.0031308 ? 12.92 * clamped : 1.055 * clamped ** (1 / 2.4) - 0.055;
+	};
+
+	return {
+		rgb: [encode(linear[0]), encode(linear[1]), encode(linear[2])],
+		alpha: alpha === undefined ? 1 : cssNumber(alpha, 1),
+	};
+}
+
+/** A colour painted over an opaque one, blended the way the GPU does, in encoded sRGB. */
+function composite(top: Srgba, behind: Srgba): Srgba {
+	const mix = (index: 0 | 1 | 2): number => top.rgb[index] * top.alpha + behind.rgb[index] * (1 - top.alpha);
+	return { rgb: [mix(0), mix(1), mix(2)], alpha: 1 };
+}
+
+/** WCAG relative luminance of an opaque sRGB colour. */
+function luminance({ rgb }: Srgba): number {
+	const [r = 0, g = 0, b = 0] = rgb.map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** WCAG contrast ratio between two opaque colours. */
+function contrastRatio(a: Srgba, b: Srgba): number {
+	const [light = 0, dark = 0] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+	return (light + 0.05) / (dark + 0.05);
+}
+
+/** A token's colour in one theme, read from `theme.css`. */
+function themeColor(variant: ThemeVariant, token: string): Srgba {
+	const value = tokenValue(variant, token);
+	if (value === undefined) throw new Error(`theme.css declares no --${token} in ${variant}`);
+	return parseOklch(value);
+}
 
 /** Tailwind's spacing step, in points — `h-6` is six of them. */
 const SPACING_STEP = 4;
@@ -230,8 +302,10 @@ describe("switchVariants slots", () => {
 		// produce for a frame on every toggle.
 		for (const size of SWITCH_SIZES) {
 			const slots = slotsFor(size);
-			expect(cls(slots.track())).toMatch(/\bbg-input\b/);
-			expect(cls(slots.thumb())).toMatch(/\bbg-background\b/);
+			// The resting class is the resting token, so the first frame and the
+			// interpolated style start from the same colour.
+			expect(cls(slots.track()).split(" ")).toContain(`bg-${SWITCH_TRACK_REST_TOKEN}`);
+			expect(cls(slots.thumb()).split(" ")).toContain(`bg-${SWITCH_THUMB_REST_TOKEN}`);
 			expect(cls(slots.track())).not.toMatch(/\bbg-(primary|success|warning|destructive|info)\b/);
 			expect(cls(slots.thumb())).not.toMatch(/\bbg-(primary|success|warning|destructive|info)\b/);
 		}
@@ -319,6 +393,21 @@ describe("switch colour tokens", () => {
 				continue;
 			}
 			expect(SWITCH_THUMB_TOKEN[color]).toBe(`${SWITCH_TRACK_TOKEN[color]}-foreground`);
+		}
+	});
+
+	test("the resting thumb reads at 3:1 or more against the resting track and the surface under it", () => {
+		// With no On/Off text beside it, the knob is the only sign of the state, so
+		// it has to meet the 3:1 non-text contrast minimum (WCAG 1.4.11). The dark
+		// track is translucent, so it is measured over each surface a switch sits on.
+		for (const variant of ["light", "dark"] as const) {
+			const thumb = themeColor(variant, SWITCH_THUMB_REST_TOKEN);
+			for (const surface of ["background", "card"]) {
+				const behind = themeColor(variant, surface);
+				const track = composite(themeColor(variant, SWITCH_TRACK_REST_TOKEN), behind);
+				expect(contrastRatio(thumb, track)).toBeGreaterThanOrEqual(3);
+				expect(contrastRatio(thumb, behind)).toBeGreaterThanOrEqual(3);
+			}
 		}
 	});
 
@@ -562,5 +651,16 @@ describe("content treatment", () => {
 				expect(treatment.textClass).toBe(SWITCH_INVALID_CONTENT_TEXT_CLASS);
 			}
 		}
+	});
+});
+
+describe("resolveSwitchAccessibilityActions", () => {
+	test("Android lists 'activate', so a TalkBack double-tap reaches the toggle", () => {
+		expect(resolveSwitchAccessibilityActions("android")).toEqual([{ name: "activate" }]);
+	});
+
+	test("iOS lists nothing, so the VoiceOver rotor gains no literal 'activate' entry", () => {
+		// `onAccessibilityTap` already answers a VoiceOver double-tap there.
+		expect(resolveSwitchAccessibilityActions("ios")).toBeUndefined();
 	});
 });

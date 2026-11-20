@@ -24,6 +24,11 @@ const translateX = (element: Instance): number | undefined => {
 	return jestAnimatedStyle?.value.transform?.[0]?.translateX;
 };
 
+const opacity = (element: Instance): number | undefined => {
+	const { jestAnimatedStyle } = element.props as { jestAnimatedStyle?: { value: { opacity?: number } } };
+	return jestAnimatedStyle?.value.opacity;
+};
+
 type PanStep = { state: State; translationX?: number; translationY?: number };
 
 /** Sends one pan to the switch, filling in what each step leaves out. */
@@ -89,6 +94,45 @@ describe("Switch", () => {
 });
 
 describe("Switch.Thumb", () => {
+	// The first layout's frame is waited for through the travel it writes — the
+	// whole track less the insets while the thumb is unmeasured, nothing while the
+	// track is — so the opacity is read after the style ran, not before it.
+	test.each([
+		["the track", "the thumb", 52 - 2 * SWITCH_THUMB_INSET],
+		["the thumb", "the track", 0],
+	])("stays hidden when %s reports before %s, then shows at its measured place", async (first, _second, travel) => {
+		await renderWithProviders(
+			<Switch defaultSelected testID="switch">
+				<Switch.Thumb testID="thumb" />
+			</Switch>
+		);
+		const thumb = () => screen.getByTestId("thumb");
+		const measureTrack = () => fireEvent(track(), "layout", layout(52));
+		const measureThumb = () => fireEvent(thumb(), "layout", layout(24));
+
+		await (first === "the track" ? measureTrack() : measureThumb());
+		await waitFor(() => expect(translateX(thumb())).toBe(travel));
+		expect(opacity(thumb())).toBe(0);
+
+		await (first === "the track" ? measureThumb() : measureTrack());
+		await waitFor(() => expect(opacity(thumb())).toBe(1));
+		await waitFor(() => expect(translateX(thumb())).toBe(52 - 24 - 2 * SWITCH_THUMB_INSET));
+	});
+
+	test("finds a thumb written inside a fragment, and adds no second one", async () => {
+		// Built apart from the switch so the fragment is the one child it receives.
+		const parts = (
+			<>
+				<Switch.Thumb testID="thumb" />
+				<Switch.StartContent testID="start" />
+			</>
+		);
+		await renderWithProviders(<Switch testID="switch">{parts}</Switch>);
+
+		const layers = track().children.filter((child) => typeof child !== "string");
+		expect(layers.map((layer) => layer.props.testID)).toEqual(["start", "thumb"]);
+	});
+
 	test("calls a caller's onLayout and still measures itself", async () => {
 		const onLayout = jest.fn();
 		await renderWithProviders(
@@ -120,6 +164,12 @@ describe("Switch accessibility", () => {
 			checked: true,
 			disabled: true,
 		});
+	});
+
+	test("offers no custom accessibility action on iOS, where onAccessibilityTap activates it", async () => {
+		await renderWithProviders(<Switch accessibilityLabel="Wi-Fi" testID="switch" />);
+
+		expect(screen.getByTestId("switch").props.accessibilityActions).toBeUndefined();
 	});
 
 	test("is named by a sibling Field.Label", async () => {

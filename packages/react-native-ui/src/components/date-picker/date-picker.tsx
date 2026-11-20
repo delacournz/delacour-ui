@@ -403,8 +403,9 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
  * <DatePicker disabledDates={[{ type: "weekday", days: [0, 6] }]} mode="multiple" />
  *
  * @example
- * // A date of birth: no future days, opens on the year list, the year list bounded.
+ * // A date of birth: no future days, opens on the year list near a likely year, bounded.
  * <DatePicker
+ *   defaultMonth={{ year: today().year - 30, month: 1, day: 1 }}
  *   initialView="years"
  *   maxDate={addYears(today(), -18)}
  *   minDate={{ year: today().year - 120, month: 1, day: 1 }}

@@ -96,10 +96,12 @@ that would cross a disabled day starts again from the tapped day rather than com
 
 `initialView="years"` opens an empty picker on the year list, so a date decades back is a year, a
 month and a day rather than dozens of swipes. Once a day is picked, the sheet reopens on that
-day's month; while it is empty, every opening starts on the years again.
+day's month; while it is empty, every opening starts on the years again. `defaultMonth` sets
+the year the list opens scrolled to, and applies only while the picker is empty.
 
 ```tsx
 <DatePicker
+  defaultMonth={{ year: today().year - 30, month: 1, day: 1 }}
   initialView="years"
   maxDate={addYears(today(), -18)}
   minDate={{ year: today().year - 120, month: 1, day: 1 }}

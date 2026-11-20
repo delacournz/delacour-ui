@@ -20,6 +20,7 @@ export function Demo(): ReactElement {
 		<Field>
 			<Field.Label>Date of birth</Field.Label>
 			<DatePicker
+				defaultMonth={{ year: TODAY.year - 30, month: 1, day: 1 }}
 				initialView="years"
 				maxDate={{ year: TODAY.year - 18, month: TODAY.month, day: TODAY.day }}
 				minDate={{ year: TODAY.year - 120, month: 1, day: 1 }}

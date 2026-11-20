@@ -137,6 +137,7 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   ```tsx
   const now = today();
   <DatePicker
+    defaultMonth={{ year: now.year - 30, month: 1, day: 1 }}
     initialView="years"
     maxDate={addYears(now, -18)}
     minDate={{ year: now.year - 120, month: 1, day: 1 }}

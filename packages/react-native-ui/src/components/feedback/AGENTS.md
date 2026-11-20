@@ -28,9 +28,9 @@ Not for confirmations or warnings — those are a `Dialog`. Like every overlay i
 | `feedback-action.tsx` | `Feedback.Action` — a `secondary` `Button` for custom actions |
 | `feedback-cancel.tsx` | `Feedback.Cancel` — closes, keeps the draft |
 | `feedback-submit.tsx` | `Feedback.Submit` — the gate, the trimmed value, the wait on a promise |
-| `feedback.variants.ts` | The slotted `tv()`, the row and motion constants, `canSubmitFeedback` and the field-height resolvers — no RN imports |
+| `feedback.variants.ts` | The slotted `tv()`, the row and motion constants, `canSubmitFeedback`, `resolveFeedbackResultAnnouncement` and the field-height resolvers — no RN imports |
 | `feedback.variants.test.ts` | Slots, tokens in both themes, the submit gate, the field heights |
-| `feedback.render.test.tsx` | Mounted under Jest — open/close paths, controlled and uncontrolled draft, the submit gate and async send, and the out-of-root errors |
+| `feedback.render.test.tsx` | Mounted under Jest — open/close paths, controlled and uncontrolled draft, the submit gate, async send and its announced result, and the out-of-root errors |
 
 ## Design
 
@@ -65,6 +65,14 @@ Not for confirmations or warnings — those are a `Dialog`. Like every overlay i
   shown in the well with the draft intact. The caller closes and clears on success. A rejection is
   not swallowed: handle failures inside `onSubmit`, or the app's unhandled-rejection reporting sees
   it, which is better than a send that failed silently.
+- **A promise send announces its result, once, through `announce()`.** Resolved speaks "Feedback sent"
+  (polite); rejected speaks "Couldn't send feedback" (assertive — the draft is still waiting). Nothing
+  on screen carries the outcome, so no live region is involved, and the imperative `announce()` is
+  used rather than `useAnnounce` because a close-on-success unmounts the button and a pending
+  announcement would be dropped with it. A rejection is re-thrown after speaking so it still reaches
+  unhandled-rejection reporting. A synchronous `onSubmit` announces nothing (no result to await).
+  `announce={false}` opts out; `sentMessage` / `failedMessage` replace the strings
+  (`resolveFeedbackResultAnnouncement`). Field validity is `feedback-field.tsx`'s, not this.
 - **The well eases between heights; the shell never jumps.** A multi-step flow (rating → text →
   thanks) is the caller swapping the panel's and footer's children. `Feedback.Panel` measures the
   well with `onLayout` and animates a clip around it to that height over `FEEDBACK_PANEL_RESIZE_MS`

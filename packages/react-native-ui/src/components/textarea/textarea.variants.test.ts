@@ -2,16 +2,19 @@ import { describe, expect, test } from "bun:test";
 import { TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { INPUT_SIZES, inputVariants, resolveInputFieldClass } from "../input/input.variants";
 import {
+	resolveTextareaBand,
 	resolveTextareaCount,
 	resolveTextareaFieldClass,
 	resolveTextareaHeightStyle,
 	resolveTextareaRows,
 	resolveTextareaRowsHeight,
+	resolveTextareaThresholdAnnouncement,
 	TEXTAREA_BORDER_WIDTH,
 	TEXTAREA_DEFAULT_MAX_ROWS,
 	TEXTAREA_DEFAULT_ROWS,
 	TEXTAREA_LINE_HEIGHTS,
 	TEXTAREA_PADDING_Y,
+	TEXTAREA_WARNING_MAX_REMAINING,
 	textareaVariants,
 } from "./textarea.variants";
 
@@ -247,5 +250,68 @@ describe("a grouped textarea", () => {
 	test("stretches its wrapper across the group's row", () => {
 		expect(textareaVariants({ isGrouped: true }).root()).toContain("flex-1");
 		expect(textareaVariants({ isGrouped: false }).root()).not.toContain("flex-1");
+	});
+});
+
+describe("resolveTextareaBand", () => {
+	test("is none well below the limit", () => {
+		expect(resolveTextareaBand({ length: 0, maxLength: 280 })).toBe("none");
+		expect(resolveTextareaBand({ length: 200, maxLength: 280 })).toBe("none");
+	});
+
+	test("warns within a tenth of the limit, capped at 20 remaining", () => {
+		expect(TEXTAREA_WARNING_MAX_REMAINING).toBe(20);
+		expect(resolveTextareaBand({ length: 259, maxLength: 280 })).toBe("none");
+		expect(resolveTextareaBand({ length: 260, maxLength: 280 })).toBe("warning");
+		expect(resolveTextareaBand({ length: 4000 - 399, maxLength: 4000 })).toBe("none");
+		expect(resolveTextareaBand({ length: 4000 - 20, maxLength: 4000 })).toBe("warning");
+		expect(resolveTextareaBand({ length: 4000 - 21, maxLength: 4000 })).toBe("none");
+	});
+
+	test("a short limit still warns one character before it", () => {
+		expect(resolveTextareaBand({ length: 8, maxLength: 10 })).toBe("none");
+		expect(resolveTextareaBand({ length: 9, maxLength: 10 })).toBe("warning");
+		expect(resolveTextareaBand({ length: 10, maxLength: 10 })).toBe("limit");
+	});
+
+	test("at or past the limit is limit", () => {
+		expect(resolveTextareaBand({ length: 280, maxLength: 280 })).toBe("limit");
+		expect(resolveTextareaBand({ length: 300, maxLength: 280 })).toBe("limit");
+	});
+});
+
+describe("resolveTextareaThresholdAnnouncement", () => {
+	const base = { maxLength: 280 };
+
+	test("speaks when entering the warning band, polite, with the remaining count", () => {
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "none", length: 261 })).toEqual({
+			message: "19 characters remaining",
+			politeness: "polite",
+		});
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "none", length: 279 })?.message).toBe(
+			"1 character remaining"
+		);
+	});
+
+	test("speaks the limit assertively", () => {
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "warning", length: 280 })).toEqual({
+			message: "Character limit reached",
+			politeness: "assertive",
+		});
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "none", length: 280 })?.message).toBe(
+			"Character limit reached"
+		);
+	});
+
+	test("stays silent while inside a band", () => {
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "warning", length: 270 })).toBeNull();
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "limit", length: 280 })).toBeNull();
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "none", length: 10 })).toBeNull();
+	});
+
+	test("leaving a band is silent, so entering it again speaks", () => {
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "limit", length: 270 })).toBeNull();
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "warning", length: 100 })).toBeNull();
+		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "none", length: 270 })).not.toBeNull();
 	});
 });

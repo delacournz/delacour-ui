@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
-import { AccessibilityInfo } from "react-native";
+import { AccessibilityInfo, Platform } from "react-native";
 import { State } from "react-native-gesture-handler";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { makeMutable, type SharedValue } from "react-native-reanimated";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { OverlayProvider } from "../overlay";
 import { Toast } from "./toast";
@@ -11,6 +12,11 @@ import { createToastOffsetStore, type ToastOffsetStore } from "./toast.offset";
 import { createToastApi, createToastStore, type ToastApi, type ToastStore } from "./toast.store";
 import { ToastViewport } from "./toast-viewport";
 import { useToastOffset } from "./use-toast-offset";
+
+const originalOS = Platform.OS;
+function setPlatform(os: typeof Platform.OS) {
+	Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+}
 
 function Overlays({ children }: { children: ReactNode }): ReactElement {
 	return <OverlayProvider>{children}</OverlayProvider>;
@@ -46,10 +52,12 @@ async function advance(ms: number): Promise<void> {
 describe("Toast", () => {
 	beforeEach(() => {
 		jest.useFakeTimers();
+		resetAnnouncer();
 	});
 
 	afterEach(() => {
 		jest.useRealTimers();
+		setPlatform(originalOS);
 	});
 
 	test("renders nothing until a toast is shown", async () => {
@@ -77,7 +85,7 @@ describe("Toast", () => {
 		expect(screen.getByText("Link copied")).toBeOnTheScreen();
 	});
 
-	test("the card is one accessible element with a polite live region", async () => {
+	test("a message toast is one accessible element with no live region of its own", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);
 		await act(async () => {
@@ -85,7 +93,7 @@ describe("Toast", () => {
 		});
 		const card = screen.getByTestId(/^toast-toast-\d+$/);
 		expect(card.props.accessible).toBe(true);
-		expect(card.props.accessibilityLiveRegion).toBe("polite");
+		expect(card.props.accessibilityLiveRegion).toBe("none");
 		expect(card.props.accessibilityRole).toBe("none");
 	});
 
@@ -98,21 +106,69 @@ describe("Toast", () => {
 		expect(screen.getByRole("alert")).toBeOnTheScreen();
 	});
 
-	test("each revision is announced to a screen reader", async () => {
-		const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility");
-		const announceWithOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions");
+	test("each revision is announced once, on Android through the announcement route only", async () => {
+		setPlatform("android");
+		const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		announce.mockClear();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		let id = "";
+		await act(async () => {
+			({ id } = harness.toast({ title: "Saving", isLoading: true }));
+		});
+		expect(announce).toHaveBeenCalledTimes(1);
+		expect(announce).toHaveBeenLastCalledWith("Saving");
+		await advance(600);
+		await act(async () => {
+			harness.toast.update(id, { title: "Saved", isLoading: false, status: "success" });
+		});
+		expect(announce).toHaveBeenCalledTimes(2);
+		expect(announce).toHaveBeenLastCalledWith("Saved");
+		announce.mockRestore();
+	});
+
+	test("announce: false silences a toast on every platform", async () => {
+		setPlatform("ios");
+		const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		const announceWithOptions = jest
+			.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+			.mockImplementation(() => {});
+		announce.mockClear();
+		announceWithOptions.mockClear();
 		const harness = makeHarness();
 		await mountViewport(harness);
 		await act(async () => {
-			harness.toast.success("Saved");
+			harness.toast({ title: "Saved", announce: false });
 		});
-		expect(announce.mock.calls.length + announceWithOptions.mock.calls.length).toBeGreaterThan(0);
+		expect(announce).not.toHaveBeenCalled();
+		expect(announceWithOptions).not.toHaveBeenCalled();
 		announce.mockRestore();
 		announceWithOptions.mockRestore();
 	});
 
+	test("toasts shown together are each announced on iOS, queued behind each other", async () => {
+		setPlatform("ios");
+		const announceWithOptions = jest
+			.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+			.mockImplementation(() => {});
+		announceWithOptions.mockClear();
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.success("First");
+			harness.toast.success("Second");
+		});
+		expect(announceWithOptions).toHaveBeenCalledWith("First", { queue: true });
+		expect(announceWithOptions).toHaveBeenCalledWith("Second", { queue: true });
+		announceWithOptions.mockRestore();
+	});
+
 	test("on iOS a plain toast queues its announcement behind VoiceOver speech", async () => {
-		const announceWithOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions");
+		setPlatform("ios");
+		const announceWithOptions = jest
+			.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+			.mockImplementation(() => {});
+		announceWithOptions.mockClear();
 		const harness = makeHarness();
 		await mountViewport(harness);
 		await act(async () => {
@@ -123,7 +179,11 @@ describe("Toast", () => {
 	});
 
 	test("on iOS a failure interrupts VoiceOver speech", async () => {
-		const announceWithOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions");
+		setPlatform("ios");
+		const announceWithOptions = jest
+			.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+			.mockImplementation(() => {});
+		announceWithOptions.mockClear();
 		const harness = makeHarness();
 		await mountViewport(harness);
 		await act(async () => {

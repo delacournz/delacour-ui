@@ -11,7 +11,8 @@
 		"pressable",
 		"separator",
 		"text",
-		"tv"
+		"tv",
+		"use-announce"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -51,6 +52,10 @@
 			"target": "field/field-error.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../text",
 					"to": "@registry/ui/text"
@@ -178,6 +183,10 @@
 			"target": "field/field.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

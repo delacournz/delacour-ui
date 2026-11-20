@@ -9,6 +9,7 @@ import {
 	resolveToastEnterDelay,
 	resolveToastHaptic,
 	resolveToastInterrupts,
+	resolveToastPoliteness,
 	resolveToastRelease,
 	resolveToastRole,
 	resolveToastStack,
@@ -396,6 +397,14 @@ describe("accessibility", () => {
 		expect(resolveToastInterrupts("warning")).toBe(true);
 		expect(resolveToastInterrupts("success")).toBe(false);
 		expect(resolveToastInterrupts("default")).toBe(false);
+	});
+
+	test("a warning or failure is assertive, the rest polite", () => {
+		expect(resolveToastPoliteness("destructive")).toBe("assertive");
+		expect(resolveToastPoliteness("warning")).toBe("assertive");
+		expect(resolveToastPoliteness("success")).toBe("polite");
+		expect(resolveToastPoliteness("info")).toBe("polite");
+		expect(resolveToastPoliteness("default")).toBe("polite");
 	});
 
 	test("only a failure is an alert", () => {

@@ -83,7 +83,9 @@ The reference implementation for the patterns in the package
   it always was. Only a bare `Icon` is swapped; a `Button.StartContent` wraps
   content of unknown height, and replacing one could resize the button.
   `resolveSpinnerSwapIndex` is the pure decision and is unit-tested.
-- **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
+- **`isLoading`** composes a `Spinner` in and blocks presses. The spinner's name is
+  blanked (`Spinner` is otherwise "Loading"): the button is the one stop and already
+  reads busy, and a named spinner turned "Save" into "Save, Loading". Placement is
   `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the
   children and centres the spinner in the footprint the button already has,
   carrying the label onto `accessibilityLabel` so a screen reader still has a

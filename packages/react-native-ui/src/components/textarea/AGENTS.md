@@ -67,6 +67,16 @@ A multiline text field, sized in rows. One component, no parts: it renders an
   `count` slot carries no colour class to fight it. It uses `tabular-nums` so it
   does not jitter as it counts, and announces as "12 of 280 characters" rather
   than as a fraction.
+- **The count is announced at thresholds, never as a live region.** A live region on the count made
+  TalkBack read it on every keystroke over the typing echo, and VoiceOver, which has no live
+  regions, said nothing even at the limit. `resolveTextareaThresholdAnnouncement` speaks only on
+  *entering* a band: the last tenth of `maxLength` (capped at 20 characters, at least 1) says "N
+  characters remaining" politely; the limit says "Character limit reached" assertively, because typing
+  has just silently stopped. Staying inside a band is silent and leaving it re-arms it, so deleting
+  back out and typing in again is heard again. The first render never speaks. It goes through
+  `useAnnounce` (the count has no live region, so Android is not doubled) and only with `showCount`;
+  `announce={false}` silences it. The count stays readable on focus either way.
+  <!-- registry:omit -->Pinned in `textarea.variants.test.ts` and the render suite.<!-- /registry:omit -->
 - **The count works controlled and uncontrolled.** A `value` is read directly;
   without one, the last text the field reported is, seeded from `defaultValue`
   so the first frame is already right.

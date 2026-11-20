@@ -20,12 +20,14 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SlideButtonContextValue, SlideButtonProvider } from "./slide-button.context";
 import {
 	isSlideArmed,
 	isSlideDraggable,
+	resolveSlideAnnouncement,
 	resolveSlideHandleWidth,
 	resolveSlideRelease,
 	resolveSlideThreshold,
@@ -42,6 +44,7 @@ import {
 	SLIDE_BUTTON_LOOKAHEAD,
 	SLIDE_BUTTON_REDUCED_MOTION_MS,
 	SLIDE_BUTTON_SPRING,
+	type SlideAnnouncementEvent,
 	type SlideButtonSize,
 	type SlideButtonVariant,
 	slideButtonVariants,
@@ -87,6 +90,12 @@ export type SlideButtonProps = Omit<ViewProps, "children" | "style"> & {
 	haptic?: false | HapticFeedback;
 	/** What the screen reader's activate action is called. Imperative, naming the outcome. Default "Confirm". */
 	accessibilityActionLabel?: string;
+	/**
+	 * Speaks the outcome to a screen reader: "Working" while a returned promise is pending or
+	 * `isLoading` turns on, "Confirmed" on success and an assertive "Failed" when the promise
+	 * rejects. Default true. Pass false when the app announces these itself.
+	 */
+	announce?: boolean;
 };
 
 function SlideButtonRoot({
@@ -106,6 +115,7 @@ function SlideButtonRoot({
 	isLoading = false,
 	haptic = false,
 	accessibilityActionLabel = "Confirm",
+	announce = true,
 	accessibilityLabel,
 	...props
 }: SlideButtonProps): ReactElement {
@@ -157,19 +167,60 @@ function SlideButtonRoot({
 	const onCompleteRef = useRef(onComplete);
 	onCompleteRef.current = onComplete;
 
+	const speak = useAnnounce();
+	const say = useCallback(
+		(event: SlideAnnouncementEvent) => {
+			const { message, politeness } = resolveSlideAnnouncement(event);
+			speak(message, { enabled: announce, key: `slide-button-${event}`, politeness });
+		},
+		[announce, speak]
+	);
+	// Whether the promise's resolution already said "Confirmed", so a controlled
+	// parent's `isCompleted` arriving afterwards does not say it again.
+	const hasSpokenSuccess = useRef(false);
+	// Whether `onComplete`'s promise has not settled: success is then the promise's to say.
+	const isAwaiting = useRef(false);
+	const wasCompleted = useRef(completed);
+
 	const reject = useCallback(() => {
 		isPending.current = false;
 		setCompleted(false);
 		goHome();
-	}, [goHome, setCompleted]);
+		isAwaiting.current = false;
+		say("failure");
+	}, [goHome, say, setCompleted]);
 
 	const complete = useCallback(() => {
 		isPending.current = true;
+		hasSpokenSuccess.current = false;
 		setCompleted(true);
 		// Typed `void` so any function fits; read as `unknown` to find a promise in it.
 		const result: unknown = onCompleteRef.current?.();
-		if (isPromiseLike(result)) result.then(undefined, reject);
-	}, [reject, setCompleted]);
+		if (isPromiseLike(result)) {
+			isAwaiting.current = true;
+			say("pending");
+			result.then(() => {
+				isAwaiting.current = false;
+				hasSpokenSuccess.current = true;
+				say("success");
+			}, reject);
+		}
+	}, [reject, say, setCompleted]);
+
+	useEffect(() => {
+		const rose = completed && !wasCompleted.current;
+		wasCompleted.current = completed;
+		if (!completed) hasSpokenSuccess.current = false;
+		if (!rose || isAwaiting.current) return;
+		if (hasSpokenSuccess.current) hasSpokenSuccess.current = false;
+		else say("success");
+	}, [completed, say]);
+
+	const wasLoading = useRef(isLoading);
+	useEffect(() => {
+		if (isLoading && !wasLoading.current) say("pending");
+		wasLoading.current = isLoading;
+	}, [isLoading, say]);
 
 	useEffect(() => {
 		if (completed) {

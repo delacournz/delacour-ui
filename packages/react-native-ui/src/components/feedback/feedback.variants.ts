@@ -126,3 +126,29 @@ export function resolveFeedbackFieldHeightStyle({
 	const ceiling = resolveFeedbackFieldMinHeight(maxRows ?? FEEDBACK_DEFAULT_MAX_ROWS, lineHeight);
 	return { maxHeight: Math.max(minHeight, ceiling), minHeight };
 }
+
+/** What a screen reader hears when a promise `onSubmit` resolves. */
+export const FEEDBACK_SENT_MESSAGE = "Feedback sent";
+
+/** What a screen reader hears when a promise `onSubmit` rejects. */
+export const FEEDBACK_FAILED_MESSAGE = "Couldn't send feedback";
+
+export type FeedbackResultAnnouncement = {
+	message: string;
+	politeness: "polite" | "assertive";
+};
+
+/**
+ * What to speak when a send settles: success is polite, failure assertive
+ * because the draft is still waiting on the user. A caller's string wins; an
+ * empty one falls back to the default.
+ *
+ * Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function resolveFeedbackResultAnnouncement(
+	result: "sent" | "failed",
+	{ sentMessage, failedMessage }: { sentMessage?: string; failedMessage?: string }
+): FeedbackResultAnnouncement {
+	if (result === "sent") return { message: sentMessage || FEEDBACK_SENT_MESSAGE, politeness: "polite" };
+	return { message: failedMessage || FEEDBACK_FAILED_MESSAGE, politeness: "assertive" };
+}

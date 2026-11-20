@@ -3,6 +3,7 @@ import {
 	resolveSkeletonAccessibility,
 	resolveSkeletonAnimation,
 	resolveSkeletonLineWidths,
+	resolveSkeletonLoadedMessage,
 	SKELETON_ANIMATIONS,
 	SKELETON_FILL_CLASS,
 	SKELETON_LAST_LINE_WIDTH,
@@ -241,5 +242,37 @@ describe("skeletonVariants band slot", () => {
 		expect(cls).toContain("w-3/5");
 		expect(cls).toContain("min-w-12");
 		expect(cls).toContain("max-w-60");
+	});
+});
+
+describe("resolveSkeletonLoadedMessage", () => {
+	test("speaks only when a labelled skeleton goes from loading to loaded", () => {
+		expect(resolveSkeletonLoadedMessage({ label: "Inbox", wasLoading: true, isLoading: false })).toBe("Inbox loaded");
+	});
+
+	test("is silent with no label, on mount, while loading, or when nothing changed", () => {
+		expect(resolveSkeletonLoadedMessage({ wasLoading: true, isLoading: false })).toBeNull();
+		expect(resolveSkeletonLoadedMessage({ label: "", wasLoading: true, isLoading: false })).toBeNull();
+		expect(resolveSkeletonLoadedMessage({ label: "Inbox", wasLoading: false, isLoading: false })).toBeNull();
+		expect(resolveSkeletonLoadedMessage({ label: "Inbox", wasLoading: true, isLoading: true })).toBeNull();
+		expect(resolveSkeletonLoadedMessage({ label: "Inbox", wasLoading: false, isLoading: true })).toBeNull();
+	});
+
+	test("turns a 'Loading ...' label into the thing that loaded", () => {
+		expect(resolveSkeletonLoadedMessage({ label: "Loading inbox", wasLoading: true, isLoading: false })).toBe(
+			"Inbox loaded"
+		);
+		expect(resolveSkeletonLoadedMessage({ label: "Loading…", wasLoading: true, isLoading: false })).toBe("Loaded");
+	});
+
+	test("an explicit loadedLabel wins", () => {
+		expect(
+			resolveSkeletonLoadedMessage({
+				label: "Inbox",
+				loadedLabel: "Messages ready",
+				wasLoading: true,
+				isLoading: false,
+			})
+		).toBe("Messages ready");
 	});
 });

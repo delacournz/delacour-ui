@@ -1,13 +1,20 @@
 import { type ReactElement, useCallback } from "react";
+import { announce } from "../../hooks/use-announce";
 import { Button, type ButtonProps } from "../button";
 import { useFeedbackPart } from "./feedback.context";
-import { canSubmitFeedback } from "./feedback.variants";
+import { canSubmitFeedback, resolveFeedbackResultAnnouncement } from "./feedback.variants";
 
 export type FeedbackSubmitProps = Omit<ButtonProps, "onPress"> & {
 	/** Receives the trimmed message. Does NOT close — sending has to finish first. */
 	onSubmit: (value: string) => void | Promise<void>;
 	/** Allow submitting an empty message (e.g. when chips were picked). Default false. */
 	canSubmitEmpty?: boolean;
+	/** Announce the result of a promise `onSubmit` to a screen reader — sent, or failed. Default true. */
+	announce?: boolean;
+	/** Spoken when the promise resolves. Default "Feedback sent". */
+	sentMessage?: string;
+	/** Spoken when the promise rejects. Default "Couldn't send feedback". */
+	failedMessage?: string;
 };
 
 /** Whether a value is a promise, without trusting `instanceof` across realms. */
@@ -43,6 +50,9 @@ export function FeedbackSubmit({
 	canSubmitEmpty = false,
 	isDisabled = false,
 	isLoading = false,
+	announce: shouldAnnounce = true,
+	sentMessage,
+	failedMessage,
 	children = "Send",
 	...props
 }: FeedbackSubmitProps): ReactElement {
@@ -55,9 +65,22 @@ export function FeedbackSubmit({
 		if (!isPromiseLike(result)) return;
 
 		setSending(true);
-		const settle = () => setSending(false);
-		void Promise.resolve(result).finally(settle);
-	}, [canSubmit, isSending, onSubmit, setSending, value]);
+		const speak = (outcome: "sent" | "failed") => {
+			const { message, politeness } = resolveFeedbackResultAnnouncement(outcome, { failedMessage, sentMessage });
+			announce(message, { enabled: shouldAnnounce, key: "feedback-result", politeness });
+		};
+		void Promise.resolve(result).then(
+			() => {
+				setSending(false);
+				speak("sent");
+			},
+			(error: unknown) => {
+				setSending(false);
+				speak("failed");
+				throw error;
+			}
+		);
+	}, [canSubmit, failedMessage, isSending, onSubmit, sentMessage, setSending, shouldAnnounce, value]);
 
 	return (
 		<Button

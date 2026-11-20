@@ -15,6 +15,7 @@
 		"pressable",
 		"text",
 		"tv",
+		"use-announce",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -195,6 +196,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
+				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
 				},
@@ -280,6 +285,10 @@
 			"target": "post/post.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"

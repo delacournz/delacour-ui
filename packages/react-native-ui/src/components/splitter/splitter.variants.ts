@@ -571,6 +571,19 @@ export function resolveSplitterAction({
 	return null;
 }
 
+/** What a handle's custom actions and its double tap can report once they settle. */
+export type SplitterAnnouncement = "reset" | "collapse" | "expand";
+
+/**
+ * What a screen reader is told once a custom action finishes. Increment and
+ * decrement are not here: the platform reads the new `accessibilityValue` itself,
+ * but a custom action re-reads nothing.
+ */
+export function resolveSplitterAnnouncement(kind: SplitterAnnouncement): string {
+	if (kind === "reset") return "Sizes reset";
+	return kind === "collapse" ? "Pane collapsed" : "Pane expanded";
+}
+
 /** What a screen reader reads as a handle's value: the leading pane, in whole percent. */
 export function formatSplitterValue(percent: number): string {
 	return `${Math.round(percent)} percent`;

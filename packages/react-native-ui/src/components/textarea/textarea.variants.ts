@@ -188,3 +188,55 @@ export function resolveTextareaCount({ length, maxLength }: { length: number; ma
 		label: `${length}/${maxLength}`,
 	};
 }
+
+/**
+ * The most characters remaining that still count as the warning band.
+ *
+ * The band is a tenth of the limit, capped here, and never less than one
+ * character — so a 100 limit warns at 10 left, a 280 or 4000 one at 20, a 10 one at 1.
+ */
+export const TEXTAREA_WARNING_MAX_REMAINING = 20;
+
+/** Where a length sits against the limit: clear of it, close to it, or at it. */
+export type TextareaBand = "none" | "warning" | "limit";
+
+/**
+ * Which band a length is in.
+ *
+ * Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function resolveTextareaBand({ length, maxLength }: { length: number; maxLength: number }): TextareaBand {
+	if (length >= maxLength) return "limit";
+	const warnAt = Math.min(TEXTAREA_WARNING_MAX_REMAINING, Math.max(1, Math.ceil(maxLength / 10)));
+	return maxLength - length <= warnAt ? "warning" : "none";
+}
+
+/** What to say, and how urgently. */
+export type TextareaThresholdAnnouncement = { message: string; politeness: "polite" | "assertive" };
+
+/**
+ * What to speak when a length moves from `previous` band, or null for silence.
+ *
+ * Only entering a band speaks: staying in it is silent, and so is leaving it,
+ * which re-arms it — deleting back out and typing in again is heard again.
+ * Reaching the limit is assertive because typing has just silently stopped
+ * working; the warning is polite so it waits behind the typing echo.
+ *
+ * Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function resolveTextareaThresholdAnnouncement({
+	previous,
+	length,
+	maxLength,
+}: {
+	previous: TextareaBand;
+	length: number;
+	maxLength: number;
+}): TextareaThresholdAnnouncement | null {
+	const next = resolveTextareaBand({ length, maxLength });
+	if (next === previous || next === "none") return null;
+	if (next === "limit") return { message: "Character limit reached", politeness: "assertive" };
+	if (previous === "limit") return null;
+	const remaining = maxLength - length;
+	return { message: `${remaining} ${remaining === 1 ? "character" : "characters"} remaining`, politeness: "polite" };
+}

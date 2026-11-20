@@ -356,4 +356,26 @@ export function resolveSlideRelease({
 	return projected >= threshold && reached >= threshold - SLIDE_BUTTON_ARM_SLACK ? "complete" : "return";
 }
 
+export type SlideAnnouncementEvent = "pending" | "success" | "failure";
+
+/**
+ * What a screen reader is told as a slide moves through its outcomes. A confirmed slide is
+ * otherwise silent: the handle and tick are drawn, and the rail's `checked` state changes on
+ * a view that is not announced. Failure is assertive — the handle has gone home and the
+ * action did not happen.
+ */
+export function resolveSlideAnnouncement(event: SlideAnnouncementEvent): {
+	message: string;
+	politeness: "polite" | "assertive";
+} {
+	switch (event) {
+		case "pending":
+			return { message: "Working", politeness: "polite" };
+		case "success":
+			return { message: "Confirmed", politeness: "polite" };
+		case "failure":
+			return { message: "Failed. Slide to try again", politeness: "assertive" };
+	}
+}
+
 export type SlideButtonVariantProps = VariantProps<typeof slideButtonVariants>;

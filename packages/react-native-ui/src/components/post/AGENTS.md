@@ -103,7 +103,13 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
 - **Controls are 32 points with a 6-point hit slop.** `Post.Action`, the vote arrows and the stats
   reach 44 without growing the row — a test pins `POST_CONTROL_POINTS + 2 × POST_HIT_SLOP ≥ 44`.
 - **The score's label sits on the score.** React Native has no group role VoiceOver reads, so
-  "Score 1,240" is on the number between the arrows, which is also a polite live region.
+  "Score 1,240" is on the number between the arrows.
+- **A vote is announced once, by the announcer, not a live region.** Focus stays on the arrow and its
+  label has no score, and iOS has no live regions, so the score view's old `polite` region was silent
+  there and would double-speak beside an announcement on Android. `Post.Votes` records a press, and
+  when `vote` or `score` changes within 3 s speaks `resolveVoteAnnouncement` ("Upvoted, score 1,241")
+  through `useAnnounce`. A score changing with no press (server refresh) stays silent by design.
+  `announce={false}` opts out.
 - **Stats speak the full number.** `resolvePostStatLabel` builds "Like, 1,234" from the raw value,
   so `1.2K` is never read as "one point two K". On/off is `accessibilityState.selected`.
 - **`formatRelativeTime` is private to Post.** It is not hoisted to `src/lib/` — the media
@@ -120,7 +126,7 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
 | Body tag / mention / link with a handler | `link` |
 | `Post.Media` | `image` with `alt`; `alt=""` is skipped |
 | `Post.Stat` | `button`, "Like, 216", `selected` when lit |
-| `Post.Votes` | "Upvote" / "Downvote" buttons, `selected` when cast; "Score 1,240" live region |
+| `Post.Votes` | "Upvote" / "Downvote" buttons, `selected` when cast; "Score 1,240" (no live region); own vote speaks "Upvoted, score 1,241" |
 
 - **Author and Community hide their avatar from assistive tech.** The parent's label already names the
   person or community; a labelled `Avatar` inside it was a second, identical announcement on Android.

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { Pressable, Text } from "react-native";
+import { AccessibilityInfo, Platform, Pressable, Text } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { renderWithProviders, screen } from "../../test/render";
 import { Skeleton } from "./skeleton";
 
@@ -218,5 +219,88 @@ describe("Skeleton.Lines", () => {
 		);
 		expect(screen.queryByRole("progressbar")).not.toBeOnTheScreen();
 		expect(screen.getByText("Real paragraph")).toBeOnTheScreen();
+	});
+});
+
+describe("Skeleton loaded announcement", () => {
+	const originalOS = Platform.OS;
+	let announceSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+	let announceWithOptionsSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+	function setPlatform(os: typeof Platform.OS) {
+		Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+	}
+	function spoken(): string[] {
+		return [...announceSpy.mock.calls.map((c) => c[0]), ...announceWithOptionsSpy.mock.calls.map((c) => c[0])];
+	}
+
+	beforeEach(() => {
+		resetAnnouncer();
+		announceSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		announceWithOptionsSpy = jest
+			.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+			.mockImplementation(() => {});
+		announceSpy.mockClear();
+		announceWithOptionsSpy.mockClear();
+	});
+	afterEach(() => {
+		setPlatform(originalOS);
+	});
+
+	for (const os of ["ios", "android"] as const) {
+		test(`${os}: a labelled skeleton announces once when it finishes loading, not on mount`, async () => {
+			setPlatform(os);
+			const { rerender } = await renderWithProviders(
+				<Skeleton animation="none" label="Loading inbox">
+					<Text>Mail</Text>
+				</Skeleton>
+			);
+			expect(spoken()).toEqual([]);
+			await rerender(
+				<Skeleton animation="none" isLoading={false} label="Loading inbox">
+					<Text>Mail</Text>
+				</Skeleton>
+			);
+			expect(spoken()).toEqual(["Inbox loaded"]);
+		});
+	}
+
+	test("an unlabelled skeleton never announces", async () => {
+		setPlatform("ios");
+		const { rerender } = await renderWithProviders(<Skeleton animation="none" />);
+		await rerender(<Skeleton animation="none" isLoading={false} />);
+		expect(spoken()).toEqual([]);
+	});
+
+	test("announce={false} opts out", async () => {
+		setPlatform("ios");
+		const { rerender } = await renderWithProviders(<Skeleton animation="none" announce={false} label="Inbox" />);
+		await rerender(<Skeleton animation="none" announce={false} isLoading={false} label="Inbox" />);
+		expect(spoken()).toEqual([]);
+	});
+
+	test("a group of skeletons flipping together announces only the labelled group, once", async () => {
+		setPlatform("ios");
+		const tree = (isLoading: boolean) => (
+			<Skeleton.Group animation="none" isLoading={isLoading} label="Loading feed">
+				<Skeleton />
+				<Skeleton />
+				<Skeleton.Lines lines={2} />
+			</Skeleton.Group>
+		);
+		const { rerender } = await renderWithProviders(tree(true));
+		await rerender(tree(false));
+		expect(spoken()).toEqual(["Feed loaded"]);
+	});
+
+	test("a labelled Skeleton.Lines announces once, not twice", async () => {
+		setPlatform("android");
+		const { rerender } = await renderWithProviders(<Skeleton.Lines animation="none" label="Loading bio" />);
+		await rerender(
+			<Skeleton.Lines animation="none" isLoading={false} label="Loading bio">
+				<Text>Hi</Text>
+			</Skeleton.Lines>
+		);
+		expect(spoken()).toEqual(["Bio loaded"]);
 	});
 });

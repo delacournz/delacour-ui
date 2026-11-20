@@ -19,7 +19,7 @@ falls into; a two-second hold cannot be done by accident or by habit.
 | `progress-button.context.tsx` | `ProgressButtonContext`, the layer context, `useProgressButton()` |
 | `progress-button.variants.ts` | Pure `tv()` slots, colour tables, and the hold, playback, stepping and reset resolvers |
 | `progress-button.variants.test.ts` | |
-| `progress-button.render.test.tsx` | Mounted under Jest — role, hint, state, activate action completes, disabled, controlled and uncontrolled completion, auto-reset, hidden fill copy, parts outside the root. The hold itself is not reachable: `fireGestureHandler` runs BEGAN, ACTIVE, END in one call so the release rewinds the fill at once, and completion is a UI-thread timing callback |
+| `progress-button.render.test.tsx` | Mounted under Jest — the completion announcement per platform, role, hint, state, activate action completes, disabled, controlled and uncontrolled completion, auto-reset, hidden fill copy, parts outside the root. The hold itself is not reachable: `fireGestureHandler` runs BEGAN, ACTIVE, END in one call so the release rewinds the fill at once, and completion is a UI-thread timing callback |
 
 ## Design
 
@@ -108,6 +108,14 @@ falls into; a two-second hold cannot be done by accident or by habit.
   screen reader's activate completes the button outright. A screen reader cannot hold, the hint
   has already announced what the button does, and refusing would leave the action unreachable
   for anyone using one. The slide-to-confirm control makes the same call.
+- **Completion is spoken once, by the announcer.** Activation flips `checked`, but neither
+  platform reads a state change on the element a user is already on, so a screen-reader user got
+  no sign the action fired (WCAG 4.1.3). `useAnnounce` speaks "Done" on the step from not
+  completed to completed — a hold, an activation or a controlled `isCompleted` alike — through
+  one route per platform. The root has no live region, so Android is never told twice. Reset,
+  mounting already completed and the hold's progress are silent. `completedAnnouncement` replaces
+  the text (say what a custom `Done` says: "Paid"); `announce={false}` is the opt-out. The pure
+  decision is `resolveCompletionAnnouncement`.
 
 ## Out of scope
 

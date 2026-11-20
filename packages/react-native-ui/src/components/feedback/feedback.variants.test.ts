@@ -4,11 +4,14 @@ import {
 	canSubmitFeedback,
 	FEEDBACK_DEFAULT_MAX_ROWS,
 	FEEDBACK_DEFAULT_MIN_ROWS,
+	FEEDBACK_FAILED_MESSAGE,
 	FEEDBACK_FIELD_LINE_HEIGHT,
 	FEEDBACK_PANEL_RESIZE_MS,
+	FEEDBACK_SENT_MESSAGE,
 	feedbackVariants,
 	resolveFeedbackFieldHeightStyle,
 	resolveFeedbackFieldMinHeight,
+	resolveFeedbackResultAnnouncement,
 } from "./feedback.variants";
 
 const LIGHT = declaredTokens("light");
@@ -181,5 +184,26 @@ describe("FEEDBACK_PANEL_RESIZE_MS", () => {
 	test("is short and finite, so a step change settles before the next tap", () => {
 		expect(FEEDBACK_PANEL_RESIZE_MS).toBeGreaterThan(0);
 		expect(FEEDBACK_PANEL_RESIZE_MS).toBeLessThanOrEqual(250);
+	});
+});
+
+describe("resolveFeedbackResultAnnouncement", () => {
+	test("a send that went through is polite", () => {
+		expect(resolveFeedbackResultAnnouncement("sent", {})).toEqual({
+			message: FEEDBACK_SENT_MESSAGE,
+			politeness: "polite",
+		});
+	});
+
+	test("a send that failed is assertive", () => {
+		expect(resolveFeedbackResultAnnouncement("failed", {})).toEqual({
+			message: FEEDBACK_FAILED_MESSAGE,
+			politeness: "assertive",
+		});
+	});
+
+	test("a caller's string replaces the default; an empty one falls back", () => {
+		expect(resolveFeedbackResultAnnouncement("sent", { sentMessage: "Thanks!" }).message).toBe("Thanks!");
+		expect(resolveFeedbackResultAnnouncement("failed", { failedMessage: "" }).message).toBe(FEEDBACK_FAILED_MESSAGE);
 	});
 });

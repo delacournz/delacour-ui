@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"cn",
 		"tv",
+		"use-announce",
 		"use-calm-motion",
 		"use-theme-color"
 	],
@@ -53,6 +54,17 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/skeleton-loaded.ts",
+			"target": "skeleton/skeleton-loaded.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
 				}
 			]
 		},
@@ -115,6 +127,10 @@
 			"target": "skeleton/skeleton.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

@@ -34,6 +34,13 @@ export type ScreenFooterMeasurements = {
 	 * this — whoever drives it owns clearing it.
 	 */
 	overlayHeight: SharedValue<number>;
+	/**
+	 * How far a sticky footer sits above the open keyboard's top edge — the
+	 * height of a bar riding the keyboard under it, or 0. A keyboard-aware
+	 * scrollable adds it to the clearance its focused input needs. The footer
+	 * writes it from its `keyboardOffset` prop and resets it on unmount.
+	 */
+	keyboardOffset: SharedValue<number>;
 };
 
 /** Everything a screen's parts share, all of it readable from the UI thread. */
@@ -85,6 +92,7 @@ export function ScreenProvider({ parentContext = null, debug = false, children }
 	const footerHeight = useSharedValue<number>(0);
 	const footerInitialHeight = useSharedValue<number>(0);
 	const footerOverlayHeight = useSharedValue<number>(0);
+	const footerKeyboardOffset = useSharedValue<number>(0);
 
 	const scrollY = useSharedValue<number>(0);
 	const contentHeight = useSharedValue<number>(0);
@@ -100,6 +108,7 @@ export function ScreenProvider({ parentContext = null, debug = false, children }
 				height: footerHeight,
 				initialHeight: footerInitialHeight,
 				overlayHeight: footerOverlayHeight,
+				keyboardOffset: footerKeyboardOffset,
 			},
 			scrollY,
 			contentHeight,
@@ -114,6 +123,7 @@ export function ScreenProvider({ parentContext = null, debug = false, children }
 		footerHeight,
 		footerInitialHeight,
 		footerOverlayHeight,
+		footerKeyboardOffset,
 		scrollY,
 		contentHeight,
 		layoutHeight,

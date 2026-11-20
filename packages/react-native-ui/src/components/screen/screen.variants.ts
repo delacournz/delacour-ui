@@ -294,7 +294,9 @@ export function resolveScreenEdgePadding(
  *   the list's content bottom IS the screen bottom. Reserve = `c + m + b`.
  * - OPEN: `KeyboardStickyView` translates by `-(K - b)` (its `offset.opened` is
  *   the inset), so the footer's `b` band ends up BEHIND the keyboard and its top
- *   edge is `keyboardTop - (c + m)`. The list lifts by `(K - b)`, because
+ *   edge is `keyboardTop - (c + m)`. A footer given a `keyboardOffset` `o` — a
+ *   bar riding the keyboard under it — translates by `-(K - b + o)` instead, and
+ *   its top edge is `keyboardTop - (c + m + o)`. The list lifts by `(K - b)`, because
  *   `KeyboardChatScrollView` scrolls by "distance (`keyboardHeight - offset`)
  *   instead of the full keyboard height" and `Screen.ChatList` passes the inset
  *   as that offset. Measured from the lifted content bottom, the footer's top is
@@ -352,10 +354,13 @@ export function footerOccupancy(measuredContentHeight: number, safeAreaBottom: n
  *
  * For `KeyboardAwareScrollView`'s `bottomOffset` — clearance between the focused
  * input and the keyboard top, not clearance in content space.
+ *
+ * @param measuredContentHeight - `footer.initialHeight`, what `Screen.Footer` measures
+ * @param keyboardOffset - `footer.keyboardOffset`: how much further a sticky footer is lifted, onto a bar riding the keyboard
  */
-export function footerAboveKeyboard(measuredContentHeight: number): number {
+export function footerAboveKeyboard(measuredContentHeight: number, keyboardOffset = 0): number {
 	"worklet";
-	return measuredContentHeight + SCREEN_FOOTER_PADDING + SCREEN_FLOATING_BOTTOM_GAP;
+	return measuredContentHeight + SCREEN_FOOTER_PADDING + SCREEN_FLOATING_BOTTOM_GAP + keyboardOffset;
 }
 
 /** How a scrollable reserves space at its bottom edge. See {@link resolveScrollBottomInset}. */

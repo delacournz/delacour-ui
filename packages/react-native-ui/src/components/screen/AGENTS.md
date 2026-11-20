@@ -122,6 +122,19 @@ whole-screen states.
   open keyboard and excludes the band the sticky shift parks behind it.
   Conflating them is a real bug — the derivation is in the block comment above
   them, and the tests pin both.
+- **`keyboardOffset` stacks a sticky footer on a bar riding the keyboard.** A
+  form's previous / next / done toolbar sits on top of the keyboard, and a
+  sticky footer that only knew the keyboard's height parked its submit button
+  behind that bar. The footer's `offset.opened` becomes `bottom - keyboardOffset`,
+  and the footer publishes the value on the screen context
+  (`footer.keyboardOffset`) — reset to 0 on unmount — so
+  `useScreenFooterKeyboardClearance` adds the same distance and a keyboard-aware
+  scroll area keeps the focused field clear of the lifted footer. Pass the bar's
+  own height constant, never a literal: a literal drifts the day the bar is
+  restyled, and the footer then overlaps it or floats a gap above it.
+  `resolveScrollBottomInset` does not add it yet, so with the keyboard open and
+  the list scrolled to its very end the last `keyboardOffset` points of content
+  sit under the footer.
 
 ## Lists
 

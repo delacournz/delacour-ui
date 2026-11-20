@@ -1,4 +1,5 @@
-import { describe, expect, jest, test } from "@jest/globals";
+import { afterEach, describe, expect, jest, test } from "@jest/globals";
+import { Platform } from "react-native";
 import { State } from "react-native-gesture-handler";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
@@ -9,6 +10,11 @@ import { SWITCH_THUMB_INSET } from "./switch.variants";
 const layout = (width: number) => ({ nativeEvent: { layout: { height: 0, width, x: 0, y: 0 } } });
 
 type Instance = ReturnType<typeof screen.getByTestId>;
+
+// Puts back a `Platform.OS` a test replaced.
+afterEach(() => {
+	jest.restoreAllMocks();
+});
 
 /** The track is the root's only child: the node that clips the thumb and reports the travel. */
 const track = (id = "switch"): Instance => {
@@ -22,6 +28,11 @@ const translateX = (element: Instance): number | undefined => {
 		jestAnimatedStyle?: { value: { transform?: { translateX?: number }[] } };
 	};
 	return jestAnimatedStyle?.value.transform?.[0]?.translateX;
+};
+
+const opacity = (element: Instance): number | undefined => {
+	const { jestAnimatedStyle } = element.props as { jestAnimatedStyle?: { value: { opacity?: number } } };
+	return jestAnimatedStyle?.value.opacity;
 };
 
 type PanStep = { state: State; translationX?: number; translationY?: number };
@@ -70,7 +81,7 @@ describe("Switch", () => {
 		const view = await renderWithProviders(
 			<Switch accessibilityLabel="Wi-Fi" isSelected={false} onSelectedChange={onSelectedChange} />
 		);
-		await fireEvent(screen.getByRole("switch"), "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+		await fireEvent(screen.getByRole("switch"), "accessibilityTap");
 		expect(onSelectedChange).toHaveBeenCalledWith(true);
 		expect(screen.getByRole("switch")).not.toBeChecked();
 
@@ -89,6 +100,45 @@ describe("Switch", () => {
 });
 
 describe("Switch.Thumb", () => {
+	// The first layout's frame is waited for through the travel it writes — the
+	// whole track less the insets while the thumb is unmeasured, nothing while the
+	// track is — so the opacity is read after the style ran, not before it.
+	test.each([
+		["the track", "the thumb", 52 - 2 * SWITCH_THUMB_INSET],
+		["the thumb", "the track", 0],
+	])("stays hidden when %s reports before %s, then shows at its measured place", async (first, _second, travel) => {
+		await renderWithProviders(
+			<Switch defaultSelected testID="switch">
+				<Switch.Thumb testID="thumb" />
+			</Switch>
+		);
+		const thumb = () => screen.getByTestId("thumb");
+		const measureTrack = () => fireEvent(track(), "layout", layout(52));
+		const measureThumb = () => fireEvent(thumb(), "layout", layout(24));
+
+		await (first === "the track" ? measureTrack() : measureThumb());
+		await waitFor(() => expect(translateX(thumb())).toBe(travel));
+		expect(opacity(thumb())).toBe(0);
+
+		await (first === "the track" ? measureThumb() : measureTrack());
+		await waitFor(() => expect(opacity(thumb())).toBe(1));
+		await waitFor(() => expect(translateX(thumb())).toBe(52 - 24 - 2 * SWITCH_THUMB_INSET));
+	});
+
+	test("finds a thumb written inside a fragment, and adds no second one", async () => {
+		// Built apart from the switch so the fragment is the one child it receives.
+		const parts = (
+			<>
+				<Switch.Thumb testID="thumb" />
+				<Switch.StartContent testID="start" />
+			</>
+		);
+		await renderWithProviders(<Switch testID="switch">{parts}</Switch>);
+
+		const layers = track().children.filter((child) => typeof child !== "string");
+		expect(layers.map((layer) => layer.props.testID)).toEqual(["start", "thumb"]);
+	});
+
 	test("calls a caller's onLayout and still measures itself", async () => {
 		const onLayout = jest.fn();
 		await renderWithProviders(
@@ -121,6 +171,47 @@ describe("Switch accessibility", () => {
 			disabled: true,
 		});
 	});
+
+	test("offers no custom accessibility action on iOS, where onAccessibilityTap activates it", async () => {
+		await renderWithProviders(<Switch accessibilityLabel="Wi-Fi" testID="switch" />);
+
+		expect(screen.getByTestId("switch").props.accessibilityActions).toBeUndefined();
+	});
+
+	test.each(["ios", "android"] as const)(
+		"on %s, a caller's custom action reaches its handler and activation still toggles",
+		async (os) => {
+			jest.replaceProperty(Platform, "OS", os);
+			const onAccessibilityAction = jest.fn();
+			const onSelectedChange = jest.fn();
+			await renderWithProviders(
+				<Switch
+					accessibilityActions={[{ label: "Help", name: "help" }]}
+					accessibilityLabel="Wi-Fi"
+					onAccessibilityAction={onAccessibilityAction}
+					onSelectedChange={onSelectedChange}
+					testID="switch"
+				/>
+			);
+			const control = screen.getByTestId("switch");
+
+			await fireEvent(control, "accessibilityAction", { nativeEvent: { actionName: "help" } });
+			expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+			expect(onSelectedChange).not.toHaveBeenCalled();
+
+			// TalkBack activates through the `activate` action, VoiceOver through
+			// `onAccessibilityTap`.
+			if (os === "android") {
+				expect(control.props.accessibilityActions).toEqual([{ label: "Help", name: "help" }, { name: "activate" }]);
+				await fireEvent(control, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+			} else {
+				expect(control.props.accessibilityActions).toEqual([{ label: "Help", name: "help" }]);
+				await fireEvent(control, "accessibilityTap");
+			}
+			expect(onSelectedChange).toHaveBeenCalledWith(true);
+			expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+		}
+	);
 
 	test("is named by a sibling Field.Label", async () => {
 		await renderWithProviders(
@@ -221,6 +312,29 @@ describe("Switch gesture", () => {
 		await view.rerender(<Switch isDisabled onSelectedChange={onSelectedChange} testID="switch" />);
 		await pan([{ state: State.BEGAN }, { state: State.CANCELLED }]);
 		await pan([{ state: State.BEGAN }, { state: State.END }]);
+
+		expect(onSelectedChange).not.toHaveBeenCalled();
+	});
+
+	test.each([
+		["springing on", false, true],
+		["springing off", true, false],
+	])("a vertical swipe caught while %s keeps the state", async (_, from, to) => {
+		const onSelectedChange = jest.fn();
+		const view = await renderWithProviders(
+			<Switch isSelected={from} onSelectedChange={onSelectedChange} testID="switch" />
+		);
+		await fireEvent(track(), "layout", layout(52));
+
+		// The prop flips and the thumb starts springing; the swipe lands before it
+		// has crossed half way, so its position still says the old state.
+		await view.rerender(<Switch isSelected={to} onSelectedChange={onSelectedChange} testID="switch" />);
+		await pan([
+			{ state: State.BEGAN },
+			{ state: State.ACTIVE },
+			{ state: State.ACTIVE, translationY: 30 },
+			{ state: State.END, translationY: 30 },
+		]);
 
 		expect(onSelectedChange).not.toHaveBeenCalled();
 	});

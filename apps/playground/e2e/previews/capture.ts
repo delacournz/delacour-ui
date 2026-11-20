@@ -28,6 +28,8 @@ import {
 	DEVICE_MAX_EDGE,
 	MAX_EDGE,
 	mediaPaths,
+	mediaUrls,
+	mediaVersion,
 	NAVIGATION_TIMEOUT_MS,
 	PAD_POINTS,
 	SCHEME,
@@ -404,7 +406,7 @@ async function captureTheme(
 	const first = await awaitSentinel(screen, planned.id, theme);
 	const bounds = await settledBounds(fixtures, planned.id, theme, first, planned.settleMs);
 
-	const { dir, poster, video } = mediaPaths(planned.id, theme, planned.sourceHash);
+	const { dir, poster, video } = mediaPaths(planned.id, theme);
 	await mkdir(dir, { recursive: true });
 
 	const shot = await device.screenshot(`${planned.id.replace(/\//g, "-")}-${theme}`);
@@ -529,9 +531,16 @@ export function capture(id: string, second?: CaptureOptions | FlowBody, third?: 
 			if (options.types) await relaunch(fixtures);
 		}
 
+		// The cache-buster is the bytes just written, so a recapture that moved a
+		// pixel moves the URL even when the demo's own source did not change.
+		const files = THEMES.flatMap((theme) => {
+			const paths = mediaPaths(id, theme);
+			return flow ? [paths.poster, paths.video] : [paths.poster];
+		});
+		const version = mediaVersion(files.map((file) => readFileSync(file)));
 		const media = (theme: Theme) => {
-			const paths = mediaPaths(id, theme, demo.sourceHash);
-			return flow ? { poster: paths.posterUrl, video: paths.videoUrl } : { poster: paths.posterUrl };
+			const urls = mediaUrls(id, theme, version);
+			return flow ? urls : { poster: urls.poster };
 		};
 		const fragment: Fragment = {
 			animated: flow !== undefined,

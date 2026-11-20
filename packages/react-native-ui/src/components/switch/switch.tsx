@@ -1,5 +1,7 @@
 import {
 	Children,
+	cloneElement,
+	Fragment,
 	isValidElement,
 	type ReactElement,
 	type ReactNode,
@@ -9,7 +11,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
+import { type AccessibilityActionEvent, type LayoutChangeEvent, Platform, type ViewProps } from "react-native";
 import { Gesture, GestureDetector, State } from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
@@ -26,6 +28,7 @@ import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SwitchContextValue, SwitchProvider } from "./switch.context";
 import {
 	hasThumbChild,
+	resolveSwitchActivation,
 	resolveSwitchAxes,
 	resolveSwitchRelease,
 	resolveSwitchTrackTokens,
@@ -71,8 +74,10 @@ function SwitchRoot({
 	isInvalid,
 	haptic = "selection",
 	className,
+	accessibilityActions,
 	accessibilityLabel,
 	accessibilityState,
+	onAccessibilityAction,
 	children,
 	...props
 }: SwitchProps): ReactElement {
@@ -102,6 +107,9 @@ function SwitchRoot({
 	// whole gesture. Read at release rather than the final translation, so a drag
 	// out and back to its start is still a drag and not a tap.
 	const peakDistance = useSharedValue(0);
+	// The same peak along the track only. A swipe that never moved along it has
+	// no intent to change the state, whatever the thumb's position says.
+	const peakHorizontal = useSharedValue(0);
 
 	// A ref rather than state: the pan reads it twice a drag and nothing renders
 	// differently for it, so a re-render on touch-down would be pure cost.
@@ -156,6 +164,7 @@ function SwitchRoot({
 				"worklet";
 				grabbed.value = progress.value;
 				peakDistance.value = 0;
+				peakHorizontal.value = 0;
 				isPressed.value = withSpring(1, SWITCH_PRESS_SPRING);
 				scheduleOnRN(setDragging, true);
 			})
@@ -164,6 +173,7 @@ function SwitchRoot({
 				// Before the travel check: a vertical swipe moves no thumb but still
 				// counts as movement.
 				peakDistance.value = Math.max(peakDistance.value, Math.abs(event.translationX), Math.abs(event.translationY));
+				peakHorizontal.value = Math.max(peakHorizontal.value, Math.abs(event.translationX));
 
 				const travel = switchTravel({
 					inset: SWITCH_THUMB_INSET,
@@ -194,6 +204,7 @@ function SwitchRoot({
 				// returns near its start does not read as a tap either.
 				const target = resolveSwitchRelease({
 					distance: Math.max(peakDistance.value, Math.abs(event.translationX), Math.abs(event.translationY)),
+					horizontalDistance: Math.max(peakHorizontal.value, Math.abs(event.translationX)),
 					progress: progress.value,
 					velocity: event.velocityX,
 					wasSelected: selected,
@@ -222,6 +233,7 @@ function SwitchRoot({
 		isGestureDisabled,
 		isPressed,
 		peakDistance,
+		peakHorizontal,
 		progress,
 		selected,
 		setDragging,
@@ -297,11 +309,24 @@ function SwitchRoot({
 	const content = useMemo(() => withThumb(children), [children]);
 	const slots = switchVariants({ isDisabled: axes.isDisabled, size: axes.size });
 
+	// Merged with the caller's actions, never replaced by them: see
+	// `resolveSwitchActivation`. `activate` is consumed only when the switch added
+	// it; every other action, and an `activate` the caller owns, reaches the
+	// caller's own handler. `Platform.OS` is read here rather than at module scope
+	// so a test can replace it.
+	const activation = useMemo(
+		() => resolveSwitchActivation({ accessibilityActions, platform: Platform.OS }),
+		[accessibilityActions]
+	);
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
-			if (event.nativeEvent.actionName === "activate") toggle();
+			if (activation.routesActivate && event.nativeEvent.actionName === "activate") {
+				toggle();
+				return;
+			}
+			onAccessibilityAction?.(event);
 		},
-		[toggle]
+		[activation.routesActivate, onAccessibilityAction, toggle]
 	);
 
 	// `accessibilityState` is merged, not replaced: a caller's `busy` must not
@@ -314,7 +339,7 @@ function SwitchRoot({
 		<SwitchProvider value={context}>
 			<GestureDetector gesture={gesture}>
 				<Animated.View
-					accessibilityActions={ACCESSIBILITY_ACTIONS}
+					accessibilityActions={activation.accessibilityActions}
 					accessibilityLabel={accessibilityLabel ?? field?.label ?? undefined}
 					accessibilityRole="switch"
 					accessibilityState={{ ...accessibilityState, checked: selected, disabled: axes.isDisabled }}
@@ -335,19 +360,6 @@ function SwitchRoot({
 		</SwitchProvider>
 	);
 }
-
-/**
- * The one action an assistive double-tap on a `switch` maps to.
- *
- * Module scope on purpose: a fresh array each render is a new prop every commit,
- * and React Native sends the whole accessibility config across on any change.
- *
- * It exists at all because the root is not a `Pressable` — there is no touch
- * responder for TalkBack's activation to land on, so without this the switch
- * would announce its state and offer no way to change it. `onAccessibilityTap`
- * is the iOS half of the same gap.
- */
-const ACCESSIBILITY_ACTIONS = [{ name: "activate" }] as const;
 
 /** Read inside the pan's worklets, so it is a plain number captured once. */
 const PAN_CANCELLED = State.CANCELLED;
@@ -372,12 +384,32 @@ const PAN_CANCELLED = State.CANCELLED;
  * children, and importing it from a part would close a cycle. See AGENTS.md.
  */
 function withThumb(children: ReactNode): ReactNode {
-	const items = Children.toArray(children);
+	const items = flattenFragments(children);
 	const isThumb = items.map(isSwitchThumbElement);
 
 	if (!hasThumbChild(isThumb)) return [...items, <SwitchThumb key="thumb" />];
 
 	return [...items.filter((_, index) => !isThumb[index]), ...items.filter((_, index) => isThumb[index])];
+}
+
+/**
+ * The children with every fragment opened up, at any depth.
+ *
+ * `Children.toArray` stops at a fragment, so a `Switch.Thumb` written inside
+ * `<>…</>` would go undetected: a second thumb would be composed in over it,
+ * hiding anything inside the caller's knob, and both would write the one
+ * measured width. Opening fragments here lets {@link withThumb} see every part.
+ *
+ * A child taken out of a fragment is re-keyed with the fragment's key in front,
+ * so keys stay unique across the flattened list and stable between renders.
+ */
+function flattenFragments(children: ReactNode, keyPrefix = ""): ReactNode[] {
+	return Children.toArray(children).flatMap((child) => {
+		if (!isValidElement<{ children?: ReactNode }>(child)) return [child];
+		const key = `${keyPrefix}${String(child.key)}`;
+		if (child.type === Fragment) return flattenFragments(child.props.children, key);
+		return keyPrefix ? [cloneElement(child, { key })] : [child];
+	});
 }
 
 /**

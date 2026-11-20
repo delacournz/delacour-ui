@@ -128,11 +128,10 @@ export const SWITCH_TRACK_TOKEN: Record<SwitchColor, string> = {
 /**
  * The track a switch that is off wears.
  *
- * `input` rather than `secondary`, and it is the token that makes the knob
- * legible without a border: it is the chrome a field's own box wears, a step
- * darker than the page in light and a step lighter in dark, so a knob painted
- * the page's own colour reads against it at either end of the theme. `secondary`
- * sits too close to the surface behind it for that.
+ * `input` rather than `secondary`: it is the chrome a field's own box wears, a
+ * step away from the page, so the off pill still has a shape. `secondary` sits
+ * too close to the surface behind it for that. The knob, not the track, carries
+ * the contrast: see {@link SWITCH_THUMB_REST_TOKEN}.
  */
 export const SWITCH_TRACK_REST_TOKEN = "input";
 
@@ -159,8 +158,17 @@ export const SWITCH_THUMB_TOKEN: Record<SwitchColor, string> = {
 	info: "info-foreground",
 };
 
-/** The thumb a switch that is off wears. */
-export const SWITCH_THUMB_REST_TOKEN = "background";
+/**
+ * The thumb a switch that is off wears.
+ *
+ * `muted-foreground`, not `background`. With no On/Off text beside it, the knob
+ * is the only sign of the state, so it must meet the 3:1 non-text contrast
+ * minimum (WCAG 1.4.11) against the resting track and the surface behind it. A
+ * knob in the page's own colour reached 1.21:1 on the light `input` track and
+ * 1.47:1 on the dark one; this reaches 3.76:1 and 4.39:1 at the least. A test
+ * computes the ratios from `theme.css`.
+ */
+export const SWITCH_THUMB_REST_TOKEN = "muted-foreground";
 
 /** The thumb, on or off, once the switch is reporting an invalid value. */
 export const SWITCH_INVALID_THUMB_TOKEN = "destructive-foreground";
@@ -279,7 +287,7 @@ export const switchVariants = tv({
 		/** The capsule. Its colour is an animated style, never a class. */
 		track: "relative justify-center overflow-hidden rounded-full bg-input",
 		/** The knob. Its position and its colour are one animated style. */
-		thumb: "absolute left-0.75 items-center justify-center rounded-full bg-background",
+		thumb: "absolute left-0.75 items-center justify-center rounded-full bg-muted-foreground",
 		/** Behind the thumb at the leading edge. Revealed as the switch turns on. */
 		startContent: "absolute left-0.75 items-center justify-center",
 		/** Behind the thumb at the trailing edge. Revealed as the switch turns off. */
@@ -445,10 +453,13 @@ export function switchTravel({
  * translation: a vertical swipe that began on the switch moves nothing
  * horizontally, and reading only that axis would turn every attempt to scroll
  * past the control into a toggle. It is also the peak over the gesture, not the
- * translation at release, so a drag out and back is not a tap. A release
- * travelling fast is a **flick**, and goes the way the finger was going however
- * short of half way it stopped.
- * Anything else is settled by position.
+ * translation at release, so a drag out and back is not a tap. A gesture past
+ * the slop that never moved **along the track** (`horizontalDistance` under the
+ * slop) is a scroll, not a drag, and keeps the state: grabbed mid-animation, the
+ * thumb's position can still say the old state, and settling by it would flip
+ * the switch. A release travelling fast is a **flick**, and goes the way the
+ * finger was going however short of half way it stopped. Anything else is
+ * settled by position.
  *
  * Marked `"worklet"` and written flat — it calls nothing, not even to clamp.
  * A module-scope worklet is rewritten into a factory call that runs at import
@@ -461,17 +472,21 @@ export function switchTravel({
 export function resolveSwitchRelease({
 	progress,
 	distance,
+	horizontalDistance,
 	velocity,
 	wasSelected,
 }: {
 	progress: number;
 	/** The furthest the finger got over the gesture, in points, on whichever axis moved further. */
 	distance: number;
+	/** The furthest the finger got along the track over the gesture, in points. */
+	horizontalDistance: number;
 	velocity: number;
 	wasSelected: boolean;
 }): boolean {
 	"worklet";
 	if (distance < SWITCH_TAP_SLOP) return !wasSelected;
+	if (horizontalDistance < SWITCH_TAP_SLOP) return wasSelected;
 	if (velocity > SWITCH_FLING_VELOCITY) return true;
 	if (velocity < -SWITCH_FLING_VELOCITY) return false;
 	return progress > 0.5;
@@ -511,3 +526,45 @@ export function resolveSwitchContentTreatment({
 }
 
 export type SwitchVariantProps = VariantProps<typeof switchVariants>;
+
+/** The one built-in action. Module scope, so the list keeps one identity. */
+const SWITCH_ACTIVATE_ACTION = { name: "activate" } as const;
+const SWITCH_ANDROID_ACCESSIBILITY_ACTIONS = [SWITCH_ACTIVATE_ACTION] as const;
+
+/** An accessibility action as React Native takes it. Structural, so this file stays pure. */
+export type SwitchAccessibilityAction = { readonly name: string; readonly label?: string };
+
+/**
+ * The accessibility actions the root lists, and whether it routes `activate` to
+ * its own toggle. The caller's actions are merged in, never dropped.
+ *
+ * **Android** appends `activate` after the caller's actions. The root is not a
+ * `Pressable`, so a TalkBack double-tap reaches `onAccessibilityAction` only
+ * when `activate` is listed. Without it the switch would announce its state and
+ * offer no way to change it.
+ *
+ * **iOS** keeps the caller's actions as they are and adds nothing.
+ * `onAccessibilityTap` already answers a VoiceOver double-tap, and Fabric shows
+ * every listed action as a rotor custom action, so `activate` would add a
+ * literal "activate" entry. `Pressable` makes the same split for the same reason.
+ *
+ * A caller that lists `activate` itself owns it on both platforms, and the
+ * switch routes nothing for it, so one activation never toggles twice. This is
+ * the rule `resolvePressableActivation` follows.
+ *
+ * Takes the platform rather than reading `Platform.OS`, so the file stays pure.
+ */
+export function resolveSwitchActivation<A extends SwitchAccessibilityAction>({
+	accessibilityActions,
+	platform,
+}: {
+	accessibilityActions?: readonly A[];
+	platform: string;
+}): { accessibilityActions: readonly (A | typeof SWITCH_ACTIVATE_ACTION)[] | undefined; routesActivate: boolean } {
+	const ownsActivate = accessibilityActions?.some((action) => action.name === "activate") === true;
+	if (platform !== "android" || ownsActivate) return { accessibilityActions, routesActivate: false };
+	if (accessibilityActions === undefined || accessibilityActions.length === 0) {
+		return { accessibilityActions: SWITCH_ANDROID_ACCESSIBILITY_ACTIONS, routesActivate: true };
+	}
+	return { accessibilityActions: [...accessibilityActions, SWITCH_ACTIVATE_ACTION], routesActivate: true };
+}

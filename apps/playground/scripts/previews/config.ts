@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { join } from "node:path";
 
 export const PLAYGROUND = join(import.meta.dirname, "../..");
@@ -80,20 +81,48 @@ export const BUDGET_BYTES = 120 * 1024 * 1024;
 export const NAVIGATION_TIMEOUT_MS = 60_000;
 
 /**
- * Where a demo's media lives, and the URLs the manifest points at.
+ * Where a demo's media lives on disk.
  *
  * Keyed on the **full id**, not component + demo. A folder gallery nests
  * (`screen/navbar/default`), and two facets are free to name a demo the same
  * thing — `screen/navbar/default` and `screen/chat/default` would collide the
  * moment the path were flattened to component + name.
  */
-export function mediaPaths(id: string, theme: Theme, hash: string) {
+export function mediaPaths(id: string, theme: Theme) {
 	const dir = join(MEDIA_DIR, id);
 	return {
 		dir,
 		poster: join(dir, `${theme}.png`),
-		posterUrl: `/previews/${id}/${theme}.png?v=${hash}`,
 		video: join(dir, `${theme}.mp4`),
-		videoUrl: `/previews/${id}/${theme}.mp4?v=${hash}`,
 	};
+}
+
+/**
+ * The URLs the manifest points at, with {@link mediaVersion} as the cache-buster.
+ *
+ * Vite copies `public/` with no content hashing and `/previews/**` is cached for
+ * a day, so the `?v=` is the only thing that tells a browser or the edge that a
+ * file changed.
+ */
+export function mediaUrls(id: string, theme: Theme, version: string) {
+	return {
+		poster: `/previews/${id}/${theme}.png?v=${version}`,
+		video: `/previews/${id}/${theme}.mp4?v=${version}`,
+	};
+}
+
+/**
+ * A demo's media version: a hash of the bytes it publishes, every theme's files
+ * in one.
+ *
+ * Content, not the demo's `sourceHash`. A `--force` recapture after a library
+ * change leaves the demo's source alone, so a source-keyed URL stayed the same
+ * while the picture behind it changed, and a returning reader was served the old
+ * one from cache. Each file is length-prefixed, so bytes moving across the
+ * boundary between two files still move the version.
+ */
+export function mediaVersion(files: readonly Uint8Array[]): string {
+	const hash = createHash("sha256");
+	for (const file of files) hash.update(`${file.byteLength}:`).update(file);
+	return hash.digest("hex").slice(0, 12);
 }

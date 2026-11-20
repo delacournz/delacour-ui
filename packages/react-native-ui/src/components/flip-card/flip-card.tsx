@@ -41,7 +41,6 @@ import {
 	flipCardVariants,
 	isFlipCardFaceName,
 	oppositeFace,
-	resolveFlipCardActions,
 	resolveFlipTarget,
 	resolveRubberBand,
 	resolveSwipeVelocity,
@@ -347,13 +346,6 @@ function FlipCardRoot(props: FlipCardProps): ReactElement {
 		[height, width]
 	);
 
-	const handleAccessibilityAction = useCallback(
-		(event: { nativeEvent: { actionName: string } }) => {
-			if (event.nativeEvent.actionName === "activate" && !isDisabled) flip();
-		},
-		[flip, isDisabled]
-	);
-
 	const context = useMemo<FlipCardContextValue>(
 		() => ({
 			accessibilityLabel,
@@ -373,19 +365,17 @@ function FlipCardRoot(props: FlipCardProps): ReactElement {
 
 	const { faces, rest } = splitFlipCardChildren(children);
 	const slots = flipCardVariants();
-	const actions = isDisabled ? [] : resolveFlipCardActions(trigger);
 
 	// The card is a container (`accessible={false}`) so the controls on its faces
-	// stay reachable one by one. The swipe card's action lives on its visible face
-	// instead — see `FlipCardFaceBody`.
+	// stay reachable one by one, and a container is never focused, so it lists no
+	// action. A press card's activation is a "Flip card" button inside its visible
+	// face; a swipe card's is its grouped visible face — see `FlipCardFaceBody`.
 	const card = (
 		<Animated.View
-			accessibilityActions={actions}
 			accessibilityLabel={accessibilityLabel}
 			accessibilityState={{ disabled: isDisabled }}
 			accessible={false}
 			className={slots.root({ className })}
-			onAccessibilityAction={handleAccessibilityAction}
 			onLayout={handleLayout}
 			style={pressStyle}
 			{...viewProps}

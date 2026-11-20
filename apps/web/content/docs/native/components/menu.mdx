@@ -169,10 +169,12 @@ child of `Menu.Content` to repaint it; it stays put while the rows scroll.
 
 ## Accessibility
 
-The panel is a `menu` in a modal layer, so a screen reader stays inside it until it closes. Rows are
-`menuitem`s; a checkbox row announces `checked`, a radio row `selected`, a submenu trigger
-`expanded`, and a disabled row `disabled`. The trigger announces `expanded` while the menu is open,
-with the hint "Opens a menu". An outside tap and Android's back button both close it.
+The panel is a `menu` in a modal layer, so a screen reader stays inside it until it closes. Focus
+moves to the first row once it has opened, and back to the trigger once it has closed. Rows are
+`menuitem`s and are chosen with a double-tap, like a tap; a checkbox row announces `checked`, a radio
+row is a `radio` that announces `checked`, a submenu trigger `expanded`, and a disabled row
+`disabled`. The trigger announces `expanded` while the menu is open, with the hint "Opens a menu". An
+outside tap, Android's back button and the VoiceOver escape gesture all close it.
 
 ## API Reference
 

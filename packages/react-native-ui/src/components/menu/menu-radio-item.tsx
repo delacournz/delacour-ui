@@ -23,7 +23,7 @@ export type MenuRadioItemProps = Omit<MenuItemProps, "onSelect"> & {
  *
  * Closes the menu on select by default — a choice made is a visit finished.
  * The mark takes the leading column, so an `icon` moves to the row's end.
- * Announced as `selected`.
+ * Announced as a `radio`, `checked` while selected.
  */
 export function MenuRadioItem({
 	value,

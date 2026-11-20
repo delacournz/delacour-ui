@@ -275,6 +275,12 @@ const SHOTS: Shot[] = [
 	},
 	{ id: "76-compare-bna-full-phone-dark", path: "/compare/bna-ui", frame: "phone", theme: "dark", full: true },
 	{ id: "77-home-faq-desktop-dark", path: "/#faq", frame: "desktop", theme: "dark" },
+	{
+		id: "78-docs-screen-keyboard-toolbars-desktop-dark",
+		path: "/docs/native/components/screen#keyboard-toolbars",
+		frame: "desktop",
+		theme: "dark",
+	},
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

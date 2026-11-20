@@ -92,7 +92,11 @@ optional Cancel action and debounced change reporting, over `Input.Group`. Root 
   tap still reaches the gesture, which runs natively. Cancel does not claim it — blurring
   is its job.
 - **The field announces itself as a search.** `accessibilityRole="search"`, named by the
-  enclosing `Field.Label` when there is one and by the placeholder when not;
+  enclosing `Field.Label` when there is one ("Directory, required" when the Field is
+  required) and by the placeholder when not; `Field`'s error and description become the hint
+  ("Invalid: …"). `SearchBar` calls `useFieldControlAccessibility` once (with the placeholder
+  as `fallbackLabel`, claiming the label) and hands `Input` only the resolved name; `Input`
+  adds the hint, so it is not passed down twice. Clear, Cancel and chips get no hint;
   `accessibilityState.busy` while loading. `returnKeyType` and `enterKeyHint` default to
   search, capitalisation and autocorrect off — all set before the caller's
   props, so each can be overridden. **`inputMode` is deliberately not `search`:** on iOS it

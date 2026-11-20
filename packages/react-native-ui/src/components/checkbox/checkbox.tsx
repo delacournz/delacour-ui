@@ -1,6 +1,7 @@
 import { Children, type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import { Pressable, type PressableProps } from "../pressable";
 import { type CheckboxContextValue, CheckboxProvider, useCheckboxGroupContext } from "./checkbox.context";
 import type { CheckboxLabelProps } from "./checkbox.types";
@@ -9,7 +10,7 @@ import {
 	type CheckboxColor,
 	type CheckboxSize,
 	checkboxVariants,
-	resolveCheckboxAccessibilityLabel,
+	extractCheckboxText,
 	resolveCheckboxAxes,
 	resolveCheckboxHitSlop,
 } from "./checkbox.variants";
@@ -61,6 +62,7 @@ function CheckboxRoot({
 	feedback = "fade",
 	haptic = "selection",
 	className,
+	accessibilityHint,
 	accessibilityLabel,
 	accessibilityState,
 	children,
@@ -139,14 +141,28 @@ function CheckboxRoot({
 	// root is left with the row and nothing else.
 	const rootClassName = checkboxVariants({ ...axes, hasLabel }).root({ className });
 
+	// Inline text is the box's own name, so it goes in as `defaultLabel`: the
+	// field's label then neither names the box nor is claimed away from
+	// `Field.Label`, and "required" joins the inline name. Content with no
+	// extractable text names the box through the tree, so the field's name is
+	// dropped rather than overriding it — and the label is not claimed, so it
+	// stays readable beside the box.
+	const inlineText = extractCheckboxText(content);
+	const namedByContent = hasLabel && inlineText === undefined && accessibilityLabel === undefined;
+	const fieldA11y = useFieldControlAccessibility({
+		accessibilityHint,
+		accessibilityLabel,
+		defaultLabel: inlineText,
+		isInvalid: axes.isInvalid,
+		takesFieldLabel: !namedByContent,
+	});
+
 	return (
 		<CheckboxProvider value={context}>
 			<Pressable
-				accessibilityLabel={resolveCheckboxAccessibilityLabel({
-					fieldLabel: field?.label,
-					hasContent: hasLabel,
-					own: accessibilityLabel,
-				})}
+				accessibilityHint={fieldA11y.accessibilityHint}
+				accessibilityLabel={namedByContent ? undefined : fieldA11y.accessibilityLabel}
+				accessibilityLabelledBy={namedByContent ? undefined : fieldA11y.accessibilityLabelledBy}
 				accessibilityRole="checkbox"
 				accessibilityState={{ ...accessibilityState, checked: isIndeterminate ? "mixed" : checked }}
 				className={rootClassName}

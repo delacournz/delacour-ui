@@ -121,6 +121,16 @@ returns the root's state for a custom trigger or footer.
   trampoline, as `Switch` does, so a tap on the label opens the sheet without
   re-registering on every render. Inline, nothing registers — there is nothing
   to open.
+- **Validity is spoken, once, from the root.** The root calls
+  `useFieldControlAccessibility` one time (`fallbackLabel: "Time"`), so one claim
+  hides `Field.Label` and the trigger reads "Reminder, required" with the hint
+  "Invalid: <error>. <description>. Opens time picker". Inline there is no
+  trigger, so each wheel column is its own focus stop and carries the name and
+  hint: `resolveColumnAccessibilityLabel` makes "Reminder, Hour, required" (the
+  required word after the column, as `Slider.Thumb` does). The sheet's
+  `TimePicker.Wheel` keeps bare "Hour"/"Minute" and no hint — the sheet has its
+  title and the trigger already said it. `TimePickerWheel` takes
+  `accessibilityLabel`, `accessibilityHint` and `isRequired` for standalone use.
 - **Read-only shows the value and refuses the press; disabled also fades.** Both
   leave the trigger a button to assistive technology, with the disabled state on
   the one that is.

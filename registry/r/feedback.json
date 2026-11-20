@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"button",
 		"dialog",
+		"field",
 		"input",
 		"tv",
 		"use-controllable-state"
@@ -82,6 +83,10 @@
 			"target": "feedback/feedback-field.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../field/field-control",
+					"to": "@registry/ui/field/field-control"
+				},
 				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
@@ -200,6 +205,10 @@
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
 				},
 				{
 					"from": "../overlay",

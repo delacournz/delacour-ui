@@ -1,5 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { Field } from "../field";
 import { Switch } from "./switch";
 
 describe("Switch", () => {
@@ -42,5 +43,27 @@ describe("Switch", () => {
 		expect(control).toBeDisabled();
 		await fireEvent(control, "accessibilityTap");
 		expect(onSelectedChange).not.toHaveBeenCalled();
+	});
+
+	test("inside an invalid, required Field it is named and described by the Field", async () => {
+		await renderWithProviders(
+			<Field isInvalid isRequired>
+				<Field.Label>Notifications</Field.Label>
+				<Switch />
+				<Field.Error>Turn this on to continue.</Field.Error>
+				<Field.Description>Push alerts.</Field.Description>
+			</Field>
+		);
+		const control = screen.getByRole("switch");
+		expect(control.props.accessibilityLabel).toBe("Notifications, required");
+		expect(control.props.accessibilityHint).toContain("Invalid: Turn this on to continue.");
+		expect(control.props.accessibilityHint).toContain("Push alerts.");
+	});
+
+	test("outside a Field the label is the caller's own", async () => {
+		await renderWithProviders(<Switch accessibilityLabel="Wi-Fi" />);
+		const control = screen.getByRole("switch");
+		expect(control.props.accessibilityLabel).toBe("Wi-Fi");
+		expect(control.props.accessibilityHint).toBeUndefined();
 	});
 });

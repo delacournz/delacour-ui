@@ -2,6 +2,7 @@ import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } 
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { BottomSheet } from "../bottom-sheet";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import { type TimePickerContextValue, TimePickerProvider } from "./time-picker.context";
 import {
 	currentTime,
@@ -54,7 +55,18 @@ function TimePickerRoot({
 }: TimePickerProps): ReactElement {
 	const field = useFieldContext();
 	const resolvedDisabled = isDisabled ?? field?.isDisabled ?? false;
-	const resolvedInvalid = isInvalid ?? field?.isInvalid ?? false;
+
+	const isInert = resolvedDisabled || isReadOnly;
+	const fieldAccessibility = useFieldControlAccessibility({
+		accessibilityHint: presentation === "sheet" && !isInert ? "Opens time picker" : undefined,
+		accessibilityLabel,
+		fallbackLabel: "Time",
+		isInvalid,
+	});
+	const resolvedInvalid = fieldAccessibility.isInvalid;
+	const wheelLabel = accessibilityLabel ?? field?.label ?? undefined;
+	const wheelHint = fieldAccessibility.accessibilityHint;
+	const wheelRequired = fieldAccessibility.isRequired;
 
 	const [value, setValue] = useControllableState<TimeValue | null>({
 		value: valueProp,
@@ -144,18 +156,27 @@ function TimePickerRoot({
 			doneLabel,
 			clearLabel,
 			clearable,
-			accessibilityLabel: accessibilityLabel ?? field?.label ?? "Time",
+			accessibilityLabel: fieldAccessibility.accessibilityLabel,
+			accessibilityHint: fieldAccessibility.accessibilityHint,
+			accessibilityLabelledBy: fieldAccessibility.accessibilityLabelledBy,
+			wheelAccessibility:
+				presentation === "inline" ? { label: wheelLabel, hint: wheelHint, isRequired: wheelRequired } : null,
 			wheel: { minTime, maxTime, minuteStep, showSeconds, visibleRows },
 		}),
 		[
-			accessibilityLabel,
+			fieldAccessibility.accessibilityHint,
+			fieldAccessibility.accessibilityLabel,
+			fieldAccessibility.accessibilityLabelledBy,
+			presentation,
+			wheelHint,
+			wheelLabel,
+			wheelRequired,
 			clearLabel,
 			clearable,
 			close,
 			cycle,
 			display,
 			doneLabel,
-			field?.label,
 			isOpen,
 			isReadOnly,
 			maxTime,
@@ -219,7 +240,10 @@ function TimePickerRoot({
  * fields around it. `presentation="inline"` draws the wheel in place.
  *
  * Inside a `Field` it takes the field's invalid and disabled state, reads
- * `Field.Label` as its accessible name, and a tap on the label opens it.
+ * `Field.Label` as its accessible name, and a tap on the label opens it. A
+ * screen reader also hears the field's required state ("Reminder, required"),
+ * its error ("Invalid: …") and its description on the trigger — or, inline, on
+ * every column.
  *
  * @example
  * <TimePicker minuteStep={5} onValueChange={setTime} value={time} />

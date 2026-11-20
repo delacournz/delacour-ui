@@ -1,8 +1,10 @@
 import { describe, expect, test } from "bun:test";
+import { createElement } from "react";
 import { TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
+	extractRadioText,
 	RADIO_DEFAULT_SIZE,
 	RADIO_DEFAULT_VARIANT,
 	RADIO_DOT_SPRING,
@@ -573,5 +575,16 @@ describe("shouldEmitSelection", () => {
 	// deselect gesture. HTML's own radio does not fire `change` here either.
 	test("stays quiet when the option is already selected", () => {
 		expect(shouldEmitSelection("a", "a")).toBe(false);
+	});
+});
+
+describe("extractRadioText", () => {
+	test("reads a string and nested element children", () => {
+		expect(extractRadioText(["Free ", createElement("span", { key: "a" }, "plan")])).toBe("Free plan");
+	});
+
+	test("is undefined for content with no text", () => {
+		expect(extractRadioText([createElement("span", { key: "a" })])).toBeUndefined();
+		expect(extractRadioText("  ")).toBeUndefined();
 	});
 });

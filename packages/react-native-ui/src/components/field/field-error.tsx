@@ -1,4 +1,5 @@
-import { Children, type ReactElement, type ReactNode } from "react";
+import { Children, type ReactElement, type ReactNode, useEffect } from "react";
+import { labelText } from "../label/label.variants";
 import { Text } from "../text";
 import { useFieldContext } from "./field.context";
 import type { FieldTextProps } from "./field.types";
@@ -26,20 +27,37 @@ export type FieldErrorProps = Omit<FieldTextProps, "children"> & { children?: Re
  *
  * Always destructive, in a valid field as much as an invalid one: an error message is
  * never the calm case.
+ *
+ * **One announcement mechanism**: an Android polite live region, so TalkBack
+ * reads the message as it appears. There is no `role="alert"` beside it — on
+ * Android that only adds a spoken "alert" to every visit, and on iOS it maps to
+ * no trait at all. VoiceOver hears the message through the control instead: the
+ * text is registered with the field and joins the control's hint. An
+ * on-appearance announcement for iOS belongs to the shared announce helper.
  */
 export function FieldError({ className, color, children, ...props }: FieldErrorProps): ReactElement | null {
 	const field = useFieldContext();
 	const isInvalid = field?.isInvalid ?? false;
 	const isDisabled = field?.isDisabled ?? false;
+	const isVisible = hasContent(children);
 
-	if (!hasContent(children)) return null;
+	// The control reads the error as part of its hint, so it is heard wherever
+	// focus is. Only text is lent — an element has no words to read before it renders.
+	const registerError = field?.registerError;
+	const errorText = isVisible ? (labelText(children) ?? null) : null;
+	useEffect(() => {
+		if (!registerError) return;
+		registerError(errorText);
+		return () => registerError(null);
+	}, [errorText, registerError]);
+
+	if (!isVisible) return null;
 
 	return (
 		<Text.Caption
 			accessibilityLiveRegion="polite"
 			className={fieldVariants({ isDisabled, isInvalid }).error({ className })}
 			color={color ?? resolveFieldTextColor("error", isInvalid)}
-			role="alert"
 			{...props}
 		>
 			{children}

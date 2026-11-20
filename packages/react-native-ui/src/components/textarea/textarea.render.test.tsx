@@ -149,6 +149,21 @@ describe("Textarea", () => {
 			expect(await screen.findByLabelText("Notes")).toBeOnTheScreen();
 		});
 
+		test("required, invalid, error and description reach the field", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Notes</Field.Label>
+					<Textarea />
+					<Field.Description>Keep it short.</Field.Description>
+					<Field.Error>Too long</Field.Error>
+				</Field>
+			);
+			expect(screen.getByLabelText("Notes, required")).toHaveProp(
+				"accessibilityHint",
+				"Invalid: Too long. Keep it short."
+			);
+		});
+
 		test("an own accessibilityLabel beats the Field.Label", async () => {
 			await renderWithProviders(
 				<Field>

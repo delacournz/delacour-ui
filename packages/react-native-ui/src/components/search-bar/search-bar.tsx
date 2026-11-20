@@ -14,6 +14,7 @@ import { useControllableState } from "../../hooks/use-controllable-state";
 import { IconMagnifyingGlass } from "../../icons/central";
 import { composeRefs } from "../../lib/compose-refs";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import { Icon } from "../icon";
 import { Input, type InputProps } from "../input";
 import { Spinner } from "../spinner";
@@ -132,6 +133,7 @@ function SearchBarRoot({
 	isLoading = false,
 	isDisabled: isDisabledProp,
 	isInvalid,
+	isRequired,
 	tokens,
 	onTokenRemove,
 	placeholder = "Search",
@@ -164,6 +166,11 @@ function SearchBarRoot({
 	// swallow the `Field` before it was consulted. `Input.Group` runs the same
 	// ladder for the box; the bar needs the answer itself to hide clear and Cancel.
 	const isDisabled = isDisabledProp ?? field?.isDisabled ?? false;
+	// The one hook call for this field: it claims `Field.Label`, and its name
+	// ("Directory, required", or the placeholder outside a Field) goes to `Input`
+	// as an explicit label. `Input` then adds the error and description as the
+	// hint itself, so the hint is not passed down — it would be spoken twice.
+	const a11y = useFieldControlAccessibility({ accessibilityLabel, fallbackLabel: placeholder, isInvalid, isRequired });
 	const isReadOnly = readOnly === true || editable === false;
 
 	// The debouncer is a dispatcher, not a query, so it reads the latest
@@ -328,7 +335,7 @@ function SearchBarRoot({
 					</Input.Group.Prefix>
 					{tokens && tokens.length > 0 ? <SearchBarTokens onTokenRemove={onTokenRemove} tokens={tokens} /> : null}
 					<Input
-						accessibilityLabel={accessibilityLabel ?? field?.label ?? placeholder}
+						accessibilityLabel={a11y.accessibilityLabel}
 						accessibilityRole="search"
 						accessibilityState={{ ...accessibilityState, busy: isLoading }}
 						autoCapitalize="none"

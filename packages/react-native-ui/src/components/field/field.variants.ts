@@ -151,4 +151,136 @@ export function resolveFieldLabelText(children: unknown): string | null {
 	return text === "" ? null : text;
 }
 
+/** The words a field adds to a control's announcement. English by default; pass your own to localise. */
+export type FieldAccessibilityLabels = {
+	/** Appended to the control's name — "Email, required". Matches `Label`'s announcement. */
+	required: string;
+	/** Leads the hint of an invalid control — "Invalid: Enter a valid email". */
+	invalid: string;
+};
+
+export const FIELD_ACCESSIBILITY_LABELS: FieldAccessibilityLabels = { invalid: "Invalid", required: "required" };
+
+/** The slice of a field's context a control's accessibility is built from. */
+export type FieldAccessibilitySource = {
+	label: string | null;
+	labelNativeID: string;
+	isInvalid: boolean;
+	isRequired: boolean;
+	error: string | null;
+	description: string | null;
+};
+
+/** What a control spreads, plus the validity it should render with. */
+export type FieldControlAccessibility = {
+	accessibilityLabel: string | undefined;
+	accessibilityHint: string | undefined;
+	/** Android only — set when the field's label is an element with no text to lend. */
+	accessibilityLabelledBy: string | undefined;
+	isInvalid: boolean;
+	isRequired: boolean;
+};
+
+/**
+ * A control's accessible name, hint and validity, given the field around it.
+ *
+ * React Native 0.88 has no `aria-invalid`, `aria-required`,
+ * `aria-describedby` or `accessibilityErrorMessage` — `accessibilityState`
+ * holds none of the three either. So validity is spoken, the one channel both
+ * screen readers have:
+ *
+ * - **Required** joins the **name**, "Email, required" — exactly what `Label`
+ *   announces for its own `isRequired`, so the two say the same words.
+ * - **Invalid, the error and the description** become the **hint**, in that
+ *   order: "Invalid: Enter a valid email. We never share it." VoiceOver reads a
+ *   hint after a pause; TalkBack reads it as the node's tooltip text. The error
+ *   leads because it is the one line that changed. A control's own hint is
+ *   kept, last.
+ * - **An element label** has no text to lend. On Android the control points at
+ *   it with `accessibilityLabelledBy` and the label's `nativeID` instead; iOS
+ *   has no equivalent, so a caller there passes `accessibilityLabel`.
+ *
+ * Name precedence: an explicit `accessibilityLabel` verbatim (the caller
+ * already said what they meant, required or not), then the control's own
+ * `defaultLabel` — a `Checkbox`'s inline text — then the field's label, then
+ * the control's `fallbackLabel` — `TimePicker`'s "Time". The control's own
+ * `isInvalid` / `isRequired` beat the field's, the same ladder `Input` uses.
+ *
+ * Pure, so every branch is unit-testable. See AGENTS.md.
+ */
+export function resolveFieldControlAccessibility({
+	accessibilityHint,
+	accessibilityLabel,
+	defaultLabel,
+	fallbackLabel,
+	field,
+	isInvalid,
+	isRequired,
+	labels = FIELD_ACCESSIBILITY_LABELS,
+	platform,
+}: {
+	accessibilityHint?: string;
+	accessibilityLabel?: string;
+	defaultLabel?: string;
+	fallbackLabel?: string;
+	field: FieldAccessibilitySource | null;
+	isInvalid?: boolean;
+	isRequired?: boolean;
+	labels?: FieldAccessibilityLabels;
+	platform: string;
+}): FieldControlAccessibility {
+	const resolvedInvalid = isInvalid ?? field?.isInvalid ?? false;
+	const resolvedRequired = isRequired ?? field?.isRequired ?? false;
+
+	const name = defaultLabel ?? field?.label ?? fallbackLabel;
+	const label =
+		accessibilityLabel ??
+		(name !== undefined && resolvedRequired ? `${name}, ${labels.required}` : (name ?? undefined));
+
+	const error = field?.error ?? null;
+	const lead = resolvedInvalid ? (error === null ? labels.invalid : `${labels.invalid}: ${error}`) : error;
+	const hint = joinSentences([lead, field?.description ?? null, accessibilityHint ?? null]);
+
+	const labelledBy = platform === "android" && label === undefined && field !== null ? field.labelNativeID : undefined;
+
+	return {
+		accessibilityHint: hint,
+		accessibilityLabel: label,
+		accessibilityLabelledBy: labelledBy,
+		isInvalid: resolvedInvalid,
+		isRequired: resolvedRequired,
+	};
+}
+
+/** Joins hint parts into sentences, adding a full stop only where a part has no closing punctuation. */
+function joinSentences(parts: ReadonlyArray<string | null>): string | undefined {
+	const present = parts
+		.filter((part): part is string => part !== null && part.trim() !== "")
+		.map((part) => part.trim());
+	if (present.length === 0) return undefined;
+	return present
+		.map((part, index) => (index < present.length - 1 && !/[.!?…:]$/.test(part) ? `${part}.` : part))
+		.join(" ");
+}
+
+/**
+ * Whether `Field.Label` steps out of the accessibility tree.
+ *
+ * Once a control has read the label's text as its own name, a swipe that also
+ * stopped on the label would say "Email" twice — once as text, once as the
+ * control. So the label hides, but only when both hold: a control claimed it,
+ * and there was text to claim. An element label lends nothing, so it stays the
+ * thing a screen reader reads (and what Android's `accessibilityLabelledBy`
+ * points at). Pure, so it is unit-testable.
+ */
+export function resolveFieldLabelHidden({
+	isClaimed,
+	labelText,
+}: {
+	isClaimed: boolean;
+	labelText: string | null;
+}): boolean {
+	return isClaimed && labelText !== null;
+}
+
 export type FieldVariantProps = VariantProps<typeof fieldVariants>;

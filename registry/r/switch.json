@@ -109,6 +109,10 @@
 					"to": "@registry/hooks/use-theme-color"
 				},
 				{
+					"from": "../field/field-control",
+					"to": "@registry/ui/field/field-control"
+				},
+				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
 				},
@@ -171,6 +175,10 @@
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
 				}
 			]
 		}

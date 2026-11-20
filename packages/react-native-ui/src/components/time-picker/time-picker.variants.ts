@@ -318,3 +318,28 @@ export const TIME_WHEEL_COLUMN_LABELS: Record<TimeWheelColumnKind, string> = {
 	second: "Second",
 	period: "AM or PM",
 };
+
+/**
+ * The name a screen reader speaks for one wheel column.
+ *
+ * Bare ("Hour") unless the wheel stands in for a whole field, as it does inline:
+ * then each column leads with the field's name ("Reminder, Hour") and the
+ * required word follows the column it names, as `Slider.Thumb` does. Pure.
+ */
+export function resolveColumnAccessibilityLabel({
+	kind,
+	label,
+	isRequired = false,
+	requiredLabel = "required",
+}: {
+	kind: TimeWheelColumnKind;
+	/** The enclosing field's name, when the wheel is the whole control. */
+	label?: string;
+	isRequired?: boolean;
+	requiredLabel?: string;
+}): string {
+	const column = TIME_WHEEL_COLUMN_LABELS[kind];
+	const name = label?.trim();
+	if (!name) return column;
+	return isRequired ? `${name}, ${column}, ${requiredLabel}` : `${name}, ${column}`;
+}

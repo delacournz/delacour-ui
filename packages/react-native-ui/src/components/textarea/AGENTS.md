@@ -77,6 +77,7 @@ A multiline text field, sized in rows. One component, no parts: it renders an
 - **`multiline` and `numberOfLines` are withheld.** It is always multiline, and
   `rows` is its height; `numberOfLines` would be a second answer to the same
   question, and on Android the one that wins.
+- **A `Field` names and describes it through `Input`.** `Textarea` renders an `Input`, which makes the one `useFieldControlAccessibility` call; the count's own live region is separate and stays polite. Nothing extra is wired here.
 - **There is no `label`, `description` or `errorMessage` prop.** A textarea goes
   in a [`Field`](../field/AGENTS.md) the way an `Input` does — the reason
   `Input` ships no label part holds here too. `apps/playground`'s

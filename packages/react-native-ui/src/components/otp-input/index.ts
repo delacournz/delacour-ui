@@ -21,7 +21,6 @@ export {
 	type OtpSlotState,
 	type OtpStateAxes,
 	resolveAccessibilityHint,
-	resolveAccessibilityLabel,
 	resolveAccessibilityValue,
 	resolveActiveIndex,
 	resolveAutofill,

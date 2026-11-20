@@ -14,6 +14,7 @@ import {
 } from "./time-picker.time";
 import type { TimePickerWheelProps } from "./time-picker.types";
 import {
+	resolveColumnAccessibilityLabel,
 	resolveTimeFromColumn,
 	resolveTimeWheelColumns,
 	resolveWheelPadding,
@@ -62,6 +63,9 @@ export function TimePickerWheel({
 	size = "md",
 	visibleRows = TIME_PICKER_DEFAULT_VISIBLE_ROWS,
 	isDisabled,
+	accessibilityLabel,
+	accessibilityHint,
+	isRequired,
 	className,
 	testID,
 }: TimePickerWheelProps): ReactElement {
@@ -111,6 +115,12 @@ export function TimePickerWheel({
 				return (
 					<Fragment key={column.kind}>
 						<TimeWheelColumn
+							accessibilityHint={accessibilityHint}
+							accessibilityLabel={resolveColumnAccessibilityLabel({
+								isRequired,
+								kind: column.kind,
+								label: accessibilityLabel,
+							})}
 							isDisabled={resolvedDisabled}
 							kind={column.kind}
 							onSettle={handleSettle}

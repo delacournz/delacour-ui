@@ -92,6 +92,22 @@ counts: "3 dates".
 `disabledDates` takes the calendar's matchers — a date, a span, weekdays or a predicate. A range
 that would cross a disabled day starts again from the tapped day rather than completing.
 
+## Date of birth
+
+`initialView="years"` opens an empty picker on the year list, so a date decades back is a year, a
+month and a day rather than dozens of swipes. Once a day is picked, the sheet reopens on that
+day's month; while it is empty, every opening starts on the years again.
+
+```tsx
+<DatePicker
+  initialView="years"
+  maxDate={addYears(today(), -18)}
+  minDate={{ year: today().year - 120, month: 1, day: 1 }}
+  onValueChange={setDob}
+  value={dob}
+/>
+```
+
 ## Custom format and locale
 
 ```tsx
@@ -208,6 +224,7 @@ small field never shrinks the day targets.
     locale: { type: "string", description: "A BCP 47 tag. Omitted, the device's." },
     weekStartsOn: { type: '0 | 1 | 2 | 3 | 4 | 5 | 6 | "auto"', default: '"auto"' },
     captionLayout: { type: '"label" | "picker"', default: '"picker"' },
+    initialView: { type: '"days" | "months" | "years"', default: '"days"', description: "The view an empty picker opens on. With a value, it opens on the value's month." },
     minDate: { type: "CalendarDate" },
     maxDate: { type: "CalendarDate" },
     disabledDates: { type: "readonly DateMatcher[]" },

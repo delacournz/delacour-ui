@@ -2,6 +2,7 @@ import { defineDemoGroup } from "../define-demo-group";
 import * as boundsAndDisabledWeekends from "./bounds-and-disabled-weekends";
 import * as controlledOpen from "./controlled-open";
 import * as customFormatLocale from "./custom-format-locale";
+import * as dateOfBirth from "./date-of-birth";
 import * as inFieldInvalid from "./in-field-invalid";
 import * as multiple from "./multiple";
 import * as rangeBooking from "./range-booking";
@@ -14,6 +15,7 @@ export const datePickerDemos = defineDemoGroup("date-picker", {
 	"range-booking": rangeBooking,
 	multiple,
 	"bounds-and-disabled-weekends": boundsAndDisabledWeekends,
+	"date-of-birth": dateOfBirth,
 	"sizes-variants": sizesVariants,
 	"in-field-invalid": inFieldInvalid,
 	"controlled-open": controlledOpen,

@@ -430,3 +430,59 @@ describe("DatePicker parts", () => {
 		}
 	});
 });
+
+describe("DatePicker initialView", () => {
+	const bounds = { maxDate: { day: 20, month: 11, year: 2008 }, minDate: { day: 20, month: 11, year: 1926 } };
+	const year = (y: number) => screen.queryByTestId(`stay-calendar-year-${y}`);
+	const caption = () => screen.getByTestId("stay-calendar-caption");
+
+	test("an empty picker opens on the years, then walks year, month and day to a pick", async () => {
+		const onValueChange = jest.fn();
+		await renderWithProviders(<Picker defaultOpen initialView="years" onValueChange={onValueChange} {...bounds} />, {
+			wrapper: Providers,
+		});
+		expect(year(1990)).toBeOnTheScreen();
+		await tap(screen.getByTestId("stay-calendar-year-1990"));
+		await tap(screen.getByTestId("stay-calendar-month-3"));
+		await tap(day("1990-03-23"));
+		expect(onValueChange).toHaveBeenCalledWith({ day: 23, month: 3, year: 1990 });
+	});
+
+	test("a picked value opens on its month's days, not the years", async () => {
+		await renderWithProviders(
+			<Picker defaultOpen defaultValue={{ day: 23, month: 3, year: 1990 }} initialView="years" {...bounds} />,
+			{ wrapper: Providers }
+		);
+		expect(caption()).toHaveAccessibleName("March 1990");
+		expect(year(1990)).not.toBeOnTheScreen();
+	});
+
+	test("reopening after a pick shows the picked month's days, even with a defaultMonth", async () => {
+		await renderWithProviders(
+			<Picker defaultMonth={{ day: 1, month: 1, year: 1996 }} initialView="years" {...bounds} />,
+			{ wrapper: Providers }
+		);
+		await tap(trigger());
+		await tap(screen.getByTestId("stay-calendar-year-1990"));
+		await tap(screen.getByTestId("stay-calendar-month-3"));
+		await tap(day("1990-03-23"));
+		await settle();
+		expect(trigger()).not.toBeExpanded();
+
+		await tap(trigger());
+		expect(caption()).toHaveAccessibleName("March 1990");
+		expect(year(1990)).not.toBeOnTheScreen();
+	});
+
+	test("starts again on the years each time the sheet opens while empty", async () => {
+		const { rerender } = await renderWithProviders(<Picker initialView="years" isOpen {...bounds} />, {
+			wrapper: Providers,
+		});
+		await tap(screen.getByTestId("stay-calendar-year-1990"));
+		expect(year(1990)).not.toBeOnTheScreen();
+
+		await rerender(<Picker initialView="years" isOpen={false} {...bounds} />);
+		await rerender(<Picker initialView="years" isOpen {...bounds} />);
+		expect(year(1990)).toBeOnTheScreen();
+	});
+});

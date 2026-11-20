@@ -252,6 +252,7 @@ import * as demo_countdown_urgent from "./countdown/urgent";
 import * as demo_date_picker_bounds_and_disabled_weekends from "./date-picker/bounds-and-disabled-weekends";
 import * as demo_date_picker_controlled_open from "./date-picker/controlled-open";
 import * as demo_date_picker_custom_format_locale from "./date-picker/custom-format-locale";
+import * as demo_date_picker_date_of_birth from "./date-picker/date-of-birth";
 import * as demo_date_picker_in_field_invalid from "./date-picker/in-field-invalid";
 import * as demo_date_picker_multiple from "./date-picker/multiple";
 import * as demo_date_picker_range_booking from "./date-picker/range-booking";
@@ -1120,6 +1121,7 @@ export const DEMOS = {
 	"date-picker/bounds-and-disabled-weekends": demo_date_picker_bounds_and_disabled_weekends,
 	"date-picker/controlled-open": demo_date_picker_controlled_open,
 	"date-picker/custom-format-locale": demo_date_picker_custom_format_locale,
+	"date-picker/date-of-birth": demo_date_picker_date_of_birth,
 	"date-picker/in-field-invalid": demo_date_picker_in_field_invalid,
 	"date-picker/multiple": demo_date_picker_multiple,
 	"date-picker/range-booking": demo_date_picker_range_booking,

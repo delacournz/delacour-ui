@@ -1,5 +1,22 @@
 # @delacour/react-native-ui
 
+## 0.10.0
+
+### Minor Changes
+
+- [#355](https://github.com/delacournz/delacour-ui/pull/355) [`b9265f3`](https://github.com/delacournz/delacour-ui/commit/b9265f317ea48c528f5b06d81064316d8655d8e1) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `initialView` to `Calendar` and `DatePicker`, so a date of birth can open on the year list and be picked as a year, a month and a day. `Calendar` reads it on mount and ignores it under a `label` caption. `DatePicker` applies it only while empty; with a value it opens on that value's month. `DatePicker`'s `defaultMonth` now also applies only while empty, so reopening a picked date shows its month rather than `defaultMonth`. Each opening of the sheet now remounts the calendar, so it never resumes from where the last opening was paged to.
+
+- [#354](https://github.com/delacournz/delacour-ui/pull/354) [`314ca8d`](https://github.com/delacournz/delacour-ui/commit/314ca8d48484160c33ce14a92e90dd41ae8ae27a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Screen.Footer` takes `keyboardOffset`: while the keyboard is open, a sticky footer lifts that many extra points, so it sits on top of a bar riding the keyboard (a form's previous / next / done toolbar) instead of behind it. The footer publishes the value on the screen context, and a `keyboardAware` `Screen.ScrollArea` adds it to the focused field's clearance.
+
+### Patch Changes
+
+- [#352](https://github.com/delacournz/delacour-ui/pull/352) [`a1647cc`](https://github.com/delacournz/delacour-ui/commit/a1647cca5dd439614a3f81bb7b5c95cc50771835) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Select: a long list mounts only the rows near the sheet's viewport. The sheet's list ran on React Native's virtualisation defaults (10 rows first, 10 more every 50ms, a window of 21 viewports), so a searchable Select with ~250 options mounted nearly every row while the sheet was still opening, and the open stuttered. The first paint and each later batch are now one sheet of rows at the sheet's cap, and the window is 5 viewports. Nothing changes visually.
+
+- [#356](https://github.com/delacournz/delacour-ui/pull/356) [`2370ee1`](https://github.com/delacournz/delacour-ui/commit/2370ee1335fa64f0bbdc5d968745bf5c42ab6034) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Switch` fixes. `Switch.Thumb` runs a caller's `onLayout` as well as measuring itself, so passing one no longer pushes an on-state thumb out past the track. A caller's `accessibilityState` is merged with `checked` and `disabled` instead of replacing them. Inside a `Field`, the switch takes the `Field.Label` text as its accessible name unless an `accessibilityLabel` is passed. A drag out and back to near its start settles by position instead of toggling, on either axis. A cancelled pan, or one that ends after the switch was disabled, commits nothing and plays no haptic.
+- Updated dependencies []:
+  - @delacour/react-native-bottom-sheet@0.10.0
+  - @delacour/react-native-charts@0.10.0
+
 ## 0.9.0
 
 ### Minor Changes

@@ -1,5 +1,9 @@
 # @delacour/react-native-bottom-sheet
 
+## 0.10.0
+
+No changes in this release.
+
 ## 0.9.0
 
 ### Patch Changes

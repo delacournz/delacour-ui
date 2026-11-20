@@ -152,12 +152,14 @@ export function ScreenFooter({
 
 	// Published so a keyboard-aware scrollable clears the bar under the footer
 	// too, and cleared on unmount so a screen without the bar stops clearing it.
+	// A footer that is not sticky never lifts, so it publishes 0: otherwise the
+	// scrollable would scroll the focused field past a gap that is not there.
 	useEffect(() => {
-		footer.keyboardOffset.value = keyboardOffset;
+		footer.keyboardOffset.value = sticky ? keyboardOffset : 0;
 		return () => {
 			footer.keyboardOffset.value = 0;
 		};
-	}, [keyboardOffset, footer.keyboardOffset]);
+	}, [sticky, keyboardOffset, footer.keyboardOffset]);
 
 	useEffect(() => {
 		return () => {

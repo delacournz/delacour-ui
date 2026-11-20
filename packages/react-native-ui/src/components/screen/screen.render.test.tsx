@@ -133,6 +133,23 @@ describe("Screen", () => {
 		expect(captured.context?.footer.keyboardOffset.value).toBe(0);
 	});
 
+	test("a footer that is not sticky publishes no keyboardOffset, because it does not lift", async () => {
+		const captured: { context: ScreenContextValue | null } = { context: null };
+		function Probe(): null {
+			captured.context = useScreen();
+			return null;
+		}
+		await renderWithProviders(
+			<Screen>
+				<Probe />
+				<Screen.Footer keyboardOffset={44}>
+					<Text>Footer note</Text>
+				</Screen.Footer>
+			</Screen>
+		);
+		expect(captured.context?.footer.keyboardOffset.value).toBe(0);
+	});
+
 	test("a keyboard-aware scroll area clears a footer's keyboardOffset as well as the footer", async () => {
 		const clearance = () => screen.getByTestId("form").props.bottomOffset;
 		function Form({ keyboardOffset }: { keyboardOffset?: number }): ReactElement {

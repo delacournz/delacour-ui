@@ -87,10 +87,11 @@ export function SwitchThumb({ className, children, onLayout, ...props }: SwitchT
 		};
 	});
 
-	// A glyph on the knob takes the *track*'s colour, not the knob's own: it is
-	// drawn on the knob, so it has to contrast with it, and the one value that
-	// reads at both ends is the colour the track fades to. Static rather than
-	// interpolated because an `Icon`'s colour is a prop, not a style.
+	// A glyph on the knob takes the *track*'s on colour, not the knob's own: it is
+	// drawn on the knob, so it has to contrast with the on knob, which is that
+	// colour's foreground. Static rather than interpolated because an `Icon`'s
+	// colour is a prop, not a style — so it cannot follow the knob to its grey off
+	// state, where it falls well under 3:1. Keep knob glyphs decorative.
 	const slots = switchVariants({ isDisabled, size });
 	const glyphColor = useThemeColor(resolveSwitchTrackTokens({ color, isInvalid }).active);
 	const glyphClassName = slots.glyph();

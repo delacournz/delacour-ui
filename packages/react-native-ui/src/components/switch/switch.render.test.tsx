@@ -1,4 +1,5 @@
-import { describe, expect, jest, test } from "@jest/globals";
+import { afterEach, describe, expect, jest, test } from "@jest/globals";
+import { Platform } from "react-native";
 import { State } from "react-native-gesture-handler";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
@@ -9,6 +10,11 @@ import { SWITCH_THUMB_INSET } from "./switch.variants";
 const layout = (width: number) => ({ nativeEvent: { layout: { height: 0, width, x: 0, y: 0 } } });
 
 type Instance = ReturnType<typeof screen.getByTestId>;
+
+// Puts back a `Platform.OS` a test replaced.
+afterEach(() => {
+	jest.restoreAllMocks();
+});
 
 /** The track is the root's only child: the node that clips the thumb and reports the travel. */
 const track = (id = "switch"): Instance => {
@@ -75,7 +81,7 @@ describe("Switch", () => {
 		const view = await renderWithProviders(
 			<Switch accessibilityLabel="Wi-Fi" isSelected={false} onSelectedChange={onSelectedChange} />
 		);
-		await fireEvent(screen.getByRole("switch"), "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+		await fireEvent(screen.getByRole("switch"), "accessibilityTap");
 		expect(onSelectedChange).toHaveBeenCalledWith(true);
 		expect(screen.getByRole("switch")).not.toBeChecked();
 
@@ -171,6 +177,41 @@ describe("Switch accessibility", () => {
 
 		expect(screen.getByTestId("switch").props.accessibilityActions).toBeUndefined();
 	});
+
+	test.each(["ios", "android"] as const)(
+		"on %s, a caller's custom action reaches its handler and activation still toggles",
+		async (os) => {
+			jest.replaceProperty(Platform, "OS", os);
+			const onAccessibilityAction = jest.fn();
+			const onSelectedChange = jest.fn();
+			await renderWithProviders(
+				<Switch
+					accessibilityActions={[{ label: "Help", name: "help" }]}
+					accessibilityLabel="Wi-Fi"
+					onAccessibilityAction={onAccessibilityAction}
+					onSelectedChange={onSelectedChange}
+					testID="switch"
+				/>
+			);
+			const control = screen.getByTestId("switch");
+
+			await fireEvent(control, "accessibilityAction", { nativeEvent: { actionName: "help" } });
+			expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+			expect(onSelectedChange).not.toHaveBeenCalled();
+
+			// TalkBack activates through the `activate` action, VoiceOver through
+			// `onAccessibilityTap`.
+			if (os === "android") {
+				expect(control.props.accessibilityActions).toEqual([{ label: "Help", name: "help" }, { name: "activate" }]);
+				await fireEvent(control, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+			} else {
+				expect(control.props.accessibilityActions).toEqual([{ label: "Help", name: "help" }]);
+				await fireEvent(control, "accessibilityTap");
+			}
+			expect(onSelectedChange).toHaveBeenCalledWith(true);
+			expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+		}
+	);
 
 	test("is named by a sibling Field.Label", async () => {
 		await renderWithProviders(

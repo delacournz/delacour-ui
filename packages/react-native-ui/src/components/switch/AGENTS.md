@@ -211,10 +211,14 @@ section to read first — what follows is only where a switch differs.
   actually flip it, on iOS and Android respectively. Without them the switch would
   announce its state and offer no way to change it — the same gap
   `Slider.Thumb`'s `adjustable` actions close. The `activate` entry is listed on
-  Android only (`resolveSwitchAccessibilityActions`): Fabric shows every listed
+  Android only (`resolveSwitchActivation`): Fabric shows every listed
   action in the iOS rotor, so on iOS it would add a literal "activate" entry
   next to the double-tap that `onAccessibilityTap` already handles —
-  `Pressable`'s `resolvePressableActivation` makes the same split.
+  `Pressable`'s `resolvePressableActivation` makes the same split. A caller's
+  own `accessibilityActions` and `onAccessibilityAction` are merged in, not
+  spread over the built-ins: `activate` is appended after the caller's actions
+  and routed to the toggle, and every other action reaches the caller's handler.
+  A caller that lists `activate` itself owns it. This is `Pressable`'s rule too.
 - **The root is marked `accessible`, and that one word is load-bearing.** Without
   it the view is not an accessibility element on iOS at all, so the role and the
   checked state written beside it never reach VoiceOver. It also merges the track

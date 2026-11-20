@@ -28,7 +28,7 @@ import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SwitchContextValue, SwitchProvider } from "./switch.context";
 import {
 	hasThumbChild,
-	resolveSwitchAccessibilityActions,
+	resolveSwitchActivation,
 	resolveSwitchAxes,
 	resolveSwitchRelease,
 	resolveSwitchTrackTokens,
@@ -74,8 +74,10 @@ function SwitchRoot({
 	isInvalid,
 	haptic = "selection",
 	className,
+	accessibilityActions,
 	accessibilityLabel,
 	accessibilityState,
+	onAccessibilityAction,
 	children,
 	...props
 }: SwitchProps): ReactElement {
@@ -307,11 +309,24 @@ function SwitchRoot({
 	const content = useMemo(() => withThumb(children), [children]);
 	const slots = switchVariants({ isDisabled: axes.isDisabled, size: axes.size });
 
+	// Merged with the caller's actions, never replaced by them: see
+	// `resolveSwitchActivation`. `activate` is consumed only when the switch added
+	// it; every other action, and an `activate` the caller owns, reaches the
+	// caller's own handler. `Platform.OS` is read here rather than at module scope
+	// so a test can replace it.
+	const activation = useMemo(
+		() => resolveSwitchActivation({ accessibilityActions, platform: Platform.OS }),
+		[accessibilityActions]
+	);
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
-			if (event.nativeEvent.actionName === "activate") toggle();
+			if (activation.routesActivate && event.nativeEvent.actionName === "activate") {
+				toggle();
+				return;
+			}
+			onAccessibilityAction?.(event);
 		},
-		[toggle]
+		[activation.routesActivate, onAccessibilityAction, toggle]
 	);
 
 	// `accessibilityState` is merged, not replaced: a caller's `busy` must not
@@ -324,7 +339,7 @@ function SwitchRoot({
 		<SwitchProvider value={context}>
 			<GestureDetector gesture={gesture}>
 				<Animated.View
-					accessibilityActions={ACCESSIBILITY_ACTIONS}
+					accessibilityActions={activation.accessibilityActions}
 					accessibilityLabel={accessibilityLabel ?? field?.label ?? undefined}
 					accessibilityRole="switch"
 					accessibilityState={{ ...accessibilityState, checked: selected, disabled: axes.isDisabled }}
@@ -345,18 +360,6 @@ function SwitchRoot({
 		</SwitchProvider>
 	);
 }
-
-/**
- * `activate` on Android only, where a TalkBack double-tap needs it to reach the
- * toggle. iOS lists nothing: `onAccessibilityTap` answers VoiceOver, and a
- * listed action would show as a literal "activate" in the rotor. See
- * {@link resolveSwitchAccessibilityActions}.
- *
- * Module scope on purpose: the platform never changes, and a fresh array each
- * render would be a new prop every commit — React Native sends the whole
- * accessibility config across on any change.
- */
-const ACCESSIBILITY_ACTIONS = resolveSwitchAccessibilityActions(Platform.OS);
 
 /** Read inside the pan's worklets, so it is a plain number captured once. */
 const PAN_CANCELLED = State.CANCELLED;

@@ -3,7 +3,7 @@ import { declarationCount, type ThemeVariant, TOKENS_CSS, tokenValue } from "../
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
 	hasThumbChild,
-	resolveSwitchAccessibilityActions,
+	resolveSwitchActivation,
 	resolveSwitchAxes,
 	resolveSwitchContentTreatment,
 	resolveSwitchRelease,
@@ -708,13 +708,42 @@ describe("content treatment", () => {
 	});
 });
 
-describe("resolveSwitchAccessibilityActions", () => {
+describe("resolveSwitchActivation", () => {
 	test("Android lists 'activate', so a TalkBack double-tap reaches the toggle", () => {
-		expect(resolveSwitchAccessibilityActions("android")).toEqual([{ name: "activate" }]);
+		expect(resolveSwitchActivation({ platform: "android" })).toEqual({
+			accessibilityActions: [{ name: "activate" }],
+			routesActivate: true,
+		});
 	});
 
 	test("iOS lists nothing, so the VoiceOver rotor gains no literal 'activate' entry", () => {
 		// `onAccessibilityTap` already answers a VoiceOver double-tap there.
-		expect(resolveSwitchAccessibilityActions("ios")).toBeUndefined();
+		expect(resolveSwitchActivation({ platform: "ios" })).toEqual({
+			accessibilityActions: undefined,
+			routesActivate: false,
+		});
+	});
+
+	test("Android appends 'activate' after a caller's own actions instead of dropping it", () => {
+		expect(
+			resolveSwitchActivation({ accessibilityActions: [{ label: "Help", name: "help" }], platform: "android" })
+		).toEqual({ accessibilityActions: [{ label: "Help", name: "help" }, { name: "activate" }], routesActivate: true });
+	});
+
+	test("iOS leaves a caller's own actions untouched", () => {
+		const actions = [{ label: "Help", name: "help" }];
+		expect(resolveSwitchActivation({ accessibilityActions: actions, platform: "ios" }).accessibilityActions).toBe(
+			actions
+		);
+	});
+
+	test("a caller that lists 'activate' owns it, so the switch never toggles twice", () => {
+		const actions = [{ name: "activate" }];
+		for (const platform of ["ios", "android"]) {
+			expect(resolveSwitchActivation({ accessibilityActions: actions, platform })).toEqual({
+				accessibilityActions: actions,
+				routesActivate: false,
+			});
+		}
 	});
 });

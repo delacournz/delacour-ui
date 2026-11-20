@@ -527,25 +527,44 @@ export function resolveSwitchContentTreatment({
 
 export type SwitchVariantProps = VariantProps<typeof switchVariants>;
 
-/** The action list Android gets. Module scope, so the prop keeps one identity. */
-const SWITCH_ANDROID_ACCESSIBILITY_ACTIONS = [{ name: "activate" }] as const;
+/** The one built-in action. Module scope, so the list keeps one identity. */
+const SWITCH_ACTIVATE_ACTION = { name: "activate" } as const;
+const SWITCH_ANDROID_ACCESSIBILITY_ACTIONS = [SWITCH_ACTIVATE_ACTION] as const;
+
+/** An accessibility action as React Native takes it. Structural, so this file stays pure. */
+export type SwitchAccessibilityAction = { readonly name: string; readonly label?: string };
 
 /**
- * The custom accessibility actions the root lists, by platform.
+ * The accessibility actions the root lists, and whether it routes `activate` to
+ * its own toggle. The caller's actions are merged in, never dropped.
  *
- * **Android** lists `activate`. The root is not a `Pressable`, so a TalkBack
- * double-tap reaches `onAccessibilityAction` only when `activate` is listed.
- * Without it the switch would announce its state and offer no way to change it.
+ * **Android** appends `activate` after the caller's actions. The root is not a
+ * `Pressable`, so a TalkBack double-tap reaches `onAccessibilityAction` only
+ * when `activate` is listed. Without it the switch would announce its state and
+ * offer no way to change it.
  *
- * **iOS** lists nothing. `onAccessibilityTap` already answers a VoiceOver
- * double-tap, and Fabric shows every listed action as a rotor custom action, so
- * `activate` would add a literal "activate" entry. `Pressable` makes the same
- * split for the same reason (`resolvePressableActivation`).
+ * **iOS** keeps the caller's actions as they are and adds nothing.
+ * `onAccessibilityTap` already answers a VoiceOver double-tap, and Fabric shows
+ * every listed action as a rotor custom action, so `activate` would add a
+ * literal "activate" entry. `Pressable` makes the same split for the same reason.
+ *
+ * A caller that lists `activate` itself owns it on both platforms, and the
+ * switch routes nothing for it, so one activation never toggles twice. This is
+ * the rule `resolvePressableActivation` follows.
  *
  * Takes the platform rather than reading `Platform.OS`, so the file stays pure.
  */
-export function resolveSwitchAccessibilityActions(
-	platform: string
-): typeof SWITCH_ANDROID_ACCESSIBILITY_ACTIONS | undefined {
-	return platform === "android" ? SWITCH_ANDROID_ACCESSIBILITY_ACTIONS : undefined;
+export function resolveSwitchActivation<A extends SwitchAccessibilityAction>({
+	accessibilityActions,
+	platform,
+}: {
+	accessibilityActions?: readonly A[];
+	platform: string;
+}): { accessibilityActions: readonly (A | typeof SWITCH_ACTIVATE_ACTION)[] | undefined; routesActivate: boolean } {
+	const ownsActivate = accessibilityActions?.some((action) => action.name === "activate") === true;
+	if (platform !== "android" || ownsActivate) return { accessibilityActions, routesActivate: false };
+	if (accessibilityActions === undefined || accessibilityActions.length === 0) {
+		return { accessibilityActions: SWITCH_ANDROID_ACCESSIBILITY_ACTIONS, routesActivate: true };
+	}
+	return { accessibilityActions: [...accessibilityActions, SWITCH_ACTIVATE_ACTION], routesActivate: true };
 }

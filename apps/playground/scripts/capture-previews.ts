@@ -198,7 +198,7 @@ async function readExistingManifest(): Promise<Map<string, PreviewEntryJson>> {
 /** Whether a demo's published files all exist for the hash the manifest holds. */
 async function filesPresent(demo: PlannedDemo): Promise<boolean> {
 	const checks = THEMES.flatMap((theme) => {
-		const paths = mediaPaths(demo.id, theme, demo.sourceHash);
+		const paths = mediaPaths(demo.id, theme);
 		return demo.animated ? [exists(paths.poster), exists(paths.video)] : [exists(paths.poster)];
 	});
 	return (await Promise.all(checks)).every(Boolean);

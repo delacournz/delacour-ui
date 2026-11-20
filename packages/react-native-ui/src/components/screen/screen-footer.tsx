@@ -40,6 +40,19 @@ export type ScreenFooterProps = ScreenPlacementProps & {
 	 * React Navigation both expose `useIsFocused()`.
 	 */
 	isFocused?: boolean;
+	/**
+	 * Lift a sticky footer this many points further while the keyboard is open,
+	 * so it sits on a bar that rides the keyboard — a form's previous / next /
+	 * done toolbar — instead of hiding under it. A keyboard-aware scroll area
+	 * clears the same extra distance, through the screen context.
+	 *
+	 * The distance from the keyboard's top edge to the bar's top edge: the bar's
+	 * height plus any gap it floats at. Build it from the bar's own constants,
+	 * never a literal. Only applies to a `sticky` footer.
+	 *
+	 * @default 0
+	 */
+	keyboardOffset?: number;
 };
 
 /**
@@ -80,12 +93,18 @@ export type ScreenFooterProps = ScreenPlacementProps & {
  * <Screen.Footer sticky>
  *   <MessageComposer />
  * </Screen.Footer>
+ *
+ * @example
+ * <Screen.Footer keyboardOffset={TOOLBAR_OFFSET} sticky>
+ *   <Button onPress={submit}>Submit</Button>
+ * </Screen.Footer>
  */
 export function ScreenFooter({
 	placement = "overlay",
 	sticky = false,
 	fadeBorderOnScroll = false,
 	isFocused = true,
+	keyboardOffset = 0,
 	className,
 	children,
 	style,
@@ -132,6 +151,17 @@ export function ScreenFooter({
 		footer.placement.value = placement;
 	}, [placement, footer.placement]);
 
+	// Published so a keyboard-aware scrollable clears the bar under the footer
+	// too, and cleared on unmount so a screen without the bar stops clearing it.
+	// A footer that is not sticky never lifts, so it publishes 0: otherwise the
+	// scrollable would scroll the focused field past a gap that is not there.
+	useEffect(() => {
+		footer.keyboardOffset.value = sticky ? keyboardOffset : 0;
+		return () => {
+			footer.keyboardOffset.value = 0;
+		};
+	}, [sticky, keyboardOffset, footer.keyboardOffset]);
+
 	useEffect(() => {
 		return () => {
 			footer.height.value = 0;
@@ -147,8 +177,9 @@ export function ScreenFooter({
 				// Shift by the inset rather than animating the padding away: the
 				// footer's safe-area band is meaningless once the keyboard covers it,
 				// and animating padding leaves a visible gap between the two
-				// mid-transition.
-				offset={{ closed: 0, opened: bottom }}
+				// mid-transition. `keyboardOffset` lifts it further, onto a bar that
+				// rides the keyboard.
+				offset={{ closed: 0, opened: bottom - keyboardOffset }}
 				style={{ paddingBottom: SCREEN_FLOATING_BOTTOM_GAP, paddingTop: SCREEN_FOOTER_PADDING }}
 			>
 				<ScreenFooterBackground fadeOnScroll={fadeBorderOnScroll} placement={placement} />

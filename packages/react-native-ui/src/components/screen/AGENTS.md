@@ -122,6 +122,28 @@ whole-screen states.
   open keyboard and excludes the band the sticky shift parks behind it.
   Conflating them is a real bug — the derivation is in the block comment above
   them, and the tests pin both.
+- **`keyboardOffset` stacks a sticky footer on a bar riding the keyboard.** A
+  form's previous / next / done toolbar sits on top of the keyboard, and a
+  sticky footer that only knew the keyboard's height parked its submit button
+  behind that bar. The footer's `offset.opened` becomes `bottom - keyboardOffset`,
+  and the footer publishes the value on the screen context
+  (`footer.keyboardOffset`) — reset to 0 on unmount — so
+  `useScreenFooterKeyboardClearance` adds the same distance and a keyboard-aware
+  scroll area keeps the focused field clear of the lifted footer. The value is
+  the distance from the keyboard's top edge to the bar's top edge — the bar's
+  height plus any gap it floats at (keyboard-controller's `KeyboardToolbar`
+  floats 11pt above a keyboard with rounded corners) — built from the bar's own
+  constants, never a literal: a literal drifts the day the bar is restyled, and
+  the footer then overlaps it or floats a gap above it. A footer that is not
+  sticky publishes 0, because it does not lift.
+- **Two scrollables do not read `keyboardOffset` yet.** `resolveScrollBottomInset`
+  does not add it, so with the keyboard open and a list scrolled to its very end
+  the last `keyboardOffset` points of content sit under the footer. And
+  `Screen.ChatList` lifts its content by the keyboard minus its own `offset`
+  (the safe-area inset by default) and never reads the footer's, so a sticky
+  composer given a `keyboardOffset` covers the newest messages by that much —
+  pass the chat list `offset={bottom - keyboardOffset}` until it reads the
+  context.
 
 ## Lists
 

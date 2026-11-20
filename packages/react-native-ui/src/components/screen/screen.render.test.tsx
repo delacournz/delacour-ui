@@ -4,6 +4,7 @@ import { Text } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Screen } from "./screen";
+import { type ScreenContextValue, useScreen } from "./screen.context";
 
 const tap = (name: string) => fireEvent(screen.getByRole("button", { name }), "accessibilityTap");
 
@@ -79,6 +80,95 @@ describe("Screen", () => {
 		);
 		expect(screen.getByText("Heading")).toBeOnTheScreen();
 		expect(screen.getByText("Footer note")).toBeOnTheScreen();
+	});
+
+	test("a sticky footer's keyboardOffset lifts it that far above the open keyboard", async () => {
+		// The keyboard mock renders the sticky view as a plain View, so its offset is a prop on the
+		// nearest ancestor of the footer's content that carries one.
+		const stickyOffset = () => {
+			let node = screen.getByText("Footer note").parent;
+			while (node && node.props.offset === undefined) node = node.parent;
+			return node?.props.offset;
+		};
+		const view = await renderWithProviders(
+			<Screen>
+				<Screen.Footer sticky>
+					<Text>Footer note</Text>
+				</Screen.Footer>
+			</Screen>
+		);
+		expect(stickyOffset()).toEqual({ closed: 0, opened: 0 });
+
+		await view.rerender(
+			<Screen>
+				<Screen.Footer keyboardOffset={44} sticky>
+					<Text>Footer note</Text>
+				</Screen.Footer>
+			</Screen>
+		);
+		expect(stickyOffset()).toEqual({ closed: 0, opened: -44 });
+	});
+
+	test("a footer publishes its keyboardOffset on the screen context, and clears it when it unmounts", async () => {
+		const captured: { context: ScreenContextValue | null } = { context: null };
+		function Probe(): null {
+			captured.context = useScreen();
+			return null;
+		}
+		const view = await renderWithProviders(
+			<Screen>
+				<Probe />
+				<Screen.Footer keyboardOffset={44} sticky>
+					<Text>Footer note</Text>
+				</Screen.Footer>
+			</Screen>
+		);
+		expect(captured.context?.footer.keyboardOffset.value).toBe(44);
+
+		await view.rerender(
+			<Screen>
+				<Probe />
+			</Screen>
+		);
+		expect(captured.context?.footer.keyboardOffset.value).toBe(0);
+	});
+
+	test("a footer that is not sticky publishes no keyboardOffset, because it does not lift", async () => {
+		const captured: { context: ScreenContextValue | null } = { context: null };
+		function Probe(): null {
+			captured.context = useScreen();
+			return null;
+		}
+		await renderWithProviders(
+			<Screen>
+				<Probe />
+				<Screen.Footer keyboardOffset={44}>
+					<Text>Footer note</Text>
+				</Screen.Footer>
+			</Screen>
+		);
+		expect(captured.context?.footer.keyboardOffset.value).toBe(0);
+	});
+
+	test("a keyboard-aware scroll area clears a footer's keyboardOffset as well as the footer", async () => {
+		const clearance = () => screen.getByTestId("form").props.bottomOffset;
+		function Form({ keyboardOffset }: { keyboardOffset?: number }): ReactElement {
+			return (
+				<Screen>
+					<Screen.ScrollArea keyboardAware testID="form">
+						<Text>Field</Text>
+					</Screen.ScrollArea>
+					<Screen.Footer keyboardOffset={keyboardOffset} sticky>
+						<Text>Footer note</Text>
+					</Screen.Footer>
+				</Screen>
+			);
+		}
+		const view = await renderWithProviders(<Form />);
+		const base = clearance();
+
+		await view.rerender(<Form keyboardOffset={44} />);
+		expect(clearance()).toBe(base + 44);
 	});
 
 	test("a Screen.View renders its children", async () => {

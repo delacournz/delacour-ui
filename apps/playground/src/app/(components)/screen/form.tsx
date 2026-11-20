@@ -4,7 +4,7 @@ import { Text } from "@delacour/react-native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
 import { TextInput, View } from "react-native";
-import { KeyboardToolbar } from "react-native-keyboard-controller";
+import { KEYBOARD_HAS_ROUNDED_CORNERS, KeyboardToolbar } from "react-native-keyboard-controller";
 
 const FIELDS = [
 	"Full name",
@@ -20,10 +20,12 @@ const FIELDS = [
 ] as const;
 
 /**
- * `KeyboardToolbar`'s height. keyboard-controller declares it as
- * `KEYBOARD_TOOLBAR_HEIGHT` but does not export it, so it is named once here.
+ * How far `KeyboardToolbar`'s top edge sits above the keyboard's: its height
+ * (`KEYBOARD_TOOLBAR_HEIGHT`, 42) plus the 11pt it floats above a keyboard with
+ * rounded corners (`OPENED_OFFSET`). keyboard-controller exports neither, so
+ * both are named once here.
  */
-const TOOLBAR_HEIGHT = 42;
+const TOOLBAR_OFFSET = 42 + (KEYBOARD_HAS_ROUNDED_CORNERS ? 11 : 0);
 
 /**
  * A form screen: `keyboardAware` scrolls the focused field clear of the
@@ -34,7 +36,7 @@ const TOOLBAR_HEIGHT = 42;
  * still leave them behind the footer riding on top of it.
  *
  * `KeyboardToolbar` adds previous / next / done above the keyboard, and the
- * footer's `keyboardOffset` is its height: without it the Save button sits
+ * footer's `keyboardOffset` is how far it stands above the keyboard: without it the Save button sits
  * behind the toolbar.
  */
 export default function ScreenFormDemo(): ReactElement {
@@ -66,7 +68,7 @@ export default function ScreenFormDemo(): ReactElement {
 				))}
 			</Screen.ScrollArea>
 
-			<Screen.Footer keyboardOffset={TOOLBAR_HEIGHT} sticky>
+			<Screen.Footer keyboardOffset={TOOLBAR_OFFSET} sticky>
 				<Button haptic="medium" onPress={() => router.back()}>
 					Save
 				</Button>

@@ -70,10 +70,10 @@ navbar's brightens as you leave the top, the footer's fades out as the content r
 
 ## Keyboard toolbars
 
-Pass a keyboard toolbar's height as `keyboardOffset` and a sticky footer sits on top of the bar, with a `keyboardAware` scroll area clearing both.
+Pass how far a keyboard toolbar's top edge stands above the keyboard as `keyboardOffset` and a sticky footer sits on top of the bar, with a `keyboardAware` scroll area clearing both.
 
 ```tsx
-<Screen.Footer keyboardOffset={TOOLBAR_HEIGHT} sticky>
+<Screen.Footer keyboardOffset={TOOLBAR_OFFSET} sticky>
   <Button onPress={submit}>Submit</Button>
 </Screen.Footer>
 ```
@@ -205,7 +205,7 @@ Pinned chrome at the bottom, and the part that rides the keyboard.
     sticky: { type: "boolean", description: "Keep the footer against the keyboard as it opens, rather than behind it." },
     isFocused: { type: "boolean", description: "Whether a field inside the footer holds focus, which changes the clearance it asks for." },
     fadeBorderOnScroll: { type: "boolean" },
-    keyboardOffset: { type: "number", default: "0", description: "Sticky only. Lift the footer this much further while the keyboard is open, onto a bar riding the keyboard — a form toolbar. A keyboard-aware scroll area clears it too. Pass the bar's height constant." },
+    keyboardOffset: { type: "number", default: "0", description: "Sticky only. Lift the footer this much further while the keyboard is open, onto a bar riding the keyboard — a form toolbar. A keyboard-aware scroll area clears it too. The distance from the keyboard's top edge to the bar's: its height plus any gap it floats at." },
     className: { type: "string" },
     children: { type: "ReactNode" },
   }}

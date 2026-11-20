@@ -46,8 +46,9 @@ export type ScreenFooterProps = ScreenPlacementProps & {
 	 * done toolbar — instead of hiding under it. A keyboard-aware scroll area
 	 * clears the same extra distance, through the screen context.
 	 *
-	 * Pass the bar's own height constant, never a literal. Only applies to a
-	 * `sticky` footer.
+	 * The distance from the keyboard's top edge to the bar's top edge: the bar's
+	 * height plus any gap it floats at. Build it from the bar's own constants,
+	 * never a literal. Only applies to a `sticky` footer.
 	 *
 	 * @default 0
 	 */
@@ -94,7 +95,7 @@ export type ScreenFooterProps = ScreenPlacementProps & {
  * </Screen.Footer>
  *
  * @example
- * <Screen.Footer keyboardOffset={TOOLBAR_HEIGHT} sticky>
+ * <Screen.Footer keyboardOffset={TOOLBAR_OFFSET} sticky>
  *   <Button onPress={submit}>Submit</Button>
  * </Screen.Footer>
  */

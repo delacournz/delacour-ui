@@ -356,6 +356,44 @@ describe("Calendar", () => {
 			expect(onMonthChange).toHaveBeenLastCalledWith(day(2026, 3, 1));
 		});
 
+		test('initialView="years" opens on the year list, then walks year, month and day', async () => {
+			const onSelect = jest.fn();
+			await renderWithProviders(
+				<Calendar
+					initialView="years"
+					locale="en"
+					maxDate={day(2008, 11, 20)}
+					minDate={day(1926, 11, 20)}
+					onSelect={onSelect}
+					testID="cal"
+				/>
+			);
+			expect(screen.getByRole("button", { name: "1926 – 2008" })).toBeOnTheScreen();
+			expect(screen.queryByTestId("cal-day-2008-11-01")).not.toBeOnTheScreen();
+
+			await fireEvent(screen.getByTestId("cal-year-1990"), "accessibilityTap");
+			expect(screen.getByRole("button", { name: "1990" })).toBeOnTheScreen();
+
+			await fireEvent(screen.getByTestId("cal-month-3"), "accessibilityTap");
+			expect(screen.getByRole("button", { name: "March 1990" })).toBeOnTheScreen();
+
+			await press("1990-03-23");
+			expect(onSelect).toHaveBeenLastCalledWith(day(1990, 3, 23));
+		});
+
+		test('initialView="months" opens on the months of the visible year', async () => {
+			await renderWithProviders(<Calendar initialView="months" locale="en" testID="cal" />);
+			expect(screen.getByRole("button", { name: "2026" })).toBeOnTheScreen();
+			expect(screen.getByTestId("cal-month-10")).toBeOnTheScreen();
+		});
+
+		test("initialView is ignored by a label caption, which has no way back to the days", async () => {
+			await renderWithProviders(<Calendar captionLayout="label" initialView="years" locale="en" testID="cal" />);
+			expect(screen.getByRole("adjustable", { name: "October 2026" })).toBeOnTheScreen();
+			expect(screen.queryByTestId("cal-year-2026")).not.toBeOnTheScreen();
+			expect(screen.getByTestId("cal-day-2026-10-14")).toBeOnTheScreen();
+		});
+
 		test('captionLayout="label" is an adjustable text, not a button', async () => {
 			await renderWithProviders(<Calendar captionLayout="label" locale="en" testID="cal" />);
 			expect(screen.getByRole("adjustable", { name: "October 2026" })).toBeOnTheScreen();

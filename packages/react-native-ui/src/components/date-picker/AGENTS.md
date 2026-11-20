@@ -22,7 +22,7 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 | `date-picker-value.tsx` | `DatePicker.Value` — the formatted selection or the placeholder; a half range ends on a muted "End" |
 | `date-picker-icon.tsx` | `DatePicker.Icon` — `IconCalendar1`, muted or destructive |
 | `date-picker-content.tsx` | `DatePicker.Content` — the sheet (scrim, close, title, calendar, footer), or the calendar in place when inline |
-| `date-picker-calendar.tsx` | `DatePicker.Calendar` — `Calendar` bound to the picker, every tap routed through `select` |
+| `date-picker-calendar.tsx` | `DatePicker.Calendar` — `Calendar` bound to the picker, every tap routed through `select`; keyed by `openCount`, so each opening starts on `initialView` (empty) or the value's days |
 | `date-picker-done.tsx` | `DatePicker.Done` — closes |
 | `date-picker-clear.tsx` | `DatePicker.Clear` — empties, reports, stays open |
 | `date-picker.context.tsx` | `DatePickerProvider`, `useDatePicker()`, `useDatePickerContext()`, `useDatePickerPart()` |
@@ -126,13 +126,19 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   anatomy can open near a likely date and bound paging and the year list without a custom
   `DatePicker.Calendar`. Omitted, the calendar derives `startMonth`/`endMonth` from
   `minDate`/`maxDate`, and opens on the selection's month, else today's.
-- **A date of birth sets `maxDate`.** Without it the picker allows future days and the year list
-  runs a century ahead:
+- **`initialView` and `defaultMonth` apply only while the picker is empty.** With a value, the
+  calendar opens on that value's month of days, so an edit starts where the last pick ended rather
+  than at the year list or a month chosen for an empty field. The root counts openings
+  (`openCount`) and keys the calendar by it, so every opening starts fresh — including a sheet
+  reopened before its close settled, or one kept mounted — rather than where the last one was left.
+- **A date of birth sets `maxDate` and opens on the years.** Without `maxDate` the picker allows
+  future days and the year list runs a century ahead:
 
   ```tsx
   const now = today();
   <DatePicker
     defaultMonth={{ year: now.year - 30, month: 1, day: 1 }}
+    initialView="years"
     maxDate={addYears(now, -18)}
     minDate={{ year: now.year - 120, month: 1, day: 1 }}
     onValueChange={field.onChange}

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { ViewProps } from "react-native";
 import type { CalendarDate, CalendarDateRange, DateMatcher, Weekday } from "../calendar/calendar.date";
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
-import type { CalendarSize } from "../calendar/calendar.variants";
+import type { CalendarSize, CalendarView } from "../calendar/calendar.variants";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { DatePickerFormat, DatePickerFormatRange, DatePickerPresentation } from "./date-picker.variants";
 
@@ -57,11 +57,22 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		weekStartsOn?: Weekday | "auto";
 		/** `picker` makes the calendar's caption open the month and year views. */
 		captionLayout?: CalendarCaptionLayout;
+		/**
+		 * The view the calendar opens on while nothing is picked. `years` starts a date of birth at
+		 * the year list: a year opens its months, a month its days. With a value, the calendar opens
+		 * on that value's days, so an edit starts where the last pick ended.
+		 *
+		 * @default "days"
+		 */
+		initialView?: CalendarView;
 		/** The earliest day that can be picked, inclusive. */
 		minDate?: CalendarDate;
 		/** The latest day that can be picked, inclusive. */
 		maxDate?: CalendarDate;
-		/** The month the calendar opens on. Omitted, the selection's month, else today's. */
+		/**
+		 * The month an empty picker's calendar opens on. Omitted, today's. With a value, the calendar
+		 * opens on the value's month instead.
+		 */
 		defaultMonth?: CalendarDate;
 		/** The earliest month paging and the year list reach. Omitted, `minDate`'s month. */
 		startMonth?: CalendarDate;

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { ViewProps } from "react-native";
 import type { CalendarDate, CalendarDateRange, DateMatcher, Weekday } from "./calendar.date";
-import type { CalendarSize, CalendarVariant } from "./calendar.variants";
+import type { CalendarSize, CalendarVariant, CalendarView } from "./calendar.variants";
 
 /**
  * What a calendar selects, and the value it reports — one shape per mode.
@@ -71,6 +71,14 @@ export type CalendarProps = Omit<ViewProps, "children"> &
 		weekStartsOn?: Weekday | "auto";
 		/** `picker` makes the caption open the month and year views. */
 		captionLayout?: CalendarCaptionLayout;
+		/**
+		 * The view the calendar opens on. `years` starts a date of birth at the year list: a year
+		 * opens its months, a month opens its days. Read on mount only, like `defaultMonth`.
+		 * A `label` caption always opens on the days, since it has no way back to them.
+		 *
+		 * @default "days"
+		 */
+		initialView?: CalendarView;
 		/** Draws the neighbouring months' days in the leading and trailing cells. */
 		showOutsideDays?: boolean;
 		/** Lets an outside day be picked, paging to its month. */

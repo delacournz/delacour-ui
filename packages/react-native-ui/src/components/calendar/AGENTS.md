@@ -15,7 +15,7 @@ sheets.
 | `calendar.tsx` | Root: selection and month state, bounds, the context value, the `Object.assign` surface |
 | `calendar-header.tsx` | `Calendar.Header` — prev arrow, caption, next arrow by default |
 | `calendar-nav.tsx` | `Calendar.Nav` — a ghost `Button` that disables itself at a bound |
-| `calendar-caption.tsx` | `Calendar.Caption` — label, or the button that cycles days → months → years |
+| `calendar-caption.tsx` | `Calendar.Caption` — label, or the button that cycles days → months → years. `initialView` picks the view the calendar opens on (picker caption only) |
 | `calendar-weekdays.tsx` | `Calendar.Weekdays` — short names shown, full names spoken |
 | `calendar-grid.tsx` | `Calendar.Grid` — six weeks, the paging pan and slide, hosts the picker |
 | `calendar-day.tsx` | `Calendar.Day` — one cell: band, circle, number or custom content |
@@ -60,6 +60,13 @@ sheets.
   closed night is not bookable, and silently accepting it is worse than making the user tap again.
 - **Disabled vs read-only.** `isDisabled` makes everything inert and fades the root. `isReadOnly`
   ignores day taps and leaves paging working — looking at another month changes nothing.
+
+## Opening view
+
+- **`initialView` seeds the view once, on mount**, like `defaultMonth`. `years` is for a date of
+  birth: a year opens its months, a month its days, so a date decades back is three taps rather
+  than dozens of swipes. A `label` caption ignores it and opens on the days, because a jump view
+  with no caption button has no way back to them.
 
 ## Layout
 

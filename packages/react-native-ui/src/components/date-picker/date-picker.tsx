@@ -83,6 +83,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		locale,
 		weekStartsOn = "auto",
 		captionLayout = "picker",
+		initialView = "days",
 		minDate,
 		maxDate,
 		defaultMonth,
@@ -156,6 +157,15 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		cancelPendingClose();
 		setRangeDraft(null);
 	}, [cancelPendingClose, isOpen, presentation]);
+
+	// Counted during render, the way React derives state from a prop: each opening, controlled or
+	// not, remounts the calendar on `initialView`.
+	const [openCount, setOpenCount] = useState(0);
+	const [wasOpen, setWasOpen] = useState(isOpen);
+	if (isOpen !== wasOpen) {
+		setWasOpen(isOpen);
+		if (isOpen) setOpenCount((count) => count + 1);
+	}
 
 	const trigger = resolveTriggerState({ ...axes, isOpen });
 
@@ -248,6 +258,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 				defaultMonth,
 				disabled: disabledDates,
 				endMonth,
+				initialView,
 				maxDate,
 				minDate,
 				selectOutsideDays,
@@ -272,6 +283,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			locale,
 			mode,
 			open,
+			openCount,
 			placeholder: placeholder ?? resolveDefaultPlaceholder(mode),
 			presentation,
 			select,
@@ -301,6 +313,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			doneLabel,
 			endMonth,
 			field?.label,
+			initialView,
 			isClearable,
 			isOpen,
 			locale,
@@ -308,6 +321,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			minDate,
 			mode,
 			open,
+			openCount,
 			placeholder,
 			presentation,
 			select,
@@ -389,9 +403,10 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
  * <DatePicker disabledDates={[{ type: "weekday", days: [0, 6] }]} mode="multiple" />
  *
  * @example
- * // A date of birth: no future days, opens near a likely year, the year list bounded.
+ * // A date of birth: no future days, opens on the year list near a likely year, bounded.
  * <DatePicker
  *   defaultMonth={{ year: today().year - 30, month: 1, day: 1 }}
+ *   initialView="years"
  *   maxDate={addYears(today(), -18)}
  *   minDate={{ year: today().year - 120, month: 1, day: 1 }}
  *   onValueChange={setDob}

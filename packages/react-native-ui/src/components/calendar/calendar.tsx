@@ -127,6 +127,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		locale,
 		weekStartsOn = "auto",
 		captionLayout = "picker",
+		initialView = "days",
 		showOutsideDays = true,
 		selectOutsideDays = false,
 		isBordered = false,
@@ -168,7 +169,8 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 	});
 	const visibleMonth = useMemo(() => startOfMonth(visibleMonthRaw), [visibleMonthRaw]);
 
-	const [view, setView] = useState<CalendarView>("days");
+	// Read on mount only. A label caption cannot leave a jump view, so it always opens on the days.
+	const [view, setView] = useState<CalendarView>(captionLayout === "picker" ? initialView : "days");
 	// The direction counts only for the month the calendar paged to. When `month` changes from
 	// outside, the stale page is dropped during render, so the new month never slides in from the
 	// side of an earlier page.

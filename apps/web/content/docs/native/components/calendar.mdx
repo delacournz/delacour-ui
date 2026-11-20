@@ -113,6 +113,14 @@ views. `"label"` makes it plain text, for a calendar that only pages.
 <Calendar captionLayout="label" />
 ```
 
+`initialView` picks the view a picker caption opens on — `"days"`, the default, `"months"` or
+`"years"`. A date of birth starts at the years: a year opens its months, a month its days. It is
+read on mount only, and a `"label"` caption ignores it, since it has no way back to the days.
+
+```tsx
+<Calendar initialView="years" maxDate={addYears(today(), -18)} />
+```
+
 ## Sizes and variants
 
 `size` sets the cell height on the input scale — `sm` is 36, `md` 44, `lg` 52 points. `variant`
@@ -256,6 +264,7 @@ library is needed:
     locale: { type: "string", description: "A BCP 47 tag. Omitted, the device's." },
     weekStartsOn: { type: '0 | 1 | 2 | 3 | 4 | 5 | 6 | "auto"', default: '"auto"' },
     captionLayout: { type: '"label" | "picker"', default: '"picker"' },
+    initialView: { type: '"days" | "months" | "years"', default: '"days"', description: "The view a picker caption opens on. Read on mount only." },
     showOutsideDays: { type: "boolean", default: "true", description: "Draws neighbouring months' days in the spare cells." },
     selectOutsideDays: { type: "boolean", default: "false", description: "Lets an outside day be picked, paging to its month." },
     isBordered: { type: "boolean", default: "false", description: "Draws the calendar on a Surface card." },

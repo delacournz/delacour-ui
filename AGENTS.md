@@ -253,7 +253,8 @@ A missing or stale timings file still yields a complete partition, just a less e
 (`verify:expo --cache-dir`, which passes `--cacheDirectory` to Jest; Vitest has no equivalent).
 `ci.yml`'s Jest leg restores it. A cold cache was most of that leg, because every worker
 transforms React Native at once before the first suite runs. The legs keep `verify:expo`'s default
-worker count: `--max-workers 100%` was measured and gained nothing (runs 45036902128, 45036909720).
+worker count: `--max-workers 100%` was measured and gained nothing (133–148s with it, runs 45036902128 and
+45036909720; 120–156s without, runs 45035258347 and 45035261132).
 
 Unlike a local signoff, CI ignores the path gates: `registry` and `copied tests` run on every pull
 request, and their statuses are written beside the required ones. `verify-expo` — the CLI against a

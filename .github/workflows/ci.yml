@@ -19,6 +19,12 @@ name: CI
 #   that exact head, neither tests the tip of the dispatched ref. The `resolve` job turns that into
 #   one SHA, and every job checks that SHA out — the workflow file is always the dispatched ref's,
 #   the tree tested is the target's.
+# - `merge_group` — a pull request entering `develop`'s merge queue. GitHub builds the queue's own
+#   commit (the PR squashed onto develop, or onto the entries ahead of it), and this run tests that
+#   tree and writes the `signoff/*` statuses on it; the queue merges only when the umbrella lands.
+#   This is the full-suite gate: whatever a pull request's own run narrows, the queue runs everything,
+#   so no tree reaches `develop` untested. `verify-expo` stays on the version pull request's own run,
+#   which has to pass before that pull request can join the queue.
 # - A push to `release/playground/*`, which triggers the EAS `release:prod` workflow that ships the
 #   app to the stores. GitHub and EAS run independently, so these checks cannot hold that release
 #   back — they only mean a push that shipped something broken is visibly red rather than silently
@@ -32,6 +38,8 @@ on:
     branches: [release/playground/*]
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
     inputs:
       mode:
@@ -120,6 +128,9 @@ jobs:
             if [ "$EVENT" = "pull_request" ]; then
               SIGN=true
               [ "$HEAD_REF" = "changeset-release/develop" ] || EXPO=false
+            elif [ "$EVENT" = "merge_group" ]; then
+              SIGN=true
+              EXPO=false
             fi
             echo "sha=${EVENT_SHA}" >> "$GITHUB_OUTPUT"
             echo "sign=${SIGN}" >> "$GITHUB_OUTPUT"

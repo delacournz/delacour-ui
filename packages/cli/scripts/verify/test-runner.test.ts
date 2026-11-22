@@ -158,4 +158,16 @@ describe("copiedTestArgs", () => {
 		expect(copiedTestArgs("jest", "/r.json", "25%")).toContain("--maxWorkers=25%");
 		expect(copiedTestArgs("vitest", "/r.json", "25%")).toContain("--maxWorkers=25%");
 	});
+
+	test("a cache directory reaches Jest, so a seeded transform cache can be reused", () => {
+		expect(copiedTestArgs("jest", "/r.json", null, "/tmp/jest")).toContain("--cacheDirectory=/tmp/jest");
+	});
+
+	test("no cache directory leaves Jest on its own default", () => {
+		expect(copiedTestArgs("jest", "/r.json", null).some((arg) => arg.startsWith("--cacheDirectory"))).toBe(false);
+	});
+
+	test("Vitest has no transform cache flag, so a cache directory is not passed to it", () => {
+		expect(copiedTestArgs("vitest", "/r.json", null, "/tmp/jest").some((arg) => arg.startsWith("--cache"))).toBe(false);
+	});
 });

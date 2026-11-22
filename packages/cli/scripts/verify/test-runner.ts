@@ -163,17 +163,25 @@ export function parseBunSummary(output: string): TestRun {
  * pool — a count or a percentage of the cores — because each defaults to nearly every core, and
  * three runners started side by side then starve each other until a 100 ms render blows Jest's
  * 5 s timeout. `null` keeps the runner's default.
+ *
+ * `cacheDir` is Jest's transform cache. It is content-addressed, so a directory restored from an
+ * earlier run (CI seeds one from `develop`) can only skip a Babel transform, never change a result,
+ * and a cold one costs most of the leg: every worker transforms React Native at once. Vitest has
+ * no equivalent flag, so it is Jest's alone.
  */
 export function copiedTestArgs(
 	runner: Exclude<TestRunner, "bun">,
 	outputFile: string,
-	maxWorkers: string | null
+	maxWorkers: string | null,
+	cacheDir: string | null = null
 ): string[] {
 	const base =
 		runner === "jest"
 			? ["jest", "--json", `--outputFile=${outputFile}`]
 			: ["vitest", "run", "--reporter=json", `--outputFile=${outputFile}`];
-	return maxWorkers === null ? base : [...base, `--maxWorkers=${maxWorkers}`];
+	const workers = maxWorkers === null ? [] : [`--maxWorkers=${maxWorkers}`];
+	const cache = runner === "jest" && cacheDir !== null ? [`--cacheDirectory=${cacheDir}`] : [];
+	return [...base, ...workers, ...cache];
 }
 
 /** Runs the copied suites under `runner`, from the package they were copied into. */
@@ -181,7 +189,8 @@ export async function runCopiedTests(
 	cwd: string,
 	runner: TestRunner,
 	reporter: Reporter,
-	maxWorkers: string | null = null
+	maxWorkers: string | null = null,
+	cacheDir: string | null = null
 ): Promise<TestRun> {
 	if (runner === "bun") {
 		const output = await run("bun", ["test"], { cwd, reporter, label: "bun test", allowFailure: true });
@@ -189,7 +198,7 @@ export async function runCopiedTests(
 	}
 
 	const outputFile = join(cwd, ".verify-test-report.json");
-	const args = copiedTestArgs(runner, outputFile, maxWorkers);
+	const args = copiedTestArgs(runner, outputFile, maxWorkers, cacheDir);
 
 	await rm(outputFile, { force: true });
 	const output = await run("bun", ["x", ...args], { cwd, reporter, label: runner, allowFailure: true });

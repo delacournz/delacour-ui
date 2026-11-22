@@ -66,6 +66,8 @@ type Options = {
 	dir: string | undefined;
 	/** `--max-workers`: the Jest or Vitest worker cap under `--tests`, a count or a percentage. */
 	maxWorkers: string | null;
+	/** `--cache-dir`: Jest's transform cache under `--tests jest`; Jest's default when unset. */
+	cacheDir: string | null;
 };
 
 function parseOptions(argv: string[]): Options {
@@ -96,6 +98,7 @@ function parseOptions(argv: string[]): Options {
 		tests: (tests as TestRunner | undefined) ?? null,
 		dir: value("--dir"),
 		maxWorkers: value("--max-workers") ?? null,
+		cacheDir: value("--cache-dir") ?? null,
 	};
 }
 
@@ -125,6 +128,8 @@ Options
   --registry <p>   a registry directory or URL (default: this repo's)
   --max-workers <n> cap the Jest or Vitest workers under --tests — a count or a
                    percentage of the cores, for runs that share the machine
+  --cache-dir <p>  Jest's transform cache under --tests jest (content-addressed,
+                   so a reused one only skips work)
   --dir <path>     scaffold here instead of .verify/app; the CLI build and the
                    packed engines go beside it, so runs with different
                    directories can run at the same time
@@ -280,7 +285,13 @@ try {
 	if (options.tests && options.install) {
 		reporter.step(`Every copied suite passes under ${options.tests}`);
 		const expected = await copiedSuites(workspace.configRoot, options.tests);
-		const result = await runCopiedTests(workspace.configRoot, options.tests, reporter, options.maxWorkers);
+		const result = await runCopiedTests(
+			workspace.configRoot,
+			options.tests,
+			reporter,
+			options.maxWorkers,
+			options.cacheDir
+		);
 
 		// Render tests are Jest's alone: the Jest leg has to have been given some, and
 		// the other two none, or the CLI's runner gate is not holding.

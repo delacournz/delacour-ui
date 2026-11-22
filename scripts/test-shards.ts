@@ -41,7 +41,8 @@ export type JestReport = {
 		name: string;
 		status: "passed" | "failed";
 		message: string;
-		perfStats: { start: number; end: number };
+		startTime: number;
+		endTime: number;
 		assertionResults: { status: string }[];
 	}[];
 };
@@ -112,7 +113,7 @@ export function verifyRun(assigned: readonly string[], report: JestReport, root:
 
 export function timingsFrom(report: JestReport, root: string): Timings {
 	return Object.fromEntries(
-		report.testResults.map((suite) => [relative(root, suite.name), suite.perfStats.end - suite.perfStats.start])
+		report.testResults.map((suite) => [relative(root, suite.name), suite.endTime - suite.startTime])
 	);
 }
 

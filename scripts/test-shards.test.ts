@@ -7,7 +7,8 @@ const suite = (name: string, status: "passed" | "failed" = "passed", ms = 100): 
 	name: `/repo/pkg/${name}`,
 	status,
 	message: status === "failed" ? "boom" : "",
-	perfStats: { start: 1000, end: 1000 + ms },
+	startTime: 1000,
+	endTime: 1000 + ms,
 	assertionResults: [{ status }],
 });
 

@@ -249,6 +249,12 @@ every render suite once, records the times and saves them as a cache along with 
 cache. Pull requests restore both from their base branch. It writes no status and gates nothing.
 A missing or stale timings file still yields a complete partition, just a less even one.
 
+`seed.yml` also runs `copied tests (jest)` once and saves the copied app's Jest transform cache
+(`verify:expo --cache-dir`, which passes `--cacheDirectory` to Jest; Vitest has no equivalent).
+`ci.yml`'s Jest leg restores it. A cold cache was most of that leg, because every worker
+transforms React Native at once before the first suite runs. The legs keep `verify:expo`'s default
+worker count: `--max-workers 100%` was measured and gained nothing (runs 45036902128, 45036909720).
+
 Unlike a local signoff, CI ignores the path gates: `registry` and `copied tests` run on every pull
 request, and their statuses are written beside the required ones. `verify-expo` — the CLI against a
 real, npm-installed Expo app — is not part of signoff at all: it installs from the registry and takes

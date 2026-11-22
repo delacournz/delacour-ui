@@ -1199,7 +1199,7 @@ breaks hooks. Hydration warnings in the console are the first symptom.
 
 `content/docs/native/releases/` holds one hand-written page, `channels.mdx`; the rest are
 **generated and gitignored**. `bun run release-notes` (`scripts/generate-release-notes.ts`, run
-first by `dev`, `build` and `codegen`) writes `index.md` — what is pending plus the latest release,
+first by `dev` and `build`) writes `index.md` — what is pending plus the latest release,
 across every package — and one page per published package (`react-native-ui.md`, `cli.md`,
 `react-native-charts.md`, `react-native-bottom-sheet.md`), which `meta.json` lists under
 `---Packages---`. Ported from warden's docs site.

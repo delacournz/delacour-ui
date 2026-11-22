@@ -61,11 +61,13 @@ export type SignoffCheck = {
 const VERIFY_APP = "verify-app";
 
 /**
- * `apps/web/.output`. `build` runs `vite build` into it, and so does `typecheck` through
- * `@delacour/web#codegen` whenever that misses the cache; two at once fail with `ENOTEMPTY` as one
- * empties the directory the other is writing.
+ * `apps/web/src/routeTree.gen.ts`. `build`'s `vite build` writes it, and so does `typecheck` through
+ * `@delacour/web#codegen` (`apps/web/scripts/gen-route-tree.ts`) on a cache miss. The contents are
+ * identical, but two writers on one file is a race nobody should have to reason about. Before codegen
+ * stopped being a `vite build`, both also emptied and rewrote `apps/web/.output`, and two at once
+ * failed with `ENOTEMPTY`.
  */
-const WEB_OUTPUT = "web-output";
+const WEB_ROUTE_TREE = "web-route-tree";
 
 /** The bare context the ruleset requires. Emitted last, and only when everything passed. */
 export const UMBRELLA_CONTEXT = "signoff";
@@ -96,7 +98,7 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		paths: [],
 		workflow: "ci.yml",
 		run: [{ argv: ["bunx", "turbo", "typecheck"] }],
-		locks: [WEB_OUTPUT],
+		locks: [WEB_ROUTE_TREE],
 	},
 	{
 		context: "check",
@@ -125,7 +127,7 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		// Scoped to the docs site: it is the only thing Railway deploys, and an unfiltered build would
 		// drag in the Expo playground for nothing.
 		run: [{ argv: ["bunx", "turbo", "build", "--filter=@delacour/web"] }],
-		locks: [WEB_OUTPUT],
+		locks: [WEB_ROUTE_TREE],
 	},
 	{
 		context: "registry",

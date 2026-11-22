@@ -518,9 +518,19 @@ jobs:
         env:
           NPM_TOKEN: ${{ github.token }}
         run: bun install --frozen-lockfile
+      # Jest's transform cache for the copied app, written by `seed.yml` on `develop`. A cold one is
+      # most of this leg: every worker transforms React Native at once before the first suite runs.
+      - if: matrix.runner == 'jest'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/jest-copied
+          key: jest-copied-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'packages/cli/scripts/verify/**') }}-${{ needs.resolve.outputs.sha }}
+          restore-keys: |
+            jest-copied-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'packages/cli/scripts/verify/**') }}-
+            jest-copied-${{ runner.os }}-${{ runner.arch }}-
       - name: Copy every suite and run it
         working-directory: packages/cli
-        run: bun run verify:expo --tests ${{ matrix.runner }}
+        run: bun run verify:expo --tests ${{ matrix.runner }} --cache-dir ${{ runner.temp }}/jest-copied
 
   # Writes what `bun run signoff` would have, for the commit these jobs tested: every sub-context,
   # then the umbrella last. `needs` covers every job above, so the umbrella is earned only when all of

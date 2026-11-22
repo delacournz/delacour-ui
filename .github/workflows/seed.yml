@@ -8,6 +8,8 @@ name: Seed
 #   shards balance on (`scripts/test-shards.ts`). The newest one wins by prefix.
 # - `jest-…-<sha>`: Jest's transform cache after that run. Content-addressed, so restoring it can only
 #   skip a transform, never change a result.
+# - `jest-copied-…-<sha>`: the same, for `ci.yml`'s `copied tests (jest)` leg, whose app is a
+#   scaffolded consumer project with its own node_modules. Its first cold run is most of that leg.
 #
 # This is a full run of every render suite, so it is also a check: a red Seed run means `develop`'s
 # render suites fail on the merged tree. It writes no status and gates nothing.
@@ -62,3 +64,39 @@ jobs:
         with:
           path: .render-timings.json
           key: render-timings-${{ github.sha }}
+
+  copied-jest:
+    name: copied tests (jest, recorded cache)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/jest-copied
+          key: jest-copied-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'packages/cli/scripts/verify/**') }}-${{ github.sha }}
+          restore-keys: |
+            jest-copied-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'packages/cli/scripts/verify/**') }}-
+            jest-copied-${{ runner.os }}-${{ runner.arch }}-
+      - name: Copy every suite and run it under Jest
+        working-directory: packages/cli
+        run: bun run verify:expo --tests jest --cache-dir ${{ runner.temp }}/jest-copied

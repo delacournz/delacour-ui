@@ -519,6 +519,20 @@ describe("drift guard", () => {
 		expect(workflow.on.merge_group?.types).toEqual(["checks_requested"]);
 	});
 
+	test("develop lands only through a squash merge queue that waits for every entry's checks", async () => {
+		// The queue is where the full suite runs on the tree that will land, so it is one half of a pair:
+		// a queue with no `merge_group` run in ci.yml would wait on statuses that never arrive.
+		const ruleset = (await Bun.file(".github/rulesets/develop.json").json()) as {
+			rules: { type: string; parameters?: Record<string, unknown> }[];
+		};
+		const queue = ruleset.rules.find((entry) => entry.type === "merge_queue");
+		expect(queue?.parameters).toMatchObject({ merge_method: "SQUASH", grouping_strategy: "ALLGREEN" });
+		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
+			on: { merge_group?: unknown };
+		};
+		expect(workflow.on.merge_group).toBeDefined();
+	});
+
 	/** Runs `resolve`'s own shell script, as the runner would, and returns what it wrote to GITHUB_OUTPUT. */
 	async function resolveOutputs(env: Record<string, string>): Promise<Record<string, string>> {
 		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {

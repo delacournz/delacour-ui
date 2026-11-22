@@ -19,7 +19,7 @@ async function load(file: string): Promise<{ text: string; workflow: Workflow }>
 }
 
 describe("workflow triggers", () => {
-	for (const file of ["version.yml", "promote.yml"]) {
+	for (const file of ["version.yml", "promote.yml", "seed.yml"]) {
 		test(`${file} runs on pushes to develop only`, async () => {
 			const { workflow } = await load(file);
 			expect(Object.keys(workflow.on)).toEqual(["push"]);

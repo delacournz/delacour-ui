@@ -235,6 +235,20 @@ fast-forwards to a release commit, whose pull request `ci.yml` signs off on its 
 one either. `scripts/signoff.test.ts` fails if `ci.yml` regains a push to `develop`, drops one of the
 four pull request types, or stops skipping drafts and forks.
 
+**The render suites run in shards.** `ci.yml`'s `test` job runs every `bun test` suite; the Jest
+render suites (`*.render.test.tsx`, about 670 worker-seconds) run in the `render (i/4)` matrix
+through `scripts/test-shards.ts`. Each shard computes the same longest-first partition of
+`jest --listTests`, weighted by the per-file times `seed.yml` records on every push to `develop`.
+Before running, it checks that the partition covers every file exactly once. It runs its slice with
+one worker per core in random order (`--randomize`), then fails unless Jest's own JSON report shows
+that slice ran, passed and skipped nothing. Together the shards provably ran every file, and no
+shard waits on another.
+
+`seed.yml` (push to `develop`) is the one workflow that runs on `develop` for CI's sake. It runs
+every render suite once, records the times and saves them as a cache along with Jest's transform
+cache. Pull requests restore both from their base branch. It writes no status and gates nothing.
+A missing or stale timings file still yields a complete partition, just a less even one.
+
 Unlike a local signoff, CI ignores the path gates: `registry` and `copied tests` run on every pull
 request, and their statuses are written beside the required ones. `verify-expo` — the CLI against a
 real, npm-installed Expo app — is not part of signoff at all: it installs from the registry and takes

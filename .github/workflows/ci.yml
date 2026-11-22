@@ -261,7 +261,63 @@ jobs:
           key: turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-${{ needs.resolve.outputs.sha }}
           restore-keys: |
             turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-
-      - run: bun run test
+      # Every suite but the Jest render suites, which the `render` shards below run. `bun run test`
+      # locally runs both (`test:render` is in it); the two together are the same set.
+      - run: bunx turbo run test test:release test:scripts
+
+  # `@delacour/react-native-ui`'s Jest render suites (`*.render.test.tsx`), split across shards. They
+  # are ~670 worker-seconds — nearly all of CI's critical path when they ran as one 2-worker task
+  # inside `test`. `scripts/test-shards.ts` gives every shard the same longest-first partition of
+  # `jest --listTests`, weighted by the per-file times `seed.yml` records on every push to `develop`,
+  # checks that the partition covers every file exactly once, runs its slice with one worker per
+  # core in random order, and fails unless Jest's own report shows exactly that slice ran and passed
+  # with nothing skipped. So the shards together provably ran every file, and none waits on another.
+  render:
+    name: render (${{ matrix.shard }}/4)
+    needs: resolve
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
+      # Restore only: `seed.yml` writes both on `develop`, which every pull request can read. The
+      # timings only balance the shards — a stale or missing file leaves the partition complete, just
+      # less even. Jest's transform cache is content-addressed, so a hit can only skip work.
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .render-timings.json
+          key: render-timings-${{ needs.resolve.outputs.sha }}
+          restore-keys: |
+            render-timings-
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/jest
+          key: jest-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'packages/react-native-ui/jest.config.js') }}-${{ needs.resolve.outputs.sha }}
+          restore-keys: |
+            jest-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'packages/react-native-ui/jest.config.js') }}-
+      - name: Run shard ${{ matrix.shard }}/4
+        run: >-
+          bun scripts/test-shards.ts run --shard ${{ matrix.shard }}/4 --timings .render-timings.json
+          -- --cacheDirectory=${{ runner.temp }}/jest
 
   build:
     name: build
@@ -471,13 +527,14 @@ jobs:
   # them passed — `verify-expo` included wherever it ran, and skipped only on an ordinary pull request.
   signoff:
     name: signoff
-    needs: [resolve, typecheck, check, test, build, registry, verify-expo, copied-tests]
+    needs: [resolve, typecheck, check, test, render, build, registry, verify-expo, copied-tests]
     # `sign` is true for every pull request `resolve` let through and a dispatch with mode `signoff`.
     # `always()` so a skipped `verify-expo` does not skip this job; every other result is checked.
     if: >-
       always() && needs.resolve.result == 'success' && needs.resolve.outputs.sign == 'true' &&
       needs.typecheck.result == 'success' && needs.check.result == 'success' &&
-      needs.test.result == 'success' && needs.build.result == 'success' &&
+      needs.test.result == 'success' && needs.render.result == 'success' &&
+      needs.build.result == 'success' &&
       needs.registry.result == 'success' && needs.copied-tests.result == 'success' &&
       (needs.verify-expo.result == 'success' ||
       (needs.verify-expo.result == 'skipped' && needs.resolve.outputs.expo != 'true'))

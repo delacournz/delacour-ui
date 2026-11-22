@@ -75,3 +75,4 @@ expo-env.d.ts
 # them into the manifest) and the spec runner's own artefacts
 /apps/playground/.previews
 .warden-e2e
+.render-timings.json

@@ -1,6 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
 import { Dialog, type DialogProps } from "./dialog";
@@ -63,5 +63,19 @@ describe("Dialog", () => {
 	test("defaultOpen starts it open", async () => {
 		await renderWithProviders(<DeleteDialog defaultOpen />, { wrapper: Overlays });
 		expect(screen.getByRole("header", { name: "Delete file?" })).toBeOnTheScreen();
+	});
+
+	test("two closes in one tick report once", async () => {
+		const onOpenChange = jest.fn();
+		await renderWithProviders(<DeleteDialog defaultOpen onOpenChange={onOpenChange} />, { wrapper: Overlays });
+		const cancel = screen.getByRole("button", { name: "Cancel" });
+
+		await act(async () => {
+			cancel.props.onAccessibilityTap();
+			cancel.props.onAccessibilityTap();
+		});
+
+		expect(onOpenChange).toHaveBeenCalledTimes(1);
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
 	});
 });

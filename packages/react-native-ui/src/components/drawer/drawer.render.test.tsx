@@ -1,10 +1,24 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { withTiming } from "react-native-reanimated";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
 import { Drawer, type DrawerProps, useDrawer } from "./index";
+
+jest.mock("react-native-reanimated", () => {
+	const actual = jest.requireActual<typeof import("react-native-reanimated")>("react-native-reanimated");
+	const withTimingSpy = jest.fn(actual.withTiming);
+	return new Proxy(actual, { get: (target, key) => (key === "withTiming" ? withTimingSpy : Reflect.get(target, key)) });
+});
+
+const timing = jest.mocked(withTiming);
+const realTiming = timing.getMockImplementation();
+
+// An exit that never lands: the panel stays mounted for as long as the test needs, so the
+// window a second close arrives in is held open rather than raced against the exit's timer.
+const holdExits = () => timing.mockImplementation((target) => target);
 
 function Overlays({ children }: { children: ReactNode }): ReactElement {
 	return <OverlayProvider>{children}</OverlayProvider>;
@@ -56,6 +70,7 @@ const silenceConsoleError = () => {
 describe("Drawer", () => {
 	afterEach(() => {
 		jest.restoreAllMocks();
+		if (realTiming !== undefined) timing.mockImplementation(realTiming);
 	});
 
 	test("renders nothing until opened", async () => {
@@ -225,11 +240,28 @@ describe("Drawer", () => {
 	test("a second close while exiting reports once", async () => {
 		const onOpenChange = jest.fn();
 		await renderWithProviders(<Menu defaultOpen onOpenChange={onOpenChange} />, { wrapper: Overlays });
+		const panel = screen.getByTestId("panel");
+		holdExits();
 
 		await press("Sign out");
-		await fireEvent(screen.getByTestId("panel"), "accessibilityEscape");
+		await fireEvent(panel, "accessibilityEscape");
+
+		expect(screen.getByTestId("panel")).toBeOnTheScreen();
+		expect(onOpenChange).toHaveBeenCalledTimes(1);
+	});
+
+	test("two closes in one tick report once", async () => {
+		const onOpenChange = jest.fn();
+		await renderWithProviders(<Menu defaultOpen onOpenChange={onOpenChange} />, { wrapper: Overlays });
+		const panel = screen.getByTestId("panel");
+
+		await act(async () => {
+			panel.props.onAccessibilityEscape();
+			panel.props.onAccessibilityEscape();
+		});
 
 		expect(onOpenChange).toHaveBeenCalledTimes(1);
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
 	});
 
 	test("useDrawer exposes the open state and a setter to custom rows", async () => {

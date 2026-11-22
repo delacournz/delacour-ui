@@ -142,3 +142,27 @@ describe("GitHub Packages token", () => {
 		});
 	}
 });
+
+/**
+ * The render shards prove they ran every file only if every shard index runs. Each shard computes
+ * the partition for the N in its own `--shard i/N`, so a matrix of `[1, 2, 3]` under a step still
+ * saying `/4` would leave a quarter of the files unassigned to any running job, with every job green.
+ */
+describe("render shards", () => {
+	type Step = { name?: string; run?: string };
+	type Job = { name?: string; strategy?: { matrix?: { shard?: number[] } }; steps?: Step[] };
+
+	test("the matrix is exactly 1..N, and the name and run step say the same N", async () => {
+		const { text } = await load("ci.yml");
+		const { jobs } = Bun.YAML.parse(text) as { jobs: Record<string, Job> };
+		const render = jobs.render;
+		const shards = render?.strategy?.matrix?.shard ?? [];
+		const total = shards.length;
+		expect(total).toBeGreaterThan(0);
+		expect(shards).toEqual(Array.from({ length: total }, (_, i) => i + 1));
+		expect(render?.name).toBe(`render (\${{ matrix.shard }}/${total})`);
+		const runs = (render?.steps ?? []).map((step) => step.run ?? "").filter((run) => run.includes("test-shards.ts"));
+		expect(runs).toHaveLength(1);
+		expect(runs[0]).toContain(`--shard \${{ matrix.shard }}/${total} `);
+	});
+});

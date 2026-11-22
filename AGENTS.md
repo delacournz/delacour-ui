@@ -97,7 +97,13 @@ not `main`.
 
 `.github/rulesets/develop.json` (`develop-protected`) is the merge gate: it blocks force-pushes and
 deletion, requires linear history, and requires a pull request whose `signoff` statuses are green
-(see [Signoff](#signoff)) and whose review threads are resolved. Squash is the only merge method.
+(see [Signoff](#signoff)) and whose review threads are resolved, and it lands every pull request through
+a **merge queue**. Squash is the only merge method. **Merge when ready** adds the pull request to the
+queue. GitHub then builds the queue's own commit: the squash onto `develop`, or onto the entries
+ahead of it. `ci.yml` runs on that commit (`merge_group`) and writes the `signoff/*` statuses there,
+and the queue merges only once the umbrella lands. The queue's rule uses GitHub's defaults (build and
+merge up to 5 at once, group of 1, 5-minute wait, 60-minute timeout, ALLGREEN), changed only for a
+measured reason.
 
 `.github/rulesets/main.json` (`main-protected`) is release-only: it blocks deletion and non-fast-forward
 pushes, requires linear history, and restricts updates to its bypass list — repository admins and
@@ -114,10 +120,14 @@ it when they do.
 
 The branch does **not** have to be up to date with `develop` (`strict_required_status_checks_policy`
 is off). With it on, every merge staled every other open pull request's signoff, and a batch of
-pull requests became a serial train of rebase, re-sign-off, merge. The cost is that a squash lands a
-tree nobody signed off — the head plus whatever `develop` gained meanwhile. Git conflicts still block
-the merge; a semantic conflict between two independently green pull requests does not. When two
-pull requests touch the same code, rebase the second and let CI sign it off again before merging it.
+pull requests became a serial train of rebase, re-sign-off, merge. The queue makes up-to-date
+unnecessary: it tests the tree that will land, so two independently green pull requests that
+conflict semantically fail in the queue rather than on `develop`.
+
+The queue is inert without `ci.yml`'s `merge_group` trigger: a queue whose checks never report
+times out every entry. `scripts/signoff.test.ts` fails if the ruleset carries the queue and the
+workflow does not. Apply the ruleset only once that trigger is on `develop`. To back the queue out, remove the
+`merge_queue` rule from the JSON and apply it again with the loop below.
 
 GitHub does not apply the rulesets from those files; the files are the reproducible copy of what was
 applied. To change protection, edit the JSON, apply it, and commit both in the same change:

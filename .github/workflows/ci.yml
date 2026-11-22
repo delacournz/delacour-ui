@@ -190,9 +190,8 @@ jobs:
         env:
           NPM_TOKEN: ${{ github.token }}
         run: bun install --frozen-lockfile
-      # `@delacour/web#typecheck` depends on `@delacour/web#codegen` (see turbo.jsonc): TanStack
-      # Router generates the gitignored `apps/web/src/routeTree.gen.ts` during that build, and tsc
-      # cannot run without it.
+      # `@delacour/web#typecheck` depends on `@delacour/web#codegen` (see turbo.jsonc), which writes
+      # the gitignored `apps/web/src/routeTree.gen.ts` the checker cannot run without.
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .turbo/cache
@@ -289,10 +288,6 @@ jobs:
       # Scoped to the docs site on purpose. This is the only thing Railway deploys, and an
       # unfiltered `turbo build` would drag in the Expo playground for no benefit.
       #
-      # This repeats the vite build the typecheck job already triggers. That is fifteen seconds,
-      # and it buys an independent proof that the docs site builds on its own — which is the exact
-      # command Railway runs.
-      #
       # Never add `bun run previews` here. It drives an iOS simulator and needs a Mac with Xcode;
       # its outputs (apps/web/public/previews/**, apps/web/src/previews/manifest.ts) are committed
       # precisely so this builds on a simulator-less runner. See apps/web/AGENTS.md.
@@ -303,6 +298,12 @@ jobs:
           restore-keys: |
             turbo-${{ github.job }}-${{ runner.os }}-${{ runner.arch }}-
       - run: bun run build --filter=@delacour/web
+      # `typecheck` generates the route tree with `scripts/gen-route-tree.ts` rather than a `vite
+      # build`. The build above just wrote the Vite plugin's copy; this fails unless the script's is
+      # byte-identical to it.
+      - name: The fast route tree matches TanStack Start's
+        working-directory: apps/web
+        run: bun scripts/gen-route-tree.ts --check
 
   registry:
     name: registry

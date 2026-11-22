@@ -320,7 +320,8 @@ flags it and `--fix` would put 6 back.
 reading the same `tsconfig.json` and reporting the same errors as `tsc` 7. A forced
 `turbo typecheck` spends about 6s type checking across the workspaces, where `tsc` 7 spent about 16s
 and `tsc` 6 about 40s — the playground alone went 12.4s → 3.8s → 1.5s. The turbo wall time barely
-moves, because `@delacour/web#codegen`'s `vite build` is its critical path.
+moved, because `@delacour/web#codegen`'s `vite build` was its critical path; `codegen` is now the
+router generator alone (`apps/web/scripts/gen-route-tree.ts`), well under a second.
 
 - **`--no-script` is not optional.** `bun check` runs a `check` script when the package has one, and
   every workspace's `check` is Biome. Without the flag, `typecheck` would lint.
@@ -649,10 +650,12 @@ workflows set a `working_directory`, are in
 | pre-push | `bun run typecheck` across every workspace |
 
 `@delacour/web#typecheck` depends on `@delacour/web#codegen` in `turbo.jsonc`, which is what
-makes the pre-push hook usable at all: TanStack Router generates the gitignored
-`apps/web/src/routeTree.gen.ts` during `vite build`, so on a fresh clone `tsc` used to fail with a
-wall of `Property '_splat' does not exist on type 'never'` before anything had been built. The edge
-is scoped to `apps/web` on purpose — no other workspace needs a build to typecheck.
+makes the pre-push hook usable at all: `apps/web/src/routeTree.gen.ts` is generated and
+gitignored, so on a fresh clone `tsc` used to fail with a wall of
+`Property '_splat' does not exist on type 'never'` before anything had been built. `codegen` writes
+it with the router generator (`apps/web/scripts/gen-route-tree.ts`, under a second), not a
+`vite build`. The edge is scoped to `apps/web` on purpose — no other workspace needs generated code
+to typecheck.
 
 A commit can therefore rewrite its own staged files. If a commit fails, the fix
 is usually already applied and staged — re-read the diff before changing

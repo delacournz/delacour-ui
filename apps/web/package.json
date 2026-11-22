@@ -6,7 +6,7 @@
 	"sideEffects": false,
 	"scripts": {
 		"dev": "bun run release-notes && vite dev",
-		"codegen": "bun run release-notes && vite build --logLevel error",
+		"codegen": "bun scripts/gen-route-tree.ts",
 		"release-notes": "bun scripts/generate-release-notes.ts",
 		"gen-install": "bun scripts/gen-install-manifest.ts",
 		"gen-theme": "bun scripts/gen-theme.ts",
@@ -47,6 +47,7 @@
 	"devDependencies": {
 		"@delacour/biome-config": "workspace:*",
 		"@tailwindcss/vite": "^4.3.3",
+		"@tanstack/router-generator": "1.167.45",
 		"@types/mdast": "4.0.4",
 		"@types/mdx": "^2.0.14",
 		"@types/node": "^26.2.0",

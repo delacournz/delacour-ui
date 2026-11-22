@@ -43,7 +43,6 @@ function DialogRoot({
 	// scrim tap, a double tap) both see the same render, and one landing while the exit
 	// runs must not report again. A controlled root defers to its prop.
 	const accepted = useRef(open);
-	accepted.current = isOpen === undefined ? accepted.current : open;
 	useEffect(() => {
 		if (isOpen === undefined) accepted.current = open;
 	}, [isOpen, open]);

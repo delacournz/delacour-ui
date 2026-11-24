@@ -1,3 +1,4 @@
+export type { FabLabels } from "../../lib/labels";
 export { Fab, type FabProps } from "./fab";
 export {
 	type FabContextValue,

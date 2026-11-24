@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, BackHandler } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Icon, type IconComponent } from "../icon";
 import { Fab } from "./fab";
@@ -318,5 +319,39 @@ describe("Fab.Group", () => {
 		} finally {
 			spy.mockRestore();
 		}
+	});
+});
+
+describe("Fab.Group labels", () => {
+	function Group({ labels }: { labels?: { close: string } }) {
+		return (
+			<Fab.Group accessibilityLabel="Add" defaultOpen icon={TestGlyph} isSafeAreaAware={false} labels={labels}>
+				<Fab.Action icon={TestGlyph} label="Photo" onPress={() => {}} />
+			</Fab.Group>
+		);
+	}
+
+	test("the labels prop changes the scrim's name", async () => {
+		await renderWithProviders(<Group labels={{ close: "Fermer" }} />);
+		expect(screen.getByRole("button", { name: "Fermer" })).toBeOnTheScreen();
+		expect(screen.queryByRole("button", { name: "Close" })).not.toBeOnTheScreen();
+	});
+
+	test("a provider's labels change the scrim's name", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ fab: { close: "Fermer" } }}>
+				<Group />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Fermer" })).toBeOnTheScreen();
+	});
+
+	test("the prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ fab: { close: "Fermer" } }}>
+				<Group labels={{ close: "Cerrar" }} />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Cerrar" })).toBeOnTheScreen();
 	});
 });

@@ -371,6 +371,13 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(DELACOUR_DEFAULT_LABELS.motion).toEqual({ pause: "Pause animation", resume: "Resume animation" });
 	});
 
+	test("numberInput is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.numberInput;
+		expect([labels.decrease, labels.increase]).toEqual(["Decrease", "Increase"]);
+		expect(labels.limit("10", "max")).toBe("10, maximum");
+		expect(labels.limit("1", "min")).toBe("1, minimum");
+	});
+
 	test("pagination is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.pagination;
 		expect(labels.list).toBe("Pagination");

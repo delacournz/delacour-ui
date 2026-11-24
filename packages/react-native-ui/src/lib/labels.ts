@@ -631,6 +631,16 @@ export type MotionLabels = {
 	resume: string;
 };
 
+/** NumberInput's spoken strings. */
+export type NumberInputLabels = {
+	/** The decrement stepper's name. `NumberInput.Decrement`'s `accessibilityLabel` wins. */
+	decrease: string;
+	/** The increment stepper's name. `NumberInput.Increment`'s `accessibilityLabel` wins. */
+	increase: string;
+	/** Announced when a step reaches a bound, `text` the formatted value: "10, maximum". */
+	limit: (text: string, bound: "max" | "min") => string;
+};
+
 /** Pagination's visible and spoken strings. */
 export type PaginationLabels = {
 	/** The control's accessible name. */
@@ -687,6 +697,7 @@ export type DelacourLabels = {
 	message: MessageLabels;
 	messageScroller: MessageScrollerLabels;
 	motion: MotionLabels;
+	numberInput: NumberInputLabels;
 	pagination: PaginationLabels;
 };
 
@@ -1029,6 +1040,11 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 	motion: {
 		pause: "Pause animation",
 		resume: "Resume animation",
+	},
+	numberInput: {
+		decrease: "Decrease",
+		increase: "Increase",
+		limit: (text, bound) => `${text}, ${bound === "max" ? "maximum" : "minimum"}`,
 	},
 	pagination: {
 		list: "Pagination",

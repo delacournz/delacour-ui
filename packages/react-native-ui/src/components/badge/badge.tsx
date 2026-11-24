@@ -1,5 +1,6 @@
 import { Children, type ReactElement, type ReactNode, useMemo } from "react";
 import { type AccessibilityActionEvent, View } from "react-native";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { TextClassProvider } from "../text/text.context";
@@ -77,7 +78,16 @@ function BadgeRoot({
 	const rootClassName = slots.root({ className });
 
 	const interactive = resolveBadgeInteractive({ onPress, onLongPress });
-	const closeExposure = resolveBadgeCloseExposure({ hasClose: onClose !== undefined, interactive });
+	const closeExposure = resolveBadgeCloseExposure({
+		accessible: props.accessible,
+		hasClose: onClose !== undefined,
+		interactive,
+	});
+	warnInteractiveChildInAccessible({
+		accessible: interactive || props.accessible === true,
+		children,
+		component: "Badge",
+	});
 	const closeHidden = closeExposure === "action";
 	const inner = (
 		<IconDefaultsProvider value={iconDefaults}>
@@ -114,9 +124,9 @@ function BadgeRoot({
 		return (
 			<BadgeProvider value={context}>
 				<View
-					accessibilityActions={accessibilityActions}
+					accessibilityActions={actions}
 					className={rootClassName}
-					onAccessibilityAction={onAccessibilityAction}
+					onAccessibilityAction={handleAccessibilityAction}
 					{...props}
 				>
 					{inner}
@@ -196,9 +206,10 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  * default differs, `scale`.
  *
  * `onClose` composes a dismiss control in at the end. It is a pressable of its
- * own, so dismissing never also fires `onPress`. On a pressable badge the root is
- * one accessibility element that folds the control in, so the control is hidden
- * there and offered as a `remove` accessibility action instead.
+ * own, so dismissing never also fires `onPress`. On a pressable badge, or a plain one
+ * the caller made `accessible`, the root is one accessibility element that folds the
+ * control in, so the control is hidden there and offered as a `remove` accessibility
+ * action instead.
  *
  * Plain string or number children are wrapped in a `Badge.Label` automatically;
  * pass the compound parts when a layout needs more control.

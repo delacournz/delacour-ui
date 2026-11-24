@@ -151,6 +151,55 @@ describe("Badge", () => {
 			expect(onPress).not.toHaveBeenCalled();
 		});
 
+		test("a plain badge the caller made accessible offers remove as an action and hides the close", async () => {
+			const onClose = jest.fn();
+			await renderWithProviders(
+				<Badge accessible closeTestID="close" onClose={onClose} testID="badge">
+					React
+				</Badge>
+			);
+			const root = screen.getByTestId("badge");
+			expect(root.props.accessibilityActions).toEqual([{ label: "Remove", name: "remove" }]);
+			expect(screen.getByTestId("close", { includeHiddenElements: true })).toHaveProp("accessible", false);
+			await fireEvent(root, "accessibilityAction", { nativeEvent: { actionName: "remove" } });
+			expect(onClose).toHaveBeenCalledTimes(1);
+		});
+
+		test("a disabled accessible badge ignores the remove action", async () => {
+			const onClose = jest.fn();
+			await renderWithProviders(
+				<Badge accessible isDisabled onClose={onClose} testID="badge">
+					React
+				</Badge>
+			);
+			await fireEvent(screen.getByTestId("badge"), "accessibilityAction", {
+				nativeEvent: { actionName: "remove" },
+			});
+			expect(onClose).not.toHaveBeenCalled();
+		});
+
+		test("an accessible plain badge forwards a caller's own actions", async () => {
+			const onAccessibilityAction = jest.fn();
+			await renderWithProviders(
+				<Badge
+					accessibilityActions={[{ label: "Share", name: "share" }]}
+					accessible
+					onAccessibilityAction={onAccessibilityAction}
+					onClose={() => undefined}
+					testID="badge"
+				>
+					React
+				</Badge>
+			);
+			const root = screen.getByTestId("badge");
+			expect(root.props.accessibilityActions).toEqual([
+				{ label: "Share", name: "share" },
+				{ label: "Remove", name: "remove" },
+			]);
+			await fireEvent(root, "accessibilityAction", { nativeEvent: { actionName: "share" } });
+			expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+		});
+
 		test("the remove action keeps a caller's actions and forwards every other one", async () => {
 			const onAccessibilityAction = jest.fn();
 			await renderWithProviders(

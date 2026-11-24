@@ -9,6 +9,7 @@
 	],
 	"registryDependencies": [
 		"badge",
+		"direction",
 		"icon",
 		"icons",
 		"pressable",
@@ -46,6 +47,10 @@
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../direction/direction.context",
+					"to": "@registry/ui/direction/direction.context"
 				},
 				{
 					"from": "../icon",
@@ -172,6 +177,10 @@
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../direction/direction.context",
+					"to": "@registry/ui/direction/direction.context"
 				}
 			]
 		}

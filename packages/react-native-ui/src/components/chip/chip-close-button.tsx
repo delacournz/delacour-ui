@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import { I18nManager } from "react-native";
 import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { IconCrossSmall } from "../../icons/central";
+import { useDirection } from "../direction/direction.context";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { useChipPart } from "./chip.context";
@@ -23,7 +23,8 @@ export type ChipCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "ch
  * surface's colour from the root's `IconDefaultsProvider`, so it turns with the
  * label when the chip is selected. The 14–18 point glyph grows towards the minimum
  * touch target with `hitSlop`, capped so it never reaches a neighbouring chip,
- * and on its leading side so it never takes a press meant for the label.
+ * and on its leading side so it never takes a press meant for the label. The leading
+ * side follows the enclosing `Direction`, falling back to the app's `I18nManager.isRTL`.
  */
 export function ChipCloseButton({
 	accessibilityLabel = "Remove",
@@ -33,7 +34,8 @@ export function ChipCloseButton({
 	...props
 }: ChipCloseButtonProps): ReactElement {
 	const { size, isDisabled } = useChipPart("Chip.CloseButton");
-	const slop = resolveChipCloseHitSlop(size, useMinimumHitTarget(), { isRTL: I18nManager.isRTL });
+	const { isRTL } = useDirection();
+	const slop = resolveChipCloseHitSlop(size, useMinimumHitTarget(), { isRTL });
 
 	return (
 		<Pressable

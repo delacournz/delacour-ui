@@ -804,6 +804,7 @@
 			],
 			"registryDependencies": [
 				"badge",
+				"direction",
 				"icon",
 				"icons",
 				"pressable",

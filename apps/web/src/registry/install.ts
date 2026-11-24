@@ -2493,7 +2493,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 109,
+		fileCount: 114,
 		groups: [
 			{
 				name: "tag-input",
@@ -2561,6 +2561,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -3789,7 +3801,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 49,
+		fileCount: 54,
 		groups: [
 			{
 				name: "chip",
@@ -3858,6 +3870,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -3956,7 +3980,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 164,
+		fileCount: 169,
 		groups: [
 			{
 				name: "combobox",
@@ -4163,6 +4187,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -8428,7 +8464,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 112,
+		fileCount: 117,
 		groups: [
 			{
 				name: "search-bar",
@@ -8542,6 +8578,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -10586,7 +10634,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 108,
+		fileCount: 113,
 		groups: [
 			{
 				name: "support",
@@ -10671,6 +10719,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{

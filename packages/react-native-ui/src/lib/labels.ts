@@ -708,6 +708,244 @@ export type PaginationLabels = {
 	status: (range: { from: number; to: number; total: number }) => string;
 };
 
+/** Popover's spoken strings. */
+export type PopoverLabels = {
+	/** The corner close button's accessible name. */
+	close: string;
+};
+
+/** A vote, as the catalog names it. Restates `PostVote`: the catalog imports nothing. */
+export type PostLabelVote = "up" | "down" | null;
+
+/**
+ * How long ago a post was made, as the catalog is handed it. Restates the buckets
+ * `formatRelativeTime` computes. A `date` is past a week: `month` is zero-based (0 is January),
+ * `year` is set only when it differs from the current year.
+ */
+export type PostTimeAgo =
+	| { unit: "now" }
+	| { unit: "minute" | "hour" | "day"; count: number }
+	| { unit: "date"; month: number; day: number; year: number | undefined };
+
+/** Post's visible and spoken strings. */
+export type PostLabels = {
+	/** The time as printed on the card: "now", "3m", "2h", "2d", "Oct 5", "Oct 5, 2024". */
+	timeShort: (ago: PostTimeAgo) => string;
+	/** The time as a screen reader says it: "just now", "3 minutes ago", "October 5". */
+	timeSpoken: (ago: PostTimeAgo) => string;
+	/**
+	 * `Post.Author`'s one-stop label: name, handle, verified, time, non-empty parts only —
+	 * "Aria, @aria, verified, 3 minutes ago". `handle` is as the caller wrote it; `spokenTime` is
+	 * `timeSpoken`'s output, or the caller's `timestamp`, and may be empty.
+	 */
+	author: (parts: { name: string; handle: string | undefined; isVerified: boolean; spokenTime: string }) => string;
+	/** `Post.Community`'s label when `meta` is a string, "r/reactnative, 5h ago · u/aria". `meta` is undefined when it is a node. */
+	community: (name: string, meta: string | undefined) => string;
+	/**
+	 * `Post.Stat`'s label with a value: noun and count together, "Like, 1,234". `value` arrives
+	 * grouped when it was a number. Not called with no value, or a string value the same as the
+	 * label: the label alone is said then.
+	 */
+	stat: (label: string, value: string) => string;
+	/** The vote group's label, "Score 1,240". `score` arrives grouped when it was a number. */
+	score: (score: string) => string;
+	/** The up arrow's accessible name. */
+	upvote: string;
+	/** The down arrow's accessible name. */
+	downvote: string;
+	/**
+	 * Spoken after the caller's own vote lands, "Upvoted, score 1,241". `vote` is the state now;
+	 * `null` means the vote was removed. `score` arrives grouped when it was a number.
+	 */
+	voteAnnouncement: (vote: PostLabelVote, score: string) => string;
+	/** The body toggle's visible word while the body is clamped. */
+	more: string;
+	/** The body toggle's visible word while the body is open. */
+	less: string;
+	/** The body toggle's accessible name while clamped; contains the visible word. */
+	showMore: string;
+	/** The body toggle's accessible name while open. */
+	showLess: string;
+	/** A pressable card's screen-reader carrier name. */
+	openPost: string;
+	/** The carrier's `longpress` action, offered on every platform. */
+	moreOptions: string;
+};
+
+/** Progress's spoken strings. */
+export type ProgressLabels = {
+	/**
+	 * The bar's spoken value on any range but 0 to 100, "18 of 24". Both numbers arrive already
+	 * formatted with the readout's `Intl.NumberFormat`, so grouping and decimals follow the locale.
+	 * `valueLabel` still replaces it.
+	 */
+	valueOf: (current: string, max: string) => string;
+};
+
+/** ProgressButton's spoken strings. */
+export type ProgressButtonLabels = {
+	/** The accessibility hint read after the label: how a screen-reader user completes the hold. */
+	hint: string;
+	/** Spoken once when the hold completes. Pass the `Done` content's text via `completedAnnouncement` when it says more. */
+	completed: string;
+};
+
+/** QRCode's spoken strings. */
+export type QrCodeLabels = {
+	/**
+	 * The code's accessible name when the caller gives none. `shown` is the value already cut to 60
+	 * characters with a trailing "…" when it was longer: "QR code: https://delacour.co.nz".
+	 */
+	code: (shown: string) => string;
+	/** The name of a code with no value, or one that could not be encoded. */
+	unavailable: string;
+};
+
+/** Questionnaire's visible and spoken strings. */
+export type QuestionnaireLabels = {
+	/** `Questionnaire.Back`'s text. */
+	back: string;
+	/** `Questionnaire.Next`'s text. */
+	next: string;
+	/** `Questionnaire.Submit`'s text. */
+	submit: string;
+	/** `Questionnaire.Skip`'s text. */
+	skip: string;
+	/** `Questionnaire.Skip`'s accessible name, longer than its text. */
+	skipQuestion: string;
+	/** Next's and Submit's hint while the current answer would not validate. */
+	answerRequired: string;
+	/** A yes/no question's first button, unless the question sets `yesLabel`. */
+	yes: string;
+	/** A yes/no question's second button, unless the question sets `noLabel`. */
+	no: string;
+	/** The free-text field's accessible name once an "Other" option is chosen. */
+	otherAnswer: string;
+	/** That field's placeholder. */
+	otherPlaceholder: string;
+	/** The count readout and the spoken prefix of a question. `current` is one-based: "Question 2 of 5". */
+	questionCount: (current: number, total: number) => string;
+	/** Spoken when the user moves to another question. `count` is `questionCount`'s result: "Question 2 of 5: Do you agree?". */
+	questionAnnouncement: (count: string, title: string) => string;
+	/** One scale button's spoken name: "7 out of 10". */
+	scaleValue: (value: number, max: number) => string;
+	/** A required question that is not a `multiple` is unanswered. */
+	errorRequired: string;
+	/** A required `multiple` question has no box ticked. */
+	errorRequiredChoice: string;
+	/** Fewer options ticked than the question's `min`. */
+	errorMinSelected: (min: number) => string;
+	/** More options ticked than the question's `max`. */
+	errorMaxSelected: (max: number) => string;
+	/** Fewer characters typed than the question's `minLength`. */
+	errorMinLength: (min: number) => string;
+	/** More characters typed than the question's `maxLength`. */
+	errorMaxLength: (max: number) => string;
+	/** A number outside a scale's or rating's range. */
+	errorOutOfRange: (min: number, max: number) => string;
+	/** An "Other" option is chosen with no text. */
+	errorOtherRequired: string;
+};
+
+/** Rating's spoken strings. */
+export type RatingLabels = {
+	/** The stars' accessible name, read before the value. */
+	name: string;
+	/**
+	 * The stars' spoken value. `formatted` is the value already formatted for the locale (whole
+	 * numbers without decimals, at most two otherwise): "3.5 out of 5".
+	 */
+	value: (formatted: string, count: number) => string;
+};
+
+/** Screen's visible and spoken strings. */
+export type ScreenLabels = {
+	/** `Screen.Navbar.BackButton`'s accessible name. */
+	back: string;
+	/** `Screen.Loading`'s spinner name and announcement, when no `label` prop is given. */
+	loading: string;
+	/** `Screen.Error`'s heading, when no `title` prop is given. */
+	errorTitle: string;
+	/**
+	 * What is spoken when `Screen.Error` appears. Called with the trimmed title and message, which
+	 * may be empty: the default drops an empty part and closes the title with a full stop unless it
+	 * already ends in punctuation.
+	 */
+	errorAnnouncement: (title: string, message: string) => string;
+};
+
+/** SearchBar's visible and spoken strings. */
+export type SearchBarLabels = {
+	/** The Cancel action's visible text. */
+	cancel: string;
+	/** The clear button's accessible name. */
+	clear: string;
+	/** The field's placeholder, and its accessible name when no `Field.Label` gives one. */
+	placeholder: string;
+	/** A token chip's close control name, "Remove Sale". */
+	removeToken: (label: string) => string;
+};
+
+/** SectionProgress's spoken strings. */
+export type SectionProgressLabels = {
+	/** The pill's accessible name. */
+	pill: string;
+	/**
+	 * The pill's spoken value, "Pricing, 42 percent". `percent` is a whole number 0 to 100, already
+	 * rounded and clamped; `title` is the active section's title, empty when there is none, in which
+	 * case only the percentage is read.
+	 */
+	value: (title: string, percent: number) => string;
+};
+
+/** SectionRail's spoken strings. */
+export type SectionRailLabels = {
+	/** The trigger's accessible name; its value is the active section's title. */
+	trigger: string;
+};
+
+/** Select's visible and spoken strings. */
+export type SelectLabels = {
+	/** The trigger's hint, read after its name: tells a screen reader it opens a list. Omitted while read-only. */
+	opensList: string;
+	/** The sheet's search field placeholder and accessible name. */
+	searchPlaceholder: string;
+	/** What an empty list says: no options, or nothing matching the search. */
+	empty: string;
+	/** A multiple trigger's text past `maxLabels`, "3 selected". */
+	selectedCount: (count: number) => string;
+	/** The description of a row disabled by `maxSelected` that has none of its own. */
+	limitReached: string;
+	/** The multiple sheet's footer button, which closes it. */
+	done: string;
+	/** A row's accessible name: its label, then its description when it has one, "Engineer, Limit reached". */
+	option: (label: string, description: string | undefined) => string;
+};
+
+/** SelectionMode's visible and spoken strings. */
+export type SelectionModeLabels = {
+	/** The header's title while no total is known to count against; also its visible default. Visible, and the lead of the "n of m" readout. */
+	title: string;
+	/** The header's count with no total, as shown and announced: "3 selected". */
+	selectedCount: (count: number) => string;
+	/**
+	 * The header's count against a total, as shown and announced: "3 of 12", or "Select · 3 of 12"
+	 * when a title is given. `title` is the header's resolved title (the `title` prop, else the
+	 * `title` label above) and may be an empty string, in which case it is dropped.
+	 */
+	progress: (count: number, total: number, title: string) => string;
+	/** The header's close button's accessible name. */
+	stopSelecting: string;
+	/** The header's select-all button, visible, while something is left to add. */
+	selectAll: string;
+	/** The header's select-all button, visible, once everything is selected. */
+	deselectAll: string;
+	/** An active item's hint, read after its name and checked state. */
+	itemHint: string;
+	/** The custom action an inactive item offers a screen reader to enter the mode. */
+	startSelecting: string;
+};
+
 /** Signature's visible and spoken strings. */
 export type SignatureLabels = {
 	/** The pad's name when neither it nor an enclosing `Field` has one. */
@@ -734,6 +972,52 @@ export type SignatureLabels = {
 	captured: string;
 	/** Announced when the pad is cleared. */
 	cleared: string;
+};
+
+/** What a Sketch tool or shape can be named. Restates `SketchTool | SketchShape`: the catalog imports nothing. */
+export type SketchToolName =
+	| "pen"
+	| "eraser"
+	| "shape"
+	| "arrow"
+	| "diamond"
+	| "ellipse"
+	| "heart"
+	| "line"
+	| "rectangle"
+	| "star"
+	| "triangle";
+
+/** Sketch's spoken strings. */
+export type SketchLabels = {
+	/** A toolbar tool's or shape's accessible name: "Pen", "Rectangle". */
+	tool: (name: SketchToolName) => string;
+	/** The stroke-width slider thumb's accessible name. */
+	size: string;
+	/** The canvas' accessible name, empty vs counted: "Drawing, empty", "Drawing, 3 marks". An eraser counts as a mark. */
+	drawing: (markCount: number) => string;
+	/** A colour swatch's name when its colour is a theme token; `token` is the token's words, lower-case: "muted foreground". */
+	swatchToken: (token: string) => string;
+	/** A colour swatch's name when its colour is a literal and has no speakable name; `position` is one-based: "Colour 2 of 5". */
+	swatchPosition: (position: number, count: number) => string;
+	/** The undo button's name, and the canvas' undo action. */
+	undo: string;
+	/** The canvas' clear action. */
+	clear: string;
+	/** Spoken on iOS after an undo removes a mark. */
+	undone: string;
+};
+
+/** SlideButton's spoken strings. */
+export type SlideButtonLabels = {
+	/** The custom action that confirms without sliding, offered to screen readers. */
+	confirm: string;
+	/** Spoken while the confirmation is pending (polite). */
+	working: string;
+	/** Spoken once the slide is confirmed (polite). */
+	confirmed: string;
+	/** Spoken when the action failed and the handle returned (assertive). */
+	failed: string;
 };
 
 /** Every component's labels, as the library ships them. */
@@ -775,7 +1059,22 @@ export type DelacourLabels = {
 	pageHeader: PageHeaderLabels;
 	pagination: PaginationLabels;
 	planner: PlannerLabels;
+	popover: PopoverLabels;
+	post: PostLabels;
+	progress: ProgressLabels;
+	progressButton: ProgressButtonLabels;
+	qrCode: QrCodeLabels;
+	questionnaire: QuestionnaireLabels;
+	rating: RatingLabels;
+	screen: ScreenLabels;
+	searchBar: SearchBarLabels;
+	sectionProgress: SectionProgressLabels;
+	sectionRail: SectionRailLabels;
+	select: SelectLabels;
+	selectionMode: SelectionModeLabels;
 	signature: SignatureLabels;
+	sketch: SketchLabels;
+	slideButton: SlideButtonLabels;
 };
 
 /** A component whose strings the catalog holds. */
@@ -788,6 +1087,34 @@ const plural = (count: number, one: string, other: string): string => (count ===
 
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
+const SKETCH_TOOL_NAMES = {
+	arrow: "Arrow",
+	diamond: "Diamond",
+	ellipse: "Ellipse",
+	eraser: "Eraser",
+	heart: "Heart",
+	line: "Line",
+	pen: "Pen",
+	rectangle: "Rectangle",
+	shape: "Shape",
+	star: "Star",
+	triangle: "Triangle",
+} as const;
+
+const MONTHS_LONG = [
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+] as const;
 
 /** Today's English. */
 export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
@@ -1153,6 +1480,153 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 			`${count === 0 ? "No entries" : `${count} ${plural(count, "entry", "entries")}`} in ${month}`,
 		more: (count) => `+${count} more`,
 	},
+
+	popover: {
+		close: "Close",
+	},
+
+	post: {
+		timeShort: (ago) => {
+			switch (ago.unit) {
+				case "now":
+					return "now";
+				case "minute":
+					return `${ago.count}m`;
+				case "hour":
+					return `${ago.count}h`;
+				case "day":
+					return `${ago.count}d`;
+				case "date":
+					return `${MONTHS[ago.month]} ${ago.day}${ago.year === undefined ? "" : `, ${ago.year}`}`;
+			}
+		},
+		timeSpoken: (ago) => {
+			switch (ago.unit) {
+				case "now":
+					return "just now";
+				case "minute":
+					return `${ago.count} ${plural(ago.count, "minute", "minutes")} ago`;
+				case "hour":
+					return `${ago.count} ${plural(ago.count, "hour", "hours")} ago`;
+				case "day":
+					return `${ago.count} ${plural(ago.count, "day", "days")} ago`;
+				case "date":
+					return `${MONTHS_LONG[ago.month]} ${ago.day}${ago.year === undefined ? "" : `, ${ago.year}`}`;
+			}
+		},
+		author: ({ name, handle, isVerified, spokenTime }) => {
+			const parts = [name];
+			if (handle) parts.push(handle);
+			if (isVerified) parts.push("verified");
+			if (spokenTime) parts.push(spokenTime);
+			return parts.join(", ");
+		},
+		community: (name, meta) => (meta === undefined ? name : `${name}, ${meta}`),
+		stat: (label, value) => `${label}, ${value}`,
+		score: (score) => `Score ${score}`,
+		upvote: "Upvote",
+		downvote: "Downvote",
+		voteAnnouncement: (vote, score) =>
+			`${vote === "up" ? "Upvoted" : vote === "down" ? "Downvoted" : "Vote removed"}, score ${score}`,
+		more: "more",
+		less: "less",
+		showMore: "Show more",
+		showLess: "Show less",
+		openPost: "Open post",
+		moreOptions: "More options",
+	},
+
+	progress: {
+		valueOf: (current, max) => `${current} of ${max}`,
+	},
+
+	progressButton: {
+		hint: "Press and hold to confirm",
+		completed: "Done",
+	},
+
+	qrCode: {
+		code: (shown) => `QR code: ${shown}`,
+		unavailable: "QR code unavailable",
+	},
+
+	questionnaire: {
+		back: "Back",
+		next: "Next",
+		submit: "Submit",
+		skip: "Skip",
+		skipQuestion: "Skip this question",
+		answerRequired: "Answer required",
+		yes: "Yes",
+		no: "No",
+		otherAnswer: "Other answer",
+		otherPlaceholder: "Please specify",
+		questionCount: (current, total) => `Question ${current} of ${total}`,
+		questionAnnouncement: (count, title) => `${count}: ${title}`,
+		scaleValue: (value, max) => `${value} out of ${max}`,
+		errorRequired: "Answer this question to continue.",
+		errorRequiredChoice: "Choose at least 1 option.",
+		errorMinSelected: (min) => `Choose at least ${min} ${plural(min, "option", "options")}.`,
+		errorMaxSelected: (max) => `Choose no more than ${max} ${plural(max, "option", "options")}.`,
+		errorMinLength: (min) => `Enter at least ${min} ${plural(min, "character", "characters")}.`,
+		errorMaxLength: (max) => `Use no more than ${max} ${plural(max, "character", "characters")}.`,
+		errorOutOfRange: (min, max) => `Choose a value from ${min} to ${max}.`,
+		errorOtherRequired: "Describe your other answer.",
+	},
+
+	rating: {
+		name: "Rating",
+		value: (formatted, count) => `${formatted} out of ${count}`,
+	},
+
+	screen: {
+		back: "Back",
+		loading: "Loading",
+		errorTitle: "Something went wrong",
+		errorAnnouncement: (title, message) => {
+			if (title === "") return message;
+			if (message === "") return title;
+			return /[.!?]$/.test(title) ? `${title} ${message}` : `${title}. ${message}`;
+		},
+	},
+
+	searchBar: {
+		cancel: "Cancel",
+		clear: "Clear search",
+		placeholder: "Search",
+		removeToken: (label) => `Remove ${label}`,
+	},
+
+	sectionProgress: {
+		pill: "Sections",
+		value: (title, percent) => (title === "" ? `${percent} percent` : `${title}, ${percent} percent`),
+	},
+
+	sectionRail: {
+		trigger: "Sections",
+	},
+
+	select: {
+		opensList: "Opens a list of options",
+		searchPlaceholder: "Search",
+		empty: "No results",
+		selectedCount: (count) => `${count} selected`,
+		limitReached: "Limit reached",
+		done: "Done",
+		option: (label, description) => (description ? `${label}, ${description}` : label),
+	},
+
+	selectionMode: {
+		title: "Select",
+		selectedCount: (count) => `${count} selected`,
+		progress: (count, total, title) => (title ? `${title} · ${count} of ${total}` : `${count} of ${total}`),
+		stopSelecting: "Stop selecting",
+		selectAll: "Select all",
+		deselectAll: "Deselect all",
+		itemHint: "Double-tap to select",
+		startSelecting: "Start selecting",
+	},
+
 	signature: {
 		name: "Signature",
 		empty: (name) => `${name} pad, empty`,
@@ -1167,6 +1641,25 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		alternative: "Can't sign? Type your name",
 		captured: "Signature captured",
 		cleared: "Signature cleared",
+	},
+
+	sketch: {
+		tool: (name) => SKETCH_TOOL_NAMES[name],
+		size: "Stroke width",
+		drawing: (markCount) =>
+			markCount === 0 ? "Drawing, empty" : `Drawing, ${markCount} ${plural(markCount, "mark", "marks")}`,
+		swatchToken: (token) => token.charAt(0).toUpperCase() + token.slice(1),
+		swatchPosition: (position, count) => `Colour ${position} of ${count}`,
+		undo: "Undo",
+		clear: "Clear",
+		undone: "Undone",
+	},
+
+	slideButton: {
+		confirm: "Confirm",
+		working: "Working",
+		confirmed: "Confirmed",
+		failed: "Failed. Slide to try again",
 	},
 };
 

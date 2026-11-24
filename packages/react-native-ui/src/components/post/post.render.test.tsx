@@ -499,6 +499,17 @@ describe("Post", () => {
 				expect(polite).toHaveBeenCalledWith("Downvoted, score 4");
 			});
 
+			test("a score refresh that lands before the cast vote is silent, and the vote landing is still heard", async () => {
+				setOS("ios");
+				const view = await renderWithProviders(tree({ score: 5 }));
+				await fireEvent(screen.getByRole("button", { name: "Upvote" }), "accessibilityTap");
+				await view.rerender(tree({ score: 6 }));
+				expect(withOptions).not.toHaveBeenCalled();
+				await view.rerender(tree({ score: 6, vote: "up" }));
+				expect(withOptions).toHaveBeenCalledTimes(1);
+				expect(withOptions).toHaveBeenCalledWith("Upvoted, score 6", expect.anything());
+			});
+
 			test("a score that changes without a press is silent", async () => {
 				setOS("ios");
 				const view = await renderWithProviders(tree({ score: 5 }));

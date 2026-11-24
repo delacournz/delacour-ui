@@ -70,25 +70,21 @@ export function PostVotes({
 	const text = typeof score === "number" ? formatCompactCount(score) : score;
 	const label = accessibilityLabel ?? resolveVotesLabel(score);
 	const speak = useAnnounce();
-	const pressedAt = useRef<number | null>(null);
-	const first = useRef(true);
+	const expected = useRef<{ vote: PostVote; at: number } | null>(null);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: only a changed vote or score speaks; speak and announce are read as rendered
+	// biome-ignore lint/correctness/useExhaustiveDependencies: only the vote the press asked for speaks; speak and announce are read as rendered
 	useEffect(() => {
-		if (first.current) {
-			first.current = false;
-			return;
-		}
-		const at = pressedAt.current;
-		if (at === null) return;
-		pressedAt.current = null;
-		if (Date.now() - at > VOTE_ANNOUNCE_WINDOW_MS) return;
+		const pending = expected.current;
+		if (pending === null || vote !== pending.vote) return;
+		expected.current = null;
+		if (Date.now() - pending.at > VOTE_ANNOUNCE_WINDOW_MS) return;
 		speak(resolveVoteAnnouncement(vote, score), { enabled: announce });
 	}, [vote, score]);
 
 	const cast = (pressed: "up" | "down"): void => {
-		pressedAt.current = Date.now();
-		onVote?.(resolveNextVote(vote, pressed));
+		const next = resolveNextVote(vote, pressed);
+		expected.current = { vote: next, at: Date.now() };
+		onVote?.(next);
 	};
 
 	return (

@@ -6,6 +6,7 @@ import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Signature } from "./signature";
 import type { SignatureHandle, SignatureValue } from "./signature.types";
+import { resetSignatureWarnings } from "./signature.warn";
 import { SIGNATURE_PAD_GESTURE_ID } from "./signature-pad";
 
 const TWO_STROKES: SignatureValue = {
@@ -356,5 +357,72 @@ describe("Signature.Pad accessibility", () => {
 		const pad = screen.getByLabelText("Signature pad, empty");
 		await fireEvent(pad, "accessibilityAction", { nativeEvent: { actionName: "custom" } });
 		expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe("Signature toolbar and typed-name route", () => {
+	test("the default toolbar holds Undo, Redo and Clear, with Redo between", async () => {
+		await renderWithProviders(<Signature defaultValue={TWO_STROKES} />);
+		const names = screen.getAllByRole("button").map((button) => button.props.accessibilityLabel);
+		expect(names).toEqual(["Undo", "Redo", "Clear signature"]);
+	});
+
+	test("Redo is disabled until an undo, then restores the stroke", async () => {
+		await renderWithProviders(<Signature defaultValue={TWO_STROKES} />);
+		expect(screen.getByRole("button", { name: "Redo" })).toBeDisabled();
+
+		await activate("Undo");
+		expect(screen.getByLabelText("Signature, drawn, 1 stroke")).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Redo" })).toBeEnabled();
+
+		await activate("Redo");
+		expect(screen.getByLabelText("Signature, drawn, 2 strokes")).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Redo" })).toBeDisabled();
+	});
+
+	test("the toolbar buttons and the alternative link read the labels override", async () => {
+		await renderWithProviders(
+			<Signature
+				defaultValue={TWO_STROKES}
+				labels={{ alternative: "Type instead", clear: "Wipe", redo: "Again", undo: "Back" }}
+				onRequestAlternative={() => undefined}
+			/>
+		);
+		expect(screen.getByRole("button", { name: "Type instead" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Back" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Again" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Wipe" })).toBeOnTheScreen();
+	});
+
+	describe("the missing-alternative development warning", () => {
+		function spyOnWarn(): jest.SpiedFunction<typeof console.warn> {
+			resetSignatureWarnings();
+			return jest.spyOn(console, "warn").mockImplementation(() => undefined);
+		}
+
+		test("fires once for an interactive pad without onRequestAlternative", async () => {
+			const warn = spyOnWarn();
+			try {
+				const view = await renderWithProviders(<Signature />);
+				await view.rerender(<Signature />);
+				await renderWithProviders(<Signature />);
+				expect(warn).toHaveBeenCalledTimes(1);
+				expect(String(warn.mock.calls[0]?.[0])).toContain("onRequestAlternative");
+			} finally {
+				warn.mockRestore();
+			}
+		});
+
+		test("stays quiet with onRequestAlternative, read-only or disabled", async () => {
+			const warn = spyOnWarn();
+			try {
+				await renderWithProviders(<Signature onRequestAlternative={() => undefined} />);
+				await renderWithProviders(<Signature isReadOnly />);
+				await renderWithProviders(<Signature isDisabled />);
+				expect(warn).not.toHaveBeenCalled();
+			} finally {
+				warn.mockRestore();
+			}
+		});
 	});
 });

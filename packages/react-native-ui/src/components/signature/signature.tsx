@@ -38,8 +38,10 @@ import {
 	type SignaturePadAction,
 	type SignatureSize,
 	type SignatureVariant,
+	shouldWarnMissingAlternative,
 	signatureVariants,
 } from "./signature.variants";
+import { warnSignatureMissingAlternativeOnce } from "./signature.warn";
 import { SignatureAlternative } from "./signature-alternative";
 import { SignatureClear } from "./signature-clear";
 import { SignaturePad } from "./signature-pad";
@@ -130,6 +132,14 @@ function SignatureRoot({
 	const labels = useLabels("signature", labelsProp);
 	const axes = resolveSignatureAxes({ field, own: { isDisabled, isInvalid, isReadOnly, size, variant } });
 	const isInteractive = !axes.isDisabled && !axes.isReadOnly;
+
+	const warnsMissingAlternative = shouldWarnMissingAlternative({
+		hasAlternative: onRequestAlternative !== undefined,
+		isInteractive,
+	});
+	useEffect(() => {
+		if (warnsMissingAlternative) warnSignatureMissingAlternativeOnce();
+	}, [warnsMissingAlternative]);
 
 	const [history, setHistory] = useState<SignatureHistory>(() =>
 		createHistory(value !== undefined ? value : defaultValue)
@@ -322,6 +332,7 @@ function SignatureRoot({
 						<SignatureToolbar>
 							<SignatureAlternative />
 							<SignatureUndo />
+							<SignatureRedo />
 							<SignatureClear />
 						</SignatureToolbar>
 					</>
@@ -335,9 +346,9 @@ function SignatureRoot({
  * A pad to sign with a finger or a stylus, handing back the strokes as data or
  * as an SVG.
  *
- * A bare `<Signature />` is the pad and a toolbar holding undo and clear. Write
- * the anatomy out to choose the actions — `Signature.Redo` joins them — or to
- * put the toolbar somewhere else.
+ * A bare `<Signature />` is the pad and a toolbar holding undo, redo and
+ * clear. Write the anatomy out to choose the actions, or to put the toolbar
+ * somewhere else.
  *
  * **Drawing is on the UI thread**, and the drawing is React state only between
  * strokes: `onValueChange` fires when a finger lifts and on undo, redo and clear,
@@ -351,7 +362,8 @@ function SignatureRoot({
  *
  * **Offer `onRequestAlternative`.** A signature is a path a finger has to trace,
  * and no accessibility label makes that possible for everyone; the prop renders
- * a "Can't sign? Type your name" link that hands off to a typed-name flow.
+ * a "Can't sign? Type your name" link that hands off to a typed-name flow. In
+ * development, an interactive signature without it warns once.
  *
  * `isInvalid` and `isDisabled` cascade from an enclosing `Field`, whose label
  * names the pad to a screen reader. The pad takes a touch the moment it lands,

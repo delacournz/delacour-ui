@@ -1,11 +1,13 @@
+import { Field } from "@delacour/react-native-ui/field";
+import { Input } from "@delacour/react-native-ui/input";
 import { Signature, type SignatureValue } from "@delacour/react-native-ui/signature";
-import type { ReactElement } from "react";
+import { type ReactElement, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
-		"A bare `<Signature />` is a pad, a line to sign on and a toolbar holding undo and clear. Draw with a finger — the stroke is smoothed into ink as it goes, and a tap leaves a dot.",
+		"A bare `<Signature />` is a pad, a line to sign on and a toolbar holding undo, redo and clear, with a link for anyone who would rather type their name. Draw with a finger — the stroke is smoothed into ink as it goes, and a tap leaves a dot.",
 	capture: { align: "stretch" },
 };
 
@@ -26,5 +28,23 @@ function sampleSignature(): SignatureValue {
 const SAMPLE = sampleSignature();
 
 export function Demo(): ReactElement {
-	return <Signature defaultValue={SAMPLE} guidelineLabel="Sign above the line" testID="signature-basic" />;
+	const [isTyping, setIsTyping] = useState(false);
+
+	if (isTyping) {
+		return (
+			<Field>
+				<Field.Label>Type your full name</Field.Label>
+				<Input autoCapitalize="words" autoComplete="name" placeholder="Full name" />
+			</Field>
+		);
+	}
+
+	return (
+		<Signature
+			defaultValue={SAMPLE}
+			guidelineLabel="Sign above the line"
+			onRequestAlternative={() => setIsTyping(true)}
+			testID="signature-basic"
+		/>
+	);
 }

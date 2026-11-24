@@ -3,7 +3,6 @@ import { Button, type ButtonProps } from "../button";
 import { Icon, type IconComponent } from "../icon";
 import { useSignaturePart } from "./signature.context";
 import {
-	SIGNATURE_ACTION_LABELS,
 	SIGNATURE_TOOLBAR_BUTTON_SIZE,
 	SIGNATURE_TOOLBAR_LABEL_SIZE,
 	type SignatureAction,
@@ -46,7 +45,7 @@ export function SignatureActionButton({
 
 	return (
 		<Button
-			accessibilityLabel={accessibilityLabel ?? SIGNATURE_ACTION_LABELS[action]}
+			accessibilityLabel={accessibilityLabel ?? signature.labels[action]}
 			isDisabled={isDisabled ?? (!signature.isInteractive || !isPossible)}
 			onPress={run}
 			size={resolvedSize}

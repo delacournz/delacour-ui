@@ -40,6 +40,7 @@ export function Demo(): ReactElement {
 				<Signature.Toolbar>
 					<Signature.Alternative testID="signature-alternative" />
 					<Signature.Undo />
+					<Signature.Redo />
 					<Signature.Clear />
 				</Signature.Toolbar>
 			</Signature>

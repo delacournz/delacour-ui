@@ -22,6 +22,7 @@ standalone SVG document, or as a PNG.
 | `signature-redo.tsx` | `Signature.Redo` |
 | `signature-clear.tsx` | `Signature.Clear` |
 | `signature-alternative.tsx` | `Signature.Alternative` — the typed-name link |
+| `signature.warn.ts` | The development warning for an interactive pad with no `onRequestAlternative`, once per process. Internal |
 | `signature.context.tsx` | `SignatureContext`, `useSignature()`, `useSignatureContext()`, `useSignaturePart()` |
 | `signature.types.ts` | `SignaturePoint`, `SignatureStroke`, `SignatureValue`, `SignatureHandle`, `SignatureExportOptions`, `SignaturePngOptions` |
 | `signature.stroke.ts` | Pure, no RN: point filter, smoother and path tracer (worklets), history reducer, bounds, re-fit, the export frame and PNG size, SVG export, JSON round trip |
@@ -105,6 +106,19 @@ standalone SVG document, or as a PNG.
   `foreground` against, so a token name falls back to `#000000` ink and no
   background. Black rather than the pad's colour: dark mode's near-white ink
   would export an invisible signature. Every attribute is escaped.
+- **The default toolbar is Alternative, Undo, Redo, Clear.** Redo is there so a sighted
+  user has what a screen reader's rotor already offers. Write the anatomy out to drop
+  or reorder one.
+- **Every string is a label.** The root takes `labels?: Partial<SignatureLabels>`,
+  resolved with `useLabels("signature", labels)` — the prop over `DelacourProvider`'s
+  `labels` over the English defaults — and puts the result on context. The pad's name
+  and hints, the action buttons' accessibility labels, the typed-name link and the
+  announcements all read `labels` from there, so one override reaches every part.
+- **A typed-name entry is the caller's, and development says so.** `SignatureValue`
+  is strokes only, so the library cannot hold a typed name itself; `onRequestAlternative`
+  hands off to a flow the caller owns. An interactive signature (not read-only, not
+  disabled) mounted without it warns once per process from an effect, gated by
+  `shouldWarnMissingAlternative`. Production never warns.
 - **The toolbar disables what would do nothing**, and an explicit `isDisabled`
   still wins. It renders nothing while read-only — an undo button beside a
   signature on a receipt, even a disabled one, says it could be changed.

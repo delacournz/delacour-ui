@@ -42,6 +42,7 @@ export type DelacourProviderProps = {
 	 * `useMinimumHitSlop`.
 	 */
 	isMaterialHitTarget?: boolean;
+	/**
 	 * The strings components speak or show on their own — an arrow's accessible name, a
 	 * "Page 3 of 12" — keyed by component, laid over the English defaults. A component's own
 	 * `labels` prop wins over these. Pass a stable object: a new one every render re-renders every

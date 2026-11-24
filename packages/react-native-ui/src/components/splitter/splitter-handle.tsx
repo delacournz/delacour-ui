@@ -1,4 +1,4 @@
-import { type ReactElement, useCallback, useMemo, useState } from "react";
+import { type ReactElement, useCallback, useMemo, useRef, useState } from "react";
 import { type AccessibilityActionEvent, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
@@ -114,10 +114,13 @@ export function SplitterHandle({
 	const isVertical = orientation === "vertical";
 
 	const speak = useAnnounce();
+	/** Read by `resetAndAnnounce`, which feeds the double tap: a new `labels` must not rebuild the gesture. */
+	const labelsRef = useRef(labels);
+	labelsRef.current = labels;
 	const resetAndAnnounce = useCallback(() => {
 		reset();
-		speak(resolveSplitterAnnouncement("reset", labels), { enabled: announce });
-	}, [announce, labels, reset, speak]);
+		speak(resolveSplitterAnnouncement("reset", labelsRef.current), { enabled: announce });
+	}, [announce, reset, speak]);
 
 	const start = useSharedValue<number[]>([]);
 	const delta = useSharedValue(0);

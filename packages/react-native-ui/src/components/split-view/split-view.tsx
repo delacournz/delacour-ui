@@ -89,6 +89,9 @@ function SplitViewRoot({
 	...props
 }: SplitViewProps): ReactElement {
 	const labels = useLabels("splitView", labelsProp);
+	/** Read by `cycle`, which feeds the drag row's gesture: a new `labels` must not rebuild that gesture. */
+	const labelsRef = useRef(labels);
+	labelsRef.current = labels;
 	// A literal array arrives fresh every render; keyed on its content so the
 	// heights, and the drag row's gesture, are rebuilt only when a stop changes.
 	const pointsKey = snapPointsProp.join(",");
@@ -189,10 +192,10 @@ function SplitViewRoot({
 			setCurrent(next);
 			if (!announce) return;
 			AccessibilityInfo.isScreenReaderEnabled().then((enabled) => {
-				if (enabled) AccessibilityInfo.announceForAccessibility(formatSnapPosition(next, snapCount, labels));
+				if (enabled) AccessibilityInfo.announceForAccessibility(formatSnapPosition(next, snapCount, labelsRef.current));
 			});
 		},
-		[haptic, labels, setCurrent, snapCount, snapIndex]
+		[haptic, setCurrent, snapCount, snapIndex]
 	);
 
 	const handleLayout = useCallback(

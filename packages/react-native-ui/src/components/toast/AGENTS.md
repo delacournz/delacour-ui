@@ -35,6 +35,7 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 
 ## Design
 
+- **The spoken strings are `labels`, not literals**: the close control's and the `dismiss` action's name (`dismiss`), a non-string `Toast.Action`'s name (`action`) and the one-sentence announcement (`announcement(title, description)`, called only with a description) come from `lib/labels` through `useLabels("toast", labels)` on the root, and ride `ToastContext` so `Toast.Close` and `Toast.Action` read them. Precedence is defaults <- `DelacourProvider` `labels` <- the root's prop; an `accessibilityLabel` still beats them. `ToastViewportItem` (so every imperative `toast()` call) reads `useLabels("toast")`: its labels come from the provider at the viewport, not from the call site. `resolveToastAnnouncement(parts, labels?)` takes the labels as a trailing, defaulted argument.
 - **`toast` is a function on a module-level store, not a hook.** A toast's most common caller is
   not a component — an API client, a mutation's `onError` — so `toast("Saved")` has to work with no
   provider and no hook. `toast-api.ts` holds the one store; `ToastViewport` and `useToast` read it

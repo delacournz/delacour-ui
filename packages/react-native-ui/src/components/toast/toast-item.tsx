@@ -13,6 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useAnnounce } from "../../hooks/use-announce";
+import { useLabels } from "../../hooks/use-labels";
 import { type AnnounceLiveRegion, resolveAnnounceRoute, resolveLiveRegion } from "../../lib/announce";
 import { OVERLAY_MOTION } from "../overlay/overlay.variants";
 import { playHaptic } from "../pressable";
@@ -198,9 +199,12 @@ export function ToastViewportItem({
 		};
 	}, [revision, duration, isPaused, isExiting, hide, createdAt, batchIndex]);
 
+	const labels = useLabels("toast");
 	const status = item.kind === "message" ? item.status : "default";
 	const announcement =
-		item.kind === "message" ? resolveToastAnnouncement({ title: item.title, description: item.description }) : null;
+		item.kind === "message"
+			? resolveToastAnnouncement({ title: item.title, description: item.description }, labels)
+			: null;
 	const haptic = resolveToastHaptic(status, item.haptic);
 
 	const speak = useAnnounce();

@@ -1,3 +1,4 @@
+export type { ToastLabels } from "../../lib/labels";
 export { Toast, type ToastProps } from "./toast";
 export {
 	type ToastContextValue,

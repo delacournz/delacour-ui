@@ -29,8 +29,8 @@ export function ToastAction({
 	onPress,
 	...props
 }: ToastActionProps): ReactElement {
-	const { hide, registerAction } = useToastPart("Toast.Action");
-	const label = accessibilityLabel ?? (typeof children === "string" ? children : "Action");
+	const { hide, labels, registerAction } = useToastPart("Toast.Action");
+	const label = accessibilityLabel ?? (typeof children === "string" ? children : labels.action);
 
 	const run = useCallback(() => {
 		if (disabled) return;

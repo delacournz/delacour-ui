@@ -16,17 +16,17 @@ export type ToastCloseProps = Omit<PressableProps, "asChild" | "busy" | "childre
  * reaches the same thing through the toast's `escape` and "Dismiss" actions.
  */
 export function ToastClose({
-	accessibilityLabel = "Dismiss",
+	accessibilityLabel,
 	className,
 	feedback = "fade",
 	hitSlop = 12,
 	onPress,
 	...props
 }: ToastCloseProps): ReactElement {
-	const { hide } = useToastPart("Toast.Close");
+	const { hide, labels } = useToastPart("Toast.Close");
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel}
+			accessibilityLabel={accessibilityLabel ?? labels.dismiss}
 			accessibilityRole="button"
 			className={toastVariants().close({ className })}
 			feedback={feedback}

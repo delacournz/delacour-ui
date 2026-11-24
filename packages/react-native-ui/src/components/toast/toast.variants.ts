@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type ToastLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { ALERT_FOREGROUND_TOKEN, ALERT_STATUSES, type AlertStatus } from "../alert/alert.variants";
 import type { HapticFeedback } from "../pressable/pressable";
@@ -299,8 +300,11 @@ export function resolveToastHaptic(status: Status, haptic: HapticFeedback | fals
 }
 
 /** What a screen reader says as a toast appears: the title, then the description. */
-export function resolveToastAnnouncement({ title, description }: { title: string; description?: string }): string {
-	return description ? `${title}. ${description}` : title;
+export function resolveToastAnnouncement(
+	{ title, description }: { title: string; description?: string },
+	labels: Pick<ToastLabels, "announcement"> = DELACOUR_DEFAULT_LABELS.toast
+): string {
+	return description ? labels.announcement(title, description) : title;
 }
 
 /** Whether the announcement cuts in over whatever is being read — a warning or a failure does. */

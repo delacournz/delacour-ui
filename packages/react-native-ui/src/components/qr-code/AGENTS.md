@@ -104,8 +104,15 @@ tests, in the item's `tests` — copied only by `delacour add qr-code --tests`.
 
 - **`accessibilityRole="image"`** on the tile. It is not a control; a screen reader should not offer
   to activate it. An author who wants tap-to-copy wraps it in `Pressable`.
-- **The label** is the caller's, else `"QR code: " + value` cut at 60 characters with an ellipsis,
-  so a 500-character URL is not read character by character.
+- **The label** is the caller's, else `labels.code` of the value cut at 60 characters with an
+  ellipsis (the cut is in `resolveQrLabel`, so a 500-character URL is not read character by
+  character and a translation never sees the long value).
+- **The spoken strings are the `labels` prop, not literals**: `code(shown)` and `unavailable`
+  come from `lib/labels` through `useLabels("qrCode", labels)`, resolved once in the root.
+  Precedence is `accessibilityLabel` (for a code that encodes) ← the root's `labels` ←
+  `DelacourProvider` `labels` ← English. A code that failed to encode always reads
+  `labels.unavailable`. `resolveQrLabel` takes labels last; `QR_UNAVAILABLE_LABEL` is a
+  deprecated alias of the English default. Dev-warning text stays English.
 - **`isDecorative`** hides the code entirely, for when its value is printed beside it.
 - **A value with no label and not decorative warns in development**: a URL means something to a
   sighted user and nothing to a screen reader unless the caller says what it is for.

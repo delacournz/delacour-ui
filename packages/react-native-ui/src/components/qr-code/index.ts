@@ -1,3 +1,4 @@
+export type { QrCodeLabels } from "../../lib/labels";
 export { QRCode } from "./qr-code";
 export {
 	QR_ERROR_CORRECTIONS,

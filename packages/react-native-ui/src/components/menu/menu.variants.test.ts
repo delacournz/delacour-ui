@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	MENU_DEFAULT_MIN_WIDTH,
@@ -7,6 +8,7 @@ import {
 	MENU_ENTER_SCALE,
 	MENU_MOTION,
 	MENU_PRESS,
+	MENU_TRIGGER_HINT,
 	type MenuPlacementInput,
 	menuVariants,
 	resolveCloseOnSelect,
@@ -413,5 +415,13 @@ describe("menu colour tokens", () => {
 	test("the reader found tokens at all", () => {
 		expect(colorTokens(menuVariants().background())).toContain("popover");
 		expect(colorTokens(menuVariants().itemDescription())).toContain("muted-foreground");
+	});
+});
+
+describe("menu labels", () => {
+	test("MENU_TRIGGER_HINT is the catalog default, in English", () => {
+		expect(MENU_TRIGGER_HINT).toBe(DELACOUR_DEFAULT_LABELS.menu.triggerHint);
+		expect(MENU_TRIGGER_HINT).toBe("Opens a menu");
+		expect(DELACOUR_DEFAULT_LABELS.menu.close).toBe("Close menu");
 	});
 });

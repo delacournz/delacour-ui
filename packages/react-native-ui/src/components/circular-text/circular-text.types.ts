@@ -46,7 +46,7 @@ export type CircularTextProps = Omit<ViewProps, "children"> & {
 	isPaused?: boolean;
 	/** The pause a `loop` starts with when `isPaused` is not given. Default `false`. */
 	defaultPaused?: boolean;
-	/** Called when the user pauses or resumes — through `isPaused`'s control or the screen reader's pause action. */
+	/** Called when the user pauses or resumes — through `isPaused`'s control or the pause and resume accessibility actions. */
 	onPausedChange?: (isPaused: boolean) => void;
 	/** Drawn in the middle, upright and still while the ring turns. Stays independently accessible. */
 	centerContent?: ReactNode;

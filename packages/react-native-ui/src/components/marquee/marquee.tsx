@@ -41,7 +41,7 @@ export type MarqueeProps = Omit<ViewProps, "children"> & {
 	isPaused?: boolean;
 	/** Whether the strip starts paused when `isPaused` is not set. Default `false`. */
 	defaultPaused?: boolean;
-	/** Called when the screen reader's pause or resume action changes it. Only offered when `accessibilityLabel` is set. */
+	/** Called when the pause or resume accessibility action changes it — offered only when `accessibilityLabel` is set, for Switch Control and Voice Control. */
 	onPausedChange?: (isPaused: boolean) => void;
 	className?: string;
 	/** Classes for the row (or column) wrapping each copy of the content. */

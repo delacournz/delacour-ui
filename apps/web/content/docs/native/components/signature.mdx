@@ -31,7 +31,10 @@ export default function Example() {
 ## Offer another way to sign
 
 Not everyone can trace a path with a finger, so pass `onRequestAlternative` on every pad: it adds a
-"Can't sign? Type your name" link that hands off to a flow you own.
+"Can't sign? Type your name" link that hands off to a flow you own. A screen reader gets the same
+route on the pad itself. An empty pad is announced as a button whose double tap opens the route, and
+the pad lists a "Type your name instead" action whether or not it holds a drawing. In development, a
+pad that takes input without `onRequestAlternative` logs a warning once.
 
 <Preview id="signature/alternative" />
 
@@ -50,7 +53,9 @@ isTyping ? (
 
 ## Choosing the actions
 
-Write the anatomy out to pick the toolbar's buttons; each is disabled while it would do nothing.
+A bare `<Signature />` shows the typed-name link (when `onRequestAlternative` is passed), Undo,
+Redo and Clear. Write the anatomy out to pick the toolbar's buttons; each is disabled while it would
+do nothing.
 
 <Preview id="signature/with-toolbar" />
 
@@ -69,6 +74,8 @@ Write the anatomy out to pick the toolbar's buttons; each is disabled while it w
 ## In a form
 
 A `Field` cascades `isInvalid` and `isDisabled`, and its label names the pad to a screen reader.
+React Native has no `aria-invalid`, so the field's error and description are read in the pad's
+hint, and "required" ends its name.
 
 <Preview id="signature/in-field" />
 
@@ -196,7 +203,8 @@ so no downstroke is lost. Leave room around it to scroll from.
       default: '"light"',
       description: "Played as each stroke begins; a clear plays a selection tick.",
     },
-    onRequestAlternative: { type: "() => void", description: "Offers a typed-name route and renders Signature.Alternative." },
+    onRequestAlternative: { type: "() => void", description: "Offers a typed-name route: renders Signature.Alternative, adds the pad's type action, and makes an empty pad's double tap open it." },
+    labels: { type: "Partial<SignatureLabels>", description: "Every string the signature speaks or shows. Laid over DelacourProvider's labels, which sit over the English defaults." },
     ref: { type: "Ref<SignatureHandle>" },
     padClassName: { type: "string", description: "Classes for the default pad, when no children are given." },
     children: { type: "ReactNode" },

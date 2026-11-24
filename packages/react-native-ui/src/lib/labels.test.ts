@@ -212,6 +212,67 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.noneSelected).toBe("No date and time selected");
 	});
 
+	test("drawer is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.drawer).toEqual({ close: "Close" });
+	});
+
+	test("fab is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.fab).toEqual({ close: "Close" });
+	});
+
+	test("feedback is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.feedback).toEqual({
+			submit: "Send",
+			cancel: "Cancel",
+			sent: "Feedback sent",
+			failed: "Couldn't send feedback",
+		});
+	});
+
+	test("flipCard is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.flipCard).toEqual({
+			action: "Flip card",
+			front: "Front of card",
+			back: "Back of card",
+			showsBack: "Shows the back",
+			showsFront: "Shows the front",
+		});
+	});
+
+	test("flow is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.flow;
+		expect(labels.zoomIn).toBe("Zoom in");
+		expect(labels.zoomOut).toBe("Zoom out");
+		expect(labels.fit).toBe("Fit to view");
+		expect(labels.lock).toBe("Lock canvas");
+		expect(labels.select).toBe("Select");
+		expect([labels.moveUp, labels.moveDown, labels.moveLeft, labels.moveRight]).toEqual([
+			"Move up",
+			"Move down",
+			"Move left",
+			"Move right",
+		]);
+		expect(labels.delete).toBe("Delete");
+		expect(labels.connect("out", "Merge", "first input")).toBe("Connect out to Merge, first input");
+		expect(labels.connect(null, "Merge", null)).toBe("Connect to Merge");
+	});
+
+	test("imageViewer is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.imageViewer;
+		expect(labels.open).toBe("Opens full screen image viewer");
+		expect(labels.close).toBe("Close image viewer");
+		expect([labels.nextImage, labels.previousImage, labels.zoomIn, labels.zoomOut, labels.resetZoom]).toEqual([
+			"Next image",
+			"Previous image",
+			"Zoom in",
+			"Zoom out",
+			"Reset zoom",
+		]);
+		expect(labels.position(2, 5)).toBe("2 of 5");
+		expect(labels.counter(2, 5)).toBe("2 / 5");
+		expect(labels.loadFailed).toBe("This image could not be loaded");
+	});
+
 	test("kpi is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.kpi;
 		expect(labels.up).toBe("Up");
@@ -221,6 +282,27 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.noTrendData).toBe("No trend data");
 		expect(labels.sparkline(12, "4", "9")).toBe("Trend over 12 points, from 4 to 9");
 		expect(labels.loading).toBe("Loading");
+	});
+
+	test("leaderboard is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.leaderboard;
+		expect(labels.empty).toBe("No entries yet");
+		expect(labels.rank(2)).toBe("Rank 2");
+		expect(labels.tied).toBe("tied");
+		expect(labels.moved("up", 3)).toBe("up 3 places");
+		expect(labels.moved("down", 1)).toBe("down 1 place");
+		expect(labels.noChange).toBe("no change");
+	});
+
+	test("map is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.map).toEqual({
+			name: "Map",
+			zoomIn: "Zoom in",
+			zoomOut: "Zoom out",
+			pointNorth: "Point north",
+			recenter: "Recenter map",
+			showMyLocation: "Show my location",
+		});
 	});
 
 	test("motion is today's English", () => {

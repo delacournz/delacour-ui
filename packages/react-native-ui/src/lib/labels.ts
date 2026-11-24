@@ -393,6 +393,97 @@ export type DialogLabels = {
 	close: string;
 };
 
+/** Drawer's spoken strings. */
+export type DrawerLabels = {
+	/** The header's ✕ and a bare `Drawer.Close`: its accessible name. An `accessibilityLabel` prop wins. */
+	close: string;
+};
+
+/** Fab's spoken strings. */
+export type FabLabels = {
+	/** The scrim behind an open `Fab.Group`, a full-screen button that closes it. */
+	close: string;
+};
+
+/** Feedback's visible and spoken strings. */
+export type FeedbackLabels = {
+	/** `Feedback.Submit`'s text when it has no children. */
+	submit: string;
+	/** `Feedback.Cancel`'s text when it has no children. */
+	cancel: string;
+	/** Announced when a promise `onSubmit` resolves. `Feedback.Submit`'s `sentMessage` wins. */
+	sent: string;
+	/** Announced, assertively, when a promise `onSubmit` rejects. `Feedback.Submit`'s `failedMessage` wins. */
+	failed: string;
+};
+
+/** FlipCard's spoken strings. */
+export type FlipCardLabels = {
+	/** The turn's accessible name: the flip button, a swipe card's `activate` action, an icon-only `FlipCard.Trigger`. */
+	action: string;
+	/** Announced once the card settles on its front. The root's `faceLabels` wins. */
+	front: string;
+	/** Announced once the card settles on its back. The root's `faceLabels` wins. */
+	back: string;
+	/** The flip control's hint while the front shows. */
+	showsBack: string;
+	/** The flip control's hint while the back shows. */
+	showsFront: string;
+};
+
+/** Flow's spoken strings. */
+export type FlowLabels = {
+	/** The zoom-in control's accessible name. */
+	zoomIn: string;
+	/** The zoom-out control's accessible name. */
+	zoomOut: string;
+	/** The fit-to-view control's accessible name. */
+	fit: string;
+	/** The lock toggle's accessible name. It reports its state as selected. */
+	lock: string;
+	/** A node's assistive action that activates it, offered when it has an `onPress`. */
+	select: string;
+	/** A draggable node's assistive move up. */
+	moveUp: string;
+	/** A draggable node's assistive move down. */
+	moveDown: string;
+	/** A draggable node's assistive move left. */
+	moveLeft: string;
+	/** A draggable node's assistive move right. */
+	moveRight: string;
+	/** A node's assistive action that deletes it, offered when it has an `onDelete`. */
+	delete: string;
+	/**
+	 * One connect action: this node's handle (`from`, null when unnamed) to another node (`target`)
+	 * and its handle (`into`, null when unnamed or the only one): "Connect out to Merge, first input".
+	 */
+	connect: (from: string | null, target: string, into: string | null) => string;
+};
+
+/** ImageViewer's visible and spoken strings. */
+export type ImageViewerLabels = {
+	/** The Trigger's accessible hint, read after its alt text. Its `accessibilityHint` wins. */
+	open: string;
+	/** The close button's accessible name. Its `accessibilityLabel` wins. */
+	close: string;
+	/** The pager's `increment` action. */
+	nextImage: string;
+	/** The pager's `decrement` action. */
+	previousImage: string;
+	/** The pager's `zoomIn` action. */
+	zoomIn: string;
+	/** The pager's `zoomOut` action. */
+	zoomOut: string;
+	/** The pager's `resetZoom` action. */
+	resetZoom: string;
+	/** The pager's spoken value, "2 of 5". One-based. */
+	position: (current: number, count: number) => string;
+	/** The chrome's visible counter, "2 / 5". One-based; shown for a gallery of more than one. */
+	counter: (current: number, count: number) => string;
+	/** Visible where an image failed to load and nothing sits beneath it. */
+	loadFailed: string;
+};
+
 /** Kpi's spoken strings. */
 export type KpiLabels = {
 	up: string;
@@ -407,6 +498,36 @@ export type KpiLabels = {
 	noTrendData: string;
 	/** The value's placeholder while it loads. */
 	loading: string;
+};
+
+/** Leaderboard's visible and spoken strings. */
+export type LeaderboardLabels = {
+	/** Shown when `data` is empty. The root's `emptyText` wins. */
+	empty: string;
+	/** A place's rank, first in its spoken sentence: "Rank 2". */
+	rank: (rank: number) => string;
+	/** Said after the rank when the place shares its value with another entry. */
+	tied: string;
+	/** A climb or a fall: "up 3 places", "down 1 place". */
+	moved: (direction: "up" | "down", places: number) => string;
+	/** An entry whose `change` is zero. */
+	noChange: string;
+};
+
+/** Map's spoken strings: the map's name and `Map.Controls`' button names. */
+export type MapLabels = {
+	/** The native map's accessible name. The root's `accessibilityLabel` wins. */
+	name: string;
+	/** The zoom-in button's accessible name. */
+	zoomIn: string;
+	/** The zoom-out button's accessible name. */
+	zoomOut: string;
+	/** The compass button's accessible name; it turns the map back to north-up. */
+	pointNorth: string;
+	/** The recenter button's accessible name; it returns to the opening view. */
+	recenter: string;
+	/** The locate button's accessible name; it flies to the device's location. */
+	showMyLocation: string;
 };
 
 /** What a looping animation's pause control is called — every looping component shares them. */
@@ -459,7 +580,15 @@ export type DelacourLabels = {
 	datePicker: DatePickerLabels;
 	dateTimePicker: DateTimePickerLabels;
 	dialog: DialogLabels;
+	drawer: DrawerLabels;
+	fab: FabLabels;
+	feedback: FeedbackLabels;
+	flipCard: FlipCardLabels;
+	flow: FlowLabels;
+	imageViewer: ImageViewerLabels;
 	kpi: KpiLabels;
+	leaderboard: LeaderboardLabels;
+	map: MapLabels;
 	motion: MotionLabels;
 	pagination: PaginationLabels;
 };
@@ -665,6 +794,50 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 	dialog: {
 		close: "Close",
 	},
+	drawer: {
+		close: "Close",
+	},
+	fab: {
+		close: "Close",
+	},
+	feedback: {
+		submit: "Send",
+		cancel: "Cancel",
+		sent: "Feedback sent",
+		failed: "Couldn't send feedback",
+	},
+	flipCard: {
+		action: "Flip card",
+		front: "Front of card",
+		back: "Back of card",
+		showsBack: "Shows the back",
+		showsFront: "Shows the front",
+	},
+	flow: {
+		zoomIn: "Zoom in",
+		zoomOut: "Zoom out",
+		fit: "Fit to view",
+		lock: "Lock canvas",
+		select: "Select",
+		moveUp: "Move up",
+		moveDown: "Move down",
+		moveLeft: "Move left",
+		moveRight: "Move right",
+		delete: "Delete",
+		connect: (from, target, into) => `Connect${from ? ` ${from}` : ""} to ${target}${into ? `, ${into}` : ""}`,
+	},
+	imageViewer: {
+		open: "Opens full screen image viewer",
+		close: "Close image viewer",
+		nextImage: "Next image",
+		previousImage: "Previous image",
+		zoomIn: "Zoom in",
+		zoomOut: "Zoom out",
+		resetZoom: "Reset zoom",
+		position: (current, count) => `${current} of ${count}`,
+		counter: (current, count) => `${current} / ${count}`,
+		loadFailed: "This image could not be loaded",
+	},
 	kpi: {
 		up: "Up",
 		down: "Down",
@@ -673,6 +846,21 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		sparkline: (points, first, last) => `Trend over ${points} points, from ${first} to ${last}`,
 		noTrendData: "No trend data",
 		loading: "Loading",
+	},
+	leaderboard: {
+		empty: "No entries yet",
+		rank: (rank) => `Rank ${rank}`,
+		tied: "tied",
+		moved: (direction, places) => `${direction} ${places} ${plural(places, "place", "places")}`,
+		noChange: "no change",
+	},
+	map: {
+		name: "Map",
+		zoomIn: "Zoom in",
+		zoomOut: "Zoom out",
+		pointNorth: "Point north",
+		recenter: "Recenter map",
+		showMyLocation: "Show my location",
 	},
 	motion: {
 		pause: "Pause animation",

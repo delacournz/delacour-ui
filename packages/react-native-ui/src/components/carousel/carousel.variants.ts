@@ -205,17 +205,21 @@ export function resolveAutoplayNext(index: number, count: number, loop: boolean)
  * Whether autoplay runs at all.
  *
  * Moving content the user did not ask for is held still under reduce motion and
- * while a screen reader is on (WCAG 2.2.2), as well as when the carousel is
+ * while a screen reader is on or the user paused it (WCAG 2.2.2), as well as when the carousel is
  * disabled or has nothing to move to.
  */
 export function resolveAutoplayEnabled(state: {
 	autoplay: boolean;
 	isCalm: boolean;
 	isScreenReader: boolean;
+	/** The user's persistent pause — unlike a touch, it can be undone. */
+	isPaused: boolean;
 	isDisabled: boolean;
 	count: number;
 }): boolean {
-	return state.autoplay && !state.isCalm && !state.isScreenReader && !state.isDisabled && state.count > 1;
+	return (
+		state.autoplay && !state.isCalm && !state.isScreenReader && !state.isPaused && !state.isDisabled && state.count > 1
+	);
 }
 
 /** What the adjustable root reads out: "2 of 5". Empty with nothing to count. */
@@ -226,6 +230,45 @@ export function resolveCarouselA11yValue(
 ): string {
 	if (count <= 0) return "";
 	return labels.position(index + 1, count);
+}
+
+/** The two actions an assistive swipe on an `adjustable` maps to. */
+export const CAROUSEL_POSITION_ACTIONS = [{ name: "increment" }, { name: "decrement" }];
+
+/**
+ * The accessibility props of the small position element that is the carousel's one adjustable stop.
+ *
+ * The viewport wraps the slides, so it must NOT be `accessible`: a merged element reads every
+ * slide's text as its own name and hides any control inside a slide. This element carries the role,
+ * the carousel's label, "2 of 5" and the actions instead, and wraps nothing. With no label given it
+ * has no name, because a fallback would be a hard-coded string. Autoplay's pause / play actions ride
+ * on it too, after increment and decrement.
+ */
+export function resolveCarouselPositionAccessibility(state: {
+	accessibilityLabel: string | undefined;
+	/** Autoplay's pause / play actions, offered beside increment and decrement while it runs. */
+	autoplayActions?: ReadonlyArray<{ name: string; label: string }>;
+	count: number;
+	index: number;
+	isDisabled: boolean;
+	labels: CarouselLabels;
+}): {
+	accessible: true;
+	accessibilityActions: ReadonlyArray<{ name: string; label?: string }> | undefined;
+	accessibilityLabel: string | undefined;
+	accessibilityRole: "adjustable";
+	accessibilityState: { disabled: boolean };
+	accessibilityValue: { text: string };
+} {
+	return {
+		accessible: true,
+		accessibilityActions:
+			state.count > 1 ? [...CAROUSEL_POSITION_ACTIONS, ...(state.autoplayActions ?? [])] : undefined,
+		accessibilityLabel: state.accessibilityLabel,
+		accessibilityRole: "adjustable",
+		accessibilityState: { disabled: state.isDisabled },
+		accessibilityValue: { text: resolveCarouselA11yValue(state.index, state.count, state.labels) },
+	};
 }
 
 /** Whether Previous and Next have anywhere to go. */

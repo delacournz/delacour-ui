@@ -9,6 +9,7 @@ import {
 	resolveMessageAccessibilityActions,
 	resolveMessageAccessibilityLabel,
 	resolveMessageChildSlot,
+	resolveMessageHiddenProps,
 	resolveMessageLabelParts,
 	resolveMessageStatusLabel,
 	shouldAnnounceStatusChange,
@@ -303,5 +304,21 @@ describe("extractMessageText", () => {
 
 	test("fragments are walked", () => {
 		expect(extractMessageText(createElement(Fragment, null, "a", "b"))).toBe("ab");
+	});
+});
+
+describe("resolveMessageHiddenProps", () => {
+	test("a merged message hides the drawn control from assistive technology", () => {
+		expect(resolveMessageHiddenProps(false)).toEqual({
+			accessibilityElementsHidden: true,
+			importantForAccessibility: "no-hide-descendants",
+		});
+	});
+
+	test("a compound message leaves the control reachable", () => {
+		expect(resolveMessageHiddenProps(true)).toEqual({
+			accessibilityElementsHidden: false,
+			importantForAccessibility: "auto",
+		});
 	});
 });

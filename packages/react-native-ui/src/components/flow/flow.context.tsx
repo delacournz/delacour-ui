@@ -1,6 +1,7 @@
 import { createContext, type ReactElement, type ReactNode, useContext } from "react";
 import type { PanGesture, PinchGesture } from "react-native-gesture-handler";
 import type { SharedValue } from "react-native-reanimated";
+import type { LoopingMotionHold } from "../../lib/looping-motion";
 import type { FlowHandleRef } from "./flow.variants";
 import type { FlowConnection, FlowPoint, FlowRect, FlowSide, FlowSize, FlowViewport } from "./flow-geometry";
 import type { FlowRegistry, FlowRegistryEntry, FlowSnapshotEntry } from "./flow-registry";
@@ -88,7 +89,8 @@ export function useFlow(): UseFlowResult {
 export type FlowCanvasLayerValue = {
 	/** Every colour token the canvas's children name, resolved against the app's theme. */
 	colors: Readonly<Record<string, string | undefined>>;
-	isCalm: boolean;
+	/** Why the marching edges hold, or `none`. One subscription at the root, not one per edge. */
+	hold: LoopingMotionHold;
 };
 
 const FlowCanvasLayerContext = createContext<FlowCanvasLayerValue | null>(null);

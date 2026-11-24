@@ -212,7 +212,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 61,
+		fileCount: 63,
 		groups: [
 			{
 				name: "context-menu",
@@ -399,6 +399,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
 				],
 			},
 		],
@@ -2701,7 +2717,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 121,
+		fileCount: 122,
 		groups: [
 			{
 				name: "tag-input",
@@ -2947,6 +2963,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -4149,7 +4173,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 55,
 		groups: [
 			{
 				name: "chip",
@@ -4286,6 +4310,14 @@ export const install = {
 				],
 			},
 			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -4328,7 +4360,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 179,
+		fileCount: 180,
 		groups: [
 			{
 				name: "combobox",
@@ -4728,6 +4760,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -5237,7 +5277,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 72,
+		fileCount: 77,
 		groups: [
 			{
 				name: "flow",
@@ -5429,6 +5469,22 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
+				name: "looping-motion",
+				title: "loopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/looping-motion.ts", target: "src/lib/looping-motion.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -5442,6 +5498,30 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
+				name: "use-looping-motion",
+				title: "useLoopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-looping-motion.ts", target: "src/hooks/use-looping-motion.ts" },
 				],
 			},
 		],
@@ -5555,7 +5635,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 109,
+		fileCount: 110,
 		groups: [
 			{
 				name: "kpi",
@@ -5763,6 +5843,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -9282,7 +9370,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 124,
+		fileCount: 125,
 		groups: [
 			{
 				name: "search-bar",
@@ -9555,6 +9643,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -10202,7 +10298,7 @@ export const install = {
 		expo: ["react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 27,
+		fileCount: 32,
 		groups: [
 			{
 				name: "text-animation",
@@ -10278,6 +10374,46 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
+				name: "looping-motion",
+				title: "loopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/looping-motion.ts", target: "src/lib/looping-motion.ts" },
+				],
+			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
+				name: "use-looping-motion",
+				title: "useLoopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-looping-motion.ts", target: "src/hooks/use-looping-motion.ts" },
 				],
 			},
 		],
@@ -10431,7 +10567,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 38,
+		fileCount: 39,
 		groups: [
 			{
 				name: "badge",
@@ -10536,6 +10672,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -11553,7 +11697,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 115,
+		fileCount: 116,
 		groups: [
 			{
 				name: "support",
@@ -11771,6 +11915,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -12360,7 +12512,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-reanimated", "react-native-svg", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 22,
+		fileCount: 27,
 		groups: [
 			{
 				name: "marquee",
@@ -12409,6 +12561,30 @@ export const install = {
 				],
 			},
 			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
+				name: "looping-motion",
+				title: "loopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/looping-motion.ts", target: "src/lib/looping-motion.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -12422,6 +12598,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
+				name: "use-looping-motion",
+				title: "useLoopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-looping-motion.ts", target: "src/hooks/use-looping-motion.ts" },
 				],
 			},
 			{
@@ -12955,7 +13147,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 62,
 		groups: [
 			{
 				name: "animated-badge",
@@ -13093,6 +13285,14 @@ export const install = {
 				],
 			},
 			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -13117,6 +13317,22 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
+				name: "looping-motion",
+				title: "loopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/looping-motion.ts", target: "src/lib/looping-motion.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -13132,6 +13348,30 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
 				],
 			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
+				name: "use-looping-motion",
+				title: "useLoopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-looping-motion.ts", target: "src/hooks/use-looping-motion.ts" },
+				],
+			},
 		],
 	},
 	"collapsible": {
@@ -13143,7 +13383,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 39,
+		fileCount: 41,
 		groups: [
 			{
 				name: "collapsible",
@@ -13268,6 +13508,22 @@ export const install = {
 				],
 			},
 			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -13286,7 +13542,7 @@ export const install = {
 		expo: ["expo-linear-gradient", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 58,
 		groups: [
 			{
 				name: "post",
@@ -13298,6 +13554,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/post/post-action.tsx", target: "src/components/ui/post/post-action.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-author.tsx", target: "src/components/ui/post/post-author.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-body.tsx", target: "src/components/ui/post/post-body.tsx" },
+					{ source: "packages/react-native-ui/src/components/post/post-card-action.tsx", target: "src/components/ui/post/post-card-action.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-community.tsx", target: "src/components/ui/post/post-community.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-footer.tsx", target: "src/components/ui/post/post-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-header.tsx", target: "src/components/ui/post/post-header.tsx" },
@@ -13441,6 +13698,14 @@ export const install = {
 				],
 			},
 			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
+				],
+			},
+			{
 				name: "announce",
 				title: "announce",
 				kind: "shared",
@@ -13467,7 +13732,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 47,
+		fileCount: 48,
 		groups: [
 			{
 				name: "message",
@@ -13580,6 +13845,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -13842,7 +14115,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-reanimated", "react-native-svg", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 22,
+		fileCount: 27,
 		groups: [
 			{
 				name: "circular-text",
@@ -13900,6 +14173,22 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
+				name: "looping-motion",
+				title: "loopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/looping-motion.ts", target: "src/lib/looping-motion.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -13913,6 +14202,30 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
+				name: "use-looping-motion",
+				title: "useLoopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-looping-motion.ts", target: "src/hooks/use-looping-motion.ts" },
 				],
 			},
 		],
@@ -19579,7 +19892,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 71,
+		fileCount: 73,
 		groups: [
 			{
 				name: "carousel",
@@ -19811,6 +20124,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
+				name: "looping-motion",
+				title: "loopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/looping-motion.ts", target: "src/lib/looping-motion.ts" },
+				],
+			},
+			{
+				name: "use-looping-motion",
+				title: "useLoopingMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-looping-motion.ts", target: "src/hooks/use-looping-motion.ts" },
 				],
 			},
 		],

@@ -1,4 +1,4 @@
-import { calmMotion } from "../../lib/calm-motion";
+import type { LoopingMotionHold } from "../../lib/looping-motion";
 import { BADGE_FOREGROUND_TOKEN, type BadgeColor, type BadgeSize, badgeVariants } from "../badge/badge.variants";
 
 /** What the badge says. `loading` draws a spinner and marks the badge busy. */
@@ -186,19 +186,23 @@ export type AnimatedBadgeMotion = {
  * Which of the badge's motions run.
  *
  * Reduce motion cuts everything over: the content swaps, the width jumps, the
- * badge does not slide, and nothing pulses. The app's `isMotionCalm` — for an
- * E2E runner waiting on the screen to settle — stills only the pulse, the one
- * motion that never ends; a roll and a spring settle on their own.
+ * badge does not slide, and nothing pulses. The pulse is the one motion that
+ * never ends, so it alone answers the looping-motion `hold` — calm motion, a
+ * screen reader or the user's pause — while a roll and a spring settle on their
+ * own and ignore it. A held pulse is not frozen mid-swell: it rests at the
+ * glyph's base scale and opacity, because a half-swollen glyph is no state worth
+ * keeping.
  */
 export function resolveAnimatedBadgeMotion({
 	isReduceMotion,
-	isMotionCalm,
+	hold,
 	pulse,
 	status,
 	animateLayout,
 }: {
 	isReduceMotion: boolean;
-	isMotionCalm: boolean;
+	/** Why the pulse is held, from `useLoopingMotion`; `none` lets it run. */
+	hold: LoopingMotionHold;
 	pulse?: boolean;
 	status: AnimatedBadgeStatus;
 	animateLayout: boolean;
@@ -208,6 +212,6 @@ export function resolveAnimatedBadgeMotion({
 		roll: !isReduceMotion,
 		resize: isReduceMotion ? "instant" : "spring",
 		layout: animateLayout && !isReduceMotion,
-		pulse: wantsPulse && !calmMotion({ isReduceMotion, isMotionCalm }),
+		pulse: wantsPulse && !isReduceMotion && hold === "none",
 	};
 }

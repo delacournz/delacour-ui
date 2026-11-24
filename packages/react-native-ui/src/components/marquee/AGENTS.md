@@ -31,7 +31,19 @@ Display names: `DelacourUI.Marquee`, `.Group`, `.Group.Provider`, `.Track`, `.Sc
   UI test runner that waits for the screen to idle, and for a reader with reduce motion on. Under
   `useCalmMotion()` the root swaps the track for `MarqueeScroller`: one copy, no duplicates, in a
   `ScrollView` the reader drags by hand, with no indicator. Content stays reachable, and the swap is
-  live if the OS setting flips.
+  live if the OS setting flips. A screen reader holds it the same way (`useLoopingMotion`), so its
+  user can scroll the content instead of chasing it.
+- **A user pause freezes, it does not rest (WCAG 2.2.2).** `isPaused` / `defaultPaused` /
+  `onPausedChange` keep the track and ease its velocity to zero through the same reaction a press
+  uses (`resolveMarqueeHeld`'s `isFrozen`, which wins over every `pause` kind, `none` included) —
+  no second clock, and resume continues from the same offset. The pause actions ride on the root
+  only when `accessibilityLabel` is set, because only then is the root one accessible element;
+  otherwise spreading them would make a container `accessible` and swallow its children.
+- **`isPaused` is not `pause: { kind: "controlled" }`.** `pause` is the app's transient hold — a
+  strip stilled while something else on screen has the reader's attention. `isPaused` is the user's
+  persistent pause, the one to wire a visible Pause button to. Both freeze the track; while the
+  controlled `pause` holds it, the strip offers no pause or resume action, because neither would
+  change anything visible.
 - **It is not a carousel.** No snapping, no index, no paging. Anything a reader must reach by
   swiping belongs to `Tabs`' pager.
 - **`direction` is axis and sign in one value.** A separate `orientation` plus `reverse` pair has an
@@ -83,7 +95,8 @@ Display names: `DelacourUI.Marquee`, `.Group`, `.Group.Provider`, `.Track`, `.Sc
   same reason: it would swallow the children's presses.
 - **A group holds one finger-down flag and one pause.** Each strip in a `Marquee.Group` writes the
   group's flag, so a press on any row stills every row, and the group's `pause` wins over a strip's
-  own (`resolveMarqueePause`) — a row that slid on while its sibling held is the drift a group exists
+  own (`resolveMarqueePause`). So does the group's `isPaused`: it holds the user's pause for every
+  row, and a strip inside reads and writes that, never its own — a row that slid on while its sibling held is the drift a group exists
   to prevent. Speed is the other way round: a strip's own wins over the group's
   (`resolveMarqueeSpeed`). Opposite directions are two signs of one speed, so rows stay in
   proportion.

@@ -1,7 +1,9 @@
-import { afterEach, describe, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
+import { AccessibilityInfo } from "react-native";
 import { CalmMotionProvider } from "../../hooks/use-calm-motion";
-import { act, renderWithProviders, screen } from "../../test/render";
+import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import { TextAnimation } from "./text-animation";
 
@@ -9,8 +11,20 @@ function Calm({ children }: { children: ReactNode }): ReactElement {
 	return <CalmMotionProvider isMotionCalm>{children}</CalmMotionProvider>;
 }
 
+let isReaderOn = false;
+
+beforeEach(() => {
+	resetScreenReaderStore();
+	isReaderOn = false;
+	jest.spyOn(AccessibilityInfo, "isScreenReaderEnabled").mockImplementation(() => Promise.resolve(isReaderOn));
+	jest.spyOn(AccessibilityInfo, "addEventListener").mockImplementation((() => ({
+		remove: () => {},
+	})) as unknown as typeof AccessibilityInfo.addEventListener);
+});
+
 afterEach(() => {
 	jest.useRealTimers();
+	jest.restoreAllMocks();
 });
 
 describe("TextAnimation (reveal)", () => {
@@ -292,5 +306,78 @@ describe("TextAnimation.Rolling", () => {
 	test("calm motion announces the value", async () => {
 		await renderWithProviders(<TextAnimation.Rolling value={31} />, { wrapper: Calm });
 		expect(screen.getByRole("text", { name: "31" })).toBeOnTheScreen();
+	});
+});
+
+describe("TextAnimation looping motion", () => {
+	test("Rotating holds the first phrase while a screen reader is on", async () => {
+		jest.useFakeTimers();
+		isReaderOn = true;
+		await renderWithProviders(<TextAnimation.Rotating intervalMs={500} phrases={["fast", "calm"]} />);
+		await act(async () => {
+			jest.advanceTimersByTime(5000);
+		});
+		expect(screen.getByRole("text", { name: "fast" })).toBeOnTheScreen();
+	});
+
+	test("Rotating freezes on the current phrase while paused, and continues from it on resume", async () => {
+		jest.useFakeTimers();
+		const view = await renderWithProviders(<TextAnimation.Rotating intervalMs={500} phrases={["a", "b", "c"]} />);
+		await act(async () => {
+			jest.advanceTimersByTime(500);
+		});
+		expect(screen.getByRole("text", { name: "b" })).toBeOnTheScreen();
+		await view.rerender(<TextAnimation.Rotating intervalMs={500} isPaused phrases={["a", "b", "c"]} />);
+		await act(async () => {
+			jest.advanceTimersByTime(5000);
+		});
+		expect(screen.getByRole("text", { name: "b" })).toBeOnTheScreen();
+		await view.rerender(<TextAnimation.Rotating intervalMs={500} isPaused={false} phrases={["a", "b", "c"]} />);
+		await act(async () => {
+			jest.advanceTimersByTime(500);
+		});
+		expect(screen.getByRole("text", { name: "c" })).toBeOnTheScreen();
+	});
+
+	test("Rotating offers pause and resume actions on its accessible root, and reports the change", async () => {
+		jest.useFakeTimers();
+		const onPausedChange = jest.fn();
+		await renderWithProviders(
+			<TextAnimation.Rotating intervalMs={500} onPausedChange={onPausedChange} phrases={["a", "b"]} testID="rotating" />
+		);
+		const root = screen.getByTestId("rotating");
+		expect(root.props.accessibilityActions).toHaveLength(1);
+		const name = root.props.accessibilityActions[0].name as string;
+		await act(async () => {
+			fireEvent(root, "accessibilityAction", { nativeEvent: { actionName: name } });
+		});
+		expect(onPausedChange).toHaveBeenCalledWith(true);
+		await act(async () => {
+			jest.advanceTimersByTime(3000);
+		});
+		expect(screen.getByRole("text", { name: "a" })).toBeOnTheScreen();
+	});
+
+	test("a single phrase offers no pause action", async () => {
+		await renderWithProviders(<TextAnimation.Rotating phrases={["only"]} testID="one" />);
+		expect(screen.getByTestId("one").props.accessibilityActions).toBeUndefined();
+	});
+
+	test("a looping Typing offers the pause action, a one-shot does not", async () => {
+		await renderWithProviders(
+			<>
+				<TextAnimation.Typing testID="loop">{["One", "Two"]}</TextAnimation.Typing>
+				<TextAnimation.Typing testID="once">Hello</TextAnimation.Typing>
+			</>
+		);
+		expect(screen.getByTestId("loop").props.accessibilityActions).toHaveLength(1);
+		expect(screen.getByTestId("once").props.accessibilityActions).toBeUndefined();
+	});
+
+	test("Typing shows the resting phrase while a screen reader is on", async () => {
+		isReaderOn = true;
+		await renderWithProviders(<TextAnimation.Typing testID="typing">{["One", "Two"]}</TextAnimation.Typing>);
+		await act(async () => {});
+		expect(screen.getByText("T", { includeHiddenElements: true })).toBeOnTheScreen();
 	});
 });

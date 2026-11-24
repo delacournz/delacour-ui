@@ -13,7 +13,7 @@ vertical, autoplaying. Compound root plus `Carousel.Content`, `Carousel.Item`,
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/carousel` |
 | `carousel.tsx` | Root + the `Object.assign` surface — owns the index, the reconcile and autoplay |
-| `carousel-content.tsx` | `Carousel.Content` — the viewport, the Item walk, the window, the pan, the adjustable element |
+| `carousel-content.tsx` | `Carousel.Content` — the viewport, the Item walk, the window, the pan, the position element |
 | `carousel-item.tsx` | `Carousel.Item` — one absolutely placed slide and its animated style |
 | `carousel-caption.tsx` | `Carousel.Caption` — a `Text` on a scrim, faded by its slide's offset |
 | `carousel-dots.tsx` | `Carousel.Dots` and the internal dot — decoration driven by `position` |
@@ -24,7 +24,7 @@ vertical, autoplaying. Compound root plus `Carousel.Content`, `Carousel.Item`,
 | `carousel.types.ts` | Prop types shared by two or more parts |
 | `carousel.variants.ts` | Pure `tv()` slots, constants and the geometry, coverflow, dot and a11y resolvers |
 | `carousel.variants.test.ts` | |
-| `carousel.render.test.tsx` | Mounted under Jest — adjustable role, "n of count" value, assistive increment/decrement, arrows and their disabled ends, controlled and uncontrolled index, clamping, loop, the mounted window, autoplay stopping, parts outside the root, and the pan driven through its `carousel-pan` test id |
+| `carousel.render.test.tsx` | Mounted under Jest — adjustable position element (not wrapping slides; slide controls reachable), "n of count" value, assistive increment/decrement, arrows and their disabled ends, controlled and uncontrolled index, clamping, loop, the mounted window, autoplay stopping, parts outside the root, and the pan driven through its `carousel-pan` test id |
 | `use-carousel-autoplay.ts` | The JS interval and every reason it does not run |
 
 The paging maths — wrapped offsets, rubber band, pan origin and position, settle
@@ -137,6 +137,15 @@ file stable: its functions are the contract both consume.
   keeps moving after the user took hold of it is fighting them.
 - **Never runs under reduce motion, the app's `isMotionCalm`, or a screen
   reader** (WCAG 2.2.2). The screen reader is subscribed, not sampled.
+- **A persistent user pause is separate from "stop for good".** `isPaused` /
+  `defaultPaused` / `onPausedChange` on the root run through `useLoopingMotion`;
+  resuming restarts the timer, where a touch cannot be undone. The screen reader
+  comes from the shared `useScreenReaderEnabled`, not a private subscription.
+  When `autoplay` is set, `Carousel.Content` — already the single adjustable
+  element — adds "Pause animation" / "Resume animation" custom actions beside
+  `increment`/`decrement` (none while a screen reader or reduce motion holds
+  autoplay). They mainly serve Switch Control and Voice Control. No visible
+  toggle ships; an app wires `isPaused` to its own control.
 - **Pauses while the app is backgrounded.** A carousel scrolled off-screen keeps
   ticking: detecting that cheaply is not possible, so it is documented rather than
   solved.
@@ -144,10 +153,17 @@ file stable: its functions are the contract both consume.
 
 ## Accessibility
 
-- **`Carousel.Content` is the adjustable element**, not the root, so the arrows
-  stay reachable in their own right. Its value is "2 of 5"
-  (`resolveCarouselA11yValue`); `increment`/`decrement` map to `next`/`previous`,
-  and the OS reads the new value.
+- **The viewport is not `accessible`.** A merged viewport read every slide's
+  text as its name and hid any control inside a slide. The adjustable is a small
+  position element instead: the viewport's preceding sibling (read before the slides; as a child, the slides' `zIndex` reordered it after them on Android),
+  1x1, absolute, `pointerEvents="none"`, with no fill and nothing inside, so it
+  draws nothing, moves no pixel and takes no touch. Never `opacity: 0`: a fully
+  transparent view is skipped by VoiceOver and TalkBack. Its props come from
+  `resolveCarouselPositionAccessibility`: the carousel's `accessibilityLabel`
+  (none given means no name; there is no fallback string), value "2 of 5"
+  (`resolveCarouselA11yValue`), and `increment`/`decrement` mapped to
+  `next`/`previous`, after which the OS reads the new value. The arrows stay
+  reachable in their own right. The pan stays on the viewport.
 - **Off-screen slides are hidden from assistive tech** unless the carousel peeks,
   when every mounted slide is visible and stays reachable
   (`resolveSlideAccessibility`).

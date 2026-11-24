@@ -1,0 +1,30 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "looping-motion",
+	"type": "registry:lib",
+	"title": "loopingMotion",
+	"description": "Why a looping animation holds — calm motion, a screen reader or the user's pause — and its pause actions.",
+	"registryDependencies": [
+		"labels"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/looping-motion.ts",
+			"target": "looping-motion.ts",
+			"namespace": "lib"
+		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/looping-motion.test.ts",
+			"target": "looping-motion.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
+	]
+}

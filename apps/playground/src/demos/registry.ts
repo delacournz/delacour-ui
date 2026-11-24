@@ -203,6 +203,7 @@ import * as demo_circular_text_badge from "./circular-text/badge";
 import * as demo_circular_text_controlled from "./circular-text/controlled";
 import * as demo_circular_text_hold_to_pause from "./circular-text/hold-to-pause";
 import * as demo_circular_text_loading_ring from "./circular-text/loading-ring";
+import * as demo_circular_text_pause_button from "./circular-text/pause-button";
 import * as demo_circular_text_seal from "./circular-text/seal";
 import * as demo_circular_text_two_rings from "./circular-text/two-rings";
 import * as demo_collapsible_a_custom_indicator from "./collapsible/a-custom-indicator";
@@ -337,6 +338,7 @@ import * as demo_flow_controls_minimap from "./flow/controls-minimap";
 import * as demo_flow_drag from "./flow/drag";
 import * as demo_flow_edge_variants from "./flow/edge-variants";
 import * as demo_flow_groups from "./flow/groups";
+import * as demo_flow_pause_button from "./flow/pause-button";
 import * as demo_flow_pipeline from "./flow/pipeline";
 import * as demo_frame_decision_footer from "./frame/decision-footer";
 import * as demo_frame_members from "./frame/members";
@@ -451,6 +453,7 @@ import * as demo_marker_variants from "./marker/variants";
 import * as demo_marquee_badges from "./marquee/badges";
 import * as demo_marquee_cards from "./marquee/cards";
 import * as demo_marquee_hold_to_pause from "./marquee/hold-to-pause";
+import * as demo_marquee_pause_button from "./marquee/pause-button";
 import * as demo_marquee_speed from "./marquee/speed";
 import * as demo_marquee_two_rows from "./marquee/two-rows";
 import * as demo_marquee_vertical from "./marquee/vertical";
@@ -788,6 +791,7 @@ import * as demo_tag_input_overflow_invalid from "./tag-input/overflow-invalid";
 import * as demo_tag_input_sizes_and_variants from "./tag-input/sizes-and-variants";
 import * as demo_text_animation_counting from "./text-animation/counting";
 import * as demo_text_animation_orders from "./text-animation/orders";
+import * as demo_text_animation_pause_button from "./text-animation/pause-button";
 import * as demo_text_animation_reveal_characters from "./text-animation/reveal-characters";
 import * as demo_text_animation_reveal_words from "./text-animation/reveal-words";
 import * as demo_text_animation_rolling from "./text-animation/rolling";
@@ -1072,6 +1076,7 @@ export const DEMOS = {
 	"circular-text/controlled": demo_circular_text_controlled,
 	"circular-text/hold-to-pause": demo_circular_text_hold_to_pause,
 	"circular-text/loading-ring": demo_circular_text_loading_ring,
+	"circular-text/pause-button": demo_circular_text_pause_button,
 	"circular-text/seal": demo_circular_text_seal,
 	"circular-text/two-rings": demo_circular_text_two_rings,
 	"collapsible/a-custom-indicator": demo_collapsible_a_custom_indicator,
@@ -1206,6 +1211,7 @@ export const DEMOS = {
 	"flow/drag": demo_flow_drag,
 	"flow/edge-variants": demo_flow_edge_variants,
 	"flow/groups": demo_flow_groups,
+	"flow/pause-button": demo_flow_pause_button,
 	"flow/pipeline": demo_flow_pipeline,
 	"frame/decision-footer": demo_frame_decision_footer,
 	"frame/members": demo_frame_members,
@@ -1320,6 +1326,7 @@ export const DEMOS = {
 	"marquee/badges": demo_marquee_badges,
 	"marquee/cards": demo_marquee_cards,
 	"marquee/hold-to-pause": demo_marquee_hold_to_pause,
+	"marquee/pause-button": demo_marquee_pause_button,
 	"marquee/speed": demo_marquee_speed,
 	"marquee/two-rows": demo_marquee_two_rows,
 	"marquee/vertical": demo_marquee_vertical,
@@ -1657,6 +1664,7 @@ export const DEMOS = {
 	"tag-input/sizes-and-variants": demo_tag_input_sizes_and_variants,
 	"text-animation/counting": demo_text_animation_counting,
 	"text-animation/orders": demo_text_animation_orders,
+	"text-animation/pause-button": demo_text_animation_pause_button,
 	"text-animation/reveal-characters": demo_text_animation_reveal_characters,
 	"text-animation/reveal-words": demo_text_animation_reveal_words,
 	"text-animation/rolling": demo_text_animation_rolling,

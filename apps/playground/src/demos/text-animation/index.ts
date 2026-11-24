@@ -1,6 +1,7 @@
 import { defineDemoGroup } from "../define-demo-group";
 import * as counting from "./counting";
 import * as orders from "./orders";
+import * as pauseButton from "./pause-button";
 import * as revealCharacters from "./reveal-characters";
 import * as revealWords from "./reveal-words";
 import * as rolling from "./rolling";
@@ -13,6 +14,7 @@ export const textAnimationDemos = defineDemoGroup("text-animation", {
 	"reveal-characters": revealCharacters,
 	typing,
 	rotating,
+	"pause-button": pauseButton,
 	counting,
 	rolling,
 	orders,

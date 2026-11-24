@@ -1,7 +1,8 @@
-import { afterEach, describe, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Platform } from "react-native";
+import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
 import { IconSparkle } from "../../icons/central";
-import { renderWithProviders, screen, within } from "../../test/render";
+import { act, fireEvent, renderWithProviders, screen, within } from "../../test/render";
 import { AnimatedBadge } from "./animated-badge";
 
 /**
@@ -132,5 +133,66 @@ describe("AnimatedBadge", () => {
 		} finally {
 			Platform.OS = original;
 		}
+	});
+
+	describe("pulse pause", () => {
+		let isReaderOn = false;
+
+		beforeEach(() => {
+			resetScreenReaderStore();
+			isReaderOn = false;
+			jest.spyOn(AccessibilityInfo, "isScreenReaderEnabled").mockImplementation(() => Promise.resolve(isReaderOn));
+			jest
+				.spyOn(AccessibilityInfo, "addEventListener")
+				.mockImplementation((() => ({ remove: jest.fn() })) as unknown as typeof AccessibilityInfo.addEventListener);
+		});
+
+		function names(): string[] {
+			return (root().props.accessibilityActions ?? []).map((action: { name: string }) => action.name);
+		}
+
+		test("a pulsing badge offers pause, and resume once paused", async () => {
+			const onPausedChange = jest.fn();
+			const view = await renderWithProviders(
+				<AnimatedBadge testID="badge" status="loading" onPausedChange={onPausedChange}>
+					Building
+				</AnimatedBadge>
+			);
+			expect(names()).toEqual(["pause"]);
+			await act(async () => fireEvent(root(), "accessibilityAction", { nativeEvent: { actionName: "pause" } }));
+			expect(onPausedChange).toHaveBeenCalledWith(true);
+			expect(names()).toEqual(["resume"]);
+			await view.unmount();
+		});
+
+		test("isPaused controls the pause", async () => {
+			await renderWithProviders(
+				<AnimatedBadge testID="badge" status="loading" isPaused>
+					Building
+				</AnimatedBadge>
+			);
+			expect(names()).toEqual(["resume"]);
+		});
+
+		test("a screen reader holds the pulse and leaves no action to offer", async () => {
+			isReaderOn = true;
+			const view = await renderWithProviders(
+				<AnimatedBadge testID="badge" status="loading">
+					Building
+				</AnimatedBadge>
+			);
+			await act(async () => {});
+			expect(names()).toEqual([]);
+			await view.unmount();
+		});
+
+		test("a badge that does not pulse offers no pause", async () => {
+			await renderWithProviders(
+				<AnimatedBadge testID="badge" status="success">
+					Live
+				</AnimatedBadge>
+			);
+			expect(names()).toEqual([]);
+		});
 	});
 });

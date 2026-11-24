@@ -45,10 +45,21 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
   that kept its own count would show the wrong one the moment they disagreed. Post owns what a
   press looks like.
 - **A pressable card is `accessible={false}`.** An accessible parent swallows its children on iOS,
-  so a card that merged would hide like, reply and the author's profile tap from VoiceOver. The
-  cost is that the card's own `onPress` is not a VoiceOver stop — give the thread another
-  reachable path (a title, or the reply stat) when that matters. Without `onPress` the root is a
-  plain `View`.
+  so a card that merged would hide like, reply and the author's profile tap from VoiceOver. That
+  leaves the card's own `onPress` / `onLongPress` with no element to act on, so a pressable, enabled
+  card renders `PostCardAction` as its first child: a one-point, transparent library `Pressable`
+  ("Open post", role button) pinned to the corner, out of flow, with `pointerEvents="none"` so a
+  finger still lands on the card. `Pressable` routes a screen reader's activation to `onPress` per
+  platform (`onAccessibilityTap` on iOS, `activate` on Android); `longpress` ("More options") is
+  added on every platform by `resolvePostCardActions`. It works for a post with no `Post.Body`.
+  Not a `Text` — on iOS Fabric a paragraph is never the accessibility element, so actions on it never
+  fire — and not a merged body frame, which would hide the body's own links. Not `opacity: 0`: UIKit
+  and TalkBack skip a transparent view. A disabled or press-less card has no carrier; without
+  `onPress` the root is a plain `View`. Passing `accessible` to `Post` yourself merges the card and
+  swallows its controls — a development warning says so.
+- **The "more" / "less" toggle is labelled "Show more" / "Show less"** (the visible word is in the
+  name) and carries `accessibilityState.expanded`. It is one `Pressable` stop
+  (`feedback="none"`) around a plain `Text`: a `Text` with `onPress` is a second VoiceOver stop on iOS.
 - **`Post.Author` and `Post.Community` are one stop each.** Their labels are built by
   `resolveAuthorA11yLabel` — "Aria Whitlock, @aria, verified, 3 minutes ago" — so the time is read as
   words, never "3m", and four elements are not four swipes.

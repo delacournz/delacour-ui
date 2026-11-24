@@ -12,6 +12,7 @@
 		"cn",
 		"icon",
 		"icons",
+		"interactive-child",
 		"pressable",
 		"text",
 		"tv",
@@ -92,8 +93,23 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
 					"from": "../text",
 					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-card-action.tsx",
+			"target": "post/post-card-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
 				}
 			]
 		},
@@ -223,6 +239,10 @@
 			"target": "post/post.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				},
 				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"

@@ -68,7 +68,7 @@ because the target is the content. Compound root plus `ContextMenu.Trigger`,
   pass `ContextMenu.Preview` children of its own when that matters. It grows
   1 → 1.03 over Menu's 160ms enter and casts `shadow-lg`. The 8pt offset clears
   that growth for any target under ~530pt tall, and a test pins the arithmetic.
-  Under reduced motion it does not grow — it still appears.
+  Under calm motion (reduce motion or `isMotionCalm`) it does not grow — it still appears.
 - **The scrim is on by default.** `hasScrim` is Menu's; ContextMenu defaults it
   to `true` — the content behind is not the menu's control, and the dim says
   where the action now is. A tap on it (or the preview) closes; Android back

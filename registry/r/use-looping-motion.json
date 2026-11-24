@@ -1,0 +1,53 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-looping-motion",
+	"type": "registry:hook",
+	"title": "useLoopingMotion",
+	"description": "Holds a loop under calm motion or a screen reader, with a user pause (WCAG 2.2.2).",
+	"registryDependencies": [
+		"labels",
+		"looping-motion",
+		"use-calm-motion",
+		"use-controllable-state",
+		"use-labels"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-looping-motion.ts",
+			"target": "use-looping-motion.ts",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
+					"from": "../lib/looping-motion",
+					"to": "@registry/lib/looping-motion"
+				}
+			]
+		}
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-looping-motion.render.test.tsx",
+			"target": "use-looping-motion.render.test.tsx",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
+	]
+}

@@ -11,7 +11,8 @@
 		"cn",
 		"text",
 		"tv",
-		"use-calm-motion"
+		"use-calm-motion",
+		"use-looping-motion"
 	],
 	"dependencies": [],
 	"expoDependencies": [
@@ -96,8 +97,8 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../hooks/use-calm-motion",
-					"to": "@registry/hooks/use-calm-motion"
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
 				},
 				{
 					"from": "../../lib/cn",
@@ -115,8 +116,8 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../hooks/use-calm-motion",
-					"to": "@registry/hooks/use-calm-motion"
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
 				},
 				{
 					"from": "../../lib/cn",
@@ -208,6 +209,10 @@
 				{
 					"from": "../../hooks/use-calm-motion",
 					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
 				},
 				{
 					"from": "../../test/render",

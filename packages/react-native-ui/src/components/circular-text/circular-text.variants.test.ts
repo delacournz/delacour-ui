@@ -17,8 +17,10 @@ import {
 	resolveRingBox,
 	resolveRingLabel,
 	resolveRingLength,
+	resolveRingPaused,
 	resolveRingText,
 	resolveSpan,
+	resolveSpinRun,
 	resolveSpinVelocity,
 } from "./circular-text.variants";
 
@@ -343,5 +345,55 @@ describe("resolveCopies", () => {
 	test("estimates a fill from the text without its own trailing separator", () => {
 		expect(resolveCopies("fill", "DELACOUR UI • ", " • ", 400, 10)).toBe(resolveRepeatCount(400, 11, 10, 3));
 		expect(resolveCopies("fill", "DELACOUR UI", " • ", 400, 10)).toBe(resolveRepeatCount(400, 11, 10, 3));
+	});
+});
+
+describe("resolveSpinRun", () => {
+	test("a loop runs when nothing holds it", () => {
+		expect(resolveSpinRun({ kind: "loop", isAtRest: false, isPaused: false })).toEqual({
+			isLooping: true,
+			isHeld: false,
+		});
+	});
+
+	test("a rest state stops the loop outright, paused or not", () => {
+		expect(resolveSpinRun({ kind: "loop", isAtRest: true, isPaused: false })).toEqual({
+			isLooping: false,
+			isHeld: false,
+		});
+		expect(resolveSpinRun({ kind: "loop", isAtRest: true, isPaused: true }).isLooping).toBe(false);
+	});
+
+	test("a pause stays held through a rest, so lifting the rest does not drift the ring", () => {
+		expect(resolveSpinRun({ kind: "loop", isAtRest: true, isPaused: true })).toEqual({
+			isLooping: false,
+			isHeld: true,
+		});
+	});
+
+	test("a pause keeps the loop registered but held, so the angle freezes", () => {
+		expect(resolveSpinRun({ kind: "loop", isAtRest: false, isPaused: true })).toEqual({
+			isLooping: true,
+			isHeld: true,
+		});
+	});
+
+	test("none and controlled never run a clock", () => {
+		for (const kind of ["none", "controlled"] as const) {
+			expect(resolveSpinRun({ kind, isAtRest: false, isPaused: false })).toEqual({ isLooping: false, isHeld: false });
+		}
+	});
+});
+
+describe("resolveRingPaused", () => {
+	test("the user's pause holds the ring, whatever the app's pause kind", () => {
+		expect(resolveRingPaused(true, { kind: "press" })).toBe(true);
+		expect(resolveRingPaused(true, { kind: "none" })).toBe(true);
+	});
+
+	test("the app's controlled pause holds it on its own", () => {
+		expect(resolveRingPaused(false, { kind: "controlled", isPaused: true })).toBe(true);
+		expect(resolveRingPaused(false, { kind: "controlled", isPaused: false })).toBe(false);
+		expect(resolveRingPaused(false, { kind: "press" })).toBe(false);
 	});
 });

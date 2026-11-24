@@ -117,12 +117,12 @@
 			],
 			"registryDependencies": [
 				"badge",
-				"calm-motion",
 				"icon",
 				"icons",
+				"looping-motion",
 				"spinner",
 				"text",
-				"use-calm-motion"
+				"use-looping-motion"
 			],
 			"dependencies": [],
 			"expoDependencies": [
@@ -281,6 +281,7 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -651,7 +652,8 @@
 				"tv",
 				"use-calm-motion",
 				"use-controllable-state",
-				"use-labels"
+				"use-labels",
+				"use-looping-motion"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -874,7 +876,7 @@
 			],
 			"registryDependencies": [
 				"text",
-				"use-calm-motion"
+				"use-looping-motion"
 			],
 			"dependencies": [],
 			"expoDependencies": [
@@ -897,6 +899,7 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
+				"provider",
 				"test-kit"
 			],
 			"renderTestDependencies": [
@@ -937,6 +940,7 @@
 				"pressable",
 				"text",
 				"tv",
+				"use-calm-motion",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -1204,7 +1208,8 @@
 			"registryDependencies": [
 				"menu",
 				"pressable",
-				"tv"
+				"tv",
+				"use-calm-motion"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1834,10 +1839,11 @@
 				"button",
 				"icon",
 				"icons",
+				"looping-motion",
 				"surface",
 				"text",
 				"tv",
-				"use-calm-motion",
+				"use-looping-motion",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -2139,6 +2145,22 @@
 			]
 		},
 		{
+			"name": "interactive-child",
+			"type": "registry:lib",
+			"title": "interactiveChild",
+			"description": "A development warning when an accessible container swallows a control a screen reader cannot reach.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/interactive-child.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
 			"name": "item",
 			"type": "registry:ui",
 			"title": "Item",
@@ -2423,6 +2445,24 @@
 			]
 		},
 		{
+			"name": "looping-motion",
+			"type": "registry:lib",
+			"title": "loopingMotion",
+			"description": "Why a looping animation holds — calm motion, a screen reader or the user's pause — and its pause actions.",
+			"registryDependencies": [
+				"labels"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/looping-motion.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
 			"name": "map",
 			"type": "registry:ui",
 			"title": "Map",
@@ -2597,7 +2637,8 @@
 			"registryDependencies": [
 				"cn",
 				"tv",
-				"use-calm-motion",
+				"use-controllable-state",
+				"use-looping-motion",
 				"use-theme-color"
 			],
 			"dependencies": [],
@@ -2726,6 +2767,7 @@
 				"cn",
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -3328,6 +3370,7 @@
 				"cn",
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -3349,6 +3392,7 @@
 				"ui/post/post-action.tsx",
 				"ui/post/post-author.tsx",
 				"ui/post/post-body.tsx",
+				"ui/post/post-card-action.tsx",
 				"ui/post/post-community.tsx",
 				"ui/post/post-footer.tsx",
 				"ui/post/post-header.tsx",
@@ -5576,7 +5620,8 @@
 				"cn",
 				"text",
 				"tv",
-				"use-calm-motion"
+				"use-calm-motion",
+				"use-looping-motion"
 			],
 			"dependencies": [],
 			"expoDependencies": [
@@ -6179,6 +6224,31 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-labels.tsx"
+			]
+		},
+		{
+			"name": "use-looping-motion",
+			"type": "registry:hook",
+			"title": "useLoopingMotion",
+			"description": "Holds a loop under calm motion or a screen reader, with a user pause (WCAG 2.2.2).",
+			"registryDependencies": [
+				"labels",
+				"looping-motion",
+				"use-calm-motion",
+				"use-controllable-state",
+				"use-labels"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-looping-motion.ts"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
 			]
 		},
 		{

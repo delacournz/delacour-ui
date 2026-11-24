@@ -1,0 +1,28 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "interactive-child",
+	"type": "registry:lib",
+	"title": "interactiveChild",
+	"description": "A development warning when an accessible container swallows a control a screen reader cannot reach.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/interactive-child.ts",
+			"target": "interactive-child.ts",
+			"namespace": "lib"
+		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/interactive-child.test.ts",
+			"target": "interactive-child.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
+	]
+}

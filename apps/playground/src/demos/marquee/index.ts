@@ -2,6 +2,7 @@ import { defineDemoGroup } from "../define-demo-group";
 import * as badges from "./badges";
 import * as cards from "./cards";
 import * as holdToPause from "./hold-to-pause";
+import * as pauseButton from "./pause-button";
 import * as speed from "./speed";
 import * as twoRows from "./two-rows";
 import * as vertical from "./vertical";
@@ -12,6 +13,7 @@ export const marqueeDemos = defineDemoGroup("marquee", {
 	"two-rows": twoRows,
 	vertical,
 	"hold-to-pause": holdToPause,
+	"pause-button": pauseButton,
 	speed,
 	cards,
 });

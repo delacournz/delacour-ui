@@ -53,6 +53,23 @@ section first. What follows is only where a standalone disclosure differs.
   `Pressable` whose `Animated.View` writes `opacity` every frame; the accordion
   fades its item for the same reason, and a collapsible's root is its item.
 
+## Calm motion
+
+- **Under calm motion the spring becomes a 150 ms `withTiming`.** The root asks
+  `useCalmMotion()` (reduce motion, or `isMotionCalm`) and
+  `resolveCollapsibleTravel` returns `spring` or `timing`. This is a transition,
+  not a loop, so it is not held at rest: the section still opens, just without
+  the spring's sweep. The 150 ms is `Carousel`'s calm convention
+  (`CAROUSEL_CALM_DURATION_MS`), restated as `COLLAPSIBLE_CALM_DURATION_MS`.
+- **What a reader sees depends on which half of calm motion is on.** Under the OS
+  reduce-motion setting Reanimated finishes any animation at once
+  (`ReduceMotion.System`), so the panel snaps, as the spring already did. Under
+  `isMotionCalm` alone it runs the 150 ms eased timing, short enough that a UI
+  test's idle wait does not pay for a spring's settle.
+- **One change covers every part.** The panel's height, its fade and the
+  indicator's rotation all read the root's `progress`, so none carries a calm
+  branch of its own.
+
 ## State
 
 - **`isOpen` / `defaultOpen` / `onOpenChange`, `BottomSheet`'s names.** One

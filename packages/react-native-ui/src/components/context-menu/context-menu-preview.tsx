@@ -1,6 +1,7 @@
 import { type ReactElement, type ReactNode, useEffect } from "react";
 import type { ViewProps } from "react-native";
-import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useContextMenuPart, useContextMenuTarget } from "./context-menu.context";
 import { CONTEXT_MENU_PREVIEW_MS, CONTEXT_MENU_PREVIEW_SCALE, contextMenuVariants } from "./context-menu.variants";
 
@@ -23,7 +24,7 @@ export type ContextMenuPreviewProps = Omit<ViewProps, "children"> & {
  * matters. With a preview present, the panel anchors to the trigger's rect
  * rather than the press point, so it opens beside the copy, never across it.
  *
- * Under reduced motion it does not grow; it still appears, with the scrim.
+ * Under calm motion (reduce motion or `isMotionCalm`) it does not grow; it still appears, with the scrim.
  */
 export function ContextMenuPreview({
 	children,
@@ -33,13 +34,13 @@ export function ContextMenuPreview({
 }: ContextMenuPreviewProps): ReactElement | null {
 	const { content } = useContextMenuPart("ContextMenu.Preview");
 	const { targetRect } = useContextMenuTarget("ContextMenu.Preview", true);
-	const isReducedMotion = useReducedMotion();
+	const isCalm = useCalmMotion();
 
 	const lift = useSharedValue(1);
 	useEffect(() => {
-		if (isReducedMotion) return;
+		if (isCalm) return;
 		lift.value = withTiming(CONTEXT_MENU_PREVIEW_SCALE, { duration: CONTEXT_MENU_PREVIEW_MS });
-	}, [isReducedMotion, lift]);
+	}, [isCalm, lift]);
 	const liftStyle = useAnimatedStyle(() => ({ transform: [{ scale: lift.value }] }));
 
 	if (!targetRect) return null;

@@ -28,7 +28,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Canvas, Group } from "react-native-skia";
 import { scheduleOnRN } from "react-native-worklets";
-import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLoopingMotion } from "../../hooks/use-looping-motion";
 import { useThemeColors } from "../../hooks/use-theme-color";
 import {
 	FlowCanvasLayerProvider,
@@ -91,6 +91,12 @@ export type FlowProps = {
 	onConnect?: (connection: FlowConnection) => void;
 	/** Refuses a connection before `onConnect` hears of it, and before a node offers it. */
 	isValidConnection?: (connection: FlowConnection) => boolean;
+	/** Freezes the marching edges where they are (controlled). Resume continues from there. */
+	isPaused?: boolean;
+	/** Whether the marching edges start paused (uncontrolled). */
+	defaultPaused?: boolean;
+	/** The pause changed. Wire `isPaused` to your own visible control. */
+	onPausedChange?: (isPaused: boolean) => void;
 	className?: string;
 	testID?: string;
 	children?: ReactNode;
@@ -153,6 +159,9 @@ function FlowRoot({
 	onNodeDragEnd,
 	onConnect,
 	isValidConnection,
+	isPaused,
+	defaultPaused,
+	onPausedChange,
 	className,
 	testID,
 	children,
@@ -378,9 +387,9 @@ function FlowRoot({
 	const slots = flowVariants();
 	const layers = sortLayers(children);
 
-	const isCalm = useCalmMotion();
+	const { hold } = useLoopingMotion({ defaultPaused, isPaused, onPausedChange });
 	const colors = useThemeColors(collectFlowCanvasTokens(layers.canvas.map(colorOf)));
-	const canvasLayer = useMemo<FlowCanvasLayerValue>(() => ({ colors, isCalm }), [colors, isCalm]);
+	const canvasLayer = useMemo<FlowCanvasLayerValue>(() => ({ colors, hold }), [colors, hold]);
 
 	return (
 		<FlowProvider value={context}>

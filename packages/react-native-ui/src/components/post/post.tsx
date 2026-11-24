@@ -1,11 +1,14 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View } from "react-native";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { Pressable, type PressableProps } from "../pressable";
 import { type PostContextValue, PostProvider } from "./post.context";
+import { hasPostCardCarrier } from "./post.utils";
 import { type PostSize, type PostVariant, postVariants } from "./post.variants";
 import { PostAction } from "./post-action";
 import { PostAuthor } from "./post-author";
 import { PostBody } from "./post-body";
+import { PostCardAction } from "./post-card-action";
 import { PostCommunity } from "./post-community";
 import { PostFooter } from "./post-footer";
 import { PostHeader } from "./post-header";
@@ -36,11 +39,19 @@ function PostRoot({
 	...props
 }: PostProps): ReactElement {
 	const context = useMemo<PostContextValue>(() => ({ variant, size }), [variant, size]);
+	warnInteractiveChildInAccessible({ component: "Post", accessible: props.accessible, children });
 	const rootClass = postVariants({ variant, size, isDisabled: disabled }).root({ className });
+
+	const hasCarrier = hasPostCardCarrier({
+		hasPress: onPress !== undefined,
+		hasLongPress: onLongPress !== undefined,
+		disabled,
+	});
 
 	// `accessible={false}` on a pressable card is deliberate: an accessible
 	// parent swallows its children on iOS, and the like and reply buttons inside
-	// would vanish from VoiceOver. See AGENTS.md.
+	// would vanish from VoiceOver. The card's own presses reach assistive
+	// technology through a one-point carrier, PostCardAction. See AGENTS.md.
 	const card =
 		onPress || onLongPress ? (
 			<Pressable
@@ -53,6 +64,7 @@ function PostRoot({
 				{...props}
 				accessible={false}
 			>
+				{hasCarrier ? <PostCardAction onLongPress={onLongPress} onPress={onPress} /> : null}
 				{children}
 			</Pressable>
 		) : (

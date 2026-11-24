@@ -8,7 +8,7 @@ import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useMessageLabelPart, useMessagePart } from "./message.context";
 import type { MessageStatusType } from "./message.types";
-import { resolveMessageStatusLabel, shouldShowStatus } from "./message.utils";
+import { resolveMessageHiddenProps, resolveMessageStatusLabel, shouldShowStatus } from "./message.utils";
 import { MESSAGE_STATUS_TOKEN, messageVariants } from "./message.variants";
 
 const GLYPH_ENTERING = FadeIn.duration(120);
@@ -34,6 +34,8 @@ export type MessageStatusProps = {
  *
  * `read` is the info token, `failed` the destructive one; the rest are muted.
  * A failed receipt with an `onRetry` on the message adds a Retry control. The
+ * Merged into the message, the drawn Retry is hidden from assistive technology: it
+ * is the root's `retry` action. Under `isCompound` it is its own stop. The
  * glyph cross-fades as the status moves, and holds still under reduce motion.
  */
 export function MessageStatusRow({ label, className }: MessageStatusProps): ReactElement | null {
@@ -55,7 +57,13 @@ export function MessageStatusRow({ label, className }: MessageStatusProps): Reac
 			</Animated.View>
 			<Text className={slots.statusLabel()}>{text}</Text>
 			{status.type === "failed" && onRetry ? (
-				<Pressable accessibilityLabel="Retry" feedback="fade" hitSlop={8} onPress={onRetry}>
+				<Pressable
+					accessibilityLabel="Retry"
+					feedback="fade"
+					hitSlop={8}
+					onPress={onRetry}
+					{...resolveMessageHiddenProps(context.isCompound)}
+				>
 					<Text className={slots.retry()}>Retry</Text>
 				</Pressable>
 			) : null}

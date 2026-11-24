@@ -1,6 +1,7 @@
-import { describe, expect, jest, test } from "@jest/globals";
-import { Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Text } from "react-native";
+import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { DelacourProvider } from "../provider";
 import { Marquee } from "./marquee";
 
@@ -24,6 +25,27 @@ async function measure(root: number, copy: number): Promise<void> {
 	if (!copyView) throw new Error("copy view not found");
 	await fireEvent(copyView, "layout", { nativeEvent: { layout: { width: copy, height: 40 } } });
 }
+
+let readerListener: ((enabled: boolean) => void) | null = null;
+let isReaderOn = false;
+
+beforeEach(() => {
+	resetScreenReaderStore();
+	readerListener = null;
+	isReaderOn = false;
+	jest.spyOn(AccessibilityInfo, "isScreenReaderEnabled").mockImplementation(() => Promise.resolve(isReaderOn));
+	jest.spyOn(AccessibilityInfo, "addEventListener").mockImplementation(((
+		event: string,
+		listener: (v: boolean) => void
+	) => {
+		if (event === "screenReaderChanged") readerListener = listener;
+		return { remove: jest.fn() };
+	}) as unknown as typeof AccessibilityInfo.addEventListener);
+});
+
+afterEach(() => {
+	jest.restoreAllMocks();
+});
 
 describe("Marquee", () => {
 	test("renders its content once before it is measured", async () => {
@@ -141,5 +163,92 @@ describe("Marquee", () => {
 		expect(screen.getByTestId("group")).toBeOnTheScreen();
 		expect(screen.getByText("Left")).toBeOnTheScreen();
 		expect(screen.getByText("Right")).toBeOnTheScreen();
+	});
+	test("a screen reader swaps the moving track for one still, hand-scrollable copy", async () => {
+		isReaderOn = true;
+		await renderWithProviders(
+			<Marquee testID="strip">
+				<Words />
+			</Marquee>
+		);
+		await act(async () => {});
+		await fireEvent(screen.getByTestId("strip"), "layout", { nativeEvent: { layout: { width: 300, height: 40 } } });
+		expect(screen.getAllByText("Alpha", { includeHiddenElements: true })).toHaveLength(1);
+	});
+
+	test("a screen reader turned on mid-loop rests the strip", async () => {
+		await renderWithProviders(
+			<Marquee testID="strip">
+				<Words />
+			</Marquee>
+		);
+		await measure(300, 100);
+		expect(screen.getAllByText("Alpha", { includeHiddenElements: true }).length).toBeGreaterThan(1);
+		await act(async () => {
+			readerListener?.(true);
+		});
+		expect(screen.getAllByText("Alpha", { includeHiddenElements: true })).toHaveLength(1);
+	});
+
+	test("a user pause freezes the track in place rather than swapping it for the still strip", async () => {
+		await renderWithProviders(
+			<Marquee isPaused testID="strip">
+				<Words />
+			</Marquee>
+		);
+		await measure(300, 100);
+		expect(screen.getAllByText("Alpha", { includeHiddenElements: true }).length).toBeGreaterThan(1);
+	});
+
+	test("a labelled strip held by the app's controlled pause offers no actions", async () => {
+		await renderWithProviders(
+			<Marquee accessibilityLabel="Our partners" pause={{ kind: "controlled", isPaused: true }} testID="strip">
+				<Words />
+			</Marquee>
+		);
+		expect(screen.getByTestId("strip").props.accessibilityActions).toBeUndefined();
+	});
+
+	test("a labelled strip offers pause, and its action reports the change", async () => {
+		const onPausedChange = jest.fn();
+		await renderWithProviders(
+			<Marquee accessibilityLabel="Our partners" onPausedChange={onPausedChange} testID="strip">
+				<Words />
+			</Marquee>
+		);
+		const strip = screen.getByTestId("strip");
+		expect(strip.props.accessibilityActions).toEqual([{ name: "pause", label: "Pause animation" }]);
+		await act(async () => {
+			strip.props.onAccessibilityAction({ nativeEvent: { actionName: "pause" } });
+		});
+		expect(onPausedChange).toHaveBeenCalledWith(true);
+	});
+
+	test("an unlabelled strip carries no accessibility actions", async () => {
+		await renderWithProviders(
+			<Marquee testID="strip">
+				<Words />
+			</Marquee>
+		);
+		expect(screen.getByTestId("strip").props.accessibilityActions).toBeUndefined();
+	});
+
+	test("a Group's pause applies to its strips and wins over their own", async () => {
+		const onPausedChange = jest.fn();
+		await renderWithProviders(
+			<Marquee.Group defaultPaused onPausedChange={onPausedChange}>
+				<Marquee accessibilityLabel="Row" isPaused={false} testID="row">
+					<Words />
+				</Marquee>
+			</Marquee.Group>
+		);
+		expect(screen.getByTestId("row").props.accessibilityActions).toEqual([
+			{ name: "resume", label: "Resume animation" },
+		]);
+		await act(async () => {
+			screen.getByTestId("row").props.onAccessibilityAction({ nativeEvent: { actionName: "resume" } });
+		});
+		expect(onPausedChange).toHaveBeenCalledWith(false);
+		expect(screen.getByTestId("row").props.accessibilityActions).toEqual([{ name: "pause", label: "Pause animation" }]);
 	});
 });

@@ -303,12 +303,15 @@ export type BadgeCloseExposure = "none" | "element" | "action";
 export function resolveBadgeCloseExposure({
 	hasClose,
 	interactive,
+	accessible,
 }: {
 	hasClose: boolean;
 	interactive: boolean;
+	/** The caller's `accessible` on a plain root: `true` merges its children into one element. */
+	accessible?: boolean | undefined;
 }): BadgeCloseExposure {
 	if (!hasClose) return "none";
-	return interactive ? "action" : "element";
+	return interactive || accessible === true ? "action" : "element";
 }
 
 export type BadgeVariantProps = VariantProps<typeof badgeVariants>;

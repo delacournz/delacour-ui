@@ -9,12 +9,12 @@
 	],
 	"registryDependencies": [
 		"badge",
-		"calm-motion",
 		"icon",
 		"icons",
+		"looping-motion",
 		"spinner",
 		"text",
-		"use-calm-motion"
+		"use-looping-motion"
 	],
 	"dependencies": [],
 	"expoDependencies": [
@@ -93,8 +93,8 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../hooks/use-calm-motion",
-					"to": "@registry/hooks/use-calm-motion"
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
 				},
 				{
 					"from": "../icon",
@@ -119,8 +119,8 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../lib/calm-motion",
-					"to": "@registry/lib/calm-motion"
+					"from": "../../lib/looping-motion",
+					"to": "@registry/lib/looping-motion"
 				},
 				{
 					"from": "../badge/badge.variants",
@@ -168,6 +168,10 @@
 			"target": "animated-badge/animated-badge.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"

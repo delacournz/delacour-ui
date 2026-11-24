@@ -287,6 +287,19 @@ describe("resolveBadgeCloseExposure", () => {
 	test("a pressable root folds the close control in, so it is offered as an action", () => {
 		expect(resolveBadgeCloseExposure({ hasClose: true, interactive: true })).toBe("action");
 	});
+
+	test("a plain root the caller made accessible merges its children, so the close is an action too", () => {
+		expect(resolveBadgeCloseExposure({ hasClose: true, interactive: false, accessible: true })).toBe("action");
+	});
+
+	test("accessible={false} or unset leaves a plain root's close its own element", () => {
+		expect(resolveBadgeCloseExposure({ hasClose: true, interactive: false, accessible: false })).toBe("element");
+		expect(resolveBadgeCloseExposure({ hasClose: true, interactive: false, accessible: undefined })).toBe("element");
+	});
+
+	test("accessible with no close is still none", () => {
+		expect(resolveBadgeCloseExposure({ hasClose: false, interactive: false, accessible: true })).toBe("none");
+	});
 });
 
 describe("the dismiss control's hit target", () => {

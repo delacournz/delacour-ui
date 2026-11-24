@@ -6,6 +6,7 @@ import * as controlsMinimap from "./controls-minimap";
 import * as drag from "./drag";
 import * as edgeVariants from "./edge-variants";
 import * as groups from "./groups";
+import * as pauseButton from "./pause-button";
 import * as pipeline from "./pipeline";
 
 /** Key order is the gallery's reading order — a whole graph, the routes, groups, the gestures, the chrome, then motion and assistive use. */
@@ -17,5 +18,6 @@ export const flowDemos = defineDemoGroup("flow", {
 	connect,
 	"controls-minimap": controlsMinimap,
 	"animated-edges": animatedEdges,
+	"pause-button": pauseButton,
 	"accessible-move": accessibleMove,
 });

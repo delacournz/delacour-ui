@@ -38,6 +38,16 @@ export type CircularTextProps = Omit<ViewProps, "children"> & {
 	separator?: string;
 	/** Default `{ kind: "none" }`. */
 	pause?: CircularTextPause;
+	/**
+	 * The user's persistent pause of a `loop` (WCAG 2.2.2), for an app to wire to its own visible
+	 * control. Freezes the ring at its current angle; clearing it resumes from there. Controlled.
+	 * Distinct from `pause`, which is the press-to-hold gesture and the app's transient hold.
+	 */
+	isPaused?: boolean;
+	/** The pause a `loop` starts with when `isPaused` is not given. Default `false`. */
+	defaultPaused?: boolean;
+	/** Called when the user pauses or resumes — through `isPaused`'s control or the pause and resume accessibility actions. */
+	onPausedChange?: (isPaused: boolean) => void;
 	/** Drawn in the middle, upright and still while the ring turns. Stays independently accessible. */
 	centerContent?: ReactNode;
 	/** A step on `Text`'s type scale. Default `xs`. */

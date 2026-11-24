@@ -11,6 +11,7 @@
 		"cn",
 		"icon",
 		"icons",
+		"interactive-child",
 		"pressable",
 		"text",
 		"tv",
@@ -182,6 +183,10 @@
 				{
 					"from": "../../hooks/use-calm-motion",
 					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
 				}
 			]
 		},

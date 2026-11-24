@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { AccessibilityInfo, Text as RNText } from "react-native";
+import { AccessibilityInfo, Pressable as RNPressable, Text as RNText } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Message, useMessage } from "./index";
 import type { MessageStatus } from "./message.types";
@@ -253,6 +253,40 @@ describe("Message.Status", () => {
 		);
 		await fireEvent(screen.getByRole("button", { name: "Retry" }), "accessibilityTap");
 		expect(onRetry).toHaveBeenCalledTimes(1);
+	});
+
+	test("a merged message hides the drawn Retry, which is its retry action", async () => {
+		await renderWithProviders(<Conversation direction="outgoing" onRetry={jest.fn()} status={{ type: "failed" }} />);
+		expect(screen.queryByRole("button", { name: "Retry" })).not.toBeOnTheScreen();
+		const retry = screen.getByLabelText("Retry", { includeHiddenElements: true });
+		expect(retry.props.accessibilityElementsHidden).toBe(true);
+		expect(retry.props.importantForAccessibility).toBe("no-hide-descendants");
+	});
+
+	test("warns once in development when a merged message holds a pressable in its actions", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+		try {
+			await renderWithProviders(
+				<Message direction="incoming">
+					<Message.Bubble>
+						<Message.Text>Hi</Message.Text>
+					</Message.Bubble>
+					<Message.Actions>
+						<RNPressable onPress={jest.fn()} />
+					</Message.Actions>
+				</Message>
+			);
+			expect(warn).toHaveBeenCalledWith(expect.stringContaining("[Message] is one accessibility element"));
+		} finally {
+			warn.mockRestore();
+		}
+	});
+
+	test("a compound message leaves the drawn Retry reachable", async () => {
+		await renderWithProviders(
+			<Conversation direction="outgoing" isCompound onRetry={jest.fn()} status={{ type: "failed" }} />
+		);
+		expect(screen.getByRole("button", { name: "Retry" })).toBeOnTheScreen();
 	});
 
 	test("no Retry control without onRetry or when not failed", async () => {

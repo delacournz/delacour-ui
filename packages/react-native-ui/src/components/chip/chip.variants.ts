@@ -7,7 +7,12 @@ import {
 	type BadgeColor,
 	type BadgeSize,
 } from "../badge/badge.variants";
-import { MIN_HIT_TARGET } from "../pressable/pressable.variants";
+import {
+	type HitSlopInsets,
+	MIN_HIT_TARGET,
+	normalizeHitSlop,
+	resolveMinimumHitSlop,
+} from "../pressable/pressable.variants";
 
 /**
  * How an unselected chip is painted.
@@ -103,9 +108,22 @@ export const CHIP_CLOSE_SIZE: Record<ChipSize, number> = { sm: 14, md: 16, lg: 1
 export const CHIP_CLOSE_HIT_CAP: Record<ChipSize, number> = { sm: 10, md: 13, lg: 15 };
 
 /**
- * The close glyph's slop on every side at the default 44pt minimum: half the
- * shortfall, held to the cap. The component asks `useMinimumHitSlop`, so an
- * Android app on Material's 48 gets more where the cap allows.
+ * How far the close glyph's slop may reach towards the label, in points: half
+ * the root's `gap-1` / `gap-1.5` / `gap-2`.
+ *
+ * In a pressable chip the label is the chip's own target, and the close button
+ * is the inner one, hit-tested first: slop past half the gap removes the chip
+ * on a press meant to toggle it. A close button placed somewhere other than
+ * last by hand keeps the same cap on its leading side.
+ */
+export const CHIP_CLOSE_LEADING_CAP: Record<ChipSize, number> = { sm: 2, md: 3, lg: 4 };
+
+/**
+ * The close glyph's trailing, top and bottom slop at the default 44pt minimum:
+ * half the shortfall, held to {@link CHIP_CLOSE_HIT_CAP}. The leading side is
+ * held to {@link CHIP_CLOSE_LEADING_CAP} as well — see
+ * {@link resolveChipCloseHitSlop}, which the component reaches with the app's
+ * minimum, so an Android app on Material's 48 gets more where the caps allow.
  */
 export const CHIP_CLOSE_HIT_SLOP: Record<ChipSize, number> = {
 	sm: Math.min(CHIP_CLOSE_HIT_CAP.sm, (MIN_HIT_TARGET - CHIP_CLOSE_SIZE.sm) / 2),
@@ -113,9 +131,22 @@ export const CHIP_CLOSE_HIT_SLOP: Record<ChipSize, number> = {
 	lg: Math.min(CHIP_CLOSE_HIT_CAP.lg, (MIN_HIT_TARGET - CHIP_CLOSE_SIZE.lg) / 2),
 };
 
-/** `useMinimumHitSlop` arguments for the close glyph: its drawn size and the cap that keeps it off neighbours. */
-export function resolveChipCloseHitTarget(size: ChipSize): { cap: number; size: number } {
-	return { cap: CHIP_CLOSE_HIT_CAP[size], size: CHIP_CLOSE_SIZE[size] };
+/**
+ * The close glyph's `hitSlop` at `size` for a minimum target of `min`: half the
+ * shortfall on each side, held to {@link CHIP_CLOSE_HIT_CAP}, and the leading
+ * side (left, or right when `isRTL`) held to {@link CHIP_CLOSE_LEADING_CAP} so
+ * it stays off the label. Pure, so it is unit-testable.
+ */
+export function resolveChipCloseHitSlop(
+	size: ChipSize,
+	min: number = MIN_HIT_TARGET,
+	{ isRTL = false }: { isRTL?: boolean } = {}
+): HitSlopInsets {
+	const insets = normalizeHitSlop(
+		resolveMinimumHitSlop(CHIP_CLOSE_SIZE[size], min, { cap: CHIP_CLOSE_HIT_CAP[size] })
+	) ?? { bottom: 0, left: 0, right: 0, top: 0 };
+	const leading = Math.min(CHIP_CLOSE_LEADING_CAP[size], isRTL ? insets.right : insets.left);
+	return isRTL ? { ...insets, right: leading } : { ...insets, left: leading };
 }
 
 /**

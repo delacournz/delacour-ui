@@ -77,7 +77,10 @@ and `Chip.CloseButton`.
   reason, so `sm` and `md` chips fall short of 44 tall on purpose. The close
   glyph is 14–18 points and bare, so it grows with `useMinimumHitSlop` on every
   side, capped by `CHIP_CLOSE_HIT_CAP` at its chip's edge plus half a gap — more
-  would land on the next chip, and the later sibling wins the press.
+  would land on the next chip, and the later sibling wins the press. Its leading
+  side stops at `CHIP_CLOSE_LEADING_CAP`, half the label gap: the close button is
+  the inner target, hit-tested first, so more would remove a pressable chip on a
+  press meant to toggle it.
 - **`onClose` is its own pressable, never a mode of the root.** The remove
   control is a `Chip.CloseButton` composed in last, so its tap is claimed by the
   inner detector and never also toggles the chip. It presses with `fade` —

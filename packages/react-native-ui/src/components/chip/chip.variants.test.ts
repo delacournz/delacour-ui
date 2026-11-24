@@ -2,10 +2,10 @@ import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { BADGE_COLORS, BADGE_FOREGROUND_TOKEN, BADGE_SIZES, badgeVariants } from "../badge/badge.variants";
-import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	CHIP_CLOSE_HIT_CAP,
 	CHIP_CLOSE_HIT_SLOP,
+	CHIP_CLOSE_LEADING_CAP,
 	CHIP_CLOSE_SIZE,
 	CHIP_COLORS,
 	CHIP_FOREGROUND_TOKEN,
@@ -15,7 +15,7 @@ import {
 	CHIP_VARIANTS,
 	chipVariants,
 	resolveChipCloseExposure,
-	resolveChipCloseHitTarget,
+	resolveChipCloseHitSlop,
 	resolveChipForegroundToken,
 	resolveChipMode,
 	resolveChipSurface,
@@ -311,13 +311,38 @@ describe("hit slop", () => {
 
 	test("the close glyph reaches as far as its cap allows, and 44 where the cap is not the limit", () => {
 		for (const size of CHIP_SIZES) {
-			const target = resolveChipCloseHitTarget(size);
-			const slop = resolveMinimumHitSlop(target.size, 44, { cap: target.cap });
-			expect(typeof slop).toBe("number");
-			const reach = target.size + 2 * (slop as number);
-			expect(reach).toBe(Math.min(44, target.size + 2 * CHIP_CLOSE_HIT_CAP[size]));
+			const slop = resolveChipCloseHitSlop(size);
+			const reach = CHIP_CLOSE_SIZE[size] + slop.top + slop.bottom;
+			expect(reach).toBe(Math.min(44, CHIP_CLOSE_SIZE[size] + 2 * CHIP_CLOSE_HIT_CAP[size]));
+			expect(slop.right).toBe(slop.top);
 		}
-		expect(resolveMinimumHitSlop(CHIP_CLOSE_SIZE.lg, 44, { cap: CHIP_CLOSE_HIT_CAP.lg })).toBe(13);
+		expect(resolveChipCloseHitSlop("lg").top).toBe(13);
+	});
+
+	// The label sits a gap-1 / gap-1.5 / gap-2 before the glyph and, in a
+	// pressable chip, is the chip's own target. The inner close button is
+	// hit-tested first, so slop past half that gap removes the chip on a press
+	// meant to toggle it.
+	test("the close slop's leading side stops at half the label gap", () => {
+		const labelGap = { sm: 4, md: 6, lg: 8 } as const;
+		for (const size of CHIP_SIZES) {
+			expect(CHIP_CLOSE_LEADING_CAP[size]).toBe(labelGap[size] / 2);
+			for (const min of [44, 48]) {
+				expect(resolveChipCloseHitSlop(size, min).left).toBeLessThanOrEqual(labelGap[size] / 2);
+			}
+		}
+	});
+
+	test("the leading side is the right one in a right-to-left layout", () => {
+		const ltr = resolveChipCloseHitSlop("md", 44);
+		const rtl = resolveChipCloseHitSlop("md", 44, { isRTL: true });
+		expect(rtl).toEqual({ ...ltr, left: ltr.right, right: ltr.left });
+	});
+
+	test("the label gaps are the ones the cap assumes", () => {
+		expect(chipVariants({ size: "sm" }).root()).toMatch(/(^|\s)gap-1(\s|$)/);
+		expect(chipVariants({ size: "md" }).root()).toContain("gap-1.5");
+		expect(chipVariants({ size: "lg" }).root()).toContain("gap-2");
 	});
 
 	// Chip height = line height + py + border: 16+8+2, 20+12+2, 24+16+2.

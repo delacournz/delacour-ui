@@ -47,7 +47,7 @@ src/
 │                         keyboard-animation, navigation-theme, calm-motion, labels,
 │                         paging, scroll-sections, scroll-maths, scroll-edges,
 │                         wrap-text-children, announce, modal-accessibility,
-│                         looping-motion
+│                         looping-motion, interactive-child
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── test/                 the render-test kit — Jest setup and renderWithProviders
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
@@ -144,6 +144,22 @@ Rules:
 - **A transition is not a loop.** A panel opening or a preview lifting ends by itself and reads
   `useCalmMotion` directly.
 - The pause control's strings are `labels.motion` (`useLabels`).
+
+### Merged containers
+
+A container that is one accessibility element (`accessible`) is read as one stop: a screen reader
+never focuses anything inside it, so a `Pressable` composed into it is unreachable however it looks.
+A container that has to stay one stop keeps its inner controls reachable the way `Chip`, `Attachment`
+and `Badge` do — **one stop, each inner control mirrored as a named `accessibilityActions` entry, and
+the drawn duplicate hidden** (`accessibilityElementsHidden` plus
+`importantForAccessibility="no-hide-descendants"`), so nothing is announced twice.
+
+| Module | What it holds |
+| --- | --- |
+| `lib/interactive-child.ts` | `findInteractiveChild` (walks the element tree a container was handed for a press handler or control role, skipping hidden subtrees) and `warnInteractiveChildInAccessible`, a development-only warning, once per component and control, when an `accessible` container wraps one |
+
+It reads props, not the rendered tree, so a control a composite child draws internally is not seen;
+a merged container still decides its own actions rather than relying on the warning.
 
 ## Components
 

@@ -2144,6 +2144,22 @@
 			]
 		},
 		{
+			"name": "interactive-child",
+			"type": "registry:lib",
+			"title": "interactiveChild",
+			"description": "A development warning when an accessible container swallows a control a screen reader cannot reach.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/interactive-child.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
 			"name": "item",
 			"type": "registry:ui",
 			"title": "Item",

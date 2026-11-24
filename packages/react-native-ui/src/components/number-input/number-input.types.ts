@@ -22,7 +22,7 @@ export type NumberInputStepperProps = {
 	 * Increment; set it when a custom anatomy puts both on one side.
 	 */
 	position?: NumberInputStepperPosition;
-	/** Read by a screen reader. Defaults to "Decrease" / "Increase". */
+	/** Read by a screen reader. Defaults to the `decrease` / `increase` label ("Decrease" / "Increase"). */
 	accessibilityLabel?: string;
 	className?: string;
 	/** Replaces the minus or plus glyph. An `Icon` inherits the stepper's size and colour. */

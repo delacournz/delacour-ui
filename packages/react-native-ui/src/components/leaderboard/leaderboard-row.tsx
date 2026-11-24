@@ -25,13 +25,13 @@ export type LeaderboardRowProps = {
  * found at a glance, without a second accent competing with the podium.
  */
 export function LeaderboardRow({ ranked, testID }: LeaderboardRowProps): ReactElement {
-	const { formatValue, unit, highlightId, showMovement, renderMedia, onPressEntry } =
+	const { labels, formatValue, unit, highlightId, showMovement, renderMedia, onPressEntry } =
 		useLeaderboardPart("Leaderboard.Row");
 	const { entry, rank } = ranked;
 	const isHighlighted = entry.id === highlightId;
 	const slots = leaderboardVariants({ isHighlighted });
 	const formattedValue = formatValue(entry.value);
-	const accessibilityLabel = resolveLeaderboardAccessibilityLabel({ formattedValue, ranked, unit });
+	const accessibilityLabel = resolveLeaderboardAccessibilityLabel({ formattedValue, ranked, unit }, labels);
 	const media = renderMedia?.(entry, rank);
 	const Name = isHighlighted ? Text.Strong : Text;
 

@@ -98,14 +98,15 @@ LeaderboardPodiumBar.displayName = "DelacourUI.Leaderboard.PodiumPlace.Bar";
  * for a label, and a button only when the board has `onPressEntry`.
  */
 export function LeaderboardPodiumPlace(props: LeaderboardPodiumPlaceProps): ReactElement {
-	const { formatValue, unit, highlightId, renderMedia, onPressEntry } = useLeaderboardPart("Leaderboard.PodiumPlace");
+	const { labels, formatValue, unit, highlightId, renderMedia, onPressEntry } =
+		useLeaderboardPart("Leaderboard.PodiumPlace");
 	const { ranked, testID } = props;
 	const { entry, rank } = ranked;
 	const place = resolvePodiumPlace(rank);
 	const isHighlighted = entry.id === highlightId;
 	const slots = leaderboardVariants({ isHighlighted, place: `${place}` });
 	const formattedValue = formatValue(entry.value);
-	const accessibilityLabel = resolveLeaderboardAccessibilityLabel({ formattedValue, ranked, unit });
+	const accessibilityLabel = resolveLeaderboardAccessibilityLabel({ formattedValue, ranked, unit }, labels);
 	const media = renderMedia?.(entry, rank);
 	const Name = isHighlighted ? Text.Strong : Text;
 

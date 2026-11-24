@@ -1,7 +1,10 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { LeaderboardLabels } from "../../lib/labels";
 import type { LeaderboardEntry } from "./leaderboard.types";
 
 export type LeaderboardContextValue = {
+	/** The board's resolved spoken strings. */
+	labels: LeaderboardLabels;
 	/** Turns a score into the text drawn and spoken. */
 	formatValue: (value: number) => string;
 	/** Spoken after the value — "points", "seconds". */

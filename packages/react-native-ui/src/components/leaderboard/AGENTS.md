@@ -99,3 +99,10 @@ everything, with internal parts `Podium`, `PodiumPlace`, `Row`, `Movement` and
 - **Not virtualised.** Rows are plain views; pass `limit` for a long board.
 - **No text treatment on a view slot** (rule 1). The tests assert it across
   every combination.
+- **The spoken strings are `labels`, not literals.** "Rank 2", "tied", the movement
+  ("up 3 places", "no change") and the empty text come from `lib/labels` through
+  `useLabels`, resolved once on the root and shared through the context — English,
+  then `DelacourProvider`'s `labels`, then the board's own `labels` prop. `emptyText`
+  still wins over `labels.empty`. `resolveLeaderboardAccessibilityLabel` and
+  `resolveMovementLabel` take the labels as a trailing argument defaulting to English,
+  which keeps them pure.

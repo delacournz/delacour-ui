@@ -243,7 +243,7 @@ describe("progressButtonVariants — the button's box", () => {
 			const ours = progressButtonVariants({ size });
 			const button = buttonVariants({ size });
 			const buttonRoot = button.root().split(/\s+/);
-			const height = buttonRoot.find((c) => c.startsWith("h-button-"));
+			const height = buttonRoot.find((c) => c.startsWith("min-h-button-"));
 			const padding = buttonRoot.find((c) => c.startsWith("px-"));
 			expect(height).toBeDefined();
 			expect(padding).toBeDefined();

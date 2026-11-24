@@ -425,9 +425,11 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
-				"tv"
+				"tv",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -642,12 +644,14 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"paging",
 				"slot",
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2215,11 +2219,13 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"separator",
 				"surface",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"@delacour/react-native-charts",
@@ -3100,10 +3106,12 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"

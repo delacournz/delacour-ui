@@ -1,7 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
-import { DelacourProvider } from "../provider";
 import { Pagination } from "./pagination";
 import { usePagination } from "./pagination.context";
 
@@ -338,12 +338,12 @@ describe("Pagination labels", () => {
 		expect(screen.getByText("1 bis 20 von 472")).toBeOnTheScreen();
 	});
 
-	test("DelacourProvider's labels rename it, and a standalone Status reads them too", async () => {
+	test("a LabelsProvider's labels rename it, and a standalone Status reads them too", async () => {
 		await renderWithProviders(
-			<DelacourProvider labels={{ pagination: german }}>
+			<LabelsProvider labels={{ pagination: german }}>
 				<Pagination count={3} />
 				<Pagination.Status pageSize={20} total={50} />
-			</DelacourProvider>
+			</LabelsProvider>
 		);
 		expect(screen.getByRole("button", { name: "Seite 2" })).toBeOnTheScreen();
 		expect(screen.getByText("1 bis 20 von 50")).toBeOnTheScreen();
@@ -351,9 +351,9 @@ describe("Pagination labels", () => {
 
 	test("the prop wins over the provider, and a caller's accessibilityLabel wins over both", async () => {
 		await renderWithProviders(
-			<DelacourProvider labels={{ pagination: { nextPage: "Suivante", page: (page) => `Page n° ${page}` } }}>
+			<LabelsProvider labels={{ pagination: { nextPage: "Suivante", page: (page) => `Page n° ${page}` } }}>
 				<Pagination accessibilityLabel="Orders" count={3} labels={{ nextPage: "Weiter" }} />
-			</DelacourProvider>
+			</LabelsProvider>
 		);
 		expect(screen.getByRole("button", { name: "Weiter" })).toBeOnTheScreen();
 		expect(screen.getByRole("button", { name: "Page n° 2" })).toBeOnTheScreen();

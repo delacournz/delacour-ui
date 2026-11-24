@@ -1,5 +1,6 @@
 import { Children, type ReactElement, type ReactNode, useCallback, useEffect, useMemo } from "react";
 import type { LayoutChangeEvent } from "react-native";
+import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { type IconDefaults, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { TextClassProvider } from "../text/text.context";
@@ -11,7 +12,13 @@ import {
 	useTabsListPart,
 	useTabsPart,
 } from "./tabs.context";
-import { resolveTabsTriggerState, TABS_FOREGROUND_TOKEN, TABS_LABEL_TEXT_SIZE, tabsVariants } from "./tabs.variants";
+import {
+	resolveTabsTriggerHitSlop,
+	resolveTabsTriggerState,
+	TABS_FOREGROUND_TOKEN,
+	TABS_LABEL_TEXT_SIZE,
+	tabsVariants,
+} from "./tabs.variants";
 import { TabsLabel } from "./tabs-label";
 
 export type TabsTriggerRenderProps = {
@@ -76,11 +83,13 @@ export function TabsTrigger({
 	haptic = "selection",
 	onPress,
 	onLayout,
+	hitSlop,
 	...props
 }: TabsTriggerProps): ReactElement {
 	const bar = useTabsPart("Tabs.Trigger");
 	const { measure, unmeasure } = useTabsListPart("Tabs.Trigger");
 	const isScrollable = useTabsIsScrollable();
+	const minimumHitTarget = useMinimumHitTarget();
 
 	const { isDisabled: settledIsDisabled } = resolveTabsTriggerState({ own: isDisabled, root: bar.isDisabled });
 	const isSelected = bar.value === value;
@@ -160,6 +169,7 @@ export function TabsTrigger({
 				disabled={settledIsDisabled}
 				feedback={feedback}
 				haptic={haptic}
+				hitSlop={hitSlop ?? resolveTabsTriggerHitSlop({ min: minimumHitTarget, size: bar.size, variant: bar.variant })}
 				onLayout={handleLayout}
 				onPress={handlePress}
 				{...props}

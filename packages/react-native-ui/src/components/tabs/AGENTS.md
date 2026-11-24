@@ -218,6 +218,11 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
 - **The trigger's `TextClassProvider` carries no colour either**, following the
   slot. A bare `<Text>` composed into a trigger takes the page colour; reach for
   `Tabs.Label` when it should read as part of the tab.
+- **A trigger's `hitSlop` is vertical only, and stops at the list's padding**
+  (`resolveTabsTriggerHitSlop`). Triggers abut, so a sideways slop would overlap a neighbour and
+  hand it the press; the `list` is `overflow-hidden`, so slop beyond its padding is clipped and
+  never receives a touch. A `primary` `sm` bar therefore grows by its 2pt track, and a
+  `secondary` bar, which has no padding, grows not at all. A caller's own `hitSlop` wins.
 - **The axis ladder is `own ?? root ?? default`,
   [`Checkbox`](../checkbox/AGENTS.md)'s and not
   [`Radio.Group`](../radio/AGENTS.md)'s.** A radio group puts itself first because

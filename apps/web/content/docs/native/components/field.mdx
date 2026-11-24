@@ -123,6 +123,17 @@ fixed.
 <Field.Error>{error}</Field.Error>
 ```
 
+Pass `reserveError` to keep the line open while it is empty, so the message appearing or clearing moves
+nothing around the field.
+
+```tsx
+<Field isInvalid={!!error} reserveError>
+  <Field.Label>Signature</Field.Label>
+  <Signature onValueChange={setSignature} />
+  <Field.Error>{error}</Field.Error>
+</Field>
+```
+
 ## Reading the field's state
 
 Use `useField()` to read the field from a control inside it, without prop drilling.
@@ -202,6 +213,11 @@ React Native's `ViewProps`, plus:
       default: "false",
       description: "The control inside is unavailable. Fades the label and disables the control.",
     },
+    reserveError: {
+      type: "boolean",
+      default: "false",
+      description: "Keeps Field.Error's line when it has no message, so the error appearing or clearing shifts nothing.",
+    },
     className: { type: "string" },
   }}
 />
@@ -232,6 +248,7 @@ caller turn a description into a heading and lose the type scale the component e
     isInvalid: { type: "boolean", required: true },
     isDisabled: { type: "boolean", required: true },
     orientation: { type: '"vertical" | "horizontal"', required: true },
+    reserveError: { type: "boolean" },
     registerPress: {
       type: "(onPress: (() => void) | null) => void",
       required: true,

@@ -6,6 +6,7 @@ import {
 	FIELD_TEXT_PARTS,
 	type FieldTextPart,
 	fieldVariants,
+	resolveFieldErrorSlot,
 	resolveFieldInteractive,
 	resolveFieldLabelText,
 	resolveFieldTextColor,
@@ -236,5 +237,20 @@ describe("resolveFieldLabelText", () => {
 		expect(resolveFieldLabelText(false)).toBeNull();
 		expect(resolveFieldLabelText({ type: "Text", props: {} })).toBeNull();
 		expect(resolveFieldLabelText(["a", "b"])).toBeNull();
+	});
+});
+
+describe("resolveFieldErrorSlot", () => {
+	test("a message renders whether or not the line is reserved", () => {
+		expect(resolveFieldErrorSlot(true, false)).toBe("message");
+		expect(resolveFieldErrorSlot(true, true)).toBe("message");
+	});
+
+	test("no message renders nothing by default", () => {
+		expect(resolveFieldErrorSlot(false, false)).toBe("none");
+	});
+
+	test("no message keeps its line when the field reserves it", () => {
+		expect(resolveFieldErrorSlot(false, true)).toBe("reserved");
 	});
 });

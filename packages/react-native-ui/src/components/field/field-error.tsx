@@ -2,7 +2,7 @@ import { Children, type ReactElement, type ReactNode } from "react";
 import { Text } from "../text";
 import { useFieldContext } from "./field.context";
 import type { FieldTextProps } from "./field.types";
-import { fieldVariants, resolveFieldTextColor } from "./field.variants";
+import { fieldVariants, resolveFieldErrorSlot, resolveFieldTextColor } from "./field.variants";
 
 /**
  * `Text` renders `Animated.Text`, so its `children` may also be a Reanimated
@@ -26,18 +26,38 @@ export type FieldErrorProps = Omit<FieldTextProps, "children"> & { children?: Re
  *
  * Always destructive, in a valid field as much as an invalid one: an error message is
  * never the calm case.
+ *
+ * Under `<Field reserveError>` an empty error still renders, as one caption line
+ * of a non-breaking space hidden from assistive technology and carrying no
+ * `alert` role — so it holds the height a message will take without being
+ * announced. A message longer than a line still grows the field.
  */
 export function FieldError({ className, color, children, ...props }: FieldErrorProps): ReactElement | null {
 	const field = useFieldContext();
 	const isInvalid = field?.isInvalid ?? false;
 	const isDisabled = field?.isDisabled ?? false;
+	const slot = resolveFieldErrorSlot(hasContent(children), field?.reserveError ?? false);
+	const errorClassName = fieldVariants({ isDisabled, isInvalid }).error({ className });
 
-	if (!hasContent(children)) return null;
+	if (slot === "none") return null;
+
+	if (slot === "reserved") {
+		return (
+			<Text.Caption
+				accessibilityElementsHidden
+				className={errorClassName}
+				importantForAccessibility="no-hide-descendants"
+				{...props}
+			>
+				{"\u00A0"}
+			</Text.Caption>
+		);
+	}
 
 	return (
 		<Text.Caption
 			accessibilityLiveRegion="polite"
-			className={fieldVariants({ isDisabled, isInvalid }).error({ className })}
+			className={errorClassName}
 			color={color ?? resolveFieldTextColor("error", isInvalid)}
 			role="alert"
 			{...props}

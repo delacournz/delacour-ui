@@ -9,6 +9,11 @@ export type FieldContextValue = {
 	/** Which way the field's parts are laid out. */
 	orientation: FieldOrientation;
 	/**
+	 * Whether an empty `Field.Error` keeps its line, so a message arriving moves
+	 * nothing. Optional, so a value built by hand for `FieldProvider` still types.
+	 */
+	reserveError?: boolean;
+	/**
 	 * A control inside offers its press here, so the whole row can drive it.
 	 *
 	 * The counterpart of `isInvalid` travelling the other way: state cascades

@@ -32,6 +32,8 @@ export type MarqueeTrackProps = MarqueeStripProps & {
 	container: number;
 	/** The finger-down flag — the group's when there is one, so a press on any row holds them all. */
 	isPressed: SharedValue<boolean>;
+	/** The user's pause: eased to a stop like any hold, and resumed from the same offset. */
+	isFrozen: boolean;
 	trackClassName: string;
 };
 
@@ -42,7 +44,8 @@ export type MarqueeTrackProps = MarqueeStripProps & {
  * Each frame adds `dt × velocity` to an offset and wraps it by the period — the
  * measured length of one copy, trailing gap included. Pausing eases `velocity`
  * to zero rather than stopping a timeline, so a hold, a resume and a change of
- * speed all continue from wherever the strip is, with no jump. Nothing here
+ * speed all continue from wherever the strip is, with no jump. A user pause
+ * (`isFrozen`) is one more reason to ease to zero, not a second clock. Nothing here
  * re-renders per frame; the copy count is the only state, and it changes on
  * layout.
  *
@@ -59,6 +62,7 @@ export function MarqueeTrack({
 	easeMs,
 	container,
 	isPressed,
+	isFrozen,
 	copyClassName,
 	trackClassName,
 	isContentHidden,
@@ -80,7 +84,7 @@ export function MarqueeTrack({
 	// flag lives, and eased into rather than set: a held strip decelerates and a
 	// released one picks back up, and a speed change mid-flight glides.
 	useAnimatedReaction(
-		() => (resolveMarqueeHeld(pause, isPressed.value) ? 0 : target),
+		() => (resolveMarqueeHeld(pause, isPressed.value, isFrozen) ? 0 : target),
 		(next, previous) => {
 			if (next === previous) return;
 			velocity.value =

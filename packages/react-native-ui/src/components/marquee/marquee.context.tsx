@@ -9,6 +9,9 @@ export type MarqueeGroupContextValue = {
 	pause: MarqueePause | undefined;
 	/** Whether a finger is down on any strip in the group — written by every strip, read by all of them. */
 	isPressed: SharedValue<boolean>;
+	/** The group's user pause, which every strip inside follows over its own. */
+	isPaused: boolean;
+	onPausedChange: (isPaused: boolean) => void;
 };
 
 const MarqueeGroupContext = createContext<MarqueeGroupContextValue | null>(null);

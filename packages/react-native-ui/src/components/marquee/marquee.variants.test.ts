@@ -232,6 +232,13 @@ describe("resolveMarqueeHeld", () => {
 	test("none never holds", () => {
 		expect(resolveMarqueeHeld({ kind: "none" }, true)).toBe(false);
 	});
+
+	test("a user pause holds whatever the pause says, so even a strip that never holds can be frozen", () => {
+		expect(resolveMarqueeHeld({ kind: "none" }, false, true)).toBe(true);
+		expect(resolveMarqueeHeld({ kind: "press" }, false, true)).toBe(true);
+		expect(resolveMarqueeHeld({ isPaused: false, kind: "controlled" }, false, true)).toBe(true);
+		expect(resolveMarqueeHeld({ kind: "press" }, false, false)).toBe(false);
+	});
 });
 
 describe("marqueeVariants", () => {

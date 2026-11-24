@@ -10,6 +10,8 @@ import {
 } from "react";
 import { View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { PaginationLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
 import { type PaginationContextValue, PaginationProvider } from "./pagination.context";
 import {
@@ -62,6 +64,12 @@ export type PaginationProps = Omit<ViewProps, "children"> & {
 	/** The root's accessible name. */
 	accessibilityLabel?: string;
 	/**
+	 * Some of the strings it speaks or shows — the arrows' names, "Page 3", "Jump forward 5 pages".
+	 * Laid over `DelacourProvider`'s `labels`, which sit over the English defaults. Pass a stable
+	 * object.
+	 */
+	labels?: Partial<PaginationLabels>;
+	/**
 	 * Leading content — a `Pagination.Summary`; the run follows on the trailing
 	 * edge. Children that include a run part (`Item`, `Previous`, `Next`,
 	 * `Ellipsis`) replace the default run instead.
@@ -91,11 +99,14 @@ function PaginationRoot({
 	pageJump = PAGINATION_DEFAULT_PAGE_JUMP,
 	isDisabled = false,
 	haptic = "selection",
-	accessibilityLabel = "Pagination",
+	accessibilityLabel,
+	labels: labelsProp,
 	children,
 	className,
 	...props
 }: PaginationProps): ReactElement {
+	const labels = useLabels("pagination", labelsProp);
+	const rootLabel = accessibilityLabel ?? labels.list;
 	const [held, setPage] = useControllableState<number>({
 		defaultValue: defaultPage,
 		onChange: onPageChange,
@@ -136,12 +147,13 @@ function PaginationRoot({
 
 	const context = useMemo<PaginationContextValue>(
 		() => ({
-			accessibilityLabel,
+			accessibilityLabel: rootLabel,
 			canNext,
 			canPrevious,
 			count,
 			haptic,
 			isDisabled,
+			labels,
 			page,
 			pageJump,
 			range,
@@ -149,7 +161,7 @@ function PaginationRoot({
 			size,
 			variant,
 		}),
-		[accessibilityLabel, canNext, canPrevious, count, haptic, isDisabled, page, pageJump, range, select, size, variant]
+		[canNext, canPrevious, count, haptic, isDisabled, labels, page, pageJump, range, rootLabel, select, size, variant]
 	);
 
 	const slots = paginationVariants({ size });
@@ -180,12 +192,7 @@ function PaginationRoot({
 
 	return (
 		<PaginationProvider value={context}>
-			<View
-				accessibilityLabel={accessibilityLabel}
-				accessibilityRole="toolbar"
-				className={slots.root({ className })}
-				{...props}
-			>
+			<View accessibilityLabel={rootLabel} accessibilityRole="toolbar" className={slots.root({ className })} {...props}>
 				{isCustomRun ? null : children}
 				{run}
 			</View>

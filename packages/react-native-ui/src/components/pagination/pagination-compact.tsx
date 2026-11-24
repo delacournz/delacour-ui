@@ -24,7 +24,7 @@ const ACCESSIBILITY_ACTIONS = [{ name: "increment" }, { name: "decrement" }] as 
  */
 export function PaginationCompact({ className, ...props }: PaginationCompactProps): ReactElement {
 	const root = usePaginationPart("Pagination.Compact");
-	const { accessibilityLabel, count, isDisabled, page, select, size } = root;
+	const { accessibilityLabel, count, isDisabled, labels, page, select, size } = root;
 	const slots = paginationVariants({ isDisabled, size });
 
 	const handleAccessibilityAction = useCallback(
@@ -41,7 +41,7 @@ export function PaginationCompact({ className, ...props }: PaginationCompactProp
 			accessibilityLabel={accessibilityLabel}
 			accessibilityRole="adjustable"
 			accessibilityState={{ disabled: isDisabled }}
-			accessibilityValue={{ max: count, min: 1, now: page, text: formatCompactAccessibilityValue(page, count) }}
+			accessibilityValue={{ max: count, min: 1, now: page, text: formatCompactAccessibilityValue(page, count, labels) }}
 			accessible
 			className={slots.compact({ className })}
 			onAccessibilityAction={handleAccessibilityAction}

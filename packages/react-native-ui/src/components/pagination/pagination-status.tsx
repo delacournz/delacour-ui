@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import { useLabels } from "../../hooks/use-labels";
 import { Text, type TextPresetProps } from "../text";
 import { usePaginationContext } from "./pagination.context";
 import {
@@ -24,12 +25,14 @@ export type PaginationStatusProps = TextPresetProps & {
  */
 export function PaginationStatus({ page, pageSize, total, className, ...props }: PaginationStatusProps): ReactElement {
 	const root = usePaginationContext();
+	const standalone = useLabels("pagination");
+	const labels = root?.labels ?? standalone;
 	const range = resolvePaginationStatus({ page: page ?? root?.page ?? 1, pageSize, total });
 	const slots = paginationVariants({ size: root?.size ?? PAGINATION_DEFAULT_SIZE });
 
 	return (
 		<Text className={slots.status({ className })} numberOfLines={1} {...props}>
-			{formatPaginationStatus(range)}
+			{formatPaginationStatus(range, labels)}
 		</Text>
 	);
 }

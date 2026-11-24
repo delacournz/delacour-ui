@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { PaginationLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
 import type { PaginationSize, PaginationToken, PaginationVariant } from "./pagination.variants";
 
@@ -22,6 +23,8 @@ export type PaginationContextValue = {
 	haptic: false | HapticFeedback;
 	/** The root's accessible name, which the compact readout reuses. */
 	accessibilityLabel: string;
+	/** The resolved spoken and visible strings: defaults, then the provider's, then the root's `labels`. */
+	labels: PaginationLabels;
 };
 
 const PaginationContext = createContext<PaginationContextValue | null>(null);

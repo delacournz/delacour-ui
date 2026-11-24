@@ -36,6 +36,12 @@ are selected.
   `accent-foreground`.** `resolveTreeForeground` names the token a composed `Icon` gets and
   the suite asserts the `label` slot emits `text-<that token>` and that `theme.css` declares
   it — the `Steps` pattern, so a numeral and a glyph can never drift apart.
+- **Selection is never colour alone** (WCAG 1.4.1, 1.4.11). The `accent` fill is ~1.1:1
+  against the page, so a selected row also gets a `font-semibold` label and a 4pt
+  `bg-primary` bar down its start edge (the `marker` slot, absolute, `start-0`, hidden from
+  assistive technology, drawn only under `single`/`multiple`). The suite holds the bar's
+  `primary` at 3:1 against both `background` and `accent`, light and dark, via
+  `contrastRatio`. `accessibilityState.selected` is unchanged.
 - **The chevron is a step quieter than the label** (`muted-foreground`) until the row is
   selected, when both are `accent-foreground` — a muted glyph on an accent fill reads as
   disabled.

@@ -125,6 +125,51 @@ describe("geometry the slots write out", () => {
 	});
 });
 
+describe("selected cue beyond colour (WCAG 1.4.1, 1.4.11)", () => {
+	const token = (name: string, nth: number): string => {
+		const found = [...THEME_CSS.matchAll(new RegExp(`--${name}:\\s*(oklch\\([^)]*\\))`, "g"))][nth]?.[1];
+		if (!found) throw new Error(`theme.css declares no --${name} #${nth}`);
+		return found;
+	};
+
+	/** WCAG ratio for an achromatic `oklch(L 0 0)` — its linear luminance is L cubed. */
+	const contrastRatio = (a: string, b: string): number => {
+		const lightness = (value: string): number => {
+			const match = /^oklch\(\s*([\d.]+)\s+0(?:\.0+)?\s+0/.exec(value);
+			if (!match?.[1]) throw new Error(`not an achromatic oklch(): ${value}`);
+			return Number(match[1]) ** 3;
+		};
+		const [hi, lo] = [lightness(a), lightness(b)].sort((x, y) => y - x);
+		return ((hi ?? 0) + 0.05) / ((lo ?? 0) + 0.05);
+	};
+
+	test("a selected label is heavier than an unselected one", () => {
+		expect(cls(treeVariants({ isSelected: true }).label())).toMatch(/\bfont-semibold\b/);
+		expect(cls(treeVariants({ isSelected: false }).label())).not.toMatch(/\bfont-semibold\b/);
+	});
+
+	test("a selected row carries a leading bar in primary, at least 3pt wide, in start-only terms", () => {
+		const bar = cls(treeVariants({ isSelected: true }).marker());
+		expect(bar).toMatch(/\bbg-primary\b/);
+		expect(bar).toMatch(/\bw-1\b/);
+		expect(bar).toMatch(/\babsolute\b/);
+		expect(bar).toMatch(/\bstart-0\b/);
+		expect(bar).not.toMatch(/(^|\s)(left|right)-/);
+	});
+
+	test("the bar holds 3:1 against the page and the selected fill, light and dark", () => {
+		for (const [nth, label] of [
+			[0, "light"],
+			[1, "dark"],
+		] as const) {
+			const primary = token("primary", nth);
+			expect(contrastRatio(primary, token("background", nth))).toBeGreaterThanOrEqual(3);
+			expect(contrastRatio(primary, token("accent", nth))).toBeGreaterThanOrEqual(3);
+			expect(label.length).toBeGreaterThan(0);
+		}
+	});
+});
+
 describe("colour", () => {
 	test("a selected row is filled with accent and its label carries accent-foreground", () => {
 		const slots = treeVariants({ isSelected: true });

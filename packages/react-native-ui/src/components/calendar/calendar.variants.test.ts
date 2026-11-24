@@ -142,7 +142,8 @@ describe("range band geometry", () => {
 		for (const size of ["sm", "md", "lg"] as const) {
 			const slots = calendarVariants({ rangeRole: "start", size });
 			expect(slots.bandAnchor()).toContain(`w-input-${size}`);
-			expect(slots.dayBase()).toContain(`size-input-${size}`);
+			expect(slots.dayBase()).toContain(`min-h-input-${size}`);
+			expect(slots.dayBase()).toContain(`min-w-input-${size}`);
 		}
 	});
 
@@ -218,10 +219,21 @@ describe("tones", () => {
 
 describe("sizes", () => {
 	test("the cell steps on the input scale", () => {
-		expect(calendarVariants({ size: "sm" }).cell()).toContain("h-input-sm");
-		expect(calendarVariants({ size: "md" }).cell()).toContain("h-input-md");
-		expect(calendarVariants({ size: "lg" }).cell()).toContain("h-input-lg");
+		expect(calendarVariants({ size: "sm" }).cell()).toContain("min-h-input-sm");
+		expect(calendarVariants({ size: "md" }).cell()).toContain("min-h-input-md");
+		expect(calendarVariants({ size: "lg" }).cell()).toContain("min-h-input-lg");
 		expect(calendarVariants({ size: "md" }).dayLabel()).toContain("text-input-md");
+	});
+
+	test("a caller's min-h displaces the default, and no slot pins a fixed height", () => {
+		expect(calendarVariants({ size: "md" }).cell({ className: "min-h-20" })).toContain("min-h-20");
+		expect(calendarVariants({ size: "md" }).cell({ className: "min-h-20" })).not.toContain("min-h-input-md");
+		for (const size of CALENDAR_SIZES) {
+			const slots = calendarVariants({ size });
+			for (const slot of [slots.cell(), slots.dayBase(), slots.pickerItem()]) {
+				expect(slot).not.toMatch(/(^|\s)(h|size)-input-/);
+			}
+		}
 	});
 
 	test("defaults are md and primary", () => {

@@ -67,7 +67,7 @@ export const CALENDAR_PAGE_VELOCITY = 500;
  * beside the circle; one stopped at the cell's centre left half a translucent `secondary` circle
  * over band and half over the page, a two-tone circle. A one-day range draws no band at all.
  *
- * **The cell steps on the input scale** — `h-input-*` and `text-input-*` — so a calendar inline
+ * **The cell steps on the input scale** — `min-h-input-*` (a floor, so numerals grow it at 2× text instead of clipping; a week's cells stretch to its tallest) and `text-input-*` — so a calendar inline
  * beside a field shares its density, and a retune of the field retunes the calendar.
  *
  * **Colour is on the text slots, never their parent** (rule 1): `dayLabel`, `weekdayLabel`,
@@ -122,29 +122,29 @@ export const calendarVariants = tv({
 		size: {
 			sm: {
 				captionText: "text-input-sm",
-				cell: "h-input-sm",
+				cell: "min-h-input-sm",
 				bandAnchor: "w-input-sm",
-				dayBase: "size-input-sm",
+				dayBase: "min-h-input-sm min-w-input-sm",
 				dayLabel: "text-input-sm",
-				pickerItem: "h-input-sm",
+				pickerItem: "min-h-input-sm",
 				pickerItemLabel: "text-input-sm",
 			},
 			md: {
 				captionText: "text-input-md",
-				cell: "h-input-md",
+				cell: "min-h-input-md",
 				bandAnchor: "w-input-md",
-				dayBase: "size-input-md",
+				dayBase: "min-h-input-md min-w-input-md",
 				dayLabel: "text-input-md",
-				pickerItem: "h-input-md",
+				pickerItem: "min-h-input-md",
 				pickerItemLabel: "text-input-md",
 			},
 			lg: {
 				captionText: "text-input-lg",
-				cell: "h-input-lg",
+				cell: "min-h-input-lg",
 				bandAnchor: "w-input-lg",
-				dayBase: "size-input-lg",
+				dayBase: "min-h-input-lg min-w-input-lg",
 				dayLabel: "text-input-lg",
-				pickerItem: "h-input-lg",
+				pickerItem: "min-h-input-lg",
 				pickerItemLabel: "text-input-lg",
 			},
 		},

@@ -87,10 +87,18 @@ and `GridItem.Actions`.
   them — `"Storage, 74 GB, of 100 GB"` — into its `accessibilityLabel` unless
   the caller passed one. A part holding only elements registers nothing; label
   the tile yourself then. The group is `accessibilityRole="list"`.
-- **A pressable tile must not hold another control.** iOS merges an accessible
-  element's children, so a button in a pressable tile's `Actions` is
-  unreachable. Put controls on a static tile and give that tile
-  `accessible={false}` so each control is its own stop.
+- **A tile is one stop, so it must not hold another control.** Pressable or
+  static, the tile is one accessibility element (a `Pressable`, or an
+  `accessible` `Animated.View`), and a button in `GridItem.Actions` is drawn and
+  tappable but unreachable by a screen reader. Development warns once per
+  control (`warnInteractiveChildInAccessible`, which reads props, so a control a
+  composite child draws itself is not seen). Two fixes: `accessible={false}` on
+  the tile, so each control is its own stop (the warning honours it); or keep one
+  stop and mirror the control as a named `accessibilityActions` entry plus
+  `onAccessibilityAction` on the tile, hiding the drawn control with
+  `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`.
+  A pressable tile keeps its own `activate` / `longpress` and forwards every
+  other action to the caller. Nothing is mirrored automatically.
 - **`Background` is always behind.** The root moves every `GridItem.Background`
   to the front of its children before rendering, so it is drawn first wherever
   the caller wrote it. It takes no touches and is hidden from assistive

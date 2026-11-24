@@ -1,6 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Kpi } from "./kpi";
@@ -228,5 +229,48 @@ describe("Kpi", () => {
 		await silenceConsoleError(() =>
 			expect(renderWithProviders(<Probe />)).rejects.toThrow("useKpi must be called inside a <Kpi>.")
 		);
+	});
+});
+
+describe("Kpi labels", () => {
+	const labels = { up: "Hausse", loading: "Chargement" };
+
+	test("the labels prop changes the spoken trend and loading placeholder", async () => {
+		await renderWithProviders(
+			<Kpi labels={labels}>
+				<Kpi.Trend value={7.8} />
+			</Kpi>
+		);
+		expect(screen.getByLabelText("Hausse 7.8 percent")).toBeOnTheScreen();
+		await renderWithProviders(
+			<Kpi isLoading labels={labels}>
+				<Kpi.Value>1</Kpi.Value>
+			</Kpi>
+		);
+		expect(screen.getByLabelText("Chargement")).toBeOnTheScreen();
+	});
+
+	test("a provider's labels change the spoken trend and sparkline", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ kpi: { up: "Hausse", noTrendData: "Aucune donnee" } }}>
+				<Kpi>
+					<Kpi.Trend value={7.8} />
+					<Kpi.Sparkline data={[]} />
+				</Kpi>
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Hausse 7.8 percent")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Aucune donnee")).toBeOnTheScreen();
+	});
+
+	test("the prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ kpi: { up: "Hausse" } }}>
+				<Kpi labels={{ up: "Subida" }}>
+					<Kpi.Trend value={7.8} />
+				</Kpi>
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Subida 7.8 percent")).toBeOnTheScreen();
 	});
 });

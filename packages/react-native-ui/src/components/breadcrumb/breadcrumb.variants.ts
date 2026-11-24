@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type BreadcrumbLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { TextSize } from "../text/text.variants";
 
@@ -239,8 +240,10 @@ export function resolveBreadcrumbSeparatorGlyph(isRTL: boolean): "chevron-right"
  * The ellipsis' accessible name. A button offers to show the levels; a static
  * mark only says they are there. With no count it names no number.
  */
-export function resolveBreadcrumbEllipsisLabel(hiddenCount: number | undefined, isInteractive: boolean): string {
-	const noun = hiddenCount === 1 ? "level" : "levels";
-	if (isInteractive) return hiddenCount === undefined ? "Show hidden levels" : `Show ${hiddenCount} hidden ${noun}`;
-	return hiddenCount === undefined ? "Hidden levels" : `${hiddenCount} hidden ${noun}`;
+export function resolveBreadcrumbEllipsisLabel(
+	hiddenCount: number | undefined,
+	isInteractive: boolean,
+	labels: BreadcrumbLabels = DELACOUR_DEFAULT_LABELS.breadcrumb
+): string {
+	return labels.ellipsis(hiddenCount, isInteractive);
 }

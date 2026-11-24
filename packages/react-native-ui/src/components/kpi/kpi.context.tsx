@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { KpiLabels } from "../../lib/labels";
 import type { KpiColorIndex, KpiGoodDirection, KpiGroupOrientation, KpiLayout, KpiSize } from "./kpi.variants";
 
 export type KpiContextValue = {
@@ -10,6 +11,8 @@ export type KpiContextValue = {
 	goodDirection: KpiGoodDirection;
 	/** Whether the numbers are still on their way. The value, trend and sparkline hold placeholders. */
 	isLoading: boolean;
+	/** The spoken strings, resolved: English, then the provider's, then the card's own `labels`. */
+	labels: KpiLabels;
 	/**
 	 * The sparkline point being scrubbed, or `null` when nothing is. A custom
 	 * part reads it to print that point's value in place of the latest one.

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type PaginationLabels } from "../../lib/labels";
 import { THEME_CSS, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import {
 	clampPage,
@@ -466,5 +467,19 @@ describe("colour tokens", () => {
 		const token = resolveControlForeground();
 		expect(THEME_CSS).toContain(`--${token}:`);
 		expect(cls(paginationVariants().controlLabel())).toContain(`text-${token}`);
+	});
+
+	test("a custom labels object reaches every resolver's output", () => {
+		const labels: PaginationLabels = {
+			...DELACOUR_DEFAULT_LABELS.pagination,
+			jump: (direction, pages) => `${direction === 1 ? "vor" : "zurück"} ${pages}`,
+			page: (page) => `Seite ${page}`,
+			pageOf: (page, count) => `Seite ${page} von ${count}`,
+			status: ({ from, to, total }) => `${from} bis ${to} von ${total}`,
+		};
+		expect(formatPaginationStatus({ from: 1, to: 20, total: 472 }, labels)).toBe("1 bis 20 von 472");
+		expect(formatCompactAccessibilityValue(3, 12, labels)).toBe("Seite 3 von 12");
+		expect(formatPageLabel(3, labels)).toBe("Seite 3");
+		expect(formatEllipsisLabel(-1, 5, labels)).toBe("zurück 5");
 	});
 });

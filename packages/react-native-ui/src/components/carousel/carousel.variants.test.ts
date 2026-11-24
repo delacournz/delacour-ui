@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	CAROUSEL_CALM_DURATION_MS,
@@ -341,6 +342,15 @@ describe("resolveCarouselA11yValue", () => {
 
 	test("is empty with nothing to count", () => {
 		expect(resolveCarouselA11yValue(0, 0)).toBe("");
+	});
+
+	test("speaks through the labels it is given, one-based", () => {
+		const labels = {
+			...DELACOUR_DEFAULT_LABELS.carousel,
+			position: (current: number, count: number) => `${current}/${count}`,
+		};
+		expect(resolveCarouselA11yValue(1, 5, labels)).toBe("2/5");
+		expect(resolveCarouselA11yValue(0, 0, labels)).toBe("");
 	});
 });
 

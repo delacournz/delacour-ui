@@ -1,6 +1,8 @@
 import { type ReactElement, useMemo } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
+import type { KpiLabels } from "../../lib/labels";
 import { Card, type CardProps } from "../card";
 import { type KpiContextValue, KpiProvider, useKpiGroupContext } from "./kpi.context";
 import { type KpiColorIndex, type KpiGoodDirection, kpiVariants } from "./kpi.variants";
@@ -31,6 +33,11 @@ export type KpiProps = CardProps & {
 	goodDirection?: KpiGoodDirection;
 	/** The numbers are on their way: the value, trend and sparkline hold placeholders of their own size. */
 	isLoading?: boolean;
+	/**
+	 * Some of the spoken strings — the trend's direction and amount, the sparkline's name, the loading
+	 * placeholder. Laid over `DelacourProvider`'s `labels`, which sit over English.
+	 */
+	labels?: Partial<KpiLabels>;
 	/** The scrubbed sparkline point, controlled. `null` when nothing is scrubbed. */
 	activeIndex?: number | null;
 	/** The scrubbed point to start from, uncontrolled. */
@@ -43,6 +50,7 @@ function KpiRoot({
 	colorIndex = 1,
 	goodDirection = "up",
 	isLoading = false,
+	labels: labelsProp,
 	activeIndex: activeIndexProp,
 	defaultActiveIndex = null,
 	onActiveIndexChange,
@@ -53,6 +61,7 @@ function KpiRoot({
 	...props
 }: KpiProps): ReactElement {
 	const group = useKpiGroupContext();
+	const labels = useLabels("kpi", labelsProp);
 	const [activeIndex, setActiveIndex] = useControllableState<number | null>({
 		value: activeIndexProp,
 		defaultValue: defaultActiveIndex,
@@ -60,8 +69,8 @@ function KpiRoot({
 	});
 
 	const context = useMemo<KpiContextValue>(
-		() => ({ activeIndex, colorIndex, goodDirection, isLoading, setActiveIndex, size }),
-		[activeIndex, colorIndex, goodDirection, isLoading, setActiveIndex, size]
+		() => ({ activeIndex, colorIndex, goodDirection, isLoading, labels, setActiveIndex, size }),
+		[activeIndex, colorIndex, goodDirection, isLoading, labels, setActiveIndex, size]
 	);
 
 	// Inside a separated group the group's surface is the card; each metric

@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
+import type { BreadcrumbLabels } from "../../lib/labels";
 import { type BreadcrumbContextValue, BreadcrumbProvider } from "./breadcrumb.context";
 import { BREADCRUMB_DEFAULT_SIZE, type BreadcrumbSize, breadcrumbVariants } from "./breadcrumb.variants";
 import { BreadcrumbEllipsis } from "./breadcrumb-ellipsis";
@@ -14,6 +16,8 @@ export type BreadcrumbProps = ViewProps & {
 	size?: BreadcrumbSize;
 	/** Replaces the chevron between crumbs — a string is drawn as muted text. */
 	separator?: ReactNode;
+	/** Some of the spoken strings, over the provider's and the English defaults. */
+	labels?: Partial<BreadcrumbLabels>;
 	className?: string;
 	children?: ReactNode;
 };
@@ -21,11 +25,13 @@ export type BreadcrumbProps = ViewProps & {
 function BreadcrumbRoot({
 	size = BREADCRUMB_DEFAULT_SIZE,
 	separator,
+	labels: labelsProp,
 	className,
 	children,
 	...props
 }: BreadcrumbProps): ReactElement {
-	const context = useMemo<BreadcrumbContextValue>(() => ({ separator, size }), [separator, size]);
+	const labels = useLabels("breadcrumb", labelsProp);
+	const context = useMemo<BreadcrumbContextValue>(() => ({ labels, separator, size }), [labels, separator, size]);
 
 	return (
 		<BreadcrumbProvider value={context}>

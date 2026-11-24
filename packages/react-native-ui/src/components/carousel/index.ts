@@ -1,3 +1,4 @@
+export type { CarouselLabels } from "../../lib/labels";
 export { Carousel, type CarouselProps } from "./carousel";
 export {
 	type CarouselContextValue,

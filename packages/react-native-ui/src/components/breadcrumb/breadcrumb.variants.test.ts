@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { type BreadcrumbLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { THEME_CSS } from "../../styles/theme-tokens.test";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
@@ -208,6 +209,17 @@ describe("resolveBreadcrumbEllipsisLabel", () => {
 		expect(resolveBreadcrumbEllipsisLabel(3, false)).toBe("3 hidden levels");
 		expect(resolveBreadcrumbEllipsisLabel(1, false)).toBe("1 hidden level");
 		expect(resolveBreadcrumbEllipsisLabel(undefined, false)).toBe("Hidden levels");
+	});
+});
+
+describe("resolveBreadcrumbEllipsisLabel with custom labels", () => {
+	test("the resolved labels' ellipsis speaks, in both modes", () => {
+		const labels: BreadcrumbLabels = {
+			...DELACOUR_DEFAULT_LABELS.breadcrumb,
+			ellipsis: (count, isInteractive) => `${isInteractive ? "zeige" : "versteckt"} ${count ?? "?"}`,
+		};
+		expect(resolveBreadcrumbEllipsisLabel(3, true, labels)).toBe("zeige 3");
+		expect(resolveBreadcrumbEllipsisLabel(undefined, false, labels)).toBe("versteckt ?");
 	});
 });
 

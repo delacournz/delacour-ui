@@ -425,9 +425,11 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
-				"tv"
+				"tv",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -642,12 +644,14 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"paging",
 				"slot",
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2215,11 +2219,13 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"separator",
 				"surface",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"@delacour/react-native-charts",
@@ -2295,6 +2301,22 @@
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
+			]
+		},
+		{
+			"name": "labels",
+			"type": "registry:lib",
+			"title": "labels",
+			"description": "Every string the components speak or show on their own, with English defaults and the merge order.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/labels.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3084,10 +3106,12 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -3472,8 +3496,10 @@
 				"primitives"
 			],
 			"registryDependencies": [
+				"labels",
 				"use-calm-motion",
 				"use-keyboard-state-sync",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [],
@@ -6109,6 +6135,21 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-keyboard-state-sync.tsx"
+			]
+		},
+		{
+			"name": "use-labels",
+			"type": "registry:hook",
+			"title": "useLabels",
+			"description": "A component's spoken strings, and the provider an app translates them with.",
+			"registryDependencies": [
+				"labels"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-labels.tsx"
 			]
 		},
 		{

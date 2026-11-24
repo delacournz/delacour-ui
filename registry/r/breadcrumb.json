@@ -10,9 +10,11 @@
 	"registryDependencies": [
 		"icon",
 		"icons",
+		"labels",
 		"pressable",
 		"text",
-		"tv"
+		"tv",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -119,12 +121,28 @@
 		{
 			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb.context.tsx",
 			"target": "breadcrumb/breadcrumb.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb.tsx",
 			"target": "breadcrumb/breadcrumb.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb.types.ts",
@@ -136,6 +154,10 @@
 			"target": "breadcrumb/breadcrumb.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -149,7 +171,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/breadcrumb/index.ts",
 			"target": "breadcrumb/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -158,6 +186,10 @@
 			"target": "breadcrumb/breadcrumb.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -181,6 +213,10 @@
 			"target": "breadcrumb/breadcrumb.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

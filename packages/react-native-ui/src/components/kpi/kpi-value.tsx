@@ -19,12 +19,12 @@ import { kpiVariants } from "./kpi.variants";
  * line, announced as loading, so the card does not jump when the data lands.
  */
 export function KpiValue({ className, ...props }: KpiTextProps): ReactElement {
-	const { size, isLoading } = useKpiPart("Kpi.Value");
+	const { size, isLoading, labels } = useKpiPart("Kpi.Value");
 	const plane = useCardContext()?.plane ?? null;
 	const slots = kpiVariants({ plane: plane ?? "none", size });
 
 	if (isLoading) {
-		return <View accessibilityLabel="Loading" accessible className={slots.valuePlaceholder()} />;
+		return <View accessibilityLabel={labels.loading} accessible className={slots.valuePlaceholder()} />;
 	}
 
 	return <Text adjustsFontSizeToFit className={slots.value({ className })} numberOfLines={1} {...props} />;

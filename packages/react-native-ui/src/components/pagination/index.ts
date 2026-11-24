@@ -1,3 +1,4 @@
+export type { PaginationLabels } from "../../lib/labels";
 export { Pagination, type PaginationProps } from "./pagination";
 export {
 	type PaginationContextValue,

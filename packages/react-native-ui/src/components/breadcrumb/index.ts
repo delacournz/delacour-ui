@@ -1,3 +1,4 @@
+export type { BreadcrumbLabels } from "../../lib/labels";
 export { Breadcrumb, type BreadcrumbProps } from "./breadcrumb";
 export {
 	type BreadcrumbContextValue,

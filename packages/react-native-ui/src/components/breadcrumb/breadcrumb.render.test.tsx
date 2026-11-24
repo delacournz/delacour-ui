@@ -1,5 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Breadcrumb } from "./breadcrumb";
 import { useBreadcrumb } from "./breadcrumb.context";
@@ -320,5 +321,67 @@ describe("Breadcrumb", () => {
 		["Breadcrumb.Ellipsis", <Breadcrumb.Ellipsis key="p" />],
 	])("%s outside a Breadcrumb throws its documented error", async (name, part) => {
 		await expectThrows(part, `${name} must be rendered inside a <Breadcrumb>.`);
+	});
+
+	describe("labels", () => {
+		const GERMAN = {
+			list: "Brotkrumen",
+			currentPage: "aktuelle Seite",
+			ellipsis: (count: number | undefined, isInteractive: boolean) =>
+				isInteractive ? `${count} Ebenen zeigen` : `${count} Ebenen versteckt`,
+		};
+
+		function Labelled({ labels }: { labels?: Partial<typeof GERMAN> }): ReactElement {
+			return (
+				<Breadcrumb labels={labels}>
+					<Breadcrumb.List maxItems={3} onEllipsisPress={() => undefined}>
+						{TRAIL.map((crumb, index) => (
+							<Breadcrumb.Item key={crumb}>
+								{index === TRAIL.length - 1 ? (
+									<Breadcrumb.Page>{crumb}</Breadcrumb.Page>
+								) : (
+									<Breadcrumb.Link>{crumb}</Breadcrumb.Link>
+								)}
+							</Breadcrumb.Item>
+						))}
+					</Breadcrumb.List>
+				</Breadcrumb>
+			);
+		}
+
+		test("the labels prop changes the list, ellipsis and page", async () => {
+			await renderWithProviders(<Labelled labels={GERMAN} />);
+			expect(screen.getByLabelText("Brotkrumen")).toBeTruthy();
+			expect(screen.getByRole("button", { name: "5 Ebenen zeigen" })).toBeTruthy();
+			expect(screen.getByText("2026").props.accessibilityValue).toEqual({ text: "aktuelle Seite" });
+		});
+
+		test("a LabelsProvider changes them too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ breadcrumb: GERMAN }}>
+					<Labelled />
+				</LabelsProvider>
+			);
+			expect(screen.getByLabelText("Brotkrumen")).toBeTruthy();
+			expect(screen.getByRole("button", { name: "5 Ebenen zeigen" })).toBeTruthy();
+			expect(screen.getByText("2026").props.accessibilityValue).toEqual({ text: "aktuelle Seite" });
+		});
+
+		test("the prop wins over the provider, and a caller's own label wins over both", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ breadcrumb: GERMAN }}>
+					<Breadcrumb labels={{ list: "Pfad" }}>
+						<Breadcrumb.List>
+							<Breadcrumb.Item>
+								<Breadcrumb.Page>Home</Breadcrumb.Page>
+							</Breadcrumb.Item>
+						</Breadcrumb.List>
+					</Breadcrumb>
+				</LabelsProvider>
+			);
+			expect(screen.getByLabelText("Pfad")).toBeTruthy();
+			expect(screen.queryByLabelText("Brotkrumen")).toBeNull();
+			expect(screen.getByText("Home").props.accessibilityValue).toEqual({ text: "aktuelle Seite" });
+		});
 	});
 });

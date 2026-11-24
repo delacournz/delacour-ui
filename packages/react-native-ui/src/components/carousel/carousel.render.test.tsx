@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Text } from "../text";
 import { Carousel, type CarouselProps } from "./index";
@@ -351,6 +352,41 @@ describe("Carousel", () => {
 			} finally {
 				console.error = original;
 			}
+		});
+	});
+
+	describe("labels", () => {
+		const german = {
+			previous: "Vorherige Folie",
+			next: "Nächste Folie",
+			position: (current: number, count: number) => `${current} von ${count}`,
+		};
+
+		test("the labels prop changes the arrows' names and the value", async () => {
+			await renderWithProviders(<TestCarousel labels={german} />);
+			expect(viewport()).toHaveAccessibilityValue({ text: "1 von 3" });
+			expect(screen.getByRole("button", { name: "Nächste Folie" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Vorherige Folie" })).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider changes them too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ carousel: german }}>
+					<TestCarousel />
+				</LabelsProvider>
+			);
+			expect(viewport()).toHaveAccessibilityValue({ text: "1 von 3" });
+			expect(screen.getByRole("button", { name: "Nächste Folie" })).toBeOnTheScreen();
+		});
+
+		test("the prop wins over the provider, key by key", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ carousel: german }}>
+					<TestCarousel labels={{ next: "Weiter" }} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("button", { name: "Weiter" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Vorherige Folie" })).toBeOnTheScreen();
 		});
 	});
 });

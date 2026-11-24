@@ -215,6 +215,15 @@ describe("Toast", () => {
 		expect(harness.store.getSnapshot()[0]?.isExiting).toBe(true);
 	});
 
+	test("a loading toast's spinner adds no name to the card", async () => {
+		const harness = makeHarness();
+		await mountViewport(harness);
+		await act(async () => {
+			harness.toast.show({ title: "Saving", isLoading: true });
+		});
+		expect(screen.queryByLabelText("Loading", { includeHiddenElements: true })).not.toBeOnTheScreen();
+	});
+
 	test("a loading toast has no close control", async () => {
 		const harness = makeHarness();
 		await mountViewport(harness);

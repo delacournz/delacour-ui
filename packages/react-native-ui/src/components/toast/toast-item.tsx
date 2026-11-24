@@ -74,7 +74,7 @@ function renderMessage(
 	const { action } = item;
 	return (
 		<Toast accessibilityLiveRegion={liveRegion} onHide={handle.hide} status={item.status} testID={`toast-${item.id}`}>
-			<Toast.Indicator>{item.isLoading ? <Spinner /> : undefined}</Toast.Indicator>
+			<Toast.Indicator>{item.isLoading ? <Spinner accessibilityLabel="" /> : undefined}</Toast.Indicator>
 			<Toast.Content>
 				<Toast.Title>{item.title}</Toast.Title>
 				{item.description ? <Toast.Description>{item.description}</Toast.Description> : null}

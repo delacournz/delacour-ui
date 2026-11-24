@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text, View } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Badge } from "./badge";
 import { useBadge } from "./badge.context";
@@ -341,6 +342,50 @@ describe("Badge", () => {
 
 		test("useBadge throws its documented error", async () => {
 			await expect(renderWithProviders(<ContextProbe />)).rejects.toThrow("useBadge must be called inside a <Badge>.");
+		});
+	});
+
+	describe("labels", () => {
+		test("the labels prop names the dismiss control", async () => {
+			await renderWithProviders(
+				<Badge labels={{ remove: "Entfernen" }} onClose={() => undefined}>
+					React
+				</Badge>
+			);
+			expect(screen.getByRole("button", { name: "Entfernen" })).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider names it too, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ badge: { remove: "Entfernen" } }}>
+					<Badge testID="a" onClose={() => undefined}>
+						A
+					</Badge>
+					<Badge labels={{ remove: "Weg" }} onClose={() => undefined}>
+						B
+					</Badge>
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("button", { name: "Entfernen" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Weg" })).toBeOnTheScreen();
+		});
+
+		test("closeAccessibilityLabel still wins over labels", async () => {
+			await renderWithProviders(
+				<Badge closeAccessibilityLabel="Remove React" labels={{ remove: "Entfernen" }} onClose={() => undefined}>
+					React
+				</Badge>
+			);
+			expect(screen.getByRole("button", { name: "Remove React" })).toBeOnTheScreen();
+		});
+
+		test("a pressable badge's folded remove action is labelled from labels", async () => {
+			await renderWithProviders(
+				<Badge labels={{ remove: "Entfernen" }} onClose={() => undefined} onPress={() => undefined} testID="root">
+					React
+				</Badge>
+			);
+			expect(screen.getByTestId("root").props.accessibilityActions).toEqual([{ label: "Entfernen", name: "remove" }]);
 		});
 	});
 });

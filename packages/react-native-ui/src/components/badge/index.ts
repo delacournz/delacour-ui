@@ -1,3 +1,4 @@
+export type { BadgeLabels } from "../../lib/labels";
 export { Badge, type BadgeProps } from "./badge";
 export { type BadgeContextValue, BadgeProvider, useBadge, useBadgeContext } from "./badge.context";
 export type { BadgeSlotProps } from "./badge.types";

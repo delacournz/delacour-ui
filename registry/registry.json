@@ -678,7 +678,6 @@
 			"registryDependencies": [
 				"cn",
 				"color",
-				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",

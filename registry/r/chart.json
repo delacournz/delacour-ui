@@ -10,7 +10,6 @@
 	"registryDependencies": [
 		"cn",
 		"color",
-		"pressable",
 		"text",
 		"tv",
 		"use-controllable-state",
@@ -207,13 +206,7 @@
 		{
 			"path": "packages/react-native-ui/src/components/chart/pie-chart-slice-targets.tsx",
 			"target": "chart/pie-chart-slice-targets.tsx",
-			"namespace": "ui",
-			"rewrites": [
-				{
-					"from": "../pressable/pressable.variants",
-					"to": "@registry/ui/pressable/pressable.variants"
-				}
-			]
+			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/chart/pie-chart-slice.tsx",

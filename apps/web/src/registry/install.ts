@@ -4529,10 +4529,10 @@ export const install = {
 		description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
 		importPath: "@delacour/react-native-ui/chart",
 		exportName: "Chart",
-		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-reanimated", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 53,
+		fileCount: 47,
 		groups: [
 			{
 				name: "chart",
@@ -4570,17 +4570,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart.tsx", target: "src/components/ui/chart/pie-chart.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/use-chart-font.ts", target: "src/components/ui/chart/use-chart-font.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/use-chart-palette.ts", target: "src/components/ui/chart/use-chart-palette.ts" },
-				],
-			},
-			{
-				name: "pressable",
-				title: "Pressable",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -4622,22 +4611,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{

@@ -258,9 +258,10 @@ knows nothing about tokens.
   in: the summary, then each drawn slice in order as a 44-point box at its
   label position, named with its value and share through the tooltip's own
   formatters. The boxes are `pointerEvents="none"` and activate through
-  `accessibilityTap` on iOS and the `activate` action on Android, the way
-  `Pressable` routes them — a touch handler there would steal a sighted tap
-  from the engine's hit test. Activating a slice selects it; it never toggles
+  `accessibilityTap` on iOS and the `activate` action on Android, the split
+  `Pressable` makes — wired inline, because importing it would make `delacour
+  add chart` copy `Pressable` and install a haptics module — and a touch
+  handler there would steal a sighted tap from the engine's hit test. Activating a slice selects it; it never toggles
   it off.
 
 - **`@delacour/react-native-charts` is an optional peer, not a dependency.** A dependency

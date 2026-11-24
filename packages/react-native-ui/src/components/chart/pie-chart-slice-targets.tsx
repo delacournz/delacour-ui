@@ -1,7 +1,6 @@
 import { sliceLabelPosition } from "@delacour/react-native-charts/core";
 import type { ReactElement } from "react";
 import { type AccessibilityActionEvent, Platform, View } from "react-native";
-import { dispatchPressableAccessibilityAction, resolvePressableActivation } from "../pressable/pressable.variants";
 import { pieSliceAccessibilityLabel } from "./chart-accessibility";
 import { usePieChart } from "./pie-chart.context";
 
@@ -16,6 +15,14 @@ export type PieChartSliceTargetsProps = {
 /** The side of each slice's accessibility box, in points — the minimum touch target. */
 const TARGET_SIZE = 44;
 
+/**
+ * Android's activation, listed for TalkBack. iOS reaches a double-tap through
+ * `onAccessibilityTap` instead, and lists nothing — an `activate` entry there
+ * would show in the VoiceOver rotor. Module scope, so the array keeps its
+ * identity across renders.
+ */
+const ANDROID_ACTIONS = [{ name: "activate" }] as const;
+
 /** How far out along a slice's bisector its box is centred, as a fraction of the radius. */
 const TARGET_RADIUS_FRACTION = 0.7;
 
@@ -27,9 +34,10 @@ const TARGET_RADIUS_FRACTION = 0.7;
  * boxes stand in for it. They are siblings of the canvas inside the frame, and
  * **never take a touch** (`pointerEvents="none"`): selection by finger stays the
  * engine's hit test, and a screen reader activates a slice through
- * `accessibilityTap` on iOS and the `activate` action on Android, wired by
- * `resolvePressableActivation` as `Pressable` does. Activating a slice selects
- * it; it does not toggle, because "select" is what the user asked for and a
+ * `accessibilityTap` on iOS and the `activate` action on Android — the split
+ * `Pressable` makes, wired inline rather than imported, so a chart copied by
+ * the CLI does not drag `Pressable` and a haptics module in with it.
+ * Activating a slice selects it; it does not toggle, because "select" is what the user asked for and a
  * second double-tap on the same slice announcing "cleared" would be a surprise.
  *
  * Each box is centred on its slice's label position, so touch exploration lands
@@ -52,14 +60,10 @@ export function PieChartSliceTargets({ summary, formatValue, formatPercent }: Pi
 				if (slice === undefined) return null;
 				const anchor = sliceLabelPosition(slice, TARGET_RADIUS_FRACTION);
 				const activate = (): void => select(index);
-				const activation = resolvePressableActivation({
-					hasAccessibilityTap: false,
-					hasPress: true,
-					platform: Platform.OS,
-				});
+				const android = Platform.OS === "android";
 				return (
 					<View
-						accessibilityActions={activation.accessibilityActions}
+						accessibilityActions={android ? ANDROID_ACTIONS : undefined}
 						accessibilityLabel={pieSliceAccessibilityLabel({
 							label: entry.label,
 							value: values[index] ?? 0,
@@ -71,16 +75,14 @@ export function PieChartSliceTargets({ summary, formatValue, formatPercent }: Pi
 						accessibilityState={{ selected: selectedIndex === index }}
 						accessible
 						key={entry.key}
-						onAccessibilityAction={(event: AccessibilityActionEvent) => {
-							dispatchPressableAccessibilityAction({
-								actionName: event.nativeEvent.actionName,
-								activation,
-								busy: false,
-								disabled: false,
-								onPress: activate,
-							});
-						}}
-						onAccessibilityTap={activation.wiresAccessibilityTap ? activate : undefined}
+						onAccessibilityAction={
+							android
+								? (event: AccessibilityActionEvent) => {
+										if (event.nativeEvent.actionName === "activate") activate();
+									}
+								: undefined
+						}
+						onAccessibilityTap={android ? undefined : activate}
 						pointerEvents="none"
 						style={{
 							position: "absolute",

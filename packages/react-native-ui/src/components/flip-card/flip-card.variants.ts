@@ -325,6 +325,23 @@ export function resolveFlipCardActions(trigger: FlipCardTrigger): Array<{ name: 
 	return [{ label: FLIP_CARD_ACTION_LABEL, name: "activate" }];
 }
 
+/**
+ * How a face presents itself to a screen reader.
+ *
+ * - `"flip-button"` — `trigger="press"`'s visible face. The face stays a
+ *   container so a control on it is reached on its own, and a transparent
+ *   "Flip card" button sits behind its content as the card's activation.
+ * - `"grouped"` — `trigger="swipe"`'s visible face: one element holding the
+ *   `activate` action.
+ * - `"container"` — a hidden face, and every face under `"manual"`.
+ */
+export type FlipCardFaceMode = "container" | "flip-button" | "grouped";
+
+export function resolveFaceMode({ hidden, trigger }: { hidden: boolean; trigger: FlipCardTrigger }): FlipCardFaceMode {
+	if (hidden || trigger === "manual") return "container";
+	return trigger === "press" ? "flip-button" : "grouped";
+}
+
 /** What `FlipCard.Trigger` tells a screen reader a press will do. */
 export function resolveFlipCardTriggerHint(destination: FlipCardFace): string {
 	return destination === "back" ? "Shows the back" : "Shows the front";

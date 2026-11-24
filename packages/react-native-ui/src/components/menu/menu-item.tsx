@@ -7,7 +7,7 @@ import { Icon } from "../icon";
 import { playHaptic } from "../pressable/pressable";
 import { dispatchPressableAccessibilityAction, resolvePressableActivation } from "../pressable/pressable.variants";
 import { Text } from "../text";
-import { useMenuPart } from "./menu.context";
+import { type MenuFocusTarget, useMenuPart } from "./menu.context";
 import type { MenuItemProps } from "./menu.types";
 import {
 	MENU_ICON_TOKEN,
@@ -17,6 +17,7 @@ import {
 	menuVariants,
 	resolveCloseOnSelect,
 	resolveMenuItemAccessibility,
+	resolveMenuRowRole,
 } from "./menu.variants";
 
 export type { MenuItemProps } from "./menu.types";
@@ -92,7 +93,7 @@ export function MenuRow({
 	accessibilityState,
 	...props
 }: MenuRowProps): ReactElement {
-	const { close, haptic } = useMenuPart("Menu.Item");
+	const { close, firstRowRef, haptic } = useMenuPart("Menu.Item");
 	const isReducedMotion = useReducedMotion();
 	const slots = menuVariants({ isDisabled, isInset, variant });
 	const shouldClose = resolveCloseOnSelect(kind, isClosedOnSelect);
@@ -136,6 +137,18 @@ export function MenuRow({
 		handleSelect
 	);
 
+	// The first row to mount claims the panel's initial focus, and gives it up when it unmounts.
+	const claimFirstRow = useCallback(
+		(node: MenuFocusTarget | null) => {
+			if (node === null) return;
+			if (firstRowRef.current === null) firstRowRef.current = node;
+			return () => {
+				if (firstRowRef.current === node) firstRowRef.current = null;
+			};
+		},
+		[firstRowRef]
+	);
+
 	const rowStyle = useAnimatedStyle(() => ({
 		transform: [{ scale: 1 - pressed.value * (1 - pressedScale) }],
 	}));
@@ -157,13 +170,14 @@ export function MenuRow({
 	return (
 		<GestureDetector gesture={gesture}>
 			<Animated.View
-				accessibilityRole="menuitem"
+				accessibilityRole={resolveMenuRowRole(kind)}
 				accessibilityState={accessibilityState ?? resolveMenuItemAccessibility({ isDisabled, kind: "item" })}
 				accessibilityActions={accessibilityActions}
 				accessible
 				className={slots.item({ className })}
 				onAccessibilityAction={onAccessibilityAction}
 				onAccessibilityTap={onAccessibilityTap}
+				ref={claimFirstRow}
 				style={rowStyle}
 				{...props}
 			>

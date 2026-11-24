@@ -1,6 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
@@ -214,5 +215,36 @@ describe("Popover", () => {
 		} finally {
 			spy.mockRestore();
 		}
+	});
+});
+
+describe("Popover labels", () => {
+	test("the labels prop renames the corner close button", async () => {
+		await renderWithProviders(<RenamePopover defaultOpen labels={{ close: "Schliessen" }} />, { wrapper: Overlays });
+		expect(screen.getByRole("button", { name: "Schliessen" })).toBeOnTheScreen();
+		expect(screen.queryByRole("button", { name: "Close" })).not.toBeOnTheScreen();
+	});
+
+	test("a LabelsProvider's labels rename it", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ popover: { close: "Fermer" } }}>
+				<RenamePopover defaultOpen />
+			</LabelsProvider>,
+			{ wrapper: Overlays }
+		);
+		expect(screen.getByRole("button", { name: "Fermer" })).toBeOnTheScreen();
+	});
+
+	test("Close's own accessibilityLabel wins over labels.close", async () => {
+		await renderWithProviders(
+			<Popover defaultOpen labels={{ close: "Schliessen" }}>
+				<Popover.Content>
+					<Popover.Title>T</Popover.Title>
+					<Popover.Close accessibilityLabel="Dismiss" />
+				</Popover.Content>
+			</Popover>,
+			{ wrapper: Overlays }
+		);
+		expect(screen.getByRole("button", { name: "Dismiss" })).toBeOnTheScreen();
 	});
 });

@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { PopoverLabels } from "../../lib/labels";
 import { PopoverContext, type PopoverContextValue } from "./popover.context";
 import type { PopoverPlacement } from "./popover.position";
 import { POPOVER_DEFAULTS } from "./popover.variants";
@@ -19,6 +21,11 @@ export type PopoverProps = {
 	onOpenChange?: (isOpen: boolean) => void;
 	/** An outside tap, Android back and the escape gesture close it. Default true. */
 	isDismissible?: boolean;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `Popover.Close`'s own `accessibilityLabel` still wins over `labels.close`.
+	 */
+	labels?: Partial<PopoverLabels>;
 	children: ReactNode;
 };
 
@@ -27,6 +34,7 @@ function PopoverRoot({
 	defaultOpen = false,
 	onOpenChange,
 	isDismissible = true,
+	labels: labelsProp,
 	children,
 }: PopoverProps): ReactElement {
 	const [isOpen, setOpen] = useControllableState({
@@ -34,6 +42,7 @@ function PopoverRoot({
 		defaultValue: defaultOpen,
 		onChange: onOpenChange,
 	});
+	const labels = useLabels("popover", labelsProp);
 	const [anchorCount, setAnchorCount] = useState(0);
 	const [placement, setPlacement] = useState<PopoverPlacement>(POPOVER_DEFAULTS.placement);
 	const hasAnchor = anchorCount > 0;
@@ -54,6 +63,7 @@ function PopoverRoot({
 			setOpen,
 			close,
 			isDismissible,
+			labels,
 			placement,
 			onPlaced: setPlacement,
 			anchorRect: hasAnchor ? anchor.rect : trigger.rect,
@@ -67,6 +77,7 @@ function PopoverRoot({
 			setOpen,
 			close,
 			isDismissible,
+			labels,
 			placement,
 			hasAnchor,
 			anchor.rect,

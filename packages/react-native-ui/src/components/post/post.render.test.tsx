@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { IconBubble2, IconHeart } from "../../icons/central";
+import type { PostLabels } from "../../lib/labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Post } from "./post";
 import { usePost } from "./post.context";
@@ -606,5 +608,84 @@ describe("Post", () => {
 				expect(withOptions).not.toHaveBeenCalled();
 			});
 		});
+	});
+});
+
+describe("Post labels", () => {
+	const german = {
+		openPost: "Beitrag öffnen",
+		moreOptions: "Weitere Optionen",
+		upvote: "Positiv",
+		downvote: "Negativ",
+		score: (score: string) => `Punkte ${score}`,
+		showMore: "Mehr zeigen",
+		more: "mehr",
+		community: (name: string, meta: string | undefined) => (meta === undefined ? name : `${name} von ${meta}`),
+		author: ({ name, spokenTime }: { name: string; spokenTime: string }) => `${name} schrieb ${spokenTime}`,
+		timeSpoken: () => "vor kurzem",
+		stat: (label: string, value: string) => `${label}: ${value}`,
+	};
+
+	function tree(rootLabels?: Partial<PostLabels>) {
+		return (
+			<Post labels={rootLabels} onLongPress={jest.fn()} onPress={jest.fn()} variant="vote">
+				<Post.Header>
+					<Post.Community meta="5h" name="r/rn" />
+					<Post.Author date={new Date(Date.now() - 5000)} name="Aria" />
+				</Post.Header>
+				<Post.Footer>
+					<Post.Stat icon={IconHeart} label="Like" value={1234} />
+					<Post.Votes score={1240} />
+				</Post.Footer>
+			</Post>
+		);
+	}
+
+	test("the root labels prop changes what a screen reader hears", async () => {
+		await renderWithProviders(tree(german));
+		expect(screen.getByTestId("post-card-action").props.accessibilityLabel).toBe("Beitrag öffnen");
+		expect(screen.getByTestId("post-card-action").props.accessibilityActions).toEqual(
+			expect.arrayContaining([{ name: "longpress", label: "Weitere Optionen" }])
+		);
+		expect(screen.getByLabelText("r/rn von 5h")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Aria schrieb vor kurzem")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Like: 1,234")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Punkte 1,240")).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Positiv" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Negativ" })).toBeOnTheScreen();
+	});
+
+	test("a LabelsProvider's post labels do too", async () => {
+		await renderWithProviders(<LabelsProvider labels={{ post: german }}>{tree()}</LabelsProvider>);
+		expect(screen.getByTestId("post-card-action").props.accessibilityLabel).toBe("Beitrag öffnen");
+		expect(screen.getByLabelText("Punkte 1,240")).toBeOnTheScreen();
+	});
+
+	test("the body toggle's name and word come from the labels", async () => {
+		await renderWithProviders(
+			<Post labels={german}>
+				<Post.Body expandable numberOfLines={1} testID="body">
+					Hi
+				</Post.Body>
+			</Post>
+		);
+		const twin = screen
+			.getAllByText("Hi", { includeHiddenElements: true })
+			.find((node) => typeof node.props.onTextLayout === "function");
+		if (!twin) throw new Error("the measuring twin did not render");
+		await fireEvent(twin, "textLayout", { nativeEvent: { lines: [{ text: "a" }, { text: "b" }] } });
+		expect(screen.getByRole("button", { name: "Mehr zeigen" })).toBeOnTheScreen();
+		expect(screen.getByText("mehr")).toBeOnTheScreen();
+	});
+
+	test("an explicit accessibilityLabel on a part still wins", async () => {
+		await renderWithProviders(
+			<Post labels={german}>
+				<Post.Community accessibilityLabel="Mine" meta="5h" name="r/rn" />
+				<Post.Votes accessibilityLabel="Score!" score={3} />
+			</Post>
+		);
+		expect(screen.getByLabelText("Mine")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Score!")).toBeOnTheScreen();
 	});
 });

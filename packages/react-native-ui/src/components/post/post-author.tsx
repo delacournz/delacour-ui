@@ -57,13 +57,13 @@ export function PostAuthor({
 	className,
 	...props
 }: PostAuthorProps): ReactElement {
-	const { variant, size } = usePostPart("Post.Author");
+	const { variant, size, labels } = usePostPart("Post.Author");
 	const { handleInline } = resolvePostLayout(variant);
 	const slots = postVariants({ variant, size });
-	const relative = date ? formatRelativeTime(date, now ?? new Date()) : null;
+	const relative = date ? formatRelativeTime(date, now ?? new Date(), labels) : null;
 	const shortTime = timestamp ?? relative?.short ?? "";
 	const spokenTime = timestamp ?? relative?.spoken ?? "";
-	const label = accessibilityLabel ?? resolveAuthorA11yLabel({ name, handle, verified, spokenTime });
+	const label = accessibilityLabel ?? resolveAuthorA11yLabel({ name, handle, verified, spokenTime }, labels);
 	const meta = [handle, shortTime].filter((part): part is string => Boolean(part)).join(" · ");
 
 	const content = (

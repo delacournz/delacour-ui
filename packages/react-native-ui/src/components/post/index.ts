@@ -1,3 +1,4 @@
+export type { PostLabels } from "../../lib/labels";
 export { Post, type PostProps } from "./post";
 export { type PostContextValue, PostProvider, usePost, usePostContext } from "./post.context";
 export type { PostSlotProps } from "./post.types";

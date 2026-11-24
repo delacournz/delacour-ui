@@ -142,9 +142,8 @@ section to read first — what follows is only where a switch differs.
   The off knob is `background`, which clears 3:1 against that track (3.10 or
   more). It was `muted-foreground` while `input` was a pale border grey; once
   `input` darkened, that grey knob fell to 1.57:1 in light. `secondary` or
-  `muted-foreground` in either slot would fail again. `switch.variants.test.ts`
-  pins both tokens and computes the ratios from `theme.css`, and another test
-  holds the slot class to the token. One known gap: a glyph *inside* the knob
+  `muted-foreground` in either slot would fail again, so keep the slot
+  classes and the two token constants in step. One known gap: a glyph *inside* the knob
   takes the track's on colour (a prop, so it cannot fade with the knob), which
   reads on the on knob but not on the off one, so keep knob glyphs decorative.
   Content in `Switch.StartContent` and `.EndContent` sits on the track and is

@@ -133,10 +133,12 @@ export const radioVariants = tv({
 	},
 	compoundVariants: [
 		// Neither `variant` nor `isSelected` paints the ring alone, so all four
-		// cells live here — the reason a badge's twenty-four do.
+		// cells live here — the reason a badge's twenty-four do. An unselected
+		// ring is `input` in both variants: it is the control's only edge, and
+		// the `border` hairline sits near 1.2:1 where WCAG 1.4.11 asks 3:1.
 		{ variant: "primary", isSelected: false, class: { indicator: "border-input bg-transparent" } },
 		{ variant: "primary", isSelected: true, class: { indicator: "border-primary bg-transparent" } },
-		{ variant: "secondary", isSelected: false, class: { indicator: "border-border bg-secondary" } },
+		{ variant: "secondary", isSelected: false, class: { indicator: "border-input bg-secondary" } },
 		{ variant: "secondary", isSelected: true, class: { indicator: "border-primary bg-secondary" } },
 		// Invalid outranks selected, and it is a compound rather than a plain
 		// variant purely for emission order: `tv` emits the variants first and the

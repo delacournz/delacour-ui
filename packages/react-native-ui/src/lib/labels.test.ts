@@ -405,6 +405,21 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.jump(-1, 1)).toBe("Jump back 1 page");
 		expect(labels.status({ from: 41, to: 60, total: 472 })).toBe("41–60 of 472");
 	});
+
+	test("planner is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.planner;
+		expect([labels.previousMonth, labels.nextMonth, labels.today]).toEqual(["Previous month", "Next month", "Today"]);
+		expect([0, 1, 3].map(labels.entryCount)).toEqual(["no entries", "1 entry", "3 entries"]);
+		expect(labels.day("Wednesday, October 14", "2 entries", ["Run"], true)).toBe(
+			"Wednesday, October 14, 2 entries, Run, today"
+		);
+		expect(labels.day("Wednesday, October 14", "no entries", [], false)).toBe("Wednesday, October 14, no entries");
+		expect(labels.legendCount("Run", 4)).toBe("Run, 4");
+		expect(labels.summary(0, "October")).toBe("No entries in October");
+		expect(labels.summary(1, "October")).toBe("1 entry in October");
+		expect(labels.summary(12, "October")).toBe("12 entries in October");
+		expect(labels.more(3)).toBe("+3 more");
+	});
 });
 
 describe("resolveLabels", () => {

@@ -623,6 +623,29 @@ export type MessageScrollerLabels = {
 	newMessages: (count: number, senderName?: string) => string;
 };
 
+/** Planner's visible and spoken strings. Month and weekday names come from `Intl`, in the planner's `locale`. */
+export type PlannerLabels = {
+	/** The back button's accessible name. `Planner.Nav`'s `previousLabel` wins. */
+	previousMonth: string;
+	/** The forward button's accessible name. `Planner.Nav`'s `nextLabel` wins. */
+	nextMonth: string;
+	/** `Planner.Today`'s text when it has no children. */
+	today: string;
+	/** A day's entry count, inside its spoken label: "no entries", "1 entry", "3 entries". */
+	entryCount: (count: number) => string;
+	/**
+	 * A day's whole spoken label. `date` is the localised day title, `entries` is `entryCount`'s
+	 * text, `names` the day's category or entry names in order: "Wednesday, October 14, 2 entries, Run, today".
+	 */
+	day: (date: string, entries: string, names: readonly string[], isToday: boolean) => string;
+	/** A legend row's spoken label when counts show: "Run, 4". */
+	legendCount: (name: string, count: number) => string;
+	/** `Planner.Summary`'s text when it has no children; `month` is the localised month: "12 entries in October". */
+	summary: (count: number, month: string) => string;
+	/** A `calendar` day's overflow line: "+3 more". */
+	more: (count: number) => string;
+};
+
 /** What a looping animation's pause control is called — every looping component shares them. */
 export type MotionLabels = {
 	/** Offered while the loop moves. */
@@ -722,6 +745,7 @@ export type DelacourLabels = {
 	otpInput: OtpInputLabels;
 	pageHeader: PageHeaderLabels;
 	pagination: PaginationLabels;
+	planner: PlannerLabels;
 };
 
 /** A component whose strings the catalog holds. */
@@ -1089,6 +1113,17 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		jump: (direction, pages) =>
 			`Jump ${direction === 1 ? "forward" : "back"} ${pages} ${plural(pages, "page", "pages")}`,
 		status: ({ from, to, total }) => `${from}–${to} of ${total}`,
+	},
+	planner: {
+		previousMonth: "Previous month",
+		nextMonth: "Next month",
+		today: "Today",
+		entryCount: (count) => (count === 0 ? "no entries" : `${count} ${plural(count, "entry", "entries")}`),
+		day: (date, entries, names, isToday) => [date, entries, ...names, ...(isToday ? ["today"] : [])].join(", "),
+		legendCount: (name, count) => `${name}, ${count}`,
+		summary: (count, month) =>
+			`${count === 0 ? "No entries" : `${count} ${plural(count, "entry", "entries")}`} in ${month}`,
+		more: (count) => `+${count} more`,
 	},
 };
 

@@ -910,7 +910,15 @@ Four things about it are load-bearing, and the fourth is what keeps the other th
 | `src/components/theme-builder.tsx` | the seven axes, as grids of links |
 | `src/components/theme-specimens.tsx` | what an axis looks like, shared by the tiles and the summary |
 | `src/components/theme-preview.tsx` | the mock interface the tokens are painted onto |
+| `src/lib/theme-contrast.ts` | `themeContrast` — `auditContrast(resolveTokens(config))` as a sorted, labelled view model |
+| `src/components/theme-contrast-panel.tsx` | the contrast notice under the preview: failing pairs, or an all-clear |
 | `src/components/theme-css.tsx` | the summary, the two code blocks in their tabs, and the copy button |
+
+**The contrast panel** (`theme-contrast-panel.tsx`, under the preview) runs `@delacour/design-system/contrast-audit`
+over the same resolved tokens the CSS is emitted from and lists each pair below WCAG 2.2 AA — mode,
+`--foreground` on `--background`, ratio against minimum, text or non-text — or says all pairs clear. It is
+server-rendered, advisory (it never blocks copying), and the default and house themes show the all-clear
+by contract; most other base × accent combinations do not. The logic is `src/lib/theme-contrast.ts`.
 
 The specimens are one file because the tiles and the summary draw the same things, and a swatch on
 a tile that disagreed with the swatch on the row it sets would be wrong in exactly the place

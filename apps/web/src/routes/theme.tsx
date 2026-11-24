@@ -3,6 +3,7 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactElement, ReactNode } from "react";
 import { PresetsRow } from "@/components/presets-row";
 import { ResetThemeLink, ThemeBuilder } from "@/components/theme-builder";
+import { ThemeContrastPanel } from "@/components/theme-contrast-panel";
 import { CopyThemeButton, PresetNotice, ThemeCssPanel, ThemeSummary } from "@/components/theme-css";
 import { ThemePreview } from "@/components/theme-preview";
 import { themeFontLinks } from "@/lib/google-fonts";
@@ -121,6 +122,8 @@ function ThemePage(): ReactElement {
 						<Panel kicker="Preview">
 							<ThemePreview config={resolved.config} />
 						</Panel>
+
+						<ThemeContrastPanel config={resolved.config} />
 
 						<Panel kicker="What that adds up to">
 							<ThemeSummary config={resolved.config} />

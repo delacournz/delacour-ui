@@ -12,7 +12,7 @@ import { DelacourProvider } from "@delacour/react-native-ui/provider";
 <DelacourProvider>{children}</DelacourProvider>;
 ```
 
-## The five layers
+## The six layers
 
 Outermost first. The order is not stylistic.
 
@@ -22,7 +22,8 @@ Outermost first. The order is not stylistic.
 | `SafeAreaProvider` | Seeded with `initialWindowMetrics`. |
 | `KeyboardProvider` | Owns one pair of shared animation values for the whole app. |
 | `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. A **sibling** of the children, not a parent of them. |
-| `CalmMotionProvider` | Pure context carrying `isMotionCalm`. Wraps the children alone. |
+| `CalmMotionProvider` | Pure context carrying `isMotionCalm`. |
+| `LabelsProvider` | Pure context carrying `labels`. Wraps the children alone. |
 
 ## One more layer is yours
 
@@ -91,6 +92,30 @@ keeps moving: a `Spinner` still says work is in flight, an indeterminate `Progre
 Your own components ask the same question with `useCalmMotion()`, from
 `@delacour/react-native-ui/hooks/use-calm-motion`.
 
+## `labels` translates what components say on their own
+
+Every string a component speaks or shows without being given one — an arrow's name, "Page 3 of
+12", "Jump forward 5 pages" — comes from one catalog, `@delacour/react-native-ui/lib/labels`, keyed
+by component. Pass the strings you want to change; anything left out stays English.
+
+```tsx
+const LABELS = {
+  pagination: { nextPage: "Page suivante", page: (page: number) => `Page ${page}` },
+  carousel: { position: (current: number, count: number) => `${current} sur ${count}` },
+};
+
+<DelacourProvider labels={LABELS}>{children}</DelacourProvider>;
+```
+
+A label that carries a number is a function, so a language orders and inflects it itself. A
+component's own `labels` prop wins over the provider's, and a part's own `accessibilityLabel` wins
+over both. Declare the map at module scope: a new object every render re-renders everything that
+reads it. Pagination, Breadcrumb, Kpi and Carousel read it today; the rest of the library is moving
+over component by component.
+
+Your own components read the same catalog with `useLabels(component)`, from
+`@delacour/react-native-ui/hooks/use-labels`.
+
 ## What it deliberately does not do
 
 There are no per-layer escape hatches — no `gestureHandler={false}`, no `safeAreaProps`, no
@@ -104,7 +129,8 @@ packages.
 
 Only if your app already has a root stack of its own. `<KeyboardStateSync />` is **required**, not
 optional polish, and must be a child of `KeyboardProvider`. `CalmMotionProvider` is optional —
-without it `useCalmMotion()` follows reduce motion alone. `BottomSheetProvider` goes innermost,
+without it `useCalmMotion()` follows reduce motion alone. `LabelsProvider` is optional too — without
+it every component speaks English. `BottomSheetProvider` goes innermost,
 and only if the app has sheets.
 
 ```tsx

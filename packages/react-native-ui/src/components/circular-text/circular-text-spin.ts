@@ -45,9 +45,9 @@ export function useCircularSpin({
 	spin: CircularTextSpin;
 }): SharedValue<number> {
 	const rotation = useSharedValue(0);
-	const { isLooping } = resolveSpinRun({ kind: spin.kind, isAtRest, isPaused });
+	const { isLooping, isHeld } = resolveSpinRun({ kind: spin.kind, isAtRest, isPaused });
 	const target = resolveSpinVelocity(direction, spin.kind === "loop" ? (spin.speed ?? CIRCULAR_TEXT_DEFAULT_SPEED) : 0);
-	const velocity = useSharedValue(isPaused ? 0 : target);
+	const velocity = useSharedValue(isHeld ? 0 : target);
 
 	const frame = useFrameCallback((info) => {
 		rotation.value = advanceRotation(rotation.value, info.timeSincePreviousFrame ?? 0, velocity.value);
@@ -59,7 +59,7 @@ export function useCircularSpin({
 	}, [frame, isLooping, rotation]);
 
 	useAnimatedReaction(
-		() => isPaused || isPressed.value,
+		() => isHeld || isPressed.value,
 		(paused) => {
 			velocity.value = withTiming(paused ? 0 : target, { duration: CIRCULAR_TEXT_EASE_MS });
 		}

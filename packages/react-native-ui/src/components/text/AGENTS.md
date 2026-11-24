@@ -87,11 +87,12 @@ own text inheritance through classNames. Compound root plus thirteen presets:
   profiles badly, the escape hatch is to base the root on RN's `Text` and let app
   code write `<Animated.Text className={useTextClass()} style={…} />` — the
   cascade is on context, so that inherits correctly. Measure first.
-- **OS font scaling is respected and capped.** `allowFontScaling` is left at
-  React Native's default; `maxFontSizeMultiplier` defaults to
-  `TEXT_MAX_FONT_SIZE_MULTIPLIER`. The cap exists for the fixed-height chrome —
-  `h-button-*` and `h-navbar-row` cannot grow, so an uncapped multiplier clips a
-  label rather than enlarging it. Both stay overridable per call site.
+- **OS font scaling is respected and capped at 2×.** `allowFontScaling` is left
+  at React Native's default; `maxFontSizeMultiplier` defaults to
+  `TEXT_MAX_FONT_SIZE_MULTIPLIER` (2), the 200% WCAG 1.4.4 asks text to reach.
+  Text-bearing chrome sizes with `min-h-*` (`min-h-button-*`, `min-h-input-*`)
+  so it grows with its label instead of clipping it; the cap stays because
+  iOS's largest accessibility size is over 3×. Both stay overridable per call site.
 - **No `asChild`.** `Slot` throws on a non-element child and a `Text`'s child is
   usually a string, so it would be unusable in the shape people would reach for.
   There is also nothing to donate: `useTextClass()` hands the class over directly.

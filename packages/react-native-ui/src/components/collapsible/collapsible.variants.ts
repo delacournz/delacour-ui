@@ -61,9 +61,10 @@ export type CollapsibleTravel = { kind: "spring" } | { kind: "timing"; duration:
 
 /**
  * Settles how the panel, its fade and the indicator travel: the spring normally,
- * a brief linear timing under calm motion (reduce motion, or an E2E build's
- * `isMotionCalm`). Not an instant jump: the panel still resolves to the same end
- * state, but without the bounce and sweep that reduce motion asks to be spared.
+ * a brief eased timing under calm motion (reduce motion, or an E2E build's
+ * `isMotionCalm`), with no bounce. Under the OS reduce-motion setting Reanimated
+ * completes the timing at once, so the panel snaps; under `isMotionCalm` alone the
+ * 150 ms runs.
  */
 export function resolveCollapsibleTravel({ isCalm }: { isCalm: boolean }): CollapsibleTravel {
 	return isCalm ? { kind: "timing", duration: COLLAPSIBLE_CALM_DURATION_MS } : { kind: "spring" };

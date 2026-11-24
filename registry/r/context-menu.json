@@ -231,6 +231,10 @@
 					"to": "@registry/hooks/use-calm-motion"
 				},
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
 				}

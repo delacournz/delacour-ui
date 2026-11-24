@@ -52,7 +52,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 48,
+		fileCount: 49,
 		groups: [
 			{
 				name: "button",
@@ -191,6 +191,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 		],
@@ -744,7 +752,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 61,
+		fileCount: 62,
 		groups: [
 			{
 				name: "stack-card",
@@ -902,6 +910,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -1076,7 +1092,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 62,
+		fileCount: 63,
 		groups: [
 			{
 				name: "selection-mode",
@@ -1234,6 +1250,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -1402,7 +1426,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 57,
 		groups: [
 			{
 				name: "toggle-button",
@@ -1555,6 +1579,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -1821,7 +1853,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 75,
+		fileCount: 76,
 		groups: [
 			{
 				name: "input",
@@ -2003,6 +2035,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"textarea": {
@@ -2014,7 +2054,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 79,
+		fileCount: 80,
 		groups: [
 			{
 				name: "textarea",
@@ -2207,6 +2247,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"theme-selector": {
@@ -2218,7 +2266,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 80,
+		fileCount: 81,
 		groups: [
 			{
 				name: "theme-selector",
@@ -2419,6 +2467,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -2437,7 +2493,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 108,
+		fileCount: 109,
 		groups: [
 			{
 				name: "tag-input",
@@ -2678,6 +2734,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -2712,7 +2776,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 87,
+		fileCount: 88,
 		groups: [
 			{
 				name: "otp-input",
@@ -2911,6 +2975,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -2945,7 +3017,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 89,
+		fileCount: 90,
 		groups: [
 			{
 				name: "number-input",
@@ -3155,6 +3227,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -3173,7 +3253,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 117,
+		fileCount: 118,
 		groups: [
 			{
 				name: "markdown-editor",
@@ -3419,6 +3499,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -3701,7 +3789,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 48,
+		fileCount: 49,
 		groups: [
 			{
 				name: "chip",
@@ -3842,6 +3930,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -3860,7 +3956,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 163,
+		fileCount: 164,
 		groups: [
 			{
 				name: "combobox",
@@ -4171,6 +4267,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -4648,7 +4752,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 71,
+		fileCount: 72,
 		groups: [
 			{
 				name: "flow",
@@ -4824,6 +4928,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -4942,7 +5054,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 106,
+		fileCount: 107,
 		groups: [
 			{
 				name: "kpi",
@@ -5169,6 +5281,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -5187,7 +5307,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 160,
+		fileCount: 161,
 		groups: [
 			{
 				name: "questionnaire",
@@ -5514,6 +5634,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -5556,7 +5684,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 139,
+		fileCount: 140,
 		groups: [
 			{
 				name: "color-picker",
@@ -5825,6 +5953,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -6041,7 +6177,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 154,
+		fileCount: 155,
 		groups: [
 			{
 				name: "planner",
@@ -6341,6 +6477,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -6548,7 +6692,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 85,
+		fileCount: 86,
 		groups: [
 			{
 				name: "calendar",
@@ -6744,6 +6888,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -6786,7 +6938,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 150,
+		fileCount: 151,
 		groups: [
 			{
 				name: "date-picker",
@@ -7080,6 +7232,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -7138,7 +7298,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 195,
+		fileCount: 196,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -7498,6 +7658,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -7707,7 +7875,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 81,
+		fileCount: 82,
 		groups: [
 			{
 				name: "signature",
@@ -7893,6 +8061,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -7927,7 +8103,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 129,
+		fileCount: 130,
 		groups: [
 			{
 				name: "select",
@@ -8186,6 +8362,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -8244,7 +8428,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 111,
+		fileCount: 112,
 		groups: [
 			{
 				name: "search-bar",
@@ -8480,6 +8664,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -8659,7 +8851,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 134,
+		fileCount: 135,
 		groups: [
 			{
 				name: "time-picker",
@@ -8923,6 +9115,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -9124,7 +9324,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 35,
+		fileCount: 36,
 		groups: [
 			{
 				name: "avatar",
@@ -9245,6 +9445,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"badge": {
@@ -9256,7 +9464,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 37,
+		fileCount: 38,
 		groups: [
 			{
 				name: "badge",
@@ -9377,6 +9585,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 		],
@@ -9790,7 +10006,7 @@ export const install = {
 		expo: ["expo-linear-gradient", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 61,
+		fileCount: 62,
 		groups: [
 			{
 				name: "table",
@@ -9951,6 +10167,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"map": {
@@ -9962,7 +10186,7 @@ export const install = {
 		expo: ["@maplibre/maplibre-react-native", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 69,
+		fileCount: 70,
 		groups: [
 			{
 				name: "map",
@@ -10135,6 +10359,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -10354,7 +10586,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 107,
+		fileCount: 108,
 		groups: [
 			{
 				name: "support",
@@ -10579,6 +10811,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -10621,7 +10861,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 77,
+		fileCount: 78,
 		groups: [
 			{
 				name: "scroll-text",
@@ -10806,6 +11046,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -11680,7 +11928,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 55,
+		fileCount: 56,
 		groups: [
 			{
 				name: "animated-badge",
@@ -11831,6 +12079,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -12003,7 +12259,7 @@ export const install = {
 		expo: ["expo-linear-gradient", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 53,
+		fileCount: 54,
 		groups: [
 			{
 				name: "post",
@@ -12147,6 +12403,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 		],
@@ -13177,7 +13441,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 115,
+		fileCount: 116,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -13415,6 +13679,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -14330,7 +14602,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 55,
 		groups: [
 			{
 				name: "dialog",
@@ -14491,6 +14763,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"popover": {
@@ -14502,7 +14782,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 57,
 		groups: [
 			{
 				name: "popover",
@@ -14665,6 +14945,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"tooltip": {
@@ -14676,7 +14964,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 67,
+		fileCount: 68,
 		groups: [
 			{
 				name: "tooltip",
@@ -14857,6 +15145,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"drawer": {
@@ -14868,7 +15164,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 55,
+		fileCount: 56,
 		groups: [
 			{
 				name: "drawer",
@@ -15030,6 +15326,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"feedback": {
@@ -15041,7 +15345,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 118,
+		fileCount: 119,
 		groups: [
 			{
 				name: "feedback",
@@ -15285,6 +15589,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -15477,7 +15789,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 44,
+		fileCount: 45,
 		groups: [
 			{
 				name: "tabs",
@@ -15614,6 +15926,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"tree": {
@@ -15625,7 +15945,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 41,
+		fileCount: 42,
 		groups: [
 			{
 				name: "tree",
@@ -15759,6 +16079,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"tour": {
@@ -15770,7 +16098,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 60,
+		fileCount: 61,
 		groups: [
 			{
 				name: "tour",
@@ -15930,6 +16258,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -15948,7 +16284,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 68,
+		fileCount: 69,
 		groups: [
 			{
 				name: "screen",
@@ -16119,6 +16455,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -16918,7 +17262,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 95,
+		fileCount: 96,
 		groups: [
 			{
 				name: "sketch",
@@ -17133,6 +17477,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -17159,7 +17511,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 97,
+		fileCount: 98,
 		groups: [
 			{
 				name: "page-header",
@@ -17364,6 +17716,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -17768,7 +18128,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 68,
+		fileCount: 69,
 		groups: [
 			{
 				name: "carousel",
@@ -17931,6 +18291,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -17989,7 +18357,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 65,
+		fileCount: 66,
 		groups: [
 			{
 				name: "image-viewer",
@@ -18150,6 +18518,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -18197,10 +18573,10 @@ export const install = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		importPath: "@delacour/react-native-ui/provider",
 		exportName: "DelacourProvider",
-		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets"],
-		npm: [],
+		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
+		npm: ["cn", "tailwindcss"],
 		dev: [],
-		fileCount: 7,
+		fileCount: 21,
 		groups: [
 			{
 				name: "provider",
@@ -18210,6 +18586,17 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/provider/AGENTS.md", target: "src/components/ui/provider/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/provider/index.ts", target: "src/components/ui/provider/index.ts" },
 					{ source: "packages/react-native-ui/src/components/provider/provider.tsx", target: "src/components/ui/provider/provider.tsx" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -18242,6 +18629,51 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 		],

@@ -363,6 +363,13 @@ describe("resolveSpinRun", () => {
 		expect(resolveSpinRun({ kind: "loop", isAtRest: true, isPaused: true }).isLooping).toBe(false);
 	});
 
+	test("a pause stays held through a rest, so lifting the rest does not drift the ring", () => {
+		expect(resolveSpinRun({ kind: "loop", isAtRest: true, isPaused: true })).toEqual({
+			isLooping: false,
+			isHeld: true,
+		});
+	});
+
 	test("a pause keeps the loop registered but held, so the angle freezes", () => {
 		expect(resolveSpinRun({ kind: "loop", isAtRest: false, isPaused: true })).toEqual({
 			isLooping: true,

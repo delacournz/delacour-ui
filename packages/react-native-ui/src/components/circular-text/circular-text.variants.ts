@@ -238,6 +238,8 @@ export function advanceRotation(rotation: number, dtMs: number, velocity: number
  * Only a `loop` runs, and only when nothing rests it: calm motion or a screen reader sends the
  * angle back to 0 and registers nothing. A pause — the user's or the app's `pause` — keeps the loop
  * registered at zero velocity, so the angle freezes where it is and resuming carries on from it.
+ * The hold is kept through a rest too, so a ring paused before a screen reader or calm motion
+ * rested it comes back still rather than drifting while its velocity eases down.
  * `controlled` and `none` never run a clock of their own.
  */
 export function resolveSpinRun({
@@ -250,7 +252,7 @@ export function resolveSpinRun({
 	isPaused: boolean;
 }): { isLooping: boolean; isHeld: boolean } {
 	const isLooping = kind === "loop" && !isAtRest;
-	return { isLooping, isHeld: isLooping && isPaused };
+	return { isLooping, isHeld: kind === "loop" && isPaused };
 }
 
 /**

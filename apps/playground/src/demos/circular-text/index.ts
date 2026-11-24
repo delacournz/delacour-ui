@@ -4,6 +4,7 @@ import * as badge from "./badge";
 import * as controlled from "./controlled";
 import * as holdToPause from "./hold-to-pause";
 import * as loadingRing from "./loading-ring";
+import * as pauseButton from "./pause-button";
 import * as seal from "./seal";
 import * as twoRings from "./two-rings";
 
@@ -15,5 +16,6 @@ export const circularTextDemos = defineDemoGroup("circular-text", {
 	badge,
 	"loading-ring": loadingRing,
 	"hold-to-pause": holdToPause,
+	"pause-button": pauseButton,
 	controlled,
 });

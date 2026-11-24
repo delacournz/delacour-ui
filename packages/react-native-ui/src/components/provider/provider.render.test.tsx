@@ -1,11 +1,20 @@
-import { describe, expect, test } from "@jest/globals";
+import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
-import { Text } from "react-native";
+import { Platform, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { render, screen } from "../../test/render";
 import { Button } from "../button";
 import { DelacourProvider } from "./provider";
+
+afterEach(() => {
+	jest.restoreAllMocks();
+});
+
+function HitTargetProbe(): ReactElement {
+	return <Text>{`target ${useMinimumHitTarget()}`}</Text>;
+}
 
 function CalmProbe(): ReactElement {
 	return <Text>{useCalmMotion() ? "calm" : "moving"}</Text>;
@@ -65,6 +74,35 @@ describe("DelacourProvider", () => {
 			</DelacourProvider>
 		);
 		expect(screen.getByText("moving")).toBeOnTheScreen();
+	});
+
+	test("the minimum hit target is 44 by default", async () => {
+		await render(
+			<DelacourProvider>
+				<HitTargetProbe />
+			</DelacourProvider>
+		);
+		expect(screen.getByText("target 44")).toBeOnTheScreen();
+	});
+
+	test("isMaterialHitTarget leaves iOS at 44", async () => {
+		jest.replaceProperty(Platform, "OS", "ios");
+		await render(
+			<DelacourProvider isMaterialHitTarget>
+				<HitTargetProbe />
+			</DelacourProvider>
+		);
+		expect(screen.getByText("target 44")).toBeOnTheScreen();
+	});
+
+	test("isMaterialHitTarget grows Android to 48", async () => {
+		jest.replaceProperty(Platform, "OS", "android");
+		await render(
+			<DelacourProvider isMaterialHitTarget>
+				<HitTargetProbe />
+			</DelacourProvider>
+		);
+		expect(screen.getByText("target 48")).toBeOnTheScreen();
 	});
 
 	test("initialMetrics seeds the safe-area insets for the first frame", async () => {

@@ -13,7 +13,7 @@ and only `onPress` and `onLongPress` cross back to JS.
 | `index.ts` | → `@delacour/react-native-ui/pressable` |
 | `pressable.tsx` | The Gesture API primitive |
 | `pressable.variants.ts` | Shared feedback vocabulary and screen-reader activation routing, no RN imports |
-| `pressable.variants.test.ts` | Feedback, rest opacity, accessibility state, activation and action-dispatch matrices |
+| `pressable.variants.test.ts` | Feedback, rest opacity, accessibility state, activation and action-dispatch matrices, minimum hit target and slop |
 | `pressable.render.test.tsx` | Mounted under Jest — role and name, disabled and busy state, iOS tap and Android `activate` / `longpress` routing, caller-owned actions, `asChild` and its errors |
 
 ## Design
@@ -90,6 +90,24 @@ and only `onPress` and `onLongPress` cross back to JS.
   Verified on an iOS simulator with `AXPress` through Simulator.app's
   accessibility bridge, which calls `accessibilityActivate` — `warden ui press`
   does not, it synthesises a touch, so it cannot tell the two paths apart.
+- **`hitSlop` reaches the gestures, not only the view.** A Gesture Handler
+  tap with `shouldCancelWhenOutside` checks the touch against the view's own
+  bounds plus the *gesture's* `hitSlop`, never the view's. On iOS the view's
+  slop gets the touch delivered and the tap then fails it as outside, so a slop
+  on the view alone only ever worked on Android. `Pressable` normalises its
+  `hitSlop` to four numbers (`normalizeHitSlop`) and hands it to the tap and the
+  long press as well as the view, as primitives so the gesture's memo holds.
+- **A small control reaches the minimum target with `hitSlop`, sized from what
+  it draws.** `resolveMinimumHitSlop(size, min)` gives half the shortfall to each
+  side of a short axis — a number for a square, insets for anything else,
+  `undefined` at or above `min`. `min` is 44 (`MIN_HIT_TARGET`, the HIG), or 48
+  on Android when the app opts into Material (`resolveMinimumHitTarget`,
+  `DelacourProvider isMaterialHitTarget`); components read it through
+  `useMinimumHitSlop` in `hooks/use-minimum-hit-target.tsx`. Its `cap` bounds
+  each side for targets packed tighter than the slop: React Native hit-tests
+  the later sibling first, so overlapping slop gives the press to whichever
+  sits later in the tree. Cap at half the gap; the target then falls short of
+  44, which is the honest trade for a layout that dense. No pixel moves.
 - **A className's opacity is multiplied into the press, never overwritten.**
   The press feedback is an animated style, and an animated style owns every key
   it writes on the view — so its resting `opacity: 1` silently replaced a

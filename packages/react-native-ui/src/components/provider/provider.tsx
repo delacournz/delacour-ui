@@ -5,6 +5,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { initialWindowMetrics, type Metrics, SafeAreaProvider } from "react-native-safe-area-context";
 import { CalmMotionProvider } from "../../hooks/use-calm-motion";
 import { KeyboardStateSync } from "../../hooks/use-keyboard-state-sync";
+import { MinimumHitTargetProvider } from "../../hooks/use-minimum-hit-target";
 
 export type DelacourProviderProps = {
 	children: ReactNode;
@@ -32,6 +33,14 @@ export type DelacourProviderProps = {
 	 */
 	isMotionCalm?: boolean;
 	/**
+	 * Grow every small control's touch target on Android from 44 to Material's
+	 * 48dp. Defaults to `false`; iOS stays at the HIG's 44pt either way.
+	 *
+	 * Nothing drawn moves: the extra reach is `hitSlop`, read through
+	 * `useMinimumHitSlop`.
+	 */
+	isMaterialHitTarget?: boolean;
+	/**
 	 * Style for the outermost `GestureHandlerRootView`.
 	 *
 	 * Forwarded untouched, with no default merged in: the gesture root applies
@@ -48,7 +57,7 @@ export type DelacourProviderProps = {
  * Mount it ONCE, around everything — a root layout, an `App.tsx`. It is not
  * idempotent and does not detect an enclosing copy of itself; see AGENTS.md.
  *
- * Five layers, outermost first, and the order is not stylistic:
+ * Six layers, outermost first, and the order is not stylistic:
  *
  * 1. `GestureHandlerRootView` — an ancestor native view every gesture handler
  *    `Pressable` creates has to attach to. Its absence is silent: no error, no
@@ -63,8 +72,9 @@ export type DelacourProviderProps = {
  *    dismiss interrupted by navigation, a stack pop, an app suspend — leaves
  *    every screen in the app believing it is still open.
  * 5. `CalmMotionProvider` — the app's `isMotionCalm`, for `useCalmMotion()`.
- *    Pure context, no native view, so it wraps `{children}` alone — innermost,
- *    where a new layer goes.
+ * 6. `MinimumHitTargetProvider` — the app's `isMaterialHitTarget`, for
+ *    `useMinimumHitSlop()`. Five and six are pure context, no native view, so
+ *    they wrap `{children}` alone — innermost, where a new layer goes.
  *
  * **`BottomSheetProvider` is not here, and the app mounts it.** The sheet's
  * engine, `@delacour/react-native-bottom-sheet`, is an optional peer of this
@@ -115,6 +125,7 @@ export type DelacourProviderProps = {
 export function DelacourProvider({
 	children,
 	initialMetrics = initialWindowMetrics,
+	isMaterialHitTarget = false,
 	isMotionCalm = false,
 	style,
 }: DelacourProviderProps): ReactElement {
@@ -123,7 +134,9 @@ export function DelacourProvider({
 			<SafeAreaProvider initialMetrics={initialMetrics}>
 				<KeyboardProvider>
 					<KeyboardStateSync />
-					<CalmMotionProvider isMotionCalm={isMotionCalm}>{children}</CalmMotionProvider>
+					<CalmMotionProvider isMotionCalm={isMotionCalm}>
+						<MinimumHitTargetProvider isMaterialHitTarget={isMaterialHitTarget}>{children}</MinimumHitTargetProvider>
+					</CalmMotionProvider>
 				</KeyboardProvider>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>

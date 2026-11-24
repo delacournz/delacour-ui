@@ -144,6 +144,7 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.empty).toBe("No results");
 		expect(labels.search).toBe("Search");
 		expect(labels.searchInField("Country", "Search")).toBe("Country, Search");
+		expect(labels.triggerInField("Country", "Choose a country")).toBe("Country, Choose a country");
 		expect(labels.clearSearch).toBe("Clear search");
 		expect(labels.clear).toBe("Clear");
 		expect(labels.triggerHint).toBe("Opens a searchable list of options");

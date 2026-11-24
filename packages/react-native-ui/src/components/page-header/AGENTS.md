@@ -159,3 +159,11 @@ leaves again. `profile` is a clip of Follow and unfollow. `gradient-cover`,
 body taller than the screen, or the swipe only rubber-bands and the header never
 scrolls away. `stats` draws dividers on the stacked strip only, because of the
 inline-wrap hairline above.
+
+- **The spoken strings are `labels`, not literals.** The verified avatar label
+  ("Aria, verified" / "Verified") comes from `lib/labels` through `useLabels`,
+  resolved once on the root and shared through the context — English, then
+  `DelacourProvider`'s `labels`, then the header's own `labels` prop. The
+  resolver takes the labels as an argument and defaults to English, so its
+  callers are unchanged. An `accessibilityLabel` on the avatar still wins. The
+  en dash for a non-count and the `K`/`M`/`B`/`T` suffixes stay literals.

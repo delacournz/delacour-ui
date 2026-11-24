@@ -93,7 +93,7 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
   takes no touches.
 - **The scrim is `bg-overlay`, faded by the spring.** The token carries its own
   alpha, so the fade runs 0 → 1 and lands on the theme's overlay. Tapping it
-  closes; it is a button labelled "Close".
+  closes; it is a button named by `labels.close` ("Close").
 - **Android back closes an open dial**, through a `BackHandler` subscription
   that exists only while the dial is open.
 - **`testID` lands on what a finger presses.** `Fab.Group`'s goes on the
@@ -137,3 +137,7 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
   (`LIBRARY_FAB` in `styles.ts`), so a style switch moves the buttons and leaves
   the fab where it is. Give a style its own numbers there when one needs a
   different fab.
+- **The spoken strings are `labels`, not literals.** The scrim's "Close" is `FabLabels.close` from
+  `lib/labels`, resolved once in `Fab.Group` through `useLabels("fab", labels)` — English, then
+  `DelacourProvider`'s `labels`, then the group's own `labels` prop. Caller strings
+  (`accessibilityLabel`, `label`) are never labels.

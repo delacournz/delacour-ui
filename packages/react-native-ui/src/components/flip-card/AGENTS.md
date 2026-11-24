@@ -82,7 +82,7 @@ the back, a profile with details behind it. A compound root plus `FlipCard.Front
   faces stay reachable one by one. `resolveFaceMode` decides each face's part:
   - **`"press"`** — the visible face stays a container, and its first child is a transparent,
     absolutely-filling, `pointerEvents="none"` accessible **"Flip card" button** (hint "Shows the
-    back" / "Shows the front"). It sits behind the content, so explore-by-touch over a control
+    back" / "Shows the front" — both from `labels`). It sits behind the content, so explore-by-touch over a control
     lands on the control. Its activation goes through `resolvePressableActivation`:
     `onAccessibilityTap` on iOS, an `activate` action on Android. A disabled card keeps the
     button, marks it disabled and consumes the activation without flipping. A hidden face has no
@@ -101,6 +101,13 @@ the back, a profile with details behind it. A compound root plus `FlipCard.Front
   card is the accessible alternative to dragging. With no children it is an icon-only square on
   the button scale with Central Icons' `IconArrowRotateLeftRight`, labelled "Flip card"; its hint
   names the destination ("Shows the back").
+- **The spoken strings are `labels`, not literals.** The flip control's name and hints and the
+  face announcements come from `lib/labels` (`flipCard`) through `useLabels`, resolved once on the
+  root and shared through the context — English, then `DelacourProvider`'s `labels`, then the
+  card's own `labels` prop. `resolveFlipCardActions` and `resolveFlipCardTriggerHint` take the
+  labels as a trailing argument defaulting to English. `faceLabels` and a Trigger's own
+  `accessibilityLabel` / `accessibilityHint` still win. `FLIP_CARD_ACTION_LABEL` and
+  `FLIP_CARD_DEFAULT_FACE_LABELS` are aliases of the catalog defaults.
 - **No size axis.** The card has no intrinsic scale, and the footprint is already a `className`.
 - **Motion presets live here, not in `lib/`.** `default` (damping 18, stiffness 160), `snappy`
   (22, 260), `gentle` (16, 90); the test pins only the stiffness ordering. Extract to `lib/motion`

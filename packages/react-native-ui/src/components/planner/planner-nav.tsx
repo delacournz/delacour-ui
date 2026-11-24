@@ -8,9 +8,9 @@ import { plannerVariants } from "./planner.variants";
 
 export type PlannerNavProps = ViewProps & {
 	className?: string;
-	/** Spoken for the back button. Defaults to "Previous month". */
+	/** Spoken for the back button. Defaults to `labels.previousMonth`, "Previous month". */
 	previousLabel?: string;
-	/** Spoken for the forward button. Defaults to "Next month". */
+	/** Spoken for the forward button. Defaults to `labels.nextMonth`, "Next month". */
 	nextLabel?: string;
 };
 
@@ -21,18 +21,12 @@ export type PlannerNavProps = ViewProps & {
  * announced to a screen reader once it has actually arrived, so a controlled
  * parent that refuses the change is not reported as having made it.
  */
-export function PlannerNav({
-	className,
-	previousLabel = "Previous month",
-	nextLabel = "Next month",
-	testID,
-	...props
-}: PlannerNavProps): ReactElement {
-	const { page } = usePlannerPart("Planner.Nav");
+export function PlannerNav({ className, previousLabel, nextLabel, testID, ...props }: PlannerNavProps): ReactElement {
+	const { page, labels } = usePlannerPart("Planner.Nav");
 	return (
 		<View className={plannerVariants().nav({ className })} testID={testID} {...props}>
 			<Button
-				accessibilityLabel={previousLabel}
+				accessibilityLabel={previousLabel ?? labels.previousMonth}
 				onPress={() => page(-1)}
 				size="icon-sm"
 				testID={testID === undefined ? undefined : `${testID}-previous`}
@@ -41,7 +35,7 @@ export function PlannerNav({
 				<Icon icon={IconChevronLeft} />
 			</Button>
 			<Button
-				accessibilityLabel={nextLabel}
+				accessibilityLabel={nextLabel ?? labels.nextMonth}
 				onPress={() => page(1)}
 				size="icon-sm"
 				testID={testID === undefined ? undefined : `${testID}-next`}

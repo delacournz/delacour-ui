@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Leaderboard } from "./leaderboard";
 import type { LeaderboardEntry, RankedEntry } from "./leaderboard.types";
@@ -194,5 +195,40 @@ describe("Leaderboard parts", () => {
 		await expect(renderWithProviders(<LeaderboardRow ranked={ranked} />)).rejects.toThrow(
 			"<Leaderboard.Row> must be rendered inside a <Leaderboard>."
 		);
+	});
+});
+
+describe("Leaderboard labels", () => {
+	const FR = {
+		empty: "Aucune entrée",
+		rank: (rank: number) => `Rang ${rank}`,
+	};
+	const MOVED: readonly LeaderboardEntry[] = [{ id: "a", name: "Aria", value: 5, change: 2 }];
+
+	test("the labels prop changes the row label and the empty text", async () => {
+		await renderWithProviders(<Leaderboard data={MOVED} labels={{ rank: FR.rank }} podium="none" />);
+		expect(screen.getByLabelText("Rang 1, Aria, 5, up 2 places")).toBeOnTheScreen();
+		await renderWithProviders(<Leaderboard data={[]} labels={{ empty: FR.empty }} />);
+		expect(screen.getByText("Aucune entrée")).toBeOnTheScreen();
+	});
+
+	test("the provider's labels change the board", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ leaderboard: { noChange: "inchangé" } }}>
+				<Leaderboard data={[{ id: "a", name: "Aria", value: 5, change: 0 }]} podium="none" />
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Rank 1, Aria, 5, inchangé")).toBeOnTheScreen();
+	});
+
+	test("the prop wins over the provider, and emptyText wins over both", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ leaderboard: { rank: (rank) => `Rang ${rank}`, empty: "Vide" } }}>
+				<Leaderboard data={MOVED} labels={{ rank: (rank) => `N° ${rank}` }} podium="none" />
+				<Leaderboard data={[]} emptyText="Rien" />
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("N° 1, Aria, 5, up 2 places")).toBeOnTheScreen();
+		expect(screen.getByText("Rien")).toBeOnTheScreen();
 	});
 });

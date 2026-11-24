@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import type { FeedbackLabels } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	canSubmitFeedback,
@@ -205,5 +206,29 @@ describe("resolveFeedbackResultAnnouncement", () => {
 	test("a caller's string replaces the default; an empty one falls back", () => {
 		expect(resolveFeedbackResultAnnouncement("sent", { sentMessage: "Thanks!" }).message).toBe("Thanks!");
 		expect(resolveFeedbackResultAnnouncement("failed", { failedMessage: "" }).message).toBe(FEEDBACK_FAILED_MESSAGE);
+	});
+});
+
+describe("feedback labels", () => {
+	const FRENCH: FeedbackLabels = {
+		cancel: "Annuler",
+		failed: "Echec de l'envoi",
+		sent: "Retour envoye",
+		submit: "Envoyer",
+	};
+
+	test("the exported messages are the catalog defaults", () => {
+		expect(FEEDBACK_SENT_MESSAGE).toBe("Feedback sent");
+		expect(FEEDBACK_FAILED_MESSAGE).toBe("Couldn't send feedback");
+	});
+
+	test("labels reach the resolver", () => {
+		expect(resolveFeedbackResultAnnouncement("sent", {}, FRENCH).message).toBe("Retour envoye");
+		expect(resolveFeedbackResultAnnouncement("failed", {}, FRENCH).message).toBe("Echec de l'envoi");
+	});
+
+	test("a caller's message still wins, an empty one falls back to the labels", () => {
+		expect(resolveFeedbackResultAnnouncement("sent", { sentMessage: "Merci" }, FRENCH).message).toBe("Merci");
+		expect(resolveFeedbackResultAnnouncement("sent", { sentMessage: "" }, FRENCH).message).toBe("Retour envoye");
 	});
 });

@@ -1,3 +1,4 @@
+export type { MapLabels } from "../../lib/labels";
 export { Map, type MapProps } from "./map";
 export {
 	type MapContextValue,

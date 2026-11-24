@@ -16,6 +16,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
+import { useLabels } from "../../hooks/use-labels";
 import { focusAccessibilityTarget, useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import { Pressable } from "../pressable";
@@ -109,7 +110,8 @@ export function MenuContent({
 	onAccessibilityEscape,
 	...props
 }: MenuContentProps): ReactElement | null {
-	const { anchor: contextAnchor, close, isOpen, triggerRef } = useMenuPart("Menu.Content");
+	const { anchor: contextAnchor, close, isOpen, labels: labelsProp, triggerRef } = useMenuPart("Menu.Content");
+	const labels = useLabels("menu", labelsProp);
 	const anchor = anchorProp ?? contextAnchor;
 	const window = useWindowDimensions();
 	const insets = useSafeAreaInsets();
@@ -251,7 +253,7 @@ export function MenuContent({
 		<Modal animationType="none" onRequestClose={close} statusBarTranslucent transparent visible>
 			<GestureHandlerRootView style={fill}>
 				<Pressable
-					accessibilityLabel="Close menu"
+					accessibilityLabel={labels.close}
 					className="absolute inset-0"
 					feedback="none"
 					importantForAccessibility="no"

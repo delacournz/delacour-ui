@@ -1,11 +1,13 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
 import { Spinner } from "../spinner";
+import { useMessageScroller } from "./message-scroller.context";
 import { messageScrollerVariants } from "./message-scroller.variants";
 
 export type MessageScrollerLoadingOlderProps = {
-	/** What a screen reader hears. Default "Loading older messages". */
+	/** What a screen reader hears. Default `labels.loadingOlder`, "Loading older messages". */
 	label?: string;
 	className?: string;
 	testID?: string;
@@ -18,14 +20,16 @@ export type MessageScrollerLoadingOlderProps = {
  * fight the list's visible-content anchoring, nudging the reader's place by its own height.
  */
 export function MessageScrollerLoadingOlder({
-	label = "Loading older messages",
+	label,
 	className,
 	testID,
 }: MessageScrollerLoadingOlderProps): ReactElement {
 	const slots = messageScrollerVariants();
+	const own = useLabels("messageScroller");
+	const labels = useMessageScroller()?.labels ?? own;
 	return (
 		<View
-			accessibilityLabel={label}
+			accessibilityLabel={label ?? labels.loadingOlder}
 			accessibilityRole="progressbar"
 			accessible
 			className={cn(slots.loadingOlder(), className)}

@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type ImageViewerLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /** The furthest a pinch may zoom in, and where the accessibility `zoomIn` steps stop. */
@@ -365,7 +366,11 @@ export function isSameImage(a: ViewerImageLike, b: ViewerImageLike): boolean {
 }
 
 /** What the pager tells assistive tech: "2 of 5". Empty with nothing to count. */
-export function resolveViewerA11yValue(index: number, count: number): string {
+export function resolveViewerA11yValue(
+	index: number,
+	count: number,
+	labels: ImageViewerLabels = DELACOUR_DEFAULT_LABELS.imageViewer
+): string {
 	if (count <= 0) return "";
-	return `${index + 1} of ${count}`;
+	return labels.position(index + 1, count);
 }

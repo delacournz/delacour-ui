@@ -6,7 +6,7 @@ export type FeedbackCancelProps = ButtonProps;
 
 /**
  * Closes the dialog and keeps the draft — a `secondary` `Button` labelled
- * "Cancel" unless given children. Clearing on cancel would throw away a long
+ * `labels.cancel` ("Cancel") unless given children. Clearing on cancel would throw away a long
  * message the user only meant to put down for a moment.
  *
  * @example
@@ -14,11 +14,11 @@ export type FeedbackCancelProps = ButtonProps;
  */
 export function FeedbackCancel({
 	variant = "secondary",
-	children = "Cancel",
+	children,
 	onPress,
 	...props
 }: FeedbackCancelProps): ReactElement {
-	const { close } = useFeedbackPart("Feedback.Cancel");
+	const { close, labels } = useFeedbackPart("Feedback.Cancel");
 
 	const handlePress = useCallback(() => {
 		close();
@@ -27,7 +27,7 @@ export function FeedbackCancel({
 
 	return (
 		<Button onPress={handlePress} variant={variant} {...props}>
-			{children}
+			{children ?? labels.cancel}
 		</Button>
 	);
 }

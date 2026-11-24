@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type PlannerLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { PlannerCategory, PlannerEntry } from "./planner.types";
 import { formatDayTitle, isSameMonth, toDayKey } from "./planner-dates";
@@ -267,37 +268,35 @@ export function countByCategory(
  * label — it is the button's `selected` state, which the screen reader speaks
  * in its own words.
  */
-export function resolvePlannerDayLabel({
-	date,
-	entries,
-	categories,
-	isToday,
-	locale,
-}: {
-	date: Date;
-	entries: readonly PlannerEntry[];
-	categories: readonly PlannerCategory[] | undefined;
-	isToday: boolean;
-	locale: string | undefined;
-}): string {
-	const parts = [formatDayTitle(date, locale), resolveEntryCount(entries.length)];
-
+export function resolvePlannerDayLabel(
+	{
+		date,
+		entries,
+		categories,
+		isToday,
+		locale,
+	}: {
+		date: Date;
+		entries: readonly PlannerEntry[];
+		categories: readonly PlannerCategory[] | undefined;
+		isToday: boolean;
+		locale: string | undefined;
+	},
+	labels: PlannerLabels = DELACOUR_DEFAULT_LABELS.planner
+): string {
 	const names: string[] = [];
 	for (const entry of entries) {
 		const category = entry.category === undefined ? undefined : categories?.find((c) => c.id === entry.category);
 		const name = category?.label ?? entry.label;
 		if (!names.includes(name)) names.push(name);
 	}
-	parts.push(...names);
 
-	if (isToday) parts.push("today");
-	return parts.join(", ");
+	return labels.day(formatDayTitle(date, locale), resolveEntryCount(entries.length, labels), names, isToday);
 }
 
 /** "no entries", "1 entry", "3 entries". */
-export function resolveEntryCount(count: number): string {
-	if (count === 0) return "no entries";
-	return count === 1 ? "1 entry" : `${count} entries`;
+export function resolveEntryCount(count: number, labels: PlannerLabels = DELACOUR_DEFAULT_LABELS.planner): string {
+	return labels.entryCount(count);
 }
 
 /**

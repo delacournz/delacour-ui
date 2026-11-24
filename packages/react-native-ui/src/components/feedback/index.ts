@@ -1,3 +1,4 @@
+export type { FeedbackLabels } from "../../lib/labels";
 export { Feedback, type FeedbackProps } from "./feedback";
 export { type FeedbackContextValue, useFeedback, useFeedbackContext } from "./feedback.context";
 export {

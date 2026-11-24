@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useId, useMemo, useRef } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { DrawerLabels } from "../../lib/labels";
 import { type DrawerFocusTarget, DrawerProvider, type DrawerRootValue } from "./drawer.context";
 import { DrawerBody } from "./drawer-body";
 import { DrawerClose } from "./drawer-close";
@@ -19,6 +21,8 @@ export type DrawerProps = {
 	onOpenChange?: (isOpen: boolean) => void;
 	/** Whether a scrim tap, Android back and the iOS escape gesture close it. Default true. */
 	isDismissible?: boolean;
+	/** Spoken strings, laid over `DelacourProvider`'s and the English defaults. Today: the ✕'s name. */
+	labels?: Partial<DrawerLabels>;
 	children: ReactNode;
 };
 
@@ -27,6 +31,7 @@ function DrawerRoot({
 	defaultOpen = false,
 	onOpenChange,
 	isDismissible = true,
+	labels: labelsProp,
 	children,
 }: DrawerProps): ReactElement {
 	const [open, setControllableOpen] = useControllableState({
@@ -45,14 +50,16 @@ function DrawerRoot({
 	);
 	const close = useCallback(() => setOpen(false), [setOpen]);
 
+	const labels = useLabels("drawer", labelsProp);
+
 	const titleId = useId();
 	const descriptionId = useId();
 	const triggerRef = useRef<DrawerFocusTarget | null>(null);
 	const titleRef = useRef<DrawerFocusTarget | null>(null);
 
 	const value = useMemo<DrawerRootValue>(
-		() => ({ close, descriptionId, isDismissible, isOpen: open, setOpen, titleId, titleRef, triggerRef }),
-		[close, descriptionId, isDismissible, open, setOpen, titleId]
+		() => ({ close, descriptionId, isDismissible, isOpen: open, labels, setOpen, titleId, titleRef, triggerRef }),
+		[close, descriptionId, isDismissible, labels, open, setOpen, titleId]
 	);
 
 	return <DrawerProvider value={value}>{children}</DrawerProvider>;

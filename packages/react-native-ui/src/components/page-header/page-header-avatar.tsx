@@ -39,8 +39,8 @@ export type PageHeaderAvatarProps = Omit<AvatarProps, "size"> & {
  * a class.
  *
  * **Verification is spoken.** The avatar is one element to assistive
- * technology, so `isVerified` appends ", verified" to its label as well as
- * drawing the rosette. A caller's `accessibilityLabel` wins outright.
+ * technology, so `isVerified` appends "verified" (the `pageHeader` labels) to its
+ * label as well as drawing the rosette. A caller's `accessibilityLabel` wins outright.
  */
 export function PageHeaderAvatar({
 	size: sizeProp,
@@ -53,7 +53,7 @@ export function PageHeaderAvatar({
 	children,
 	...props
 }: PageHeaderAvatarProps): ReactElement {
-	const { variant, align, hasCover } = usePageHeaderPart("PageHeader.Avatar");
+	const { variant, align, hasCover, labels } = usePageHeaderPart("PageHeader.Avatar");
 	const size = resolvePageHeaderAvatarSize(align, sizeProp);
 	const slots = pageHeaderVariants({ variant, align });
 	const overlap = resolvePageHeaderOverlap({
@@ -62,7 +62,7 @@ export function PageHeaderAvatar({
 		hasCover,
 		isOverlapping,
 	});
-	const label = accessibilityLabel ?? resolvePageHeaderAvatarLabel(name, isVerified);
+	const label = accessibilityLabel ?? resolvePageHeaderAvatarLabel(name, isVerified, labels);
 	const corner = badge ?? (isVerified ? <PageHeaderRosette /> : null);
 
 	// The lift replaces the ring's own top margin rather than adding to it, so it

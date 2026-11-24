@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type ImageViewerLabels } from "../../lib/labels";
 import { aliasedTokens, declaredTokens, tokenValue } from "../../styles/theme-tokens.test";
 import {
 	imageViewerVariants,
@@ -445,5 +446,14 @@ describe("resolveViewerA11yValue", () => {
 	test("reads n of m", () => {
 		expect(resolveViewerA11yValue(1, 5)).toBe("2 of 5");
 		expect(resolveViewerA11yValue(0, 0)).toBe("");
+	});
+
+	test("reads the labels it is given", () => {
+		const french: ImageViewerLabels = {
+			...DELACOUR_DEFAULT_LABELS.imageViewer,
+			position: (current, count) => `${current} sur ${count}`,
+		};
+		expect(resolveViewerA11yValue(1, 5, french)).toBe("2 sur 5");
+		expect(resolveViewerA11yValue(0, 0, french)).toBe("");
 	});
 });

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { AccessibilityInfo } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Text } from "../text";
@@ -418,5 +419,49 @@ describe("Flow looping motion", () => {
 		);
 		expect(screen.getByTestId("canvas")).toBeOnTheScreen();
 		await view.unmount();
+	});
+
+	test("the labels prop renames the controls and the node actions", async () => {
+		await renderWithProviders(
+			<Flow labels={{ connect: (_from, target) => `Relier à ${target}`, delete: "Supprimer", zoomIn: "Zoom avant" }}>
+				<Flow.Node accessibilityLabel="Source" id="a" onDelete={jest.fn()} position={{ x: 0, y: 0 }}>
+					<Flow.Handle id="out" />
+				</Flow.Node>
+				<Flow.Node accessibilityLabel="Sink" id="b" position={{ x: 300, y: 0 }}>
+					<Flow.Handle id="in" side="left" type="target" />
+				</Flow.Node>
+				<Flow.Controls />
+			</Flow>
+		);
+		expect(screen.getByRole("button", { name: "Zoom avant" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Zoom out" })).toBeOnTheScreen();
+		const labels = (screen.getByLabelText("Source").props.accessibilityActions as { label: string }[]).map(
+			(candidate) => candidate.label
+		);
+		expect(labels).toContain("Relier à Sink");
+		expect(labels).toContain("Supprimer");
+	});
+
+	test("the provider's labels rename the controls", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ flow: { fit: "Ajuster" } }}>
+				<Flow>
+					<Flow.Controls />
+				</Flow>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Ajuster" })).toBeOnTheScreen();
+	});
+
+	test("the labels prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ flow: { fit: "Ajuster" } }}>
+				<Flow labels={{ fit: "Cadrer" }}>
+					<Flow.Controls />
+				</Flow>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Cadrer" })).toBeOnTheScreen();
+		expect(screen.queryByRole("button", { name: "Ajuster" })).toBeNull();
 	});
 });

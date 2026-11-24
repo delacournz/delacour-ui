@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { AccessibilityInfo, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
@@ -141,6 +142,46 @@ describe("Drawer", () => {
 			{ wrapper: Overlays }
 		);
 		expect(screen.getByRole("button", { name: "Dismiss menu" })).toBeOnTheScreen();
+	});
+
+	describe("labels", () => {
+		const FRENCH = { close: "Fermer" };
+		const drawer = (props: Partial<DrawerProps> = {}, closeLabel?: string) => (
+			<Drawer defaultOpen {...props}>
+				<Drawer.Content testID="panel">
+					<Drawer.Header>
+						<Drawer.Title>Menu</Drawer.Title>
+					</Drawer.Header>
+					{closeLabel ? <Drawer.Close accessibilityLabel={closeLabel} /> : null}
+				</Drawer.Content>
+			</Drawer>
+		);
+
+		test("labels prop changes the header's close name", async () => {
+			await renderWithProviders(drawer({ labels: FRENCH }), { wrapper: Overlays });
+			expect(screen.getByRole("button", { name: "Fermer" })).toBeOnTheScreen();
+			expect(screen.queryByRole("button", { name: "Close" })).not.toBeOnTheScreen();
+		});
+
+		test("provider's labels change the close name", async () => {
+			await renderWithProviders(<LabelsProvider labels={{ drawer: FRENCH }}>{drawer()}</LabelsProvider>, {
+				wrapper: Overlays,
+			});
+			expect(screen.getByRole("button", { name: "Fermer" })).toBeOnTheScreen();
+		});
+
+		test("labels prop wins over the provider", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ drawer: FRENCH }}>{drawer({ labels: { close: "Schliessen" } })}</LabelsProvider>,
+				{ wrapper: Overlays }
+			);
+			expect(screen.getByRole("button", { name: "Schliessen" })).toBeOnTheScreen();
+		});
+
+		test("accessibilityLabel wins over labels", async () => {
+			await renderWithProviders(drawer({ labels: FRENCH }, "Dismiss menu"), { wrapper: Overlays });
+			expect(screen.getByRole("button", { name: "Dismiss menu" })).toBeOnTheScreen();
+		});
 	});
 
 	test("the trigger calls its own onPress after opening", async () => {

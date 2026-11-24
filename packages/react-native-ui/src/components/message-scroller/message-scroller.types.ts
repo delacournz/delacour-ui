@@ -1,4 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
+import type { MessageScrollerLabels } from "../../lib/labels";
 import type { MessageRunPosition } from "./message-scroller.utils";
 
 /** What `renderMessage` is handed for one message row. */
@@ -45,6 +46,8 @@ export type MessageScrollerBaseProps = {
 	runWindowMs?: number;
 	/** Draw a separator at each new calendar day. Default true. */
 	separateDates?: boolean;
+	/** The scroller's spoken and visible strings, laid over the provider's and the English defaults. */
+	labels?: Partial<MessageScrollerLabels>;
 	/** The separator's label. Default: Today, Yesterday, a weekday inside six days, then the date. */
 	formatDate?: (date: Date, now: Date) => string;
 	/** Draws the unread divider before this message. */
@@ -106,7 +109,7 @@ export type MessageScrollerProps<T> = MessageScrollerBaseProps & {
 };
 
 export type MessageScrollerJumpButtonProps = {
-	/** The accessibility label's first half. Default "Jump to latest". */
+	/** The accessibility label's first half. Default `labels.jumpToLatest`, "Jump to latest". */
 	label?: string;
 	/** Default `end`. */
 	placement?: "center" | "end";

@@ -147,6 +147,7 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
 - **Handles, edges, the background and the minimap are hidden.** A line has no name of its own;
   the node's label and actions already say what it joins.
 - **Controls are labelled `Button`s** — "Zoom in", "Zoom out", "Fit to view", "Lock canvas".
+- **Spoken strings are `labels`.** Control names and the node actions (Select, the four moves, "Connect …", Delete) come from `useLabels("flow", labels)`, resolved once on the root and shared through `FlowContextValue.labels`. `resolveNodeAccessibilityActions` takes `labels` and defaults to English; `FLOW_CONTROL_LABELS` and each move's `label` are the English defaults. `Partial<FlowLabels>` on `<Flow labels>` wins over `DelacourProvider`.
 
 ## Performance
 

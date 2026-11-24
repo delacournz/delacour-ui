@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { AccessibilityInfo, Platform, View } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
@@ -556,5 +557,55 @@ describe("Menu accessibility", () => {
 		await press("Options");
 		await waitFor(() => expect(focused).toHaveLength(2));
 		expect(role(focused[1])).toBe("button");
+	});
+});
+
+describe("Menu labels", () => {
+	beforeEach(() => {
+		Platform.OS = "ios";
+		jest.spyOn(View.prototype as unknown as Measurable, "measureInWindow").mockImplementation((callback) => {
+			callback(10, 100, 120, 40);
+		});
+	});
+	afterEach(() => {
+		Platform.OS = originalOS;
+		jest.restoreAllMocks();
+	});
+
+	const FRENCH = { close: "Fermer le menu", triggerHint: "Ouvre un menu" };
+	const scrim = (name: string) => screen.getByLabelText(name, { includeHiddenElements: true });
+
+	test("English by default: the trigger hint and the dismiss target", async () => {
+		await renderWithProviders(<ItemsMenu defaultOpen />, { wrapper: Overlays });
+		expect(screen.getByRole("button", { name: "Options" }).props.accessibilityHint).toBe("Opens a menu");
+		expect(scrim("Close menu")).toBeTruthy();
+	});
+
+	test("the labels prop changes both", async () => {
+		await renderWithProviders(<ItemsMenu defaultOpen labels={FRENCH} />, { wrapper: Overlays });
+		expect(screen.getByRole("button", { name: "Options" }).props.accessibilityHint).toBe("Ouvre un menu");
+		expect(scrim("Fermer le menu")).toBeTruthy();
+	});
+
+	test("the provider's labels change both", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ menu: FRENCH }}>
+				<ItemsMenu defaultOpen />
+			</LabelsProvider>,
+			{ wrapper: Overlays }
+		);
+		expect(screen.getByRole("button", { name: "Options" }).props.accessibilityHint).toBe("Ouvre un menu");
+		expect(scrim("Fermer le menu")).toBeTruthy();
+	});
+
+	test("the prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ menu: FRENCH }}>
+				<ItemsMenu defaultOpen labels={{ close: "Dismiss" }} />
+			</LabelsProvider>,
+			{ wrapper: Overlays }
+		);
+		expect(scrim("Dismiss")).toBeTruthy();
+		expect(screen.getByRole("button", { name: "Options" }).props.accessibilityHint).toBe("Ouvre un menu");
 	});
 });

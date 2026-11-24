@@ -18,8 +18,8 @@ export type DrawerCloseProps =
  *
  * Without children it is a ✕: this library's `Pressable` with `fade` feedback
  * — a scale on a glyph this small reads as a jitter — 12pt of slop because a
- * bare glyph has no capsule to bring it toward 44pt, and `"Close"` as its
- * label. `Drawer.Header` writes one at its trailing edge unless told not to.
+ * bare glyph has no capsule to bring it toward 44pt, and `labels.close` (English
+ * "Close") as its label, which an `accessibilityLabel` prop wins over. `Drawer.Header` writes one at its trailing edge unless told not to.
  *
  * With `asChild` it donates the close to its child, chained ahead of the
  * child's own `onPress` — a navigation row that should also shut the menu.
@@ -33,7 +33,7 @@ export type DrawerCloseProps =
  * </Drawer.Close>
  */
 export function DrawerClose(props: DrawerCloseProps): ReactElement {
-	const { close } = useDrawerPart("Drawer.Close");
+	const { close, labels } = useDrawerPart("Drawer.Close");
 	const slop = useMinimumHitSlop(DRAWER_CLOSE_SIZE);
 	const { onPress } = props;
 
@@ -53,7 +53,7 @@ export function DrawerClose(props: DrawerCloseProps): ReactElement {
 
 	const {
 		asChild: _asChild,
-		accessibilityLabel = "Close",
+		accessibilityLabel,
 		className,
 		feedback = "fade",
 		hitSlop = slop,
@@ -63,7 +63,7 @@ export function DrawerClose(props: DrawerCloseProps): ReactElement {
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel}
+			accessibilityLabel={accessibilityLabel ?? labels.close}
 			accessibilityRole="button"
 			className={drawerVariants().close({ className })}
 			feedback={feedback}

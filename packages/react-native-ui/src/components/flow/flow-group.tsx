@@ -149,8 +149,8 @@ export function FlowGroup({
 	);
 
 	const accessibility = useMemo(
-		() => resolveGroupAccessibility({ id, isDraggable, isLocked, label }),
-		[id, isDraggable, isLocked, label]
+		() => resolveGroupAccessibility({ id, isDraggable, isLocked, label, labels: flow.labels }),
+		[flow.labels, id, isDraggable, isLocked, label]
 	);
 
 	const handleAccessibilityAction = useCallback(

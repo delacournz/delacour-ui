@@ -1,3 +1,4 @@
+export type { MenuLabels } from "../../lib/labels";
 export { Menu, type MenuProps } from "./menu";
 export {
 	type MenuContextValue,

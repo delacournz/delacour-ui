@@ -1,3 +1,4 @@
+export type { FlowLabels } from "../../lib/labels";
 export { Flow, type FlowProps } from "./flow";
 export {
 	type FlowConnectionPreview,

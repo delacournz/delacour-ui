@@ -11,6 +11,7 @@
 		"compose-refs",
 		"icon",
 		"icons",
+		"labels",
 		"modal-accessibility",
 		"pressable",
 		"separator",
@@ -18,6 +19,7 @@
 		"text",
 		"tv",
 		"use-controllable-state",
+		"use-labels",
 		"use-modal-accessibility"
 	],
 	"dependencies": [
@@ -45,7 +47,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/menu/index.ts",
 			"target": "menu/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/menu/menu-background.tsx",
@@ -76,6 +84,10 @@
 			"target": "menu/menu-content.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../hooks/use-modal-accessibility",
 					"to": "@registry/hooks/use-modal-accessibility"
@@ -198,6 +210,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../lib/compose-refs",
 					"to": "@registry/lib/compose-refs"
 				},
@@ -221,6 +237,10 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/modal-accessibility",
 					"to": "@registry/lib/modal-accessibility"
 				},
@@ -235,6 +255,10 @@
 			"target": "menu/menu.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../pressable/pressable",
 					"to": "@registry/ui/pressable/pressable"
@@ -258,6 +282,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
 				}
@@ -270,6 +298,10 @@
 			"target": "menu/menu.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -289,6 +321,10 @@
 			"target": "menu/menu.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

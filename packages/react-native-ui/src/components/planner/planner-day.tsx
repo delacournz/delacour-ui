@@ -40,7 +40,8 @@ const NO_ENTRIES: readonly PlannerEntry[] = [];
  */
 export function PlannerDay({ date, isInMonth = true, renderDay, className, testID }: PlannerDayProps): ReactElement {
 	const planner = usePlannerPart("Planner.Day");
-	const { entriesByDay, todayKey, selected, variant, fill, categories, locale, pressDay, showOutsideDays } = planner;
+	const { entriesByDay, todayKey, selected, variant, fill, categories, locale, pressDay, showOutsideDays, labels } =
+		planner;
 
 	const key = toDayKey(date);
 	const entries = entriesByDay.get(key) ?? NO_ENTRIES;
@@ -63,7 +64,7 @@ export function PlannerDay({ date, isInMonth = true, renderDay, className, testI
 	return (
 		<View className={slots.cell({ className })}>
 			<Pressable
-				accessibilityLabel={resolvePlannerDayLabel({ date, entries, categories, isToday, locale })}
+				accessibilityLabel={resolvePlannerDayLabel({ date, entries, categories, isToday, locale }, labels)}
 				accessibilityState={{ selected: isSelected }}
 				className={variant === "tiles" ? "flex-1" : slots.day()}
 				feedback="fade"
@@ -153,7 +154,7 @@ function PlannerDayBlocks({ info, planner }: PlannerDayContentProps): ReactEleme
 				))}
 				{overflow > 0 ? (
 					<Text className={slots.more()} numberOfLines={1}>
-						+{overflow} more
+						{planner.labels.more(overflow)}
 					</Text>
 				) : null}
 			</View>

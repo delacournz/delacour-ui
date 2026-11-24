@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { FlipCardLabels } from "../../lib/labels";
 import type { FlipCardAxis, FlipCardFace, FlipCardTrigger } from "./flip-card.variants";
 
 /** What `useFlipCard()` hands a custom child: the face, the two ways to turn it, and whether it is turning. */
@@ -25,6 +26,8 @@ export type FlipCardContextValue = FlipCardState & {
 	rotation: SharedValue<number>;
 	/** The card's name, for the visible face when that face is one accessibility element. */
 	accessibilityLabel?: string;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	labels: FlipCardLabels;
 };
 
 const FlipCardContext = createContext<FlipCardContextValue | null>(null);

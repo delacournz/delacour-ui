@@ -1,10 +1,10 @@
 import { type ComponentRef, type ReactElement, useCallback, useMemo } from "react";
 import type Animated from "react-native-reanimated";
+import { useLabels } from "../../hooks/use-labels";
 import { composeRefs } from "../../lib/compose-refs";
 import { Slot } from "../../lib/slot";
 import { Pressable, type PressableProps } from "../pressable";
 import { type MenuMeasurable, useMenuPart } from "./menu.context";
-import { MENU_TRIGGER_HINT } from "./menu.variants";
 
 export type MenuTriggerProps = PressableProps & { asChild?: boolean };
 
@@ -29,7 +29,8 @@ export type MenuTriggerProps = PressableProps & { asChild?: boolean };
  * </Menu.Trigger>
  */
 export function MenuTrigger({ asChild = false, children, onPress, ref, ...props }: MenuTriggerProps): ReactElement {
-	const { isOpen, toggle, triggerRef } = useMenuPart("Menu.Trigger");
+	const { isOpen, labels: labelsProp, toggle, triggerRef } = useMenuPart("Menu.Trigger");
+	const labels = useLabels("menu", labelsProp);
 
 	const handlePress = useCallback(() => {
 		toggle();
@@ -45,7 +46,7 @@ export function MenuTrigger({ asChild = false, children, onPress, ref, ...props 
 	const composedRef = useMemo(() => composeRefs(ref, setTrigger), [ref, setTrigger]);
 
 	const shared = {
-		accessibilityHint: MENU_TRIGGER_HINT,
+		accessibilityHint: labels.triggerHint,
 		accessibilityState: { expanded: isOpen },
 		onPress: handlePress,
 		ref: composedRef,

@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import type { TextInputInstance } from "react-native";
+import type { MarkdownEditorLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
 import type {
 	MarkdownCommand,
@@ -24,6 +25,8 @@ export type MarkdownEditorContextValue = {
 	applyAction: (action: MarkdownToolbarAction) => void;
 	/** The formats in effect at the caret, for lighting the toolbar. */
 	active: readonly MarkdownCommandType[];
+	/** The spoken and visible strings, resolved once on the root. */
+	labels: MarkdownEditorLabels;
 	size: MarkdownEditorSize;
 	variant: MarkdownEditorVariant;
 	isDisabled: boolean;

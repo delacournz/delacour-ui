@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type LeaderboardLabels } from "../../lib/labels";
 import type { LeaderboardEntry, RankedEntry } from "./leaderboard.types";
 import {
 	applyLeaderboardLimit,
@@ -505,5 +506,44 @@ describe("leaderboardVariants", () => {
 				}
 			}
 		}
+	});
+});
+
+const FRENCH: LeaderboardLabels = {
+	empty: "Aucune entrée",
+	rank: (rank) => `Rang ${rank}`,
+	tied: "ex aequo",
+	moved: (direction, places) => `${direction === "up" ? "en hausse" : "en baisse"} de ${places}`,
+	noChange: "inchangé",
+};
+
+describe("leaderboard labels", () => {
+	test("the English defaults match today's strings", () => {
+		const en = DELACOUR_DEFAULT_LABELS.leaderboard;
+		expect(en.empty).toBe("No entries yet");
+		expect(en.rank(2)).toBe("Rank 2");
+		expect(en.moved("up", 1)).toBe("up 1 place");
+		expect(en.moved("down", 2)).toBe("down 2 places");
+	});
+
+	test("labels reach the movement resolver", () => {
+		expect(resolveMovementLabel({ kind: "up", places: 3 }, FRENCH)).toBe("en hausse de 3");
+		expect(resolveMovementLabel({ kind: "down", places: 1 }, FRENCH)).toBe("en baisse de 1");
+		expect(resolveMovementLabel({ kind: "same" }, FRENCH)).toBe("inchangé");
+		expect(resolveMovementLabel({ kind: "none" }, FRENCH)).toBeUndefined();
+	});
+
+	test("labels reach the accessibility sentence", () => {
+		const ranked: RankedEntry = { entry: { id: "a", name: "Ngaio", value: 1, change: 2 }, rank: 2, isTied: true };
+		expect(resolveLeaderboardAccessibilityLabel({ ranked, formattedValue: "1", unit: "pts" }, FRENCH)).toBe(
+			"Rang 2, ex aequo, Ngaio, 1 pts, en hausse de 2"
+		);
+	});
+
+	test("a movement kind that moves is a label direction", () => {
+		const direction: Parameters<LeaderboardLabels["moved"]>[0] = (
+			resolveMovement(1) as Extract<ReturnType<typeof resolveMovement>, { kind: "up" | "down" }>
+		).kind;
+		expect(direction).toBe("up");
 	});
 });

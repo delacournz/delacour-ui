@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { useState } from "react";
 import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { NumberInput } from "./number-input";
@@ -18,7 +19,7 @@ function adjust(name: "increment" | "decrement") {
 	return fireEvent(screen.getByRole("adjustable"), "accessibilityAction", { nativeEvent: { actionName: name } });
 }
 
-function pressStepper(label: "Increase" | "Decrease") {
+function pressStepper(label: string) {
 	return fireEvent(screen.getByRole("button", { name: label }), "accessibilityAction", {
 		nativeEvent: { actionName: "activate" },
 	});
@@ -537,5 +538,64 @@ describe("NumberInput announcements", () => {
 		await renderWithProviders(<NumberInput accessibilityLabel={FIELD} defaultValue={1} />);
 		await pressStepper("Increase");
 		expect(android).toHaveBeenCalledWith("2");
+	});
+});
+
+describe("NumberInput labels", () => {
+	const FRENCH = {
+		decrease: "Diminuer",
+		increase: "Augmenter",
+		limit: (text: string, bound: "max" | "min") =>
+			`${text}, ${bound === "max" ? "maximum atteint" : "minimum atteint"}`,
+	};
+
+	beforeEach(() => {
+		resetAnnouncer();
+		setPlatform("ios");
+		jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	test("the labels prop renames the steppers and the limit announcement", async () => {
+		const spoken = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		await renderWithProviders(<NumberInput accessibilityLabel={FIELD} defaultValue={9} labels={FRENCH} max={10} />);
+		expect(screen.getByRole("button", { name: "Diminuer" })).toBeOnTheScreen();
+		await pressStepper("Augmenter");
+		expect(spoken).toHaveBeenLastCalledWith("10, maximum atteint", { queue: true });
+	});
+
+	test("the provider's labels rename the steppers", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ numberInput: { increase: "Augmenter" } }}>
+				<NumberInput accessibilityLabel={FIELD} defaultValue={1} />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Augmenter" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Decrease" })).toBeOnTheScreen();
+	});
+
+	test("the prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ numberInput: { increase: "Augmenter" } }}>
+				<NumberInput accessibilityLabel={FIELD} defaultValue={1} labels={{ increase: "Mehr" }} />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Mehr" })).toBeOnTheScreen();
+	});
+
+	test("a stepper's own accessibilityLabel wins over the labels", async () => {
+		await renderWithProviders(
+			<NumberInput accessibilityLabel={FIELD} defaultValue={1} labels={FRENCH}>
+				<NumberInput.Decrement accessibilityLabel="Moins" />
+				<NumberInput.Field />
+				<NumberInput.Increment />
+			</NumberInput>
+		);
+		expect(screen.getByRole("button", { name: "Moins" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Augmenter" })).toBeOnTheScreen();
 	});
 });

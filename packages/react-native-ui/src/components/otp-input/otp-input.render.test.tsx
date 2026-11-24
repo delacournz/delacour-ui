@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { act, createRef } from "react";
 import { TextInput } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { OtpInput, type OtpInputRef } from "./otp-input";
@@ -426,5 +427,42 @@ describe("OtpInput", () => {
 				"OtpInput.Separator must be rendered inside an <OtpInput>."
 			);
 		});
+	});
+});
+
+describe("OtpInput labels", () => {
+	const labels = {
+		defaultLabel: "Code",
+		hint: () => "Astuce",
+		progress: (entered: number, length: number) => `${entered}/${length}`,
+	};
+
+	test("the labels prop changes name, hint and value", async () => {
+		await renderWithProviders(<OtpInput labels={labels} length={4} testID="otp" />);
+		const field = screen.getByTestId("otp");
+		expect(field.props.accessibilityLabel).toBe("Code");
+		expect(field.props.accessibilityHint).toBe("Astuce");
+		expect(field.props.accessibilityValue).toEqual({ text: "0/4" });
+	});
+
+	test("a provider's labels change them", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ otpInput: { defaultLabel: "Code" } }}>
+				<OtpInput testID="otp" />
+			</LabelsProvider>
+		);
+		expect(screen.getByTestId("otp").props.accessibilityLabel).toBe("Code");
+	});
+
+	test("the prop wins over the provider, and accessibilityLabel/Hint win over both", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ otpInput: { defaultLabel: "Provider", hint: () => "P" } }}>
+				<OtpInput accessibilityHint="Own hint" labels={{ defaultLabel: "Prop" }} testID="a" />
+				<OtpInput accessibilityLabel="Own" labels={{ defaultLabel: "Prop" }} testID="b" />
+			</LabelsProvider>
+		);
+		expect(screen.getByTestId("a").props.accessibilityLabel).toBe("Prop");
+		expect(screen.getByTestId("a").props.accessibilityHint).toBe("Own hint");
+		expect(screen.getByTestId("b").props.accessibilityLabel).toBe("Own");
 	});
 });

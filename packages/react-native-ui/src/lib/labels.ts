@@ -393,6 +393,97 @@ export type DialogLabels = {
 	close: string;
 };
 
+/** Drawer's spoken strings. */
+export type DrawerLabels = {
+	/** The header's ✕ and a bare `Drawer.Close`: its accessible name. An `accessibilityLabel` prop wins. */
+	close: string;
+};
+
+/** Fab's spoken strings. */
+export type FabLabels = {
+	/** The scrim behind an open `Fab.Group`, a full-screen button that closes it. */
+	close: string;
+};
+
+/** Feedback's visible and spoken strings. */
+export type FeedbackLabels = {
+	/** `Feedback.Submit`'s text when it has no children. */
+	submit: string;
+	/** `Feedback.Cancel`'s text when it has no children. */
+	cancel: string;
+	/** Announced when a promise `onSubmit` resolves. `Feedback.Submit`'s `sentMessage` wins. */
+	sent: string;
+	/** Announced, assertively, when a promise `onSubmit` rejects. `Feedback.Submit`'s `failedMessage` wins. */
+	failed: string;
+};
+
+/** FlipCard's spoken strings. */
+export type FlipCardLabels = {
+	/** The turn's accessible name: the flip button, a swipe card's `activate` action, an icon-only `FlipCard.Trigger`. */
+	action: string;
+	/** Announced once the card settles on its front. The root's `faceLabels` wins. */
+	front: string;
+	/** Announced once the card settles on its back. The root's `faceLabels` wins. */
+	back: string;
+	/** The flip control's hint while the front shows. */
+	showsBack: string;
+	/** The flip control's hint while the back shows. */
+	showsFront: string;
+};
+
+/** Flow's spoken strings. */
+export type FlowLabels = {
+	/** The zoom-in control's accessible name. */
+	zoomIn: string;
+	/** The zoom-out control's accessible name. */
+	zoomOut: string;
+	/** The fit-to-view control's accessible name. */
+	fit: string;
+	/** The lock toggle's accessible name. It reports its state as selected. */
+	lock: string;
+	/** A node's assistive action that activates it, offered when it has an `onPress`. */
+	select: string;
+	/** A draggable node's assistive move up. */
+	moveUp: string;
+	/** A draggable node's assistive move down. */
+	moveDown: string;
+	/** A draggable node's assistive move left. */
+	moveLeft: string;
+	/** A draggable node's assistive move right. */
+	moveRight: string;
+	/** A node's assistive action that deletes it, offered when it has an `onDelete`. */
+	delete: string;
+	/**
+	 * One connect action: this node's handle (`from`, null when unnamed) to another node (`target`)
+	 * and its handle (`into`, null when unnamed or the only one): "Connect out to Merge, first input".
+	 */
+	connect: (from: string | null, target: string, into: string | null) => string;
+};
+
+/** ImageViewer's visible and spoken strings. */
+export type ImageViewerLabels = {
+	/** The Trigger's accessible hint, read after its alt text. Its `accessibilityHint` wins. */
+	open: string;
+	/** The close button's accessible name. Its `accessibilityLabel` wins. */
+	close: string;
+	/** The pager's `increment` action. */
+	nextImage: string;
+	/** The pager's `decrement` action. */
+	previousImage: string;
+	/** The pager's `zoomIn` action. */
+	zoomIn: string;
+	/** The pager's `zoomOut` action. */
+	zoomOut: string;
+	/** The pager's `resetZoom` action. */
+	resetZoom: string;
+	/** The pager's spoken value, "2 of 5". One-based. */
+	position: (current: number, count: number) => string;
+	/** The chrome's visible counter, "2 / 5". One-based; shown for a gallery of more than one. */
+	counter: (current: number, count: number) => string;
+	/** Visible where an image failed to load and nothing sits beneath it. */
+	loadFailed: string;
+};
+
 /** Kpi's spoken strings. */
 export type KpiLabels = {
 	up: string;
@@ -409,12 +500,190 @@ export type KpiLabels = {
 	loading: string;
 };
 
+/** Leaderboard's visible and spoken strings. */
+export type LeaderboardLabels = {
+	/** Shown when `data` is empty. The root's `emptyText` wins. */
+	empty: string;
+	/** A place's rank, first in its spoken sentence: "Rank 2". */
+	rank: (rank: number) => string;
+	/** Said after the rank when the place shares its value with another entry. */
+	tied: string;
+	/** A climb or a fall: "up 3 places", "down 1 place". */
+	moved: (direction: "up" | "down", places: number) => string;
+	/** An entry whose `change` is zero. */
+	noChange: string;
+};
+
+/** Map's spoken strings: the map's name and `Map.Controls`' button names. */
+export type MapLabels = {
+	/** The native map's accessible name. The root's `accessibilityLabel` wins. */
+	name: string;
+	/** The zoom-in button's accessible name. */
+	zoomIn: string;
+	/** The zoom-out button's accessible name. */
+	zoomOut: string;
+	/** The compass button's accessible name; it turns the map back to north-up. */
+	pointNorth: string;
+	/** The recenter button's accessible name; it returns to the opening view. */
+	recenter: string;
+	/** The locate button's accessible name; it flies to the device's location. */
+	showMyLocation: string;
+};
+
+/** Every MarkdownEditor toolbar action. Restates `MarkdownToolbarAction`: the catalog imports nothing. */
+export type MarkdownEditorActionKey =
+	| "heading"
+	| "bold"
+	| "italic"
+	| "strikethrough"
+	| "code"
+	| "codeBlock"
+	| "link"
+	| "quote"
+	| "bulletList"
+	| "orderedList";
+
+/**
+ * MarkdownEditor's visible and spoken strings. Each toolbar action is a key of its own — its button's
+ * accessible name and the subject of its announcement — so renaming one leaves the rest alone.
+ */
+export type MarkdownEditorLabels = { [Action in MarkdownEditorActionKey]: string } & {
+	/** Announced after a toolbar press switches a format on; `name` is the action's name. */
+	applied: (name: string) => string;
+	/** Announced after a toolbar press switches a format off. */
+	removed: (name: string) => string;
+	/** The mode switch's Write tab. */
+	write: string;
+	/** The mode switch's Preview tab. */
+	preview: string;
+	/** The preview pane's accessible name. */
+	previewPane: string;
+	/** `MarkdownEditor.Preview`'s text when there is nothing to render. Its `emptyText` wins. */
+	empty: string;
+	/** A bullet-list row's spoken text; an ordered row speaks its number instead. */
+	bulletItem: (text: string) => string;
+	/** A link inside a list row, offered as an action on the row; `text` is the link's text. */
+	openLink: (text: string) => string;
+	/** The text a link command inserts, selected, when nothing was selected. */
+	linkText: string;
+};
+
+/** Menu's spoken strings. ContextMenu's panel is `Menu.Content`, so it speaks `close` too. */
+export type MenuLabels = {
+	/** The accessible name of the dismiss target behind an open panel. */
+	close: string;
+	/** `Menu.Trigger`'s hint, read after its name. Its `accessibilityHint` wins. */
+	triggerHint: string;
+};
+
+/** The receipts a message moves through. Restates `MessageStatusType`: the catalog imports nothing. */
+export type MessageStatusKey = "sending" | "sent" | "delivered" | "read" | "failed";
+
+/** Message's visible and spoken strings. */
+export type MessageLabels = {
+	/**
+	 * A receipt's words, drawn under the bubble, spoken in the message's label and announced when a
+	 * send fails. `reason` is the app's own text, trimmed, and only ever present for "failed".
+	 */
+	status: (type: MessageStatusKey, reason?: string) => string;
+	/** Stands in for an outgoing message's author. */
+	you: string;
+	/** A typing indicator with no author to name. */
+	typing: string;
+	/** A typing indicator for an incoming author: "Aria is typing". */
+	typingBy: (author: string) => string;
+	/** The named action that mirrors a long press. */
+	moreActions: string;
+	/** The failed receipt's Retry control, drawn and as an action. */
+	retry: string;
+};
+
+/** MessageScroller's visible and spoken strings. */
+export type MessageScrollerLabels = {
+	/** The list's accessible name. */
+	list: string;
+	/** The jump button's accessible name before any unread count. Its `label` wins. */
+	jumpToLatest: string;
+	/** The jump button's name with an unread count, already capped: "Jump to latest, 3 unread". */
+	jumpToLatestUnread: (base: string, count: string) => string;
+	/** Spoken while an older page loads. `LoadingOlder`'s `label` wins. */
+	loadingOlder: string;
+	/** The day separator for the current day. */
+	today: string;
+	/** The day separator for the day before. */
+	yesterday: string;
+	/** A weekday's full name, 0 = Sunday, for a day inside the last six. Unused when a `locale` is given. */
+	weekday: (day: number) => string;
+	/** A month's short name, 0 = January. Unused when a `locale` is given. */
+	month: (month: number) => string;
+	/** A separator for an older day, its month already named: "12 Sep", or "12 Sep 2025" outside this year. */
+	date: (day: number, month: string, year?: number) => string;
+	/** The unread divider's text: "1 new message", "3 new messages". `UnreadDivider`'s `label` wins. */
+	unreadDivider: (count: number) => string;
+	/** Announced when messages arrive away from the end; `senderName` only for a single named arrival. */
+	newMessages: (count: number, senderName?: string) => string;
+};
+
+/** Planner's visible and spoken strings. Month and weekday names come from `Intl`, in the planner's `locale`. */
+export type PlannerLabels = {
+	/** The back button's accessible name. `Planner.Nav`'s `previousLabel` wins. */
+	previousMonth: string;
+	/** The forward button's accessible name. `Planner.Nav`'s `nextLabel` wins. */
+	nextMonth: string;
+	/** `Planner.Today`'s text when it has no children. */
+	today: string;
+	/** A day's entry count, inside its spoken label: "no entries", "1 entry", "3 entries". */
+	entryCount: (count: number) => string;
+	/**
+	 * A day's whole spoken label. `date` is the localised day title, `entries` is `entryCount`'s
+	 * text, `names` the day's category or entry names in order: "Wednesday, October 14, 2 entries, Run, today".
+	 */
+	day: (date: string, entries: string, names: readonly string[], isToday: boolean) => string;
+	/** A legend row's spoken label when counts show: "Run, 4". */
+	legendCount: (name: string, count: number) => string;
+	/** `Planner.Summary`'s text when it has no children; `month` is the localised month: "12 entries in October". */
+	summary: (count: number, month: string) => string;
+	/** A `calendar` day's overflow line: "+3 more". */
+	more: (count: number) => string;
+};
+
 /** What a looping animation's pause control is called — every looping component shares them. */
 export type MotionLabels = {
 	/** Offered while the loop moves. */
 	pause: string;
 	/** Offered while the user holds it paused. */
 	resume: string;
+};
+
+/** NumberInput's spoken strings. */
+export type NumberInputLabels = {
+	/** The decrement stepper's name. `NumberInput.Decrement`'s `accessibilityLabel` wins. */
+	decrease: string;
+	/** The increment stepper's name. `NumberInput.Increment`'s `accessibilityLabel` wins. */
+	increase: string;
+	/** Announced when a step reaches a bound, `text` the formatted value: "10, maximum". */
+	limit: (text: string, bound: "max" | "min") => string;
+};
+
+/** What an OtpInput cell takes, for the words around it: `digits` is "digit", any other pattern "character". */
+export type OtpInputUnit = "digit" | "character";
+
+/** OtpInput's spoken strings. */
+export type OtpInputLabels = {
+	/** The accessible name when neither `accessibilityLabel` nor an enclosing `Field.Label` gives one. */
+	defaultLabel: string;
+	/** The value while masked or empty, how many cells are filled: "2 of 4 digits entered". */
+	progress: (entered: number, length: number, unit: OtpInputUnit) => string;
+	/** The hint saying what to type: "Enter the 6 digit code". Its `accessibilityHint` wins. */
+	hint: (length: number, unit: OtpInputUnit) => string;
+};
+
+/** PageHeader's spoken strings. */
+export type PageHeaderLabels = {
+	/** A verified, named avatar's label: "Aria, verified". `name` is trimmed and non-empty. */
+	verifiedAvatar: (name: string) => string;
+	/** A verified avatar with no name. */
+	verified: string;
 };
 
 /** Pagination's visible and spoken strings. */
@@ -459,9 +728,25 @@ export type DelacourLabels = {
 	datePicker: DatePickerLabels;
 	dateTimePicker: DateTimePickerLabels;
 	dialog: DialogLabels;
+	drawer: DrawerLabels;
+	fab: FabLabels;
+	feedback: FeedbackLabels;
+	flipCard: FlipCardLabels;
+	flow: FlowLabels;
+	imageViewer: ImageViewerLabels;
 	kpi: KpiLabels;
+	leaderboard: LeaderboardLabels;
+	map: MapLabels;
+	markdownEditor: MarkdownEditorLabels;
+	menu: MenuLabels;
+	message: MessageLabels;
+	messageScroller: MessageScrollerLabels;
 	motion: MotionLabels;
+	numberInput: NumberInputLabels;
+	otpInput: OtpInputLabels;
+	pageHeader: PageHeaderLabels;
 	pagination: PaginationLabels;
+	planner: PlannerLabels;
 };
 
 /** A component whose strings the catalog holds. */
@@ -471,6 +756,9 @@ export type DelacourLabelsComponent = keyof DelacourLabels;
 export type DelacourLabelOverrides = { [K in DelacourLabelsComponent]?: Partial<DelacourLabels[K]> };
 
 const plural = (count: number, one: string, other: string): string => (count === 1 ? one : other);
+
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
 
 /** Today's English. */
 export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
@@ -665,6 +953,50 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 	dialog: {
 		close: "Close",
 	},
+	drawer: {
+		close: "Close",
+	},
+	fab: {
+		close: "Close",
+	},
+	feedback: {
+		submit: "Send",
+		cancel: "Cancel",
+		sent: "Feedback sent",
+		failed: "Couldn't send feedback",
+	},
+	flipCard: {
+		action: "Flip card",
+		front: "Front of card",
+		back: "Back of card",
+		showsBack: "Shows the back",
+		showsFront: "Shows the front",
+	},
+	flow: {
+		zoomIn: "Zoom in",
+		zoomOut: "Zoom out",
+		fit: "Fit to view",
+		lock: "Lock canvas",
+		select: "Select",
+		moveUp: "Move up",
+		moveDown: "Move down",
+		moveLeft: "Move left",
+		moveRight: "Move right",
+		delete: "Delete",
+		connect: (from, target, into) => `Connect${from ? ` ${from}` : ""} to ${target}${into ? `, ${into}` : ""}`,
+	},
+	imageViewer: {
+		open: "Opens full screen image viewer",
+		close: "Close image viewer",
+		nextImage: "Next image",
+		previousImage: "Previous image",
+		zoomIn: "Zoom in",
+		zoomOut: "Zoom out",
+		resetZoom: "Reset zoom",
+		position: (current, count) => `${current} of ${count}`,
+		counter: (current, count) => `${current} / ${count}`,
+		loadFailed: "This image could not be loaded",
+	},
 	kpi: {
 		up: "Up",
 		down: "Down",
@@ -674,9 +1006,100 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		noTrendData: "No trend data",
 		loading: "Loading",
 	},
+	leaderboard: {
+		empty: "No entries yet",
+		rank: (rank) => `Rank ${rank}`,
+		tied: "tied",
+		moved: (direction, places) => `${direction} ${places} ${plural(places, "place", "places")}`,
+		noChange: "no change",
+	},
+	map: {
+		name: "Map",
+		zoomIn: "Zoom in",
+		zoomOut: "Zoom out",
+		pointNorth: "Point north",
+		recenter: "Recenter map",
+		showMyLocation: "Show my location",
+	},
+	markdownEditor: {
+		bold: "Bold",
+		bulletList: "Bulleted list",
+		code: "Inline code",
+		codeBlock: "Code block",
+		heading: "Heading",
+		italic: "Italic",
+		link: "Link",
+		orderedList: "Numbered list",
+		quote: "Quote",
+		strikethrough: "Strikethrough",
+		applied: (name) => `${name} applied`,
+		removed: (name) => `${name} removed`,
+		write: "Write",
+		preview: "Preview",
+		previewPane: "Preview",
+		empty: "Nothing to preview",
+		bulletItem: (text) => `bullet ${text}`,
+		openLink: (text) => `Open link ${text}`,
+		linkText: "link",
+	},
+	menu: {
+		close: "Close menu",
+		triggerHint: "Opens a menu",
+	},
+	message: {
+		status: (type, reason) => {
+			switch (type) {
+				case "sending":
+					return "Sending";
+				case "sent":
+					return "Sent";
+				case "delivered":
+					return "Delivered";
+				case "read":
+					return "Read";
+				case "failed":
+					return reason ? `Failed: ${reason}` : "Failed to send";
+			}
+		},
+		you: "You",
+		typing: "Typing",
+		typingBy: (author) => `${author} is typing`,
+		moreActions: "More actions",
+		retry: "Retry",
+	},
+	messageScroller: {
+		list: "Conversation",
+		jumpToLatest: "Jump to latest",
+		jumpToLatestUnread: (base, count) => `${base}, ${count} unread`,
+		loadingOlder: "Loading older messages",
+		today: "Today",
+		yesterday: "Yesterday",
+		weekday: (day) => WEEKDAYS[day] ?? "",
+		month: (month) => MONTHS[month] ?? "",
+		date: (day, month, year) => (year === undefined ? `${day} ${month}` : `${day} ${month} ${year}`),
+		unreadDivider: (count) => `${count} new ${plural(count, "message", "messages")}`,
+		newMessages: (count, senderName) => {
+			if (count !== 1) return `${count} new messages`;
+			return senderName ? `New message from ${senderName}` : "New message";
+		},
+	},
 	motion: {
 		pause: "Pause animation",
 		resume: "Resume animation",
+	},
+	numberInput: {
+		decrease: "Decrease",
+		increase: "Increase",
+		limit: (text, bound) => `${text}, ${bound === "max" ? "maximum" : "minimum"}`,
+	},
+	otpInput: {
+		defaultLabel: "Verification code",
+		progress: (entered, length, unit) => `${entered} of ${length} ${unit}s entered`,
+		hint: (length, unit) => `Enter the ${length} ${unit} code`,
+	},
+	pageHeader: {
+		verifiedAvatar: (name) => `${name}, verified`,
+		verified: "Verified",
 	},
 	pagination: {
 		list: "Pagination",
@@ -689,6 +1112,17 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		jump: (direction, pages) =>
 			`Jump ${direction === 1 ? "forward" : "back"} ${pages} ${plural(pages, "page", "pages")}`,
 		status: ({ from, to, total }) => `${from}–${to} of ${total}`,
+	},
+	planner: {
+		previousMonth: "Previous month",
+		nextMonth: "Next month",
+		today: "Today",
+		entryCount: (count) => (count === 0 ? "no entries" : `${count} ${plural(count, "entry", "entries")}`),
+		day: (date, entries, names, isToday) => [date, entries, ...names, ...(isToday ? ["today"] : [])].join(", "),
+		legendCount: (name, count) => `${name}, ${count}`,
+		summary: (count, month) =>
+			`${count === 0 ? "No entries" : `${count} ${plural(count, "entry", "entries")}`} in ${month}`,
+		more: (count) => `+${count} more`,
 	},
 };
 

@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import type { PlannerLabels } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { TABS_PAN } from "../tabs/tabs.variants";
 import type { PlannerCategory, PlannerEntry } from "./planner.types";
@@ -11,6 +12,7 @@ import {
 	plannerVariants,
 	resolveDayDisplay,
 	resolveEntryColor,
+	resolveEntryCount,
 	resolveEntryLimit,
 	resolvePlannerDayLabel,
 	resolveSwipePage,
@@ -350,5 +352,35 @@ describe("plannerVariants", () => {
 			expect(plannerVariants({ colorIndex: `${colorIndex}` }).swatch()).toContain(`bg-chart-${colorIndex}`);
 			expect(plannerVariants({ colorIndex: `${colorIndex}` }).tint()).toContain(`bg-chart-${colorIndex}/15`);
 		}
+	});
+});
+
+const FRENCH: PlannerLabels = {
+	previousMonth: "Mois précédent",
+	nextMonth: "Mois suivant",
+	today: "Aujourd'hui",
+	entryCount: (count) => (count === 0 ? "aucune entrée" : `${count} ${count === 1 ? "entrée" : "entrées"}`),
+	day: (date, entries, names, isToday) => [date, entries, ...names, ...(isToday ? ["aujourd'hui"] : [])].join(" ; "),
+	legendCount: (name, count) => `${name} : ${count}`,
+	summary: (count, month) => `${count} en ${month}`,
+	more: (count) => `+${count} de plus`,
+};
+
+describe("planner labels", () => {
+	const date = new Date(2026, 9, 14);
+
+	test("resolveEntryCount defaults to English and takes labels", () => {
+		expect(resolveEntryCount(0)).toBe("no entries");
+		expect(resolveEntryCount(1)).toBe("1 entry");
+		expect(resolveEntryCount(3)).toBe("3 entries");
+		expect(resolveEntryCount(3, FRENCH)).toBe("3 entrées");
+	});
+
+	test("resolvePlannerDayLabel speaks through the labels", () => {
+		const label = resolvePlannerDayLabel(
+			{ date, entries: [entry("a", date, "run")], categories: CATEGORIES, isToday: true, locale: "en-NZ" },
+			FRENCH
+		);
+		expect(label).toBe("Wednesday, 14 October ; 1 entrée ; Run ; aujourd'hui");
 	});
 });

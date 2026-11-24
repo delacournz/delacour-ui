@@ -21,7 +21,7 @@ export type PlannerLegendProps = PlannerSlotProps & {
  * the name is the whole of it for the ear.
  */
 export function PlannerLegend({ counts = false, className, children, ...props }: PlannerLegendProps): ReactElement {
-	const { entries, month, categories, isFramed } = usePlannerPart("Planner.Legend");
+	const { entries, month, categories, isFramed, labels } = usePlannerPart("Planner.Legend");
 	const slots = plannerVariants({ isFramed });
 	const { items } = countByCategory(entries, month, categories);
 
@@ -31,7 +31,7 @@ export function PlannerLegend({ counts = false, className, children, ...props }:
 				const color = resolveCategoryColor(category);
 				return (
 					<View
-						accessibilityLabel={counts ? `${category.label}, ${count}` : category.label}
+						accessibilityLabel={counts ? labels.legendCount(category.label, count) : category.label}
 						accessible
 						className={slots.legendItem()}
 						key={category.id}

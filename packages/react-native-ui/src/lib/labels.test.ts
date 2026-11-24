@@ -212,6 +212,67 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.noneSelected).toBe("No date and time selected");
 	});
 
+	test("drawer is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.drawer).toEqual({ close: "Close" });
+	});
+
+	test("fab is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.fab).toEqual({ close: "Close" });
+	});
+
+	test("feedback is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.feedback).toEqual({
+			submit: "Send",
+			cancel: "Cancel",
+			sent: "Feedback sent",
+			failed: "Couldn't send feedback",
+		});
+	});
+
+	test("flipCard is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.flipCard).toEqual({
+			action: "Flip card",
+			front: "Front of card",
+			back: "Back of card",
+			showsBack: "Shows the back",
+			showsFront: "Shows the front",
+		});
+	});
+
+	test("flow is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.flow;
+		expect(labels.zoomIn).toBe("Zoom in");
+		expect(labels.zoomOut).toBe("Zoom out");
+		expect(labels.fit).toBe("Fit to view");
+		expect(labels.lock).toBe("Lock canvas");
+		expect(labels.select).toBe("Select");
+		expect([labels.moveUp, labels.moveDown, labels.moveLeft, labels.moveRight]).toEqual([
+			"Move up",
+			"Move down",
+			"Move left",
+			"Move right",
+		]);
+		expect(labels.delete).toBe("Delete");
+		expect(labels.connect("out", "Merge", "first input")).toBe("Connect out to Merge, first input");
+		expect(labels.connect(null, "Merge", null)).toBe("Connect to Merge");
+	});
+
+	test("imageViewer is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.imageViewer;
+		expect(labels.open).toBe("Opens full screen image viewer");
+		expect(labels.close).toBe("Close image viewer");
+		expect([labels.nextImage, labels.previousImage, labels.zoomIn, labels.zoomOut, labels.resetZoom]).toEqual([
+			"Next image",
+			"Previous image",
+			"Zoom in",
+			"Zoom out",
+			"Reset zoom",
+		]);
+		expect(labels.position(2, 5)).toBe("2 of 5");
+		expect(labels.counter(2, 5)).toBe("2 / 5");
+		expect(labels.loadFailed).toBe("This image could not be loaded");
+	});
+
 	test("kpi is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.kpi;
 		expect(labels.up).toBe("Up");
@@ -223,8 +284,114 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.loading).toBe("Loading");
 	});
 
+	test("leaderboard is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.leaderboard;
+		expect(labels.empty).toBe("No entries yet");
+		expect(labels.rank(2)).toBe("Rank 2");
+		expect(labels.tied).toBe("tied");
+		expect(labels.moved("up", 3)).toBe("up 3 places");
+		expect(labels.moved("down", 1)).toBe("down 1 place");
+		expect(labels.noChange).toBe("no change");
+	});
+
+	test("map is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.map).toEqual({
+			name: "Map",
+			zoomIn: "Zoom in",
+			zoomOut: "Zoom out",
+			pointNorth: "Point north",
+			recenter: "Recenter map",
+			showMyLocation: "Show my location",
+		});
+	});
+
+	test("markdownEditor is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.markdownEditor;
+		const { applied, removed, write, preview, previewPane, empty, bulletItem, openLink, linkText, ...actions } = labels;
+		expect(actions).toEqual({
+			bold: "Bold",
+			bulletList: "Bulleted list",
+			code: "Inline code",
+			codeBlock: "Code block",
+			heading: "Heading",
+			italic: "Italic",
+			link: "Link",
+			orderedList: "Numbered list",
+			quote: "Quote",
+			strikethrough: "Strikethrough",
+		});
+		expect(labels.applied("Bold")).toBe("Bold applied");
+		expect(labels.removed("Bold")).toBe("Bold removed");
+		expect([labels.write, labels.preview, labels.previewPane]).toEqual(["Write", "Preview", "Preview"]);
+		expect(labels.empty).toBe("Nothing to preview");
+		expect(labels.bulletItem("Milk")).toBe("bullet Milk");
+		expect(labels.openLink("docs")).toBe("Open link docs");
+		expect(labels.linkText).toBe("link");
+	});
+
+	test("menu is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.menu).toEqual({ close: "Close menu", triggerHint: "Opens a menu" });
+	});
+
+	test("message is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.message;
+		const types = ["sending", "sent", "delivered", "read", "failed"] as const;
+		expect(types.map((type) => labels.status(type))).toEqual([
+			"Sending",
+			"Sent",
+			"Delivered",
+			"Read",
+			"Failed to send",
+		]);
+		expect(labels.status("failed", "No signal")).toBe("Failed: No signal");
+		expect(labels.you).toBe("You");
+		expect(labels.typing).toBe("Typing");
+		expect(labels.typingBy("Aria")).toBe("Aria is typing");
+		expect(labels.moreActions).toBe("More actions");
+		expect(labels.retry).toBe("Retry");
+	});
+
+	test("messageScroller is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.messageScroller;
+		expect(labels.list).toBe("Conversation");
+		expect(labels.jumpToLatest).toBe("Jump to latest");
+		expect(labels.jumpToLatestUnread("Jump to latest", "99+")).toBe("Jump to latest, 99+ unread");
+		expect(labels.loadingOlder).toBe("Loading older messages");
+		expect([labels.today, labels.yesterday]).toEqual(["Today", "Yesterday"]);
+		expect([0, 6].map(labels.weekday)).toEqual(["Sunday", "Saturday"]);
+		expect([0, 8, 11].map(labels.month)).toEqual(["Jan", "Sep", "Dec"]);
+		expect(labels.date(12, "Sep")).toBe("12 Sep");
+		expect(labels.date(12, "Sep", 2025)).toBe("12 Sep 2025");
+		expect(labels.unreadDivider(1)).toBe("1 new message");
+		expect(labels.unreadDivider(3)).toBe("3 new messages");
+		expect(labels.newMessages(1, "Aria")).toBe("New message from Aria");
+		expect(labels.newMessages(1)).toBe("New message");
+		expect(labels.newMessages(4, "Aria")).toBe("4 new messages");
+	});
+
 	test("motion is today's English", () => {
 		expect(DELACOUR_DEFAULT_LABELS.motion).toEqual({ pause: "Pause animation", resume: "Resume animation" });
+	});
+
+	test("numberInput is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.numberInput;
+		expect([labels.decrease, labels.increase]).toEqual(["Decrease", "Increase"]);
+		expect(labels.limit("10", "max")).toBe("10, maximum");
+		expect(labels.limit("1", "min")).toBe("1, minimum");
+	});
+
+	test("otpInput is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.otpInput;
+		expect(labels.defaultLabel).toBe("Verification code");
+		expect(labels.progress(2, 4, "digit")).toBe("2 of 4 digits entered");
+		expect(labels.progress(0, 1, "character")).toBe("0 of 1 characters entered");
+		expect(labels.hint(6, "digit")).toBe("Enter the 6 digit code");
+	});
+
+	test("pageHeader is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.pageHeader;
+		expect(labels.verifiedAvatar("Aria")).toBe("Aria, verified");
+		expect(labels.verified).toBe("Verified");
 	});
 
 	test("pagination is today's English", () => {
@@ -240,9 +407,29 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.jump(-1, 1)).toBe("Jump back 1 page");
 		expect(labels.status({ from: 41, to: 60, total: 472 })).toBe("41–60 of 472");
 	});
+
+	test("planner is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.planner;
+		expect([labels.previousMonth, labels.nextMonth, labels.today]).toEqual(["Previous month", "Next month", "Today"]);
+		expect([0, 1, 3].map(labels.entryCount)).toEqual(["no entries", "1 entry", "3 entries"]);
+		expect(labels.day("Wednesday, October 14", "2 entries", ["Run"], true)).toBe(
+			"Wednesday, October 14, 2 entries, Run, today"
+		);
+		expect(labels.day("Wednesday, October 14", "no entries", [], false)).toBe("Wednesday, October 14, no entries");
+		expect(labels.legendCount("Run", 4)).toBe("Run, 4");
+		expect(labels.summary(0, "October")).toBe("No entries in October");
+		expect(labels.summary(1, "October")).toBe("1 entry in October");
+		expect(labels.summary(12, "October")).toBe("12 entries in October");
+		expect(labels.more(3)).toBe("+3 more");
+	});
 });
 
 describe("resolveLabels", () => {
+	test("one MarkdownEditor action renamed on each layer leaves the other actions alone", () => {
+		const labels = resolveLabels("markdownEditor", { markdownEditor: { bold: "Gras" } }, { italic: "Italique" });
+		expect([labels.bold, labels.italic, labels.link]).toEqual(["Gras", "Italique", "Link"]);
+	});
+
 	test("no overrides gives the defaults", () => {
 		expect(resolveLabels("pagination", undefined, undefined)).toEqual(DELACOUR_DEFAULT_LABELS.pagination);
 	});

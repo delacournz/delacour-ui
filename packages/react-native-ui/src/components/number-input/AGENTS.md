@@ -134,6 +134,11 @@ Root plus `NumberInput.Field`, `.Decrement` and `.Increment`, and
   `accessibilityValue` natively, so announcing there would double the speech; typing
   is echoed by the `TextInput`; a controlled value moving is the parent's to say.
   `announce={false}` silences it.
+- **Spoken strings are `labels`.** The stepper names (`decrease`, `increase`) and the limit
+  announcement (`limit(text, "max" | "min")`, English `10, maximum`) come from `DelacourLabels.numberInput`,
+  resolved once on the root (`labels` prop, then `LabelsProvider`, then English) and shared through
+  context. A stepper's own `accessibilityLabel` still wins. `resolveStepAnnouncement` takes the labels
+  as a trailing parameter defaulting to English.
 - **A stepper declares `activate`.** VoiceOver's double-tap then runs the
   stepper's handler rather than synthesising a touch the hold gesture would read
   as a press-in with no press-out.

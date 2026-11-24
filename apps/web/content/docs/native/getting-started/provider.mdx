@@ -112,9 +112,11 @@ A label that carries a number is a function, so a language orders and inflects i
 component's own `labels` prop wins over the provider's, and a part's own `accessibilityLabel` wins
 over both. Declare the map at module scope: a new object every render re-renders everything that
 reads it. Alert, Attachment, Avatar, Badge, BottomSheet, Breadcrumb, Calendar, Carousel, Chart,
-Chip, ColorPicker, Combobox, Compare, ContextMenu, Countdown, DatePicker, DateTimePicker, Dialog, Kpi
-and Pagination read it today, and `motion` names the pause and resume actions every looping
-animation offers; the rest of the library is moving over component by component.
+Chip, ColorPicker, Combobox, Compare, ContextMenu, Countdown, DatePicker, DateTimePicker, Dialog,
+Drawer, Fab, Feedback, FlipCard, Flow, ImageViewer, Kpi, Leaderboard, Map, MarkdownEditor, Menu,
+Message, MessageScroller, NumberInput, OtpInput, PageHeader, Pagination and Planner read it today,
+and `motion` names the pause and resume actions every looping animation offers; the rest of the
+library is moving over component by component.
 
 Your own components read the same catalog with `useLabels(component)`, from
 `@delacour/react-native-ui/hooks/use-labels`.

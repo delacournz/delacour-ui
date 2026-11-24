@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type FlowLabels } from "../../lib/labels";
 import {
 	collectFlowCanvasTokens,
 	FLOW_ACCESSIBILITY_MOVES,
@@ -472,5 +473,70 @@ describe("resolveGroupAccessibility", () => {
 		expect(
 			resolveGroupAccessibility({ id: "g", isDraggable: false, isLocked: false, label: undefined }).isAccessible
 		).toBe(false);
+	});
+});
+
+const FRENCH: FlowLabels = {
+	connect: (from, target, into) => `Relier${from ? ` ${from}` : ""} à ${target}${into ? ` (${into})` : ""}`,
+	delete: "Supprimer",
+	fit: "Ajuster",
+	lock: "Verrouiller",
+	moveDown: "Descendre",
+	moveLeft: "Aller à gauche",
+	moveRight: "Aller à droite",
+	moveUp: "Monter",
+	select: "Choisir",
+	zoomIn: "Zoom avant",
+	zoomOut: "Zoom arrière",
+};
+
+describe("flow labels", () => {
+	test("every move's name is a key of FlowLabels, and its label is the English default", () => {
+		for (const move of FLOW_ACCESSIBILITY_MOVES) {
+			expect(typeof DELACOUR_DEFAULT_LABELS.flow[move.name]).toBe("string");
+			expect(move.label).toBe(DELACOUR_DEFAULT_LABELS.flow[move.name]);
+		}
+	});
+
+	test("the control labels are the English defaults", () => {
+		expect(FLOW_CONTROL_LABELS).toEqual({
+			fit: "Fit to view",
+			lock: "Lock canvas",
+			zoomIn: "Zoom in",
+			zoomOut: "Zoom out",
+		});
+	});
+
+	test("labels reach every group move", () => {
+		const { actions } = resolveGroupAccessibility({
+			id: "g",
+			isDraggable: true,
+			isLocked: false,
+			label: "Stage",
+			labels: FRENCH,
+		});
+		expect(actions.map((action) => action.label)).toEqual(["Monter", "Descendre", "Aller à gauche", "Aller à droite"]);
+	});
+
+	test("labels reach every node action", () => {
+		const a = { handles: [{ id: "out", type: "source" as const }], id: "a", label: "Fetch" };
+		const b = { handles: [{ id: "in", type: "target" as const }], id: "b", label: "Parse" };
+		const { actions } = resolveNodeAccessibilityActions({
+			canActivate: true,
+			canDelete: true,
+			canMove: true,
+			labels: FRENCH,
+			node: a,
+			others: [b],
+		});
+		expect(actions.map((action) => action.label)).toEqual([
+			"Choisir",
+			"Monter",
+			"Descendre",
+			"Aller à gauche",
+			"Aller à droite",
+			"Relier out à Parse",
+			"Supprimer",
+		]);
 	});
 });

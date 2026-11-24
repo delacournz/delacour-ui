@@ -2,7 +2,7 @@ import type { ReactElement, ReactNode } from "react";
 import { IconCrossMedium } from "../../icons/central";
 import { Button, type ButtonProps } from "../button";
 import { Icon } from "../icon";
-import { useImageViewerPart } from "./image-viewer.context";
+import { useImageViewerInternalPart, useImageViewerPart } from "./image-viewer.context";
 
 export type ImageViewerCloseProps = Omit<ButtonProps, "onPress" | "children"> & {
 	/** Replaces the cross. */
@@ -11,19 +11,20 @@ export type ImageViewerCloseProps = Omit<ButtonProps, "onPress" | "children"> & 
 
 /**
  * Closes the viewer: a ghost icon `Button` with a cross in `media-foreground`,
- * labelled "Close image viewer". The chrome draws one; render another wherever a
+ * labelled "Close image viewer" unless `accessibilityLabel` or the viewer's `labels.close` says otherwise. The chrome draws one; render another wherever a
  * second way out helps — it works anywhere inside `<ImageViewer>`.
  */
 export function ImageViewerClose({
 	children,
-	accessibilityLabel = "Close image viewer",
+	accessibilityLabel,
 	testID = "image-viewer-close",
 	...props
 }: ImageViewerCloseProps): ReactElement {
 	const { close } = useImageViewerPart("ImageViewer.Close");
+	const { labels } = useImageViewerInternalPart("ImageViewer.Close");
 
 	const buttonProps: ButtonProps = {
-		accessibilityLabel,
+		accessibilityLabel: accessibilityLabel ?? labels.close,
 		size: "icon-md",
 		testID,
 		variant: "ghost",

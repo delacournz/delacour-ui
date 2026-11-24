@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type MarkdownEditorLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { ButtonIconSize } from "../button/button.variants";
 import { INPUT_VARIANTS, type InputSize, type InputVariant, inputVariants } from "../input/input.variants";
@@ -65,18 +66,9 @@ export const MARKDOWN_TOOLBAR_ACTIONS = [
 export const MARKDOWN_DEFAULT_TOOLBAR_ACTIONS: readonly MarkdownToolbarAction[] = MARKDOWN_TOOLBAR_ACTIONS;
 
 /** The spoken name of each action — its accessibility label, and the subject of its announcement. */
-export const MARKDOWN_ACTION_LABELS: Record<MarkdownToolbarAction, string> = {
-	bold: "Bold",
-	bulletList: "Bulleted list",
-	code: "Inline code",
-	codeBlock: "Code block",
-	heading: "Heading",
-	italic: "Italic",
-	link: "Link",
-	orderedList: "Numbered list",
-	quote: "Quote",
-	strikethrough: "Strikethrough",
-};
+export const MARKDOWN_ACTION_LABELS: Record<MarkdownToolbarAction, string> = Object.fromEntries(
+	MARKDOWN_TOOLBAR_ACTIONS.map((action) => [action, DELACOUR_DEFAULT_LABELS.markdownEditor[action]])
+) as Record<MarkdownToolbarAction, string>;
 
 /** The square button an action draws at each editor size — the button's own `icon-*` step, never a number. */
 export const MARKDOWN_EDITOR_ACTION_SIZE: Record<MarkdownEditorSize, ButtonIconSize> = {
@@ -226,8 +218,13 @@ export function resolveMarkdownActionIsActive(
  * The action toggles, so the state it was in before the press says which way
  * it went: lit before means it has just been removed.
  */
-export function resolveMarkdownAnnouncement(action: MarkdownToolbarAction, wasActive: boolean): string {
-	return `${MARKDOWN_ACTION_LABELS[action]} ${wasActive ? "removed" : "applied"}`;
+export function resolveMarkdownAnnouncement(
+	action: MarkdownToolbarAction,
+	wasActive: boolean,
+	labels: MarkdownEditorLabels = DELACOUR_DEFAULT_LABELS.markdownEditor
+): string {
+	const name = labels[action];
+	return wasActive ? labels.removed(name) : labels.applied(name);
 }
 
 /** The marker drawn beside a list item: a bullet, or its number counted from the list's `start`. */
@@ -268,7 +265,10 @@ export type MarkdownLinkAction = { name: string; label: string; url: string };
  * repeated text gets an ordinal ("Open link here (2)"): VoiceOver dispatches a custom action by its
  * label, so two equal labels would both open the first url.
  */
-export function resolveMarkdownLinkActions(inline: readonly MarkdownInline[]): MarkdownLinkAction[] {
+export function resolveMarkdownLinkActions(
+	inline: readonly MarkdownInline[],
+	labels: MarkdownEditorLabels = DELACOUR_DEFAULT_LABELS.markdownEditor
+): MarkdownLinkAction[] {
 	const out: MarkdownLinkAction[] = [];
 	const counts = new Map<string, number>();
 	const walk = (nodes: readonly MarkdownInline[]): void => {
@@ -278,7 +278,7 @@ export function resolveMarkdownLinkActions(inline: readonly MarkdownInline[]): M
 				case "code":
 					break;
 				case "link": {
-					const base = `Open link ${markdownInlineToText(node.children)}`;
+					const base = labels.openLink(markdownInlineToText(node.children));
 					const seen = (counts.get(base) ?? 0) + 1;
 					counts.set(base, seen);
 					out.push({

@@ -12,6 +12,7 @@
 		"cn",
 		"icon",
 		"icons",
+		"interactive-child",
 		"pressable",
 		"text",
 		"tv",
@@ -223,6 +224,10 @@
 			"target": "post/post.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				},
 				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"

@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"icon",
 		"icons",
+		"interactive-child",
 		"pressable",
 		"text",
 		"tv",
@@ -86,6 +87,10 @@
 			"target": "badge/badge.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				},
 				{
 					"from": "../icon",
 					"to": "@registry/ui/icon"

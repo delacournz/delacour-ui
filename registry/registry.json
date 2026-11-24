@@ -281,6 +281,7 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -2766,6 +2767,7 @@
 				"cn",
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -3368,6 +3370,7 @@
 				"cn",
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",

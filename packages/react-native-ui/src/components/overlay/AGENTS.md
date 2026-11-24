@@ -16,7 +16,7 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/overlay` |
 | `overlay.tsx` | `Overlay` — the root is the provider: teleport's `PortalProvider` (skipped when one is already above), the registry and the touch-start fan-out; the `Object.assign` names `Portal` and `Scrim`. `OverlayProvider` is the same component, under the name a root layout reads best with |
-| `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, reports `isExiting`, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
+| `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, reports `isExiting`, takes `isPassive` for an overlay read past (a tooltip), teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `bg-overlay`, opacity follows presence, hidden from assistive technology |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext` and their hooks. `bottom-sheet/` imports it |
 | `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `hidesAppContent`, `topModalOverlay`, `isBelowTopModal`, `isModalOnTop`, `OVERLAY_LAYER_BASE` |
@@ -106,8 +106,9 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   `onExited`, which is why an exiting modal stops hiding the app.
 - **`isOnTop` is the registry's, and only a portal needs it.** `useOverlayModalAccessibility`
   takes the portal `id` and reads `isModalOnTop`: the top `modal`/`anchored` overlay that is not
-  exiting holds VoiceOver, so a dialog lets go while its own popover is up and two modal siblings
-  never fight. An id the registry has not recorded yet is its own top. Android containment is not
+  exiting and not `isPassive` holds VoiceOver, so a dialog lets go while its own popover is up and
+  two modal siblings never fight. `Tooltip.Content` is `isPassive`: it is read past, so a dialog
+  stays modal under an open tooltip, while Android back still closes the tooltip first. An id the registry has not recorded yet is its own top. Android containment is not
   the hook's job — the provider and portal already hide everything outside the top modal.
 - **The hook lives in `hooks/` and its pure parts in `lib/modal-accessibility.ts`, not here,** so
   Menu (a React Native `Modal`), Fab.Group, SectionProgress, SectionRail, Tour and ImageViewer —

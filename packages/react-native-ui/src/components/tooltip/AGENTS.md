@@ -107,7 +107,8 @@ card corner, which is larger than the inverted chip's `rounded-md`, so it clears
   opening.
 - **The panel is never read and never takes focus.** `accessibilityElementsHidden` and
   `importantForAccessibility="no-hide-descendants"` on the positioner; non-modal overlays never move
-  focus (the overlay plan's rule). Reading it as well would say everything twice.
+  focus (the overlay plan's rule). Reading it as well would say everything twice. Its portal is
+  `isPassive`, so an open tooltip never takes VoiceOver's containment from a dialog under it.
 - **With a screen reader on, a long press does not open it** (`shouldTooltipActivate`) — the words
   already reached the trigger, and double-tap-and-hold is an action. A press tooltip still opens,
   for someone using zoom alongside VoiceOver, and then never times out

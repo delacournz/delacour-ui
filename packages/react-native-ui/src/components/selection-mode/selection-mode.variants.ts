@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SelectionModeLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /**
@@ -215,10 +216,12 @@ export function resolveItemPress({
  * `"n selected"` when it is not. The title is dropped without a total — on its
  * own it would say nothing the count does not.
  */
-export function resolveHeaderCount({ count, total, title }: { count: number; total?: number; title?: string }): string {
-	if (total === undefined) return `${count} selected`;
-	const tally = `${count} of ${total}`;
-	return title ? `${title} · ${tally}` : tally;
+export function resolveHeaderCount(
+	{ count, total, title }: { count: number; total?: number; title?: string },
+	labels: SelectionModeLabels = DELACOUR_DEFAULT_LABELS.selectionMode
+): string {
+	if (total === undefined) return labels.selectedCount(count);
+	return labels.progress(count, total, title ?? "");
 }
 
 /** How a group lays its items out — see {@link resolveGroupLayout}. */
@@ -284,8 +287,15 @@ export function resolveBarVisible({
 	return isActive && (count > 0 || isShownWhenEmpty);
 }
 
-/** The long-press action an inactive item offers a screen reader. */
-export const SELECTION_MODE_START_ACTION = { label: "Start selecting", name: "longpress" } as const;
+/**
+ * The long-press action an inactive item offers a screen reader, in English.
+ *
+ * @deprecated Read `labels.startSelecting` — the item builds its action from the resolved labels.
+ */
+export const SELECTION_MODE_START_ACTION = {
+	label: DELACOUR_DEFAULT_LABELS.selectionMode.startSelecting,
+	name: "longpress",
+} as const;
 
 /** What a screen reader is told an item is — see {@link resolveItemAccessibility}. */
 export type SelectionItemAccessibility =
@@ -312,18 +322,23 @@ export function resolveItemAccessibility({
 	isActive,
 	isDisabled,
 	isSelected,
+	labels = DELACOUR_DEFAULT_LABELS.selectionMode,
 }: {
 	isActive: boolean;
 	isDisabled: boolean;
 	isSelected: boolean;
+	labels?: SelectionModeLabels;
 }): SelectionItemAccessibility {
 	if (isActive) {
 		return {
-			accessibilityHint: "Double-tap to select",
+			accessibilityHint: labels.itemHint,
 			accessibilityRole: "checkbox",
 			accessibilityState: { checked: isSelected, disabled: isDisabled },
 			kind: "checkbox",
 		};
 	}
-	return { accessibilityActions: isDisabled ? [] : [{ ...SELECTION_MODE_START_ACTION }], kind: "inherit" };
+	return {
+		accessibilityActions: isDisabled ? [] : [{ label: labels.startSelecting, name: "longpress" }],
+		kind: "inherit",
+	};
 }

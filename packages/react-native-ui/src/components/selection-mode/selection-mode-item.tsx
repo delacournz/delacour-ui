@@ -100,7 +100,7 @@ export function SelectionModeItem({
 	...props
 }: SelectionModeItemProps): ReactElement {
 	const selection = useSelectionModePart("SelectionMode.Item");
-	const { isActive, toggle, enter } = selection;
+	const { isActive, toggle, enter, labels } = selection;
 	const isSelected = selection.isSelected(value);
 	const isShown = resolveIndicatorShown({ indicator, isActive, isIndicatorAlwaysShown });
 
@@ -114,7 +114,7 @@ export function SelectionModeItem({
 	const canEnter = !isActive && !isDisabled;
 	const handleLongPress = useCallback(() => enter(value), [enter, value]);
 
-	const accessibility = resolveItemAccessibility({ isActive, isDisabled, isSelected });
+	const accessibility = resolveItemAccessibility({ isActive, isDisabled, isSelected, labels });
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
 			if (canEnter && event.nativeEvent.actionName === "longpress") enter(value);

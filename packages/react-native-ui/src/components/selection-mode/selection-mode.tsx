@@ -1,6 +1,8 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { SelectionModeLabels } from "../../lib/labels";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
 import { type SelectionModeContextValue, SelectionModeProvider } from "./selection-mode.context";
 import {
@@ -37,6 +39,11 @@ export type SelectionModeProps = ViewProps & {
 	max?: number;
 	/** Played on entering the mode and on every toggle. Off by default. */
 	haptic?: false | HapticFeedback;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. The header's
+	 * `title` prop still wins over `labels.title`.
+	 */
+	labels?: Partial<SelectionModeLabels>;
 };
 
 function SelectionModeRoot({
@@ -51,8 +58,10 @@ function SelectionModeRoot({
 	onSelectedChange,
 	max,
 	haptic = false,
+	labels: labelsProp,
 	...props
 }: SelectionModeProps): ReactElement {
+	const labels = useLabels("selectionMode", labelsProp);
 	const [active, setActive] = useControllableState<boolean>({
 		defaultValue: defaultActive,
 		onChange: onActiveChange,
@@ -116,13 +125,14 @@ function SelectionModeRoot({
 			isActive: active,
 			isAllSelected: resolveIsAllSelected({ max, selected: picked, values: values ?? EMPTY }),
 			isSelected,
+			labels,
 			max,
 			selectAll,
 			selected: [...picked],
 			toggle,
 			total: values?.length,
 		}),
-		[active, clear, enter, exit, haptic, isSelected, max, picked, selectAll, toggle, values]
+		[active, clear, enter, exit, haptic, isSelected, labels, max, picked, selectAll, toggle, values]
 	);
 
 	return (

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	resolveBarVisible,
@@ -132,6 +133,19 @@ describe("resolveHeaderCount", () => {
 	});
 });
 
+describe("resolveHeaderCount with custom labels", () => {
+	const labels = {
+		...DELACOUR_DEFAULT_LABELS.selectionMode,
+		progress: (count: number, total: number, title: string) => `${title}: ${count}/${total}`,
+		selectedCount: (count: number) => `${count} gewaehlt`,
+	};
+
+	test("the labels reach both readouts", () => {
+		expect(resolveHeaderCount({ count: 2 }, labels)).toBe("2 gewaehlt");
+		expect(resolveHeaderCount({ count: 2, title: "Wahl", total: 5 }, labels)).toBe("Wahl: 2/5");
+	});
+});
+
 describe("resolveGroupLayout", () => {
 	test("stacks by default", () => {
 		expect(resolveGroupLayout({})).toEqual({ kind: "stack" });
@@ -202,6 +216,19 @@ describe("resolveItemAccessibility", () => {
 	test("an inactive disabled item offers nothing it cannot do", () => {
 		expect(resolveItemAccessibility({ isActive: false, isDisabled: true, isSelected: false })).toEqual({
 			accessibilityActions: [],
+			kind: "inherit",
+		});
+	});
+});
+
+describe("resolveItemAccessibility with custom labels", () => {
+	const labels = { ...DELACOUR_DEFAULT_LABELS.selectionMode, itemHint: "Tippen", startSelecting: "Auswahl starten" };
+
+	test("the hint and the action label come from the labels", () => {
+		const active = resolveItemAccessibility({ isActive: true, isDisabled: false, isSelected: false, labels });
+		expect(active.kind === "checkbox" && active.accessibilityHint).toBe("Tippen");
+		expect(resolveItemAccessibility({ isActive: false, isDisabled: false, isSelected: false, labels })).toEqual({
+			accessibilityActions: [{ label: "Auswahl starten", name: "longpress" }],
 			kind: "inherit",
 		});
 	});

@@ -110,3 +110,8 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   `resolveAvatarOverlap` never slides a face further than a whole face nor
   backwards, and `overlap={0}` closes the stack into a plain row. A child's own
   `size` still beats the group's, but the overlap is computed from the group's.
+- **A pressable avatar reaches the minimum touch target with `hitSlop`, not size.**
+  `sm` and `md` draw under 44, so a tappable one takes slop up to the app's
+  minimum and the face stays the size it was. Inside `Avatar.Group` the slop is
+  capped at 0: the faces overlap, and slop would hand the press to the later face
+  rather than the one under the finger. A caller's own `hitSlop` wins.

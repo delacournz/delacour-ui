@@ -6,6 +6,7 @@ import { IconMagnifyingGlass } from "../../icons/central";
 import { BottomSheet, type BottomSheetProps } from "../bottom-sheet";
 import { Button } from "../button";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import { Icon } from "../icon";
 import { Input } from "../input";
 import type { InputSize, InputVariant } from "../input/input.variants";
@@ -48,6 +49,8 @@ type SelectBaseProps = {
 	size?: InputSize;
 	/** Reports an invalid value. Inherited from an enclosing `Field` when not given. */
 	isInvalid?: boolean;
+	/** Marks the value as required, so a screen reader adds "required" to the name. Inherited from an enclosing `Field` when not given. */
+	isRequired?: boolean;
 	/** Fades the trigger and stops it opening. Inherited from an enclosing `Field` when not given. */
 	isDisabled?: boolean;
 	/** Shows the value with a normal look, and never opens. */
@@ -93,6 +96,12 @@ export type SelectSingleProps = SelectBaseProps & {
 	onValueChange?: (value: string | null) => void;
 	/** A second press on the chosen row clears it. @default false */
 	isClearable?: boolean;
+	/**
+	 * Fires on every pick, after `onValueChange`, including a press on the chosen row, which closes
+	 * the sheet without `onValueChange`. Never on a clear or a dismiss. Lets a form move on after the
+	 * user confirms the option it already holds.
+	 */
+	onConfirm?: (value: string) => void;
 };
 
 export type SelectMultipleProps = SelectBaseProps & {
@@ -122,6 +131,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 		variant = "primary",
 		size = "md",
 		isInvalid,
+		isRequired,
 		isDisabled,
 		isReadOnly = false,
 		isLoading = false,
@@ -149,6 +159,12 @@ function SelectRoot(props: SelectProps): ReactElement {
 	const { top: topInset } = useSafeAreaInsets();
 	const resolvedIsInvalid = isInvalid ?? field?.isInvalid ?? false;
 	const resolvedIsDisabled = isDisabled ?? field?.isDisabled ?? false;
+	const a11y = useFieldControlAccessibility({
+		accessibilityHint: isReadOnly ? undefined : "Opens a list of options",
+		fallbackLabel: title ?? placeholder,
+		isInvalid,
+		isRequired,
+	});
 
 	// Rows come from data, never from live children: the declarative form is
 	// read into the same shape the `options` prop takes, so search can filter it
@@ -200,7 +216,10 @@ function SelectRoot(props: SelectProps): ReactElement {
 		const result = toggleSelection(selected, value, toggleOptions);
 		if (result.change === "blocked" || result.change === "limit-reached") playHaptic("warning");
 		if (result.change !== "unchanged" && result.change !== "blocked") setSelected(result.selected);
-		if (mode === "single") close();
+		if (mode !== "single") return;
+		const confirmed = result.selected[0];
+		if (confirmed !== undefined) single?.onConfirm?.(confirmed);
+		close();
 	};
 
 	// Offered to an enclosing `Field`, so tapping its label opens the sheet the
@@ -217,11 +236,14 @@ function SelectRoot(props: SelectProps): ReactElement {
 	const sheetTitle = title ?? field?.label ?? undefined;
 
 	const context: SelectContextValue = {
-		accessibilityLabel: field?.label ?? title,
+		accessibilityHint: a11y.accessibilityHint,
+		accessibilityLabel: a11y.accessibilityLabel,
+		accessibilityLabelledBy: a11y.accessibilityLabelledBy,
 		close,
 		isDisabled: resolvedIsDisabled,
 		isInvalid: resolvedIsInvalid,
 		isLoading,
+		isRequired: a11y.isRequired,
 		isOpen,
 		isReadOnly,
 		open,
@@ -389,8 +411,8 @@ function SelectRoot(props: SelectProps): ReactElement {
  * Options come as data through `options`, or as `Select.Item` and `Select.Group`
  * children. Either way the rows are drawn from one normalised list, so search
  * filters them and the list is virtualised. Inside a `Field` the select takes
- * its invalid and disabled state, reads its label as its accessible name and
- * sheet title, and opens when the label is tapped.
+ * its invalid and disabled state, reads its label as its accessible name ("Country, required" when required) and
+ * sheet title, announces its error and description as the hint, and opens when the label is tapped.
  *
  * The sheet engine is an optional peer: an app using `Select` installs
  * `@delacour/react-native-bottom-sheet` and mounts `BottomSheetProvider` once.

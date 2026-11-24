@@ -9,7 +9,7 @@ export type OverlayContextValue = {
 	 * A portal reports that its overlay is presented, in which layer, and
 	 * whether it draws inside the app content rather than in the `"root"` host.
 	 */
-	present: (id: string, layer: OverlayLayer, isInApp: boolean) => void;
+	present: (id: string, layer: OverlayLayer, isInApp: boolean, isPassive: boolean) => void;
 	/** A portal reports that its overlay started, or stopped, animating closed. */
 	exiting: (id: string, isExiting: boolean) => void;
 	/** The overlay's portal unmounted. */

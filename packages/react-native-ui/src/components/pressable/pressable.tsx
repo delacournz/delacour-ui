@@ -7,6 +7,7 @@ import {
 	type ReactElement,
 	type ReactNode,
 	type Ref,
+	useMemo,
 } from "react";
 import { type AccessibilityActionEvent, type AccessibilityState, Platform, type ViewProps } from "react-native";
 import {
@@ -25,6 +26,7 @@ import {
 	dispatchPressableAccessibilityAction,
 	invokePressableHandler,
 	isPressableInteractive,
+	normalizeHitSlop,
 	type PressableFeedback,
 	resolvePressableAccessibilityState,
 	resolvePressableActivation,
@@ -168,10 +170,21 @@ export function Pressable({
 	accessibilityActions,
 	onAccessibilityAction,
 	onAccessibilityTap,
+	hitSlop,
 	ref,
 	...props
 }: PressableProps): ReactElement {
 	const pressed = useSharedValue(0);
+	// The slop goes to the view and to the gestures, and each platform reads a
+	// different one: iOS hit-tests the view's `hitSlop`, Gesture Handler's
+	// Android orchestrator only the gesture's. As primitives, so the gesture's
+	// memo holds. See AGENTS.md.
+	const slop = normalizeHitSlop(hitSlop);
+	const slopTop = slop?.top ?? 0;
+	const slopRight = slop?.right ?? 0;
+	const slopBottom = slop?.bottom ?? 0;
+	const slopLeft = slop?.left ?? 0;
+	const hasSlop = slop !== undefined;
 	const interactive = isPressableInteractive({ busy, disabled });
 	// Destructured to primitives on purpose. Reanimated's plugin collects what
 	// the worklet closes over, and a fresh object each render would rebuild the
@@ -186,9 +199,14 @@ export function Pressable({
 	// so a pressable with no `onLongPress` keeps the long press but disables it.
 	// `onDeactivate` also fires when the tap is cancelled (the finger slid off,
 	// or another gesture won), which is not a press.
+	const gestureSlop = useMemo(
+		() => (hasSlop ? { bottom: slopBottom, left: slopLeft, right: slopRight, top: slopTop } : undefined),
+		[hasSlop, slopBottom, slopLeft, slopRight, slopTop]
+	);
 	const tap = useTapGesture({
 		enabled: interactive,
 		shouldCancelWhenOutside: true,
+		hitSlop: gestureSlop,
 		onBegin: () => {
 			"worklet";
 			pressed.value = withSpring(1, PRESS_SPRING);
@@ -207,6 +225,7 @@ export function Pressable({
 	const longPress = useLongPressGesture({
 		enabled: interactive && onLongPress !== undefined,
 		shouldCancelWhenOutside: true,
+		hitSlop: gestureSlop,
 		onActivate: () => {
 			"worklet";
 			if (onLongPress) scheduleOnRN(onLongPress);
@@ -263,6 +282,7 @@ export function Pressable({
 			accessibilityState: state,
 			accessible: true,
 			className,
+			hitSlop,
 			ref,
 			style: animatedStyle,
 			...props,
@@ -278,6 +298,7 @@ export function Pressable({
 			// element, which is what a control should be.
 			accessible
 			className={className}
+			hitSlop={hitSlop}
 			ref={ref}
 			style={animatedStyle}
 			{...props}

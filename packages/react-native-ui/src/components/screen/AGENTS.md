@@ -291,6 +291,14 @@ the first row is still leaving.
   rotor through headings. `Screen.Loading` takes its title through `Navbar.Title`, so it gets the
   same role. A non-string `Navbar.Title` child is passed through untouched — give it the role
   yourself. `Navbar.Subtitle` is not a heading.
+- **`Screen.Loading` and `Screen.Error` speak once when they appear, by one route per platform.** A
+  screen that swaps its content for a spinner or an error is otherwise silent to a screen reader,
+  and on iOS a live region alone says nothing. Both use `useAnnouncement` with `onMount` and
+  `channel: "announcement"`, so Android's live region is `none` and the announcer speaks — never
+  both. `Loading` is a single busy `progressbar` stop named by `label` (default "Loading"; the
+  Spinner's own default would double it if the wrapper were a second stop). `Error`'s content is
+  `role="alert"` and announces `title. message` assertively. `announce={false}` opts out of the
+  speech on either. Loading settling into content or error unmounts it, which drops pending speech.
 
 ## API
 
@@ -298,6 +306,9 @@ the first row is still leaving.
   loading swap, icon inheritance, haptics, accessibility — so a navbar action is
   written as `<Button size="icon-sm" variant="secondary">`. A second
   definition of props a component does not change is one that can drift.
+- **`Screen.Navbar.BackButton` reaches the minimum touch target with `hitSlop`, not padding.** The
+  glyph is 20pt, so the control tops itself up to 44pt (48dp under `isMaterialHitTarget`) without
+  moving a pixel; a caller's own `hitSlop` wins.
 - **`Screen.Navbar.BackButton` takes an `onPress`.** This library has no
   navigation dependency and must not gain one for a chevron. The app wires
   `router.back()`. `Screen.Footer`'s `isFocused` prop is the same trade: an app

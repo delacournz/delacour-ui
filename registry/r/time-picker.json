@@ -194,6 +194,10 @@
 					"to": "@registry/ui/bottom-sheet"
 				},
 				{
+					"from": "../field/field-control",
+					"to": "@registry/ui/field/field-control"
+				},
+				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
 				}
@@ -271,6 +275,10 @@
 				{
 					"from": "../bottom-sheet",
 					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
 				},
 				{
 					"from": "../overlay",

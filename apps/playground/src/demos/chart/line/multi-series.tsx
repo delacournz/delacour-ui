@@ -19,7 +19,7 @@ const DATA = [
 
 const CONFIG = {
 	desktop: { label: "Desktop" },
-	mobile: { label: "Mobile" },
+	mobile: { label: "Mobile", dash: [6, 4] as const },
 	tablet: { label: "Tablet" },
 };
 

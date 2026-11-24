@@ -93,6 +93,7 @@ describe("buildRegistry", () => {
 			"spinner",
 			"text",
 			"tv",
+			"use-minimum-hit-target",
 		]);
 		expect(byName.get("tv")?.registryDependencies).toEqual(["styles"]);
 		expect(byName.get("list-group")?.registryDependencies).toContain("icons");
@@ -297,6 +298,7 @@ describe("buildRegistry", () => {
 			target: "button/button.tsx",
 			namespace: "ui",
 			rewrites: [
+				{ from: "../../hooks/use-minimum-hit-target", to: "@registry/hooks/use-minimum-hit-target" },
 				{ from: "../icon", to: "@registry/ui/icon" },
 				{ from: "../pressable", to: "@registry/ui/pressable" },
 				{ from: "../spinner", to: "@registry/ui/spinner" },

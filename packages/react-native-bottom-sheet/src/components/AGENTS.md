@@ -10,7 +10,7 @@ none takes a class; every `displayName` is `DelacourBottomSheet.BottomSheet.X`.
 | `bottom-sheet.tsx` | The root — state, geometry, animation, pans, intents, the imperative ref, and the `Object.assign` that names the parts |
 | `bottom-sheet.types.ts` | Every prop type, `BottomSheetRef`, `BottomSheetContextValue`, `BottomSheetAnimatedValue` |
 | `bottom-sheet.context.tsx` | Three contexts: `BottomSheet` (open state and ref methods), `BottomSheetAnimated` (the shared values), `BottomSheetInternal` (what the parts share) |
-| `bottom-sheet-trigger.tsx` | Opens the sheet; `asChild` donates `onPress` |
+| `bottom-sheet-trigger.tsx` | Opens the sheet; `asChild` donates `onPress`; reports `expanded`; the node focus returns to |
 | `bottom-sheet-portal.tsx` | The frame the sheet measures itself against — inside a teleport `Portal` to the nearest host under a provider, in place with `inline` or without one; registers the sheet as presented |
 | `bottom-sheet-overlay.tsx` | The scrim: a React Native `Pressable`, written before the panel |
 | `bottom-sheet-container.tsx` | The panel — the surface that moves; inset by `detachedFrame` and `box-none` when detached |
@@ -19,7 +19,7 @@ none takes a class; every `displayName` is `DelacourBottomSheet.BottomSheet.X`.
 | `bottom-sheet-content.tsx` | The static body: the content pan, the `bodyClip` clip, the `contentArea + bodyInset` layout box, the measured inner box and the inset spacer |
 | `bottom-sheet-footer.tsx` | The sticky footer: translated to `footerTop`, its styled box padded through the band and measured less the band into `footerContentHeight` |
 | `bottom-sheet-close.tsx` | The dismiss control; `asChild` donates `onPress` |
-| `bottom-sheet-title.tsx` | The heading; publishes the `nativeID` the panel is labelled by |
+| `bottom-sheet-title.tsx` | The heading; publishes the `nativeID` the panel is labelled by; the node focus lands on |
 | `bottom-sheet-description.tsx` | Supporting copy; publishes a `nativeID` of its own |
 
 `Host` and `Provider` live in `src/portal` and are named on the compound from
@@ -70,12 +70,34 @@ layout clears the queue rather than racing it.
 ## Accessibility
 
 No `accessible` container: one would collapse the whole sheet into a single
-VoiceOver element. Instead the panel is `accessibilityViewIsModal` while open
-under an overlay, its descendants are hidden while it is closed, and the title
-labels it through `accessibilityLabelledBy`. The handle is the sheet's one
-`adjustable` element: increment and decrement move a snap point, escape closes,
-and its value reads `SnapPoint i of n`. The overlay is hidden from assistive
-technology while it is transparent.
+VoiceOver element. The rules live in `core/modal-accessibility.ts` and
+`accessibility/use-sheet-accessibility.ts`; the parts only read what the root
+resolved.
+
+- **Modal.** The panel is `accessibilityViewIsModal` while the sheet is open,
+  the root's `modal` prop is true (the default), no `Overlay` has
+  `enableTouchThrough` (the overlay registers its kind — `none`, `blocking` or
+  `touch-through` — and a touch-through scrim makes the sheet non-modal) and
+  the sheet is the top of its host (`isModalTop` over the registry; no registry means every sheet is its
+  own top). A scrim is not required. Pass `modal={false}` for a persistent
+  drawer that leaves the app reachable — such a sheet also moves no focus.
+  Descendants are hidden while it is closed, and the title labels it.
+- **Escape.** `onAccessibilityEscape` is on the panel while it is modal and
+  dismissible (`enablePanDownToClose`, and the current step's `dismissible`).
+  VoiceOver delivers escape to the focused element and its ancestors, so it
+  works from any row inside the sheet. The handle's escape action and gesture
+  obey the same dismissible flag.
+- **Focus in.** Once the sheet has settled open, focus moves to `Title`, else the
+  panel, through `sendAccessibilityEvent(node, "focus")`.
+- **Focus out.** Once the close has settled, focus returns to `Trigger` if it is
+  still mounted. `Trigger` also reports `accessibilityState.expanded` while open;
+  with `asChild` the child has to take a `ref`.
+- **Not contained here.** The panel hides only its siblings in the teleport host.
+  Hiding the app itself (TalkBack, and VoiceOver for the app view) is the
+  provider-owning skin's job; the engine has no handle on the app's view.
+- The handle is the sheet's one `adjustable` element: increment and decrement
+  move a snap point, and its value reads `SnapPoint i of n`. The overlay is
+  hidden from assistive technology while it is transparent.
 
 ## Contexts
 

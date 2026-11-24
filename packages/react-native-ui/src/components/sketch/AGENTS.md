@@ -175,6 +175,10 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
 - **A swatch is the one sub-44 target: 36pt around a 24pt dot.** Six swatches
   have to fit a 360pt row with the gutter off. The ring always reserves its
   border and is coloured only when selected, so selection moves nothing.
+- **Swatch hit slop is 2pt a side, half the 4pt row gap** (`SKETCH_SWATCH_SLOP_CAP`), so a swatch
+  reaches 40 of 44pt and neighbouring slop never overlaps and steals a tap. Reaching 44 would
+  need an 8pt gap, which the 360pt row cannot afford. The tool and undo buttons are `icon-md`
+  (44pt); a caller's `icon-sm` gets `Button`'s own slop.
 - **A colour that resolves to nothing is not offered.** `resolveSketchSwatches`
   drops it, and a repeated colour appears once. Ink is never `undefined`.
 - **Disabled fades the toolbar, never the canvas.** The marks stay readable.

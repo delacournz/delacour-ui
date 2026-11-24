@@ -256,3 +256,90 @@ export function dispatchPressableAccessibilityAction({
 	}
 	return false;
 }
+
+/** The smallest touch target, in points, a control is promised: Apple's HIG and WCAG 2.5.5's AAA size. */
+export const MIN_HIT_TARGET = 44;
+
+/** Material's minimum touch target, in dp — what an Android app opts into with `isMaterialHitTarget`. */
+export const MATERIAL_MIN_HIT_TARGET = 48;
+
+/**
+ * The minimum touch target for this platform.
+ *
+ * 44 everywhere unless the app opts into Material's 48dp, and that opt-in only
+ * moves Android: an iOS target sized to Material's number would be four points
+ * bigger than the HIG asks for, for nothing.
+ */
+export function resolveMinimumHitTarget({
+	isMaterialHitTarget = false,
+	platform,
+}: {
+	isMaterialHitTarget?: boolean;
+	platform: string;
+}): number {
+	return isMaterialHitTarget && platform === "android" ? MATERIAL_MIN_HIT_TARGET : MIN_HIT_TARGET;
+}
+
+/** What a target draws at: one edge for a square, or both for anything else. */
+export type HitTargetSize = number | { height: number; width: number };
+
+/** Slop on each side, in points. Structural, so no RN import — it is React Native's `Insets` with every key set. */
+export type HitSlopInsets = { bottom: number; left: number; right: number; top: number };
+
+/** A non-finite or negative edge is nothing drawn. */
+function drawnEdge(edge: number): number {
+	return Number.isFinite(edge) && edge > 0 ? edge : 0;
+}
+
+/**
+ * The `hitSlop` that grows a target drawn at `size` to `min` points, without
+ * growing anything drawn.
+ *
+ * Half the shortfall goes on each side of an axis, so `size + 2 × slop` always
+ * reaches `min`. A square, or any target short by the same amount on both axes,
+ * gets a single number; a wide one gets insets that grow only the short axis.
+ * A target already at `min` gets `undefined`, so the prop can be passed as is.
+ *
+ * `cap` bounds the slop on every side, for targets packed closer than the slop
+ * would need — a swatch row, a day grid. Two siblings' slop must not overlap:
+ * React Native hit-tests the later sibling first, so an overlap hands the press
+ * to whichever sits later in the tree, not to the one under the finger. Keep
+ * `cap` at half the gap between neighbours; the target then falls short of
+ * `min`, which is the honest trade for a layout that dense.
+ *
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
+ */
+export function resolveMinimumHitSlop(
+	size: HitTargetSize,
+	min: number = MIN_HIT_TARGET,
+	{ cap = Number.POSITIVE_INFINITY }: { cap?: number } = {}
+): number | HitSlopInsets | undefined {
+	const width = drawnEdge(typeof size === "number" ? size : size.width);
+	const height = drawnEdge(typeof size === "number" ? size : size.height);
+	const bound = Math.max(0, cap);
+	const horizontal = Math.min(bound, Math.max(0, (min - width) / 2));
+	const vertical = Math.min(bound, Math.max(0, (min - height) / 2));
+
+	if (horizontal === 0 && vertical === 0) return undefined;
+	if (horizontal === vertical) return horizontal;
+	return { bottom: vertical, left: horizontal, right: horizontal, top: vertical };
+}
+
+/**
+ * Any `hitSlop` React Native accepts, as four numbers — or `undefined` when it
+ * grows nothing.
+ *
+ * `Pressable` hands its slop to the tap gesture as well as the view, and a
+ * gesture is memoised on primitives: a fresh insets object each render would
+ * rebuild it every render.
+ */
+export function normalizeHitSlop(
+	hitSlop: number | Partial<HitSlopInsets> | null | undefined
+): HitSlopInsets | undefined {
+	if (hitSlop === null || hitSlop === undefined) return undefined;
+	const insets =
+		typeof hitSlop === "number"
+			? { bottom: hitSlop, left: hitSlop, right: hitSlop, top: hitSlop }
+			: { bottom: hitSlop.bottom ?? 0, left: hitSlop.left ?? 0, right: hitSlop.right ?? 0, top: hitSlop.top ?? 0 };
+	return insets.bottom || insets.left || insets.right || insets.top ? insets : undefined;
+}

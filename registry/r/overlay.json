@@ -8,7 +8,8 @@
 		"overlays"
 	],
 	"registryDependencies": [
-		"tv"
+		"tv",
+		"use-modal-accessibility"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -86,6 +87,17 @@
 			"path": "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts",
 			"target": "overlay/use-overlay-back-handler.ts",
 			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts",
+			"target": "overlay/use-overlay-modal-accessibility.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-modal-accessibility",
+					"to": "@registry/hooks/use-modal-accessibility"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts",

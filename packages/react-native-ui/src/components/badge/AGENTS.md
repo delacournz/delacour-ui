@@ -17,7 +17,7 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
 | `badge-close-button.tsx` | `Badge.CloseButton`, the dismiss pressable |
 | `badge.context.tsx` | `BadgeContext`, `useBadge()`, `useBadgeContext()`, `useBadgePart()` |
 | `badge.types.ts` | Prop types shared by two or more parts |
-| `badge.variants.ts` | Pure `tv()` slots + `resolveBadgeInteractive`, no RN imports |
+| `badge.variants.ts` | Pure `tv()` slots + `resolveBadgeInteractive`, `resolveBadgeCloseExposure`, `resolveBadgeCloseHitSlop`; no RN imports |
 | `badge.variants.test.ts` | |
 | `badge.render.test.tsx` | Mounted under Jest — string children, content-vs-button root, press/long-press/disabled, onClose isolation, compound parts and out-of-root errors |
 
@@ -52,6 +52,18 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   unless the root forwards one, so a flow or test could only find it by its label.
   `closeTestID` is named like `closeAccessibilityLabel`, the other prop the root
   passes through to it.
+- **The dismiss glyph carries `hitSlop`, capped at half the gap.** The ✕ is
+  the bare 14–18pt icon, far under the 44pt minimum, but its only neighbour is the
+  label a gap away: slop reaching past half that gap would take presses from the
+  badge's own body. So the cap, not the minimum, sets it (2, 3, 4pt by size) and
+  the target stays small by design; a caller's own `hitSlop` wins.
+- **A pressable badge offers `remove` as an accessibility action.** A pressable
+  root is one accessibility element and iOS folds its children into it, so the ✕
+  is unreachable by swipe and its label is read as part of the badge's. It is
+  hidden there and removal is a `remove` action on the root (VoiceOver's Actions
+  rotor, TalkBack's actions menu), labelled with `closeAccessibilityLabel` and
+  routed to `onClose`; a caller's own actions are kept. A plain badge's ✕ stays its own labelled
+  button. `resolveBadgeCloseExposure` is that decision.
 - **A size is padding, never a height.** `Text` respects OS font scaling, so a
   fixed height clips the label at a large accessibility step instead of growing
   with it — and unlike `h-button-*` or `h-navbar-row`, a badge lines up against

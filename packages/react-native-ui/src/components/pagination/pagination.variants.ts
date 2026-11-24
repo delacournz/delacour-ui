@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type PaginationLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /**
@@ -194,9 +195,12 @@ export function resolvePaginationStatus({
 	return { from: (current - 1) * pageSize + 1, to: Math.min(current * pageSize, total), total };
 }
 
-/** "41–60 of 472". English in v1. */
-export function formatPaginationStatus({ from, to, total }: PaginationStatusRange): string {
-	return `${from}–${to} of ${total}`;
+/** "41–60 of 472", from the labels. */
+export function formatPaginationStatus(
+	range: PaginationStatusRange,
+	labels: PaginationLabels = DELACOUR_DEFAULT_LABELS.pagination
+): string {
+	return labels.status(range);
 }
 
 /** The compact readout — "3 / 12". */
@@ -205,18 +209,26 @@ export function formatCompact(page: number, count: number): string {
 }
 
 /** The compact readout as VoiceOver reads it — "Page 3 of 12". */
-export function formatCompactAccessibilityValue(page: number, count: number): string {
-	return `Page ${page} of ${count}`;
+export function formatCompactAccessibilityValue(
+	page: number,
+	count: number,
+	labels: PaginationLabels = DELACOUR_DEFAULT_LABELS.pagination
+): string {
+	return labels.pageOf(page, count);
 }
 
 /** An item's accessible name — "Page 3". */
-export function formatPageLabel(page: number): string {
-	return `Page ${page}`;
+export function formatPageLabel(page: number, labels: PaginationLabels = DELACOUR_DEFAULT_LABELS.pagination): string {
+	return labels.page(page);
 }
 
 /** A gap's accessible name — "Jump forward 5 pages". */
-export function formatEllipsisLabel(direction: -1 | 1, jump: number): string {
-	return `Jump ${direction === 1 ? "forward" : "back"} ${jump} ${jump === 1 ? "page" : "pages"}`;
+export function formatEllipsisLabel(
+	direction: -1 | 1,
+	jump: number,
+	labels: PaginationLabels = DELACOUR_DEFAULT_LABELS.pagination
+): string {
+	return labels.jump(direction, jump);
 }
 
 /**

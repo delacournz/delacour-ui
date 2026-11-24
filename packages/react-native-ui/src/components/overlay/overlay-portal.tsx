@@ -25,6 +25,12 @@ export type OverlayPortalProps = {
 	isInline?: boolean;
 	/** The teleport host. Default `"root"` — the one `OverlayProvider`'s teleport provider fills the app with. */
 	hostName?: string;
+	/**
+	 * The overlay is read past, not held: a tooltip. It never becomes the
+	 * overlay a screen reader is held inside, so a dialog under it stays modal.
+	 * Default false.
+	 */
+	isPassive?: boolean;
 };
 
 let hasWarnedMissingProvider = false;
@@ -58,6 +64,7 @@ export function OverlayPortal({
 	isExiting = false,
 	isInline = false,
 	hostName = "root",
+	isPassive = false,
 }: OverlayPortalProps): ReactElement {
 	const ownId = useId();
 	const overlayId = id ?? ownId;
@@ -71,9 +78,9 @@ export function OverlayPortal({
 	const dismissed = registry?.dismissed;
 	useEffect(() => {
 		if (present === undefined || dismissed === undefined) return;
-		present(overlayId, layer, isInApp);
+		present(overlayId, layer, isInApp, isPassive);
 		return () => dismissed(overlayId);
-	}, [present, dismissed, overlayId, layer, isInApp]);
+	}, [present, dismissed, overlayId, layer, isInApp, isPassive]);
 
 	const exiting = registry?.exiting;
 	useEffect(() => {

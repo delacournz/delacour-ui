@@ -1,6 +1,7 @@
 import { type ReactElement, type ReactNode, useEffect, useMemo } from "react";
 import { I18nManager, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { IconChevronRight } from "../../icons/central";
 import { Icon, type IconDefaults, IconDefaultsProvider } from "../icon";
 import { Pressable } from "../pressable";
@@ -28,7 +29,7 @@ export type TreeIndicatorProps = {
  *
  * **It is a `Pressable` of its own, beside the row's rather than inside it.** Two
  * nested tap gestures race for the same touch; siblings do not. Its column is
- * narrower than a touch target, so it takes a hit slop out to 44 points.
+ * narrower than a touch target, so it takes a horizontal hit slop out to the app's minimum.
  *
  * **Hidden from assistive technology.** The row announces `expanded` and offers
  * expand and collapse as custom actions, so a second element saying the same
@@ -43,6 +44,7 @@ export function TreeIndicator({ className, children }: TreeIndicatorProps): Reac
 	const slots = treeVariants({ size });
 	const glyphClassName = slots.glyph();
 	const isRTL = I18nManager.isRTL;
+	const hitSlop = resolveTreeIndicatorHitSlop(size, useMinimumHitTarget());
 
 	const target = resolveTreeIndicatorRotation({ isExpanded, isRTL });
 	const rotation = useSharedValue(target);
@@ -78,7 +80,7 @@ export function TreeIndicator({ className, children }: TreeIndicatorProps): Reac
 			disabled={isDisabled}
 			feedback="fade"
 			haptic={haptic}
-			hitSlop={resolveTreeIndicatorHitSlop(size)}
+			hitSlop={hitSlop}
 			importantForAccessibility="no-hide-descendants"
 			onPress={toggle}
 		>

@@ -28,8 +28,8 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 	const current = useRef<OverlayRegistryState>(INITIAL_OVERLAY_REGISTRY);
 	const [state, setState] = useState<OverlayRegistryState>(INITIAL_OVERLAY_REGISTRY);
 
-	const present = useCallback((id: string, layer: OverlayLayer, isInApp: boolean) => {
-		current.current = reduceOverlayRegistry(current.current, { type: "open", id, layer, isInApp });
+	const present = useCallback((id: string, layer: OverlayLayer, isInApp: boolean, isPassive: boolean) => {
+		current.current = reduceOverlayRegistry(current.current, { type: "open", id, layer, isInApp, isPassive });
 		setState(current.current);
 	}, []);
 

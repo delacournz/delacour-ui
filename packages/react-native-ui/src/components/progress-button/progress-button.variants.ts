@@ -37,6 +37,26 @@ export const PROGRESS_BUTTON_REDUCED_MOTION_STEPS = 5;
 /** What VoiceOver and TalkBack read after the label when no `accessibilityHint` is given. */
 export const PROGRESS_BUTTON_DEFAULT_HINT = "Press and hold to confirm";
 
+/** What a screen reader is told when a hold completes and the caller gives no `completedAnnouncement`. */
+export const PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE = "Done";
+
+/**
+ * What to speak as completion changes: the message on the step from not completed to completed,
+ * nothing otherwise — a reset, a mount already completed, and an empty message are all silent.
+ */
+export function resolveCompletionAnnouncement({
+	isCompleted,
+	wasCompleted,
+	message = PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE,
+}: {
+	isCompleted: boolean;
+	wasCompleted: boolean;
+	message?: string;
+}): string | null {
+	if (!isCompleted || wasCompleted || message === "") return null;
+	return message;
+}
+
 /**
  * Theme token each variant fills with.
  *

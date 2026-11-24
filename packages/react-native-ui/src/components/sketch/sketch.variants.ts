@@ -38,6 +38,15 @@ export const SKETCH_LABELS = {
 	triangle: "Triangle",
 } as const satisfies Record<SketchTool | SketchShape, string>;
 
+/** A swatch's drawn edge in points: `size-button-sm`, pinned to `tokens.css` by a test. */
+export const SKETCH_SWATCH_EDGE_PT = 36;
+
+/** The swatches row's gap in points. Pinned to the `gap-*` class by a test. */
+export const SKETCH_SWATCH_GAP_PT = 4;
+
+/** The most hit slop a swatch takes on a side: half the gap. A swatch reaches 40 of 44. */
+export const SKETCH_SWATCH_SLOP_CAP = SKETCH_SWATCH_GAP_PT / 2;
+
 /** Every slot `sketchVariants` returns, for a test that has to walk all of them. */
 export const SKETCH_SLOTS = [
 	"root",
@@ -66,7 +75,8 @@ export const SKETCH_SLOTS = [
  * - **A swatch is a 36pt target around a 24pt dot.** The ring around the dot
  *   always reserves its border and only colours it when selected, so selecting
  *   a swatch moves nothing. 36pt is the one target here under 44 — six swatches
- *   have to fit a 360pt row with the gutter taken off.
+ *   have to fit a 360pt row with the gutter taken off. Hit slop capped at half the gap
+ *   takes it to 40.
  *
  * Free of React Native imports so it stays unit-testable.
  */

@@ -10,8 +10,10 @@
 	"registryDependencies": [
 		"button",
 		"dialog",
+		"field",
 		"input",
 		"tv",
+		"use-announce",
 		"use-controllable-state"
 	],
 	"dependencies": [
@@ -83,6 +85,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../field/field-control",
+					"to": "@registry/ui/field/field-control"
+				},
+				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
 				}
@@ -103,6 +109,10 @@
 			"target": "feedback/feedback-submit.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
@@ -194,12 +204,20 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
+				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
 				},
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
 				},
 				{
 					"from": "../overlay",

@@ -11,7 +11,19 @@ export type ChartSeriesConfig = {
 	 * config is `chart-1` and nothing has to be named at all.
 	 */
 	color?: string;
+	/**
+	 * A dash pattern for this series' line, as on/off lengths in points.
+	 *
+	 * A cue that is not colour: two series a reader cannot tell apart by hue —
+	 * colour blindness, a greyscale print, a low-contrast pairing — still read
+	 * as two lines when one is dashed. The legend swatch carries it too, or the
+	 * cue would identify nothing.
+	 */
+	dash?: ChartDash;
 };
+
+/** On/off lengths of a dashed stroke, in points. */
+export type ChartDash = readonly [on: number, off: number];
 
 /**
  * The chart's series, keyed by the data field each reads.
@@ -28,6 +40,8 @@ export type ChartResolvedSeries = {
 	readonly label: string;
 	/** A colour value by the time a mark sees it, never a token name. */
 	readonly color: string;
+	/** The config's dash, when it sets one. */
+	readonly dash?: ChartDash;
 };
 
 /** A row of the caller's data. */

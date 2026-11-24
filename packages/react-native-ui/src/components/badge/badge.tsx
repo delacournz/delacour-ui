@@ -1,5 +1,5 @@
 import { Children, type ReactElement, type ReactNode, useMemo } from "react";
-import { View } from "react-native";
+import { type AccessibilityActionEvent, View } from "react-native";
 import { IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { TextClassProvider } from "../text/text.context";
@@ -11,6 +11,7 @@ import {
 	type BadgeSize,
 	type BadgeVariant,
 	badgeVariants,
+	resolveBadgeCloseExposure,
 	resolveBadgeInteractive,
 } from "./badge.variants";
 import { BadgeCloseButton } from "./badge-close-button";
@@ -45,6 +46,8 @@ function BadgeRoot({
 	onClose,
 	closeAccessibilityLabel,
 	closeTestID,
+	accessibilityActions,
+	onAccessibilityAction,
 	onPress,
 	onLongPress,
 	haptic,
@@ -73,22 +76,49 @@ function BadgeRoot({
 	const content = useMemo(() => wrapTextChildren(children), [children]);
 	const rootClassName = slots.root({ className });
 
+	const interactive = resolveBadgeInteractive({ onPress, onLongPress });
+	const closeExposure = resolveBadgeCloseExposure({ hasClose: onClose !== undefined, interactive });
+	const closeHidden = closeExposure === "action";
 	const inner = (
 		<IconDefaultsProvider value={iconDefaults}>
 			<TextClassProvider value={slots.label()}>
 				{content}
 				{onClose ? (
-					<BadgeCloseButton accessibilityLabel={closeAccessibilityLabel} onPress={onClose} testID={closeTestID} />
+					<BadgeCloseButton
+						accessibilityElementsHidden={closeHidden}
+						accessibilityLabel={closeAccessibilityLabel}
+						accessible={!closeHidden}
+						importantForAccessibility={closeHidden ? "no-hide-descendants" : "auto"}
+						onPress={onClose}
+						testID={closeTestID}
+					/>
 				) : null}
 			</TextClassProvider>
 		</IconDefaultsProvider>
 	);
 
+	const actions = closeHidden
+		? [...(accessibilityActions ?? []), { label: closeAccessibilityLabel ?? "Remove", name: "remove" }]
+		: accessibilityActions;
+
+	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
+		if (closeHidden && event.nativeEvent.actionName === "remove" && !isDisabled) {
+			onClose?.();
+			return;
+		}
+		onAccessibilityAction?.(event);
+	};
+
 	// A badge with nothing to do stays a plain box — see `resolveBadgeInteractive`.
-	if (!resolveBadgeInteractive({ onPress, onLongPress })) {
+	if (!interactive) {
 		return (
 			<BadgeProvider value={context}>
-				<View className={rootClassName} {...props}>
+				<View
+					accessibilityActions={accessibilityActions}
+					className={rootClassName}
+					onAccessibilityAction={onAccessibilityAction}
+					{...props}
+				>
 					{inner}
 				</View>
 			</BadgeProvider>
@@ -98,11 +128,13 @@ function BadgeRoot({
 	return (
 		<BadgeProvider value={context}>
 			<Pressable
+				accessibilityActions={actions}
 				accessibilityRole="button"
 				className={rootClassName}
 				disabled={isDisabled}
 				feedback={feedback}
 				haptic={haptic}
+				onAccessibilityAction={handleAccessibilityAction}
 				onLongPress={onLongPress}
 				onPress={onPress}
 				pressedOpacity={pressedOpacity}
@@ -164,7 +196,9 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  * default differs, `scale`.
  *
  * `onClose` composes a dismiss control in at the end. It is a pressable of its
- * own, so dismissing never also fires `onPress`.
+ * own, so dismissing never also fires `onPress`. On a pressable badge the root is
+ * one accessibility element that folds the control in, so the control is hidden
+ * there and offered as a `remove` accessibility action instead.
  *
  * Plain string or number children are wrapped in a `Badge.Label` automatically;
  * pass the compound parts when a layout needs more control.

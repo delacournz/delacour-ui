@@ -61,7 +61,7 @@ export function PaginationItem({
 
 	return (
 		<Pressable
-			accessibilityLabel={formatPageLabel(page)}
+			accessibilityLabel={formatPageLabel(page, root.labels)}
 			accessibilityState={{ ...accessibilityState, selected: isCurrent }}
 			className={slots.item({ className })}
 			disabled={isDisabled}

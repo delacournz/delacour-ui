@@ -1,11 +1,15 @@
 import { describe, expect, test } from "bun:test";
+import { MIN_HIT_TARGET, resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	CHAT_COMPOSER_GAP,
 	footerAboveKeyboard,
 	footerOccupancy,
+	resolveBackButtonHitTarget,
 	resolveFooterBorderOpacity,
 	resolveNavbarBorderOpacity,
 	resolveScreenEdgePadding,
+	resolveScreenErrorAnnouncement,
+	resolveScreenLoadingLabel,
 	resolveScreenViewPadding,
 	resolveScrollBottomInset,
 	resolveScrollTopInset,
@@ -604,5 +608,43 @@ describe("resolveScrollTopInset", () => {
 				expect(scroll).toBe(view.paddingTop);
 			}
 		}
+	});
+});
+
+describe("resolveBackButtonHitTarget", () => {
+	test("is the glyph box, so the slop tops it up to the minimum touch target", () => {
+		const target = resolveBackButtonHitTarget();
+		const slop = resolveMinimumHitSlop(target);
+		expect(typeof slop).toBe("number");
+		const each = typeof slop === "number" ? slop : 0;
+		expect(target.width + 2 * each).toBeGreaterThanOrEqual(MIN_HIT_TARGET);
+		expect(target.height + 2 * each).toBeGreaterThanOrEqual(MIN_HIT_TARGET);
+	});
+});
+
+describe("resolveScreenLoadingLabel", () => {
+	test("defaults to Loading", () => {
+		expect(resolveScreenLoadingLabel(undefined)).toBe("Loading");
+		expect(resolveScreenLoadingLabel("  ")).toBe("Loading");
+	});
+	test("keeps the caller's label", () => {
+		expect(resolveScreenLoadingLabel("Loading settings")).toBe("Loading settings");
+	});
+});
+
+describe("resolveScreenErrorAnnouncement", () => {
+	test("joins title and message into one sentence-separated string", () => {
+		expect(resolveScreenErrorAnnouncement("Something went wrong", "The request timed out.")).toBe(
+			"Something went wrong. The request timed out."
+		);
+	});
+	test("does not double punctuation", () => {
+		expect(resolveScreenErrorAnnouncement("Offline!", "Check your connection.")).toBe(
+			"Offline! Check your connection."
+		);
+	});
+	test("falls back to whichever part exists", () => {
+		expect(resolveScreenErrorAnnouncement("", "Gone.")).toBe("Gone.");
+		expect(resolveScreenErrorAnnouncement("Gone", " ")).toBe("Gone");
 	});
 });

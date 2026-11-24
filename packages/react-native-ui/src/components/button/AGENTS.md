@@ -83,7 +83,9 @@ The reference implementation for the patterns in the package
   it always was. Only a bare `Icon` is swapped; a `Button.StartContent` wraps
   content of unknown height, and replacing one could resize the button.
   `resolveSpinnerSwapIndex` is the pure decision and is unit-tested.
-- **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
+- **`isLoading`** composes a `Spinner` in and blocks presses. The spinner's name is
+  blanked (`Spinner` is otherwise "Loading"): the button is the one stop and already
+  reads busy, and a named spinner turned "Save" into "Save, Loading". Placement is
   `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the
   children and centres the spinner in the footprint the button already has,
   carrying the label onto `accessibilityLabel` so a screen reader still has a
@@ -105,6 +107,23 @@ The reference implementation for the patterns in the package
   the left edge unless it also sets `self-center`. This is what made an earlier
   `only` implementation collapse a full-width button into a small box flush
   left. Prefer not taking the width at all.
+- **`sm` and `icon-sm` reach 44pt with `hitSlop`, not with size.** Both draw
+  at 36. `resolveButtonHitTarget` says what the button draws at — a labelled
+  button's height (its width follows the label), an `icon-*` button's square —
+  and `useMinimumHitSlop` grows it to the app's minimum: 4pt a side, or 6 on
+  Android under `DelacourProvider isMaterialHitTarget`. `md` and `lg` get
+  nothing. Inside a `Button.Group` the axis the run lies along gets none, so a
+  member's slop never lands on its neighbour. Two `sm` / `icon-sm` buttons
+  that abut outside a `Button.Group` need their own `hitSlop` with nothing on
+  the shared edge: the later one is hit-tested first and its slop takes presses
+  on the drawn neighbour (Map's zoom pair does this). A caller's `hitSlop` wins
+  outright. The heights are `BUTTON_HEIGHTS`, pinned to `--spacing-button-*`;
+  an app that retunes density at runtime moves the drawn height and not the
+  slop, which is the trade for not measuring every button on layout.
+  On Android the slop does not land yet: the root's `overflow-hidden`
+  (load-bearing, see above) stops Gesture Handler's orchestrator descending
+  into the button for a touch outside its bounds — see
+  [Pressable](../pressable/AGENTS.md). iOS takes it.
 
 ## Button.Group
 

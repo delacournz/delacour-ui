@@ -17,7 +17,9 @@
 		"spinner",
 		"text",
 		"tv",
+		"use-announce",
 		"use-keyboard-state-sync",
+		"use-minimum-hit-target",
 		"use-scroll-source",
 		"use-theme-color"
 	],
@@ -75,6 +77,10 @@
 			"target": "screen/screen-error.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../text",
 					"to": "@registry/ui/text"
@@ -135,6 +141,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
+				{
 					"from": "../spinner",
 					"to": "@registry/ui/spinner"
 				}
@@ -145,6 +155,10 @@
 			"target": "screen/screen-navbar-back-button.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
@@ -295,7 +309,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/screen/screen.variants.test.ts",
 			"target": "screen/screen.variants.test.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
+				}
+			]
 		}
 	],
 	"testDependencies": [
@@ -307,6 +327,10 @@
 			"target": "screen/screen.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

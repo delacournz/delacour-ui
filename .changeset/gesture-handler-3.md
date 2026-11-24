@@ -28,5 +28,7 @@ Two public types change with it:
   ```
 
 - `useScrubGesture({ blocks })` takes a Gesture Handler 3 gesture, and returns a `PanGesture` (or `null`).
+- `Calendar`'s `yearListBlocksGesture` takes a Gesture Handler 3 `PanGesture` — the bottom-sheet engine's
+  `pans.content`, as `DatePicker` already passes it.
 - The bottom-sheet engine's `SheetPans` are `PanGesture`s, and its scrollables relate to the content pan with
   `useNativeGesture({ simultaneousWith })`.

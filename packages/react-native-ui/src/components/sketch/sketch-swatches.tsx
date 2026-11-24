@@ -1,8 +1,9 @@
 import type { ReactElement, ReactNode } from "react";
 import { View, type ViewProps } from "react-native";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { Pressable } from "../pressable";
 import { useSketchPart } from "./sketch.context";
-import { sketchVariants } from "./sketch.variants";
+import { SKETCH_SWATCH_EDGE_PT, SKETCH_SWATCH_SLOP_CAP, sketchVariants } from "./sketch.variants";
 
 export type SketchSwatchesProps = Omit<ViewProps, "children"> & {
 	/** Trailing content after the last swatch — a trigger for your own colour picker. */
@@ -14,6 +15,8 @@ export type SketchSwatchesProps = Omit<ViewProps, "children"> & {
  *
  * Each swatch is a 36-point target around a 24-point dot, with a ring that is
  * always reserved and only coloured when selected, so selection moves nothing.
+ * Hit slop of 2pt a side, half the 4pt gap, takes each to 40 of 44 without overlapping a
+ * neighbour.
  * A colour that resolves to nothing in the active theme is not drawn at all —
  * a swatch with no ink would select a colour the pen cannot draw with.
  *
@@ -23,6 +26,7 @@ export type SketchSwatchesProps = Omit<ViewProps, "children"> & {
 export function SketchSwatches({ children, className, ...props }: SketchSwatchesProps): ReactElement {
 	const { swatches, color, setColor, isDisabled, haptic } = useSketchPart("Sketch.Swatches");
 	const slots = sketchVariants();
+	const slop = useMinimumHitSlop(SKETCH_SWATCH_EDGE_PT, { cap: SKETCH_SWATCH_SLOP_CAP });
 
 	return (
 		<View accessibilityRole="radiogroup" className={slots.swatches({ className })} {...props}>
@@ -37,6 +41,7 @@ export function SketchSwatches({ children, className, ...props }: SketchSwatches
 						className={slots.swatch()}
 						disabled={isDisabled}
 						haptic={haptic}
+						hitSlop={slop}
 						key={swatch.color}
 						onPress={() => setColor(swatch.color)}
 						testID={`sketch-swatch-${swatch.color}`}

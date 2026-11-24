@@ -8,6 +8,8 @@ import {
 	resolveDragProgress,
 	resolveExitOffset,
 	resolveMountedWindow,
+	resolveStackCardAnnouncement,
+	resolveStackCardPosition,
 	resolveStackDepth,
 	resolveStackRelease,
 	resolveStampOpacity,
@@ -351,5 +353,46 @@ describe("stackCardVariants", () => {
 		expect(empty).toContain("absolute");
 		expect(empty).toContain("items-center");
 		expect(empty).toContain("justify-center");
+	});
+});
+
+describe("resolveStackCardPosition", () => {
+	test("counts from one", () => {
+		expect(resolveStackCardPosition(0, 3)).toBe("Card 1 of 3");
+		expect(resolveStackCardPosition(2, 3)).toBe("Card 3 of 3");
+	});
+});
+
+describe("resolveStackCardAnnouncement", () => {
+	test("a throw names the answer and the next card by its label", () => {
+		expect(
+			resolveStackCardAnnouncement({ cardLabel: "Grace", count: 3, directionLabel: "Like", index: 1, kind: "throw" })
+		).toBe("Like. Next: Grace");
+	});
+
+	test("a throw falls back to the next card's position without a label", () => {
+		expect(resolveStackCardAnnouncement({ count: 3, directionLabel: "Pass", index: 1, kind: "throw" })).toBe(
+			"Pass. Next: Card 2 of 3"
+		);
+	});
+
+	test("the last throw says the deck is empty, with the caller's words when given", () => {
+		expect(resolveStackCardAnnouncement({ count: 3, directionLabel: "Like", index: 3, kind: "throw" })).toBe(
+			"Like. No more cards"
+		);
+		expect(
+			resolveStackCardAnnouncement({
+				count: 3,
+				directionLabel: "Like",
+				emptyLabel: "All caught up",
+				index: 3,
+				kind: "throw",
+			})
+		).toBe("Like. All caught up");
+	});
+
+	test("an undo names the restored card", () => {
+		expect(resolveStackCardAnnouncement({ cardLabel: "Ada", count: 3, index: 0, kind: "undo" })).toBe("Undone. Ada");
+		expect(resolveStackCardAnnouncement({ count: 3, index: 0, kind: "undo" })).toBe("Undone. Card 1 of 3");
 	});
 });

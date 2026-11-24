@@ -5,6 +5,7 @@ import { cn } from "../../lib/cn";
 import { type SkeletonGroupContextValue, SkeletonGroupProvider } from "./skeleton.context";
 import { resolveSkeletonAccessibility, resolveSkeletonAnimation, type SkeletonAnimation } from "./skeleton.variants";
 import { useSkeletonClock } from "./skeleton-clock";
+import { useSkeletonLoadedAnnouncement } from "./skeleton-loaded";
 
 export type SkeletonGroupProps = Omit<ViewProps, "children"> & {
 	/** Whether the group's content is still loading. Every skeleton inside follows it unless told otherwise. Defaults to `true`. */
@@ -16,6 +17,10 @@ export type SkeletonGroupProps = Omit<ViewProps, "children"> & {
 	 * a busy status, while it loads. Leave the skeletons inside unlabelled.
 	 */
 	label?: string;
+	/** What to say when the group's content arrives. Defaults to the label made past tense: "Loading inbox" becomes "Inbox loaded". */
+	loadedLabel?: string;
+	/** Whether a labelled group announces that its content has loaded. Defaults to `true`. */
+	announce?: boolean;
 	className?: string;
 	children?: ReactNode;
 };
@@ -34,10 +39,13 @@ export function SkeletonGroup({
 	isLoading = true,
 	animation,
 	label,
+	loadedLabel,
+	announce,
 	className,
 	children,
 	...props
 }: SkeletonGroupProps): ReactElement {
+	useSkeletonLoadedAnnouncement({ announce, isLoading, label, loadedLabel });
 	const isCalm = useCalmMotion();
 	const resolvedAnimation = resolveSkeletonAnimation(animation, isCalm);
 	const isRunning = isLoading && resolvedAnimation !== "none";

@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TextInputInstance } from "react-native";
+import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { cn } from "../../lib/cn";
 import { useFieldContext } from "../field/field.context";
@@ -25,7 +26,7 @@ import {
 	toEditableString,
 } from "./number-input.format";
 import type { NumberInputFieldOwnProps } from "./number-input.types";
-import { NUMBER_INPUT_GROUP_CLASS } from "./number-input.variants";
+import { NUMBER_INPUT_GROUP_CLASS, resolveStepAnnouncement } from "./number-input.variants";
 import { NumberInputDecrement } from "./number-input-decrement";
 import { NumberInputField } from "./number-input-field";
 import { NumberInputIncrement } from "./number-input-increment";
@@ -68,12 +69,18 @@ export type NumberInputProps = {
 	isDisabled?: boolean;
 	/** The value can be read and selected but not changed: the steppers are off and the field takes no typing. */
 	isReadOnly?: boolean;
+	/**
+	 * Speaks the new value after a stepper press — a tap, a hold (first and last value only) or a
+	 * screen reader's activation — because focus stays on the stepper. Typing and controlled changes
+	 * are never announced. Default `true`.
+	 */
+	announce?: boolean;
 	/** Played on each step. A step that reaches a limit plays `light` instead. `false` silences both. */
 	haptic?: false | HapticFeedback;
 	placeholder?: string;
 	/** Merged onto the `Input.Group` row. */
 	className?: string;
-	/** Read by a screen reader. Defaults to an enclosing `Field.Label`'s text. */
+	/** Read by a screen reader. Defaults to an enclosing `Field.Label`'s text, with "required" when the `Field` is. */
 	accessibilityLabel?: string;
 	/** Forwarded to the `TextInput` — `testID`, `returnKeyType`, focus and submit handlers. */
 	inputProps?: NumberInputFieldOwnProps;
@@ -99,6 +106,7 @@ function NumberInputRoot({
 	isInvalid,
 	isDisabled,
 	isReadOnly = false,
+	announce: shouldAnnounce = true,
 	haptic = "selection",
 	placeholder,
 	className,
@@ -173,6 +181,17 @@ function NumberInputRoot({
 		[commit, commitDraft, config, locale, precision, setDraft]
 	);
 
+	const speak = useAnnounce();
+	const announceStep = useCallback(
+		(result: StepResult, direction: 1 | -1) => {
+			const text = formatNumber(result.value, { formatOptions, locale, precision });
+			speak(resolveStepAnnouncement({ direction, reachedLimit: result.reachedLimit, text }), {
+				enabled: shouldAnnounce,
+			});
+		},
+		[formatOptions, locale, precision, shouldAnnounce, speak]
+	);
+
 	const setValue = useCallback(
 		(next: NumberInputValue) => commit(next === null ? null : reconcile(next, config)),
 		[commit, config]
@@ -245,10 +264,14 @@ function NumberInputRoot({
 
 	const context = useMemo<NumberInputInternalContextValue>(
 		() => ({
-			accessibilityLabel: accessibilityLabel ?? field?.label ?? undefined,
+			// Only the caller's own name. An enclosing `Field`'s label, required state,
+			// error and description reach the `Input` inside the field part itself,
+			// which claims the label once.
+			accessibilityLabel,
 			// A screen reader reads what is on screen: the draft while editing, so a
 			// half-typed entry is not announced as the value it replaces.
 			accessibilityText: displayText,
+			announceStep,
 			canDecrement,
 			canIncrement,
 			config,
@@ -279,12 +302,12 @@ function NumberInputRoot({
 		}),
 		[
 			accessibilityLabel,
+			announceStep,
 			canDecrement,
 			canIncrement,
 			config,
 			displayText,
 			draft,
-			field?.label,
 			haptic,
 			inputProps,
 			isEditable,

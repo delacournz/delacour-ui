@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { ViewProps } from "react-native";
+import type { PanGesture } from "react-native-gesture-handler";
 import type { CalendarDate, CalendarDateRange, DateMatcher, Weekday } from "./calendar.date";
 import type { CalendarSize, CalendarVariant, CalendarView } from "./calendar.variants";
 
@@ -87,6 +88,16 @@ export type CalendarProps = Omit<ViewProps, "children"> &
 		isBordered?: boolean;
 		/** A horizontal swipe on the grid pages the month. */
 		swipeToPage?: boolean;
+		/**
+		 * A gesture the year list holds off while it scrolls — a bottom sheet's content pan.
+		 *
+		 * The sheet's pan claims a drag after a few points, before a `ScrollView` starts to scroll,
+		 * so inside a sheet a slow drag on the years moved the sheet instead. Given one, the year list
+		 * runs its native scroll beside a pan that blocks it (`useYearListGesture`). `DatePicker`
+		 * passes its sheet's; a calendar placed in a sheet by hand passes the engine's
+		 * `useOptionalBottomSheetInternal()?.pans.content`.
+		 */
+		yearListBlocksGesture?: PanGesture;
 		/** Overrides today — for a demo, a screenshot or a test. */
 		today?: CalendarDate;
 		className?: string;

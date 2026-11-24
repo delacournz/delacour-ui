@@ -19,16 +19,6 @@ export type PaginationControlProps = PaginationTargetProps & {
 	hasLabel?: boolean;
 };
 
-const ACCESSIBILITY_LABEL: Record<PaginationDirection, string> = {
-	next: "Next page",
-	previous: "Previous page",
-};
-
-const VISIBLE_LABEL: Record<PaginationDirection, string> = {
-	next: "Next",
-	previous: "Previous",
-};
-
 /**
  * The arrow either side of the run — what `Pagination.Previous` and
  * `Pagination.Next` both render.
@@ -68,11 +58,14 @@ export function PaginationControl({
 		onPress?.();
 	}, [direction, onPress, page, select]);
 
-	const label = showLabel ? <Text className={slots.controlLabel()}>{VISIBLE_LABEL[direction]}</Text> : null;
+	const { labels } = root;
+	const spokenName = direction === "previous" ? labels.previousPage : labels.nextPage;
+	const visibleName = direction === "previous" ? labels.previous : labels.next;
+	const label = showLabel ? <Text className={slots.controlLabel()}>{visibleName}</Text> : null;
 
 	return (
 		<Pressable
-			accessibilityLabel={ACCESSIBILITY_LABEL[direction]}
+			accessibilityLabel={spokenName}
 			className={slots.control({ className })}
 			disabled={isDisabled}
 			feedback={feedback}

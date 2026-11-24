@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Platform } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { act, renderWithProviders, screen } from "../../test/render";
 import { Countdown } from "./countdown";
 
@@ -30,7 +32,6 @@ describe("Countdown", () => {
 		expect(timer.props.accessibilityLabel).toMatch(/3 minutes/);
 		expect(timer.props.accessibilityLabel).toMatch(/left$/);
 		expect(timer.props.accessibilityLabel).not.toMatch(/second/);
-		expect(timer.props.accessibilityLiveRegion).toBe("polite");
 	});
 
 	test("a caller accessibilityLabel wins over the spoken one", async () => {
@@ -190,5 +191,71 @@ describe("Countdown", () => {
 			jest.advanceTimersByTime(5 * SECOND);
 		});
 		expect(onComplete).not.toHaveBeenCalled();
+	});
+});
+
+const originalOS = Platform.OS;
+function setPlatform(os: typeof Platform.OS) {
+	Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+}
+
+describe("Countdown announcements", () => {
+	let announceSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+	let withOptionsSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+	beforeEach(() => {
+		jest.useFakeTimers();
+		jest.setSystemTime(NOW);
+		resetAnnouncer();
+		announceSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		withOptionsSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		announceSpy.mockClear();
+		withOptionsSpy.mockClear();
+	});
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+		jest.useRealTimers();
+	});
+
+	async function run(seconds: number): Promise<void> {
+		for (let i = 0; i < seconds; i++) {
+			await act(async () => {
+				jest.advanceTimersByTime(SECOND);
+			});
+		}
+	}
+
+	test("iOS speaks 30 and 10 seconds and expiry once, nothing between", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Countdown to={at(31 * SECOND)} />);
+		expect(screen.getByRole("timer").props.accessibilityLiveRegion).toBe("none");
+		await run(31);
+		expect(withOptionsSpy.mock.calls.map((c) => c[0])).toEqual(["30 seconds left", "10 seconds left", "Time is up"]);
+		await run(5);
+		expect(withOptionsSpy).toHaveBeenCalledTimes(3);
+	});
+
+	test("Android announces through the announcer, with no live region", async () => {
+		setPlatform("android");
+		await renderWithProviders(<Countdown to={at(31 * SECOND)} />);
+		expect(screen.getByRole("timer").props.accessibilityLiveRegion).toBe("none");
+		await run(31);
+		expect(announceSpy.mock.calls.map((c) => c[0])).toEqual(["30 seconds left", "10 seconds left", "Time is up"]);
+	});
+
+	test("an already-expired mount is silent", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Countdown to={at(-SECOND)} />);
+		await run(3);
+		expect(withOptionsSpy).not.toHaveBeenCalled();
+	});
+
+	test("announce={false} speaks nothing and sets no live region", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Countdown announce={false} to={at(3 * SECOND)} />);
+		await run(4);
+		expect(withOptionsSpy).not.toHaveBeenCalled();
+		expect(screen.getByRole("timer").props.accessibilityLiveRegion).toBe("none");
 	});
 });

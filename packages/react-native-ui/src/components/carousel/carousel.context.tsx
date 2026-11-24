@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { CarouselLabels } from "../../lib/labels";
 import type { CarouselOrientation, CarouselVariant } from "./carousel.variants";
 
 /** What `useCarousel()` returns: the committed slide, and the ways to move it. */
@@ -37,6 +38,8 @@ export type CarouselOptionsValue = {
 	/** Reduce motion, or the app's `isMotionCalm`: settles by timing and drops the coverflow turn. */
 	isCalm: boolean;
 	accessibilityLabel?: string;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	labels: CarouselLabels;
 	/** `Carousel.Content` reports how many slides it holds. Stable for the carousel's lifetime. */
 	setCount: (count: number) => void;
 };

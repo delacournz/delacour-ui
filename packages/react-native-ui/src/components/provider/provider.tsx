@@ -4,6 +4,9 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { initialWindowMetrics, type Metrics, SafeAreaProvider } from "react-native-safe-area-context";
 import { CalmMotionProvider } from "../../hooks/use-calm-motion";
 import { KeyboardStateSync } from "../../hooks/use-keyboard-state-sync";
+import { LabelsProvider } from "../../hooks/use-labels";
+import { MinimumHitTargetProvider } from "../../hooks/use-minimum-hit-target";
+import type { DelacourLabelOverrides } from "../../lib/labels";
 
 export type DelacourProviderProps = {
 	children: ReactNode;
@@ -31,6 +34,21 @@ export type DelacourProviderProps = {
 	 */
 	isMotionCalm?: boolean;
 	/**
+	 * Grow every small control's touch target on Android from 44 to Material's
+	 * 48dp. Defaults to `false`; iOS stays at the HIG's 44pt either way.
+	 *
+	 * Nothing drawn moves: the extra reach is `hitSlop`, read through
+	 * `useMinimumHitSlop`.
+	 */
+	isMaterialHitTarget?: boolean;
+	/**
+	 * The strings components speak or show on their own — an arrow's accessible name, a
+	 * "Page 3 of 12" — keyed by component, laid over the English defaults. A component's own
+	 * `labels` prop wins over these. Pass a stable object: a new one every render re-renders every
+	 * component that reads a label.
+	 */
+	labels?: DelacourLabelOverrides;
+	/**
 	 * Style for the outermost `GestureHandlerRootView`.
 	 *
 	 * Forwarded untouched, with no default merged in: the gesture root applies
@@ -51,7 +69,7 @@ export type DelacourProviderProps = {
  * Mount it ONCE, around everything — a root layout, an `App.tsx`. It is not
  * idempotent and does not detect an enclosing copy of itself; see AGENTS.md.
  *
- * Five layers, outermost first, and the order is not stylistic:
+ * Seven layers, outermost first, and the order is not stylistic:
  *
  * 1. `GestureHandlerRootView` — an ancestor native view every gesture handler
  *    `Pressable` creates has to attach to. Its absence is silent: no error, no
@@ -66,8 +84,11 @@ export type DelacourProviderProps = {
  *    dismiss interrupted by navigation, a stack pop, an app suspend — leaves
  *    every screen in the app believing it is still open.
  * 5. `CalmMotionProvider` — the app's `isMotionCalm`, for `useCalmMotion()`.
- *    Pure context, no native view, so it wraps `{children}` alone — innermost,
- *    where a new layer goes.
+ * 6. `MinimumHitTargetProvider` — the app's `isMaterialHitTarget`, for
+ *    `useMinimumHitSlop()`. Five and six are pure context, no native view, so
+ *    they wrap `{children}` alone.
+ * 7. `LabelsProvider` — the app's `labels`, for `useLabels()`. Pure context
+ *    too, so it wraps `{children}` alone — innermost, where a new layer goes.
  *
  * **`BottomSheetProvider` is not here, and the app mounts it.** The sheet's
  * engine, `@delacour/react-native-bottom-sheet`, is an optional peer of this
@@ -114,11 +135,19 @@ export type DelacourProviderProps = {
  * // An E2E build: decorative loops hold still so the test runner never waits
  * // out a shimmer. `IS_E2E` is the app's own build flag.
  * <DelacourProvider isMotionCalm={IS_E2E}>{children}</DelacourProvider>
+ *
+ * @example
+ * // A French app. Keyed by component; anything left out stays English. Declare
+ * // the object at module scope so its identity is stable.
+ * const LABELS = { pagination: { next: "Suivant", page: (page: number) => `Page ${page}` } };
+ * <DelacourProvider labels={LABELS}>{children}</DelacourProvider>
  */
 export function DelacourProvider({
 	children,
 	initialMetrics = initialWindowMetrics,
+	isMaterialHitTarget = false,
 	isMotionCalm = false,
+	labels,
 	style,
 }: DelacourProviderProps): ReactElement {
 	return (
@@ -126,7 +155,11 @@ export function DelacourProvider({
 			<SafeAreaProvider initialMetrics={initialMetrics}>
 				<KeyboardProvider>
 					<KeyboardStateSync />
-					<CalmMotionProvider isMotionCalm={isMotionCalm}>{children}</CalmMotionProvider>
+					<CalmMotionProvider isMotionCalm={isMotionCalm}>
+						<MinimumHitTargetProvider isMaterialHitTarget={isMaterialHitTarget}>
+							<LabelsProvider labels={labels}>{children}</LabelsProvider>
+						</MinimumHitTargetProvider>
+					</CalmMotionProvider>
 				</KeyboardProvider>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>

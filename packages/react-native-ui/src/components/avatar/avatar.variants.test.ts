@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	AVATAR_BADGE_PLACEMENTS,
 	AVATAR_COLORS,
@@ -9,6 +10,7 @@ import {
 	AVATAR_SIZES,
 	AVATAR_VARIANTS,
 	avatarVariants,
+	resolveAvatarHitTarget,
 	resolveAvatarInteractive,
 	resolveAvatarOverlap,
 	resolveAvatarSize,
@@ -259,5 +261,28 @@ describe("resolveAvatarInteractive", () => {
 describe("avatarVariants image", () => {
 	test("sizes the image to the face, so a bundled asset is scaled rather than drawn at its own size", () => {
 		expect(avatarVariants().image().split(" ")).toEqual(expect.arrayContaining(["absolute", "inset-0", "size-full"]));
+	});
+});
+
+describe("resolveAvatarHitTarget", () => {
+	test("a standalone avatar reaches 44 with the slop its edge asks for", () => {
+		for (const size of AVATAR_SIZES) {
+			const { edge, cap } = resolveAvatarHitTarget({ size, inGroup: false });
+			const slop = resolveMinimumHitSlop(edge, 44, { cap });
+			const side = typeof slop === "number" ? slop : 0;
+			expect(edge + 2 * side).toBeGreaterThanOrEqual(44);
+			expect(edge).toBe(AVATAR_SIZE_POINTS[size]);
+		}
+	});
+
+	test("an avatar already at 44 gets no slop", () => {
+		expect(resolveMinimumHitSlop(AVATAR_SIZE_POINTS.lg, 44)).toBeUndefined();
+	});
+
+	test("a grouped avatar takes no slop, so overlapping faces keep their own press", () => {
+		for (const size of AVATAR_SIZES) {
+			const { edge, cap } = resolveAvatarHitTarget({ size, inGroup: true });
+			expect(resolveMinimumHitSlop(edge, 44, { cap })).toBeUndefined();
+		}
 	});
 });

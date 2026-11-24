@@ -33,11 +33,12 @@ import { ChartArea, type ChartAreaProps } from "./chart-area";
 import { ChartBar, type ChartBarProps } from "./chart-bar";
 import { ChartBars } from "./chart-bars";
 import { ChartCandlestick, type ChartCandlestickProps, candlestickKeysOf } from "./chart-candlestick";
+import { ChartFrame, type ChartFrameTooltip } from "./chart-frame";
 import { ChartGrid } from "./chart-grid";
 import { ChartLegend } from "./chart-legend";
 import { ChartLine, type ChartLineProps } from "./chart-line";
 import { ChartScatter, type ChartScatterProps } from "./chart-scatter";
-import { ChartTooltip } from "./chart-tooltip";
+import { ChartTooltip, type ChartTooltipProps } from "./chart-tooltip";
 import { ChartTooltipDot } from "./chart-tooltip-dot";
 import { ChartTooltipX } from "./chart-tooltip-x";
 import { ChartTooltipY } from "./chart-tooltip-y";
@@ -80,6 +81,18 @@ export type ChartProps = {
 	frameClassName?: string;
 	/** Named on the frame, so a capture flow or a test can find the plot. */
 	testID?: string;
+	/**
+	 * Replaces the generated summary a screen reader speaks for the chart,
+	 * verbatim. By default the chart names its x range and each series' lowest,
+	 * highest and latest value. An empty string counts as absent.
+	 */
+	accessibilityLabel?: string;
+	/**
+	 * Whether the chart is one element in the accessibility tree. Defaults to
+	 * `true`: an image, or an adjustable when a `Chart.Tooltip` is placed.
+	 * `false` hides the chart entirely, for a parent that describes it itself.
+	 */
+	accessible?: boolean;
 	children?: ReactNode;
 };
 
@@ -114,13 +127,15 @@ function ChartRoot({
 	className,
 	frameClassName,
 	testID,
+	accessibilityLabel,
+	accessible = true,
 	children,
 }: ChartProps): ReactElement {
 	const slots = chartVariants({ size });
 	const [frame, setFrame] = useState({ width: 0, height: 0 });
 
 	const declared = useMemo(() => resolveChartSeries(config, yKeys), [config, yKeys]);
-	const { canvas, overlay, axes, bars, stackedAreaKeys, candlestick, pointKeys, scatter } = useMemo(
+	const { canvas, overlay, axes, bars, stackedAreaKeys, candlestick, pointKeys, scatter, tooltip } = useMemo(
 		() => partitionChildren(children),
 		[children]
 	);
@@ -238,7 +253,14 @@ function ChartRoot({
 	return (
 		<ChartProvider value={value}>
 			<View className={slots.root({ className })}>
-				<View className={slots.frame({ className: frameClassName })} onLayout={onLayout} testID={testID}>
+				<ChartFrame
+					accessibilityLabel={accessibilityLabel}
+					accessible={accessible}
+					className={slots.frame({ className: frameClassName })}
+					onLayout={onLayout}
+					testID={testID}
+					tooltip={tooltip}
+				>
 					<CartesianChart
 						curve={curve}
 						data={data}
@@ -259,7 +281,7 @@ function ChartRoot({
 						<ChartProvider value={value}>{canvas}</ChartProvider>
 					</CartesianChart>
 					{overlay.canvasOverlay}
-				</View>
+				</ChartFrame>
 				{overlay.below}
 			</View>
 		</ChartProvider>
@@ -304,13 +326,14 @@ function partitionChildren(children: ReactNode): ChartPartition {
 		candlestick: null,
 		barsAt: -1,
 		scatter: false,
+		tooltip: null,
 	};
 
 	for (const child of Children.toArray(children)) {
 		if (isValidElement(child)) collectChild(child, collected);
 	}
 
-	const { canvas, canvasOverlay, below, axes, barProps, areaSpecs, pointKeys, candlestick, barsAt, scatter } =
+	const { canvas, canvasOverlay, below, axes, barProps, areaSpecs, pointKeys, candlestick, barsAt, scatter, tooltip } =
 		collected;
 	const bars = resolveBarLayout(barProps.map(barSpecOf));
 	if (barsAt !== -1) canvas.splice(barsAt, 0, <ChartBars bars={barProps} key="bars" />);
@@ -324,6 +347,7 @@ function partitionChildren(children: ReactNode): ChartPartition {
 		candlestick,
 		pointKeys,
 		scatter,
+		tooltip,
 	};
 }
 
@@ -337,6 +361,8 @@ type ChartPartition = {
 	pointKeys: readonly string[];
 	/** Whether any `Chart.Scatter` is placed — its outermost dots need the x padding bars get. */
 	scatter: boolean;
+	/** The placed `Chart.Tooltip`'s formatters, or `null` when there is none — what makes the frame adjustable. */
+	tooltip: ChartFrameTooltip | null;
 };
 
 type PartitionState = {
@@ -350,6 +376,7 @@ type PartitionState = {
 	candlestick: ChartCandlestickKeys | null;
 	barsAt: number;
 	scatter: boolean;
+	tooltip: ChartFrameTooltip | null;
 };
 
 /** Files one child by identity. A bar is recorded and not placed — `ChartBars` stands in for all of them. */
@@ -372,8 +399,11 @@ function collectChild(child: ReactElement, state: PartitionState): void {
 	}
 
 	if (CANVAS_PARTS.has(child.type)) state.canvas.push(child);
-	else if (child.type === ChartTooltip) state.canvasOverlay.push(child);
-	else state.below.push(child);
+	else if (child.type === ChartTooltip) {
+		const { formatHeading, formatValue } = child.props as ChartTooltipProps;
+		state.tooltip = { formatHeading, formatValue };
+		state.canvasOverlay.push(child);
+	} else state.below.push(child);
 }
 
 /** The part of a bar's props the layout reads. */

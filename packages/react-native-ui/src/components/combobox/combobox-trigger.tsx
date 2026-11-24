@@ -1,6 +1,7 @@
 import { type ReactElement, type ReactNode, useEffect } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { IconChevronDownSmall, IconCrossSmall } from "../../icons/central";
 import { Slot } from "../../lib/slot";
 import { Icon } from "../icon";
@@ -10,7 +11,7 @@ import { resolveSelectIconToken, SELECT_CHEVRON_CALM_DURATION_MS, selectVariants
 import { Spinner } from "../spinner";
 import { Text } from "../text";
 import { useComboboxPart } from "./combobox.context";
-import { comboboxVariants, resolveComboboxTriggerClass } from "./combobox.variants";
+import { comboboxVariants, resolveComboboxClearHitSlop, resolveComboboxTriggerClass } from "./combobox.variants";
 import { ComboboxChipRow } from "./combobox-chip-row";
 
 export type ComboboxTriggerProps = Omit<PressableProps, "onPress" | "disabled" | "children"> & {
@@ -24,8 +25,6 @@ export type ComboboxTriggerProps = Omit<PressableProps, "onPress" | "disabled" |
 };
 
 const CHEVRON_SPRING = { damping: 18, mass: 0.6, stiffness: 240 } as const;
-
-const CLEAR_HIT_SLOP = 8;
 
 /**
  * The chevron, half-turned while the sheet is open — Select's, motion and
@@ -94,6 +93,7 @@ export function ComboboxTrigger({
 	...props
 }: ComboboxTriggerProps): ReactElement {
 	const combobox = useComboboxPart("Combobox.Trigger");
+	const minimumHitTarget = useMinimumHitTarget();
 	const {
 		accessibilityLabel,
 		chipVariant,
@@ -167,7 +167,7 @@ export function ComboboxTrigger({
 				accessibilityRole="button"
 				className={slots.clear()}
 				feedback="fade"
-				hitSlop={CLEAR_HIT_SLOP}
+				hitSlop={resolveComboboxClearHitSlop(size, minimumHitTarget)}
 				onPress={clear}
 				testID={testID ? `${testID}-clear` : undefined}
 			>

@@ -5,6 +5,7 @@ import {
 	POPOVER_ARROW_INSET,
 	POPOVER_ARROW_SIZE,
 	POPOVER_CLOSE_HIT_SLOP,
+	POPOVER_CLOSE_SIZE,
 	POPOVER_COLLISION_PADDING,
 	POPOVER_DEFAULTS,
 	POPOVER_ENTER_DISTANCE,
@@ -130,6 +131,6 @@ describe("constants", () => {
 	});
 
 	test("the close glyph has slop to reach a 44pt target", () => {
-		expect(POPOVER_CLOSE_HIT_SLOP).toBeGreaterThan(0);
+		expect(POPOVER_CLOSE_SIZE + 2 * Number(POPOVER_CLOSE_HIT_SLOP)).toBeGreaterThanOrEqual(44);
 	});
 });

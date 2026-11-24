@@ -2,10 +2,16 @@ import { type ReactElement, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { Pressable, type PressableProps } from "../pressable";
 import { formatColor, isSameColor, normalizeHsva, parseColor } from "./color-picker.color";
 import { useColorPickerPart } from "./color-picker.context";
-import { COLOR_PICKER_RING_FADE_MS, colorPickerVariants } from "./color-picker.variants";
+import {
+	COLOR_PICKER_RING_FADE_MS,
+	COLOR_PICKER_SWATCH_EDGE_PT,
+	COLOR_PICKER_SWATCH_SLOP_CAP,
+	colorPickerVariants,
+} from "./color-picker.variants";
 import { ColorPickerCheckerboard } from "./color-picker-checkerboard";
 
 export type ColorPickerSwatchProps = Omit<PressableProps, "onPress" | "children"> & {
@@ -26,6 +32,9 @@ export type ColorPickerSwatchProps = Omit<PressableProps, "onPress" | "children"
  * checkerboard; on a picker without `hasAlpha` it lands opaque, as every other
  * input path does.
  *
+ * Hit slop reaches the 44pt minimum only as far as half the row's gap allows, so
+ * neighbours never overlap: `lg` gets to 44, `md` to 40, `sm` to 32.
+ *
  * Read-only and disabled both ignore the tap. Returns null for a colour that
  * does not parse.
  */
@@ -33,10 +42,12 @@ export function ColorPickerSwatch({
 	color,
 	accessibilityLabel,
 	className,
+	hitSlop,
 	...props
 }: ColorPickerSwatchProps): ReactElement | null {
 	const { hsva, size, hasAlpha, isDisabled, isReadOnly, setHsva } = useColorPickerPart("ColorPicker.Swatch");
 	const isCalm = useCalmMotion();
+	const slop = useMinimumHitSlop(COLOR_PICKER_SWATCH_EDGE_PT[size], { cap: COLOR_PICKER_SWATCH_SLOP_CAP });
 	const parsed = parseColor(color);
 	const preset = parsed ? normalizeHsva(parsed, hasAlpha) : null;
 	const hex = preset ? formatColor(preset, "hex") : "";
@@ -60,6 +71,7 @@ export function ColorPickerSwatch({
 			className={slots.swatch({ className })}
 			disabled={isDisabled || isReadOnly}
 			feedback="scale"
+			hitSlop={hitSlop ?? slop}
 			onPress={() => setHsva(preset, { commit: true })}
 			{...props}
 		>

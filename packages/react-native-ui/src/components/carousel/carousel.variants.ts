@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type CarouselLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 export const CAROUSEL_VARIANTS = ["track", "coverflow"] as const;
@@ -218,9 +219,13 @@ export function resolveAutoplayEnabled(state: {
 }
 
 /** What the adjustable root reads out: "2 of 5". Empty with nothing to count. */
-export function resolveCarouselA11yValue(index: number, count: number): string {
+export function resolveCarouselA11yValue(
+	index: number,
+	count: number,
+	labels: CarouselLabels = DELACOUR_DEFAULT_LABELS.carousel
+): string {
 	if (count <= 0) return "";
-	return `${index + 1} of ${count}`;
+	return labels.position(index + 1, count);
 }
 
 /** Whether Previous and Next have anywhere to go. */

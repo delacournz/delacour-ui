@@ -25,7 +25,7 @@ export function BreadcrumbPage({
 		<Text
 			accessibilityRole="text"
 			accessibilityState={{ ...accessibilityState, selected: true }}
-			accessibilityValue={accessibilityValue ?? { text: "current page" }}
+			accessibilityValue={accessibilityValue ?? { text: context.labels.currentPage }}
 			className={breadcrumbVariants({ size: context.size }).page({ className })}
 			size={size ?? BREADCRUMB_TEXT_SIZE[context.size]}
 			{...props}

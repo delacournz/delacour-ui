@@ -12,12 +12,14 @@
 		"compose-refs",
 		"icon",
 		"icons",
+		"modal-accessibility",
 		"overlay",
 		"pressable",
 		"slot",
 		"text",
 		"tv",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -51,6 +53,10 @@
 			"target": "dialog/dialog-close.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
@@ -138,7 +144,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/dialog/dialog.context.tsx",
 			"target": "dialog/dialog.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/dialog/dialog.tsx",
@@ -159,6 +171,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		},

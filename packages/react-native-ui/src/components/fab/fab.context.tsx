@@ -1,4 +1,5 @@
-import { createContext, type ReactElement, type ReactNode, use } from "react";
+import { type ComponentRef, createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
+import type Animated from "react-native-reanimated";
 import type { SharedValue } from "react-native-reanimated";
 import type { HapticFeedback } from "../pressable/pressable";
 import type { FabLabelSide, FabSize, FabVariant } from "./fab.variants";
@@ -62,6 +63,8 @@ export type FabGroupContextValue = {
 	/** Fade in place instead of rising with a stagger. */
 	isReducedMotion: boolean;
 	close: () => void;
+	/** The first action's button — where focus lands once the dial has opened. */
+	firstActionRef: RefObject<ComponentRef<typeof Animated.View> | null>;
 };
 
 const FabGroupContext = createContext<FabGroupContextValue | null>(null);

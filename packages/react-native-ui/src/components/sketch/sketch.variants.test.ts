@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { declarationCount } from "../../styles/theme-tokens.test";
+import { declarationCount, TOKENS_CSS } from "../../styles/theme-tokens.test";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import { SKETCH_SHAPES, SKETCH_TOOLS } from "./sketch.paths";
 import {
 	clampSketchSize,
@@ -15,6 +16,9 @@ import {
 	SKETCH_MAX_SIZE,
 	SKETCH_MIN_SIZE,
 	SKETCH_SLOTS,
+	SKETCH_SWATCH_EDGE_PT,
+	SKETCH_SWATCH_GAP_PT,
+	SKETCH_SWATCH_SLOP_CAP,
 	sketchTokenNames,
 	sketchVariants,
 } from "./sketch.variants";
@@ -217,5 +221,26 @@ describe("resolveSketchExportBackground", () => {
 describe("the root's size", () => {
 	test("is the caller's: no flex-1, whose zero basis would beat a height the caller sets", () => {
 		expect(sketchVariants().root().split(" ")).not.toContain("flex-1");
+	});
+});
+
+describe("swatch hit target", () => {
+	test("the edge is the button-sm token and the gap is the row's gap class", () => {
+		const token = TOKENS_CSS.match(/--spacing-button-sm:\s*(\d+)px/)?.[1];
+		expect(SKETCH_SWATCH_EDGE_PT).toBe(Number(token));
+		const gap = Number(
+			sketchVariants()
+				.swatches()
+				.match(/\bgap-(\d+(?:\.\d+)?)\b/)?.[1]
+		);
+		expect(gap * 4).toBe(SKETCH_SWATCH_GAP_PT);
+		expect(SKETCH_SWATCH_SLOP_CAP).toBe(SKETCH_SWATCH_GAP_PT / 2);
+	});
+
+	test("slop fits half the gap, and the swatch reaches 40 of 44 points", () => {
+		const slop = resolveMinimumHitSlop(SKETCH_SWATCH_EDGE_PT, 44, { cap: SKETCH_SWATCH_SLOP_CAP });
+		expect(slop).toBe(2);
+		expect(SKETCH_SWATCH_GAP_PT).toBeGreaterThanOrEqual(2 * 2);
+		expect(SKETCH_SWATCH_EDGE_PT + 2 * 2).toBe(40);
 	});
 });

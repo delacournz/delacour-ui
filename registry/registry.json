@@ -69,6 +69,7 @@
 				"surface",
 				"text",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -154,6 +155,22 @@
 			]
 		},
 		{
+			"name": "announce",
+			"type": "registry:lib",
+			"title": "announce",
+			"description": "Screen-reader announcements by one route per platform, throttled and coalesced per key.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/announce.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
 			"name": "attachment",
 			"type": "registry:ui",
 			"title": "Attachment",
@@ -222,7 +239,8 @@
 				"icons",
 				"pressable",
 				"text",
-				"tv"
+				"tv",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -265,7 +283,8 @@
 				"icons",
 				"pressable",
 				"text",
-				"tv"
+				"tv",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -406,9 +425,11 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
-				"tv"
+				"tv",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -457,7 +478,8 @@
 				"separator",
 				"spinner",
 				"text",
-				"tv"
+				"tv",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -622,12 +644,14 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"paging",
 				"slot",
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -696,10 +720,12 @@
 			"devDependencies": [],
 			"files": [
 				"ui/chart/AGENTS.md",
+				"ui/chart/chart-accessibility.ts",
 				"ui/chart/chart-area.tsx",
 				"ui/chart/chart-bar.tsx",
 				"ui/chart/chart-bars.tsx",
 				"ui/chart/chart-candlestick.tsx",
+				"ui/chart/chart-frame.tsx",
 				"ui/chart/chart-grid.tsx",
 				"ui/chart/chart-legend.tsx",
 				"ui/chart/chart-line.tsx",
@@ -717,6 +743,7 @@
 				"ui/chart/index.ts",
 				"ui/chart/pie-chart-center.tsx",
 				"ui/chart/pie-chart-label.tsx",
+				"ui/chart/pie-chart-slice-targets.tsx",
 				"ui/chart/pie-chart-slice.tsx",
 				"ui/chart/pie-chart-tooltip.tsx",
 				"ui/chart/pie-chart.context.tsx",
@@ -798,12 +825,14 @@
 			],
 			"registryDependencies": [
 				"badge",
+				"direction",
 				"icon",
 				"icons",
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -980,6 +1009,7 @@
 				"tv",
 				"use-calm-motion",
 				"use-controllable-state",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -1054,7 +1084,8 @@
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1220,6 +1251,7 @@
 				"cn",
 				"text",
 				"tv",
+				"use-announce",
 				"use-calm-motion"
 			],
 			"dependencies": [
@@ -1272,6 +1304,7 @@
 				"use-controllable-state"
 			],
 			"dependencies": [
+				"@delacour/react-native-bottom-sheet",
 				"tailwind-variants"
 			],
 			"expoDependencies": [],
@@ -1302,8 +1335,8 @@
 				"test-kit"
 			],
 			"renderTestDependencies": [
-				"@delacour/react-native-bottom-sheet",
-				"@jest/globals"
+				"@jest/globals",
+				"react-native-gesture-handler"
 			]
 		},
 		{
@@ -1384,12 +1417,14 @@
 				"compose-refs",
 				"icon",
 				"icons",
+				"modal-accessibility",
 				"overlay",
 				"pressable",
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1474,12 +1509,14 @@
 				"compose-refs",
 				"icon",
 				"icons",
+				"modal-accessibility",
 				"overlay",
 				"pressable",
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1597,7 +1634,8 @@
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-modal-accessibility"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1640,8 +1678,10 @@
 			"registryDependencies": [
 				"button",
 				"dialog",
+				"field",
 				"input",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -1691,10 +1731,12 @@
 				"forms"
 			],
 			"registryDependencies": [
+				"label",
 				"pressable",
 				"separator",
 				"text",
-				"tv"
+				"tv",
+				"use-announce"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1704,6 +1746,7 @@
 			"files": [
 				"ui/field/AGENTS.md",
 				"ui/field/field-content.tsx",
+				"ui/field/field-control.ts",
 				"ui/field/field-description.tsx",
 				"ui/field/field-error.tsx",
 				"ui/field/field-group.tsx",
@@ -2003,7 +2046,8 @@
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-modal-accessibility"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2179,11 +2223,13 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"separator",
 				"surface",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"@delacour/react-native-charts",
@@ -2259,6 +2305,22 @@
 			],
 			"renderTestDependencies": [
 				"@jest/globals"
+			]
+		},
+		{
+			"name": "labels",
+			"type": "registry:lib",
+			"title": "labels",
+			"description": "Every string the components speak or show on their own, with English defaults and the merge order.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/labels.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2372,9 +2434,11 @@
 				"button",
 				"icon",
 				"icons",
+				"pressable",
 				"surface",
 				"text",
 				"tv",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -2578,12 +2642,14 @@
 				"compose-refs",
 				"icon",
 				"icons",
+				"modal-accessibility",
 				"pressable",
 				"separator",
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-modal-accessibility"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2810,6 +2876,22 @@
 			]
 		},
 		{
+			"name": "modal-accessibility",
+			"type": "registry:lib",
+			"title": "modalAccessibility",
+			"description": "Where focus lands in a modal container, and when it holds a screen reader and takes the escape scrub.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/modal-accessibility.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
 			"name": "navigation-theme",
 			"type": "registry:lib",
 			"title": "navigationTheme",
@@ -2845,6 +2927,7 @@
 				"input",
 				"pressable",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -2933,7 +3016,8 @@
 				"overlays"
 			],
 			"registryDependencies": [
-				"tv"
+				"tv",
+				"use-modal-accessibility"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2956,6 +3040,7 @@
 				"ui/overlay/overlay.tsx",
 				"ui/overlay/overlay.variants.ts",
 				"ui/overlay/use-overlay-back-handler.ts",
+				"ui/overlay/use-overlay-modal-accessibility.ts",
 				"ui/overlay/use-overlay-presence.ts"
 			],
 			"testRegistryDependencies": [
@@ -3045,10 +3130,12 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -3185,7 +3272,8 @@
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -3243,6 +3331,7 @@
 				"pressable",
 				"text",
 				"tv",
+				"use-announce",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -3387,6 +3476,7 @@
 				"pressable",
 				"text",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -3430,8 +3520,11 @@
 				"primitives"
 			],
 			"registryDependencies": [
+				"labels",
 				"use-calm-motion",
-				"use-keyboard-state-sync"
+				"use-keyboard-state-sync",
+				"use-labels",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [],
 			"expoDependencies": [
@@ -3679,7 +3772,9 @@
 				"spinner",
 				"text",
 				"tv",
+				"use-announce",
 				"use-keyboard-state-sync",
+				"use-minimum-hit-target",
 				"use-scroll-source",
 				"use-theme-color"
 			],
@@ -4042,7 +4137,8 @@
 				"spinner",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -4088,10 +4184,12 @@
 			],
 			"registryDependencies": [
 				"compose-refs",
+				"modal-accessibility",
 				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-modal-accessibility",
 				"use-scroll-sections",
 				"use-theme-color"
 			],
@@ -4141,10 +4239,12 @@
 			],
 			"registryDependencies": [
 				"compose-refs",
+				"modal-accessibility",
 				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-modal-accessibility",
 				"use-scroll-sections"
 			],
 			"dependencies": [
@@ -4394,6 +4494,7 @@
 			"registryDependencies": [
 				"cn",
 				"tv",
+				"use-announce",
 				"use-calm-motion",
 				"use-theme-color"
 			],
@@ -4408,6 +4509,7 @@
 				"ui/skeleton/index.ts",
 				"ui/skeleton/skeleton-clock.ts",
 				"ui/skeleton/skeleton-group.tsx",
+				"ui/skeleton/skeleton-loaded.ts",
 				"ui/skeleton/skeleton-shimmer.tsx",
 				"ui/skeleton/skeleton.context.tsx",
 				"ui/skeleton/skeleton.tsx",
@@ -4440,7 +4542,8 @@
 				"slider",
 				"toggle-button",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -4499,6 +4602,7 @@
 				"spinner",
 				"text",
 				"tv",
+				"use-announce",
 				"use-controllable-state",
 				"use-theme-color"
 			],
@@ -4753,6 +4857,7 @@
 			"registryDependencies": [
 				"pressable",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -4804,6 +4909,7 @@
 				"pressable",
 				"text",
 				"tv",
+				"use-announce",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -4937,6 +5043,7 @@
 				"separator",
 				"text",
 				"tv",
+				"use-announce",
 				"use-calm-motion",
 				"use-controllable-state"
 			],
@@ -5144,6 +5251,7 @@
 				"surface",
 				"text",
 				"tv",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -5200,6 +5308,7 @@
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -5510,7 +5619,8 @@
 			"registryDependencies": [
 				"input",
 				"text",
-				"tv"
+				"tv",
+				"use-announce"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -5717,13 +5827,15 @@
 			],
 			"registryDependencies": [
 				"alert",
+				"announce",
 				"icon",
 				"icons",
 				"overlay",
 				"pressable",
 				"spinner",
 				"text",
-				"tv"
+				"tv",
+				"use-announce"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -5874,6 +5986,7 @@
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-modal-accessibility",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -5927,7 +6040,8 @@
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -5983,6 +6097,27 @@
 			]
 		},
 		{
+			"name": "use-announce",
+			"type": "registry:hook",
+			"title": "useAnnounce",
+			"description": "announce(), useAnnounce() and useAnnouncement() — heard once on iOS, Android and the web.",
+			"registryDependencies": [
+				"announce"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-announce.ts"
+			],
+			"renderTestRegistryDependencies": [
+				"test-kit"
+			],
+			"renderTestDependencies": [
+				"@jest/globals"
+			]
+		},
+		{
 			"name": "use-calm-motion",
 			"type": "registry:hook",
 			"title": "useCalmMotion",
@@ -6029,6 +6164,51 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-keyboard-state-sync.tsx"
+			]
+		},
+		{
+			"name": "use-labels",
+			"type": "registry:hook",
+			"title": "useLabels",
+			"description": "A component's spoken strings, and the provider an app translates them with.",
+			"registryDependencies": [
+				"labels"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-labels.tsx"
+			]
+		},
+		{
+			"name": "use-minimum-hit-target",
+			"type": "registry:hook",
+			"title": "useMinimumHitSlop",
+			"description": "The hitSlop that grows a small control to the minimum touch target, and the provider an Android app opts into 48dp with.",
+			"registryDependencies": [
+				"pressable"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-minimum-hit-target.tsx"
+			]
+		},
+		{
+			"name": "use-modal-accessibility",
+			"type": "registry:hook",
+			"title": "useModalAccessibility",
+			"description": "A modal container's VoiceOver containment and escape, with focus moved in on open and back to the trigger on close.",
+			"registryDependencies": [
+				"modal-accessibility"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-modal-accessibility.ts"
 			]
 		},
 		{

@@ -34,6 +34,36 @@ export type FieldContextValue = {
 	 * holds one label, so a second registration replaces the first.
 	 */
 	registerLabel: (label: string | null) => void;
+	/**
+	 * Whether the field's control must hold a value. Announced as part of the
+	 * control's name — "Email, required" — and drawn as `Field.Label`'s asterisk.
+	 */
+	isRequired: boolean;
+	/**
+	 * The `nativeID` `Field.Label` renders with. Android's
+	 * `accessibilityLabelledBy` points a control at it when the label is an
+	 * element with no text to lend. Stable for the field's lifetime.
+	 */
+	labelNativeID: string;
+	/**
+	 * Whether a control has taken the label's text as its own name. While it has,
+	 * `Field.Label` leaves the accessibility tree, so a swipe does not stop on
+	 * "Email" and then on the "Email" text field.
+	 */
+	isLabelClaimed: boolean;
+	/**
+	 * A control says it reads `label` as its name. Returns the release, for an
+	 * effect's cleanup. `useFieldControlAccessibility` calls it for you.
+	 */
+	claimLabel: () => () => void;
+	/** The text of the `Field.Error` inside, or `null` while there is none. */
+	error: string | null;
+	/** A `Field.Error` offers its text here. Pass `null` on unmount. */
+	registerError: (error: string | null) => void;
+	/** The text of the `Field.Description` inside, or `null` while there is none. */
+	description: string | null;
+	/** A `Field.Description` offers its text here. Pass `null` on unmount. */
+	registerDescription: (description: string | null) => void;
 };
 
 const FieldContext = createContext<FieldContextValue | null>(null);

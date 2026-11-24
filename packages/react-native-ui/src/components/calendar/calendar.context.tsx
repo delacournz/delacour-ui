@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { PanGesture } from "react-native-gesture-handler";
 import type { CalendarDate, CalendarSelectionState, Weekday } from "./calendar.date";
 import type { CalendarCaptionLayout } from "./calendar.types";
 import type { CalendarRangeRole, CalendarSize, CalendarVariant, CalendarView } from "./calendar.variants";
@@ -49,6 +50,8 @@ export type CalendarContextValue = {
 	showOutsideDays: boolean;
 	selectOutsideDays: boolean;
 	swipeToPage: boolean;
+	/** The gesture the year list blocks while it scrolls, or `undefined` to scroll as a plain list. */
+	yearListBlocksGesture: PanGesture | undefined;
 	captionLayout: CalendarCaptionLayout;
 	/** The calendar's own `testID`, which its parts derive theirs from — see `resolvePartTestID`. */
 	testID: string | undefined;

@@ -44,7 +44,7 @@ export function PaginationEllipsis({
 
 	return (
 		<Pressable
-			accessibilityLabel={formatEllipsisLabel(direction, pageJump)}
+			accessibilityLabel={formatEllipsisLabel(direction, pageJump, root.labels)}
 			className={slots.ellipsis({ className })}
 			disabled={isDisabled}
 			feedback={feedback}

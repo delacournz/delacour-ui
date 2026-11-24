@@ -1,10 +1,11 @@
 import { type ReactElement, useCallback } from "react";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconCrossSmall } from "../../icons/central";
 import { Slot } from "../../lib/slot";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { useDialogPart } from "./dialog.context";
-import { DIALOG_CLOSE_HIT_SLOP, dialogVariants } from "./dialog.variants";
+import { DIALOG_CLOSE_SIZE, dialogVariants } from "./dialog.variants";
 
 export type DialogCloseProps =
 	/** Donates the close to the single child — a `Button` in the footer, say. */
@@ -17,7 +18,7 @@ export type DialogCloseProps =
  *
  * Without children it is the ✕ in the card's corner: this library's
  * `Pressable` with `fade` feedback — a scale on a glyph this small reads as a
- * jitter — 8pt of slop because a bare glyph has no capsule to bring it toward
+ * jitter — 12pt of slop because a bare glyph has no capsule to bring it toward
  * 44pt, and `"Close"` as its label. It sits out of the flow; `Dialog.Title`
  * reserves the clearance.
  *
@@ -39,6 +40,7 @@ export type DialogCloseProps =
  */
 export function DialogClose(props: DialogCloseProps): ReactElement {
 	const { close } = useDialogPart("Dialog.Close");
+	const slop = useMinimumHitSlop(DIALOG_CLOSE_SIZE);
 	const { onPress } = props;
 
 	const handlePress = useCallback(() => {
@@ -60,7 +62,7 @@ export function DialogClose(props: DialogCloseProps): ReactElement {
 		accessibilityLabel = "Close",
 		className,
 		feedback = "fade",
-		hitSlop = DIALOG_CLOSE_HIT_SLOP,
+		hitSlop = slop,
 		onPress: _onPress,
 		...rest
 	} = props;

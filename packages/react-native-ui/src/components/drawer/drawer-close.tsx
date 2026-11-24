@@ -1,10 +1,11 @@
 import { type ReactElement, useCallback } from "react";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconCrossSmall } from "../../icons/central";
 import { Slot } from "../../lib/slot";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { useDrawerPart } from "./drawer.context";
-import { DRAWER_CLOSE_HIT_SLOP, drawerVariants } from "./drawer.variants";
+import { DRAWER_CLOSE_SIZE, drawerVariants } from "./drawer.variants";
 
 export type DrawerCloseProps =
 	/** Donates the close to the single child — a `Button` in the footer, a navigation row. */
@@ -16,7 +17,7 @@ export type DrawerCloseProps =
  * Closes the drawer.
  *
  * Without children it is a ✕: this library's `Pressable` with `fade` feedback
- * — a scale on a glyph this small reads as a jitter — 8pt of slop because a
+ * — a scale on a glyph this small reads as a jitter — 12pt of slop because a
  * bare glyph has no capsule to bring it toward 44pt, and `"Close"` as its
  * label. `Drawer.Header` writes one at its trailing edge unless told not to.
  *
@@ -33,6 +34,7 @@ export type DrawerCloseProps =
  */
 export function DrawerClose(props: DrawerCloseProps): ReactElement {
 	const { close } = useDrawerPart("Drawer.Close");
+	const slop = useMinimumHitSlop(DRAWER_CLOSE_SIZE);
 	const { onPress } = props;
 
 	const handlePress = useCallback(() => {
@@ -54,7 +56,7 @@ export function DrawerClose(props: DrawerCloseProps): ReactElement {
 		accessibilityLabel = "Close",
 		className,
 		feedback = "fade",
-		hitSlop = DRAWER_CLOSE_HIT_SLOP,
+		hitSlop = slop,
 		onPress: _onPress,
 		...rest
 	} = props;

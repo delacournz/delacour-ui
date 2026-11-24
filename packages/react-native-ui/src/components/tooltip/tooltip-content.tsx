@@ -143,7 +143,7 @@ export function TooltipContent({
 	const { arrows, body } = partitionArrow(children);
 
 	return (
-		<Overlay.Portal id={overlayId} layer="anchored">
+		<Overlay.Portal id={overlayId} isPassive layer="anchored">
 			<Animated.View
 				accessibilityElementsHidden
 				importantForAccessibility="no-hide-descendants"

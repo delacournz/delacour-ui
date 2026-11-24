@@ -15,9 +15,9 @@ digits, or one inline run of text.
 | `countdown-segment.tsx` | Internal `DelacourUI.Countdown.Segment` — one unit's box: digit columns over a caption |
 | `countdown-digit.tsx` | Internal `DelacourUI.Countdown.Digit` — one clipped column whose digit slides on change |
 | `use-countdown-clock.ts` | The tick: wall-clock reads, second-aligned timeout, `AppState` re-read, `onTick` / `onComplete` |
-| `countdown.variants.ts` | Slotted `tv()` + every pure resolver — split, trim, format, label, tick alignment, urgency |
+| `countdown.variants.ts` | Slotted `tv()` + every pure resolver — split, trim, format, label, announcement milestones, tick alignment, urgency |
 | `countdown.variants.test.ts` | |
-| `countdown.render.test.tsx` | Mounted under Jest — timer role and coarse label, units/trim/inline text, fake-timer ticks, `onTick`, `onComplete` once per target, re-arming on a new `to` |
+| `countdown.render.test.tsx` | Mounted under Jest — timer role and coarse label, units/trim/inline text, fake-timer ticks, `onTick`, `onComplete` once per target, re-arming on a new `to`, announcements per platform and the opt-out |
 
 No context and no `countdown.types.ts`: the parts are internal, take their
 values as props, and share no type that `countdown.variants.ts` does not already
@@ -109,8 +109,17 @@ export.
   `Time is up`. `resolveCountdownAccessibilityLabel` owns the rule, and a
   caller's `labels` name the units there too. A caller `accessibilityLabel`
   wins.
-- **`accessibilityLiveRegion="polite"`** on Android, which only announces when
-  the label string changes — which the coarse rule keeps rare.
+- **Not a live region: it announces at milestones, through the announcement channel.** The
+  spoken label changes every second in the final minute, so a live region on it made TalkBack
+  read every tick — and iOS has no live regions, so VoiceOver heard nothing, expiry included.
+  `useAnnouncement(resolveCountdownAnnouncement(...), { channel: "announcement" })` speaks
+  instead, throttled, on both platforms: at an hour, 10 and 5 minutes, 1 minute, 30 s and 10 s
+  (`COUNTDOWN_ANNOUNCE_MILESTONES`) and `Time is up` once at expiry. A seconds milestone is skipped
+  when seconds are not shown. A countdown mounted already expired is silent, and a new future `to`
+  re-arms the expiry announcement. The label itself stays accurate for focus reads. On the web the
+  hook falls back to a live region on the label, so it still speaks each second there.
+- **`announce={false}` is the opt-out** (default `true`), for an app that speaks the countdown
+  itself; it also leaves the live region off.
 - **Digits and captions cap at `maxFontSizeMultiplier={1.5}`.** The box padding
   is fixed, and an uncapped accessibility size would push four boxes off the
   screen edge.

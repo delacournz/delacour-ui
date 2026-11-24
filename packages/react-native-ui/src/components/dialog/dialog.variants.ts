@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 
 /** The card's widths, narrowest first. */
 export const DIALOG_SIZES = ["sm", "md", "lg", "full"] as const;
@@ -33,8 +34,11 @@ export const DIALOG_SIZE_CLASS = {
 /** The scrim's token — the foundation's, named here so the test can pin it. */
 export const DIALOG_SCRIM_TOKEN = "overlay";
 
-/** Slop around the corner ✕ — a bare glyph has no capsule to bring it toward 44pt. */
-export const DIALOG_CLOSE_HIT_SLOP = 8;
+/** The drawn edge of the default ✕ — `Icon`'s `size-icon-lg`, with no padding of its own. */
+export const DIALOG_CLOSE_SIZE = 20;
+
+/** Slop that takes the ✕ to 44pt — a bare glyph has no capsule. The component asks `useMinimumHitSlop` so Android can opt up to 48. */
+export const DIALOG_CLOSE_HIT_SLOP = resolveMinimumHitSlop(DIALOG_CLOSE_SIZE);
 
 /** The scale the card grows from on enter. */
 export const DIALOG_ENTER_SCALE = 0.96;

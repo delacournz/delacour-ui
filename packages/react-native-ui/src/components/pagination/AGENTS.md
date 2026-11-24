@@ -27,8 +27,8 @@ disabled. The caller owns fetching and slicing.
 | `pagination.context.tsx` | The root's context, `usePagination` and the internal part guard |
 | `pagination.types.ts` | `PaginationTargetProps`, shared by every pressable part |
 | `pagination.variants.ts` | Pure `tv()` slots + every resolver and formatter, no RN imports |
-| `pagination.variants.test.ts` | |
-| `pagination.render.test.tsx` | Mounted under Jest — toolbar/item/arrow names and selected/disabled state, uncontrolled and controlled paging, clamp report, ellipsis jumps, simple/compact variants (adjustable value and actions), custom runs, Status, and the outside-root errors |
+| `pagination.variants.test.ts` | Resolvers and formatters, a custom labels object included |
+| `pagination.render.test.tsx` | Mounted under Jest — toolbar/item/arrow names and selected/disabled state, uncontrolled and controlled paging, clamp report, ellipsis jumps, simple/compact variants (adjustable value and actions), custom runs, Status, the `labels` prop and provider, and the outside-root errors |
 
 ## Design
 
@@ -89,6 +89,12 @@ disabled. The caller owns fetching and slicing.
 
 ## Accessibility
 
+- **Every string is a label.** **The `labels` prop, `DelacourProvider`'s `labels` and the English
+  defaults supply every spoken or visible string** ("Page 3", "41–60 of 472", "Jump forward 5
+  pages", "Previous"), because a translation has to reach all of them from one place. Precedence is
+  defaults, then provider, then prop; the root resolves them once with `useLabels` and shares
+  them through the context, and the `format*` resolvers take them as a trailing argument so they
+  stay pure. A part's own `accessibilityLabel` still wins.
 - **Root**: `accessibilityRole="toolbar"`, named by `accessibilityLabel` ("Pagination").
 - **Item**: a button named "Page 3", `selected` when current.
 - **Previous / Next**: "Previous page" / "Next page", disabled at the ends.
@@ -119,8 +125,6 @@ disabled. The caller owns fetching and slicing.
 
 ## What it does not do
 
-- **No localisation in v1.** Every string — "Page 3", "41–60 of 472", "Jump forward 5 pages" —
-  is English, from the `format*` functions. A `labels` prop is the planned way in.
 - **No jump-to-page field and no page-size picker.** Build either as a custom part with
   `usePagination`, inside `Pagination.Summary`.
 - **No fetching, slicing or infinite scroll.** The caller turns a page into rows.

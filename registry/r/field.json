@@ -8,10 +8,12 @@
 		"forms"
 	],
 	"registryDependencies": [
+		"label",
 		"pressable",
 		"separator",
 		"text",
-		"tv"
+		"tv",
+		"use-announce"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -36,10 +38,19 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/react-native-ui/src/components/field/field-control.ts",
+			"target": "field/field-control.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/field/field-description.tsx",
 			"target": "field/field-description.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../label/label.variants",
+					"to": "@registry/ui/label/label.variants"
+				},
 				{
 					"from": "../text",
 					"to": "@registry/ui/text"
@@ -51,6 +62,14 @@
 			"target": "field/field-error.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
+				{
+					"from": "../label/label.variants",
+					"to": "@registry/ui/label/label.variants"
+				},
 				{
 					"from": "../text",
 					"to": "@registry/ui/text"
@@ -67,6 +86,10 @@
 			"target": "field/field-label.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../label/label.variants",
+					"to": "@registry/ui/label/label.variants"
+				},
 				{
 					"from": "../text",
 					"to": "@registry/ui/text"
@@ -178,6 +201,10 @@
 			"target": "field/field.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

@@ -62,8 +62,13 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   lag otherwise. Every tap cancels the last tap's pending close, so starting a new range inside
   that pause keeps the sheet open.
 - **A re-tap on the shown single day confirms it.** The calendar's `applySingleTap` reports it as
-  `null`; the picker keeps the day, reports nothing and closes. A user who opens a date of birth to
+  `null`; the picker keeps the day, reports no change and closes. A user who opens a date of birth to
   check it and taps it must not clear it. Clear (`isClearable`) is the way to empty a single day.
+- **`onConfirm` says a single pick happened, changed or not.** It fires on every completed single
+  pick — the re-tap above included, inline too — after `onValueChange`, and never on Clear or a
+  dismiss. Without it a re-tap and a dismiss look the same (`onOpenChange(false)`, then `onClose`),
+  so a form that moves on after a pick stalls on a prefilled day. `range` and `multiple` type it as
+  `never`, so it is a type error outside single mode and the root can pull it out of the `View` props.
 - **A half-picked range is never reported.** The first tap is held in `rangeDraft` inside the
   root; `onValueChange` fires once the range is complete, and on Clear. Dismissing the sheet —
   swipe, scrim, close, Done, or a controlled `isOpen={false}` — drops the draft and any pending
@@ -115,6 +120,11 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   abandoned. `isClearable` defaults on for range and multiple, off for single.
 - **The calendar keeps its own size.** `calendarSize` (default `md`) is independent of the trigger's
   `size`: a `sm` field must not shrink day targets below 44pt.
+- **The year list scrolls, not the sheet.** `DatePicker.Calendar` passes the sheet's content pan
+  to the calendar as `yearListBlocksGesture`, read with the engine's
+  `useOptionalBottomSheetInternal()`, so a slow drag on the years scrolls them instead of moving the
+  sheet. Inline, outside a sheet, it passes nothing. The calendar's `AGENTS.md` has the gesture
+  and the shapes that failed.
 - **`presentation` is a union, not a boolean**, so an anchored `"popover"` can join it once the
   Overlays category ships one, without a breaking change. Today: `sheet` (default) and `inline`,
   which draws the calendar on a card in place and renders no trigger. There is no popover import

@@ -85,6 +85,12 @@ long table goes in a `FlatList` using the same row parts.
 
 ## Accessibility
 
+- **A sort button's `hitSlop` stops at its own cell** (`resolveTableSortHitSlop`). The button is
+  its label's height, short of a touch target, so it grows vertically to the row's room and
+  horizontally to the cell's padding: any further and the head's bounds would clip it, or the
+  slop would meet the next column's button or the first body row. A pressable *row* is
+  full-width and abuts the next with no gap, so it takes none — a slop there would only steal
+  the neighbour's touches.
 - **There is no table role on iOS.** The root is `accessibilityRole="none"`, and each cell
   instead names its column: its accessible name defaults to "<header>, <value>" when the
   matching head holds text (`resolveCellAccessibilityLabel`). The root reads the head text out

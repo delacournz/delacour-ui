@@ -1,7 +1,10 @@
-import { describe, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
+import { AccessibilityInfo, Platform } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
+import { Field } from "../field";
 import { OverlayProvider } from "../overlay";
 import { Feedback, type FeedbackProps } from "./feedback";
 import { useFeedback } from "./feedback.context";
@@ -132,6 +135,33 @@ describe("Feedback", () => {
 		expect(screen.getByLabelText("Your message")).toBeOnTheScreen();
 	});
 
+	test("the field falls back to the title, then the placeholder, outside a Field", async () => {
+		await renderWithProviders(<Harness defaultOpen />, { wrapper: Overlays });
+		expect(field()).toHaveProp("accessibilityLabel", "What should we fix first?");
+		expect(field().props.accessibilityHint).toBeUndefined();
+	});
+
+	test("inside a Field it is named by the label and speaks required, error and description", async () => {
+		await renderWithProviders(
+			<Feedback defaultOpen>
+				<Feedback.Content>
+					<Feedback.Panel>
+						<Feedback.Title>Question</Feedback.Title>
+						<Field isInvalid isRequired>
+							<Field.Label>Message</Field.Label>
+							<Feedback.Field placeholder="Tell us" />
+							<Field.Description>Be specific.</Field.Description>
+							<Field.Error>Required</Field.Error>
+						</Field>
+					</Feedback.Panel>
+				</Feedback.Content>
+			</Feedback>,
+			{ wrapper: Overlays }
+		);
+		expect(field()).toHaveProp("accessibilityLabel", "Message, required");
+		expect(field()).toHaveProp("accessibilityHint", "Invalid: Required. Be specific.");
+	});
+
 	test("Submit is disabled for an empty or whitespace draft and does not fire", async () => {
 		const onSubmit = jest.fn<(value: string) => void>();
 		await renderWithProviders(<Harness defaultOpen defaultValue="   " onSubmit={onSubmit} />, { wrapper: Overlays });
@@ -252,6 +282,43 @@ describe("Feedback", () => {
 				return null;
 			}
 			await silenced(<Probe />, /useFeedback must be called inside a <Feedback>/);
+		});
+	});
+
+	describe("result announcement", () => {
+		const originalOS = Platform.OS;
+		let withOptions: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+		let plain: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+
+		beforeEach(() => {
+			resetAnnouncer();
+			Object.defineProperty(Platform, "OS", { configurable: true, get: () => "ios" });
+			plain = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+			withOptions = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+			plain.mockClear();
+			withOptions.mockClear();
+		});
+
+		afterEach(() => {
+			Object.defineProperty(Platform, "OS", { configurable: true, get: () => originalOS });
+			jest.restoreAllMocks();
+		});
+
+		test("a resolved send is announced polite, once", async () => {
+			await renderWithProviders(<Harness defaultOpen defaultValue="hi" onSubmit={async () => undefined} />, {
+				wrapper: Overlays,
+			});
+			await press("Send");
+			await waitFor(() => expect(withOptions).toHaveBeenCalledTimes(1));
+			expect(withOptions).toHaveBeenCalledWith("Feedback sent", { queue: true });
+		});
+
+		test("a synchronous send announces nothing", async () => {
+			await renderWithProviders(<Harness defaultOpen defaultValue="hi" onSubmit={() => undefined} />, {
+				wrapper: Overlays,
+			});
+			await press("Send");
+			expect(withOptions).not.toHaveBeenCalled();
 		});
 	});
 });

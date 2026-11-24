@@ -7,7 +7,7 @@ import { buildLinePath } from "../core/curve/build-line";
 import { toCurvePath } from "../core/interaction/path-segments";
 import { EMPTY_SCRUB_MODEL, type ScrubModel, type ScrubSeries } from "../gesture/gesture.types";
 import { ChartGestureOverlay } from "../gesture/gesture-overlay";
-import { useScrubGesture } from "../gesture/use-scrub-gesture";
+import { useScrubFocus, useScrubGesture } from "../gesture/use-scrub-gesture";
 import { CartesianChartContext } from "./cartesian-chart.context";
 import type { CartesianChartProps, CartesianRenderArgs, XKeyOf, YKeyOf } from "./cartesian-chart.types";
 import { useCanvasSize } from "./hooks/use-canvas-size";
@@ -109,6 +109,7 @@ export function CartesianChart<
 	}, [bounds, onBoundsChange]);
 
 	const gesture = useScrubGesture({ state: scrub, model: scrubModel, config: scrubConfig });
+	useScrubFocus(scrub, scrubModel);
 
 	const content =
 		typeof children === "function"

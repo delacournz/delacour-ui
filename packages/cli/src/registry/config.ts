@@ -765,6 +765,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "expo-blur as ScrollBlur's engine — mount it once with ScrollBlurLayerProvider.",
 	},
 
+	announce: {
+		title: "announce",
+		description: "Screen-reader announcements by one route per platform, throttled and coalesced per key.",
+	},
 	"calm-motion": {
 		title: "calmMotion",
 		description: "Whether decorative loops hold still: reduce motion, or an app's E2E build asking.",
@@ -772,6 +776,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	cn: { title: "cn", description: "Class merging that understands the library's semantic size tokens." },
 	color: { title: "isLiteralColor", description: "Tells a literal colour from a theme token name." },
 	"compose-refs": { title: "composeRefs", description: "Merges several refs onto one node." },
+	labels: {
+		title: "labels",
+		description: "Every string the components speak or show on their own, with English defaults and the merge order.",
+	},
 	"keyboard-animation": {
 		title: "keyboardAnimation",
 		description: "The timing the keyboard opens with, so content moving with it stays in step.",
@@ -802,14 +810,37 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "tv",
 		description: "tailwind-variants, taught the library's semantic size tokens.",
 	},
+	"modal-accessibility": {
+		title: "modalAccessibility",
+		description:
+			"Where focus lands in a modal container, and when it holds a screen reader and takes the escape scrub.",
+	},
 	"wrap-text-children": {
 		title: "wrapTextChildren",
 		description: "Wraps bare text children in an element React Native can render; asChild is left alone.",
 	},
 
+	"use-announce": {
+		title: "useAnnounce",
+		description: "announce(), useAnnounce() and useAnnouncement() — heard once on iOS, Android and the web.",
+	},
 	"use-calm-motion": {
 		title: "useCalmMotion",
 		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+	},
+	"use-minimum-hit-target": {
+		title: "useMinimumHitSlop",
+		description:
+			"The hitSlop that grows a small control to the minimum touch target, and the provider an Android app opts into 48dp with.",
+	},
+	"use-labels": {
+		title: "useLabels",
+		description: "A component's spoken strings, and the provider an app translates them with.",
+	},
+	"use-modal-accessibility": {
+		title: "useModalAccessibility",
+		description:
+			"A modal container's VoiceOver containment and escape, with focus moved in on open and back to the trigger on close.",
 	},
 	"use-reduce-transparency": {
 		title: "useReduceTransparency",

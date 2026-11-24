@@ -112,15 +112,19 @@ half-initialised.
 - **`isUnstyled` strips the surface, the border, the corner and the padding** of the panel and the
   arrow's paint, keeping the gap. `background` is drawn absolutely behind the content, for a
   caller painting their own surface.
+- **The ✕ reaches 44pt through slop alone.** Its 20pt glyph has no padding, so `useMinimumHitSlop` adds 12pt a side (8pt left a 36pt target); no pixel moves.
 - **Triggers donate the press.** `Popover.Trigger asChild` hands the toggle to the child's
   `onPress` and composes the measuring ref onto the child's, for `BottomSheet.Trigger`'s reason —
   so the child must be built on `Pressable`. It reports `accessibilityState.expanded`.
 - **`Popover.Anchor` takes the measuring from the trigger while it is mounted.** The root keeps one
   `useAnchorMeasure` per candidate and enables only the one in use; the trigger still opens the
   panel and still takes focus back.
-- **Modal for assistive technology.** The panel is `accessibilityViewIsModal`, `role="dialog"`,
+- **Modal for assistive technology.** The panel goes through the overlay's `useOverlayModalAccessibility`:
+  `accessibilityViewIsModal` while it is open and the top overlay (a popover opened inside a dialog
+  holds VoiceOver and the dialog lets go; a popover inside a popover likewise), `role="dialog"`,
   labelled by the title's `nativeID`; on entry focus goes to the title (or the panel), on exit back
-  to the trigger, and `onAccessibilityEscape` closes it. Android back closes it while it is the top
+  to the trigger, and `onAccessibilityEscape` closes it when dismissible. It stays modal with
+  `hasScrim={false}`: the dismiss layer still swallows outside taps. Android back closes it while it is the top
   overlay (`useOverlayBackHandler`).
 - **Draws in the `anchored` band.** Over every sheet and over the dialog it was opened from — the
   foundation's z-order.

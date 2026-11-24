@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import type { PopoverAlign, PopoverPlacement, PopoverWidth } from "./popover.position";
 
 /**
@@ -43,8 +44,11 @@ export const POPOVER_ENTER_DISTANCE = 6;
 /** The scale the panel grows from, at the arrow. */
 export const POPOVER_ENTER_SCALE = 0.96;
 
-/** A bare glyph in a corner has no capsule to bring it to 44pt — the slop does. */
-export const POPOVER_CLOSE_HIT_SLOP = 8;
+/** The drawn edge of the default ✕ — `Icon`'s `size-icon-lg`, with no padding of its own. */
+export const POPOVER_CLOSE_SIZE = 20;
+
+/** Slop that takes the ✕ to 44pt — a bare glyph has no capsule. The component asks `useMinimumHitSlop` so Android can opt up to 48. */
+export const POPOVER_CLOSE_HIT_SLOP = resolveMinimumHitSlop(POPOVER_CLOSE_SIZE);
 
 /**
  * Styling for every part of a popover.

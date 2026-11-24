@@ -45,6 +45,7 @@ failure mode makes a test necessary rather than a convention sufficient.
 | `text/label-anchor.ts` | Baseline-anchored text placed against a point |
 | `text/bar-label.ts` | A label against a bar's value end, base end or side; `top` follows the value end either way round |
 | `util/read-at.ts` | A list read that yields `NaN` for a gap or a missing index — the scrub's flat worklet |
+| `shape/dash-intervals.ts` | A dash's visible on/off into Skia's intervals, one stroke width moved from each dash to its gap under a round or square cap |
 | `shape/rect-path.ts` | A rectangle as `M C L C L C L C Z`, every corner a cubic |
 | `shape/build-bars.ts` | Points or segments to bar rects and one path, the baseline held inside the plot |
 | `shape/build-scatter.ts` | A circle, square or star per point, each on a fixed verb sequence |

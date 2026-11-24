@@ -63,8 +63,9 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   chained ahead of the child's own, for `BottomSheet.Trigger`'s reason: two tap gestures in an
   ancestor/descendant pair are not simultaneous, so a pressable wrapped around a `Button` never
   fires. The child has to be something that handles `onPress`.
-- **The corner ✕ presses with `fade` and 8pt of slop.** A scale on a glyph this small reads as a
-  jitter, and a bare glyph has no capsule to bring it toward 44pt. It sits out of the flow, and
+- **The corner ✕ presses with `fade` and slop that reaches 44pt.** A scale on a glyph this small reads as a
+  jitter, and a bare glyph has no capsule, so its 20pt edge plus `useMinimumHitSlop` (12pt a side; 14 under
+  `isMaterialHitTarget` on Android) is the target. It sits out of the flow, and
   `Dialog.Title`'s `pr-8` reserves its clearance on every dialog, so adding a close never reflows
   the title.
 - **The title and description carry no type of their own.** They *are* `Text.Header` and a muted
@@ -81,12 +82,18 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   `useReanimatedKeyboardAnimation`'s height, so it rides the keyboard's own frames. The card's
   edges come from `onLayout`, which ignores transforms, so the lift never feeds back into itself.
   The positioner fills the portal host, which fills the window, so layout `y` is window `y`.
-- **Accessibility.** The card is `accessibilityViewIsModal` with `role="dialog"` (or
-  `"alertdialog"`, `resolveDialogRole`) and `accessibilityLabelledBy` the title's `nativeID` for
-  Android. Once the entrance finishes (`onEntered`) focus moves to the title; once the exit
-  finishes, to the trigger, if one is still mounted. `findNodeHandle` of a ref that has gone is
-  null, and focus is then left where the system puts it. `Dialog.Title` takes no `ref` for that
-  reason — the dialog holds it.
+- **Accessibility.** `useOverlayModalAccessibility` (from `overlay`) owns the card's containment and
+  focus. `accessibilityViewIsModal` and `onAccessibilityEscape` are spread from its
+  `containerProps`: set only while the dialog is open and the top overlay — a popover or menu
+  opened from it takes VoiceOver and the escape scrub, and the card lets go — and no escape with
+  `isDismissible={false}`. The card has `role="dialog"` (or `"alertdialog"`, `resolveDialogRole`)
+  and `accessibilityLabelledBy` the title's `nativeID` for Android. Once the entrance finishes
+  (`onEntered`) focus moves to the title, or the card when there is no title; once the exit
+  finishes, to the trigger, if one is still mounted. `Dialog.Title` takes no `ref` for that
+  reason — the dialog holds it. `Dialog.Trigger` carries `accessibilityState.expanded` while the
+  dialog is open (merged with the caller's state), the screen-reader counterpart of
+  `aria-expanded`. Android containment (app content and overlays under the top modal hidden) is
+  `OverlayProvider`'s and `Overlay.Portal`'s, which the card draws through.
 - **No blur backdrop.** Frosted scrims need `expo-blur`, which is not a peer; recorded as a
   follow-up for every overlay.
 

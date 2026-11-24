@@ -1,5 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { DirectionProvider, directionContextValue } from "../direction/direction.context";
 import { Chip } from "./chip";
 
 const REMOVE = { nativeEvent: { actionName: "remove" } };
@@ -12,6 +13,24 @@ const REMOVE = { nativeEvent: { actionName: "remove" } };
  */
 
 describe("Chip", () => {
+	describe("close slop follows the layout direction", () => {
+		test("inside a rtl Direction in an ltr app, the leading cap lands on the right", async () => {
+			await renderWithProviders(
+				<DirectionProvider value={directionContextValue("rtl")}>
+					<Chip onClose={() => {}}>Design</Chip>
+				</DirectionProvider>
+			);
+			const slop = screen.getByRole("button", { name: "Remove" }).props.hitSlop;
+			expect(slop.left).toBeGreaterThan(slop.right);
+		});
+
+		test("with no Direction in an ltr app, the leading cap lands on the left", async () => {
+			await renderWithProviders(<Chip onClose={() => {}}>Design</Chip>);
+			const slop = screen.getByRole("button", { name: "Remove" }).props.hitSlop;
+			expect(slop.right).toBeGreaterThan(slop.left);
+		});
+	});
+
 	describe("what the props make it", () => {
 		test("with no handler it is a tag, not announced as a control", async () => {
 			await renderWithProviders(<Chip>Shipped</Chip>);

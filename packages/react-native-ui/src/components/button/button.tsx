@@ -1,4 +1,5 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
@@ -13,6 +14,7 @@ import {
 	type ButtonVariant,
 	buttonVariants,
 	resolveButtonFeedback,
+	resolveButtonHitTarget,
 	resolveButtonLayout,
 	resolveGroupedButtonSize,
 	resolveSpinnerSwapIndex,
@@ -50,6 +52,7 @@ function ButtonRoot({
 	accessibilityLabel,
 	className,
 	children,
+	hitSlop,
 	...props
 }: ButtonProps): ReactElement {
 	// Deliberately not defaulted in the destructure above: a default there would
@@ -92,6 +95,12 @@ function ButtonRoot({
 		[iconClassName, resolvedVariant]
 	);
 
+	// `sm` and `icon-sm` draw at 36pt; slop takes the target to the app's
+	// minimum without moving a pixel. A caller's own `hitSlop` wins outright.
+	const minimumHitSlop = useMinimumHitSlop(
+		resolveButtonHitTarget({ orientation: item?.orientation, size: resolvedSize })
+	);
+
 	const label = accessibilityLabel ?? (layout.isSpinnerOnly ? textOf(children) : undefined);
 
 	return (
@@ -103,6 +112,7 @@ function ButtonRoot({
 				className={slots.root({ className })}
 				disabled={resolvedIsDisabled}
 				feedback={resolveButtonFeedback(feedback, item?.feedback, item !== null, item?.isAttached)}
+				hitSlop={hitSlop ?? minimumHitSlop}
 				{...props}
 			>
 				<IconDefaultsProvider value={iconDefaults}>
@@ -131,29 +141,30 @@ function ButtonRoot({
  * `only` drops the children: the spinner stands in for the whole content, and
  * the button keeps whatever footprint its `size` gave it.
  *
- * The spinner is emitted bare — it reads its size and colour from the button's
- * context, so nothing is passed here.
+ * The spinner reads its size and colour from the button's context. Its name is
+ * blanked: the button is the one accessible stop and already says `busy`, so a
+ * spinner named "Loading" would only append itself to the button's own name.
  */
 function composeContent(children: ReactNode, layout: ButtonLayout): ReactNode {
-	if (layout.isSpinnerOnly) return <Spinner />;
+	if (layout.isSpinnerOnly) return <Spinner accessibilityLabel="" />;
 	if (layout.spinnerSide === null) return wrapTextChildren(children);
 
 	const items = Children.toArray(wrapTextChildren(children));
 	const swapAt = resolveSpinnerSwapIndex(items.map(isIcon), layout.spinnerSide);
 
 	if (swapAt !== null) {
-		return items.map((child, index) => (index === swapAt ? <Spinner key="spinner" /> : child));
+		return items.map((child, index) => (index === swapAt ? <Spinner accessibilityLabel="" key="spinner" /> : child));
 	}
 
 	return layout.spinnerSide === "start" ? (
 		<>
-			<Spinner />
+			<Spinner accessibilityLabel="" />
 			{items}
 		</>
 	) : (
 		<>
 			{items}
-			<Spinner />
+			<Spinner accessibilityLabel="" />
 		</>
 	);
 }

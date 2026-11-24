@@ -12,6 +12,7 @@ import {
 	isCountdownUrgent,
 	msUntilNextTick,
 	resolveCountdownAccessibilityLabel,
+	resolveCountdownAnnouncement,
 	resolveCountdownUnits,
 	secondsUntil,
 	splitCountdown,
@@ -279,5 +280,36 @@ describe("countdownVariants", () => {
 
 	test("every unit has a default caption", () => {
 		for (const unit of COUNTDOWN_UNITS) expect(COUNTDOWN_DEFAULT_LABELS[unit].length).toBeGreaterThan(0);
+	});
+});
+
+describe("resolveCountdownAnnouncement", () => {
+	test("speaks only at the milestones, never on the seconds between", () => {
+		const spoken = Array.from({ length: 2 * HOUR + 1 }, (_, i) => i).filter(
+			(s) => resolveCountdownAnnouncement(s, ALL) !== null
+		);
+		expect(spoken).toEqual([0, 10, 30, 60, 5 * MINUTE, 10 * MINUTE, HOUR]);
+	});
+
+	test("a milestone is the coarse label for that moment", () => {
+		expect(resolveCountdownAnnouncement(HOUR, ALL)).toBe("1 hour left");
+		expect(resolveCountdownAnnouncement(MINUTE, ALL)).toBe("1 minute left");
+		expect(resolveCountdownAnnouncement(30, ALL)).toBe("30 seconds left");
+		expect(resolveCountdownAnnouncement(10, ALL)).toBe("10 seconds left");
+	});
+
+	test("expiry is Time is up", () => {
+		expect(resolveCountdownAnnouncement(0, ALL)).toBe("Time is up");
+		expect(resolveCountdownAnnouncement(0, ["minutes"])).toBe("Time is up");
+	});
+
+	test("a seconds milestone is skipped when seconds are not shown", () => {
+		expect(resolveCountdownAnnouncement(30, ["hours", "minutes"])).toBeNull();
+		expect(resolveCountdownAnnouncement(10, ["hours", "minutes"])).toBeNull();
+		expect(resolveCountdownAnnouncement(MINUTE, ["hours", "minutes"])).toBe("1 minute left");
+	});
+
+	test("names units with the caller's labels", () => {
+		expect(resolveCountdownAnnouncement(30, ALL, { seconds: "secs" })).toMatch(/secs/);
 	});
 });

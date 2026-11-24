@@ -234,6 +234,21 @@ describe("Switch accessibility", () => {
 
 		expect(screen.getByRole("switch", { name: "Push alerts" })).toBeOnTheScreen();
 	});
+
+	test("inside an invalid, required Field it is named and described by the Field", async () => {
+		await renderWithProviders(
+			<Field isInvalid isRequired>
+				<Field.Label>Notifications</Field.Label>
+				<Switch />
+				<Field.Error>Turn this on to continue.</Field.Error>
+				<Field.Description>Push alerts.</Field.Description>
+			</Field>
+		);
+		const control = screen.getByRole("switch");
+		expect(control.props.accessibilityLabel).toBe("Notifications, required");
+		expect(control.props.accessibilityHint).toContain("Invalid: Turn this on to continue.");
+		expect(control.props.accessibilityHint).toContain("Push alerts.");
+	});
 });
 
 describe("Switch gesture", () => {

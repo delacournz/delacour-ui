@@ -1,3 +1,4 @@
+import { isValidElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 import type { TextSize } from "../text/text.variants";
@@ -269,3 +270,36 @@ export function shouldEmitSelection(current: string | null, next: string): boole
 }
 
 export type RadioVariantProps = VariantProps<typeof radioVariants>;
+
+/**
+ * The text of a radio's inline content, or `undefined` when it holds none.
+ *
+ * The row's text names the radio already, but as a node; the Field's resolver
+ * needs a string to join "required" onto. Walks strings, numbers and any
+ * element's `children`. Pure, so it is unit-testable. See AGENTS.md.
+ */
+export function extractRadioText(node: ReactNode): string | undefined {
+	const text = collectText(node)?.trim();
+	return text === undefined || text === "" ? undefined : text;
+}
+
+function collectText(node: ReactNode): string | undefined {
+	if (typeof node === "string" || typeof node === "number") return String(node);
+	if (node === null || node === undefined || typeof node === "boolean") return "";
+	if (Array.isArray(node)) {
+		let text = "";
+		for (const child of node) {
+			const part = collectText(child);
+			if (part === undefined) return undefined;
+			text += part;
+		}
+		return text;
+	}
+	if (isValidElement<{ children?: ReactNode }>(node)) {
+		// A child-less element may render its own words (`<TermsLink />`), which
+		// cannot be read before render, so the whole content is unreadable.
+		if (node.props.children === undefined) return undefined;
+		return collectText(node.props.children);
+	}
+	return "";
+}

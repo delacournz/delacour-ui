@@ -1,15 +1,18 @@
 import { describe, expect, test } from "bun:test";
-import { declaredTokens } from "../../styles/theme-tokens.test";
+import { declaredTokens, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { CHIP_SIZES } from "../chip/chip.variants";
 import { INPUT_SIZES, INPUT_VARIANTS } from "../input/input.variants";
 import {
 	resolveSearchBarCancelVisibility,
+	resolveSearchBarClearHitSlop,
 	resolveSearchBarClearVisibility,
 	resolveSearchBarCorner,
 	resolveSearchBarSuffix,
 	resolveTokenBackspace,
 	SEARCH_BAR_CANCEL_BUTTON_SIZE,
 	SEARCH_BAR_CANCEL_MODES,
+	SEARCH_BAR_CLEAR_GAP,
+	SEARCH_BAR_CLEAR_SIZE,
 	SEARCH_BAR_SHAPES,
 	SEARCH_BAR_SIZES,
 	SEARCH_BAR_TOKEN_CHIP_SIZE,
@@ -194,5 +197,42 @@ describe("resolveTokenBackspace", () => {
 	test("no tokens, nothing to remove", () => {
 		expect(resolveTokenBackspace("", [])).toEqual({ kind: "none" });
 		expect(resolveTokenBackspace("", undefined)).toEqual({ kind: "none" });
+	});
+});
+
+describe("resolveSearchBarClearHitSlop", () => {
+	test("the glyph and gap match the icon and row-gap tokens", () => {
+		const icon = { sm: "sm", md: "md", lg: "lg" } as const;
+		for (const size of INPUT_SIZES) {
+			const px = TOKENS_CSS.match(new RegExp(`--spacing-icon-${icon[size]}:\\s*(\\d+)px`))?.[1];
+			expect(Number(px)).toBe(SEARCH_BAR_CLEAR_SIZE[size]);
+		}
+		expect(SEARCH_BAR_CLEAR_GAP).toEqual({ lg: 10, md: 8, sm: 6 });
+	});
+
+	test("vertical reach is 44 at every size", () => {
+		for (const size of INPUT_SIZES) {
+			const slop = resolveSearchBarClearHitSlop(size);
+			expect(slop).toBeDefined();
+			expect(SEARCH_BAR_CLEAR_SIZE[size] + 2 * (slop?.top ?? 0)).toBeGreaterThanOrEqual(44);
+			expect(slop?.top).toBe(slop?.bottom);
+		}
+	});
+
+	test("horizontal slop never leaves the gap beside the glyph", () => {
+		for (const size of INPUT_SIZES) {
+			const slop = resolveSearchBarClearHitSlop(size);
+			expect(slop?.left).toBeLessThanOrEqual(SEARCH_BAR_CLEAR_GAP[size]);
+			expect(slop?.right).toBeLessThanOrEqual(SEARCH_BAR_CLEAR_GAP[size]);
+		}
+	});
+
+	test("Material's 48 asks for more vertically, the same horizontally", () => {
+		expect(resolveSearchBarClearHitSlop("md", 48)?.top).toBe(15);
+		expect(resolveSearchBarClearHitSlop("md", 48)?.left).toBe(8);
+	});
+
+	test("a minimum the glyph already meets needs no slop", () => {
+		expect(resolveSearchBarClearHitSlop("md", 18)).toBeUndefined();
 	});
 });

@@ -52,7 +52,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 48,
+		fileCount: 49,
 		groups: [
 			{
 				name: "button",
@@ -193,6 +193,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"context-menu": {
@@ -204,7 +212,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 59,
+		fileCount: 61,
 		groups: [
 			{
 				name: "context-menu",
@@ -354,6 +362,14 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -377,6 +393,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
 		],
 	},
 	"menu": {
@@ -388,7 +412,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 50,
+		fileCount: 52,
 		groups: [
 			{
 				name: "menu",
@@ -522,6 +546,14 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -543,6 +575,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 		],
@@ -744,7 +784,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 61,
+		fileCount: 64,
 		groups: [
 			{
 				name: "stack-card",
@@ -905,6 +945,30 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -923,7 +987,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 42,
+		fileCount: 44,
 		groups: [
 			{
 				name: "slide-button",
@@ -1058,6 +1122,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -1076,7 +1156,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 62,
+		fileCount: 63,
 		groups: [
 			{
 				name: "selection-mode",
@@ -1237,6 +1317,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -1263,7 +1351,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 35,
+		fileCount: 37,
 		groups: [
 			{
 				name: "progress-button",
@@ -1384,6 +1472,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -1402,7 +1506,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 57,
 		groups: [
 			{
 				name: "toggle-button",
@@ -1558,6 +1662,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -1576,7 +1688,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 36,
+		fileCount: 38,
 		groups: [
 			{
 				name: "fab",
@@ -1698,6 +1810,22 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
 		],
 	},
 	"field": {
@@ -1709,7 +1837,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 36,
+		fileCount: 43,
 		groups: [
 			{
 				name: "field",
@@ -1718,6 +1846,7 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -1730,6 +1859,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -1754,26 +1906,6 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -1795,6 +1927,22 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -1803,11 +1951,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 		],
@@ -1821,7 +1977,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 75,
+		fileCount: 83,
 		groups: [
 			{
 				name: "input",
@@ -1922,12 +2078,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2003,6 +2171,30 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
 		],
 	},
 	"textarea": {
@@ -2014,7 +2206,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 79,
+		fileCount: 87,
 		groups: [
 			{
 				name: "textarea",
@@ -2106,12 +2298,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2207,6 +2411,30 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
 		],
 	},
 	"theme-selector": {
@@ -2218,7 +2446,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 80,
+		fileCount: 88,
 		groups: [
 			{
 				name: "theme-selector",
@@ -2234,6 +2462,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/theme-selector/theme-selector.types.ts", target: "src/components/ui/theme-selector/theme-selector.types.ts" },
 					{ source: "packages/react-native-ui/src/components/theme-selector/theme-selector.variants.ts", target: "src/components/ui/theme-selector/theme-selector.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/theme-selector/use-theme-selection.ts", target: "src/components/ui/theme-selector/use-theme-selection.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -2258,24 +2509,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2350,14 +2590,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -2379,6 +2611,22 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -2387,11 +2635,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -2419,6 +2675,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -2437,7 +2701,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 108,
+		fileCount: 121,
 		groups: [
 			{
 				name: "tag-input",
@@ -2508,6 +2772,18 @@ export const install = {
 				],
 			},
 			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
+				],
+			},
+			{
 				name: "chip",
 				title: "Chip",
 				kind: "component",
@@ -2522,6 +2798,17 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/chip/chip.types.ts", target: "src/components/ui/chip/chip.types.ts" },
 					{ source: "packages/react-native-ui/src/components/chip/chip.variants.ts", target: "src/components/ui/chip/chip.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/chip/index.ts", target: "src/components/ui/chip/index.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -2541,6 +2828,7 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2678,11 +2966,35 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -2712,7 +3024,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 87,
+		fileCount: 95,
 		groups: [
 			{
 				name: "otp-input",
@@ -2728,6 +3040,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/otp-input/otp-input.logic.ts", target: "src/components/ui/otp-input/otp-input.logic.ts" },
 					{ source: "packages/react-native-ui/src/components/otp-input/otp-input.tsx", target: "src/components/ui/otp-input/otp-input.tsx" },
 					{ source: "packages/react-native-ui/src/components/otp-input/otp-input.variants.ts", target: "src/components/ui/otp-input/otp-input.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -2752,24 +3087,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2850,14 +3174,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -2879,6 +3195,22 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -2887,11 +3219,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -2908,6 +3248,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -2945,7 +3293,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 89,
+		fileCount: 97,
 		groups: [
 			{
 				name: "number-input",
@@ -2964,6 +3312,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/number-input/number-input.types.ts", target: "src/components/ui/number-input/number-input.types.ts" },
 					{ source: "packages/react-native-ui/src/components/number-input/number-input.variants.ts", target: "src/components/ui/number-input/number-input.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/number-input/use-step-repeat.ts", target: "src/components/ui/number-input/use-step-repeat.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -2988,24 +3359,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -3115,6 +3475,14 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -3123,11 +3491,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -3155,6 +3531,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -3173,7 +3557,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 117,
+		fileCount: 125,
 		groups: [
 			{
 				name: "markdown-editor",
@@ -3274,12 +3658,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -3422,6 +3818,30 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -3529,7 +3949,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 61,
 		groups: [
 			{
 				name: "checkbox",
@@ -3545,6 +3965,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/checkbox/checkbox.types.ts", target: "src/components/ui/checkbox/checkbox.types.ts" },
 					{ source: "packages/react-native-ui/src/components/checkbox/checkbox.variants.ts", target: "src/components/ui/checkbox/checkbox.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/checkbox/index.ts", target: "src/components/ui/checkbox/index.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -3569,24 +4012,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -3614,14 +4046,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -3643,6 +4067,22 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -3651,11 +4091,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -3701,7 +4149,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 48,
+		fileCount: 54,
 		groups: [
 			{
 				name: "chip",
@@ -3773,6 +4221,18 @@ export const install = {
 				],
 			},
 			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
+				],
+			},
+			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -3842,6 +4302,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -3860,7 +4328,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 163,
+		fileCount: 179,
 		groups: [
 			{
 				name: "combobox",
@@ -3962,12 +4430,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -4018,6 +4498,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -4067,6 +4548,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -4174,6 +4667,46 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -4232,7 +4765,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 45,
+		fileCount: 52,
 		groups: [
 			{
 				name: "radio",
@@ -4247,6 +4780,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/radio/radio.context.tsx", target: "src/components/ui/radio/radio.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/radio/radio.tsx", target: "src/components/ui/radio/radio.tsx" },
 					{ source: "packages/react-native-ui/src/components/radio/radio.variants.ts", target: "src/components/ui/radio/radio.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -4271,24 +4827,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -4301,14 +4846,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -4333,6 +4870,22 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -4341,11 +4894,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -4367,7 +4928,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 61,
 		groups: [
 			{
 				name: "switch",
@@ -4384,6 +4945,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/switch/switch.tsx", target: "src/components/ui/switch/switch.tsx" },
 					{ source: "packages/react-native-ui/src/components/switch/switch.types.ts", target: "src/components/ui/switch/switch.types.ts" },
 					{ source: "packages/react-native-ui/src/components/switch/switch.variants.ts", target: "src/components/ui/switch/switch.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -4408,24 +4992,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -4453,14 +5026,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -4482,6 +5047,22 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -4490,11 +5071,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -4532,7 +5121,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-reanimated", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 44,
+		fileCount: 47,
 		groups: [
 			{
 				name: "chart",
@@ -4540,10 +5129,12 @@ export const install = {
 				kind: "self",
 				files: [
 					{ source: "packages/react-native-ui/src/components/chart/AGENTS.md", target: "src/components/ui/chart/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-accessibility.ts", target: "src/components/ui/chart/chart-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-area.tsx", target: "src/components/ui/chart/chart-area.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-bar.tsx", target: "src/components/ui/chart/chart-bar.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-bars.tsx", target: "src/components/ui/chart/chart-bars.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-candlestick.tsx", target: "src/components/ui/chart/chart-candlestick.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-frame.tsx", target: "src/components/ui/chart/chart-frame.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-grid.tsx", target: "src/components/ui/chart/chart-grid.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-legend.tsx", target: "src/components/ui/chart/chart-legend.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-line.tsx", target: "src/components/ui/chart/chart-line.tsx" },
@@ -4561,6 +5152,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/chart/index.ts", target: "src/components/ui/chart/index.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-center.tsx", target: "src/components/ui/chart/pie-chart-center.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-label.tsx", target: "src/components/ui/chart/pie-chart-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice-targets.tsx", target: "src/components/ui/chart/pie-chart-slice-targets.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice.tsx", target: "src/components/ui/chart/pie-chart-slice.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-tooltip.tsx", target: "src/components/ui/chart/pie-chart-tooltip.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart.context.tsx", target: "src/components/ui/chart/pie-chart.context.tsx" },
@@ -4645,7 +5237,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 71,
+		fileCount: 72,
 		groups: [
 			{
 				name: "flow",
@@ -4821,6 +5413,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -4855,7 +5455,7 @@ export const install = {
 		expo: ["react-native-reanimated", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 22,
+		fileCount: 24,
 		groups: [
 			{
 				name: "countdown",
@@ -4913,6 +5513,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -4939,7 +5555,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 103,
+		fileCount: 109,
 		groups: [
 			{
 				name: "kpi",
@@ -5054,10 +5670,12 @@ export const install = {
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/chart/AGENTS.md", target: "src/components/ui/chart/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-accessibility.ts", target: "src/components/ui/chart/chart-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-area.tsx", target: "src/components/ui/chart/chart-area.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-bar.tsx", target: "src/components/ui/chart/chart-bar.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-bars.tsx", target: "src/components/ui/chart/chart-bars.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-candlestick.tsx", target: "src/components/ui/chart/chart-candlestick.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-frame.tsx", target: "src/components/ui/chart/chart-frame.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-grid.tsx", target: "src/components/ui/chart/chart-grid.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-legend.tsx", target: "src/components/ui/chart/chart-legend.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-line.tsx", target: "src/components/ui/chart/chart-line.tsx" },
@@ -5075,6 +5693,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/chart/index.ts", target: "src/components/ui/chart/index.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-center.tsx", target: "src/components/ui/chart/pie-chart-center.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-label.tsx", target: "src/components/ui/chart/pie-chart-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice-targets.tsx", target: "src/components/ui/chart/pie-chart-slice-targets.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice.tsx", target: "src/components/ui/chart/pie-chart-slice.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-tooltip.tsx", target: "src/components/ui/chart/pie-chart-tooltip.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart.context.tsx", target: "src/components/ui/chart/pie-chart.context.tsx" },
@@ -5163,11 +5782,35 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 		],
@@ -5181,7 +5824,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 160,
+		fileCount: 168,
 		groups: [
 			{
 				name: "questionnaire",
@@ -5286,12 +5929,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -5508,6 +6163,30 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -5550,7 +6229,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 139,
+		fileCount: 150,
 		groups: [
 			{
 				name: "color-picker",
@@ -5659,12 +6338,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -5715,6 +6406,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -5816,6 +6508,46 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -6035,7 +6767,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 154,
+		fileCount: 165,
 		groups: [
 			{
 				name: "planner",
@@ -6144,12 +6876,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -6200,6 +6944,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -6332,6 +7077,46 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -6542,7 +7327,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 85,
+		fileCount: 93,
 		groups: [
 			{
 				name: "calendar",
@@ -6644,12 +7429,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -6738,6 +7535,30 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -6780,7 +7601,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 150,
+		fileCount: 161,
 		groups: [
 			{
 				name: "date-picker",
@@ -6881,12 +7702,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -6937,6 +7770,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -7074,6 +7908,46 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -7132,7 +8006,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 195,
+		fileCount: 206,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -7235,12 +8109,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -7291,6 +8177,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -7492,6 +8379,46 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -7550,7 +8477,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 47,
+		fileCount: 54,
 		groups: [
 			{
 				name: "rating",
@@ -7565,6 +8492,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/rating/rating.context.tsx", target: "src/components/ui/rating/rating.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/rating/rating.tsx", target: "src/components/ui/rating/rating.tsx" },
 					{ source: "packages/react-native-ui/src/components/rating/rating.variants.ts", target: "src/components/ui/rating/rating.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -7589,24 +8539,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -7619,14 +8558,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -7651,6 +8582,22 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -7659,11 +8606,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -7701,7 +8656,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 81,
+		fileCount: 89,
 		groups: [
 			{
 				name: "signature",
@@ -7805,12 +8760,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -7887,6 +8854,30 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -7921,7 +8912,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 129,
+		fileCount: 140,
 		groups: [
 			{
 				name: "select",
@@ -8020,12 +9011,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -8076,6 +9079,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -8180,6 +9184,46 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -8238,7 +9282,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 111,
+		fileCount: 124,
 		groups: [
 			{
 				name: "search-bar",
@@ -8355,6 +9399,18 @@ export const install = {
 				],
 			},
 			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
+				],
+			},
+			{
 				name: "chip",
 				title: "Chip",
 				kind: "component",
@@ -8372,12 +9428,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -8474,6 +9542,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -8487,6 +9563,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -8516,7 +9608,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 47,
+		fileCount: 54,
 		groups: [
 			{
 				name: "slider",
@@ -8533,6 +9625,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/slider/slider.tsx", target: "src/components/ui/slider/slider.tsx" },
 					{ source: "packages/react-native-ui/src/components/slider/slider.types.ts", target: "src/components/ui/slider/slider.types.ts" },
 					{ source: "packages/react-native-ui/src/components/slider/slider.variants.ts", target: "src/components/ui/slider/slider.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -8557,24 +9672,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -8587,14 +9691,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -8619,6 +9715,22 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -8627,11 +9739,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -8653,7 +9773,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 134,
+		fileCount: 145,
 		groups: [
 			{
 				name: "time-picker",
@@ -8757,12 +9877,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -8813,6 +9945,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -8914,6 +10047,46 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -9118,7 +10291,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 35,
+		fileCount: 36,
 		groups: [
 			{
 				name: "avatar",
@@ -9239,6 +10412,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"badge": {
@@ -9250,7 +10431,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 37,
+		fileCount: 38,
 		groups: [
 			{
 				name: "badge",
@@ -9371,6 +10552,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 		],
@@ -9784,7 +10973,7 @@ export const install = {
 		expo: ["expo-linear-gradient", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 61,
+		fileCount: 62,
 		groups: [
 			{
 				name: "table",
@@ -9945,6 +11134,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"map": {
@@ -9956,7 +11153,7 @@ export const install = {
 		expo: ["@maplibre/maplibre-react-native", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 69,
+		fileCount: 70,
 		groups: [
 			{
 				name: "map",
@@ -10129,6 +11326,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -10348,7 +11553,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 107,
+		fileCount: 115,
 		groups: [
 			{
 				name: "support",
@@ -10433,6 +11638,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -10573,6 +11790,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -10586,6 +11811,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/wrap-text-children.ts", target: "src/lib/wrap-text-children.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -10615,7 +11856,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 77,
+		fileCount: 80,
 		groups: [
 			{
 				name: "scroll-text",
@@ -10787,6 +12028,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "keyboard-animation",
 				title: "keyboardAnimation",
 				kind: "shared",
@@ -10800,6 +12057,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -11517,7 +12782,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 46,
+		fileCount: 48,
 		groups: [
 			{
 				name: "alert",
@@ -11656,6 +12921,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -11674,7 +12955,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 55,
+		fileCount: 56,
 		groups: [
 			{
 				name: "animated-badge",
@@ -11825,6 +13106,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -11997,7 +13286,7 @@ export const install = {
 		expo: ["expo-linear-gradient", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 53,
+		fileCount: 56,
 		groups: [
 			{
 				name: "post",
@@ -12141,6 +13430,30 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 		],
@@ -12312,7 +13625,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 57,
+		fileCount: 64,
 		groups: [
 			{
 				name: "compare",
@@ -12329,6 +13642,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/compare/compare.types.ts", target: "src/components/ui/compare/compare.types.ts" },
 					{ source: "packages/react-native-ui/src/components/compare/compare.variants.ts", target: "src/components/ui/compare/compare.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/compare/index.ts", target: "src/components/ui/compare/index.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -12353,24 +13689,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -12419,6 +13744,14 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -12435,11 +13768,19 @@ export const install = {
 				],
 			},
 			{
-				name: "tv",
-				title: "tv",
+				name: "announce",
+				title: "announce",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -12982,7 +14323,7 @@ export const install = {
 		expo: ["react-native-reanimated", "react-native-svg", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 20,
+		fileCount: 23,
 		groups: [
 			{
 				name: "skeleton",
@@ -12993,6 +14334,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/skeleton/index.ts", target: "src/components/ui/skeleton/index.ts" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-clock.ts", target: "src/components/ui/skeleton/skeleton-clock.ts" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-group.tsx", target: "src/components/ui/skeleton/skeleton-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-loaded.ts", target: "src/components/ui/skeleton/skeleton-loaded.ts" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-shimmer.tsx", target: "src/components/ui/skeleton/skeleton-shimmer.tsx" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton.context.tsx", target: "src/components/ui/skeleton/skeleton.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/skeleton/skeleton.tsx", target: "src/components/ui/skeleton/skeleton.tsx" },
@@ -13026,6 +14368,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -13171,7 +14529,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 115,
+		fileCount: 126,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -13283,12 +14641,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -13339,6 +14709,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -13412,6 +14783,46 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "slot",
 				title: "Slot",
 				kind: "shared",
@@ -13446,7 +14857,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 32,
+		fileCount: 34,
 		groups: [
 			{
 				name: "section-rail",
@@ -13497,6 +14908,14 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -13542,6 +14961,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "scroll-sections",
 				title: "scrollSections",
 				kind: "shared",
@@ -13568,7 +14995,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 33,
+		fileCount: 35,
 		groups: [
 			{
 				name: "section-progress",
@@ -13618,6 +15045,14 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -13660,6 +15095,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -13826,7 +15269,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 42,
+		fileCount: 44,
 		groups: [
 			{
 				name: "pagination",
@@ -13938,6 +15381,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -13961,6 +15412,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
 		],
 	},
 	"breadcrumb": {
@@ -13972,7 +15431,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 40,
+		fileCount: 42,
 		groups: [
 			{
 				name: "breadcrumb",
@@ -14083,6 +15542,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -14098,6 +15565,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
 		],
 	},
 	"toast": {
@@ -14109,7 +15584,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 83,
+		fileCount: 88,
 		groups: [
 			{
 				name: "toast",
@@ -14219,6 +15694,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -14306,11 +15782,43 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 		],
@@ -14324,7 +15832,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 58,
 		groups: [
 			{
 				name: "dialog",
@@ -14374,6 +15882,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -14462,6 +15971,22 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -14485,6 +16010,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"popover": {
@@ -14496,7 +16029,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 60,
 		groups: [
 			{
 				name: "popover",
@@ -14548,6 +16081,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -14628,6 +16162,22 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -14659,6 +16209,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"tooltip": {
@@ -14670,7 +16228,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 67,
+		fileCount: 71,
 		groups: [
 			{
 				name: "tooltip",
@@ -14706,6 +16264,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -14788,6 +16347,22 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "cn",
 				title: "cn",
 				kind: "shared",
@@ -14851,6 +16426,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"drawer": {
@@ -14862,7 +16445,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 55,
+		fileCount: 59,
 		groups: [
 			{
 				name: "drawer",
@@ -14913,6 +16496,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -15001,6 +16585,22 @@ export const install = {
 				],
 			},
 			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -15024,6 +16624,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"feedback": {
@@ -15035,7 +16643,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 118,
+		fileCount: 129,
 		groups: [
 			{
 				name: "feedback",
@@ -15153,6 +16761,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -15177,12 +16786,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -15279,11 +16900,35 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 			{
@@ -15300,6 +16945,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 		],
@@ -15471,7 +17132,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 44,
+		fileCount: 45,
 		groups: [
 			{
 				name: "tabs",
@@ -15608,6 +17269,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"tree": {
@@ -15619,7 +17288,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 41,
+		fileCount: 42,
 		groups: [
 			{
 				name: "tree",
@@ -15753,6 +17422,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"tour": {
@@ -15764,7 +17441,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 60,
+		fileCount: 63,
 		groups: [
 			{
 				name: "tour",
@@ -15924,11 +17601,35 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 		],
@@ -15942,7 +17643,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 68,
+		fileCount: 71,
 		groups: [
 			{
 				name: "screen",
@@ -16100,6 +17801,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "keyboard-animation",
 				title: "keyboardAnimation",
 				kind: "shared",
@@ -16113,6 +17830,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 			{
@@ -16707,7 +18432,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 35,
+		fileCount: 37,
 		groups: [
 			{
 				name: "split-view",
@@ -16800,6 +18525,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -16818,7 +18559,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 25,
+		fileCount: 27,
 		groups: [
 			{
 				name: "splitter",
@@ -16894,6 +18635,22 @@ export const install = {
 				],
 			},
 			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
@@ -16912,7 +18669,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 95,
+		fileCount: 103,
 		groups: [
 			{
 				name: "sketch",
@@ -17014,12 +18771,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -17127,11 +18896,35 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -17153,7 +18946,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 97,
+		fileCount: 100,
 		groups: [
 			{
 				name: "page-header",
@@ -17358,6 +19151,30 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
+				name: "announce",
+				title: "announce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/announce.ts", target: "src/lib/announce.ts" },
+				],
+			},
+			{
+				name: "use-announce",
+				title: "useAnnounce",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-announce.ts", target: "src/hooks/use-announce.ts" },
 				],
 			},
 			{
@@ -17762,7 +19579,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 68,
+		fileCount: 71,
 		groups: [
 			{
 				name: "carousel",
@@ -17925,11 +19742,27 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
 				],
 			},
 			{
@@ -17972,6 +19805,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
 		],
 	},
 	"image-viewer": {
@@ -17983,7 +19824,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 65,
+		fileCount: 68,
 		groups: [
 			{
 				name: "image-viewer",
@@ -18144,6 +19985,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
+			{
 				name: "icons",
 				title: "Icons",
 				kind: "shared",
@@ -18183,6 +20032,22 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
+				],
+			},
 		],
 	},
 	"provider": {
@@ -18191,10 +20056,10 @@ export const install = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		importPath: "@delacour/react-native-ui/provider",
 		exportName: "DelacourProvider",
-		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets"],
-		npm: [],
+		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
+		npm: ["cn", "tailwindcss"],
 		dev: [],
-		fileCount: 7,
+		fileCount: 23,
 		groups: [
 			{
 				name: "provider",
@@ -18204,6 +20069,25 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/provider/AGENTS.md", target: "src/components/ui/provider/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/provider/index.ts", target: "src/components/ui/provider/index.ts" },
 					{ source: "packages/react-native-ui/src/components/provider/provider.tsx", target: "src/components/ui/provider/provider.tsx" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
 				],
 			},
 			{
@@ -18238,6 +20122,59 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
 				],
 			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
+				],
+			},
 		],
 	},
 	"overlay": {
@@ -18249,7 +20186,7 @@ export const install = {
 		expo: ["react-native-reanimated", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 19,
+		fileCount: 22,
 		groups: [
 			{
 				name: "overlay",
@@ -18267,6 +20204,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
 					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-modal-accessibility.ts", target: "src/components/ui/overlay/use-overlay-modal-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
@@ -18289,6 +20227,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "modal-accessibility",
+				title: "modalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/modal-accessibility.ts", target: "src/lib/modal-accessibility.ts" },
+				],
+			},
+			{
+				name: "use-modal-accessibility",
+				title: "useModalAccessibility",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-modal-accessibility.ts", target: "src/hooks/use-modal-accessibility.ts" },
 				],
 			},
 		],

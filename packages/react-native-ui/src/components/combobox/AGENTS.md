@@ -158,3 +158,7 @@ typed text can become a value.
   then the enclosing `Field`; the combobox registers its `open` with the field
   and reads `Field.Label` as its name, sheet title and search label. Read-only
   shows the chips without remove controls and never opens.
+- **The clear button reaches the minimum touch target vertically, and only as far sideways as its
+  gap.** The glyph is 16–20pt, so its `hitSlop` grows to the app's 44 up and down. Sideways it stops
+  at the gap beside it: slop past that would take taps from the chevron and the value, which open
+  the sheet.

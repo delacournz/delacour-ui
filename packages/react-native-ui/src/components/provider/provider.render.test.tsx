@@ -1,11 +1,21 @@
-import { describe, expect, test } from "@jest/globals";
+import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
-import { Text } from "react-native";
+import { Platform, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { LabelsProvider, useLabels } from "../../hooks/use-labels";
+import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { render, screen } from "../../test/render";
 import { Button } from "../button";
 import { DelacourProvider } from "./provider";
+
+afterEach(() => {
+	jest.restoreAllMocks();
+});
+
+function HitTargetProbe(): ReactElement {
+	return <Text>{`target ${useMinimumHitTarget()}`}</Text>;
+}
 
 function CalmProbe(): ReactElement {
 	return <Text>{useCalmMotion() ? "calm" : "moving"}</Text>;
@@ -14,6 +24,11 @@ function CalmProbe(): ReactElement {
 function InsetsProbe(): ReactElement {
 	const insets = useSafeAreaInsets();
 	return <Text>{`top:${insets.top}`}</Text>;
+}
+
+function LabelsProbe({ next }: { next?: string }): ReactElement {
+	const labels = useLabels("pagination", next === undefined ? undefined : { next });
+	return <Text>{`${labels.previous}|${labels.next}|${labels.page(3)}`}</Text>;
 }
 
 describe("DelacourProvider", () => {
@@ -67,6 +82,35 @@ describe("DelacourProvider", () => {
 		expect(screen.getByText("moving")).toBeOnTheScreen();
 	});
 
+	test("the minimum hit target is 44 by default", async () => {
+		await render(
+			<DelacourProvider>
+				<HitTargetProbe />
+			</DelacourProvider>
+		);
+		expect(screen.getByText("target 44")).toBeOnTheScreen();
+	});
+
+	test("isMaterialHitTarget leaves iOS at 44", async () => {
+		jest.replaceProperty(Platform, "OS", "ios");
+		await render(
+			<DelacourProvider isMaterialHitTarget>
+				<HitTargetProbe />
+			</DelacourProvider>
+		);
+		expect(screen.getByText("target 44")).toBeOnTheScreen();
+	});
+
+	test("isMaterialHitTarget grows Android to 48", async () => {
+		jest.replaceProperty(Platform, "OS", "android");
+		await render(
+			<DelacourProvider isMaterialHitTarget>
+				<HitTargetProbe />
+			</DelacourProvider>
+		);
+		expect(screen.getByText("target 48")).toBeOnTheScreen();
+	});
+
 	test("initialMetrics seeds the safe-area insets for the first frame", async () => {
 		await render(
 			<DelacourProvider
@@ -97,5 +141,70 @@ describe("DelacourProvider", () => {
 			</DelacourProvider>
 		);
 		expect(screen.root).toHaveStyle({ flex: 2 });
+	});
+	describe("labels", () => {
+		test("with no provider, useLabels gives the English defaults", async () => {
+			await render(<LabelsProbe />);
+			expect(screen.getByText("Previous|Next|Page 3")).toBeOnTheScreen();
+		});
+
+		test("the provider's labels override the defaults beneath it", async () => {
+			await render(
+				<DelacourProvider labels={{ pagination: { next: "Suivant", page: (page) => `Page n° ${page}` } }}>
+					<LabelsProbe />
+				</DelacourProvider>
+			);
+			expect(screen.getByText("Previous|Suivant|Page n° 3")).toBeOnTheScreen();
+		});
+
+		test("a component's own labels override the provider's", async () => {
+			await render(
+				<DelacourProvider labels={{ pagination: { next: "Suivant" } }}>
+					<LabelsProbe next="Weiter" />
+				</DelacourProvider>
+			);
+			expect(screen.getByText("Previous|Weiter|Page 3")).toBeOnTheScreen();
+		});
+
+		test("a nested LabelsProvider merges over the outer one per key", async () => {
+			await render(
+				<DelacourProvider labels={{ pagination: { next: "Suivant", previous: "Précédent" } }}>
+					<LabelsProvider labels={{ pagination: { next: "Weiter" } }}>
+						<LabelsProbe />
+					</LabelsProvider>
+				</DelacourProvider>
+			);
+			expect(screen.getByText("Précédent|Weiter|Page 3")).toBeOnTheScreen();
+		});
+
+		test("an inline labels literal with the same values keeps the resolved labels stable", async () => {
+			const seen: unknown[] = [];
+			function IdentityProbe({ next }: { next: string }): ReactElement {
+				const labels = useLabels("pagination", { next });
+				seen.push(labels);
+				return <Text>{labels.next}</Text>;
+			}
+			const view = await render(<IdentityProbe next="Weiter" />);
+			await view.rerender(<IdentityProbe next="Weiter" />);
+			expect(seen.length).toBeGreaterThanOrEqual(2);
+			expect(seen[seen.length - 1]).toBe(seen[0]);
+			await view.rerender(<IdentityProbe next="Suivant" />);
+			expect(screen.getByText("Suivant")).toBeOnTheScreen();
+			expect(seen[seen.length - 1]).not.toBe(seen[0]);
+		});
+
+		test("labels follow a rerender", async () => {
+			const view = await render(
+				<DelacourProvider labels={{ pagination: { next: "Suivant" } }}>
+					<LabelsProbe />
+				</DelacourProvider>
+			);
+			await view.rerender(
+				<DelacourProvider>
+					<LabelsProbe />
+				</DelacourProvider>
+			);
+			expect(screen.getByText("Previous|Next|Page 3")).toBeOnTheScreen();
+		});
 	});
 });

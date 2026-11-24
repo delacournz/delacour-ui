@@ -58,8 +58,11 @@ describe("Button", () => {
 
 **Touches go through Gesture Handler, and Jest has no touch system.** `userEvent.press` calls an
 `onPress` prop on a host view, and these components have none: the `Animated.View` under a
-`GestureDetector` receives touches natively. So a test drives a control the way an assistive
-technology does, which is a real path every control must honour anyway:
+`GestureDetector` receives touches natively. `fireEvent.press` fails too, silently: Gesture
+Handler 3's detector puts a host view above the control whose `onStartShouldSetResponder` declines,
+and Testing Library reads that as a touch the device would not deliver, so the press never reaches
+the composite's `onPress`. So a test drives a control the way an assistive technology does, which
+is a real path every control must honour anyway:
 
 | To | Fire |
 | --- | --- |

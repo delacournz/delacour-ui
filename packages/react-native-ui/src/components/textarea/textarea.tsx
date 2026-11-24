@@ -1,12 +1,15 @@
-import { type ReactElement, useCallback, useState } from "react";
+import { type ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
+import { useAnnounce } from "../../hooks/use-announce";
 import { Input, type InputProps } from "../input";
 import { useInputGroupContext } from "../input/input.context";
 import { Text } from "../text";
 import {
+	resolveTextareaBand,
 	resolveTextareaCount,
 	resolveTextareaFieldClass,
 	resolveTextareaHeightStyle,
+	resolveTextareaThresholdAnnouncement,
 	textareaVariants,
 } from "./textarea.variants";
 
@@ -55,6 +58,11 @@ export type TextareaProps = Omit<InputProps, "multiline" | "numberOfLines" | "ma
 		rows?: number;
 		/** Class for the view holding the field and its count. `className` styles the field itself. */
 		containerClassName?: string;
+		/**
+		 * Speak the count at its thresholds — close to the limit, and at it. Default true; only
+		 * heard with `showCount`. The count itself stays readable on focus either way.
+		 */
+		announce?: boolean;
 	};
 
 /**
@@ -75,6 +83,11 @@ export type TextareaProps = Omit<InputProps, "multiline" | "numberOfLines" | "ma
  * two, React Native's multiline `TextInput` sizes itself to its content, and
  * past the cap it scrolls. `showCount` with `maxLength` puts a count under the
  * trailing edge that turns destructive at the limit.
+ *
+ * The count is not a live region — that would speak every keystroke on Android
+ * and nothing on iOS. It is announced at thresholds only: once on entering the
+ * last tenth of the limit (at most 20 left), and once, assertively, at the limit.
+ * Deleting back out re-arms both. `announce={false}` silences it.
  *
  * `multiline` and `numberOfLines` are withheld: it is always multiline, and its
  * height comes from `rows`.
@@ -115,6 +128,7 @@ export function Textarea({
 	size,
 	className,
 	containerClassName,
+	announce: shouldAnnounce = true,
 	style,
 	value,
 	defaultValue,
@@ -144,6 +158,19 @@ export function Textarea({
 		[onChangeText]
 	);
 
+	const speak = useAnnounce();
+	const band = showCount && maxLength !== undefined ? resolveTextareaBand({ length, maxLength }) : "none";
+	const previousBand = useRef(band);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: only a band change speaks
+	useEffect(() => {
+		const previous = previousBand.current;
+		previousBand.current = band;
+		if (maxLength === undefined) return;
+		const spoken = resolveTextareaThresholdAnnouncement({ length, maxLength, previous });
+		if (!spoken) return;
+		speak(spoken.message, { enabled: shouldAnnounce && showCount === true, politeness: spoken.politeness });
+	}, [band]);
+
 	const count = showCount && maxLength !== undefined ? resolveTextareaCount({ length, maxLength }) : null;
 
 	return (
@@ -160,12 +187,7 @@ export function Textarea({
 				value={value}
 			/>
 			{count ? (
-				<Text.Caption
-					accessibilityLabel={count.accessibilityLabel}
-					accessibilityLiveRegion="polite"
-					className={slots.count()}
-					color={count.color}
-				>
+				<Text.Caption accessibilityLabel={count.accessibilityLabel} className={slots.count()} color={count.color}>
 					{count.label}
 				</Text.Caption>
 			) : null}

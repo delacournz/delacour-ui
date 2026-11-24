@@ -98,3 +98,14 @@ under the touch on either.
 - **`blocks` is a Gesture Handler 3 gesture.** A scrollable's own gesture —
   `useNativeGesture()` on the list the chart sits in — which the pan is then
   given as `block`. A v2 `Gesture.Native()` is not accepted.
+
+- **`focus` moves the scrub without a finger.** A screen reader cannot drag,
+  so `Chart`'s adjustable element writes a datum index to `focus` and
+  `useScrubFocus` (mounted by `CartesianChart`) answers it on the UI thread:
+  the scrub activates and every field is written as if a touch had landed on
+  that datum's category, through the same per-series writer the pan uses — so
+  a tooltip, a cursor and a readout follow it with no change of their own.
+  `-1` asks for nothing, and a touch resets it to `-1` so the same datum can be
+  asked for again after a drag. Nothing clears `isActive` after a focus move:
+  there is no accessibility blur event to clear it on, and the next touch's
+  `onFinalize` does.

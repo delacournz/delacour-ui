@@ -126,6 +126,41 @@ describe("Input", () => {
 			expect(await screen.findByLabelText("Legal name")).toBeOnTheScreen();
 		});
 
+		test("required, invalid, error and description reach the TextInput", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Email</Field.Label>
+					<Input />
+					<Field.Description>We never share it.</Field.Description>
+					<Field.Error>Enter a valid email</Field.Error>
+				</Field>
+			);
+			const input = screen.getByLabelText("Email, required");
+			expect(input).toHaveProp("accessibilityHint", "Invalid: Enter a valid email. We never share it.");
+		});
+
+		test("an Input.Group's isInvalid still reaches the hint, with one name", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Amount</Field.Label>
+					<Input.Group isInvalid>
+						<Input.Group.Prefix>$</Input.Group.Prefix>
+						<Input />
+					</Input.Group>
+					<Field.Error>Too much</Field.Error>
+				</Field>
+			);
+			const input = screen.getByLabelText("Amount");
+			expect(input).toHaveProp("accessibilityHint", "Invalid: Too much");
+			expect(screen.getAllByLabelText("Amount")).toHaveLength(1);
+		});
+
+		test("an own accessibilityLabel is kept verbatim, required or not", async () => {
+			await renderWithProviders(<Input accessibilityLabel="Name" isRequired />);
+			expect(screen.getByLabelText("Name")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Name").props.accessibilityHint).toBeUndefined();
+		});
+
 		test("a disabled Field disables the input, and an own isDisabled={false} opts out", async () => {
 			await renderWithProviders(
 				<Field isDisabled>

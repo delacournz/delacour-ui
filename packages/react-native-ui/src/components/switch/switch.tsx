@@ -24,6 +24,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SwitchContextValue, SwitchProvider } from "./switch.context";
 import {
@@ -75,6 +76,7 @@ function SwitchRoot({
 	haptic = "selection",
 	className,
 	accessibilityActions,
+	accessibilityHint,
 	accessibilityLabel,
 	accessibilityState,
 	onAccessibilityAction,
@@ -82,6 +84,7 @@ function SwitchRoot({
 	...props
 }: SwitchProps): ReactElement {
 	const field = useFieldContext();
+	const a11y = useFieldControlAccessibility({ accessibilityHint, accessibilityLabel, isInvalid });
 	const axes = resolveSwitchAxes({ field, own: { color, isDisabled, isInvalid, size } });
 
 	const [selected, setSelected] = useControllableState({
@@ -349,7 +352,9 @@ function SwitchRoot({
 			<GestureDetector gesture={gesture}>
 				<Animated.View
 					accessibilityActions={activation.accessibilityActions}
-					accessibilityLabel={accessibilityLabel ?? field?.label ?? undefined}
+					accessibilityHint={a11y.accessibilityHint}
+					accessibilityLabel={a11y.accessibilityLabel}
+					accessibilityLabelledBy={a11y.accessibilityLabelledBy}
 					accessibilityRole="switch"
 					accessibilityState={{ ...accessibilityState, checked: selected, disabled: axes.isDisabled }}
 					// Without this the view is not an accessibility element on iOS, and

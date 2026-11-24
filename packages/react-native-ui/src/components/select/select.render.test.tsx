@@ -216,6 +216,34 @@ describe("Select single", () => {
 		await waitFor(() => expect(screen.queryByRole("radio", { name: "Engineer" })).not.toBeOnTheScreen());
 	});
 
+	test("onConfirm fires alone for the chosen row pressed again, and after onValueChange for a new pick", async () => {
+		const calls: string[] = [];
+		const onValueChange = jest.fn((_value: unknown) => void calls.push("change"));
+		const onConfirm = jest.fn((_value: unknown) => void calls.push("confirm"));
+		await renderSelect({ defaultValue: "designer", onConfirm, onValueChange });
+		await openSheet();
+		await tap(screen.getByRole("radio", { name: "Designer" }));
+		expect(onConfirm).toHaveBeenLastCalledWith("designer");
+		expect(onValueChange).not.toHaveBeenCalled();
+		await waitFor(() => expect(screen.queryByRole("radio", { name: "Engineer" })).not.toBeOnTheScreen());
+
+		await openSheet();
+		await tap(screen.getByRole("radio", { name: "Engineer" }));
+		expect(onConfirm).toHaveBeenLastCalledWith("engineer");
+		expect(onConfirm).toHaveBeenCalledTimes(2);
+		expect(calls).toEqual(["confirm", "change", "confirm"]);
+	});
+
+	test("isClearable: clearing the chosen row does not confirm", async () => {
+		const onConfirm = jest.fn();
+		const onValueChange = jest.fn();
+		await renderSelect({ defaultValue: "designer", isClearable: true, onConfirm, onValueChange });
+		await openSheet();
+		await tap(screen.getByRole("radio", { name: "Designer" }));
+		expect(onValueChange).toHaveBeenCalledWith(null);
+		expect(onConfirm).not.toHaveBeenCalled();
+	});
+
 	test("isClearable: pressing the chosen row clears it and reports null", async () => {
 		const onValueChange = jest.fn();
 		await renderSelect({ defaultValue: "designer", isClearable: true, onValueChange });
@@ -527,9 +555,28 @@ describe("Select in a Field", () => {
 			{ wrapper: Sheets }
 		);
 		expect(screen.getByRole("button", { name: "Role" })).toBeOnTheScreen();
-		await tap(screen.getByText("Role"));
+		await tap(screen.getByText("Role", { includeHiddenElements: true }));
 		expect(screen.getByRole("button", { name: "Role" })).toBeExpanded();
 		expect(screen.getByRole("radio", { name: "Designer" })).toBeOnTheScreen();
+	});
+
+	test("reads required, the error and the description from the Field", async () => {
+		await renderWithProviders(
+			<Field isInvalid isRequired>
+				<Field.Label>Role</Field.Label>
+				<Select options={OPTIONS} placeholder="Choose" />
+				<Field.Description>Pick one.</Field.Description>
+				<Field.Error>Role is required</Field.Error>
+			</Field>,
+			{ wrapper: Sheets }
+		);
+		const trigger = screen.getByRole("button", { name: "Role, required" });
+		expect(trigger).toHaveProp("accessibilityHint", "Invalid: Role is required. Pick one. Opens a list of options");
+	});
+
+	test("outside a Field the name stays the placeholder and the hint stays its own", async () => {
+		await renderWithProviders(<Select options={OPTIONS} placeholder="Choose" />, { wrapper: Sheets });
+		expect(screen.getByRole("button", { name: "Choose" })).toHaveProp("accessibilityHint", "Opens a list of options");
 	});
 
 	test("inherits disabled from the Field, and an explicit false opts out", async () => {
@@ -580,7 +627,7 @@ describe("Select in a Field", () => {
 			{ wrapper: Sheets }
 		);
 		await openSheet("Role");
-		expect(screen.getAllByText("Role").length).toBeGreaterThan(1);
+		expect(screen.getAllByText("Role", { includeHiddenElements: true }).length).toBeGreaterThan(1);
 	});
 });
 

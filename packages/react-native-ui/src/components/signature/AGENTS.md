@@ -119,7 +119,12 @@ standalone SVG document, or as a PNG.
 - **`Field` reaches the state axes and the name, not the press.** `isInvalid` and
   `isDisabled` cascade and an explicit prop wins; `Field.Label`'s text names the
   pad. The pad registers no press: a tap on the label cannot sign for anyone, and
-  focusing a pad means nothing to a touch screen.
+  focusing a pad means nothing to a touch screen. The pad calls
+  `useFieldControlAccessibility` once: "required" ends its name
+  (`describeSignature`'s `isRequired`), and the hint leads with "Invalid: <error>.
+  <description>." before the draw hint. Only the pad's focusable view carries it —
+  toolbar buttons get no field hint. `accessibilityLabelledBy` is not spread: the
+  pad's name always includes its stroke count, which a label reference would drop.
 - **Haptics**: the `haptic` preset (default `light`) as each stroke begins,
   nothing while drawing — a buzz per point would be a motor running — and a
   selection tick on clear. `haptic={false}` silences both.

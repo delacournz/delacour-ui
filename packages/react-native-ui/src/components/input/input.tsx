@@ -4,11 +4,11 @@ import { composeRefs } from "../../lib/compose-refs";
 import { useButtonGroupItemContext } from "../button/button.context";
 import { resolveButtonSizeStep } from "../button/button.variants";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import { useInputGroupContext } from "./input.context";
 import {
 	type InputSize,
 	type InputVariant,
-	resolveInputAccessibilityLabel,
 	resolveInputFieldClass,
 	resolvePlaceholderAccentClass,
 	resolveSelectionAccentClass,
@@ -41,6 +41,11 @@ export type InputProps = Omit<TextInputProps, "placeholderTextColorClassName"> &
 	 */
 	isDisabled?: boolean;
 	/**
+	 * Marks the value as required, so a screen reader adds "required" to the name.
+	 * Inherited from an enclosing `Field` when not given.
+	 */
+	isRequired?: boolean;
+	/**
 	 * Placeholder colour, as an `accent-*` utility — `accent-muted-foreground`.
 	 * Any other utility resolves to nothing; see `input.variants.ts`.
 	 */
@@ -58,10 +63,12 @@ function InputRoot({
 	size,
 	isInvalid,
 	isDisabled,
+	isRequired,
 	className,
 	placeholderColorClassName,
 	selectionColorClassName,
 	accessibilityLabel,
+	accessibilityHint,
 	editable,
 	multiline,
 	onBlur,
@@ -127,6 +134,16 @@ function InputRoot({
 		[onBlur, setFocused]
 	);
 
+	// The one hook call per field: it claims the `Field.Label` as this input's
+	// name, so a group's inner `Input` is the only caller. The group's invalid
+	// state outranks the input's own, the same ladder as `resolved` above.
+	const a11y = useFieldControlAccessibility({
+		accessibilityHint,
+		accessibilityLabel,
+		isInvalid: group?.isInvalid ?? isInvalid,
+		isRequired,
+	});
+
 	const selectionAccent = resolveSelectionAccentClass({
 		className: selectionColorClassName,
 		isInvalid: resolved.isInvalid,
@@ -150,7 +167,9 @@ function InputRoot({
 			selectionColorClassName={selectionAccent}
 			textAlignVertical={multiline ? "top" : undefined}
 			{...props}
-			accessibilityLabel={resolveInputAccessibilityLabel(accessibilityLabel, field?.label)}
+			accessibilityHint={a11y.accessibilityHint}
+			accessibilityLabel={a11y.accessibilityLabel}
+			accessibilityLabelledBy={a11y.accessibilityLabelledBy}
 			editable={resolved.isDisabled ? false : editable}
 			onBlur={handleBlur}
 			onFocus={handleFocus}
@@ -183,8 +202,8 @@ function InputRoot({
  * field's own box.
  *
  * Inside a `Field`, the text of its `Field.Label` becomes the field's accessible
- * name when no `accessibilityLabel` is given, so a screen reader announces
- * which value the editor wants.
+ * name when no `accessibilityLabel` is given ("Email, required" when required),
+ * and the field's error and description become its hint ("Invalid: …").
  *
  * @example
  * <Input onChangeText={setEmail} placeholder="Email" value={email} />

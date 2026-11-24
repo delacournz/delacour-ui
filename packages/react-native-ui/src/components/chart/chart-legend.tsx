@@ -3,6 +3,42 @@ import { View } from "react-native";
 import { cn } from "../../lib/cn";
 import { Text } from "../text";
 import { useChartSeries } from "./chart.context";
+import type { ChartDash } from "./chart.types";
+
+const SWATCH_SEGMENTS = 3;
+const SWATCH_THICKNESS = 2;
+
+/**
+ * A short dashed line sample: the series' dash repeated, so the legend carries
+ * the same non-colour cue as the line. Sized inline because the dash lengths
+ * are data, not a token. Hidden from assistive tech like the solid swatch: the
+ * label beside it names the series.
+ */
+function DashedSwatch({ color, dash, testID }: { color: string; dash: ChartDash; testID: string }): ReactElement {
+	const [on, off] = dash;
+	const segments = Array.from({ length: SWATCH_SEGMENTS }, (_, index) => index);
+	return (
+		<View
+			accessibilityElementsHidden
+			importantForAccessibility="no-hide-descendants"
+			style={{ flexDirection: "row", alignItems: "center" }}
+			testID={testID}
+		>
+			{segments.map((index) => (
+				<View
+					key={index}
+					style={{
+						width: on,
+						height: SWATCH_THICKNESS,
+						marginRight: index === SWATCH_SEGMENTS - 1 ? 0 : off,
+						backgroundColor: color,
+					}}
+				/>
+			))}
+		</View>
+	);
+}
+DashedSwatch.displayName = "DelacourUI.Chart.Legend.DashedSwatch";
 
 export type ChartLegendProps = {
 	className?: string;
@@ -30,7 +66,17 @@ export function ChartLegend({ className, keys }: ChartLegendProps): ReactElement
 		<View className={cn(slots.legend(), className)}>
 			{shown.map((entry) => (
 				<View className={slots.legendItem()} key={entry.key}>
-					<View className={slots.legendSwatch()} style={{ backgroundColor: entry.color }} />
+					{entry.dash === undefined ? (
+						<View
+							accessibilityElementsHidden
+							className={slots.legendSwatch()}
+							importantForAccessibility="no-hide-descendants"
+							style={{ backgroundColor: entry.color }}
+							testID={`chart-legend-swatch-${entry.key}`}
+						/>
+					) : (
+						<DashedSwatch color={entry.color} dash={entry.dash} testID={`chart-legend-swatch-${entry.key}`} />
+					)}
 					<Text className={slots.legendLabel()}>{entry.label}</Text>
 				</View>
 			))}

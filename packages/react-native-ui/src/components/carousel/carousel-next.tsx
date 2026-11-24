@@ -10,19 +10,14 @@ import type { CarouselArrowProps } from "./carousel.types";
  * whenever the carousel is. Pressing it stops autoplay, as any touch does.
  *
  * Its chevron follows the axis — right when horizontal, down when vertical. Pass
- * children to draw your own; the label "Next slide" stays unless you give one.
+ * children to draw your own; its spoken name comes from `labels` (English: "Next slide") unless you give one.
  */
-export function CarouselNext({
-	children,
-	isDisabled,
-	accessibilityLabel = "Next slide",
-	...props
-}: CarouselArrowProps): ReactElement {
+export function CarouselNext({ children, isDisabled, accessibilityLabel, ...props }: CarouselArrowProps): ReactElement {
 	const { canGoNext, next } = useCarouselPart("Carousel.Next");
-	const { isDisabled: isCarouselDisabled, orientation } = useCarouselOptionsPart("Carousel.Next");
+	const { isDisabled: isCarouselDisabled, labels, orientation } = useCarouselOptionsPart("Carousel.Next");
 
 	const buttonProps: ButtonProps = {
-		accessibilityLabel,
+		accessibilityLabel: accessibilityLabel ?? labels.next,
 		haptic: "selection",
 		isDisabled: isDisabled || isCarouselDisabled || !canGoNext,
 		size: "icon-sm",

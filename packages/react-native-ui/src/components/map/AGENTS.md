@@ -111,6 +111,11 @@ no directions.
 - **The zoom buttons step from where the camera is going.** The zoom is read from
   the last `onRegionDidChange`; a press writes its target back at once, so a second
   press before the first lands steps on from it rather than repeating it.
+- **The zoom pair has no slop on the edge it shares.** Zoom in and Zoom out
+  abut in one `Surface`, and React Native hit-tests the later sibling first, so
+  Button's default slop on Zoom out's top would take presses on the drawn "+".
+  `resolveMapZoomHitSlop` keeps the minimum target's slop on the outer edges
+  and zeroes the inner one.
 - **Location comes through the map, not a location library.** `showLocate` and
   `Map.UserLocation` each request location updates, counted so they stop when the
   last one lets go, and MapLibre's `LocationManager` asks for permission and

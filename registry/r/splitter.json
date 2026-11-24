@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"pressable",
 		"tv",
+		"use-announce",
 		"use-controllable-state"
 	],
 	"dependencies": [
@@ -48,6 +49,10 @@
 			"target": "splitter/splitter-handle.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
@@ -137,6 +142,10 @@
 			"target": "splitter/splitter.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-announce",
+					"to": "@registry/hooks/use-announce"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

@@ -244,7 +244,7 @@ describe("Questionnaire: the footer", () => {
 		expect(screen.getByText("Answer this question to continue.")).toBeOnTheScreen();
 		expect(spy).toHaveBeenCalledWith("Answer this question to continue.");
 		expect(onCurrentChange).not.toHaveBeenCalled();
-		expect(screen.getByText("Your name?")).toBeOnTheScreen();
+		expect(screen.getByRole("header", { name: "Your name?" })).toBeOnTheScreen();
 	});
 
 	test("answering clears the error", async () => {
@@ -297,7 +297,7 @@ describe("Questionnaire: the footer", () => {
 		);
 		expect(screen.getByText("Do you agree?")).toBeOnTheScreen();
 		await fireEvent(screen.getByRole("button", { name: "Back" }), "accessibilityTap");
-		expect(screen.getByText("Your name?")).toBeOnTheScreen();
+		expect(screen.getByRole("header", { name: "Your name?" })).toBeOnTheScreen();
 	});
 
 	test("Skip appears on an optional question, records skipped and moves on", async () => {
@@ -408,7 +408,7 @@ describe("Questionnaire: the footer", () => {
 		);
 		expect(screen.queryByRole("button", { name: "Skip this question" })).not.toBeOnTheScreen();
 		await fireEvent(screen.getByRole("button", { name: "Back" }), "accessibilityTap");
-		expect(screen.getByText("Your name?")).toBeOnTheScreen();
+		expect(screen.getByRole("header", { name: "Your name?" })).toBeOnTheScreen();
 
 		await view.rerender(<Questionnaire defaultCurrentId="plan" haptic={false} isReadOnly questions={FLOW} />);
 		expect(screen.queryByRole("button", { name: "Submit" })).not.toBeOnTheScreen();
@@ -515,7 +515,7 @@ describe("Questionnaire: controlled and uncontrolled", () => {
 		const view = await renderWithProviders(
 			<Questionnaire currentId="name" haptic={false} onCurrentChange={onCurrentChange} questions={FLOW} />
 		);
-		expect(screen.getByText("Your name?")).toBeOnTheScreen();
+		expect(screen.getByRole("header", { name: "Your name?" })).toBeOnTheScreen();
 
 		await view.rerender(
 			<Questionnaire currentId="agree" haptic={false} onCurrentChange={onCurrentChange} questions={FLOW} />

@@ -1,10 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
+import { BUTTON_HEIGHTS } from "../button/button.variants";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	buildMapStyle,
 	hasInitialViewChanged,
 	MAP_ACCESSIBILITY_LABEL,
 	MAP_CAMERA_DURATION,
+	MAP_CONTROL_SIZE,
 	MAP_CONTROLS_CORNERS,
 	MAP_DEFAULT_BASEMAP,
 	MAP_DEFAULT_ZOOM,
@@ -24,6 +27,7 @@ import {
 	resolveHeadingRotation,
 	resolveInitialCamera,
 	resolveMapGestures,
+	resolveMapZoomHitSlop,
 	resolveMarkerAnchor,
 	resolveMarkerOffset,
 	resolvePinTipAnchor,
@@ -349,5 +353,34 @@ describe("mapVariants", () => {
 	test("touches pass through the overlay layer to the map", () => {
 		expect(mapVariants().overlay()).toContain("absolute");
 		expect(mapVariants().overlay()).toContain("inset-0");
+	});
+});
+
+describe("resolveMapZoomHitSlop", () => {
+	test("the controls draw at Button's icon-sm size", () => {
+		expect(MAP_CONTROL_SIZE).toBe(BUTTON_HEIGHTS.sm);
+	});
+
+	// Zoom in and Zoom out abut in one Surface. React Native hit-tests the later
+	// sibling first, so any slop on the shared edge hands part of one button to
+	// the other.
+	test("neither zoom button reaches over the edge it shares with the other", () => {
+		for (const min of [44, 48]) {
+			const slop = resolveMinimumHitSlop(MAP_CONTROL_SIZE, min);
+			const zoomIn = resolveMapZoomHitSlop(slop, "in");
+			const zoomOut = resolveMapZoomHitSlop(slop, "out");
+			expect(zoomIn?.bottom).toBe(0);
+			expect(zoomOut?.top).toBe(0);
+		}
+	});
+
+	test("the outer edges keep the minimum target's slop", () => {
+		const slop = resolveMinimumHitSlop(MAP_CONTROL_SIZE, 44);
+		expect(resolveMapZoomHitSlop(slop, "in")).toEqual({ top: 4, right: 4, bottom: 0, left: 4 });
+		expect(resolveMapZoomHitSlop(slop, "out")).toEqual({ top: 0, right: 4, bottom: 4, left: 4 });
+	});
+
+	test("no slop stays no slop", () => {
+		expect(resolveMapZoomHitSlop(undefined, "in")).toBeUndefined();
 	});
 });

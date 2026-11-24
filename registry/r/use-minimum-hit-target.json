@@ -1,0 +1,26 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-minimum-hit-target",
+	"type": "registry:hook",
+	"title": "useMinimumHitSlop",
+	"description": "The hitSlop that grows a small control to the minimum touch target, and the provider an Android app opts into 48dp with.",
+	"registryDependencies": [
+		"pressable"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx",
+			"target": "use-minimum-hit-target.tsx",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../components/pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
+				}
+			]
+		}
+	]
+}

@@ -8,8 +8,11 @@
 		"primitives"
 	],
 	"registryDependencies": [
+		"labels",
 		"use-calm-motion",
-		"use-keyboard-state-sync"
+		"use-keyboard-state-sync",
+		"use-labels",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [],
 	"expoDependencies": [
@@ -49,6 +52,18 @@
 					"to": "@registry/hooks/use-keyboard-state-sync"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "@delacour/react-native-ui/bottom-sheet",
 					"to": "@registry/ui/bottom-sheet"
 				},
@@ -68,6 +83,14 @@
 				{
 					"from": "../../hooks/use-calm-motion",
 					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
 				},
 				{
 					"from": "../../test/render",

@@ -33,6 +33,11 @@ export type OverlayRegistryEntry = {
 	 * than `"root"` — rather than in the `"root"` host beside it.
 	 */
 	isInApp: boolean;
+	/**
+	 * Draws something a screen reader reads past, such as a tooltip, so it never
+	 * takes the screen reader's containment from the modal under it.
+	 */
+	isPassive: boolean;
 };
 
 export type OverlayRegistryState = {
@@ -43,7 +48,7 @@ export type OverlayRegistryState = {
 export const INITIAL_OVERLAY_REGISTRY: OverlayRegistryState = { nextSeq: 1, open: [] };
 
 export type OverlayRegistryAction =
-	| { type: "open"; id: string; layer: OverlayLayer; isInApp?: boolean }
+	| { type: "open"; id: string; layer: OverlayLayer; isInApp?: boolean; isPassive?: boolean }
 	| { type: "exiting"; id: string; isExiting: boolean }
 	| { type: "close"; id: string };
 
@@ -84,7 +89,14 @@ export function reduceOverlayRegistry(
 				nextSeq: state.nextSeq + 1,
 				open: [
 					...others,
-					{ id: action.id, layer: action.layer, seq: state.nextSeq, isExiting, isInApp: action.isInApp ?? false },
+					{
+						id: action.id,
+						layer: action.layer,
+						seq: state.nextSeq,
+						isExiting,
+						isInApp: action.isInApp ?? false,
+						isPassive: action.isPassive ?? false,
+					},
 				],
 			};
 		}
@@ -188,4 +200,30 @@ export function isBelowTopModal(state: OverlayRegistryState, id: string): boolea
 	if (top === null || top === id) return false;
 	const z = zIndexOfOverlay(state, id);
 	return z !== 0 && z < zIndexOfOverlay(state, top);
+}
+
+/**
+ * Whether the overlay `id` is the one a screen reader should be held inside.
+ *
+ * True for the top `modal` or `anchored` overlay that is not animating closed
+ * and not `isPassive` (a tooltip is read past, never held):
+ * a menu opened from a dialog holds focus, and the dialog under it does not
+ * until the menu starts to exit. A toast never does.
+ *
+ * True as well when there is nothing to compare against — no `OverlayProvider`,
+ * no `id`, or an id the registry has not recorded yet (a container drawn
+ * without `Overlay.Portal`, or the first render before the portal registers).
+ * Such a container is its own top.
+ */
+export function isModalOnTop(state: OverlayRegistryState | null, id: string | undefined): boolean {
+	if (state === null || id === undefined) return true;
+	const entry = state.open.find((candidate) => candidate.id === id);
+	if (entry === undefined) return true;
+	if (entry.isExiting) return false;
+	if (entry.isPassive) return false;
+	const live: OverlayRegistryState = {
+		...state,
+		open: state.open.filter((candidate) => !candidate.isExiting && !candidate.isPassive),
+	};
+	return topOverlay(live) === id;
 }

@@ -153,7 +153,14 @@ file stable: its functions are the contract both consume.
   (`resolveSlideAccessibility`).
 - **Dots are decoration**: hidden from assistive tech and not tappable — at six
   points they are far below a 44-point target. The arrows are the control, labelled
-  "Previous slide" / "Next slide", disabled at the ends unless looping.
+  "Previous slide" / "Next slide", disabled at the ends unless looping. A part's own
+  `accessibilityLabel` still wins over the catalog's name.
+- **The spoken strings are the `labels` prop, not literals**: the arrows' names and
+  the "2 of 5" value come from `lib/labels` through `useLabels("carousel", labels)`,
+  so a language can reorder "2 of 5" instead of living with a hard-coded join.
+  Precedence is defaults ← `DelacourProvider` `labels` ← the root's prop. The
+  resolved set rides the options context (it changes only with a prop), and
+  `resolveCarouselA11yValue` takes it as a trailing argument to stay pure.
 - **Reduce motion** settles by a 150 ms timing instead of a spring, collapses
   coverflow to the track transform, and disables autoplay.
 

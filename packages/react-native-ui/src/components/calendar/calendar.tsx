@@ -132,6 +132,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		selectOutsideDays = false,
 		isBordered = false,
 		swipeToPage = true,
+		yearListBlocksGesture,
 		today: todayOverride,
 		className,
 		children,
@@ -306,6 +307,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			view,
 			visibleMonth,
 			weekStartsOn: resolvedWeekStart,
+			yearListBlocksGesture,
 			yearSpan,
 		}),
 		[
@@ -335,6 +337,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			today,
 			view,
 			visibleMonth,
+			yearListBlocksGesture,
 			yearSpan,
 		]
 	);

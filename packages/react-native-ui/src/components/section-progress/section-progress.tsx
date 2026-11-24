@@ -10,14 +10,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import {
-	AccessibilityInfo,
-	BackHandler,
-	findNodeHandle,
-	type LayoutChangeEvent,
-	View,
-	type ViewProps,
-} from "react-native";
+import { AccessibilityInfo, BackHandler, type LayoutChangeEvent, View, type ViewProps } from "react-native";
 import Animated, {
 	FadeIn,
 	isSharedValue,
@@ -29,6 +22,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import type { UseScrollSectionsResult } from "../../hooks/use-scroll-sections";
 import { type HapticFeedback, Pressable, playHaptic } from "../pressable";
 import { type SectionProgressContextValue, SectionProgressProvider } from "./section-progress.context";
@@ -86,7 +80,7 @@ export type SectionProgressProps = Omit<ViewProps, "children"> & {
 
 /** The settle the ring eases with when the progress jumps. */
 const RING_SETTLE = { duration: SECTION_PROGRESS_RING_SETTLE_MS } as const;
-/** Long enough for the panel to have mounted and been laid out before VoiceOver is pointed at it. */
+/** Long enough for the panel to have grown open and been laid out before VoiceOver is pointed at it. */
 const FOCUS_DELAY_MS = 250;
 
 function SectionProgressRoot(props: SectionProgressProps): ReactElement {
@@ -213,14 +207,39 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 	}, [isOpen, setOpen]);
 
 	const activeItemRef = useRef<ComponentRef<typeof Animated.View> | null>(null);
+	const firstItemRef = useRef<ComponentRef<typeof Animated.View> | null>(null);
+	const pillRef = useRef<ComponentRef<typeof Animated.View> | null>(null);
+	const close = useCallback(() => setOpen(false), [setOpen]);
+
+	// Not drawn through an `Overlay.Portal` — the card is a view in the pill's own tree — so
+	// there is no `id`, the card is always its own top overlay, and on Android nothing outside
+	// it is hidden from TalkBack. Focus: the active section, else the first.
+	const modal = useModalAccessibility({
+		isOpen,
+		initialFocus: [activeItemRef, firstItemRef],
+		returnFocus: pillRef,
+		onEscape: close,
+	});
+	const { focusInitial, restoreFocus } = modal;
+
+	// The panel is always mounted, so there is no presence to hook `onEntered` to: wait out the
+	// grow instead, then point VoiceOver at the section being read.
 	useEffect(() => {
 		if (!isOpen) return;
-		const timeout = setTimeout(() => {
-			const node = activeItemRef.current === null ? undefined : findNodeHandle(activeItemRef.current);
-			if (node !== undefined) AccessibilityInfo.setAccessibilityFocus(node);
-		}, FOCUS_DELAY_MS);
+		const timeout = setTimeout(focusInitial, FOCUS_DELAY_MS);
 		return () => clearTimeout(timeout);
-	}, [isOpen]);
+	}, [focusInitial, isOpen]);
+
+	// Closing — a pick, the scrim, escape, back or the pill — hands focus back to the pill at
+	// once rather than after the shrink: the row never leaves its edge, so it is mounted and
+	// focusable throughout. A pick returns here too, not to the section it scrolled to: the
+	// section is plain content with nothing to focus, and WCAG 2.4.3 wants focus back at the
+	// control that opened the panel.
+	const wasOpen = useRef(isOpen);
+	useEffect(() => {
+		if (wasOpen.current && !isOpen) restoreFocus();
+		wasOpen.current = isOpen;
+	}, [isOpen, restoreFocus]);
 
 	const select = useCallback(
 		(next: string) => {
@@ -229,7 +248,6 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 		},
 		[setOpen, setValue]
 	);
-	const close = useCallback(() => setOpen(false), [setOpen]);
 
 	const index = entries.findIndex((entry) => entry.value === value);
 	const label = resolveSectionLabel(entries, value ?? undefined);
@@ -242,10 +260,14 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 			accessibilityValue,
 			activeItemRef,
 			color,
+			containerProps: modal.containerProps,
+			firstItemRef,
+			firstValue: entries[0]?.value ?? null,
 			index,
 			isOpen,
 			label,
 			pillTestID: testID === undefined ? undefined : `${testID}-pill`,
+			pillRef,
 			placement,
 			progress: ringProgress,
 			select,
@@ -256,9 +278,11 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 			accessibilityLabel,
 			accessibilityValue,
 			color,
+			entries,
 			index,
 			isOpen,
 			label,
+			modal.containerProps,
 			placement,
 			ringProgress,
 			select,

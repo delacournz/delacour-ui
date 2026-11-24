@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { AccessibilityInfo, Text } from "react-native";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Platform, Text } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Support } from "./support";
@@ -7,9 +8,23 @@ import { Support } from "./support";
 const ACTIVATE = { nativeEvent: { actionName: "activate" } };
 
 const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+const announceWithOptions = jest
+	.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+	.mockImplementation(() => {});
+
+const originalOS = Platform.OS;
+function setPlatform(os: typeof Platform.OS) {
+	Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+}
 
 beforeEach(() => {
+	resetAnnouncer();
 	announce.mockClear();
+	announceWithOptions.mockClear();
+});
+
+afterEach(() => {
+	setPlatform(originalOS);
 });
 
 describe("Support.Status and availability", () => {
@@ -226,38 +241,108 @@ describe("Support.Topics", () => {
 	});
 });
 
-describe("Support.Agent", () => {
-	test("is one labelled element, and typing replaces the status line and announces once", async () => {
-		const view = await renderWithProviders(
-			<Support availability="online">
-				<Support.Agent name="Omar Haddad" title="Support" typingTestID="dots" />
+describe("Support.Status announcements", () => {
+	function Status({ availability, announceIt = true }: { availability: "online" | "offline"; announceIt?: boolean }) {
+		return (
+			<Support availability={availability}>
+				<Support.Status announce={announceIt} testID="status" />
 			</Support>
 		);
+	}
+
+	test("Android: a polite live region speaks a change and nothing is announced", async () => {
+		setPlatform("android");
+		const view = await renderWithProviders(<Status availability="online" />);
+		expect(screen.getByTestId("status").props.accessibilityLiveRegion).toBe("polite");
+		await view.rerender(<Status availability="offline" />);
+		expect(announce).not.toHaveBeenCalled();
+	});
+
+	test("iOS: a change is announced, not left to a live region", async () => {
+		setPlatform("ios");
+		const view = await renderWithProviders(<Status availability="online" />);
+		expect(screen.getByTestId("status").props.accessibilityLiveRegion).toBe("none");
+		expect(announceWithOptions).not.toHaveBeenCalled();
+		await view.rerender(<Status availability="offline" />);
+		expect(announceWithOptions).toHaveBeenCalledTimes(1);
+	});
+
+	test("announce={false} is silent and has no live region", async () => {
+		setPlatform("ios");
+		const view = await renderWithProviders(<Status announceIt={false} availability="online" />);
+		await view.rerender(<Status announceIt={false} availability="offline" />);
+		expect(announceWithOptions).not.toHaveBeenCalled();
+		expect(screen.getByTestId("status").props.accessibilityLiveRegion).toBe("none");
+	});
+});
+
+describe("Support.Agent", () => {
+	function Agent({ typing = false, announceIt = true }: { typing?: boolean; announceIt?: boolean }) {
+		return (
+			<Support availability="online">
+				<Support.Agent announce={announceIt} name="Omar Haddad" title="Support" typing={typing} typingTestID="dots" />
+			</Support>
+		);
+	}
+
+	test("is one labelled element, and typing replaces the status line and announces once", async () => {
+		setPlatform("android");
+		const view = await renderWithProviders(<Agent />);
 		expect(screen.getByLabelText("Omar Haddad, Support, online")).toBeOnTheScreen();
 		expect(screen.queryByTestId("dots", { hidden: true })).not.toBeOnTheScreen();
 		expect(announce).not.toHaveBeenCalled();
 
-		await view.rerender(
-			<Support availability="online">
-				<Support.Agent name="Omar Haddad" title="Support" typing typingTestID="dots" />
-			</Support>
-		);
+		await view.rerender(<Agent typing />);
 		expect(screen.getByLabelText("Omar Haddad is typing")).toBeOnTheScreen();
 		expect(screen.getByText("Omar is typing")).toBeOnTheScreen();
 		expect(screen.getByTestId("dots", { hidden: true })).toBeOnTheScreen();
 		expect(announce).toHaveBeenCalledTimes(1);
 		expect(announce).toHaveBeenCalledWith("Omar Haddad is typing");
 	});
+
+	test("Android: no live region, so typing is spoken once and stopping says nothing", async () => {
+		setPlatform("android");
+		const view = await renderWithProviders(<Agent typing />);
+		expect(screen.getByLabelText("Omar Haddad is typing").props.accessibilityLiveRegion).toBe("none");
+		expect(announce).toHaveBeenCalledTimes(1);
+		await view.rerender(<Agent />);
+		expect(announce).toHaveBeenCalledTimes(1);
+	});
+
+	test("iOS: typing is announced once", async () => {
+		setPlatform("ios");
+		const view = await renderWithProviders(<Agent />);
+		await view.rerender(<Agent typing />);
+		expect(announceWithOptions).toHaveBeenCalledTimes(1);
+		expect(announceWithOptions).toHaveBeenCalledWith("Omar Haddad is typing", { queue: true });
+	});
+
+	test("announce={false} stays silent", async () => {
+		setPlatform("android");
+		const view = await renderWithProviders(<Agent announceIt={false} />);
+		await view.rerender(<Agent announceIt={false} typing />);
+		expect(announce).not.toHaveBeenCalled();
+	});
 });
 
 describe("Support.Handoff", () => {
-	test("announces the change of hands on mount", async () => {
+	test("announces the change of hands on mount, once, with no live region beside it", async () => {
+		setPlatform("android");
 		await renderWithProviders(<Support.Handoff>You were passed to Omar.</Support.Handoff>);
-		expect(screen.getByLabelText("You were passed to Omar.")).toBeOnTheScreen();
+		const handoff = screen.getByLabelText("You were passed to Omar.");
+		expect(handoff.props.accessibilityLiveRegion).toBe("none");
+		expect(announce).toHaveBeenCalledTimes(1);
 		expect(announce).toHaveBeenCalledWith("You were passed to Omar.");
 	});
 
+	test("iOS: announces on mount", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Support.Handoff>You were passed to Omar.</Support.Handoff>);
+		expect(announceWithOptions).toHaveBeenCalledWith("You were passed to Omar.", { queue: true });
+	});
+
 	test("announce={false} stays silent for a handoff that is history", async () => {
+		setPlatform("android");
 		await renderWithProviders(<Support.Handoff announce={false}>You were passed to Omar.</Support.Handoff>);
 		expect(screen.getByText("You were passed to Omar.")).toBeOnTheScreen();
 		expect(announce).not.toHaveBeenCalled();

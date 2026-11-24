@@ -14,12 +14,14 @@ import {
 	pieInnerRadiusSpec,
 	resolvePieSeries,
 } from "./chart.variants";
+import { resolveChartSummary } from "./chart-accessibility";
 import { ChartLegend } from "./chart-legend";
 import { type PieChartContextValue, PieChartProvider } from "./pie-chart.context";
 import { PieChartCenter } from "./pie-chart-center";
 import { PieChartLabel } from "./pie-chart-label";
 import { PieChartSlice } from "./pie-chart-slice";
-import { PieChartTooltip } from "./pie-chart-tooltip";
+import { PieChartSliceTargets } from "./pie-chart-slice-targets";
+import { PieChartTooltip, type PieChartTooltipProps } from "./pie-chart-tooltip";
 import { useChartFont } from "./use-chart-font";
 import { useChartPalette } from "./use-chart-palette";
 
@@ -45,6 +47,17 @@ export type PieChartProps = {
 	selectedIndex?: number | null;
 	/** Called with a tapped slice's index, or `null` for a tap outside every slice. */
 	onSelect?: (index: number | null) => void;
+	/**
+	 * What a screen reader says for the whole pie, in place of the generated
+	 * summary (`Pie chart. Free 57%, …`). Spoken as the pie's name.
+	 */
+	accessibilityLabel?: string;
+	/**
+	 * Whether the pie is in the accessibility tree. Defaults to `true`. `false`
+	 * hides it entirely, slices included, for a pie whose figures a caller
+	 * already speaks elsewhere.
+	 */
+	accessible?: boolean;
 	className?: string;
 	/** Named on the frame, so a capture flow or a test can find the plot. */
 	testID?: string;
@@ -67,6 +80,8 @@ function PieChartRoot({
 	startAngle = 0,
 	selectedIndex,
 	onSelect,
+	accessibilityLabel,
+	accessible = true,
 	className,
 	testID,
 	children,
@@ -132,7 +147,10 @@ function PieChartRoot({
 		[series, resolved, slices, slots, size, surfaceColor, frame, nameKey, valueKey, innerRadius, selected, select]
 	);
 
-	const { canvas, overlay, below, selectable } = useMemo(() => partitionPieChildren(children), [children]);
+	const { canvas, overlay, below, selectable, tooltipProps } = useMemo(
+		() => partitionPieChildren(children),
+		[children]
+	);
 
 	const onLayout = (event: LayoutChangeEvent): void => {
 		const { width, height } = event.nativeEvent.layout;
@@ -144,22 +162,51 @@ function PieChartRoot({
 	// at all, and a pie in a list is nothing more than a picture.
 	const onSlicePress = selectable || onSelect !== undefined || selectedIndex !== undefined ? select : undefined;
 
+	const summary = resolveChartSummary({
+		kind: "pie",
+		series,
+		values: resolved.values,
+		total: resolved.total,
+		override: accessibilityLabel,
+	});
+
+	// A not-selectable pie is one image: the frame itself is the accessible
+	// element. A selectable one cannot be, because iOS ignores accessible
+	// descendants of an accessible parent, so its frame stays plain and
+	// `PieChartSliceTargets` exposes the summary and a button per slice instead.
+	const interactive = onSlicePress !== undefined;
+	const hideCanvas = { accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants" } as const;
+	const interactiveFrame = { accessible: false } as const;
+	const imageFrame = { accessible: true, accessibilityRole: "image", accessibilityLabel: summary } as const;
+	// `accessible={false}` hides the whole frame — the centre and the tooltip
+	// included — the way `Chart` does, not just the frame view itself.
+	const frameAccessibility = !accessible ? hideCanvas : interactive ? interactiveFrame : imageFrame;
+
 	return (
 		<PieChartProvider value={value}>
 			<View className={slots.root({ className })}>
-				<View className={slots.frame()} onLayout={onLayout} testID={testID}>
-					<PolarChart
-						data={rows}
-						font={font}
-						innerRadius={innerRadiusSpec}
-						labelKey={ENGINE_NAME_KEY}
-						onSlicePress={onSlicePress}
-						selectedIndex={selected}
-						startAngle={startAngle}
-						valueKey={ENGINE_VALUE_KEY}
-					>
-						<PieChartProvider value={value}>{canvas}</PieChartProvider>
-					</PolarChart>
+				<View className={slots.frame()} onLayout={onLayout} testID={testID} {...frameAccessibility}>
+					<View className="absolute inset-0" {...hideCanvas}>
+						<PolarChart
+							data={rows}
+							font={font}
+							innerRadius={innerRadiusSpec}
+							labelKey={ENGINE_NAME_KEY}
+							onSlicePress={onSlicePress}
+							selectedIndex={selected}
+							startAngle={startAngle}
+							valueKey={ENGINE_VALUE_KEY}
+						>
+							<PieChartProvider value={value}>{canvas}</PieChartProvider>
+						</PolarChart>
+					</View>
+					{accessible && interactive ? (
+						<PieChartSliceTargets
+							formatPercent={tooltipProps?.formatPercent}
+							formatValue={tooltipProps?.formatValue}
+							summary={summary}
+						/>
+					) : null}
 					{overlay}
 				</View>
 				{below}
@@ -185,11 +232,13 @@ function partitionPieChildren(children: ReactNode): {
 	overlay: ReactNode[];
 	below: ReactNode[];
 	selectable: boolean;
+	tooltipProps: PieChartTooltipProps | undefined;
 } {
 	const canvas: ReactNode[] = [];
 	const overlay: ReactNode[] = [];
 	const below: ReactNode[] = [];
 	let selectable = false;
+	let tooltipProps: PieChartTooltipProps | undefined;
 
 	for (const child of Children.toArray(children)) {
 		if (!isValidElement(child)) continue;
@@ -198,10 +247,11 @@ function partitionPieChildren(children: ReactNode): {
 		else if (child.type === PieChartTooltip) {
 			overlay.push(child);
 			selectable = true;
+			tooltipProps = (child as ReactElement<PieChartTooltipProps>).props;
 		} else below.push(child);
 	}
 
-	return { canvas, overlay, below, selectable };
+	return { canvas, overlay, below, selectable, tooltipProps };
 }
 
 /**

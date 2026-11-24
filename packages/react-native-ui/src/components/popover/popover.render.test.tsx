@@ -1,7 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { OverlayProvider } from "../overlay";
 import { Popover, type PopoverProps } from "./popover";
@@ -34,7 +34,7 @@ const press = (name: string) => fireEvent(screen.getByRole("button", { name }), 
 
 /**
  * The panel measures its trigger with `measureInWindow`, and Jest has no layout, so the
- * placement (flip, shift, arrow offset) is never resolved here; `popover.position.test.ts`
+ * placement (flip, shift, arrow offset) is never resolved here and the panel never finishes entering, so focus in and out is verified on a simulator; `popover.position.test.ts`
  * covers it as pure logic. What is tested is open/close state, callbacks and semantics.
  */
 describe("Popover", () => {
@@ -78,6 +78,18 @@ describe("Popover", () => {
 		expect(screen.getByLabelText("Rename file")).toBeOnTheScreen();
 		expect(screen.getByLabelText("Rename file")).toHaveProp("role", "dialog");
 		expect(screen.getByLabelText("Rename file")).toHaveProp("accessibilityViewIsModal", true);
+	});
+
+	test("the panel escapes when dismissible, and has no escape when not", async () => {
+		const onOpenChange = jest.fn();
+		const { rerender } = await renderWithProviders(<RenamePopover defaultOpen onOpenChange={onOpenChange} />, {
+			wrapper: Overlays,
+		});
+		const panel = screen.getByLabelText("Rename file");
+		await act(() => panel.props.onAccessibilityEscape());
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		await rerender(<RenamePopover isDismissible={false} isOpen />);
+		expect(screen.getByLabelText("Rename file").props.onAccessibilityEscape).toBeUndefined();
 	});
 
 	test("defaultOpen starts it open", async () => {

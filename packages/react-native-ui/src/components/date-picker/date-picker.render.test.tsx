@@ -1,6 +1,7 @@
 import { BottomSheetProvider } from "@delacour/react-native-bottom-sheet";
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
+import { getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { act, fireEvent, renderWithProviders, screen, within } from "../../test/render";
 import type { CalendarDate, CalendarDateRange } from "../calendar/calendar.date";
 import { OverlayProvider } from "../overlay";
@@ -194,6 +195,41 @@ describe("DatePicker single mode", () => {
 		expect(trigger()).toHaveAccessibilityValue({ text: "12 October 2026" });
 	});
 
+	test("onConfirm fires after onValueChange for a new day, and alone for the shown day tapped again", async () => {
+		const calls: string[] = [];
+		const onValueChange = jest.fn((_value: unknown) => void calls.push("change"));
+		const onConfirm = jest.fn((_value: unknown) => void calls.push("confirm"));
+		await renderWithProviders(
+			<Picker defaultOpen defaultValue={OCT_12} onConfirm={onConfirm} onValueChange={onValueChange} />,
+			{ wrapper: Providers }
+		);
+
+		await tap(day("2026-10-12"));
+		expect(onConfirm).toHaveBeenLastCalledWith(OCT_12);
+		expect(onValueChange).not.toHaveBeenCalled();
+		await settle();
+
+		await tap(trigger());
+		await tap(day("2026-10-14"));
+		expect(onConfirm).toHaveBeenLastCalledWith(OCT_14);
+		expect(onConfirm).toHaveBeenCalledTimes(2);
+		expect(calls).toEqual(["confirm", "change", "confirm"]);
+	});
+
+	test("onConfirm never fires on Clear or a dismiss", async () => {
+		const onConfirm = jest.fn();
+		const onValueChange = jest.fn();
+		await renderWithProviders(
+			<Picker defaultOpen defaultValue={OCT_12} isClearable onConfirm={onConfirm} onValueChange={onValueChange} />,
+			{ wrapper: Providers }
+		);
+		await tap(screen.getByRole("button", { name: "Clear" }));
+		expect(onValueChange).toHaveBeenCalledWith(null);
+		await tap(screen.getByTestId("stay-close"));
+		await settle();
+		expect(onConfirm).not.toHaveBeenCalled();
+	});
+
 	test("the picked day is announced as selected", async () => {
 		await renderWithProviders(<Picker defaultOpen defaultValue={OCT_12} />, { wrapper: Providers });
 		expect(day("2026-10-12")).toBeSelected();
@@ -379,6 +415,13 @@ describe("DatePicker inline", () => {
 		await settle();
 		expect(onOpenChange).not.toHaveBeenCalled();
 	});
+
+	test("onConfirm fires for an inline pick too", async () => {
+		const onConfirm = jest.fn();
+		await renderWithProviders(<Picker onConfirm={onConfirm} presentation="inline" />, { wrapper: Providers });
+		await tap(day("2026-10-12"));
+		expect(onConfirm).toHaveBeenCalledWith(OCT_12);
+	});
 });
 
 describe("DatePicker parts", () => {
@@ -472,6 +515,23 @@ describe("DatePicker initialView", () => {
 		await tap(trigger());
 		expect(caption()).toHaveAccessibleName("March 1990");
 		expect(year(1990)).not.toBeOnTheScreen();
+	});
+
+	test("in the sheet, the year list blocks the sheet's content pan", async () => {
+		await renderWithProviders(<Picker defaultOpen initialView="years" {...bounds} />, { wrapper: Providers });
+		expect(screen.getByTestId("stay-calendar-years")).toBeOnTheScreen();
+		const blocker = getByGestureTestId("stay-calendar-years-pan");
+		const blocked = "gestureRelations" in blocker ? blocker.gestureRelations.blocksHandlers : [];
+		expect(blocked).toHaveLength(1);
+		expect(blocked[0]).not.toBe(blocker.handlerTag);
+	});
+
+	test("inline, the year list blocks nothing", async () => {
+		await renderWithProviders(<Picker initialView="years" presentation="inline" {...bounds} />, {
+			wrapper: Providers,
+		});
+		expect(screen.getByTestId("stay-calendar-years")).toBeOnTheScreen();
+		expect(() => getByGestureTestId("stay-calendar-years-pan")).toThrow();
 	});
 
 	test("starts again on the years each time the sheet opens while empty", async () => {

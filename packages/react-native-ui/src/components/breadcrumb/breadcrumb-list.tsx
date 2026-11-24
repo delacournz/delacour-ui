@@ -45,12 +45,13 @@ export function BreadcrumbList({
 	itemsAfterCollapse = 1,
 	onEllipsisPress,
 	overflow: overflowProp,
-	accessibilityLabel = "Breadcrumb",
+	accessibilityLabel: accessibilityLabelProp,
 	className,
 	children,
 	...props
 }: BreadcrumbListProps): ReactElement {
-	const { size } = useBreadcrumbPart("Breadcrumb.List");
+	const { labels, size } = useBreadcrumbPart("Breadcrumb.List");
+	const accessibilityLabel = accessibilityLabelProp ?? labels.list;
 	const overflow = resolveBreadcrumbOverflow({ maxItems, overflow: overflowProp });
 	const childArray = useMemo(() => Children.toArray(children), [children]);
 

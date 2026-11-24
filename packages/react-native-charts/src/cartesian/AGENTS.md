@@ -34,7 +34,7 @@ keeps the re-render boundary visible in a diff.
 | `cartesian-chart.types.ts` | Props, render args, and the key-narrowing helpers |
 | `hooks/use-canvas-size.ts` | `onLayout` on the wrapping view |
 | `hooks/use-chart-model.ts` | The two passes, with the measuring between them; the axis roles, the x step, the stacks |
-| `marks/chart-line.tsx` | A stroked series |
+| `marks/chart-line.tsx` | A stroked series, optionally dashed — `dash` is the visible on/off, with the cap's reach taken out by `core/shape/dash-intervals.ts` |
 | `marks/chart-area.tsx` | The region between a series and a baseline |
 | `marks/chart-bar.tsx` | One bar per datum, on zero, with optional value labels |
 | `marks/chart-bar-group.tsx` | Several series side by side within each step, one path per series |

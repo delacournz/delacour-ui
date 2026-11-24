@@ -1,8 +1,9 @@
 import type { ReactElement } from "react";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconChevronLeft, IconCrossSmall } from "../../icons/central";
 import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
-import { screenVariants } from "./screen.variants";
+import { resolveBackButtonHitTarget, screenVariants } from "./screen.variants";
 
 /** Which affordance the control reads as: going back, or closing a modal. */
 export const SCREEN_BACK_BUTTON_GLYPHS = ["chevron", "close"] as const;
@@ -53,8 +54,11 @@ export function ScreenNavbarBackButton({
 	className,
 	children,
 	accessibilityLabel = "Back",
+	hitSlop,
 	...props
 }: ScreenNavbarBackButtonProps): ReactElement {
+	const slop = useMinimumHitSlop(resolveBackButtonHitTarget());
+
 	function handlePress(): void {
 		if (onBeforeBack && !onBeforeBack()) return;
 		onPress();
@@ -66,6 +70,7 @@ export function ScreenNavbarBackButton({
 			accessibilityRole="button"
 			className={screenVariants().backButton({ className })}
 			feedback="fade"
+			hitSlop={hitSlop ?? slop}
 			onPress={handlePress}
 			{...props}
 		>

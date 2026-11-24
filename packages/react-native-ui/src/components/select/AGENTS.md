@@ -72,7 +72,7 @@ engine. An app that imports no picker still never resolves it.
   disables a chosen row for `maxSelected`, or the selection could not be undone.
   A row disabled by the limit with no description of its own says "Limit
   reached" (`limitReachedText`).
-- **`onClose` is the sheet's, not the state's.** It is passed straight to `BottomSheet` and runs once the sheet has finished sliding down, later than `onValueChange` or the open state turning false. Move focus from here, never from the pick.
+- **`onClose` is the sheet's, not the state's.** It is passed straight to `BottomSheet` and runs once the sheet has finished sliding down, later than `onValueChange` or the open state turning false. Move focus from here, never from the pick. `onConfirm` (single only) says a close came from a pick — a press on the chosen row of a non-clearable select included — and not from a clear or a dismiss. It fires after `onValueChange`, and never for a clearable deselect, which empties the selection.
 - **Multiple never closes on a pick.** A sticky `Done` footer closes it; every
   close path — a pick, Done, a swipe, the overlay, the close button, or a
   controlled `isOpen` set to false — clears the query, because the clear reads
@@ -158,6 +158,13 @@ engine. An app that imports no picker still never resolves it.
   The select registers its `open` with the `Field`, so tapping the label opens
   the sheet, and reads `Field.Label`'s text as its accessible name and its
   default sheet title.
+- **Validity is spoken, once.** `SelectRoot` calls `useFieldControlAccessibility`
+  a single time (fallback name: `title`, then `placeholder`; own hint "Opens a
+  list of options", dropped when read-only) and hands the result to the trigger
+  through context, so a custom `Select.Trigger` and `asChild` get it too. Name
+  is "Role, required"; hint is "Invalid: <error>. <description>. Opens a list of
+  options". `isRequired` is own prop, then the `Field`. The hook claims the label,
+  so `Field.Label` is not read twice. Android also gets `accessibilityLabelledBy`.
 - **Read-only looks normal and never opens.** The trigger stays enabled for a
   screen reader — it is not disabled, it is fixed — with no press feedback, and
   `open` refuses.

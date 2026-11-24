@@ -613,6 +613,49 @@ describe("TagInput", () => {
 			);
 			expect(await screen.findByLabelText(LABEL)).toBeOnTheScreen();
 		});
+
+		test("the text field reads the required state, the error and the description", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Recipients</Field.Label>
+					<TagInput testID="tags" />
+					<Field.Description>Press return to add.</Field.Description>
+					<Field.Error>Add a recipient</Field.Error>
+				</Field>
+			);
+			const input = screen.getByTestId("tags-input");
+			expect(input).toHaveProp("accessibilityLabel", "Recipients, required");
+			expect(input).toHaveProp("accessibilityHint", "Invalid: Add a recipient. Press return to add.");
+		});
+
+		test("overflowing max reads as invalid on the text field", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Recipients</Field.Label>
+					<TagInput allowOverflow defaultValue={["a", "b"]} max={1} testID="tags" />
+				</Field>
+			);
+			expect(screen.getByTestId("tags-input").props.accessibilityHint).toContain("Invalid");
+		});
+
+		test("a chip keeps its own name and takes no field hint", async () => {
+			await renderWithProviders(
+				<Field isInvalid>
+					<Field.Label>Recipients</Field.Label>
+					<TagInput defaultValue={["a"]} testID="tags" />
+					<Field.Error>Add a recipient</Field.Error>
+				</Field>
+			);
+			const chip = screen.getByTestId("tags-tag-0");
+			expect(chip.props.accessibilityHint).toBeUndefined();
+		});
+
+		test("outside a Field the label is the prop and there is no hint", async () => {
+			await renderWithProviders(<TagInput accessibilityLabel={LABEL} testID="tags" />);
+			const input = screen.getByTestId("tags-input");
+			expect(input).toHaveProp("accessibilityLabel", LABEL);
+			expect(input.props.accessibilityHint).toBeUndefined();
+		});
 	});
 
 	describe("parts outside a TagInput", () => {

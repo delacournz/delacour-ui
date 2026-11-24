@@ -1,11 +1,12 @@
 import type { ReactElement } from "react";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { IconCircleX } from "../../icons/central";
 import { Icon } from "../icon";
 import { Pressable } from "../pressable";
 import { useSearchBarPart } from "./search-bar.context";
 import { claimSearchBarTouch } from "./search-bar.responder";
-import { SEARCH_BAR_CLEAR_FADE_DURATION, SEARCH_BAR_CLEAR_HIT_SLOP, searchBarVariants } from "./search-bar.variants";
+import { resolveSearchBarClearHitSlop, SEARCH_BAR_CLEAR_FADE_DURATION, searchBarVariants } from "./search-bar.variants";
 
 const ENTERING = FadeIn.duration(SEARCH_BAR_CLEAR_FADE_DURATION);
 const EXITING = FadeOut.duration(SEARCH_BAR_CLEAR_FADE_DURATION);
@@ -25,7 +26,8 @@ const EXITING = FadeOut.duration(SEARCH_BAR_CLEAR_FADE_DURATION);
  * every clear reads as noise.
  */
 export function SearchBarClear(): ReactElement {
-	const { clear, clearAccessibilityLabel, testID } = useSearchBarPart("SearchBar.Clear");
+	const { clear, clearAccessibilityLabel, size, testID } = useSearchBarPart("SearchBar.Clear");
+	const hitSlop = resolveSearchBarClearHitSlop(size, useMinimumHitTarget());
 
 	return (
 		<Animated.View entering={ENTERING} exiting={EXITING} onStartShouldSetResponder={claimSearchBarTouch}>
@@ -34,7 +36,7 @@ export function SearchBarClear(): ReactElement {
 				accessibilityRole="button"
 				className={searchBarVariants().clear()}
 				feedback="fade"
-				hitSlop={SEARCH_BAR_CLEAR_HIT_SLOP}
+				hitSlop={hitSlop}
 				onPress={clear}
 				testID={testID ? `${testID}-clear` : undefined}
 			>

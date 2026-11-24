@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { createElement, Fragment } from "react";
-import type { MessageStatus } from "./message.types";
+import type { MessageLabels, MessageStatusKey } from "../../lib/labels";
+import type { MessageStatus, MessageStatusType } from "./message.types";
 import {
 	extractMessageText,
 	formatMessageTime,
@@ -16,7 +17,56 @@ import {
 	shouldShowAvatar,
 	shouldShowStatus,
 } from "./message.utils";
-import { MESSAGE_DIRECTIONS, MESSAGE_POSITIONS } from "./message.variants";
+import { MESSAGE_DIRECTIONS, MESSAGE_POSITIONS, MESSAGE_STATUS_TYPES } from "./message.variants";
+
+const FRENCH: MessageLabels = {
+	moreActions: "Plus d'actions",
+	retry: "Réessayer",
+	status: (type, reason) => {
+		const words: Record<MessageStatusKey, string> = {
+			delivered: "Remis",
+			failed: reason ? `Échec : ${reason}` : "Échec de l'envoi",
+			read: "Lu",
+			sending: "Envoi",
+			sent: "Envoyé",
+		};
+		return words[type];
+	},
+	typing: "Écrit",
+	typingBy: (author) => `${author} écrit`,
+	you: "Vous",
+};
+
+describe("message labels", () => {
+	test("the status keys match MessageStatusType both ways", () => {
+		const forward: MessageStatusKey = "sent" as MessageStatusType;
+		const back: MessageStatusType = "sent" as MessageStatusKey;
+		expect(forward).toBe(back);
+		expect([...MESSAGE_STATUS_TYPES].sort()).toEqual(["delivered", "failed", "read", "sending", "sent"]);
+	});
+
+	test("status words and reason come from the labels", () => {
+		expect(resolveMessageStatusLabel({ type: "read" }, FRENCH)).toBe("Lu");
+		expect(resolveMessageStatusLabel({ type: "failed", reason: " Hors ligne " }, FRENCH)).toBe("Échec : Hors ligne");
+		expect(resolveMessageStatusLabel({ type: "failed", reason: " " }, FRENCH)).toBe("Échec de l'envoi");
+	});
+
+	test("the spoken label uses you, typing and the receipt from the labels", () => {
+		expect(
+			resolveMessageAccessibilityLabel({ direction: "outgoing", status: { type: "sent" }, text: "Oui" }, FRENCH)
+		).toBe("Vous, Oui, Envoyé");
+		expect(resolveMessageAccessibilityLabel({ author: "Aria", direction: "incoming", isTyping: true }, FRENCH)).toBe(
+			"Aria écrit"
+		);
+		expect(resolveMessageAccessibilityLabel({ direction: "incoming", isTyping: true }, FRENCH)).toBe("Écrit");
+	});
+
+	test("the action labels come from the labels", () => {
+		const actions = resolveMessageAccessibilityActions({ hasLongPress: true, hasPress: false, hasRetry: true }, FRENCH);
+		expect(actions.find((a) => a.name === "more")?.label).toBe("Plus d'actions");
+		expect(actions.find((a) => a.name === "retry")?.label).toBe("Réessayer");
+	});
+});
 
 describe("resolveMessageStatusLabel", () => {
 	test.each<[MessageStatus, string]>([

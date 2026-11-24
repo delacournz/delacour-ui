@@ -40,7 +40,7 @@ export type MessageStatusProps = {
  */
 export function MessageStatusRow({ label, className }: MessageStatusProps): ReactElement | null {
 	const context = useMessagePart("Message.Status");
-	const { direction, position, status, onRetry } = context;
+	const { direction, position, status, onRetry, labels } = context;
 	const isCalm = useCalmMotion();
 	const isShown = status !== undefined && shouldShowStatus(position, direction);
 	useMessageLabelPart(context, isShown && label ? { kind: "statusLabel", value: label } : undefined);
@@ -48,7 +48,7 @@ export function MessageStatusRow({ label, className }: MessageStatusProps): Reac
 	if (!isShown) return null;
 
 	const slots = messageVariants({ direction, statusType: status.type });
-	const text = label ?? resolveMessageStatusLabel(status);
+	const text = label ?? resolveMessageStatusLabel(status, labels);
 
 	return (
 		<View className={slots.status({ className })}>
@@ -58,13 +58,13 @@ export function MessageStatusRow({ label, className }: MessageStatusProps): Reac
 			<Text className={slots.statusLabel()}>{text}</Text>
 			{status.type === "failed" && onRetry ? (
 				<Pressable
-					accessibilityLabel="Retry"
+					accessibilityLabel={labels.retry}
 					feedback="fade"
 					hitSlop={8}
 					onPress={onRetry}
 					{...resolveMessageHiddenProps(context.isCompound)}
 				>
-					<Text className={slots.retry()}>Retry</Text>
+					<Text className={slots.retry()}>{labels.retry}</Text>
 				</Pressable>
 			) : null}
 		</View>

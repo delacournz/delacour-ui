@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use, useEffect, useId } from "react";
+import type { MessageLabels } from "../../lib/labels";
 import type { MessageStatus } from "./message.types";
 import type { MessageLabelPart } from "./message.utils";
 import type { MessageDirection, MessagePosition, MessageSize, MessageTone } from "./message.variants";
@@ -14,6 +15,8 @@ export type MessageContextValue = {
 	/** The message has an `onPress` or an `onLongPress`. */
 	isInteractive: boolean;
 	isSelected: boolean;
+	/** The resolved spoken and visible strings: English, the provider's, then the root's `labels`. */
+	labels: MessageLabels;
 	/** The root is not one accessibility element — each part is read on its own. */
 	isCompound: boolean;
 	onPress: (() => void) | undefined;

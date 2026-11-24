@@ -1,4 +1,5 @@
 import { isValidElement, type ReactNode } from "react";
+import { DELACOUR_DEFAULT_LABELS, type MessageLabels } from "../../lib/labels";
 import type { MessageStatus } from "./message.types";
 import type { MessageDirection, MessagePosition } from "./message.variants";
 
@@ -8,21 +9,12 @@ const DAY_MS = 86_400_000;
 const EMOJI_ONLY_MAX = 3;
 
 /** What a receipt says, drawn under the bubble and read by a screen reader. */
-export function resolveMessageStatusLabel(status: MessageStatus): string {
-	switch (status.type) {
-		case "sending":
-			return "Sending";
-		case "sent":
-			return "Sent";
-		case "delivered":
-			return "Delivered";
-		case "read":
-			return "Read";
-		case "failed": {
-			const reason = status.reason?.trim();
-			return reason ? `Failed: ${reason}` : "Failed to send";
-		}
-	}
+export function resolveMessageStatusLabel(
+	status: MessageStatus,
+	labels: MessageLabels = DELACOUR_DEFAULT_LABELS.message
+): string {
+	const reason = status.type === "failed" ? status.reason?.trim() || undefined : undefined;
+	return labels.status(status.type, reason);
 }
 
 /** Midnight at the start of `date`'s local calendar day. */
@@ -211,16 +203,19 @@ export type MessageAccessibilityLabelInput = {
  * scrolling a thread needs the side, not their own name. Blank parts are
  * dropped rather than read as a pause.
  */
-export function resolveMessageAccessibilityLabel(input: MessageAccessibilityLabelInput): string {
-	const author = input.direction === "outgoing" ? "You" : input.author?.trim() || undefined;
+export function resolveMessageAccessibilityLabel(
+	input: MessageAccessibilityLabelInput,
+	labels: MessageLabels = DELACOUR_DEFAULT_LABELS.message
+): string {
+	const author = input.direction === "outgoing" ? labels.you : input.author?.trim() || undefined;
 
 	if (input.isTyping) {
-		return author && input.direction === "incoming" ? `${author} is typing` : "Typing";
+		return author && input.direction === "incoming" ? labels.typingBy(author) : labels.typing;
 	}
 
 	const receipt =
 		input.status && shouldShowStatus(input.position ?? "single", input.direction)
-			? input.statusLabel?.trim() || resolveMessageStatusLabel(input.status)
+			? input.statusLabel?.trim() || resolveMessageStatusLabel(input.status, labels)
 			: undefined;
 
 	return [author, input.time?.trim(), input.text?.trim(), receipt].filter((part) => part).join(", ");
@@ -238,19 +233,22 @@ export type MessageAccessibilityAction = {
  * `longpress`, which TalkBack binds to its long-press gesture, and as a named
  * `more` that VoiceOver lists in its actions rotor.
  */
-export function resolveMessageAccessibilityActions({
-	hasPress,
-	hasLongPress,
-	hasRetry,
-}: {
-	hasPress: boolean;
-	hasLongPress: boolean;
-	hasRetry: boolean;
-}): MessageAccessibilityAction[] {
+export function resolveMessageAccessibilityActions(
+	{
+		hasPress,
+		hasLongPress,
+		hasRetry,
+	}: {
+		hasPress: boolean;
+		hasLongPress: boolean;
+		hasRetry: boolean;
+	},
+	labels: MessageLabels = DELACOUR_DEFAULT_LABELS.message
+): MessageAccessibilityAction[] {
 	const actions: MessageAccessibilityAction[] = [];
 	if (hasPress) actions.push({ name: "activate" });
-	if (hasLongPress) actions.push({ name: "longpress" }, { name: "more", label: "More actions" });
-	if (hasRetry) actions.push({ name: "retry", label: "Retry" });
+	if (hasLongPress) actions.push({ name: "longpress" }, { name: "more", label: labels.moreActions });
+	if (hasRetry) actions.push({ name: "retry", label: labels.retry });
 	return actions;
 }
 

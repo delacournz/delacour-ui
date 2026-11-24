@@ -94,6 +94,14 @@ Compound root plus `Message.Avatar`, `.Header`, `.Author`, `.Bubble`, `.Text`,
   `resolveMessageLabelParts` folds them: every text in order, first author and
   time. That costs one extra render on mount, which is the price of a label
   nobody has to pass twice. `accessibilityLabel` on the root replaces it.
+- **The spoken and drawn strings are `labels`, not literals.** Receipt words
+  (`status(type, reason)`), "You", "Typing" / "{author} is typing", the `more`
+  and `retry` action names and the drawn Retry come from `lib/labels` through
+  `useLabels`, resolved once on the root and shared through the context —
+  English, then `DelacourProvider`'s `labels`, then the message's own `labels`
+  prop. The resolvers take the labels as a trailing argument defaulting to
+  English, so their callers are unchanged. `Message.Status`'s `label` still wins
+  over the receipt words; the failed announcement speaks the labels' words.
 - **Role is `button` only with `onPress`;** otherwise `text`.
 - **Gestures have actions.** `onLongPress` is offered as `longpress` (TalkBack's
   gesture) and a named `more` (VoiceOver's rotor); `onRetry` on a failed message

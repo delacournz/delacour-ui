@@ -58,7 +58,12 @@ export type SwipeTileProps = { color?: SwipeActionColor; label?: string; onPress
 /** A named accessibility action — `AccessibilityActionInfo`, restated so this file imports nothing from React Native. */
 export type SwipeAccessibilityAction = { name: string; label?: string };
 
-/** The standard action a screen reader sends for a two-finger scrub (iOS) or back gesture; closes an open row. */
+/**
+ * The name of the custom action an open row offers to close itself, announced as "Close" in VoiceOver's
+ * actions rotor and TalkBack's actions menu. Neither gesture sends it: VoiceOver's two-finger Z-scrub
+ * reaches the row through `onAccessibilityEscape` (Fabric's `accessibilityPerformEscape`), and
+ * TalkBack's back gesture sends nothing to the row.
+ */
 export const SWIPE_ESCAPE_ACTION = "escape";
 
 /** What the open row's `escape` action is announced as. */

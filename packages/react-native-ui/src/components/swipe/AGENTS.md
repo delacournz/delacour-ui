@@ -138,8 +138,14 @@ root plus `Swipe.Start`, `Swipe.End`, `Swipe.Action` and `Swipe.Group`, with `us
   warns about it. Mirror it with `accessibilityActions` and `onAccessibilityAction` on `Swipe`: the
   caller's actions are published first, the tiles' after, and any name that is not a tile's goes to
   the caller's handler. Hide the inner control from assistive technology to silence the warning.
-- **An open row also offers `escape`** (labelled "Close", `SWIPE_CLOSE_ACTION_LABEL`), which closes it,
-  as the shield tap does for touch. A caller who declares their own `escape` keeps it.
+- **An open row closes from a screen reader two ways**, as the shield tap does for touch:
+  - a custom action named `escape`, labelled "Close" (`SWIPE_CLOSE_ACTION_LABEL`), listed in
+    VoiceOver's actions rotor and TalkBack's actions menu. A caller who declares their own `escape`
+    keeps it.
+  - `onAccessibilityEscape`, which is what VoiceOver's two-finger Z-scrub fires on Fabric
+    (`RCTViewComponentView`'s `accessibilityPerformEscape` calls only that prop, never an `escape`
+    action). A caller's `onAccessibilityEscape` replaces the row's close. TalkBack's back gesture
+    sends neither, so on Android the "Close" action is the way.
 - **Tiles are `button`s, hidden while the row is shut** (`accessibilityElementsHidden` and
   `importantForAccessibility="no-hide-descendants"` on each panel), so a screen reader does not
   walk into actions nobody can see.

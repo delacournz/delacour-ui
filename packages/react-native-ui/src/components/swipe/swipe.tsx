@@ -91,6 +91,7 @@ function SwipeRoot({
 	accessibilityHint,
 	accessibilityActions: callerActions,
 	onAccessibilityAction: onCallerAccessibilityAction,
+	onAccessibilityEscape: onCallerAccessibilityEscape,
 	ref,
 	...props
 }: SwipeProps): ReactElement {
@@ -359,6 +360,7 @@ function SwipeRoot({
 						accessible
 						className={slots.row({ className: contentClassName })}
 						onAccessibilityAction={handleAccessibilityAction}
+						onAccessibilityEscape={onCallerAccessibilityEscape ?? (isShut ? undefined : close)}
 						style={rowStyle}
 					>
 						{row}

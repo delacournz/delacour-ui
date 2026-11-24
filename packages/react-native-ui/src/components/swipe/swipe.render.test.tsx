@@ -104,6 +104,30 @@ describe("Swipe", () => {
 		expect(names()).not.toContain("escape");
 	});
 
+	test("VoiceOver's escape gesture (onAccessibilityEscape) closes an open row, and a shut row takes none", async () => {
+		const ref = createRef<SwipeHandle>();
+		const onOpenChange = jest.fn();
+		await renderWithProviders(<Row onOpenChange={onOpenChange} ref={ref} />);
+		expect(screen.getByLabelText("Invoice").props.onAccessibilityEscape).toBeUndefined();
+		await act(async () => ref.current?.open("end"));
+		await fireEvent(screen.getByLabelText("Invoice"), "accessibilityEscape");
+		expect(onOpenChange).toHaveBeenLastCalledWith(null);
+		expect(screen.getByLabelText("Invoice").props.onAccessibilityEscape).toBeUndefined();
+	});
+
+	test("a caller's onAccessibilityEscape runs instead of the row's own close", async () => {
+		const ref = createRef<SwipeHandle>();
+		const onOpenChange = jest.fn();
+		const onAccessibilityEscape = jest.fn();
+		await renderWithProviders(
+			<Row onAccessibilityEscape={onAccessibilityEscape} onOpenChange={onOpenChange} ref={ref} />
+		);
+		await act(async () => ref.current?.open("end"));
+		await fireEvent(screen.getByLabelText("Invoice"), "accessibilityEscape");
+		expect(onAccessibilityEscape).toHaveBeenCalledTimes(1);
+		expect(onOpenChange).not.toHaveBeenLastCalledWith(null);
+	});
+
 	test("tiles are hidden from assistive technology while the row is shut and exposed once open", async () => {
 		const ref = createRef<SwipeHandle>();
 		await renderWithProviders(<Row ref={ref} />);

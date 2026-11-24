@@ -1,3 +1,4 @@
+export type { ScreenLabels } from "../../lib/labels";
 export { Screen } from "./screen";
 export {
 	type ScreenContextValue,

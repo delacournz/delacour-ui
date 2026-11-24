@@ -1,6 +1,8 @@
 import type { ReactElement, ReactNode } from "react";
 import { View } from "react-native";
 import { useAnnouncement } from "../../hooks/use-announce";
+import { useLabels } from "../../hooks/use-labels";
+import type { ScreenLabels } from "../../lib/labels";
 import { Text } from "../text";
 import { resolveScreenErrorAnnouncement, screenVariants } from "./screen.variants";
 import { ScreenContent } from "./screen-content";
@@ -8,7 +10,7 @@ import { ScreenNavbar } from "./screen-navbar";
 import { ScreenRoot } from "./screen-root";
 
 export type ScreenErrorProps = {
-	/** Headline. Defaults to a generic apology. */
+	/** Headline. Defaults to `labels.errorTitle`. */
 	title?: string;
 	/** What went wrong, in a sentence the user can act on. */
 	message: string;
@@ -20,6 +22,8 @@ export type ScreenErrorProps = {
 	announce?: boolean;
 	/** A retry button, or anything else worth offering below the message. */
 	children?: ReactNode;
+	/** The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `title` still wins. */
+	labels?: Partial<ScreenLabels>;
 };
 
 /**
@@ -42,15 +46,18 @@ export type ScreenErrorProps = {
  * </Screen.Error>
  */
 export function ScreenError({
-	title = "Something went wrong",
+	title,
 	message,
 	onBack,
 	showNavbar = true,
 	announce = true,
 	children,
+	labels: labelsProp,
 }: ScreenErrorProps): ReactElement {
+	const labels = useLabels("screen", labelsProp);
+	const heading = title ?? labels.errorTitle;
 	const slots = screenVariants();
-	const { accessibilityLiveRegion } = useAnnouncement(resolveScreenErrorAnnouncement(title, message), {
+	const { accessibilityLiveRegion } = useAnnouncement(resolveScreenErrorAnnouncement(heading, message, labels), {
 		channel: "announcement",
 		onMount: true,
 		politeness: "assertive",
@@ -58,7 +65,7 @@ export function ScreenError({
 	});
 
 	return (
-		<ScreenRoot>
+		<ScreenRoot labels={labels}>
 			{showNavbar ? <ScreenNavbar>{onBack ? <ScreenNavbar.BackButton onPress={onBack} /> : null}</ScreenNavbar> : null}
 			<ScreenContent insets={["bottom"]}>
 				<View
@@ -68,7 +75,7 @@ export function ScreenError({
 				>
 					<View className="gap-1">
 						<Text accessibilityRole="header" className={slots.errorTitle()}>
-							{title}
+							{heading}
 						</Text>
 						<Text className={slots.errorMessage()}>{message}</Text>
 					</View>

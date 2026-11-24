@@ -286,6 +286,18 @@ the first row is still leaving.
 
 ## Accessibility
 
+- **The spoken strings are the `labels` prop, not literals**: `back` (the back button's name),
+  `loading` (`Screen.Loading`'s spinner name and announcement), `errorTitle` (`Screen.Error`'s
+  heading) and `errorAnnouncement(title, message)` (what is spoken when the error appears; it gets
+  trimmed parts) come from `lib/labels` through `useLabels("screen", labels)`. Precedence is the
+  explicit prop (`BackButton`'s `accessibilityLabel`, `Loading`'s `label`, `Error`'s `title`) ← the
+  `labels` prop ← `DelacourProvider` `labels` ← English. `ScreenRoot` resolves once and publishes
+  `labels` on the screen context; `BackButton` reads it, falling back to `useLabels("screen")`
+  outside a screen. `Loading` and `Error` resolve their own `labels` prop and hand the result to
+  the root they render. A nested screen with no `labels` keeps the outer set; one with its own
+  gets a context copy (same shared values, new `labels`) for its subtree.
+  `resolveScreenLoadingLabel` and `resolveScreenErrorAnnouncement` take `labels` as their last
+  parameter; `SCREEN_LOADING_LABEL` is a deprecated alias of the English default.
 - **A page's title is a heading.** `Screen.Navbar.Title` (a string child) and `Screen.Error`'s title
   render with `accessibilityRole="header"`, so a screen reader can land on the page title and
   rotor through headings. `Screen.Loading` takes its title through `Navbar.Title`, so it gets the

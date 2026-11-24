@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import type { ReactElement } from "react";
 import { AccessibilityInfo, Platform, Text } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Screen } from "./screen";
@@ -468,5 +469,88 @@ describe("Screen.Loading and Screen.Error announcements", () => {
 		await view.rerender(<Screen.Error message="Offline." />);
 		expect(withOptionsSpy).toHaveBeenCalledTimes(2);
 		expect(withOptionsSpy).toHaveBeenLastCalledWith("Something went wrong. Offline.", { queue: false });
+	});
+});
+
+describe("Screen labels", () => {
+	const german = {
+		back: "Zurück",
+		loading: "Laden",
+		errorTitle: "Etwas ist schiefgelaufen",
+		errorAnnouncement: (title: string, message: string) => `${title} - ${message}`,
+	};
+
+	test("the root labels prop renames the back button", async () => {
+		await renderWithProviders(
+			<Screen labels={german}>
+				<Screen.Navbar>
+					<Screen.Navbar.BackButton onPress={() => undefined} />
+				</Screen.Navbar>
+			</Screen>
+		);
+		expect(screen.getByRole("button", { name: "Zurück" })).toBeOnTheScreen();
+	});
+
+	test("the provider's labels rename the back button, the spinner and the error", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ screen: german }}>
+				<Screen>
+					<Screen.Navbar>
+						<Screen.Navbar.BackButton onPress={() => undefined} />
+					</Screen.Navbar>
+				</Screen>
+				<Screen.Loading showNavbar={false} />
+				<Screen.Error message="Offline." showNavbar={false} />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Zurück" })).toBeOnTheScreen();
+		expect(screen.getByLabelText("Laden")).toBeOnTheScreen();
+		expect(screen.getByText("Etwas ist schiefgelaufen")).toBeOnTheScreen();
+	});
+
+	test("Screen.Loading and Screen.Error take their own labels, and their navbar back button follows", async () => {
+		await renderWithProviders(
+			<>
+				<Screen.Loading labels={german} onBack={() => undefined} />
+				<Screen.Error labels={german} message="Offline." onBack={() => undefined} />
+			</>
+		);
+		expect(screen.getAllByRole("button", { name: "Zurück" })).toHaveLength(2);
+		expect(screen.getByLabelText("Laden")).toBeOnTheScreen();
+		expect(screen.getByText("Etwas ist schiefgelaufen")).toBeOnTheScreen();
+	});
+
+	test("explicit props still win over labels", async () => {
+		await renderWithProviders(
+			<Screen labels={german}>
+				<Screen.Navbar>
+					<Screen.Navbar.BackButton accessibilityLabel="Close" onPress={() => undefined} />
+				</Screen.Navbar>
+			</Screen>
+		);
+		expect(screen.getByRole("button", { name: "Close" })).toBeOnTheScreen();
+		expect(screen.queryByRole("button", { name: "Zurück" })).not.toBeOnTheScreen();
+
+		await renderWithProviders(
+			<>
+				<Screen.Loading label="Syncing" labels={german} showNavbar={false} />
+				<Screen.Error labels={german} message="Offline." showNavbar={false} title="Not found" />
+			</>
+		);
+		expect(screen.getByLabelText("Syncing")).toBeOnTheScreen();
+		expect(screen.getByText("Not found")).toBeOnTheScreen();
+	});
+
+	test("a nested screen without labels keeps the outer screen's", async () => {
+		await renderWithProviders(
+			<Screen labels={german}>
+				<Screen>
+					<Screen.Navbar>
+						<Screen.Navbar.BackButton onPress={() => undefined} />
+					</Screen.Navbar>
+				</Screen>
+			</Screen>
+		);
+		expect(screen.getByRole("button", { name: "Zurück" })).toBeOnTheScreen();
 	});
 });

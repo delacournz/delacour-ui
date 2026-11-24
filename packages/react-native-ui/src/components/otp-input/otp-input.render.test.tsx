@@ -356,7 +356,7 @@ describe("OtpInput", () => {
 					<OtpInput />
 				</Field>
 			);
-			await tap(screen.getByTestId("row"));
+			await fireEvent.press(screen.getByTestId("row"));
 			expect(focus).toHaveBeenCalledTimes(1);
 		});
 
@@ -369,7 +369,7 @@ describe("OtpInput", () => {
 					<OtpInput isDisabled />
 				</Field>
 			);
-			await tap(screen.getByTestId("row"));
+			await fireEvent.press(screen.getByTestId("row"));
 			expect(focus).not.toHaveBeenCalled();
 		});
 	});

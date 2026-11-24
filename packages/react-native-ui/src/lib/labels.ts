@@ -52,6 +52,14 @@ export type KpiLabels = {
 	loading: string;
 };
 
+/** What a looping animation's pause control is called — every looping component shares them. */
+export type MotionLabels = {
+	/** Offered while the loop moves. */
+	pause: string;
+	/** Offered while the user holds it paused. */
+	resume: string;
+};
+
 /** Pagination's visible and spoken strings. */
 export type PaginationLabels = {
 	/** The control's accessible name. */
@@ -79,6 +87,7 @@ export type DelacourLabels = {
 	breadcrumb: BreadcrumbLabels;
 	carousel: CarouselLabels;
 	kpi: KpiLabels;
+	motion: MotionLabels;
 	pagination: PaginationLabels;
 };
 
@@ -114,6 +123,10 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		sparkline: (points, first, last) => `Trend over ${points} points, from ${first} to ${last}`,
 		noTrendData: "No trend data",
 		loading: "Loading",
+	},
+	motion: {
+		pause: "Pause animation",
+		resume: "Resume animation",
 	},
 	pagination: {
 		list: "Pagination",

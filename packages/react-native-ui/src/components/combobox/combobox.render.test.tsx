@@ -55,6 +55,7 @@ describe("Combobox", () => {
 	test("the trigger's name carries the placeholder while it shows, and a value stays in the value", async () => {
 		await render();
 		expect(screen.getByRole("button", { name: "Country, Choose a country" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Country, Choose a country" }).props.accessibilityValue).toBeUndefined();
 		await render({ defaultValue: "fj" });
 		expect(screen.getByRole("button", { name: "Country" })).toBeOnTheScreen();
 	});

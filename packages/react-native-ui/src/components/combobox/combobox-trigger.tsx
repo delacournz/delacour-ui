@@ -147,7 +147,8 @@ export function ComboboxTrigger({
 				}),
 		accessibilityRole: "button" as const,
 		accessibilityState: { busy: isLoading || undefined, expanded: isOpen },
-		accessibilityValue: { text: triggerText ?? "" },
+		// No value at all rather than an empty one: TalkBack reads an empty value as a stray comma.
+		accessibilityValue: triggerText ? { text: triggerText } : undefined,
 		testID,
 	};
 
@@ -215,11 +216,12 @@ export function ComboboxTrigger({
 			</Text>
 		));
 
+	// The drawn clear is a duplicate of the trigger's `clear` action, so it carries no name or role
+	// of its own: iOS still reports a labelled button that hides only itself.
 	const clearButton = hasClear ? (
 		<Pressable
 			accessibilityElementsHidden
-			accessibilityLabel={labels.clear}
-			accessibilityRole="button"
+			accessibilityRole="none"
 			accessible={false}
 			className={slots.clear()}
 			feedback="fade"

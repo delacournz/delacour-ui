@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { AvatarLabels } from "../../lib/labels";
 import type { AvatarColor, AvatarSize, AvatarVariant } from "./avatar.variants";
 
 export type AvatarContextValue = {
@@ -15,6 +16,8 @@ export type AvatarContextValue = {
 export type AvatarGroupContextValue = {
 	/** The size every avatar in the group takes unless it states its own. */
 	size?: AvatarSize;
+	/** The group's own `labels` prop, untouched: an avatar with none of its own resolves these. */
+	labels?: Partial<AvatarLabels>;
 };
 
 const AvatarContext = createContext<AvatarContextValue | null>(null);

@@ -1,8 +1,10 @@
 import { type ReactElement, type ReactNode, useMemo, useState } from "react";
 import { Image, type ImageErrorEvent, type ImageProps, type ImageSourcePropType, View } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
 import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconPeople } from "../../icons/central";
 import { cn } from "../../lib/cn";
+import type { AvatarLabels } from "../../lib/labels";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Text } from "../text";
@@ -47,6 +49,11 @@ export type AvatarProps = Omit<PressableProps, "asChild" | "busy" | "children" |
 	 * `source` is what the retry key is built from.
 	 */
 	imageProps?: Omit<ImageProps, "source" | "src" | "srcSet">;
+	/**
+	 * Spoken strings, laid over `DelacourProvider`'s `labels`, which sit over the English defaults. An
+	 * enclosing `Avatar.Group`'s `labels` stand in when this has none. `accessibilityLabel` wins.
+	 */
+	labels?: Partial<AvatarLabels>;
 	/** Overlays — an `Avatar.Badge`. */
 	children?: ReactNode;
 };
@@ -60,6 +67,7 @@ function AvatarRoot({
 	size: sizeProp,
 	isDisabled = false,
 	imageProps,
+	labels: labelsProp,
 	accessibilityLabel,
 	onPress,
 	onLongPress,
@@ -73,6 +81,7 @@ function AvatarRoot({
 	...props
 }: AvatarProps): ReactElement {
 	const group = useAvatarGroupContext();
+	const labels = useLabels("avatar", labelsProp ?? group?.labels);
 	const size = resolveAvatarSize({ size: sizeProp, groupSize: group?.size });
 	const hitTarget = resolveAvatarHitTarget({ size, inGroup: group !== null });
 	const slop = useMinimumHitSlop(hitTarget.edge, { cap: hitTarget.cap });
@@ -91,7 +100,7 @@ function AvatarRoot({
 
 	const initials = fallback?.trim() || resolveAvatarInitials(name);
 	const isInteractive = resolveAvatarInteractive({ onPress, onLongPress });
-	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback, isInteractive });
+	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback, isInteractive }, labels);
 
 	const onImageError = (event: ImageErrorEvent) => {
 		setFailedKey(sourceKey);

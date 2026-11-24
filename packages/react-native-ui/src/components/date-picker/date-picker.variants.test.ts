@@ -370,13 +370,13 @@ describe("date picker labels", () => {
 
 	test("resolveSelectionAccessibilityValue speaks through the labels", () => {
 		expect(resolveSelectionAccessibilityValue({ mode: "single", value: null }, "en-NZ", german)).toBe("nicht gesetzt");
-		expect(resolveSelectionAccessibilityValue(started, "en-NZ", german)).toStartWith("Ab ");
+		expect(resolveSelectionAccessibilityValue(started, "en-NZ", german).startsWith("Ab ")).toBe(true);
 		expect(resolveSelectionAccessibilityValue(range, "en-NZ", german)).toContain(" bis ");
 		expect(resolveSelectionAccessibilityValue(many, "en-NZ", german)).toBe("3 Daten");
 		expect(resolveSelectionAccessibilityValue(two, "en-NZ", german)).toContain(" und ");
 	});
 
 	test("resolveAnnouncement wraps the spoken value in the labels", () => {
-		expect(resolveAnnouncement(range, "en-NZ", german)).toStartWith("Gewählt: ");
+		expect(resolveAnnouncement(range, "en-NZ", german).startsWith("Gewählt: ")).toBe(true);
 	});
 });

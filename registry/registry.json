@@ -2298,6 +2298,22 @@
 			]
 		},
 		{
+			"name": "labels",
+			"type": "registry:lib",
+			"title": "labels",
+			"description": "Every string the components speak or show on their own, with English defaults and the merge order.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/labels.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
 			"name": "leaderboard",
 			"type": "registry:ui",
 			"title": "Leaderboard",
@@ -3472,8 +3488,10 @@
 				"primitives"
 			],
 			"registryDependencies": [
+				"labels",
 				"use-calm-motion",
 				"use-keyboard-state-sync",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [],
@@ -6109,6 +6127,21 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-keyboard-state-sync.tsx"
+			]
+		},
+		{
+			"name": "use-labels",
+			"type": "registry:hook",
+			"title": "useLabels",
+			"description": "A component's spoken strings, and the provider an app translates them with.",
+			"registryDependencies": [
+				"labels"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-labels.tsx"
 			]
 		},
 		{

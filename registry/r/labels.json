@@ -1,0 +1,28 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "labels",
+	"type": "registry:lib",
+	"title": "labels",
+	"description": "Every string the components speak or show on their own, with English defaults and the merge order.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/labels.ts",
+			"target": "labels.ts",
+			"namespace": "lib"
+		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/labels.test.ts",
+			"target": "labels.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
+	]
+}

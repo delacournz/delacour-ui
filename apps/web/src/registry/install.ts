@@ -19645,7 +19645,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwindcss"],
 		dev: [],
-		fileCount: 21,
+		fileCount: 23,
 		groups: [
 			{
 				name: "provider",
@@ -19666,6 +19666,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
 					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
 					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
 				],
 			},
 			{
@@ -19698,6 +19706,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 			{

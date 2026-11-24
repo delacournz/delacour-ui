@@ -40,9 +40,10 @@ src/
 │                         use-calm-motion, use-scroll-sections,
 │                         use-scroll-source, use-reduce-transparency,
 │                         use-minimum-hit-target, use-announce
+│                         use-labels
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
-│                         keyboard-animation, navigation-theme, calm-motion,
+│                         keyboard-animation, navigation-theme, calm-motion, labels,
 │                         paging, scroll-sections, scroll-maths, scroll-edges,
 │                         wrap-text-children, announce
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts

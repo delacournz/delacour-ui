@@ -776,6 +776,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	cn: { title: "cn", description: "Class merging that understands the library's semantic size tokens." },
 	color: { title: "isLiteralColor", description: "Tells a literal colour from a theme token name." },
 	"compose-refs": { title: "composeRefs", description: "Merges several refs onto one node." },
+	labels: {
+		title: "labels",
+		description: "Every string the components speak or show on their own, with English defaults and the merge order.",
+	},
 	"keyboard-animation": {
 		title: "keyboardAnimation",
 		description: "The timing the keyboard opens with, so content moving with it stays in step.",
@@ -823,6 +827,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "useMinimumHitSlop",
 		description:
 			"The hitSlop that grows a small control to the minimum touch target, and the provider an Android app opts into 48dp with.",
+	},
+	"use-labels": {
+		title: "useLabels",
+		description: "A component's spoken strings, and the provider an app translates them with.",
 	},
 	"use-reduce-transparency": {
 		title: "useReduceTransparency",

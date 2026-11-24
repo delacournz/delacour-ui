@@ -11,13 +11,13 @@ everything — a root layout, an `App.tsx`.
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/provider` |
 | `provider.tsx` | `DelacourProvider` — the app's root layer stack; its `displayName` is `DelacourUI.Provider`, because prefix-plus-symbol would stutter and this matches its export subpath |
-| `provider.render.test.tsx` | Mounted under Jest — children render, gesture root lets a Button mount, `isMotionCalm` reaches `useCalmMotion`, `isMaterialHitTarget` reaches `useMinimumHitTarget`, `initialMetrics` seeds insets, `style` forwarded |
+| `provider.render.test.tsx` | Mounted under Jest — children render, gesture root lets a Button mount, `isMotionCalm` reaches `useCalmMotion`, `isMaterialHitTarget` reaches `useMinimumHitTarget`, `labels` reach `useLabels` (defaults ← provider ← prop, nested merge), `initialMetrics` seeds insets, `style` forwarded |
 
 ## Design
 
-- **Six layers, outermost first**: `GestureHandlerRootView` →
+- **Seven layers, outermost first**: `GestureHandlerRootView` →
   `SafeAreaProvider` → `KeyboardProvider` → `<KeyboardStateSync />` beside
-  `CalmMotionProvider` → `MinimumHitTargetProvider`, which wraps the children. The order is not stylistic. The gesture root has to be an ancestor
+  `CalmMotionProvider` → `MinimumHitTargetProvider` → `LabelsProvider`, which wraps the children. The order is not stylistic. The gesture root has to be an ancestor
   native view of every handler a `Pressable` creates, and its absence is
   *silent* — no error, no warning, presses simply stop landing.
   `KeyboardStateSync` has to be a CHILD of `KeyboardProvider`, because it calls
@@ -84,6 +84,22 @@ everything — a root layout, an `App.tsx`.
   the HIG's 44; on, Android's is Material's 48 and iOS stays at 44. Nothing
   drawn moves either way. The context defaults to `false`, so a copy used
   without this provider still reaches 44.
+- **`labels` is the app's translation, and it is a behaviour prop too.** It
+  feeds `LabelsProvider` (`hooks/use-labels.tsx`), which `useLabels(component,
+  own)` reads: English from `lib/labels.ts`, then this map, then the
+  component's own `labels` prop — and an `undefined` at any layer is an
+  absence, so it never blanks a string. A label that carries a number is a
+  function, so a language orders and inflects it itself. Like `isMotionCalm`,
+  the context defaults to empty, so a component used without this provider
+  speaks English.
+- **The catalog is one import-free file in `lib/`, not a map in this folder.**
+  A component cannot import from here: `provider.tsx` pulls the gesture,
+  keyboard and safe-area peers, and every component reading a label would drag
+  them into its subpath and its copy. Nor can the map import each component's
+  label type: type-only imports are followed into a copy like any other, so a
+  typed map naming `TourLabels` would chain every component to every other.
+  `lib/labels.ts` holds the types and the English beside each other and
+  imports nothing, so a copy that reads labels gains one strings file.
 - **Deliberately not idempotent.** It does not detect an enclosing copy of
   itself. Nesting `GestureHandlerRootView` costs a `View`; nesting
   `SafeAreaProvider` seeds from the parent's insets and costs a native view;

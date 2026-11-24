@@ -1,0 +1,26 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-labels",
+	"type": "registry:hook",
+	"title": "useLabels",
+	"description": "A component's spoken strings, and the provider an app translates them with.",
+	"registryDependencies": [
+		"labels"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-labels.tsx",
+			"target": "use-labels.tsx",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
+		}
+	]
+}

@@ -530,6 +530,71 @@ export type MapLabels = {
 	showMyLocation: string;
 };
 
+/** Every MarkdownEditor toolbar action. Restates `MarkdownToolbarAction`: the catalog imports nothing. */
+export type MarkdownEditorActionKey =
+	| "heading"
+	| "bold"
+	| "italic"
+	| "strikethrough"
+	| "code"
+	| "codeBlock"
+	| "link"
+	| "quote"
+	| "bulletList"
+	| "orderedList";
+
+/** MarkdownEditor's visible and spoken strings. */
+export type MarkdownEditorLabels = {
+	/** Each toolbar button's accessible name, and the subject of its announcement. */
+	actions: Record<MarkdownEditorActionKey, string>;
+	/** Announced after a toolbar press switches a format on; `name` is the action's name. */
+	applied: (name: string) => string;
+	/** Announced after a toolbar press switches a format off. */
+	removed: (name: string) => string;
+	/** The mode switch's Write tab. */
+	write: string;
+	/** The mode switch's Preview tab. */
+	preview: string;
+	/** The preview pane's accessible name. */
+	previewPane: string;
+	/** `MarkdownEditor.Preview`'s text when there is nothing to render. Its `emptyText` wins. */
+	empty: string;
+	/** A bullet-list row's spoken text; an ordered row speaks its number instead. */
+	bulletItem: (text: string) => string;
+	/** The text a link command inserts, selected, when nothing was selected. */
+	linkText: string;
+};
+
+/** Menu's spoken strings. ContextMenu's panel is `Menu.Content`, so it speaks `close` too. */
+export type MenuLabels = {
+	/** The accessible name of the dismiss target behind an open panel. */
+	close: string;
+	/** `Menu.Trigger`'s hint, read after its name. Its `accessibilityHint` wins. */
+	triggerHint: string;
+};
+
+/** The receipts a message moves through. Restates `MessageStatusType`: the catalog imports nothing. */
+export type MessageStatusKey = "sending" | "sent" | "delivered" | "read" | "failed";
+
+/** Message's visible and spoken strings. */
+export type MessageLabels = {
+	/**
+	 * A receipt's words, drawn under the bubble, spoken in the message's label and announced when a
+	 * send fails. `reason` is the app's own text, trimmed, and only ever present for "failed".
+	 */
+	status: (type: MessageStatusKey, reason?: string) => string;
+	/** Stands in for an outgoing message's author. */
+	you: string;
+	/** A typing indicator with no author to name. */
+	typing: string;
+	/** A typing indicator for an incoming author: "Aria is typing". */
+	typingBy: (author: string) => string;
+	/** The named action that mirrors a long press. */
+	moreActions: string;
+	/** The failed receipt's Retry control, drawn and as an action. */
+	retry: string;
+};
+
 /** What a looping animation's pause control is called — every looping component shares them. */
 export type MotionLabels = {
 	/** Offered while the loop moves. */
@@ -589,6 +654,9 @@ export type DelacourLabels = {
 	kpi: KpiLabels;
 	leaderboard: LeaderboardLabels;
 	map: MapLabels;
+	markdownEditor: MarkdownEditorLabels;
+	menu: MenuLabels;
+	message: MessageLabels;
 	motion: MotionLabels;
 	pagination: PaginationLabels;
 };
@@ -861,6 +929,53 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		pointNorth: "Point north",
 		recenter: "Recenter map",
 		showMyLocation: "Show my location",
+	},
+	markdownEditor: {
+		actions: {
+			bold: "Bold",
+			bulletList: "Bulleted list",
+			code: "Inline code",
+			codeBlock: "Code block",
+			heading: "Heading",
+			italic: "Italic",
+			link: "Link",
+			orderedList: "Numbered list",
+			quote: "Quote",
+			strikethrough: "Strikethrough",
+		},
+		applied: (name) => `${name} applied`,
+		removed: (name) => `${name} removed`,
+		write: "Write",
+		preview: "Preview",
+		previewPane: "Preview",
+		empty: "Nothing to preview",
+		bulletItem: (text) => `bullet ${text}`,
+		linkText: "link",
+	},
+	menu: {
+		close: "Close menu",
+		triggerHint: "Opens a menu",
+	},
+	message: {
+		status: (type, reason) => {
+			switch (type) {
+				case "sending":
+					return "Sending";
+				case "sent":
+					return "Sent";
+				case "delivered":
+					return "Delivered";
+				case "read":
+					return "Read";
+				case "failed":
+					return reason ? `Failed: ${reason}` : "Failed to send";
+			}
+		},
+		you: "You",
+		typing: "Typing",
+		typingBy: (author) => `${author} is typing`,
+		moreActions: "More actions",
+		retry: "Retry",
 	},
 	motion: {
 		pause: "Pause animation",

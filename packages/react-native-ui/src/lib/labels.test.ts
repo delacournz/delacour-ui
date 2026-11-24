@@ -305,6 +305,50 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		});
 	});
 
+	test("markdownEditor is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.markdownEditor;
+		expect(labels.actions).toEqual({
+			bold: "Bold",
+			bulletList: "Bulleted list",
+			code: "Inline code",
+			codeBlock: "Code block",
+			heading: "Heading",
+			italic: "Italic",
+			link: "Link",
+			orderedList: "Numbered list",
+			quote: "Quote",
+			strikethrough: "Strikethrough",
+		});
+		expect(labels.applied("Bold")).toBe("Bold applied");
+		expect(labels.removed("Bold")).toBe("Bold removed");
+		expect([labels.write, labels.preview, labels.previewPane]).toEqual(["Write", "Preview", "Preview"]);
+		expect(labels.empty).toBe("Nothing to preview");
+		expect(labels.bulletItem("Milk")).toBe("bullet Milk");
+		expect(labels.linkText).toBe("link");
+	});
+
+	test("menu is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.menu).toEqual({ close: "Close menu", triggerHint: "Opens a menu" });
+	});
+
+	test("message is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.message;
+		const types = ["sending", "sent", "delivered", "read", "failed"] as const;
+		expect(types.map((type) => labels.status(type))).toEqual([
+			"Sending",
+			"Sent",
+			"Delivered",
+			"Read",
+			"Failed to send",
+		]);
+		expect(labels.status("failed", "No signal")).toBe("Failed: No signal");
+		expect(labels.you).toBe("You");
+		expect(labels.typing).toBe("Typing");
+		expect(labels.typingBy("Aria")).toBe("Aria is typing");
+		expect(labels.moreActions).toBe("More actions");
+		expect(labels.retry).toBe("Retry");
+	});
+
 	test("motion is today's English", () => {
 		expect(DELACOUR_DEFAULT_LABELS.motion).toEqual({ pause: "Pause animation", resume: "Resume animation" });
 	});

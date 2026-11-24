@@ -24,6 +24,8 @@ export type BreadcrumbLabels = {
 	 * they are there. With no count it names no number.
 	 */
 	ellipsis: (hiddenCount: number | undefined, isInteractive: boolean) => string;
+	/** The current page's spoken value, read after its title. */
+	currentPage: string;
 };
 
 /** Carousel's spoken strings. */
@@ -52,6 +54,8 @@ export type KpiLabels = {
 
 /** Pagination's visible and spoken strings. */
 export type PaginationLabels = {
+	/** The control's accessible name. */
+	list: string;
 	/** Visible beside the chevron. */
 	previous: string;
 	/** Visible beside the chevron. */
@@ -95,6 +99,7 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 			const counted = `${hiddenCount} hidden ${plural(hiddenCount, "level", "levels")}`;
 			return isInteractive ? `Show ${counted}` : counted;
 		},
+		currentPage: "current page",
 	},
 	carousel: {
 		previous: "Previous slide",
@@ -111,6 +116,7 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		loading: "Loading",
 	},
 	pagination: {
+		list: "Pagination",
 		previous: "Previous",
 		next: "Next",
 		previousPage: "Previous page",

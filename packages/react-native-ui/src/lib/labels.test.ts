@@ -5,6 +5,7 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 	test("breadcrumb is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.breadcrumb;
 		expect(labels.list).toBe("Breadcrumb");
+		expect(labels.currentPage).toBe("current page");
 		expect(labels.ellipsis(undefined, true)).toBe("Show hidden levels");
 		expect(labels.ellipsis(1, true)).toBe("Show 1 hidden level");
 		expect(labels.ellipsis(3, true)).toBe("Show 3 hidden levels");
@@ -33,6 +34,7 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 
 	test("pagination is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.pagination;
+		expect(labels.list).toBe("Pagination");
 		expect(labels.previous).toBe("Previous");
 		expect(labels.next).toBe("Next");
 		expect(labels.previousPage).toBe("Previous page");

@@ -133,7 +133,12 @@ parts.
 - **Every press is announced.** `AccessibilityInfo.announceForAccessibility`
   says "Bold applied" or "Bold removed", read from whether the format was
   active before the press. List items carry their marker in their accessible
-  text, so a screen reader says "bullet" or "2." before the item.
+  text, so a screen reader says "bullet" or "2." before the item. A row is one
+  stop, so a link inside it cannot be focused: `resolveMarkdownLinkActions`
+  mirrors each as an `Open link <text>` accessibility action on the row, which
+  calls `onLinkPress` with the same allow-listed url. A row with no link has no
+  actions. Links in paragraphs, headings and quotes are not merged and stay
+  `Text.Link` stops.
 - **`useMarkdownEditor()` is the custom-control hook.** A button of the
   caller's own can `apply` a command, read `active`, or `setMode`. A ref on the
   root reaches `apply`, `focus` (which switches to the write pane first) and

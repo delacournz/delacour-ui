@@ -258,3 +258,41 @@ export function markdownInlineToText(inline: readonly MarkdownInline[]): string 
 	}
 	return out;
 }
+
+/** One link inside a merged block, offered to a screen reader as a named action. */
+export type MarkdownLinkAction = { name: string; label: string; url: string };
+
+/**
+ * The links in an inline run, in reading order, as accessibility actions. A list row is one
+ * screen-reader stop, so its links cannot be focused; each is mirrored as "Open link <text>".
+ */
+export function resolveMarkdownLinkActions(inline: readonly MarkdownInline[]): MarkdownLinkAction[] {
+	const out: MarkdownLinkAction[] = [];
+	const walk = (nodes: readonly MarkdownInline[]): void => {
+		for (const node of nodes) {
+			switch (node.type) {
+				case "text":
+				case "code":
+					break;
+				case "link":
+					out.push({
+						label: `Open link ${markdownInlineToText(node.children)}`,
+						name: `markdown-link-${out.length}`,
+						url: node.url,
+					});
+					break;
+				case "bold":
+				case "italic":
+				case "strikethrough":
+					walk(node.children);
+					break;
+				default: {
+					const exhaustive: never = node;
+					throw new Error(`Unknown inline node: ${JSON.stringify(exhaustive)}`);
+				}
+			}
+		}
+	};
+	walk(inline);
+	return out;
+}

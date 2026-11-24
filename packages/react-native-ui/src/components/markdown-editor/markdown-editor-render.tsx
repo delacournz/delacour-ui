@@ -1,8 +1,13 @@
 import type { ReactElement, ReactNode } from "react";
-import { View } from "react-native";
+import { type AccessibilityActionEvent, View } from "react-native";
 import { Text } from "../text";
 import type { MarkdownBlock, MarkdownInline } from "./markdown-editor.parse";
-import { markdownEditorVariants, markdownInlineToText, resolveMarkdownListMarker } from "./markdown-editor.variants";
+import {
+	markdownEditorVariants,
+	markdownInlineToText,
+	resolveMarkdownLinkActions,
+	resolveMarkdownListMarker,
+} from "./markdown-editor.variants";
 
 type RenderContext = {
 	onLinkPress: (url: string) => void;
@@ -71,7 +76,9 @@ type ListProps = RenderContext & {
 
 /**
  * A list's rows. Each row's accessible text starts with its marker, so a screen
- * reader says "bullet" or "2." before the item rather than nothing.
+ * reader says "bullet" or "2." before the item rather than nothing. A row stays
+ * one stop, so a link inside it is mirrored as an "Open link <text>" action on
+ * the row; a row with no link carries no actions.
  */
 function MarkdownList({ list, onLinkPress, codeClassName }: ListProps): ReactElement {
 	const slots = markdownEditorVariants();
@@ -81,13 +88,30 @@ function MarkdownList({ list, onLinkPress, codeClassName }: ListProps): ReactEle
 			id: `item-${index}`,
 			item,
 			label: `${list.ordered ? marker : "bullet"} ${markdownInlineToText(item)}`,
+			links: resolveMarkdownLinkActions(item),
 			marker,
 		};
 	});
 	return (
 		<View className="gap-1">
 			{rows.map((row) => (
-				<View accessibilityLabel={row.label} accessible className={slots.listItem()} key={row.id}>
+				<View
+					accessibilityActions={
+						row.links.length > 0 ? row.links.map(({ name, label }) => ({ label, name })) : undefined
+					}
+					accessibilityLabel={row.label}
+					accessible
+					className={slots.listItem()}
+					key={row.id}
+					onAccessibilityAction={
+						row.links.length > 0
+							? (event: AccessibilityActionEvent) => {
+									const link = row.links.find((candidate) => candidate.name === event.nativeEvent.actionName);
+									if (link) onLinkPress(link.url);
+								}
+							: undefined
+					}
+				>
 					<Text.Paragraph className={slots.listMarker()}>{row.marker}</Text.Paragraph>
 					<Text.Paragraph className="flex-1">
 						<MarkdownInlines codeClassName={codeClassName} nodes={row.item} onLinkPress={onLinkPress} />

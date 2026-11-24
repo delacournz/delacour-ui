@@ -349,6 +349,24 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.retry).toBe("Retry");
 	});
 
+	test("messageScroller is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.messageScroller;
+		expect(labels.list).toBe("Conversation");
+		expect(labels.jumpToLatest).toBe("Jump to latest");
+		expect(labels.jumpToLatestUnread("Jump to latest", "99+")).toBe("Jump to latest, 99+ unread");
+		expect(labels.loadingOlder).toBe("Loading older messages");
+		expect([labels.today, labels.yesterday]).toEqual(["Today", "Yesterday"]);
+		expect([0, 6].map(labels.weekday)).toEqual(["Sunday", "Saturday"]);
+		expect([0, 8, 11].map(labels.month)).toEqual(["Jan", "Sep", "Dec"]);
+		expect(labels.date(12, "Sep")).toBe("12 Sep");
+		expect(labels.date(12, "Sep", 2025)).toBe("12 Sep 2025");
+		expect(labels.unreadDivider(1)).toBe("1 new message");
+		expect(labels.unreadDivider(3)).toBe("3 new messages");
+		expect(labels.newMessages(1, "Aria")).toBe("New message from Aria");
+		expect(labels.newMessages(1)).toBe("New message");
+		expect(labels.newMessages(4, "Aria")).toBe("4 new messages");
+	});
+
 	test("motion is today's English", () => {
 		expect(DELACOUR_DEFAULT_LABELS.motion).toEqual({ pause: "Pause animation", resume: "Resume animation" });
 	});

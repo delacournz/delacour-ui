@@ -595,6 +595,32 @@ export type MessageLabels = {
 	retry: string;
 };
 
+/** MessageScroller's visible and spoken strings. */
+export type MessageScrollerLabels = {
+	/** The list's accessible name. */
+	list: string;
+	/** The jump button's accessible name before any unread count. Its `label` wins. */
+	jumpToLatest: string;
+	/** The jump button's name with an unread count, already capped: "Jump to latest, 3 unread". */
+	jumpToLatestUnread: (base: string, count: string) => string;
+	/** Spoken while an older page loads. `LoadingOlder`'s `label` wins. */
+	loadingOlder: string;
+	/** The day separator for the current day. */
+	today: string;
+	/** The day separator for the day before. */
+	yesterday: string;
+	/** A weekday's full name, 0 = Sunday, for a day inside the last six. Unused when a `locale` is given. */
+	weekday: (day: number) => string;
+	/** A month's short name, 0 = January. Unused when a `locale` is given. */
+	month: (month: number) => string;
+	/** A separator for an older day, its month already named: "12 Sep", or "12 Sep 2025" outside this year. */
+	date: (day: number, month: string, year?: number) => string;
+	/** The unread divider's text: "1 new message", "3 new messages". `UnreadDivider`'s `label` wins. */
+	unreadDivider: (count: number) => string;
+	/** Announced when messages arrive away from the end; `senderName` only for a single named arrival. */
+	newMessages: (count: number, senderName?: string) => string;
+};
+
 /** What a looping animation's pause control is called — every looping component shares them. */
 export type MotionLabels = {
 	/** Offered while the loop moves. */
@@ -657,6 +683,7 @@ export type DelacourLabels = {
 	markdownEditor: MarkdownEditorLabels;
 	menu: MenuLabels;
 	message: MessageLabels;
+	messageScroller: MessageScrollerLabels;
 	motion: MotionLabels;
 	pagination: PaginationLabels;
 };
@@ -668,6 +695,9 @@ export type DelacourLabelsComponent = keyof DelacourLabels;
 export type DelacourLabelOverrides = { [K in DelacourLabelsComponent]?: Partial<DelacourLabels[K]> };
 
 const plural = (count: number, one: string, other: string): string => (count === 1 ? one : other);
+
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
 
 /** Today's English. */
 export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
@@ -976,6 +1006,22 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		typingBy: (author) => `${author} is typing`,
 		moreActions: "More actions",
 		retry: "Retry",
+	},
+	messageScroller: {
+		list: "Conversation",
+		jumpToLatest: "Jump to latest",
+		jumpToLatestUnread: (base, count) => `${base}, ${count} unread`,
+		loadingOlder: "Loading older messages",
+		today: "Today",
+		yesterday: "Yesterday",
+		weekday: (day) => WEEKDAYS[day] ?? "",
+		month: (month) => MONTHS[month] ?? "",
+		date: (day, month, year) => (year === undefined ? `${day} ${month}` : `${day} ${month} ${year}`),
+		unreadDivider: (count) => `${count} new ${plural(count, "message", "messages")}`,
+		newMessages: (count, senderName) => {
+			if (count !== 1) return `${count} new messages`;
+			return senderName ? `New message from ${senderName}` : "New message";
+		},
 	},
 	motion: {
 		pause: "Pause animation",

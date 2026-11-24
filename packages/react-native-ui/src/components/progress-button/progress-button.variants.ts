@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type ProgressButtonLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 export const PROGRESS_BUTTON_VARIANTS = ["primary", "secondary", "destructive", "success"] as const;
@@ -34,11 +35,19 @@ export const PROGRESS_BUTTON_MAX_DRIFT = 16;
 /** How many discrete steps the fill takes under reduced motion. */
 export const PROGRESS_BUTTON_REDUCED_MOTION_STEPS = 5;
 
-/** What VoiceOver and TalkBack read after the label when no `accessibilityHint` is given. */
-export const PROGRESS_BUTTON_DEFAULT_HINT = "Press and hold to confirm";
+/**
+ * What VoiceOver and TalkBack read after the label when no `accessibilityHint` is given.
+ *
+ * @deprecated Read `labels.hint` from `useLabels("progressButton")`, or pass `labels` to the button.
+ */
+export const PROGRESS_BUTTON_DEFAULT_HINT = DELACOUR_DEFAULT_LABELS.progressButton.hint;
 
-/** What a screen reader is told when a hold completes and the caller gives no `completedAnnouncement`. */
-export const PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE = "Done";
+/**
+ * What a screen reader is told when a hold completes and the caller gives no `completedAnnouncement`.
+ *
+ * @deprecated Read `labels.completed` from `useLabels("progressButton")`, or pass `labels` to the button.
+ */
+export const PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE = DELACOUR_DEFAULT_LABELS.progressButton.completed;
 
 /**
  * What to speak as completion changes: the message on the step from not completed to completed,
@@ -47,11 +56,13 @@ export const PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE = "Done";
 export function resolveCompletionAnnouncement({
 	isCompleted,
 	wasCompleted,
-	message = PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE,
+	labels = DELACOUR_DEFAULT_LABELS.progressButton,
+	message = labels.completed,
 }: {
 	isCompleted: boolean;
 	wasCompleted: boolean;
 	message?: string;
+	labels?: ProgressButtonLabels;
 }): string | null {
 	if (!isCompleted || wasCompleted || message === "") return null;
 	return message;

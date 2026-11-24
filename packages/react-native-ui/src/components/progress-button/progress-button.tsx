@@ -24,6 +24,8 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { ProgressButtonLabels } from "../../lib/labels";
 import { IconDefaultsProvider } from "../icon";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
 import {
@@ -33,7 +35,6 @@ import {
 } from "./progress-button.context";
 import {
 	PROGRESS_BUTTON_CROSSFADE_MS,
-	PROGRESS_BUTTON_DEFAULT_HINT,
 	PROGRESS_BUTTON_FILL_FOREGROUND_TOKEN,
 	PROGRESS_BUTTON_LABEL_TOKEN,
 	PROGRESS_BUTTON_MAX_DRIFT,
@@ -80,11 +81,16 @@ export type ProgressButtonProps = Omit<ViewProps, "children"> & {
 	isDisabled?: boolean;
 	/** Played when the hold takes; a `success` knock follows on completion. Off by default. */
 	haptic?: false | HapticFeedback;
-	/** Defaults to saying the button has to be held. */
+	/** Defaults to `labels.hint`, which says the button has to be held. */
 	accessibilityHint?: string;
 	/** Speak the completion to a screen reader. On by default; `false` is the opt-out. */
 	announce?: boolean;
-	/** What is spoken on completion. Defaults to "Done"; pass the `Done` content's text when it says more. */
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `accessibilityHint` and `completedAnnouncement` still win over their keys.
+	 */
+	labels?: Partial<ProgressButtonLabels>;
+	/** What is spoken on completion. Defaults to `labels.completed` ("Done"); pass the `Done` content's text when it says more. */
 	completedAnnouncement?: string;
 	ref?: Ref<ComponentRef<typeof Animated.View>>;
 };
@@ -140,9 +146,10 @@ function ProgressButtonRoot({
 	autoResetDelay: autoResetDelayProp,
 	isDisabled = false,
 	haptic = false,
-	accessibilityHint = PROGRESS_BUTTON_DEFAULT_HINT,
+	accessibilityHint: accessibilityHintProp,
 	announce: shouldAnnounce = true,
 	completedAnnouncement,
+	labels: labelsProp,
 	onLayout,
 	ref,
 	...props
@@ -150,6 +157,8 @@ function ProgressButtonRoot({
 	const holdDuration = resolveHoldDuration(holdDurationProp);
 	const autoResetDelay = resolveAutoResetDelay(autoResetDelayProp);
 	const isReducedMotion = useReducedMotion();
+	const labels = useLabels("progressButton", labelsProp);
+	const accessibilityHint = accessibilityHintProp ?? labels.hint;
 
 	const [isCompleted, setCompleted] = useControllableState<boolean>({
 		defaultValue: defaultCompleted,
@@ -226,12 +235,13 @@ function ProgressButtonRoot({
 	useEffect(() => {
 		const message = resolveCompletionAnnouncement({
 			isCompleted,
+			labels,
 			message: completedAnnouncement,
 			wasCompleted: wasCompleted.current,
 		});
 		wasCompleted.current = isCompleted;
 		if (message !== null) speak(message, { enabled: shouldAnnounce });
-	}, [completedAnnouncement, isCompleted, shouldAnnounce, speak]);
+	}, [completedAnnouncement, isCompleted, labels, shouldAnnounce, speak]);
 
 	useEffect(() => {
 		if (!isCompleted || !isAutoReset) return;

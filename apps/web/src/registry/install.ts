@@ -9037,7 +9037,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 89,
+		fileCount: 92,
 		groups: [
 			{
 				name: "signature",
@@ -9060,6 +9060,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/signature/signature.tsx", target: "src/components/ui/signature/signature.tsx" },
 					{ source: "packages/react-native-ui/src/components/signature/signature.types.ts", target: "src/components/ui/signature/signature.types.ts" },
 					{ source: "packages/react-native-ui/src/components/signature/signature.variants.ts", target: "src/components/ui/signature/signature.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/signature/signature.warn.ts", target: "src/components/ui/signature/signature.warn.ts" },
 				],
 			},
 			{
@@ -9267,6 +9268,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -9280,6 +9289,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 		],

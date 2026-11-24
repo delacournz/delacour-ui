@@ -1,3 +1,4 @@
+export type { TextareaLabels } from "../../lib/labels";
 export { Textarea, type TextareaProps } from "./textarea";
 export {
 	resolveTextareaCount,

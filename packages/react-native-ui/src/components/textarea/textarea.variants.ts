@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type TextareaLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { InputSize } from "../input/input.variants";
 
@@ -179,10 +180,13 @@ export type TextareaCount = {
  *
  * Pure, so it is unit-testable. See AGENTS.md.
  */
-export function resolveTextareaCount({ length, maxLength }: { length: number; maxLength: number }): TextareaCount {
+export function resolveTextareaCount(
+	{ length, maxLength }: { length: number; maxLength: number },
+	labels: TextareaLabels = DELACOUR_DEFAULT_LABELS.textarea
+): TextareaCount {
 	const isAtLimit = length >= maxLength;
 	return {
-		accessibilityLabel: `${length} of ${maxLength} characters`,
+		accessibilityLabel: labels.count(length, maxLength),
 		color: isAtLimit ? "destructive" : "muted",
 		isAtLimit,
 		label: `${length}/${maxLength}`,
@@ -224,19 +228,21 @@ export type TextareaThresholdAnnouncement = { message: string; politeness: "poli
  *
  * Pure, so it is unit-testable. See AGENTS.md.
  */
-export function resolveTextareaThresholdAnnouncement({
-	previous,
-	length,
-	maxLength,
-}: {
-	previous: TextareaBand;
-	length: number;
-	maxLength: number;
-}): TextareaThresholdAnnouncement | null {
+export function resolveTextareaThresholdAnnouncement(
+	{
+		previous,
+		length,
+		maxLength,
+	}: {
+		previous: TextareaBand;
+		length: number;
+		maxLength: number;
+	},
+	labels: TextareaLabels = DELACOUR_DEFAULT_LABELS.textarea
+): TextareaThresholdAnnouncement | null {
 	const next = resolveTextareaBand({ length, maxLength });
 	if (next === previous || next === "none") return null;
-	if (next === "limit") return { message: "Character limit reached", politeness: "assertive" };
+	if (next === "limit") return { message: labels.limitReached, politeness: "assertive" };
 	if (previous === "limit") return null;
-	const remaining = maxLength - length;
-	return { message: `${remaining} ${remaining === 1 ? "character" : "characters"} remaining`, politeness: "polite" };
+	return { message: labels.remaining(maxLength - length), politeness: "polite" };
 }

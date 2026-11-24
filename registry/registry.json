@@ -1417,6 +1417,7 @@
 				"compose-refs",
 				"icon",
 				"icons",
+				"modal-accessibility",
 				"overlay",
 				"pressable",
 				"slot",
@@ -1508,6 +1509,7 @@
 				"compose-refs",
 				"icon",
 				"icons",
+				"modal-accessibility",
 				"overlay",
 				"pressable",
 				"slot",
@@ -1632,7 +1634,8 @@
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-modal-accessibility"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2043,7 +2046,8 @@
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-modal-accessibility"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2638,12 +2642,14 @@
 				"compose-refs",
 				"icon",
 				"icons",
+				"modal-accessibility",
 				"pressable",
 				"separator",
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-modal-accessibility"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2870,6 +2876,22 @@
 			]
 		},
 		{
+			"name": "modal-accessibility",
+			"type": "registry:lib",
+			"title": "modalAccessibility",
+			"description": "Where focus lands in a modal container, and when it holds a screen reader and takes the escape scrub.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/modal-accessibility.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
 			"name": "navigation-theme",
 			"type": "registry:lib",
 			"title": "navigationTheme",
@@ -2994,7 +3016,8 @@
 				"overlays"
 			],
 			"registryDependencies": [
-				"tv"
+				"tv",
+				"use-modal-accessibility"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -3017,6 +3040,7 @@
 				"ui/overlay/overlay.tsx",
 				"ui/overlay/overlay.variants.ts",
 				"ui/overlay/use-overlay-back-handler.ts",
+				"ui/overlay/use-overlay-modal-accessibility.ts",
 				"ui/overlay/use-overlay-presence.ts"
 			],
 			"testRegistryDependencies": [
@@ -4160,10 +4184,12 @@
 			],
 			"registryDependencies": [
 				"compose-refs",
+				"modal-accessibility",
 				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-modal-accessibility",
 				"use-scroll-sections",
 				"use-theme-color"
 			],
@@ -4213,10 +4239,12 @@
 			],
 			"registryDependencies": [
 				"compose-refs",
+				"modal-accessibility",
 				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-modal-accessibility",
 				"use-scroll-sections"
 			],
 			"dependencies": [
@@ -5958,6 +5986,7 @@
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-modal-accessibility",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -6165,6 +6194,21 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-minimum-hit-target.tsx"
+			]
+		},
+		{
+			"name": "use-modal-accessibility",
+			"type": "registry:hook",
+			"title": "useModalAccessibility",
+			"description": "A modal container's VoiceOver containment and escape, with focus moved in on open and back to the trigger on close.",
+			"registryDependencies": [
+				"modal-accessibility"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-modal-accessibility.ts"
 			]
 		},
 		{

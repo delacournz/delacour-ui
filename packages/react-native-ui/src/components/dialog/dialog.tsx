@@ -1,4 +1,4 @@
-import { type ReactElement, type ReactNode, useCallback, useId, useMemo, useRef } from "react";
+import { type ReactElement, type ReactNode, useCallback, useEffect, useId, useMemo, useRef } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { type DialogFocusTarget, type DialogInternalValue, DialogProvider } from "./dialog.context";
 import { DialogBody } from "./dialog-body";
@@ -38,13 +38,22 @@ function DialogRoot({
 		value: isOpen,
 	});
 
-	// Every path — trigger, close, scrim, back, escape — lands here, and a
-	// second close while the first is still exiting would report twice.
+	// Every path lands here. An uncontrolled root compares against the value it has
+	// already accepted, not the one last rendered: two closes in one tick (a Close and a
+	// scrim tap, a double tap) both see the same render, and one landing while the exit
+	// runs must not report again. A controlled root defers to its prop.
+	const accepted = useRef(open);
+	useEffect(() => {
+		if (isOpen === undefined) accepted.current = open;
+	}, [isOpen, open]);
 	const setOpen = useCallback(
 		(next: boolean) => {
-			if (next !== open) setControllableOpen(next);
+			const current = isOpen === undefined ? accepted.current : open;
+			if (next === current) return;
+			accepted.current = next;
+			setControllableOpen(next);
 		},
-		[open, setControllableOpen]
+		[isOpen, open, setControllableOpen]
 	);
 	const close = useCallback(() => setOpen(false), [setOpen]);
 

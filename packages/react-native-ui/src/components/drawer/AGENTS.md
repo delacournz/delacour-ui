@@ -84,7 +84,9 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   takes the touch), the back button, the escape gesture and the swipe. `Drawer.Close` still closes it.
   `isSwipeDismissible={false}` turns off the swipe alone.
 - **Every path to closed is one `setOpen(false)`**, and the root drops a set that does not change the
-  value, so a scrim tap during a swipe's exit does not report `onOpenChange(false)` twice.
+  value, so a scrim tap during a swipe's exit does not report `onOpenChange(false)` twice. An
+  uncontrolled root compares against the value it last accepted, not the last render's, so two closes
+  in one tick (before React re-renders) report once too; a controlled root defers to its `isOpen`.
 - **The header writes its own ✕, in the flow.** A row: the title column takes the slack and the ✕
   sits at the trailing edge, so a long title wraps before it and RTL needs no rule. `isCloseHidden`
   drops it. There is no `title` or `description` slot — both are text presets with no layout of their

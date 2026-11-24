@@ -54,7 +54,9 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
 - **Every path to closed is one `setOpen(false)`** — the trigger, `Dialog.Close`, the scrim, the
   back button, the escape gesture and `useDialog().close()`. The root drops a set that does not
   change the value, so a second tap on the scrim while the card is already leaving does not report
-  `onOpenChange(false)` twice.
+  `onOpenChange(false)` twice. An uncontrolled root compares against the value it last accepted, not
+  the last render's, so two closes in one tick (before React re-renders) report once too; a controlled
+  root defers to its `isOpen`.
 - **`isDismissible={false}` turns off the ways out the user did not choose.** The scrim still takes
   the touch — the app under an alert dialog must not be pressable — but does nothing; the back
   button is not subscribed; `onAccessibilityEscape` is not set; and the card announces as

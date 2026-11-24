@@ -113,7 +113,10 @@ Seconds round up: the final second reads `0:01`, and `0:00` appears only when ti
 
 ## Labels
 
-`labels` replaces the captions under the boxes, and names the units a screen reader hears.
+`labels` replaces the captions under the boxes, and names the units a screen reader hears. It also
+takes the spoken strings — `dayCount`, `hourCount`, `minuteCount`, `secondCount`, `timeUp`,
+`remaining` and `inlineDays` — laid over `DelacourProvider`'s `labels`. A caption set here without its
+`…Count` is read aloud as is, so a count function inflects where a caption cannot.
 
 <Preview id="countdown/labels" />
 
@@ -144,8 +147,8 @@ Extends `ViewProps`.
     },
     trim: { type: "boolean", default: "true", description: "Drop leading zero units, never below the smallest two selected." },
     labels: {
-      type: "Partial<Record<CountdownUnit, string>>",
-      description: "Captions under the segmented boxes, and the unit names a screen reader hears.",
+      type: "Partial<CountdownLabels>",
+      description: "Captions under the segmented boxes and the spoken strings, over `DelacourProvider`'s `labels`.",
     },
     urgentBelow: { type: "number", description: "At or below this many seconds left, the digits turn destructive." },
     variant: { type: '"segmented" | "inline"', default: '"segmented"' },

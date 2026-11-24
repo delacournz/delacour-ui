@@ -1751,6 +1751,7 @@
 				"ui/field/field.tsx",
 				"ui/field/field.types.ts",
 				"ui/field/field.variants.ts",
+				"ui/field/field.variants.ts-e",
 				"ui/field/index.ts"
 			],
 			"testDependencies": [

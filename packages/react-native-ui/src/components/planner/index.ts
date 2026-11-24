@@ -1,3 +1,4 @@
+export type { PlannerLabels } from "../../lib/labels";
 export { Planner, type PlannerProps } from "./planner";
 export {
 	type PlannerContextValue,

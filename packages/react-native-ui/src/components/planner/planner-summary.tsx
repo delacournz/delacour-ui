@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { Text, type TextPresetProps } from "../text";
 import { usePlannerPart } from "./planner.context";
-import { countByCategory, plannerVariants, resolveEntryCount } from "./planner.variants";
+import { countByCategory, plannerVariants } from "./planner.variants";
 
 export type PlannerSummaryProps = TextPresetProps;
 
@@ -12,13 +12,13 @@ export type PlannerSummaryProps = TextPresetProps;
  * categories. Children replace the wording.
  */
 export function PlannerSummary({ className, children, ...props }: PlannerSummaryProps): ReactElement {
-	const { entries, month, categories, locale } = usePlannerPart("Planner.Summary");
+	const { entries, month, categories, locale, labels } = usePlannerPart("Planner.Summary");
 	const { total } = countByCategory(entries, month, categories);
 	const monthName = new Intl.DateTimeFormat(locale, { month: "long" }).format(month);
 
 	return (
 		<Text className={plannerVariants().summary({ className })} {...props}>
-			{children ?? `${resolveEntryCount(total).replace(/^no/, "No")} in ${monthName}`}
+			{children ?? labels.summary(total, monthName)}
 		</Text>
 	);
 }

@@ -179,3 +179,11 @@ Compound root plus twelve parts: `Header`, `Title`, `Today`, `Nav`, `Action`,
 - **No text treatment on a view slot** (rule 1). The tests assert it across
   every combination, and that every colour token a slot names exists in both
   themes.
+- **The spoken strings are `labels`, not literals.** The nav buttons' names, the
+  `Today` text, the `Summary` line, a legend row's "Run, 4", a day's whole spoken
+  label and the calendar's "+N more" come from `lib/labels` through `useLabels`,
+  resolved once on the root and shared through the context — English, then
+  `DelacourProvider`'s `labels`, then the planner's own `labels` prop. Month and
+  weekday names stay `Intl`, in `locale`. `resolveEntryCount` and
+  `resolvePlannerDayLabel` take the labels as a trailing argument defaulting to
+  English. `previousLabel`, `nextLabel` and children still win.

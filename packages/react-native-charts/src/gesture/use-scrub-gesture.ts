@@ -111,6 +111,14 @@ export function useScrubFocus(state: ChartScrubState | undefined, model: SharedV
 			return readAt(current.positions, index);
 		};
 
+		// Where a finger would rest on a horizontal chart, whose tooltip reads the
+		// touch x: the first series' value end, so the readout sits by its bar.
+		const valueEndAt = (current: ScrubModel, index: number): number => {
+			"worklet";
+			const first = current.series[0];
+			return first === undefined ? current.left : readAt(first.ys, index);
+		};
+
 		return (index: number): void => {
 			"worklet";
 			const current = model.value;
@@ -118,8 +126,10 @@ export function useScrubFocus(state: ChartScrubState | undefined, model: SharedV
 			if (!Number.isFinite(category)) return;
 
 			const horizontal = current.axis === "y";
-			const touch = horizontal ? state.y : state.x;
-			touch.value = category;
+			if (horizontal) {
+				state.x.value = valueEndAt(current, index);
+				state.y.value = category;
+			} else state.x.value = category;
 			state.xValue.value = invertValue(current.scale, category);
 			state.index.value = index;
 			state.snappedX.value = horizontal ? Number.NaN : category;

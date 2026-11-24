@@ -205,7 +205,8 @@ export function isBelowTopModal(state: OverlayRegistryState, id: string): boolea
 /**
  * Whether the overlay `id` is the one a screen reader should be held inside.
  *
- * True for the top `modal` or `anchored` overlay that is not animating closed:
+ * True for the top `modal` or `anchored` overlay that is not animating closed
+ * and not `isPassive` (a tooltip is read past, never held):
  * a menu opened from a dialog holds focus, and the dialog under it does not
  * until the menu starts to exit. A toast never does.
  *

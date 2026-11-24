@@ -10,7 +10,7 @@ import { resolveQuestionnaireFooterButtons, resolveQuestionnaireTestId } from ".
  */
 export function QuestionnaireSkip({ children, onPress, ...props }: QuestionnaireButtonProps): ReactElement | null {
 	const questionnaire = useQuestionnairePart("Questionnaire.Skip");
-	const { axes, testID, skip, isDisabled, isReadOnly, isSubmitting } = questionnaire;
+	const { axes, labels, testID, skip, isDisabled, isReadOnly, isSubmitting } = questionnaire;
 	const shown = resolveQuestionnaireFooterButtons({
 		canBack: questionnaire.canBack,
 		canSkip: questionnaire.canSkip,
@@ -27,7 +27,7 @@ export function QuestionnaireSkip({ children, onPress, ...props }: Questionnaire
 
 	return (
 		<Button
-			accessibilityLabel="Skip this question"
+			accessibilityLabel={labels.skipQuestion}
 			isDisabled={isDisabled || isSubmitting}
 			onPress={handlePress}
 			size={axes.buttonSize}
@@ -35,7 +35,7 @@ export function QuestionnaireSkip({ children, onPress, ...props }: Questionnaire
 			variant={axes.skipVariant}
 			{...props}
 		>
-			{children ?? "Skip"}
+			{children ?? labels.skip}
 		</Button>
 	);
 }

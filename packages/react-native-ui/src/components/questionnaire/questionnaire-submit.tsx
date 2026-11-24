@@ -22,7 +22,7 @@ export function QuestionnaireSubmit({
 	...props
 }: QuestionnaireButtonProps): ReactElement | null {
 	const questionnaire = useQuestionnairePart("Questionnaire.Submit");
-	const { axes, testID, submit, isCurrentValid, isDisabled, isReadOnly, isSubmitting } = questionnaire;
+	const { axes, labels, testID, submit, isCurrentValid, isDisabled, isReadOnly, isSubmitting } = questionnaire;
 	const shown = resolveQuestionnaireFooterButtons({
 		canBack: questionnaire.canBack,
 		canSkip: questionnaire.canSkip,
@@ -39,7 +39,7 @@ export function QuestionnaireSubmit({
 
 	return (
 		<Button
-			accessibilityHint={isCurrentValid ? undefined : "Answer required"}
+			accessibilityHint={isCurrentValid ? undefined : labels.answerRequired}
 			accessibilityState={{ busy: isSubmitting, disabled: isDisabled }}
 			className={questionnaireVariants({ isDimmed: !isCurrentValid }).action({ className })}
 			isDisabled={isDisabled}
@@ -50,7 +50,7 @@ export function QuestionnaireSubmit({
 			variant={axes.nextVariant}
 			{...props}
 		>
-			{children ?? "Submit"}
+			{children ?? labels.submit}
 		</Button>
 	);
 }

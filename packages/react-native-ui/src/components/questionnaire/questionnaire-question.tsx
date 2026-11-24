@@ -69,6 +69,7 @@ export function QuestionnaireQuestion({
 		isFramed,
 		isReadOnly,
 		isSubmitting,
+		labels,
 		setAnswer,
 		size,
 		testID,
@@ -80,7 +81,7 @@ export function QuestionnaireQuestion({
 
 	useEffect(() => {
 		if (!hasNavigated || currentId === undefined) return;
-		AccessibilityInfo.announceForAccessibility(`${countLabel}: ${title}`);
+		AccessibilityInfo.announceForAccessibility(labels.questionAnnouncement(countLabel, title ?? ""));
 		const timer = setTimeout(
 			() => {
 				if (headingRef.current) AccessibilityInfo.sendAccessibilityEvent(headingRef.current, "focus");
@@ -88,7 +89,7 @@ export function QuestionnaireQuestion({
 			isCalm ? QUESTIONNAIRE_TRANSITION_MS.calm : QUESTIONNAIRE_TRANSITION_MS.full
 		);
 		return () => clearTimeout(timer);
-	}, [countLabel, currentId, hasNavigated, isCalm, title]);
+	}, [countLabel, currentId, hasNavigated, isCalm, labels, title]);
 
 	const onAnswer = useCallback(
 		(answer: Answer | undefined) => {
@@ -109,6 +110,7 @@ export function QuestionnaireQuestion({
 			axes={axes}
 			isDisabled={isInert}
 			isReadOnly={isReadOnly}
+			labels={labels}
 			onAnswer={onAnswer}
 			question={current}
 			size={size}

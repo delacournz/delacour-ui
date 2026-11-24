@@ -10,7 +10,7 @@ import { resolveQuestionnaireFooterButtons, resolveQuestionnaireTestId } from ".
  */
 export function QuestionnaireBack({ children, onPress, ...props }: QuestionnaireButtonProps): ReactElement | null {
 	const questionnaire = useQuestionnairePart("Questionnaire.Back");
-	const { axes, testID, back, isDisabled, isSubmitting } = questionnaire;
+	const { axes, labels, testID, back, isDisabled, isSubmitting } = questionnaire;
 	const shown = resolveQuestionnaireFooterButtons({
 		canBack: questionnaire.canBack,
 		canSkip: questionnaire.canSkip,
@@ -34,7 +34,7 @@ export function QuestionnaireBack({ children, onPress, ...props }: Questionnaire
 			variant={axes.backVariant}
 			{...props}
 		>
-			{children ?? "Back"}
+			{children ?? labels.back}
 		</Button>
 	);
 }

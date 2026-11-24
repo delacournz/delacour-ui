@@ -1,3 +1,4 @@
+import { DELACOUR_DEFAULT_LABELS, type QuestionnaireLabels } from "../../lib/labels";
 import type {
 	Answer,
 	Answers,
@@ -367,32 +368,33 @@ export function getProgress(
 
 // ─── Messages ────────────────────────────────────────────────────────────────
 
-function plural(count: number, word: string): string {
-	return `${count} ${word}${count === 1 ? "" : "s"}`;
-}
-
 /**
- * The English wording for a validation error.
+ * The wording for a validation error, from `labels` — English by default.
  *
- * `getErrorMessage` on the root replaces it — that is the i18n hook — and
- * receives the question too, so a message can name what was asked.
+ * `getErrorMessage` on the root replaces it, and receives the question too, so a
+ * message can name what was asked. `labels` is the catalog's error strings, for a
+ * caller who words them without writing a function.
  */
-export function defaultErrorMessage(error: ValidationError, question: Question): string {
+export function defaultErrorMessage(
+	error: ValidationError,
+	question: Question,
+	labels: QuestionnaireLabels = DELACOUR_DEFAULT_LABELS.questionnaire
+): string {
 	switch (error.type) {
 		case "required":
-			return question.kind === "multiple" ? "Choose at least 1 option." : "Answer this question to continue.";
+			return question.kind === "multiple" ? labels.errorRequiredChoice : labels.errorRequired;
 		case "minSelected":
-			return `Choose at least ${plural(error.min, "option")}.`;
+			return labels.errorMinSelected(error.min);
 		case "maxSelected":
-			return `Choose no more than ${plural(error.max, "option")}.`;
+			return labels.errorMaxSelected(error.max);
 		case "minLength":
-			return `Enter at least ${plural(error.min, "character")}.`;
+			return labels.errorMinLength(error.min);
 		case "maxLength":
-			return `Use no more than ${plural(error.max, "character")}.`;
+			return labels.errorMaxLength(error.max);
 		case "outOfRange":
-			return `Choose a value from ${error.min} to ${error.max}.`;
+			return labels.errorOutOfRange(error.min, error.max);
 		case "otherRequired":
-			return "Describe your other answer.";
+			return labels.errorOtherRequired;
 	}
 }
 
@@ -675,13 +677,20 @@ export function canSkip(state: QuestionnaireState): boolean {
 // ─── Wording ─────────────────────────────────────────────────────────────────
 
 /** "Question 2 of 5" — the count readout and the question's spoken prefix. Empty with no questions. */
-export function formatQuestionCount(progress: QuestionnaireProgress): string {
-	return progress.total === 0 ? "" : `Question ${progress.index + 1} of ${progress.total}`;
+export function formatQuestionCount(
+	progress: QuestionnaireProgress,
+	labels: QuestionnaireLabels = DELACOUR_DEFAULT_LABELS.questionnaire
+): string {
+	return progress.total === 0 ? "" : labels.questionCount(progress.index + 1, progress.total);
 }
 
 /** "7 out of 10" — what a screen reader says for one scale button. */
-export function formatScaleValue(value: number, max: number): string {
-	return `${value} out of ${max}`;
+export function formatScaleValue(
+	value: number,
+	max: number,
+	labels: QuestionnaireLabels = DELACOUR_DEFAULT_LABELS.questionnaire
+): string {
+	return labels.scaleValue(value, max);
 }
 
 /**

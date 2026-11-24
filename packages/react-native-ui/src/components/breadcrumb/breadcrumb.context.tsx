@@ -1,10 +1,13 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { BreadcrumbLabels } from "../../lib/labels";
 import type { BreadcrumbSize } from "./breadcrumb.variants";
 
 export type BreadcrumbContextValue = {
 	size: BreadcrumbSize;
 	/** What every automatic separator draws in place of the chevron. Unset draws the chevron. */
 	separator?: ReactNode;
+	/** The resolved spoken strings — defaults, then the provider's, then the root's `labels`. */
+	labels: BreadcrumbLabels;
 };
 
 const BreadcrumbContext = createContext<BreadcrumbContextValue | null>(null);

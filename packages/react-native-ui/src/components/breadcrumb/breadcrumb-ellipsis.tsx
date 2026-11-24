@@ -37,14 +37,14 @@ export function BreadcrumbEllipsis({
 	accessibilityLabel,
 	...props
 }: BreadcrumbEllipsisProps): ReactElement {
-	const { size } = useBreadcrumbPart("Breadcrumb.Ellipsis");
+	const { labels, size } = useBreadcrumbPart("Breadcrumb.Ellipsis");
 	const slotClass = breadcrumbVariants({ size }).ellipsis({ className });
 	const glyph = <BreadcrumbGlyph size={size}>{children ?? <Icon icon={IconDotGrid1x3Horizontal} />}</BreadcrumbGlyph>;
 
 	if (onPress) {
 		return (
 			<Pressable
-				accessibilityLabel={accessibilityLabel ?? resolveBreadcrumbEllipsisLabel(hiddenCount, true)}
+				accessibilityLabel={accessibilityLabel ?? resolveBreadcrumbEllipsisLabel(hiddenCount, true, labels)}
 				accessibilityRole="button"
 				className={slotClass}
 				feedback="fade"
@@ -60,7 +60,7 @@ export function BreadcrumbEllipsis({
 
 	return (
 		<View
-			accessibilityLabel={accessibilityLabel ?? resolveBreadcrumbEllipsisLabel(hiddenCount, false)}
+			accessibilityLabel={accessibilityLabel ?? resolveBreadcrumbEllipsisLabel(hiddenCount, false, labels)}
 			accessible
 			className={slotClass}
 			{...props}

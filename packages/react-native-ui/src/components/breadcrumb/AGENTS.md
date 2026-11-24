@@ -20,7 +20,7 @@ before the last navigates back to that level; the last is the current page and i
 | `breadcrumb-separator.tsx` | `Breadcrumb.Separator` — the chevron, or the caller's mark |
 | `breadcrumb-ellipsis.tsx` | `Breadcrumb.Ellipsis` — the collapsed levels, static or a button |
 | `breadcrumb-glyph.tsx` | The `IconDefaultsProvider` every breadcrumb glyph sits under — internal |
-| `breadcrumb.context.tsx` | The root's context, `useBreadcrumb` and the part hook |
+| `breadcrumb.context.tsx` | The root's context (size, separator, resolved labels), `useBreadcrumb` and the part hook |
 | `breadcrumb.types.ts` | `BreadcrumbSlotProps`, shared by item, separator and ellipsis |
 | `breadcrumb.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `breadcrumb.variants.test.ts` | |
@@ -67,6 +67,11 @@ before the last navigates back to that level; the last is the current page and i
 ## Accessibility
 
 - **The list** is `accessibilityRole="none"` with the label "Breadcrumb", overridable.
+- **Spoken strings take a `labels` prop on the root.** The list name, the ellipsis name and the page's
+  value come from `lib/labels` through `useLabels`, so an app can translate them: precedence is the
+  English defaults, then `DelacourProvider`'s `labels`, then the root's prop. The resolved set rides the
+  breadcrumb context to the parts, and `resolveBreadcrumbEllipsisLabel` takes it as a trailing argument
+  so it stays pure. A part's own `accessibilityLabel` / `accessibilityValue` still wins.
 - **A link** is `accessibilityRole="link"`, named by its text — the `Pressable` merges its children.
 - **The page** is `accessibilityRole="text"`, `accessibilityState={{ selected: true }}` and the value
   "current page". It is a `Text`, never a `Pressable`, so it cannot be activated.

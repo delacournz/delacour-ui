@@ -18,7 +18,8 @@ export type DialogTriggerProps = PressableProps;
  * something that handles `onPress`.
  *
  * The trigger's ref is kept so accessibility focus can return to it when the
- * dialog closes.
+ * dialog closes, and it reports `accessibilityState.expanded` while the dialog
+ * is open.
  *
  * @example
  * <Dialog.Trigger asChild>
@@ -26,7 +27,7 @@ export type DialogTriggerProps = PressableProps;
  * </Dialog.Trigger>
  */
 export function DialogTrigger({ asChild = false, children, onPress, ref, ...props }: DialogTriggerProps): ReactElement {
-	const { setOpen, triggerRef } = useDialogPart("Dialog.Trigger");
+	const { isOpen, setOpen, triggerRef } = useDialogPart("Dialog.Trigger");
 
 	const handlePress = useCallback(() => {
 		setOpen(true);
@@ -37,16 +38,24 @@ export function DialogTrigger({ asChild = false, children, onPress, ref, ...prop
 		triggerRef.current = node;
 	});
 
+	const accessibilityState = { ...props.accessibilityState, expanded: isOpen };
+
 	if (asChild) {
 		return (
-			<Slot onPress={handlePress} ref={composedRef} {...props}>
+			<Slot onPress={handlePress} ref={composedRef} {...props} accessibilityState={accessibilityState}>
 				{children}
 			</Slot>
 		);
 	}
 
 	return (
-		<Pressable accessibilityRole="button" onPress={handlePress} ref={composedRef} {...props}>
+		<Pressable
+			accessibilityRole="button"
+			onPress={handlePress}
+			ref={composedRef}
+			{...props}
+			accessibilityState={accessibilityState}
+		>
 			{children}
 		</Pressable>
 	);

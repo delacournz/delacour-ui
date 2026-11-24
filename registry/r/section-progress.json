@@ -9,10 +9,12 @@
 	],
 	"registryDependencies": [
 		"compose-refs",
+		"modal-accessibility",
 		"pressable",
 		"text",
 		"tv",
 		"use-controllable-state",
+		"use-modal-accessibility",
 		"use-scroll-sections",
 		"use-theme-color"
 	],
@@ -97,7 +99,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/section-progress/section-progress.context.tsx",
 			"target": "section-progress/section-progress.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/section-progress/section-progress.tsx",
@@ -107,6 +115,10 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-modal-accessibility",
+					"to": "@registry/hooks/use-modal-accessibility"
 				},
 				{
 					"from": "../../hooks/use-scroll-sections",

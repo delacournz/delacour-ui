@@ -1,6 +1,14 @@
 import { createContext, type RefObject, useContext } from "react";
+import type { SheetAccessibilityRefs } from "../accessibility/use-sheet-accessibility";
 import type { AnimateTo, SheetAnimation } from "../animation/animation.types";
-import type { DetachedOptions, ReduceMotionMode, ScrollableType, SheetEvent, SheetStepOverride } from "../core";
+import type {
+	DetachedOptions,
+	ReduceMotionMode,
+	ScrollableType,
+	SheetEvent,
+	SheetOverlayKind,
+	SheetStepOverride,
+} from "../core";
 import type { SheetPans } from "../gesture/gesture.types";
 import type { SheetKeyboardRegistry } from "../keyboard/use-sheet-keyboard";
 import type { ContainerLayout } from "../layout/use-container-layout";
@@ -65,9 +73,17 @@ export type BottomSheetInternalValue = {
 	topInset: number;
 	/** The root's `bottomInset`, for a part that reserves the resting safe-area band on the JS side. */
 	bottomInset: number;
-	/** The overlay tells the panel it exists, for `accessibilityViewIsModal`. */
-	hasOverlay: boolean;
-	setHasOverlay: (has: boolean) => void;
+	/** The overlay tells the root which kind it is, so a touch-through scrim makes the sheet non-modal. */
+	overlay: SheetOverlayKind;
+	setOverlay: (kind: SheetOverlayKind) => void;
+	/** The panel's `accessibilityViewIsModal`: open, `modal`, and the top sheet of its host. */
+	isModal: boolean;
+	/** The panel closes the sheet on the screen reader's escape: modal and dismissible. */
+	canEscape: boolean;
+	/** Whether the user can close the sheet: `enablePanDownToClose`, and the current step's `dismissible`. */
+	dismissible: boolean;
+	/** The nodes focus moves between: the title in, the trigger back. Written by `Title`, `Container` and `Trigger`. */
+	accessibilityRefs: SheetAccessibilityRefs;
 	/** A handle sets this on mount; a container with none reports a zero handle height. */
 	handleMounted: RefObject<boolean>;
 	/** A sticky footer sets this on mount; the dynamic snap point counts it and the body reserves space for it. */

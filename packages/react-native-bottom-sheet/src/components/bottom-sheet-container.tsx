@@ -1,7 +1,8 @@
-import { type ReactElement, useEffect } from "react";
+import { type ReactElement, useEffect, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { detachedFrame } from "../core";
+import { composeRefs } from "../lib/compose-refs";
 import { useBottomSheet, useBottomSheetInternal } from "./bottom-sheet.context";
 import type { BottomSheetContainerProps } from "./bottom-sheet.types";
 
@@ -17,16 +18,21 @@ import type { BottomSheetContainerProps } from "./bottom-sheet.types";
  * **It is not `accessible`.** An accessible container collapses its whole
  * subtree into one element on iOS, and every field, button and line of copy
  * inside becomes unreachable to VoiceOver. Instead the panel is a modal view
- * while open under an overlay, so a screen reader stays inside it, and its
- * descendants are hidden while it is closed, so the app behind it is what a
- * screen reader finds. The title labels it.
+ * while the sheet is open, `modal` and the top of its host — with or without an
+ * overlay — so a screen reader stays inside it, and its descendants are hidden
+ * while it is closed, so the app behind it is what a screen reader finds. The
+ * escape gesture closes a dismissible sheet from anywhere inside the panel,
+ * because VoiceOver delivers it to the focused element and its ancestors. The
+ * title labels it.
  *
  * A container written without a `Handle` reports a handle height of zero on
  * mount, so a handle-less sheet is not a sheet that never becomes ready.
  */
 export function BottomSheetContainer({ children, style, ref, ...props }: BottomSheetContainerProps): ReactElement {
-	const { geometry, state, hasOverlay, handleMounted, titleId, detached } = useBottomSheetInternal();
-	const { isOpen } = useBottomSheet();
+	const { geometry, state, isModal, canEscape, accessibilityRefs, handleMounted, titleId, detached } =
+		useBottomSheetInternal();
+	const { isOpen, close } = useBottomSheet();
+	const panelRef = useMemo(() => composeRefs(accessibilityRefs.container, ref), [accessibilityRefs, ref]);
 	const position = geometry.position;
 	const containerWidth = state.containerWidth;
 	const config = state.config;
@@ -60,10 +66,11 @@ export function BottomSheetContainer({ children, style, ref, ...props }: BottomS
 		<Animated.View
 			accessibilityElementsHidden={!isOpen}
 			accessibilityLabelledBy={titleId}
-			accessibilityViewIsModal={isOpen && hasOverlay}
+			accessibilityViewIsModal={isModal}
 			importantForAccessibility={isOpen ? "auto" : "no-hide-descendants"}
+			onAccessibilityEscape={canEscape ? close : undefined}
 			pointerEvents={detached === null ? "auto" : "box-none"}
-			ref={ref}
+			ref={panelRef}
 			style={[styles.panel, detached === null ? null : styles.detached, style, animatedStyle]}
 			{...props}
 		>

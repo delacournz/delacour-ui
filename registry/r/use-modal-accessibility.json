@@ -1,0 +1,26 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-modal-accessibility",
+	"type": "registry:hook",
+	"title": "useModalAccessibility",
+	"description": "A modal container's VoiceOver containment and escape, with focus moved in on open and back to the trigger on close.",
+	"registryDependencies": [
+		"modal-accessibility"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-modal-accessibility.ts",
+			"target": "use-modal-accessibility.ts",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/modal-accessibility",
+					"to": "@registry/lib/modal-accessibility"
+				}
+			]
+		}
+	]
+}

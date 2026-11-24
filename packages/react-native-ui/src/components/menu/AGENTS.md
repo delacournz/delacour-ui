@@ -27,11 +27,11 @@ rows run actions, they never become the trigger's value. Compound root plus
 | `menu-sub.tsx` | `Menu.Sub` — the submenu's open state, `progress` and measured height |
 | `menu-sub-trigger.tsx` | `Menu.SubTrigger` — the row with the turning chevron |
 | `menu-sub-content.tsx` | `Menu.SubContent` — the measured clip |
-| `menu.context.tsx` | The menu, submenu and radio-group contexts; `useMenu`, `useMenuRootValue`, `MenuRootProvider` |
+| `menu.context.tsx` | The menu, panel, submenu and radio-group contexts; `useMenu`, `useMenuRootValue`, `MenuRootProvider`, `useMenuFocusable` (what rows and labels register as initial focus) |
 | `menu.types.ts` | `MenuItemProps`, shared by every row |
 | `menu.variants.ts` | The slotted `tv()`, the constants and the pure resolvers — no RN imports |
-| `menu.render.test.tsx` | Mounted under Jest — open/close, items, disabled rows, checkbox and radio state, submenus, the accessibility escape, outside-part errors, Android `activate` |
-| `menu.variants.test.ts` | Placement (flip, cap, clamp, RTL, the zero-size anchor), width, close rules, accessibility state and row roles, tokens |
+| `menu.render.test.tsx` | Mounted under Jest — open/close, items, disabled rows, checkbox and radio state, submenus, outside-part errors, Android `activate`, modal containment, escape, focus in and out |
+| `menu.variants.test.ts` | Placement (flip, cap, clamp, RTL, the zero-size anchor), width, close rules, accessibility, tokens |
 
 ## The panel
 
@@ -143,16 +143,8 @@ rows run actions, they never become the trigger's value. Compound root plus
 ## Accessibility
 
 - Rows are activated by a screen reader too: `MenuRow` wires `onAccessibilityTap` (iOS) and an `activate` action (Android) to the same select as the tap gesture, behind the disabled guard, via `resolvePressableActivation`.
-- Content: `accessibilityRole="menu"`, `accessibilityViewIsModal`, and
-  `onAccessibilityEscape` — the VoiceOver scrub closes the menu like a tap
-  outside does (a caller's own handler runs after). Android's back button goes
-  through the `Modal`'s `onRequestClose`.
-- **Focus moves in and comes back.** Once the panel has entered, screen-reader
-  focus moves to the first row; once it has gone, back to the trigger, if it is
-  still mounted. The first row to mount claims `firstRowRef` in the root
-  context and gives it up on unmount, so ContextMenu, which builds the same
-  value, gets both for free. Without it VoiceOver could stay on the trigger
-  behind a modal panel, and closing left focus wherever the platform put it.
+- Content: `accessibilityRole="menu"`, and `useModalAccessibility` supplies `accessibilityViewIsModal` while open and `onAccessibilityEscape`, so VoiceOver's escape scrub closes the menu (a caller's own `onAccessibilityEscape` runs after). No portal `id` is passed: the `Modal` is the layer, so the panel is its own top, and nothing here is hidden by `Overlay.Portal`. Submenus expand in place inside the one panel, so there is no second modal to hand focus to.
+- Focus in: once the enter has run, focus goes to the first part that registered through `useMenuFocusable` — a `Menu.Label` or an enabled row, in tree order — else the panel. Focus out: once the exit has run, it goes back to the trigger (`triggerRef`).
 - Rows: `accessibilityRole="menuitem"`, except a radio row, which is a
   `radio` (`resolveMenuRowRole`). React Native has no `menuitemradio`, and a
   `menuitem` announcing `selected` reads as a highlighted row rather than one

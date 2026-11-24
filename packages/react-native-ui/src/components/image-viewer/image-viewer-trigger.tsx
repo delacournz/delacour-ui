@@ -7,8 +7,9 @@ import {
 	useLayoutEffect,
 	useRef,
 } from "react";
-import { AccessibilityInfo, View } from "react-native";
+import { View } from "react-native";
 import { useResolveClassNames } from "uniwind";
+import { focusAccessibilityTarget } from "../../hooks/use-modal-accessibility";
 import { cn } from "../../lib/cn";
 import { Pressable, type PressableProps } from "../pressable";
 import { useImageViewerInternalPart } from "./image-viewer.context";
@@ -126,8 +127,7 @@ export function ImageViewerTrigger(props: ImageViewerTriggerProps): ReactElement
 		if (imageId === undefined) return;
 		return registerTarget(imageId, {
 			focus: () => {
-				const node = ref.current;
-				if (node) AccessibilityInfo.sendAccessibilityEvent(node, "focus");
+				focusAccessibilityTarget(ref.current);
 			},
 			measure: (callback) => {
 				const node = ref.current;

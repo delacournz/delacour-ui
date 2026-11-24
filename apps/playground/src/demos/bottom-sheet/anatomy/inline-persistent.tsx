@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Inline and persistent",
 	caption:
-		"`<BottomSheet.Portal inline>` renders the sheet where it is written — an absolute fill of the nearest positioned ancestor — instead of teleporting it above the app. With `defaultOpen`, no overlay and `enablePanDownToClose={false}` it is a drawer that is always there: a map's result list, a player's queue. Drag the handle between the two snap points; a drag past the first does nothing.",
+		"`<BottomSheet.Portal inline>` renders the sheet where it is written — an absolute fill of the nearest positioned ancestor — instead of teleporting it above the app. With `defaultOpen`, no overlay, `enablePanDownToClose={false}` and `modal={false}` — which keeps the app behind it reachable to screen readers — it is a drawer that is always there: a map's result list, a player's queue. Drag the handle between the two snap points; a drag past the first does nothing.",
 	note: "With VoiceOver on, the handle is the one adjustable element: swipe up to raise the sheet a snap point and down to lower it.",
 	capture: { align: "stretch", flow: true },
 };
@@ -37,6 +37,7 @@ export function Demo(): ReactElement {
 					defaultOpen
 					dynamicSizing={false}
 					enablePanDownToClose={false}
+					modal={false}
 					onIndexChange={setIndex}
 					snapPoints={SNAP_POINTS}
 				>

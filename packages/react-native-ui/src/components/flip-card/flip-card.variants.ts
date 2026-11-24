@@ -355,6 +355,17 @@ export function resolveFlipCardTriggerHint(
 	return destination === "back" ? labels.showsBack : labels.showsFront;
 }
 
+/**
+ * What the card announces once it settles on each face: the root's `faceLabels` when given, else the
+ * labels' `front` and `back`.
+ */
+export function resolveFlipCardFaceAnnouncements(
+	faceLabels: Record<FlipCardFace, string> | undefined,
+	labels: FlipCardLabels = DELACOUR_DEFAULT_LABELS.flipCard
+): Record<FlipCardFace, string> {
+	return faceLabels ?? { back: labels.back, front: labels.front };
+}
+
 /** The `displayName`s of the two faces — what the root sorts its children by. */
 export const FLIP_CARD_FACE_NAMES = ["DelacourUI.FlipCard.Front", "DelacourUI.FlipCard.Back"] as const;
 

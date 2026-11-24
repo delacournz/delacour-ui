@@ -42,6 +42,7 @@ import {
 	flipCardVariants,
 	isFlipCardFaceName,
 	oppositeFace,
+	resolveFlipCardFaceAnnouncements,
 	resolveFlipTarget,
 	resolveRubberBand,
 	resolveSwipeVelocity,
@@ -164,10 +165,7 @@ function FlipCardRoot(props: FlipCardProps): ReactElement {
 
 	const isCalm = useCalmMotion();
 	const labels = useLabels("flipCard", labelsProp);
-	const announced = useMemo(
-		() => faceLabels ?? { back: labels.back, front: labels.front },
-		[faceLabels, labels.back, labels.front]
-	);
+	const announced = useMemo(() => resolveFlipCardFaceAnnouncements(faceLabels, labels), [faceLabels, labels]);
 
 	// Ref-backed, so a caller passing a fresh arrow every render does not change
 	// the identity of every callback below.

@@ -26,6 +26,7 @@ import {
 	resolveFaceTransform,
 	resolveFlipCardActions,
 	resolveFlipCardClasses,
+	resolveFlipCardFaceAnnouncements,
 	resolveFlipCardTriggerHint,
 	resolveFlipFaces,
 	resolveFlipTarget,
@@ -462,6 +463,23 @@ describe("isFlipCardFaceName", () => {
 		expect(isFlipCardFaceName("DelacourUI.FlipCard.Trigger")).toBe(false);
 		expect(isFlipCardFaceName("DelacourUI.Text")).toBe(false);
 		expect(isFlipCardFaceName(undefined)).toBe(false);
+	});
+});
+
+describe("resolveFlipCardFaceAnnouncements", () => {
+	const FRENCH: FlipCardLabels = { ...DELACOUR_DEFAULT_LABELS.flipCard, back: "Verso", front: "Recto" };
+
+	test("announces today's English by default", () => {
+		expect(resolveFlipCardFaceAnnouncements(undefined)).toEqual({ back: "Back of card", front: "Front of card" });
+	});
+
+	test("announces the labels' faces", () => {
+		expect(resolveFlipCardFaceAnnouncements(undefined, FRENCH)).toEqual({ back: "Verso", front: "Recto" });
+	});
+
+	test("the root's faceLabels win over the labels", () => {
+		const faceLabels = { back: "Answer", front: "Question" };
+		expect(resolveFlipCardFaceAnnouncements(faceLabels, FRENCH)).toBe(faceLabels);
 	});
 });
 

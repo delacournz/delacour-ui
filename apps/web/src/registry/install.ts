@@ -4529,10 +4529,10 @@ export const install = {
 		description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
 		importPath: "@delacour/react-native-ui/chart",
 		exportName: "Chart",
-		expo: ["react-native-gesture-handler", "react-native-reanimated", "react-native-skia", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 44,
+		fileCount: 53,
 		groups: [
 			{
 				name: "chart",
@@ -4540,10 +4540,12 @@ export const install = {
 				kind: "self",
 				files: [
 					{ source: "packages/react-native-ui/src/components/chart/AGENTS.md", target: "src/components/ui/chart/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-accessibility.ts", target: "src/components/ui/chart/chart-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-area.tsx", target: "src/components/ui/chart/chart-area.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-bar.tsx", target: "src/components/ui/chart/chart-bar.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-bars.tsx", target: "src/components/ui/chart/chart-bars.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-candlestick.tsx", target: "src/components/ui/chart/chart-candlestick.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-frame.tsx", target: "src/components/ui/chart/chart-frame.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-grid.tsx", target: "src/components/ui/chart/chart-grid.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-legend.tsx", target: "src/components/ui/chart/chart-legend.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-line.tsx", target: "src/components/ui/chart/chart-line.tsx" },
@@ -4561,12 +4563,24 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/chart/index.ts", target: "src/components/ui/chart/index.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-center.tsx", target: "src/components/ui/chart/pie-chart-center.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-label.tsx", target: "src/components/ui/chart/pie-chart-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice-targets.tsx", target: "src/components/ui/chart/pie-chart-slice-targets.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice.tsx", target: "src/components/ui/chart/pie-chart-slice.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-tooltip.tsx", target: "src/components/ui/chart/pie-chart-tooltip.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart.context.tsx", target: "src/components/ui/chart/pie-chart.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart.tsx", target: "src/components/ui/chart/pie-chart.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/use-chart-font.ts", target: "src/components/ui/chart/use-chart-font.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/use-chart-palette.ts", target: "src/components/ui/chart/use-chart-palette.ts" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -4608,6 +4622,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -4939,7 +4969,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 103,
+		fileCount: 106,
 		groups: [
 			{
 				name: "kpi",
@@ -5054,10 +5084,12 @@ export const install = {
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/chart/AGENTS.md", target: "src/components/ui/chart/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-accessibility.ts", target: "src/components/ui/chart/chart-accessibility.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-area.tsx", target: "src/components/ui/chart/chart-area.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-bar.tsx", target: "src/components/ui/chart/chart-bar.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-bars.tsx", target: "src/components/ui/chart/chart-bars.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-candlestick.tsx", target: "src/components/ui/chart/chart-candlestick.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-frame.tsx", target: "src/components/ui/chart/chart-frame.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-grid.tsx", target: "src/components/ui/chart/chart-grid.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-legend.tsx", target: "src/components/ui/chart/chart-legend.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/chart-line.tsx", target: "src/components/ui/chart/chart-line.tsx" },
@@ -5075,6 +5107,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/chart/index.ts", target: "src/components/ui/chart/index.ts" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-center.tsx", target: "src/components/ui/chart/pie-chart-center.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-label.tsx", target: "src/components/ui/chart/pie-chart-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice-targets.tsx", target: "src/components/ui/chart/pie-chart-slice-targets.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice.tsx", target: "src/components/ui/chart/pie-chart-slice.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart-tooltip.tsx", target: "src/components/ui/chart/pie-chart-tooltip.tsx" },
 					{ source: "packages/react-native-ui/src/components/chart/pie-chart.context.tsx", target: "src/components/ui/chart/pie-chart.context.tsx" },

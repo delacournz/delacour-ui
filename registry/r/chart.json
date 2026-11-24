@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"cn",
 		"color",
+		"pressable",
 		"text",
 		"tv",
 		"use-controllable-state",
@@ -43,6 +44,11 @@
 			]
 		},
 		{
+			"path": "packages/react-native-ui/src/components/chart/chart-accessibility.ts",
+			"target": "chart/chart-accessibility.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/chart/chart-area.tsx",
 			"target": "chart/chart-area.tsx",
 			"namespace": "ui"
@@ -60,6 +66,11 @@
 		{
 			"path": "packages/react-native-ui/src/components/chart/chart-candlestick.tsx",
 			"target": "chart/chart-candlestick.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chart/chart-frame.tsx",
+			"target": "chart/chart-frame.tsx",
 			"namespace": "ui"
 		},
 		{
@@ -194,6 +205,17 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/react-native-ui/src/components/chart/pie-chart-slice-targets.tsx",
+			"target": "chart/pie-chart-slice-targets.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
+				}
+			]
+		},
+		{
 			"path": "packages/react-native-ui/src/components/chart/pie-chart-slice.tsx",
 			"target": "chart/pie-chart-slice.tsx",
 			"namespace": "ui"
@@ -252,6 +274,11 @@
 	],
 	"tests": [
 		{
+			"path": "packages/react-native-ui/src/components/chart/chart-accessibility.test.ts",
+			"target": "chart/chart-accessibility.test.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/chart/chart.variants.test.ts",
 			"target": "chart/chart.variants.test.ts",
 			"namespace": "ui",
@@ -271,8 +298,41 @@
 	],
 	"renderTests": [
 		{
+			"path": "packages/react-native-ui/src/components/chart/chart-accessibility.render.test.tsx",
+			"target": "chart/chart-accessibility.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chart/chart-legend.render.test.tsx",
+			"target": "chart/chart-legend.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		},
+		{
 			"path": "packages/react-native-ui/src/components/chart/chart.render.test.tsx",
 			"target": "chart/chart.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chart/pie-chart.render.test.tsx",
+			"target": "chart/pie-chart.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
 				{

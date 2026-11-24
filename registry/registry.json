@@ -678,6 +678,7 @@
 			"registryDependencies": [
 				"cn",
 				"color",
+				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
@@ -696,10 +697,12 @@
 			"devDependencies": [],
 			"files": [
 				"ui/chart/AGENTS.md",
+				"ui/chart/chart-accessibility.ts",
 				"ui/chart/chart-area.tsx",
 				"ui/chart/chart-bar.tsx",
 				"ui/chart/chart-bars.tsx",
 				"ui/chart/chart-candlestick.tsx",
+				"ui/chart/chart-frame.tsx",
 				"ui/chart/chart-grid.tsx",
 				"ui/chart/chart-legend.tsx",
 				"ui/chart/chart-line.tsx",
@@ -717,6 +720,7 @@
 				"ui/chart/index.ts",
 				"ui/chart/pie-chart-center.tsx",
 				"ui/chart/pie-chart-label.tsx",
+				"ui/chart/pie-chart-slice-targets.tsx",
 				"ui/chart/pie-chart-slice.tsx",
 				"ui/chart/pie-chart-tooltip.tsx",
 				"ui/chart/pie-chart.context.tsx",

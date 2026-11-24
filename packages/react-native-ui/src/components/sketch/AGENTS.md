@@ -202,8 +202,14 @@ Drawing is a pointer task; the goal is operable and honest, not equivalent.
 - **The canvas is an `image`** labelled `"Drawing, empty"` / `"Drawing, 3 marks"`
   (erasers count). Its content is not described — nothing could, honestly.
 - **The canvas has `undo` and `clear` actions**, so a screen-reader user can
-  reverse and reset. Drawing by touch exploration is not supported; an
+  reverse and reset — offered only while there is a mark and the sketch is not
+  disabled (`resolveSketchAccessibilityActions`). Drawing by touch exploration is not supported; an
   accessibility-critical flow should offer another input path.
+- **The canvas is one merged stop and its `children` are decorative** (an image
+  being annotated, an empty-state hint): a `Pressable` or other control composed
+  into `Sketch.Canvas` is unreachable, and development warns once
+  (`warnInteractiveChildInAccessible`). Put controls beside the canvas, in the
+  toolbar. The library draws no control inside the canvas.
 - **Undo announces "Undone".** No announcement per stroke — it would be noise.
 - **Labels come from `SKETCH_LABELS`**, a `Record` over every tool and shape, so a
   new shape fails the typecheck until it is named.

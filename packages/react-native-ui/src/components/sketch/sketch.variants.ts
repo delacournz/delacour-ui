@@ -151,6 +151,18 @@ export function resolveSketchAccessibilityLabel(items: readonly SketchItem[]): s
 	return `Drawing, ${items.length} ${items.length === 1 ? "mark" : "marks"}`;
 }
 
+/** The canvas's spoken actions: undo and clear, offered only while there is something to reverse and the sketch is live. */
+export function resolveSketchAccessibilityActions(
+	items: readonly SketchItem[],
+	isDisabled: boolean
+): { label: string; name: "undo" | "clear" }[] {
+	if (isDisabled || items.length === 0) return [];
+	return [
+		{ label: "Undo", name: "undo" },
+		{ label: "Clear", name: "clear" },
+	];
+}
+
 /**
  * A swatch's accessible name.
  *

@@ -4,6 +4,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Canvas, Group, Path, Picture, Skia } from "react-native-skia";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { useSketchPart } from "./sketch.context";
 import {
 	appendSketchSegment,
@@ -16,7 +17,7 @@ import {
 } from "./sketch.paths";
 import { recordSketchPicture } from "./sketch.skia";
 import type { SketchCommit } from "./sketch.types";
-import { resolveSketchAccessibilityLabel, sketchVariants } from "./sketch.variants";
+import { resolveSketchAccessibilityActions, resolveSketchAccessibilityLabel, sketchVariants } from "./sketch.variants";
 
 export type SketchCanvasProps = Omit<ViewProps, "children"> & {
 	/** Painted under the marks, on screen only — an image being annotated, or an empty-state hint. */
@@ -30,11 +31,6 @@ const LIVE_ERASE = 2;
 
 /** The pan's Gesture Handler test id, which `fireGestureHandler` drives in render tests. */
 export const SKETCH_PAN_TEST_ID = "sketch-pan";
-
-const ACCESSIBILITY_ACTIONS = [
-	{ label: "Undo", name: "undo" },
-	{ label: "Clear", name: "clear" },
-];
 
 /**
  * The drawing surface: the committed marks, the live stroke, and the pan.
@@ -247,12 +243,14 @@ export function SketchCanvas({ children, className, onLayout, ...props }: Sketch
 		[handle, isDisabled]
 	);
 
+	warnInteractiveChildInAccessible({ accessible: props.accessible ?? true, children, component: "Sketch.Canvas" });
+
 	// The caller's children sit under the Skia canvas, so an image being annotated
 	// is drawn on; the layer keeps every `Clear` inside the marks.
 	return (
 		<GestureDetector gesture={gesture}>
 			<View
-				accessibilityActions={ACCESSIBILITY_ACTIONS}
+				accessibilityActions={resolveSketchAccessibilityActions(items, isDisabled)}
 				accessibilityLabel={resolveSketchAccessibilityLabel(items)}
 				accessibilityRole="image"
 				accessible

@@ -2,7 +2,7 @@ import { Button } from "@delacour/react-native-ui/button";
 import { Field } from "@delacour/react-native-ui/field";
 import { Signature, type SignatureValue } from "@delacour/react-native-ui/signature";
 import { type ReactElement, useState } from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -11,6 +11,11 @@ export const meta: DemoMeta = {
 		"Inside a `Field` the pad takes its label as its name and its invalid state as a destructive border. Submit with nothing drawn to see it; the error clears with the first stroke.",
 	capture: { align: "stretch", flow: true },
 };
+
+/** Stands in for the typed-name flow `alternative` shows in full. */
+function typeName(): void {
+	Alert.alert("Type your name", "A typed-name flow opens here.");
+}
 
 export function Demo(): ReactElement {
 	const [signature, setSignature] = useState<SignatureValue | null>(null);
@@ -21,7 +26,7 @@ export function Demo(): ReactElement {
 		<View className="gap-4">
 			<Field isInvalid={isInvalid}>
 				<Field.Label>Signature</Field.Label>
-				<Signature onValueChange={setSignature}>
+				<Signature onRequestAlternative={typeName} onValueChange={setSignature}>
 					<Signature.Pad testID="signature-field-pad" />
 					<Signature.Toolbar>
 						<Signature.Undo />

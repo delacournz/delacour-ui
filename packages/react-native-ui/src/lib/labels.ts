@@ -708,6 +708,34 @@ export type PaginationLabels = {
 	status: (range: { from: number; to: number; total: number }) => string;
 };
 
+/** Signature's visible and spoken strings. */
+export type SignatureLabels = {
+	/** The pad's name when neither it nor an enclosing `Field` has one. */
+	name: string;
+	/** An empty pad's accessible name, given its name: "Signature pad, empty". */
+	empty: (name: string) => string;
+	/** A drawn pad's accessible name, given its name and stroke count: "Signature, drawn, 2 strokes". */
+	drawn: (name: string, strokes: number) => string;
+	/** Shown on the pad while it is empty. */
+	placeholder: string;
+	/** Read after the name while the pad takes input. */
+	drawHint: string;
+	/** Read before `drawHint` while a double tap opens the typed-name route. */
+	typeHint: string;
+	undo: string;
+	redo: string;
+	/** "Clear signature" rather than "Clear": clear is final and the label is the only warning. */
+	clear: string;
+	/** The pad's custom action that opens the typed-name route. */
+	type: string;
+	/** `Signature.Alternative`'s text. */
+	alternative: string;
+	/** Announced when the first stroke lands. */
+	captured: string;
+	/** Announced when the pad is cleared. */
+	cleared: string;
+};
+
 /** Every component's labels, as the library ships them. */
 export type DelacourLabels = {
 	alert: AlertLabels;
@@ -747,6 +775,7 @@ export type DelacourLabels = {
 	pageHeader: PageHeaderLabels;
 	pagination: PaginationLabels;
 	planner: PlannerLabels;
+	signature: SignatureLabels;
 };
 
 /** A component whose strings the catalog holds. */
@@ -1123,6 +1152,21 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		summary: (count, month) =>
 			`${count === 0 ? "No entries" : `${count} ${plural(count, "entry", "entries")}`} in ${month}`,
 		more: (count) => `+${count} more`,
+	},
+	signature: {
+		name: "Signature",
+		empty: (name) => `${name} pad, empty`,
+		drawn: (name, strokes) => `${name}, drawn, ${strokes} ${plural(strokes, "stroke", "strokes")}`,
+		placeholder: "Sign here",
+		drawHint: "Double tap and hold, then drag to draw.",
+		typeHint: "Double tap to type your name instead.",
+		undo: "Undo",
+		redo: "Redo",
+		clear: "Clear signature",
+		type: "Type your name instead",
+		alternative: "Can't sign? Type your name",
+		captured: "Signature captured",
+		cleared: "Signature cleared",
 	},
 };
 

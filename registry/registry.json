@@ -4547,10 +4547,12 @@
 				"field",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
 				"use-calm-motion",
+				"use-labels",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -4579,7 +4581,8 @@
 				"ui/signature/signature.stroke.ts",
 				"ui/signature/signature.tsx",
 				"ui/signature/signature.types.ts",
-				"ui/signature/signature.variants.ts"
+				"ui/signature/signature.variants.ts",
+				"ui/signature/signature.warn.ts"
 			],
 			"testRegistryDependencies": [
 				"styles"

@@ -1,10 +1,10 @@
 import type { ReactElement, ReactNode } from "react";
 import { Button, type ButtonProps } from "../button";
 import { useSignaturePart } from "./signature.context";
-import { SIGNATURE_ALTERNATIVE_LABEL, SIGNATURE_TOOLBAR_LABEL_SIZE, signatureVariants } from "./signature.variants";
+import { SIGNATURE_TOOLBAR_LABEL_SIZE, signatureVariants } from "./signature.variants";
 
 export type SignatureAlternativeProps = Omit<ButtonProps, "onPress" | "children"> & {
-	/** The link's text. Default "Can't sign? Type your name". */
+	/** The link's text. Default the `alternative` label, "Can't sign? Type your name". */
 	children?: ReactNode;
 };
 
@@ -26,7 +26,7 @@ export function SignatureAlternative({
 	variant = "ghost",
 	...props
 }: SignatureAlternativeProps): ReactElement | null {
-	const { onRequestAlternative, isReadOnly, size: padSize } = useSignaturePart("Signature.Alternative");
+	const { onRequestAlternative, isReadOnly, labels, size: padSize } = useSignaturePart("Signature.Alternative");
 	if (!onRequestAlternative || isReadOnly) return null;
 
 	return (
@@ -37,7 +37,7 @@ export function SignatureAlternative({
 			variant={variant}
 			{...props}
 		>
-			{children ?? SIGNATURE_ALTERNATIVE_LABEL}
+			{children ?? labels.alternative}
 		</Button>
 	);
 }

@@ -1,7 +1,8 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { SignatureLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import type { SignatureStroke, SignatureValue } from "./signature.types";
-import type { SignatureSize, SignatureVariant } from "./signature.variants";
+import type { SignaturePadAction, SignatureSize, SignatureVariant } from "./signature.variants";
 
 /** What a custom part reads from {@link useSignature}. */
 export type SignatureState = {
@@ -48,8 +49,13 @@ export type SignatureContextValue = SignatureState & {
 	beginStroke: () => void;
 	/** The pad reports its measured size here. */
 	setPadSize: (width: number, height: number) => void;
-	/** Applies an action a screen reader asked for. */
-	runAction: (action: "undo" | "redo" | "clear") => void;
+	/**
+	 * Every string the signature speaks or shows, resolved: English, then
+	 * `DelacourProvider`'s `labels`, then the signature's own `labels` prop.
+	 */
+	labels: SignatureLabels;
+	/** Applies an action a screen reader asked for; `type` requests the typed-name route. */
+	runAction: (action: SignaturePadAction) => void;
 };
 
 const SignatureContext = createContext<SignatureContextValue | null>(null);

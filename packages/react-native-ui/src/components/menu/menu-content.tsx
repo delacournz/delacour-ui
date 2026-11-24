@@ -11,7 +11,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { I18nManager, Modal, ScrollView, useWindowDimensions, View, type ViewProps } from "react-native";
+import { I18nManager, Modal, Platform, ScrollView, useWindowDimensions, View, type ViewProps } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -88,8 +88,8 @@ export type MenuContentProps = Omit<ViewProps, "children"> & {
  * **Accessibility goes through `useModalAccessibility`**, without a portal id —
  * the `Modal` is the layer, so the panel is its own top. The escape scrub
  * closes it. Once the enter has run, focus lands on the first heading or enabled
- * row (the panel itself when there is neither); once the exit has run, it goes
- * back to the trigger.
+ * row (the panel itself when there is neither); once the exit has run and the `Modal` has unmounted (on Android, a beat
+ * later, once its window has closed), it goes back to the trigger.
  *
  * A caller's `Menu.Background` child is lifted out and drawn behind the
  * scroller in place of the default one.
@@ -195,12 +195,29 @@ export function MenuContent({
 		else focusInitial();
 	}, [focusInitial]);
 
+	const isRestorePending = useRef(false);
+
 	const handleExited = useCallback(() => {
+		isRestorePending.current = true;
 		setPresent(false);
 		setLocked(null);
 		setMeasuredHeight(null);
-		restoreFocus();
-	}, [restoreFocus]);
+	}, []);
+
+	// Focus goes back only once the Modal has unmounted. On Android the Modal is a
+	// separate Dialog window that is still the focused window in the tick the exit
+	// ends, and `onDismiss` is iOS-only, so the event is deferred past the window's
+	// teardown; sent earlier it lands on whatever Android focuses when the dialog goes.
+	useEffect(() => {
+		if (isPresent || !isRestorePending.current) return;
+		isRestorePending.current = false;
+		if (Platform.OS !== "android") {
+			restoreFocus();
+			return;
+		}
+		const timer = setTimeout(restoreFocus, MENU_ANDROID_RESTORE_DELAY_MS);
+		return () => clearTimeout(timer);
+	}, [isPresent, restoreFocus]);
 
 	const progress = useSharedValue(0);
 
@@ -303,6 +320,9 @@ export function MenuContent({
 MenuContent.displayName = "DelacourUI.Menu.Content";
 
 const fill = { flex: 1 };
+
+/** How long after the Modal unmounts Android is given to close its window before focus is sent. */
+const MENU_ANDROID_RESTORE_DELAY_MS = 120;
 
 type PanelFrameInput = {
 	align: MenuAlign;

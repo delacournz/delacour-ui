@@ -30,6 +30,8 @@ knows nothing about tokens.
 | `pie-chart.context.tsx` | The pie's context, mounted twice the same way; `useChartSeries` in `chart.context.tsx` reads either |
 | `pie-chart-slice.tsx`, `pie-chart-label.tsx` | Skia marks — the wedges with a hairline between them, and a label per wedge |
 | `pie-chart-center.tsx`, `pie-chart-tooltip.tsx` | React Native, over the canvas — the donut hole's content and the tap readout |
+| `pie-chart-slice-targets.tsx` | A selectable pie's accessibility tree — the summary and one `button` per slice, never touch-reactive |
+| `pie-chart.render.test.tsx` | The pie's text alternative and its slice items, activated the way VoiceOver and TalkBack do |
 
 ## Design
 
@@ -220,6 +222,21 @@ knows nothing about tokens.
   and the tooltip lives outside it. A tap selects only when something would
   show it — a `PieChart.Tooltip`, an `onSelect`, or a controlled
   `selectedIndex` — so a pie with none of those takes no gesture at all.
+
+- **A pie nothing selects is one `image`; a selectable pie is a summary and a
+  button per slice.** The canvas is one opaque view, so without either a
+  screen reader announces nothing. A picture pie's frame carries the
+  generated summary (`Pie chart. Free 57%, …`) — `accessibilityLabel`
+  replaces it, `accessible={false}` removes the pie. A selectable pie's frame
+  cannot be the element, because iOS ignores accessible descendants of an
+  accessible parent, so the canvas is hidden and `PieChartSliceTargets` stands
+  in: the summary, then each drawn slice in order as a 44-point box at its
+  label position, named with its value and share through the tooltip's own
+  formatters. The boxes are `pointerEvents="none"` and activate through
+  `accessibilityTap` on iOS and the `activate` action on Android, the way
+  `Pressable` routes them — a touch handler there would steal a sighted tap
+  from the engine's hit test. Activating a slice selects it; it never toggles
+  it off.
 
 - **`@delacour/react-native-charts` is an optional peer, not a dependency.** A dependency
   may be nested, and two copies of the engine mean two chart contexts — so a

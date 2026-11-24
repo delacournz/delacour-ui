@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
-import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
+	BADGE_CLOSE_EDGE_ROOM,
 	BADGE_CLOSE_HIT_SLOP_CAP,
 	BADGE_CLOSE_SIZES,
 	BADGE_COLORS,
@@ -101,8 +101,13 @@ describe("badgeVariants root slot", () => {
 		expect(badgeVariants({ variant: "solid" }).root()).toContain("border-transparent");
 	});
 
-	test("clips, so a pressed badge fades to the edge of its own box", () => {
-		expect(badgeVariants().root()).toContain("overflow-hidden");
+	// Gesture Handler's Android orchestrator never descends into a clipping view
+	// for a touch outside its bounds, so a clipped root drops its own hitSlop
+	// there. The press fades the root's own opacity, which needs no clip.
+	test("does not clip, so Android reaches its hitSlop", () => {
+		for (const cls of badgeVariants().root().split(/\s+/)) {
+			expect(cls).not.toMatch(/^overflow-(hidden|clip)$/);
+		}
 	});
 
 	test("only outline names a border colour", () => {
@@ -308,17 +313,50 @@ describe("the dismiss control's hit target", () => {
 		}
 	});
 
-	test("slop is capped at half the gap, so it never reaches into a neighbour's touch area", () => {
+	// The label is the glyph's neighbour inside the badge, and in a pressable
+	// badge it is the badge's own target: the inner close button is hit-tested
+	// first, so slop past half the gap would take presses meant for the body.
+	test("the leading side is capped at half the gap", () => {
 		for (const size of BADGE_SIZES) {
 			expect(BADGE_CLOSE_HIT_SLOP_CAP[size]).toBe(gapOf(size) / 2);
-			const slop = resolveBadgeCloseHitSlop(size);
-			expect(slop).toBe(resolveMinimumHitSlop(BADGE_CLOSE_SIZES[size], 44, { cap: gapOf(size) / 2 }));
-			expect(slop).toBe(gapOf(size) / 2);
+			for (const min of [44, 48]) {
+				expect(resolveBadgeCloseHitSlop(size, min)?.left).toBe(gapOf(size) / 2);
+			}
 		}
 	});
 
-	test("a smaller minimum than the cap allows is honoured uncapped", () => {
-		expect(resolveBadgeCloseHitSlop("md", 18)).toBe(1);
+	// The root no longer clips, so the slop could reach past the badge. A badge
+	// sits anywhere — beside text, in a list row — and its neighbours are not
+	// known, so the other three sides stop at the badge's own edge.
+	test("the other sides stop at the badge's own edge", () => {
+		const lineHeight = { sm: 16, md: 20, lg: 24 } as const;
+		for (const size of BADGE_SIZES) {
+			const root = badgeVariants({ size }).root();
+			const closeMargin =
+				Number(
+					badgeVariants({ size })
+						.closeButton()
+						.match(/-mr-([\d.]+)/)?.[1]
+				) * 4;
+			const height = lineHeight[size] + paddingY(root) * 4 * 2 + 2;
+			const vertical = (height - BADGE_CLOSE_SIZES[size]) / 2;
+			const trailing = paddingX(root) * 4 - closeMargin + 1;
+			expect(BADGE_CLOSE_EDGE_ROOM[size]).toEqual({ trailing, vertical });
+			const slop = resolveBadgeCloseHitSlop(size, 48);
+			expect(slop?.top).toBe(vertical);
+			expect(slop?.bottom).toBe(vertical);
+			expect(slop?.right).toBe(trailing);
+		}
+	});
+
+	test("the leading side is the right one in a right-to-left layout", () => {
+		const ltr = resolveBadgeCloseHitSlop("md");
+		const rtl = resolveBadgeCloseHitSlop("md", 44, { isRTL: true });
+		expect(rtl).toEqual(ltr ? { ...ltr, left: ltr.right, right: ltr.left } : undefined);
+	});
+
+	test("a minimum the glyph already meets adds nothing, and a small one is honoured uncapped", () => {
+		expect(resolveBadgeCloseHitSlop("md", 18)).toEqual({ top: 1, right: 1, bottom: 1, left: 1 });
 		expect(resolveBadgeCloseHitSlop("md", 16)).toBeUndefined();
 	});
 });

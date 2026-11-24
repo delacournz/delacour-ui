@@ -139,10 +139,6 @@
 				{
 					"from": "../../styles/tokens",
 					"to": "@registry/styles/tokens"
-				},
-				{
-					"from": "../pressable/pressable.variants",
-					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}

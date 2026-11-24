@@ -171,7 +171,7 @@ export function resolveChipCloseHitSlop(
  */
 export const chipVariants = tv({
 	slots: {
-		root: "flex-row items-center justify-center self-start overflow-hidden rounded-full border border-transparent",
+		root: "flex-row items-center justify-center self-start rounded-full border border-transparent",
 		label: "text-center font-medium",
 		startContent: "items-center justify-center",
 		endContent: "items-center justify-center",

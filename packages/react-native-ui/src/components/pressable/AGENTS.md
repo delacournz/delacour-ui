@@ -102,10 +102,11 @@ and only `onPress` and `onLongPress` cross back to JS.
 - **On Android, slop does not reach past a pressable that clips.** The
   orchestrator only descends into a child that clips (`overflow-hidden`) when
   the touch is inside its bounds, so a pressable whose own root is
-  `overflow-hidden` — `Button`, `Chip`, `Badge`, a Pagination item — keeps its
-  drawn size there whatever its slop. A bare glyph (a ✕, a back chevron, a
-  clear button) does not clip, and its slop works on both platforms. An
-  ancestor that clips bounds the slop on both.
+  `overflow-hidden` keeps its drawn size there whatever its slop. That is why
+  `Button`, `Chip` and `Badge` roots do not clip; a Pagination item still does.
+  A caller who adds `overflow-hidden` to one of them (to round off an image
+  inside it, say) trades its Android slop for the clip. An ancestor that clips
+  bounds the slop on both platforms.
 - **A small control reaches the minimum target with `hitSlop`, sized from what
   it draws.** `resolveMinimumHitSlop(size, min)` gives half the shortfall to each
   side of a short axis — a number for a square, insets for anything else,

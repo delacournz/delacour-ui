@@ -65,7 +65,9 @@ and `Chip.CloseButton`.
   A test asserts all eighteen surface-and-colour cells are distinct.
 - **The border is reserved in every state.** A chip toggles in place inside a
   wrapping row; a box that grew two points on selection would reflow every chip
-  after it. `overflow-hidden` keeps the pressed fade inside the capsule.
+  after it. The root does not clip: a press fades its own opacity, and an
+  `overflow-hidden` root would keep the close glyph's slop inside the chip on
+  both platforms, and the chip's own slop off it on Android.
 - **Roomier than a badge, and still never a height.** A chip is aimed at and a
   badge is only read, so each size pads at least as generously as the badge of
   that size — a test asserts it. There is no `h-*`, so the label grows with OS

@@ -1272,6 +1272,7 @@
 				"use-controllable-state"
 			],
 			"dependencies": [
+				"@delacour/react-native-bottom-sheet",
 				"tailwind-variants"
 			],
 			"expoDependencies": [],
@@ -1302,8 +1303,8 @@
 				"test-kit"
 			],
 			"renderTestDependencies": [
-				"@delacour/react-native-bottom-sheet",
-				"@jest/globals"
+				"@jest/globals",
+				"react-native-gesture-handler"
 			]
 		},
 		{

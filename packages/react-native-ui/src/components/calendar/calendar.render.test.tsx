@@ -1,9 +1,12 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
+import { Gesture } from "react-native-gesture-handler";
+import { getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Calendar } from "./calendar";
 import type { CalendarDate } from "./calendar.date";
+import { resolveYearListGesture } from "./calendar-picker";
 
 const day = (year: number, month: number, d: number): CalendarDate => ({ day: d, month, year });
 
@@ -381,6 +384,27 @@ describe("Calendar", () => {
 			expect(onSelect).toHaveBeenLastCalledWith(day(1990, 3, 23));
 		});
 
+		test("yearListBlocksGesture wraps the year list in a pan that blocks the gesture given", async () => {
+			const external = Gesture.Pan();
+			await renderWithProviders(
+				<Calendar initialView="years" locale="en" testID="cal" yearListBlocksGesture={external} />
+			);
+			expect(screen.getByTestId("cal-years")).toBeOnTheScreen();
+			expect(getByGestureTestId("cal-years-pan").config.blocksHandlers).toEqual([external]);
+
+			await fireEvent(screen.getByTestId("cal-year-1990"), "accessibilityTap");
+			expect(screen.getByRole("button", { name: "1990" })).toBeOnTheScreen();
+		});
+
+		test("without yearListBlocksGesture the year list is a plain scroll view", async () => {
+			await renderWithProviders(<Calendar initialView="years" locale="en" testID="cal" />);
+			expect(screen.getByTestId("cal-years")).toBeOnTheScreen();
+			expect(() => getByGestureTestId("cal-years-pan")).toThrow();
+
+			await fireEvent(screen.getByTestId("cal-year-1990"), "accessibilityTap");
+			expect(screen.getByRole("button", { name: "1990" })).toBeOnTheScreen();
+		});
+
 		test('initialView="months" opens on the months of the visible year', async () => {
 			await renderWithProviders(<Calendar initialView="months" locale="en" testID="cal" />);
 			expect(screen.getByRole("button", { name: "2026" })).toBeOnTheScreen();
@@ -439,5 +463,16 @@ describe("Calendar", () => {
 				spy.mockRestore();
 			}
 		});
+	});
+});
+
+describe("resolveYearListGesture", () => {
+	test("runs the native scroll beside a pan that blocks the external gesture", () => {
+		const external = Gesture.Pan();
+		const [native, blocker] = resolveYearListGesture(external).toGestureArray();
+		expect(native?.handlerName).toBe("NativeViewGestureHandler");
+		expect(native?.config.blocksHandlers).toBeUndefined();
+		expect(blocker?.handlerName).toBe("PanGestureHandler");
+		expect(blocker?.config.blocksHandlers).toEqual([external]);
 	});
 });

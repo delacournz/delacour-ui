@@ -1,3 +1,4 @@
+import { useOptionalBottomSheetInternal } from "@delacour/react-native-bottom-sheet";
 import type { ReactElement } from "react";
 import { Calendar, type CalendarProps } from "../calendar";
 import { resolvePartTestID } from "../calendar/calendar.variants";
@@ -27,12 +28,16 @@ export type DatePickerCalendarProps = Omit<
  * a single day commits and closes, a range commits and closes once both ends exist, several days
  * commit on every toggle and stay open. Every other `Calendar` prop passes through.
  *
+ * Inside a sheet it hands the calendar the sheet's content pan, so a drag on the year list scrolls
+ * the years rather than the sheet.
+ *
  * Keyed by the picker's `openCount`, so each opening starts on the root's `initialView` (or the
  * picked value's days) even when the sheet engine keeps its content mounted between openings.
  */
 export function DatePickerCalendar(props: DatePickerCalendarProps): ReactElement {
 	const picker = useDatePickerPart("DatePicker.Calendar");
 	const { calendar, shown, select } = picker;
+	const sheet = useOptionalBottomSheetInternal();
 	const common = {
 		captionLayout: calendar.captionLayout,
 		defaultMonth: picker.hasValue ? undefined : calendar.defaultMonth,
@@ -51,6 +56,7 @@ export function DatePickerCalendar(props: DatePickerCalendarProps): ReactElement
 		today: calendar.today,
 		testID: resolvePartTestID(picker.testID, "calendar"),
 		weekStartsOn: calendar.weekStartsOn,
+		yearListBlocksGesture: sheet?.pans.content,
 		...props,
 	};
 

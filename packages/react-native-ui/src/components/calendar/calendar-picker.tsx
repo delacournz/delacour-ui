@@ -1,5 +1,11 @@
-import { type ReactElement, useCallback, useMemo, useRef } from "react";
+import { type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
 import { type LayoutChangeEvent, ScrollView, type ScrollViewInstance, View, type ViewProps } from "react-native";
+import {
+	Gesture,
+	GestureDetector,
+	type GestureType,
+	type LegacySimultaneousGesture,
+} from "react-native-gesture-handler";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
@@ -14,6 +20,38 @@ export type CalendarPickerProps = Omit<ViewProps, "children"> & {
 };
 
 const CROSSFADE_MS = 150;
+
+/**
+ * The year list's native scroll, run beside a pan that blocks `external` — a bottom sheet's content
+ * pan.
+ *
+ * The content pan claims a touch after six points of vertical travel, before a React Native
+ * `ScrollView` starts to scroll, so a slow drag on the years moved the sheet and the list stayed
+ * put; only a fast flick scrolled. The native handler cannot hold the pan off by itself on iOS:
+ * its recognizer only mirrors the scroll view's pan, so `blocksExternalGesture` on it never makes
+ * the content pan wait, and `shouldActivateOnStart` stops the scroll too. A plain `Pan`, recognized
+ * together with the native scroll, can block it. A drag on the years now scrolls them; the handle
+ * and the header still move or close the sheet.
+ *
+ * `testID` names the blocking pan for Gesture Handler's Jest utilities.
+ */
+export function resolveYearListGesture(external: GestureType, testID?: string): LegacySimultaneousGesture {
+	const blocker = Gesture.Pan().blocksExternalGesture(external);
+	return Gesture.Simultaneous(Gesture.Native(), testID ? blocker.withTestId(testID) : blocker);
+}
+
+/** Wraps the year list in `resolveYearListGesture` when the calendar was given a gesture to block. */
+function YearListGesture({ children }: { children: ReactNode }): ReactElement {
+	const { testID, yearListBlocksGesture } = useCalendarPart("Calendar.Picker");
+	const panTestID = resolvePartTestID(testID, "years-pan");
+	const gesture = useMemo(
+		() => (yearListBlocksGesture ? resolveYearListGesture(yearListBlocksGesture, panTestID) : null),
+		[panTestID, yearListBlocksGesture]
+	);
+	if (!gesture) return <>{children}</>;
+	return <GestureDetector gesture={gesture}>{children}</GestureDetector>;
+}
+YearListGesture.displayName = "DelacourUI.Calendar.Picker.YearListGesture";
 
 /**
  * The months and years jump views, laid over the grid while one is open.
@@ -95,32 +133,38 @@ export function CalendarPicker({ className, ...props }: CalendarPickerProps): Re
 					})}
 				</View>
 			) : (
-				<ScrollView ref={scroller} showsVerticalScrollIndicator={false}>
-					<View accessibilityRole="list" className={slots.pickerGrid()}>
-						{years.map((year) => {
-							const isCurrent = year === visibleMonth.year;
-							const item = calendarVariants({ size, tone: isCurrent ? "selected" : "plain", variant });
-							const inBounds =
-								(!monthBounds.first || compareMonths({ day: 1, month: 12, year }, monthBounds.first) >= 0) &&
-								(!monthBounds.last || compareMonths({ day: 1, month: 1, year }, monthBounds.last) <= 0);
-							return (
-								<Pressable
-									accessibilityState={{ selected: isCurrent }}
-									className={item.pickerItem({ className: inBounds ? undefined : "opacity-40" })}
-									disabled={isDisabled || !inBounds}
-									feedback="fade"
-									haptic="selection"
-									key={year}
-									onLayout={isCurrent ? handleCurrentLayout : undefined}
-									onPress={() => pickYear(year)}
-									testID={resolvePartTestID(calendar.testID, `year-${year}`)}
-								>
-									<Text className={item.pickerItemLabel()}>{formatYear(year, locale)}</Text>
-								</Pressable>
-							);
-						})}
-					</View>
-				</ScrollView>
+				<YearListGesture>
+					<ScrollView
+						ref={scroller}
+						showsVerticalScrollIndicator={false}
+						testID={resolvePartTestID(calendar.testID, "years")}
+					>
+						<View accessibilityRole="list" className={slots.pickerGrid()}>
+							{years.map((year) => {
+								const isCurrent = year === visibleMonth.year;
+								const item = calendarVariants({ size, tone: isCurrent ? "selected" : "plain", variant });
+								const inBounds =
+									(!monthBounds.first || compareMonths({ day: 1, month: 12, year }, monthBounds.first) >= 0) &&
+									(!monthBounds.last || compareMonths({ day: 1, month: 1, year }, monthBounds.last) <= 0);
+								return (
+									<Pressable
+										accessibilityState={{ selected: isCurrent }}
+										className={item.pickerItem({ className: inBounds ? undefined : "opacity-40" })}
+										disabled={isDisabled || !inBounds}
+										feedback="fade"
+										haptic="selection"
+										key={year}
+										onLayout={isCurrent ? handleCurrentLayout : undefined}
+										onPress={() => pickYear(year)}
+										testID={resolvePartTestID(calendar.testID, `year-${year}`)}
+									>
+										<Text className={item.pickerItemLabel()}>{formatYear(year, locale)}</Text>
+									</Pressable>
+								);
+							})}
+						</View>
+					</ScrollView>
+				</YearListGesture>
 			)}
 		</Animated.View>
 	);

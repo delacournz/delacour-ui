@@ -19,7 +19,7 @@ sheets.
 | `calendar-weekdays.tsx` | `Calendar.Weekdays` — short names shown, full names spoken |
 | `calendar-grid.tsx` | `Calendar.Grid` — six weeks, the paging pan and slide, hosts the picker |
 | `calendar-day.tsx` | `Calendar.Day` — one cell: band, circle, number or custom content |
-| `calendar-picker.tsx` | `Calendar.Picker` — the months and years jump views |
+| `calendar-picker.tsx` | `Calendar.Picker` — the months and years jump views; `resolveYearListGesture` |
 | `calendar.context.tsx` | `CalendarContext`, `useCalendar()`, `useCalendarContext()`, `useCalendarPart()` |
 | `calendar.types.ts` | `CalendarSelection` (the mode union), `CalendarProps`, `CalendarCaptionLayout` |
 | `calendar.date.ts` | **Shared leaf.** `CalendarDate` maths, matchers, grid, selection rules, `Intl` formatters. No React Native |
@@ -114,6 +114,19 @@ sheets.
 - **A Gesture Handler pan on `Calendar.Grid`**, `activeOffsetX` ±12 and `failOffsetY` ±12: it
   claims a sideways drag and gives up a vertical one, so the calendar lives inside a `ScrollView`
   or a sheet without stealing its scroll.
+- **In a bottom sheet the year list blocks the sheet's content pan** (`yearListBlocksGesture`,
+  `resolveYearListGesture`). The content pan claims a drag after six points, before a `ScrollView`
+  starts to scroll, so a slow drag on the years moved the sheet and the list stayed still. Given a
+  gesture, the list's native scroll runs beside a plain `Pan` that blocks it, and every drag on the
+  years scrolls them; the handle and header still move the sheet. A drag down at the top of the
+  list does not pull the sheet down — that is the trade. Three shapes failed on an iOS simulator:
+  `Gesture.Native().blocksExternalGesture(…)` (its recognizer only mirrors the scroll view's pan, so
+  the sheet still moved), adding `shouldActivateOnStart(true)` (the sheet stopped and so did the
+  list), and `simultaneousWithExternalGesture` (both moved). The engine's `BottomSheet.ScrollView`
+  is a body scrollable that writes the sheet's content height, so nesting one here would break the
+  sheet's sizing. The calendar imports no sheet: it takes the gesture as a prop, and `DatePicker` passes
+  its sheet's (`DateTimePicker` turns its sheet's content pan off, so it passes none).
+  Without one the list is a plain `ScrollView`.
 - **`resolvePageDirection` is pure and tested.** A quarter of the width, or a release faster than
   500 pt/s, pages; a flick against the drag settles back; it never pages past a bound or on an
   unmeasured grid.
@@ -144,8 +157,8 @@ sheets.
 
 - **Parts derive their `testID` from the root's** (`resolvePartTestID`): `testID="booking"`
   names the days `booking-day-2026-10-05`, the arrows `booking-prev`/`booking-next`, the caption
-  `booking-caption` and the jump-view items `booking-month-10`/`booking-year-2026`. The default
-  anatomy renders forty-odd parts no caller writes, and an end-to-end test or a recorded preview
+  `booking-caption`, the jump-view items `booking-month-10`/`booking-year-2026` and the year list
+  `booking-years`. The default anatomy renders forty-odd parts no caller writes, and an end-to-end test or a recorded preview
   flow has to reach one particular day all the same. No root `testID`, no part ids.
 
 ## Field

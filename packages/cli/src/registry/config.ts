@@ -765,6 +765,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "expo-blur as ScrollBlur's engine — mount it once with ScrollBlurLayerProvider.",
 	},
 
+	announce: {
+		title: "announce",
+		description: "Screen-reader announcements by one route per platform, throttled and coalesced per key.",
+	},
 	"calm-motion": {
 		title: "calmMotion",
 		description: "Whether decorative loops hold still: reduce motion, or an app's E2E build asking.",
@@ -807,6 +811,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Wraps bare text children in an element React Native can render; asChild is left alone.",
 	},
 
+	"use-announce": {
+		title: "useAnnounce",
+		description: "announce(), useAnnounce() and useAnnouncement() — heard once on iOS, Android and the web.",
+	},
 	"use-calm-motion": {
 		title: "useCalmMotion",
 		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",

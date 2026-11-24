@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TextInputInstance } from "react-native";
+import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { cn } from "../../lib/cn";
 import { useFieldContext } from "../field/field.context";
@@ -25,7 +26,7 @@ import {
 	toEditableString,
 } from "./number-input.format";
 import type { NumberInputFieldOwnProps } from "./number-input.types";
-import { NUMBER_INPUT_GROUP_CLASS } from "./number-input.variants";
+import { NUMBER_INPUT_GROUP_CLASS, resolveStepAnnouncement } from "./number-input.variants";
 import { NumberInputDecrement } from "./number-input-decrement";
 import { NumberInputField } from "./number-input-field";
 import { NumberInputIncrement } from "./number-input-increment";
@@ -68,6 +69,12 @@ export type NumberInputProps = {
 	isDisabled?: boolean;
 	/** The value can be read and selected but not changed: the steppers are off and the field takes no typing. */
 	isReadOnly?: boolean;
+	/**
+	 * Speaks the new value after a stepper press — a tap, a hold (first and last value only) or a
+	 * screen reader's activation — because focus stays on the stepper. Typing and controlled changes
+	 * are never announced. Default `true`.
+	 */
+	announce?: boolean;
 	/** Played on each step. A step that reaches a limit plays `light` instead. `false` silences both. */
 	haptic?: false | HapticFeedback;
 	placeholder?: string;
@@ -99,6 +106,7 @@ function NumberInputRoot({
 	isInvalid,
 	isDisabled,
 	isReadOnly = false,
+	announce: shouldAnnounce = true,
 	haptic = "selection",
 	placeholder,
 	className,
@@ -171,6 +179,17 @@ function NumberInputRoot({
 			return result;
 		},
 		[commit, commitDraft, config, locale, precision, setDraft]
+	);
+
+	const speak = useAnnounce();
+	const announceStep = useCallback(
+		(result: StepResult, direction: 1 | -1) => {
+			const text = formatNumber(result.value, { formatOptions, locale, precision });
+			speak(resolveStepAnnouncement({ direction, reachedLimit: result.reachedLimit, text }), {
+				enabled: shouldAnnounce,
+			});
+		},
+		[formatOptions, locale, precision, shouldAnnounce, speak]
 	);
 
 	const setValue = useCallback(
@@ -249,6 +268,7 @@ function NumberInputRoot({
 			// A screen reader reads what is on screen: the draft while editing, so a
 			// half-typed entry is not announced as the value it replaces.
 			accessibilityText: displayText,
+			announceStep,
 			canDecrement,
 			canIncrement,
 			config,
@@ -279,6 +299,7 @@ function NumberInputRoot({
 		}),
 		[
 			accessibilityLabel,
+			announceStep,
 			canDecrement,
 			canIncrement,
 			config,

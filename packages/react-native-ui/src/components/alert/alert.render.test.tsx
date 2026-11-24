@@ -1,4 +1,6 @@
-import { describe, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Platform } from "react-native";
+import { resetAnnouncer } from "../../hooks/use-announce";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
@@ -32,17 +34,6 @@ describe("Alert", () => {
 		expect(screen.getByTestId("alert")).toHaveProp("accessibilityRole", "alert");
 		expect(screen.getByText("Card expiring")).toBeOnTheScreen();
 		expect(screen.getByText("The card ending 4242 expires next month.")).toBeOnTheScreen();
-	});
-
-	test("is a live region: assertive for warning and destructive, polite otherwise", async () => {
-		const view = await renderWithProviders(<Alert testID="alert" status="warning" />);
-		expect(screen.getByTestId("alert")).toHaveProp("accessibilityLiveRegion", "assertive");
-		await view.rerender(<Alert testID="alert" status="destructive" />);
-		expect(screen.getByTestId("alert")).toHaveProp("accessibilityLiveRegion", "assertive");
-		await view.rerender(<Alert testID="alert" status="info" />);
-		expect(screen.getByTestId("alert")).toHaveProp("accessibilityLiveRegion", "polite");
-		await view.rerender(<Alert testID="alert" />);
-		expect(screen.getByTestId("alert")).toHaveProp("accessibilityLiveRegion", "polite");
 	});
 
 	test("the indicator is hidden from assistive technology", async () => {
@@ -158,5 +149,117 @@ describe("Alert", () => {
 		} finally {
 			spy.mockRestore();
 		}
+	});
+});
+
+const originalOS = Platform.OS;
+function setPlatform(os: typeof Platform.OS) {
+	Object.defineProperty(Platform, "OS", { configurable: true, get: () => os });
+}
+
+let announceSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibility>;
+let announceWithOptionsSpy: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+/** The announcer holds a second message for one key until its 500 ms window closes. */
+const waitOutWindow = () => new Promise((resolve) => setTimeout(resolve, 600));
+
+function Message({
+	status = "info",
+	title = "Saved",
+	description = "All changes stored.",
+	...props
+}: {
+	status?: "info" | "warning" | "destructive";
+	title?: string;
+	description?: string;
+	announce?: boolean;
+	isOpen?: boolean;
+}) {
+	return (
+		<Alert testID="alert" status={status} {...props}>
+			<Alert.Content>
+				<Alert.Title>{title}</Alert.Title>
+				<Alert.Description>{description}</Alert.Description>
+			</Alert.Content>
+		</Alert>
+	);
+}
+
+describe("Alert announcements", () => {
+	beforeEach(() => {
+		resetAnnouncer();
+		announceSpy = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		announceWithOptionsSpy = jest
+			.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+			.mockImplementation(() => {});
+		announceSpy.mockClear();
+		announceWithOptionsSpy.mockClear();
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	test("iOS speaks title and description once on mount, polite, with no live region", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Message />);
+		expect(announceWithOptionsSpy).toHaveBeenCalledTimes(1);
+		expect(announceWithOptionsSpy).toHaveBeenCalledWith("Saved. All changes stored.", { queue: true });
+		expect(screen.getByTestId("alert")).toHaveProp("accessibilityLiveRegion", "none");
+		expect(screen.getByTestId("alert")).toHaveProp("accessibilityRole", "alert");
+	});
+
+	test("iOS speaks a warning or failure assertively", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Message status="destructive" title="Payment failed" description="Declined." />);
+		expect(announceWithOptionsSpy).toHaveBeenCalledWith("Payment failed. Declined.", { queue: false });
+	});
+
+	test("Android speaks through the announcement route once, never also a live region", async () => {
+		setPlatform("android");
+		await renderWithProviders(<Message />);
+		expect(announceSpy).toHaveBeenCalledTimes(1);
+		expect(announceSpy).toHaveBeenCalledWith("Saved. All changes stored.");
+		expect(screen.getByTestId("alert")).toHaveProp("accessibilityLiveRegion", "none");
+	});
+
+	test("the web keeps the live region, politeness from the status, and announces nothing", async () => {
+		setPlatform("web");
+		const view = await renderWithProviders(<Message status="warning" />);
+		expect(screen.getByTestId("alert")).toHaveProp("accessibilityLiveRegion", "assertive");
+		await view.rerender(<Message status="info" />);
+		expect(screen.getByTestId("alert")).toHaveProp("accessibilityLiveRegion", "polite");
+		expect(announceSpy).not.toHaveBeenCalled();
+		expect(announceWithOptionsSpy).not.toHaveBeenCalled();
+	});
+
+	test("a changed title or description is spoken again", async () => {
+		setPlatform("ios");
+		const view = await renderWithProviders(<Message />);
+		announceWithOptionsSpy.mockClear();
+		await waitOutWindow();
+		await view.rerender(<Message description="Something else." />);
+		expect(announceWithOptionsSpy).toHaveBeenCalledWith("Saved. Something else.", { queue: true });
+	});
+
+	test("closing says nothing, and re-opening speaks again", async () => {
+		setPlatform("ios");
+		const view = await renderWithProviders(<Message isOpen />);
+		announceWithOptionsSpy.mockClear();
+		await waitOutWindow();
+		await view.rerender(<Message isOpen={false} />);
+		expect(announceWithOptionsSpy).not.toHaveBeenCalled();
+		await view.rerender(<Message isOpen />);
+		expect(announceWithOptionsSpy).toHaveBeenCalledWith("Saved. All changes stored.", { queue: true });
+	});
+
+	test("announce={false} is silent on every platform and sets no live region", async () => {
+		setPlatform("ios");
+		await renderWithProviders(<Message announce={false} />);
+		setPlatform("android");
+		await renderWithProviders(<Message announce={false} />);
+		expect(announceSpy).not.toHaveBeenCalled();
+		expect(announceWithOptionsSpy).not.toHaveBeenCalled();
 	});
 });

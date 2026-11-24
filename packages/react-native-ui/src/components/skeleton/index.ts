@@ -4,6 +4,7 @@ export {
 	resolveSkeletonAccessibility,
 	resolveSkeletonAnimation,
 	resolveSkeletonLineWidths,
+	resolveSkeletonLoadedMessage,
 	SKELETON_ANIMATIONS,
 	SKELETON_CYCLE_MS,
 	SKELETON_SHAPES,

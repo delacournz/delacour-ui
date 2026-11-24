@@ -95,6 +95,13 @@ A form field's layout, and the one place its state is written down. Root plus
   absence is unexplainable from the call site. shadcn's `errors` array prop is
   not ported — it exists to accept react-hook-form and Standard Schema shapes,
   and this package takes no form dependency.
+- **`Field.Error` is heard once per platform, with no live region beside it.** It is `role="alert"`,
+  which VoiceOver does not speak when a line merely appears, and a live region alone is silent on
+  iOS and unreliable for a line that has just mounted on Android. It goes through `useAnnouncement`
+  (the announcement route on both, on mount and on every change of text), so the message is spoken
+  once and never twice. Only a string or number message is spoken (`resolveFieldErrorMessage`); an
+  error built from elements is drawn but silent. `announce={false}` opts out, for an app that moves
+  focus to the error or announces validation itself.
 - **`Field.Separator` draws two rules, not one with a label on top.** The web
   version absolutely-positions a single rule and punches a hole in it with an
   opaque `bg-background` label, which is invisible only while the separator sits

@@ -74,3 +74,5 @@ that rotates.
   A status indicator is not decorative motion.
 
 - **The root is `accessible`.** It is one `progressbar` element, busy, so a screen reader announces the spinner as a single unit rather than walking the SVG glyph; it is also what makes a role query find it. The glyph is decorative and never needs focus of its own.
+- **The root is named "Loading" by default.** An unnamed progressbar is read as a bare "progress bar", so `SPINNER_DEFAULT_LABEL` fills in and `accessibilityLabel` overrides it (an empty string included). Inside an `accessible` parent (`Button`, `SlideButton`) the label is merged into the parent's own, which an explicit parent label replaces; `Steps.Indicator` hides its descendants, so it adds no stop.
+- **A spinner appearing is not announced.** WCAG 4.1.3 asks for status messages, but a spinner is nearly always composed under a parent or screen that already speaks the state (a busy button, a `Screen.Loading`), and a standalone one would double-speak with no opt-out worth its cost. A caller who wants it heard calls `useAnnounce()` where the load starts, with the words for what is loading.

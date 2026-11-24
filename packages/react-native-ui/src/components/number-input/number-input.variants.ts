@@ -101,3 +101,26 @@ export function resolveNumberInputFieldClass(className?: string): string {
 }
 
 export type NumberInputVariantProps = VariantProps<typeof numberInputVariants>;
+
+/** Spoken after a step that reaches a bound, beside the value. */
+export const NUMBER_INPUT_LIMIT_LABELS = { max: "maximum", min: "minimum" } as const;
+
+/**
+ * What a screen reader hears after a stepper changes the value.
+ *
+ * Focus stays on the stepper, whose label does not carry the value, so the new
+ * value is spoken as formatted on screen. A step that reaches a bound says which
+ * one, because that is why the next press will do nothing.
+ */
+export function resolveStepAnnouncement({
+	text,
+	direction,
+	reachedLimit,
+}: {
+	text: string;
+	direction: 1 | -1;
+	reachedLimit: boolean;
+}): string {
+	if (!reachedLimit) return text;
+	return `${text}, ${direction === 1 ? NUMBER_INPUT_LIMIT_LABELS.max : NUMBER_INPUT_LIMIT_LABELS.min}`;
+}

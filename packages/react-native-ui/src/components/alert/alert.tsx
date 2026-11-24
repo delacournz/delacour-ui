@@ -1,9 +1,10 @@
-import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
+import { type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
 import Animated, { FadeOut } from "react-native-reanimated";
+import { useAnnouncement } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { IconDefaultsProvider } from "../icon";
 import { Surface, type SurfaceProps } from "../surface";
-import { type AlertContextValue, AlertProvider } from "./alert.context";
+import { type AlertContextValue, AlertProvider, type AlertTextPart } from "./alert.context";
 import {
 	ALERT_FOREGROUND_TOKEN,
 	ALERT_SURFACE_PADDING,
@@ -11,6 +12,7 @@ import {
 	type AlertStatus,
 	type AlertVariant,
 	alertVariants,
+	resolveAlertAnnouncement,
 	resolveAlertLiveRegion,
 	resolveAlertSurfaceVariant,
 } from "./alert.variants";
@@ -43,6 +45,11 @@ export type AlertProps = Omit<SurfaceProps, "variant" | "padding"> & {
 	closeAccessibilityLabel?: string;
 	/** `testID` for the dismiss control, so a test or automation can press it. */
 	closeTestID?: string;
+	/**
+	 * Whether the alert speaks its title and description when it appears, re-opens or changes.
+	 * Defaults to `true`; pass `false` for an alert that is part of a screen's static content.
+	 */
+	announce?: boolean;
 	children?: ReactNode;
 };
 
@@ -56,6 +63,7 @@ function AlertRoot({
 	onOpenChange,
 	closeAccessibilityLabel,
 	closeTestID,
+	announce = true,
 	className,
 	children,
 	...props
@@ -63,10 +71,26 @@ function AlertRoot({
 	const [open, setOpen] = useControllableState({ defaultValue: defaultOpen, onChange: onOpenChange, value: isOpen });
 	const dismiss = useCallback(() => setOpen(false), [setOpen]);
 
-	const context = useMemo<AlertContextValue>(
-		() => ({ dismiss, size, status, variant }),
-		[dismiss, size, status, variant]
+	const [texts, setTexts] = useState<Record<AlertTextPart, string>>({ title: "", description: "" });
+	const registerText = useCallback(
+		(part: AlertTextPart, text: string) =>
+			setTexts((current) => (current[part] === text ? current : { ...current, [part]: text })),
+		[]
 	);
+
+	const context = useMemo<AlertContextValue>(
+		() => ({ dismiss, registerText, size, status, variant }),
+		[dismiss, registerText, size, status, variant]
+	);
+
+	// Parts register their text after mount and clear it on unmount, so a dismissed alert's message
+	// returns to null and a re-opened one speaks again. `onMount` speaks the first message too.
+	const { accessibilityLiveRegion } = useAnnouncement(resolveAlertAnnouncement(texts), {
+		channel: "announcement",
+		enabled: announce,
+		onMount: true,
+		politeness: resolveAlertLiveRegion(status),
+	});
 
 	const slots = alertVariants({ size, status, variant });
 
@@ -84,7 +108,7 @@ function AlertRoot({
 		<AlertProvider value={context}>
 			<Animated.View exiting={EXITING}>
 				<Surface
-					accessibilityLiveRegion={resolveAlertLiveRegion(status)}
+					accessibilityLiveRegion={accessibilityLiveRegion}
 					accessibilityRole="alert"
 					className={slots.root({ className })}
 					padding={ALERT_SURFACE_PADDING[size]}
@@ -119,8 +143,11 @@ function AlertRoot({
  * itself when dismissed; pass `isOpen` and `onOpenChange` to own that state.
  * `useAlert().dismiss` closes it from inside, for a "Got it" action.
  *
- * Announced as an `alert`, and as a live region on Android — assertive for a
- * warning or a failure, polite for anything else.
+ * Announced as an `alert`, and spoken when it appears, re-opens or its title or
+ * description changes — through VoiceOver's announcement API on iOS and
+ * TalkBack's on Android, assertive for a warning or a failure, polite for
+ * anything else. `announce={false}` silences it, for an alert that is static
+ * page content rather than a response to something.
  *
  * @example
  * <Alert status="warning">

@@ -7,6 +7,7 @@ import {
 	NUMBER_INPUT_STEPPER_POSITIONS,
 	numberInputVariants,
 	resolveNumberInputFieldClass,
+	resolveStepAnnouncement,
 	resolveStepperHitSlop,
 	resolveStepperIconToken,
 } from "./number-input.variants";
@@ -96,5 +97,19 @@ describe("resolveStepperHitSlop", () => {
 		expect(resolveStepperHitSlop("sm")).toBeGreaterThan(0);
 		expect(resolveStepperHitSlop("md")).toBe(0);
 		expect(resolveStepperHitSlop("lg")).toBe(0);
+	});
+});
+
+describe("resolveStepAnnouncement", () => {
+	test("speaks the formatted value after an ordinary step", () => {
+		expect(resolveStepAnnouncement({ direction: 1, reachedLimit: false, text: "1,234" })).toBe("1,234");
+	});
+
+	test("names the maximum when an increment reaches it", () => {
+		expect(resolveStepAnnouncement({ direction: 1, reachedLimit: true, text: "10" })).toBe("10, maximum");
+	});
+
+	test("names the minimum when a decrement reaches it", () => {
+		expect(resolveStepAnnouncement({ direction: -1, reachedLimit: true, text: "1" })).toBe("1, minimum");
 	});
 });

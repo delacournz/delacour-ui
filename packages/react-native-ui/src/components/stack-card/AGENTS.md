@@ -39,7 +39,7 @@ row.
 | `stack-card.types.ts` | `StackCardHandle`, `StackCardState` — shared by the root and the context |
 | `stack-card.variants.ts` | The slotted `tv()` and every pure resolver, the gesture's worklets included — no RN imports |
 | `stack-card.variants.test.ts` | |
-| `stack-card.render.test.tsx` | Mounted under Jest — the top card's accessibility actions and labels, throw and undo by action, button and ref, `onSwipe`/`onIndexChange`/`onEmpty`, controlled and declined throws, disabled, and a drag (`stack-card-pan`) past and short of the threshold |
+| `stack-card.render.test.tsx` | Mounted under Jest — the top card's accessibility actions and labels, announcements and focus, throw and undo by action, button and ref, `onSwipe`/`onIndexChange`/`onEmpty`, controlled and declined throws, disabled, and a drag (`stack-card-pan`) past and short of the threshold |
 
 The pan carries `.withTestId("stack-card-pan")` so a render test can drive it with `fireGestureHandler`.
 
@@ -161,6 +161,20 @@ The pan carries `.withTestId("stack-card-pan")` so a render test can drive it wi
 - Because the top card is one element, a control inside it is not separately
   reachable. The deck's controls belong in `StackCard.Actions`, whose buttons
   carry the same labels.
+- **A landed throw or undo is spoken, once per platform** (`useAnnounce`): the answer and
+  the card now on top ("Like. Next: Profile of Grace"), "Undone. <card>", or the answer and
+  the `Empty` text ("Like. All caught up", else "No more cards"). Without this a throw
+  by a screen-reader user is silent — the card they held just flew away. A card is named by
+  its `accessibilityLabel`, else its place ("Card 2 of 3"). The strings are constants and
+  `resolveStackCardAnnouncement` in `stack-card.variants.ts`. A throw a controlled deck
+  declines says nothing.
+- **Focus moves only when the card's own action did it.** A throw or undo from the top
+  card's accessibility actions flings the element that held focus, so the new top card asks
+  for it (`sendAccessibilityEvent(ref, "focus")`, from the `focusToken` the deck bumps). An
+  action *button* keeps its own focus — stealing it would break pressing "Like" again — and a
+  drag or a `ref` call never takes focus from wherever it is. The empty deck has no focus target;
+  the announcement says so.
+- **`announce={false}` is the opt-out** for both the speech and the focus move.
 - Stamps are hidden from assistive technology; the actions say the same thing in
   words.
 

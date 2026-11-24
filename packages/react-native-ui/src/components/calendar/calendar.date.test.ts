@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import {
 	addDays,
 	addMonths,
@@ -487,5 +488,41 @@ describe("resolveYearSpan", () => {
 
 	test("reaches forward from a start month later than the visible year", () => {
 		expect(resolveYearSpan({ visible: d(2026, 10, 1), startMonth: d(2200, 1, 1) })).toEqual({ from: 2200, to: 2300 });
+	});
+});
+
+describe("formatDateRange labels", () => {
+	const german = {
+		...DELACOUR_DEFAULT_LABELS.calendar,
+		openRange: (start: string) => `ab ${start}`,
+		range: (start: string, end: string) => `${start} bis ${end}`,
+	};
+
+	test("an open range speaks through openRange", () => {
+		const open = formatDateRange({ start: d(2026, 10, 5), end: null }, { locale: "en-NZ", style: "medium" }, german);
+		expect(open.startsWith("ab ")).toBe(true);
+	});
+
+	test("an empty or one-day range ignores the labels", () => {
+		expect(formatDateRange(EMPTY_RANGE, { locale: "en-NZ", style: "medium" }, german)).toBe("");
+		const day = { start: d(2026, 10, 5), end: d(2026, 10, 5) };
+		expect(formatDateRange(day, { locale: "en-NZ", style: "medium" }, german)).toBe(
+			formatDate(d(2026, 10, 5), { locale: "en-NZ", style: "medium" })
+		);
+	});
+
+	test("the plain two-date form speaks through range when Intl has no formatRange", () => {
+		const original = Intl.DateTimeFormat.prototype.formatRange;
+		Object.defineProperty(Intl.DateTimeFormat.prototype, "formatRange", { configurable: true, value: undefined });
+		try {
+			const out = formatDateRange(
+				{ start: d(2026, 10, 5), end: d(2026, 10, 9) },
+				{ locale: "en-NZ", style: "medium" },
+				german
+			);
+			expect(out).toContain(" bis ");
+		} finally {
+			Object.defineProperty(Intl.DateTimeFormat.prototype, "formatRange", { configurable: true, value: original });
+		}
 	});
 });

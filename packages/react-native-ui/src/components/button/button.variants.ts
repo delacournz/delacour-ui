@@ -1,6 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
-import type { PressableFeedback } from "../pressable/pressable.variants";
+import type { HitTargetSize, PressableFeedback } from "../pressable/pressable.variants";
 
 export const BUTTON_VARIANTS = [
 	"primary",
@@ -558,3 +558,40 @@ export function resolveGroupMemberStretch({
 }
 
 export type ButtonVariantProps = VariantProps<typeof buttonVariants>;
+
+/**
+ * Each step's height in points — `--spacing-button-*`, restated so a resolver
+ * can do arithmetic with it. Pinned against `tokens.css` by a test, so the two
+ * cannot drift; an app that retunes the density at runtime moves the drawn
+ * height but not this number, which only ever sizes an invisible `hitSlop`.
+ */
+export const BUTTON_HEIGHTS: Record<ButtonLabelSize, number> = { sm: 36, md: 44, lg: 52 };
+
+/** An axis whose extent the button does not know, or must not grow. */
+const UNBOUNDED_EDGE = Number.MAX_SAFE_INTEGER;
+
+/**
+ * What a button draws at, for `resolveMinimumHitSlop` to grow to the minimum
+ * touch target.
+ *
+ * A labelled button's width follows its label, so only its height is known;
+ * an `icon-*` button is a square. `md` is 44 and `lg` 52, so only `sm` and
+ * `icon-sm` ever come out short. Inside a `Button.Group` the axis the run lies
+ * along is left unbounded, so no slop reaches a neighbour: two siblings'
+ * overlapping slop hands the press to whichever sits later in the tree.
+ *
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
+ */
+export function resolveButtonHitTarget({
+	orientation,
+	size,
+}: {
+	orientation?: ButtonGroupOrientation;
+	size: ButtonSize;
+}): HitTargetSize {
+	const height = BUTTON_HEIGHTS[resolveButtonSizeStep(size)];
+	const width = size.startsWith("icon-") ? height : UNBOUNDED_EDGE;
+	if (orientation === "horizontal") return { height, width: UNBOUNDED_EDGE };
+	if (orientation === "vertical") return { height: UNBOUNDED_EDGE, width };
+	return width === height ? height : { height, width };
+}

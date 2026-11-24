@@ -105,6 +105,16 @@ The reference implementation for the patterns in the package
   the left edge unless it also sets `self-center`. This is what made an earlier
   `only` implementation collapse a full-width button into a small box flush
   left. Prefer not taking the width at all.
+- **`sm` and `icon-sm` reach 44pt with `hitSlop`, not with size.** Both draw
+  at 36. `resolveButtonHitTarget` says what the button draws at — a labelled
+  button's height (its width follows the label), an `icon-*` button's square —
+  and `useMinimumHitSlop` grows it to the app's minimum: 4pt a side, or 6 on
+  Android under `DelacourProvider isMaterialHitTarget`. `md` and `lg` get
+  nothing. Inside a `Button.Group` the axis the run lies along gets none, so a
+  member's slop never lands on its neighbour. A caller's `hitSlop` wins
+  outright. The heights are `BUTTON_HEIGHTS`, pinned to `--spacing-button-*`;
+  an app that retunes density at runtime moves the drawn height and not the
+  slop, which is the trade for not measuring every button on layout.
 
 ## Button.Group
 

@@ -1,4 +1,5 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
@@ -13,6 +14,7 @@ import {
 	type ButtonVariant,
 	buttonVariants,
 	resolveButtonFeedback,
+	resolveButtonHitTarget,
 	resolveButtonLayout,
 	resolveGroupedButtonSize,
 	resolveSpinnerSwapIndex,
@@ -50,6 +52,7 @@ function ButtonRoot({
 	accessibilityLabel,
 	className,
 	children,
+	hitSlop,
 	...props
 }: ButtonProps): ReactElement {
 	// Deliberately not defaulted in the destructure above: a default there would
@@ -92,6 +95,12 @@ function ButtonRoot({
 		[iconClassName, resolvedVariant]
 	);
 
+	// `sm` and `icon-sm` draw at 36pt; slop takes the target to the app's
+	// minimum without moving a pixel. A caller's own `hitSlop` wins outright.
+	const minimumHitSlop = useMinimumHitSlop(
+		resolveButtonHitTarget({ orientation: item?.orientation, size: resolvedSize })
+	);
+
 	const label = accessibilityLabel ?? (layout.isSpinnerOnly ? textOf(children) : undefined);
 
 	return (
@@ -103,6 +112,7 @@ function ButtonRoot({
 				className={slots.root({ className })}
 				disabled={resolvedIsDisabled}
 				feedback={resolveButtonFeedback(feedback, item?.feedback, item !== null, item?.isAttached)}
+				hitSlop={hitSlop ?? minimumHitSlop}
 				{...props}
 			>
 				<IconDefaultsProvider value={iconDefaults}>

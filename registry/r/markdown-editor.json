@@ -13,6 +13,7 @@
 		"icon",
 		"icons",
 		"input",
+		"labels",
 		"pressable",
 		"tabs",
 		"text",
@@ -20,7 +21,8 @@
 		"toggle-button",
 		"tv",
 		"use-calm-motion",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -44,7 +46,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/markdown-editor/index.ts",
 			"target": "markdown-editor/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor-action.tsx",
@@ -101,6 +109,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../text",
 					"to": "@registry/ui/text"
 				}
@@ -120,13 +132,23 @@
 		{
 			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.commands.ts",
 			"target": "markdown-editor/markdown-editor.commands.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.context.tsx",
 			"target": "markdown-editor/markdown-editor.context.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../pressable/pressable",
 					"to": "@registry/ui/pressable/pressable"
@@ -148,6 +170,14 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
 				},
@@ -167,6 +197,10 @@
 			"target": "markdown-editor/markdown-editor.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -203,6 +237,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
 				},
@@ -233,6 +271,14 @@
 			"target": "markdown-editor/markdown-editor.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

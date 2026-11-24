@@ -14,10 +14,12 @@
 		"cn",
 		"icon",
 		"icons",
+		"labels",
 		"pressable",
 		"text",
 		"tv",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -43,7 +45,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/planner/index.ts",
 			"target": "planner/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/planner/planner-action.tsx",
@@ -212,7 +220,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/planner/planner.context.tsx",
 			"target": "planner/planner.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/planner/planner.tsx",
@@ -224,8 +238,16 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../card",
@@ -254,6 +276,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
 				}
@@ -276,6 +302,10 @@
 			"target": "planner/planner.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -300,6 +330,14 @@
 			"target": "planner/planner.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

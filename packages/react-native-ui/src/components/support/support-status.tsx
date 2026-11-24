@@ -1,8 +1,9 @@
 import type { ReactElement } from "react";
 import { View, type ViewProps } from "react-native";
 import { useAnnouncement } from "../../hooks/use-announce";
+import type { SupportLabels } from "../../lib/labels";
 import { Text } from "../text";
-import { useSupport } from "./support.context";
+import { useSupport, useSupportLabels } from "./support.context";
 import type { SupportAvailability } from "./support.types";
 import { resolveAvailabilityLabel, resolveStatusA11yLabel } from "./support.utils";
 import { supportVariants } from "./support.variants";
@@ -17,6 +18,10 @@ export type SupportStatusProps = Omit<ViewProps, "children"> & {
 	 * availability itself.
 	 */
 	announce?: boolean;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `replyTime` still wins over the sentence.
+	 */
+	labels?: Partial<SupportLabels>;
 	className?: string;
 };
 
@@ -33,13 +38,15 @@ export function SupportStatus({
 	replyTime,
 	availability: availabilityProp,
 	announce = true,
+	labels: labelsProp,
 	className,
 	...props
 }: SupportStatusProps): ReactElement {
 	const { availability: rootAvailability } = useSupport();
 	const availability = availabilityProp ?? rootAvailability;
 	const slots = supportVariants({ availability });
-	const label = resolveStatusA11yLabel(availability, replyTime);
+	const labels = useSupportLabels(labelsProp);
+	const label = resolveStatusA11yLabel(availability, replyTime, labels);
 	const live = useAnnouncement(label, { enabled: announce });
 
 	return (
@@ -52,7 +59,7 @@ export function SupportStatus({
 			{...props}
 		>
 			<View className={slots.statusDot()} importantForAccessibility="no" />
-			<Text className={slots.statusLabel()}>{resolveAvailabilityLabel(availability, replyTime)}</Text>
+			<Text className={slots.statusLabel()}>{resolveAvailabilityLabel(availability, replyTime, labels)}</Text>
 		</View>
 	);
 }

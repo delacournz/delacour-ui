@@ -1,9 +1,13 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import { useLabels } from "../../hooks/use-labels";
+import { mergeLabelOverrides, type SupportLabels } from "../../lib/labels";
 import type { SupportAvailability } from "./support.types";
 
 export type SupportContextValue = {
 	/** Whether anyone is there to answer — decided once, on the root. */
 	availability: SupportAvailability;
+	/** The root's `labels` prop, laid over the provider's. A part's own `labels` sits over it. */
+	labels?: Partial<SupportLabels>;
 };
 
 export type SupportTopicsContextValue = {
@@ -53,6 +57,16 @@ export function useSupportContext(): SupportContextValue | null {
  */
 export function useSupport(): SupportContextValue {
 	return useSupportContext() ?? DEFAULT_SUPPORT;
+}
+
+/**
+ * A speaking part's labels: English, then `DelacourProvider`'s, then the root's `labels` prop, then
+ * the part's own. Works outside a `<Support>`, where only the provider and the part's own apply.
+ */
+export function useSupportLabels(own?: Partial<SupportLabels>): SupportLabels {
+	const { labels: root } = useSupport();
+	const merged = own === undefined ? root : mergeLabelOverrides({ support: root }, { support: own }).support;
+	return useLabels("support", merged);
 }
 
 /** Supplies a `Support.Topics` group's selection to its topics. */

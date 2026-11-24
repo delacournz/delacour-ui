@@ -1,3 +1,4 @@
+export type { SupportLabels } from "../../lib/labels";
 export { Support, type SupportProps } from "./support";
 export {
 	type SupportContextValue,

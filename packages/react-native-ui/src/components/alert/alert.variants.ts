@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type AlertLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { SurfacePadding, SurfaceVariant } from "../surface/surface.variants";
 
@@ -206,13 +207,16 @@ function collectAlertText(node: unknown): string {
  * The title is closed with a full stop unless it already ends in punctuation, so the two do not run
  * together. `null` when neither part has text — silence, never an empty announcement.
  */
-export function resolveAlertAnnouncement({
-	title,
-	description,
-}: {
-	title: string;
-	description: string;
-}): string | null {
-	if (title && description) return /[.!?…:]$/.test(title) ? `${title} ${description}` : `${title}. ${description}`;
+export function resolveAlertAnnouncement(
+	{
+		title,
+		description,
+	}: {
+		title: string;
+		description: string;
+	},
+	labels: AlertLabels = DELACOUR_DEFAULT_LABELS.alert
+): string | null {
+	if (title && description) return labels.announcement(title, description);
 	return title || description || null;
 }

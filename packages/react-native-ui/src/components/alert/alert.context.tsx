@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { AlertLabels } from "../../lib/labels";
 import type { AlertSize, AlertStatus, AlertVariant } from "./alert.variants";
 
 export type AlertContextValue = {
@@ -8,6 +9,8 @@ export type AlertContextValue = {
 	variant: AlertVariant;
 	/** Size of the alert. */
 	size: AlertSize;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	labels: AlertLabels;
 	/**
 	 * Closes the alert — hides it when uncontrolled, and reports `false` through
 	 * `onOpenChange` either way. Lets an action inside the alert ("Got it")

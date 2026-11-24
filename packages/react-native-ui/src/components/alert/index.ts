@@ -1,3 +1,4 @@
+export type { AlertLabels } from "../../lib/labels";
 export { Alert, type AlertProps } from "./alert";
 export { type AlertContextValue, AlertProvider, useAlert, useAlertContext } from "./alert.context";
 export type { AlertSlotProps } from "./alert.types";

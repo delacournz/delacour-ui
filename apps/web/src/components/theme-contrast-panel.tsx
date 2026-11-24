@@ -45,7 +45,7 @@ export function ThemeContrastPanel({ config }: { config: DesignSystemConfig }): 
 				className="flex items-center gap-2 text-fd-muted-foreground text-xs"
 			>
 				<CircleCheck aria-hidden="true" className="size-4 shrink-0" />
-				<h2 className="font-normal" id="theme-contrast-heading">
+				<h2 className="scroll-mt-32 font-normal" id="theme-contrast-heading">
 					All {total} pairs clear WCAG AA in light and dark
 				</h2>
 			</section>
@@ -60,7 +60,7 @@ export function ThemeContrastPanel({ config }: { config: DesignSystemConfig }): 
 			<div className="flex items-start gap-2 px-4 py-3 text-sm">
 				<TriangleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
 				<div>
-					<h2 className="font-medium" id="theme-contrast-heading">
+					<h2 className="scroll-mt-32 font-medium" id="theme-contrast-heading">
 						{failures.length} contrast {failures.length === 1 ? "pair" : "pairs"} below WCAG AA
 					</h2>
 					<p className="mt-0.5 text-fd-muted-foreground text-xs">

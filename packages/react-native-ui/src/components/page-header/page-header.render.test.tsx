@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { PageHeader } from "./page-header";
@@ -213,5 +214,40 @@ describe("PageHeader", () => {
 		])("%s throws", async (name, element) => {
 			await expect(renderWithProviders(element)).rejects.toThrow(`${name} must be rendered inside a <PageHeader>.`);
 		});
+	});
+});
+
+describe("PageHeader labels", () => {
+	const labels = { verifiedAvatar: (name: string) => `${name}, vérifié`, verified: "Vérifié" };
+
+	test("the labels prop changes the spoken verified label", async () => {
+		await renderWithProviders(
+			<PageHeader labels={labels}>
+				<PageHeader.Avatar isVerified name="Aria" />
+			</PageHeader>
+		);
+		expect(screen.getByLabelText("Aria, vérifié")).toBeOnTheScreen();
+	});
+
+	test("a provider's labels change it", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ pageHeader: { verified: "Vérifié" } }}>
+				<PageHeader>
+					<PageHeader.Avatar isVerified />
+				</PageHeader>
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Vérifié")).toBeOnTheScreen();
+	});
+
+	test("the prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ pageHeader: { verified: "Vérifié" } }}>
+				<PageHeader labels={{ verified: "Verificado" }}>
+					<PageHeader.Avatar isVerified />
+				</PageHeader>
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Verificado")).toBeOnTheScreen();
 	});
 });

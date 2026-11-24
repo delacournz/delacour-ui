@@ -1,4 +1,5 @@
 import { transparentOf } from "../../lib/color";
+import { DELACOUR_DEFAULT_LABELS, type PageHeaderLabels } from "../../lib/labels";
 
 /** Drawn for a count that is not a count — `NaN`, or either infinity. An en dash, not a hyphen. */
 const NOT_A_COUNT = "–";
@@ -65,12 +66,17 @@ export function resolveStatLabel(value: number | string, label: string): string 
  * The rosette is drawn inside the avatar, which is one element to assistive
  * technology, so the only way a screen reader learns of it is through the
  * avatar's own label. `undefined` with neither a name nor a rosette, so a
- * nameless face stays unannounced the way a bare `Avatar` does.
+ * nameless face stays unannounced the way a bare `Avatar` does. The words come
+ * from `labels`, English by default.
  */
-export function resolvePageHeaderAvatarLabel(name: string | undefined, isVerified: boolean): string | undefined {
+export function resolvePageHeaderAvatarLabel(
+	name: string | undefined,
+	isVerified: boolean,
+	labels: PageHeaderLabels = DELACOUR_DEFAULT_LABELS.pageHeader
+): string | undefined {
 	const trimmed = name?.trim();
 	if (!isVerified) return trimmed || undefined;
-	return trimmed ? `${trimmed}, verified` : "Verified";
+	return trimmed ? labels.verifiedAvatar(trimmed) : labels.verified;
 }
 
 /**

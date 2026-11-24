@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { PageHeaderLabels } from "../../lib/labels";
 import type { AvatarSize } from "../avatar/avatar.variants";
 import type { SurfacePlane } from "../surface/surface.variants";
 import type { PageHeaderAlign, PageHeaderStatsLayout, PageHeaderVariant } from "./page-header.variants";
@@ -14,6 +15,8 @@ export type PageHeaderContextValue = {
 	avatarSize: AvatarSize;
 	/** The surface fill the header is drawn on — `default` for a card, `null` on the page. */
 	plane: SurfacePlane | null;
+	/** The spoken strings, resolved once on the root. */
+	labels: PageHeaderLabels;
 };
 
 /** How a cover tells the root it is there. Internal — a caller never registers a cover by hand. */

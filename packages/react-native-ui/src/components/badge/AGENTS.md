@@ -52,11 +52,14 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   unless the root forwards one, so a flow or test could only find it by its label.
   `closeTestID` is named like `closeAccessibilityLabel`, the other prop the root
   passes through to it.
-- **The dismiss glyph carries `hitSlop`, capped at half the gap.** The ✕ is
-  the bare 14–18pt icon, far under the 44pt minimum, but its only neighbour is the
-  label a gap away: slop reaching past half that gap would take presses from the
-  badge's own body. So the cap, not the minimum, sets it (2, 3, 4pt by size) and
-  the target stays small by design; a caller's own `hitSlop` wins.
+- **The dismiss glyph carries `hitSlop` up to the badge's edge, and half the gap
+  towards the label.** The ✕ is the bare 14–18pt icon, far under the 44pt
+  minimum. Its label is a gap away, and slop past half that gap would take
+  presses from the badge's own body, so the leading side stops there (2, 3, 4pt
+  by size; the right side under RTL). The other three reach the badge's own edge
+  (`BADGE_CLOSE_EDGE_ROOM`) and no further: a badge sits anywhere, and what is
+  beside it is not known. The target is the badge's height (22 / 30 / 38), still
+  short of 44 by design; a caller's own `hitSlop` wins.
 - **A pressable badge offers `remove` as an accessibility action.** A pressable
   root is one accessibility element and iOS folds its children into it, so the ✕
   is unreachable by swipe and its label is read as part of the badge's. It is
@@ -75,8 +78,10 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   badge spans the whole screen.
 - **The border is reserved on every variant, transparent until `outline`
   colours it.** Declaring it only where it shows would make the badge two points
-  wider the moment a caller switched variant. `overflow-hidden` is likewise not
-  tidiness: a pressed badge fades to the edge of its own capsule.
+  wider the moment a caller switched variant.
+- **The root does not clip.** A press fades the root's own opacity, which needs
+  no clip, and an `overflow-hidden` root would keep the dismiss glyph's slop
+  inside it on Android — see [Pressable](../pressable/AGENTS.md).
 - **The neutral end of the matrix reuses tokens the theme already has.** This
   theme's `primary` is a near-black whose tint *is* the neutral fill, so a
   `--primary-soft` would duplicate `secondary` exactly. `soft` takes

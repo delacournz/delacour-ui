@@ -1,6 +1,11 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
-import { MIN_HIT_TARGET, resolveMinimumHitSlop } from "../pressable/pressable.variants";
+import {
+	type HitSlopInsets,
+	MIN_HIT_TARGET,
+	normalizeHitSlop,
+	resolveMinimumHitSlop,
+} from "../pressable/pressable.variants";
 
 /** How the surface is painted. Orthogonal to {@link BADGE_COLORS}. */
 export const BADGE_VARIANTS = ["solid", "soft", "outline", "ghost"] as const;
@@ -88,8 +93,9 @@ export const BADGE_FOREGROUND_TOKEN: Record<BadgeVariant, Record<BadgeColor, str
  * the moment a caller switches variant; reserving it in the box means `outline`
  * changes nothing but the colour.
  *
- * `overflow-hidden` is likewise not tidiness — a pressed badge fades to the
- * edge of its own capsule.
+ * The root does not clip: a press fades its own opacity, which needs no clip,
+ * and a clipping root would keep the dismiss glyph's `hitSlop` from reaching
+ * past it on Android.
  *
  * A size is padding and never a height. `Text` respects OS font scaling, so a
  * fixed height clips the label at a large accessibility step instead of growing
@@ -111,7 +117,7 @@ export const BADGE_FOREGROUND_TOKEN: Record<BadgeVariant, Record<BadgeColor, str
  */
 export const badgeVariants = tv({
 	slots: {
-		root: "flex-row items-center justify-center self-start overflow-hidden rounded-full border border-transparent",
+		root: "flex-row items-center justify-center self-start rounded-full border border-transparent",
 		label: "text-center font-medium",
 		startContent: "items-center justify-center",
 		endContent: "items-center justify-center",
@@ -263,11 +269,10 @@ export const BADGE_CLOSE_SIZES: Record<BadgeSize, number> = { sm: 14, md: 16, lg
 export const BADGE_GAPS: Record<BadgeSize, number> = { sm: 4, md: 6, lg: 8 };
 
 /**
- * How far the dismiss control's slop may reach, per side.
+ * How far the dismiss control's slop may reach towards the label.
  *
  * Half the root's gap: the label beside it is the neighbour, and slop that
- * overlapped it would take presses from the badge's own body. The glyph is
- * bare, so the cap — not the 44pt minimum — is what sets the slop here.
+ * overlapped it would take presses from the badge's own body.
  */
 export const BADGE_CLOSE_HIT_SLOP_CAP: Record<BadgeSize, number> = {
 	sm: BADGE_GAPS.sm / 2,
@@ -276,15 +281,43 @@ export const BADGE_CLOSE_HIT_SLOP_CAP: Record<BadgeSize, number> = {
 };
 
 /**
- * The `hitSlop` for the dismiss glyph at `size`, bounded by
- * {@link BADGE_CLOSE_HIT_SLOP_CAP}. `min` is the app's minimum touch target.
- * Pure, so it is unit-testable; the component reaches it through `useMinimumHitSlop`.
+ * How far the dismiss control's slop may reach on its other three sides: to the
+ * badge's own edge and no further. `vertical` is half the badge's height
+ * (line height, `py`, border) less the glyph; `trailing` is the root's `px`
+ * less the glyph's negative margin, plus the border.
+ *
+ * The root does not clip, so the slop could go further, but a badge sits
+ * anywhere and what is beside it is not known.
+ */
+export const BADGE_CLOSE_EDGE_ROOM: Record<BadgeSize, { trailing: number; vertical: number }> = {
+	sm: { trailing: 7, vertical: 4 },
+	md: { trailing: 7, vertical: 7 },
+	lg: { trailing: 7, vertical: 10 },
+};
+
+/**
+ * The `hitSlop` for the dismiss glyph at `size`: half the shortfall to `min`,
+ * the app's minimum touch target, held to {@link BADGE_CLOSE_HIT_SLOP_CAP} on the
+ * leading side (right when `isRTL`) and to {@link BADGE_CLOSE_EDGE_ROOM} on the
+ * others. Pure, so it is unit-testable.
  */
 export function resolveBadgeCloseHitSlop(
 	size: BadgeSize,
-	min = MIN_HIT_TARGET
-): ReturnType<typeof resolveMinimumHitSlop> {
-	return resolveMinimumHitSlop(BADGE_CLOSE_SIZES[size], min, { cap: BADGE_CLOSE_HIT_SLOP_CAP[size] });
+	min: number = MIN_HIT_TARGET,
+	{ isRTL = false }: { isRTL?: boolean } = {}
+): HitSlopInsets | undefined {
+	const insets = normalizeHitSlop(resolveMinimumHitSlop(BADGE_CLOSE_SIZES[size], min));
+	if (insets === undefined) return undefined;
+	const room = BADGE_CLOSE_EDGE_ROOM[size];
+	const leading = Math.min(insets.left, BADGE_CLOSE_HIT_SLOP_CAP[size]);
+	const trailing = Math.min(insets.right, room.trailing);
+	const vertical = Math.min(insets.top, room.vertical);
+	return {
+		bottom: vertical,
+		left: isRTL ? trailing : leading,
+		right: isRTL ? leading : trailing,
+		top: vertical,
+	};
 }
 
 /**

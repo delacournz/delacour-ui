@@ -206,7 +206,7 @@ describe("Badge", () => {
 					</Badge>
 				</>
 			);
-			expect(screen.getByTestId("a")).toHaveProp("hitSlop", 3);
+			expect(screen.getByTestId("a")).toHaveProp("hitSlop", { bottom: 7, left: 3, right: 7, top: 7 });
 			expect(screen.getByTestId("b")).toHaveProp("hitSlop", 9);
 		});
 

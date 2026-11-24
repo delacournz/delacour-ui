@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { renderWithProviders, screen } from "../../test/render";
 import { QRCode } from "./qr-code";
 import { warnQrOnce } from "./qr-code.warn";
@@ -22,6 +23,36 @@ describe("QRCode", () => {
 		await renderWithProviders(<QRCode accessibilityLabel="Open the docs" value="https://delacour.co.nz" />);
 		expect(screen.getByRole("image", { name: "Open the docs" })).toBeOnTheScreen();
 		expect(screen.queryByLabelText(/^QR code: /)).not.toBeOnTheScreen();
+	});
+
+	describe("labels", () => {
+		const labels = { code: (shown: string) => `Code QR : ${shown}`, unavailable: "Code QR indisponible" };
+
+		test("the labels prop changes what a screen reader hears", async () => {
+			await renderWithProviders(<QRCode labels={labels} value="HELLO" />);
+			expect(screen.getByRole("image", { name: "Code QR : HELLO" })).toBeOnTheScreen();
+		});
+
+		test("the labels prop names an unencodable code", async () => {
+			await renderWithProviders(<QRCode labels={labels} value="" />);
+			expect(screen.getByRole("image", { name: "Code QR indisponible" })).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider does too, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ qrCode: { code: (shown) => `Provider ${shown}` } }}>
+					<QRCode value="ONE" />
+					<QRCode labels={{ code: (shown) => `Prop ${shown}` }} value="TWO" />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("image", { name: "Provider ONE" })).toBeOnTheScreen();
+			expect(screen.getByRole("image", { name: "Prop TWO" })).toBeOnTheScreen();
+		});
+
+		test("accessibilityLabel still wins over labels", async () => {
+			await renderWithProviders(<QRCode accessibilityLabel="Open the docs" labels={labels} value="HELLO" />);
+			expect(screen.getByRole("image", { name: "Open the docs" })).toBeOnTheScreen();
+		});
 	});
 
 	test("a long value is cut in the default label", async () => {

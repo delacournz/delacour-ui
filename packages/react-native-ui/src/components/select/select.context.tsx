@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { SelectLabels } from "../../lib/labels";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { SelectOption, SelectSelectionMode } from "./select.types";
 
@@ -42,6 +43,8 @@ export type SelectContextValue = {
 	close: () => void;
 	/** What a row press does: select, deselect, or refuse at the limit. */
 	toggle: (value: string) => void;
+	/** The resolved spoken strings: the `labels` prop over `DelacourProvider`'s over English. */
+	labels: SelectLabels;
 	/** The root's `testID`, which the trigger wears. */
 	testID?: string;
 };

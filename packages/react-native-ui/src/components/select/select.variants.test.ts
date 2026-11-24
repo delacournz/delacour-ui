@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type SelectLabels } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { bottomSheetVariants } from "../bottom-sheet/bottom-sheet.variants";
 import { INPUT_SIZES, INPUT_VARIANTS, inputVariants } from "../input/input.variants";
@@ -8,6 +9,7 @@ import {
 	buildSelectRows,
 	filterGroups,
 	formatSelectedCount,
+	formatSelectOptionLabel,
 	matchesQuery,
 	normalizeOptions,
 	normalizeSearchText,
@@ -362,6 +364,28 @@ describe("resolveSelectTriggerText", () => {
 
 	test("formatSelectedCount reads as a count", () => {
 		expect(formatSelectedCount(4)).toBe("4 selected");
+	});
+
+	test("custom labels word the count, and formatSelectedCount still wins over them", () => {
+		const labels: SelectLabels = { ...DELACOUR_DEFAULT_LABELS.select, selectedCount: (count) => `${count} gewählt` };
+		const base = { entries, labels, maxLabels: 1, mode: "multiple", selected: ["au", "fr"] } as const;
+		expect(resolveSelectTriggerText(base)).toBe("2 gewählt");
+		expect(resolveSelectTriggerText({ ...base, formatSelectedCount: (count) => `${count} roles` })).toBe("2 roles");
+	});
+});
+
+describe("formatSelectOptionLabel", () => {
+	test("is the label, then its description when it has one", () => {
+		expect(formatSelectOptionLabel("Engineer", "Limit reached")).toBe("Engineer, Limit reached");
+		expect(formatSelectOptionLabel("Engineer", undefined)).toBe("Engineer");
+	});
+
+	test("reads custom labels", () => {
+		const labels: SelectLabels = {
+			...DELACOUR_DEFAULT_LABELS.select,
+			option: (label, description) => `${label} - ${description ?? ""}`,
+		};
+		expect(formatSelectOptionLabel("Ingenieur", "Limit", labels)).toBe("Ingenieur - Limit");
 	});
 });
 

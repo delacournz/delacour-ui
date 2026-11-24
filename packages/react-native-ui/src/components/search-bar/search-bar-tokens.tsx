@@ -21,11 +21,11 @@ export type SearchBarTokensProps = {
  * dismisses the keyboard — `handled` alone cannot see a Gesture Handler tap.
  *
  * Each chip is static apart from its remove control, which is its own
- * accessible element labelled with the token's name. A disabled bar draws the
+ * accessible element labelled with `labels.removeToken` of the token's name. A disabled bar draws the
  * chips without one.
  */
 export function SearchBarTokens({ tokens, onTokenRemove }: SearchBarTokensProps): ReactElement {
-	const { isDisabled, size, testID } = useSearchBarPart("SearchBar.Tokens");
+	const { isDisabled, labels, size, testID } = useSearchBarPart("SearchBar.Tokens");
 	const slots = searchBarVariants();
 
 	return (
@@ -39,7 +39,7 @@ export function SearchBarTokens({ tokens, onTokenRemove }: SearchBarTokensProps)
 				{tokens.map((token) => (
 					<Chip
 						className="self-center"
-						closeAccessibilityLabel={`Remove ${token.label}`}
+						closeAccessibilityLabel={labels.removeToken(token.label)}
 						closeTestID={testID ? `${testID}-token-${token.id}-remove` : undefined}
 						isDisabled={isDisabled}
 						key={token.id}

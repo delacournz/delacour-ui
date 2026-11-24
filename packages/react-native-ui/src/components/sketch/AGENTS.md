@@ -211,8 +211,16 @@ Drawing is a pointer task; the goal is operable and honest, not equivalent.
   (`warnInteractiveChildInAccessible`). Put controls beside the canvas, in the
   toolbar. The library draws no control inside the canvas.
 - **Undo announces "Undone".** No announcement per stroke — it would be noise.
-- **Labels come from `SKETCH_LABELS`**, a `Record` over every tool and shape, so a
-  new shape fails the typecheck until it is named.
+- **The spoken strings are the `labels` prop, not literals.** `labels?: Partial<SketchLabels>`
+  on `Sketch` — `tool(name)`, `size`, `drawing(count)`, `swatchToken(token)`,
+  `swatchPosition(n, count)`, `undo`, `clear`, `undone` — resolved once with
+  `useLabels("sketch", labels)`: explicit `accessibilityLabel` on a part ← root
+  `labels` ← `DelacourProvider` `labels` ← English. Parts read the result from the
+  context (`labels`); the canvas' actions come from `resolveSketchAccessibilityActions` with the labels,
+  and `undo()` announces `labels.undone`. `resolveSketchAccessibilityLabel`,
+  `resolveSketchAccessibilityActions`, `resolveSwatchLabel` and `resolveSketchSwatches` take `labels` as their last
+  parameter. `SKETCH_LABELS` / `SKETCH_SIZE_LABEL` stay exported, deprecated, derived
+  from the English catalog; a new shape fails the typecheck until `SketchToolName` names it.
 - **Swatches are radios in a radiogroup**; tokens are named ("Primary"), literals
   by position ("Colour 3 of 6").
 

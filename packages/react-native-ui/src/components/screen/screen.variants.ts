@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type ScreenLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /** Where a navbar or footer sits: over the content, or in the flow above and below it. */
@@ -477,24 +478,27 @@ export function resolveScreenViewPadding(state: {
 	return { paddingBottom, paddingTop: paddingTop };
 }
 
-/** What `Screen.Loading` is named and says when no `label` is given. */
-export const SCREEN_LOADING_LABEL = "Loading";
+/** @deprecated Read `labels.loading` from `useLabels("screen")` — this is only the English default. */
+export const SCREEN_LOADING_LABEL = DELACOUR_DEFAULT_LABELS.screen.loading;
 
-/** The loading screen's name and announcement: the caller's label, else {@link SCREEN_LOADING_LABEL}. */
-export function resolveScreenLoadingLabel(label: string | undefined): string {
-	return label === undefined || label.trim() === "" ? SCREEN_LOADING_LABEL : label;
+/** The loading screen's name and announcement: the caller's label, else `labels.loading`. */
+export function resolveScreenLoadingLabel(
+	label: string | undefined,
+	labels: ScreenLabels = DELACOUR_DEFAULT_LABELS.screen
+): string {
+	return label === undefined || label.trim() === "" ? labels.loading : label;
 }
 
 /**
  * What a screen reader hears when `Screen.Error` appears: the title, then the message, as one
  * sentence-separated string so it is a single announcement rather than two that interrupt each other.
  */
-export function resolveScreenErrorAnnouncement(title: string, message: string): string {
-	const head = title.trim();
-	const body = message.trim();
-	if (head === "") return body;
-	if (body === "") return head;
-	return /[.!?]$/.test(head) ? `${head} ${body}` : `${head}. ${body}`;
+export function resolveScreenErrorAnnouncement(
+	title: string,
+	message: string,
+	labels: ScreenLabels = DELACOUR_DEFAULT_LABELS.screen
+): string {
+	return labels.errorAnnouncement(title.trim(), message.trim());
 }
 
 export type ScreenVariantProps = VariantProps<typeof screenVariants>;

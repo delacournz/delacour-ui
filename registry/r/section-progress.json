@@ -9,11 +9,13 @@
 	],
 	"registryDependencies": [
 		"compose-refs",
+		"labels",
 		"modal-accessibility",
 		"pressable",
 		"text",
 		"tv",
 		"use-controllable-state",
+		"use-labels",
 		"use-modal-accessibility",
 		"use-scroll-sections",
 		"use-theme-color"
@@ -44,7 +46,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/section-progress/index.ts",
 			"target": "section-progress/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/section-progress/section-progress-item.tsx",
@@ -102,6 +110,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/modal-accessibility",
 					"to": "@registry/lib/modal-accessibility"
 				}
@@ -117,12 +129,20 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../hooks/use-modal-accessibility",
 					"to": "@registry/hooks/use-modal-accessibility"
 				},
 				{
 					"from": "../../hooks/use-scroll-sections",
 					"to": "@registry/hooks/use-scroll-sections"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../pressable",
@@ -135,6 +155,10 @@
 			"target": "section-progress/section-progress.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -167,6 +191,10 @@
 			"target": "section-progress/section-progress.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

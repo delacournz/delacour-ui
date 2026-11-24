@@ -64,11 +64,11 @@ export function PostVotes({
 	testID,
 	...props
 }: PostVotesProps): ReactElement {
-	const { size } = usePostPart("Post.Votes");
+	const { size, labels } = usePostPart("Post.Votes");
 	const slots = postVariants({ size, vote: resolveVoteKey(vote), isDisabled });
 	const tone = resolveVoteTone(vote);
 	const text = typeof score === "number" ? formatCompactCount(score) : score;
-	const label = accessibilityLabel ?? resolveVotesLabel(score);
+	const label = accessibilityLabel ?? resolveVotesLabel(score, labels);
 	const speak = useAnnounce();
 	const expected = useRef<{ vote: PostVote; at: number } | null>(null);
 
@@ -78,7 +78,7 @@ export function PostVotes({
 		if (pending === null || vote !== pending.vote) return;
 		expected.current = null;
 		if (Date.now() - pending.at > VOTE_ANNOUNCE_WINDOW_MS) return;
-		speak(resolveVoteAnnouncement(vote, score), { enabled: announce });
+		speak(resolveVoteAnnouncement(vote, score, labels), { enabled: announce });
 	}, [vote, score]);
 
 	const cast = (pressed: "up" | "down"): void => {
@@ -90,7 +90,7 @@ export function PostVotes({
 	return (
 		<View className={slots.votes({ className })} testID={testID} {...props}>
 			<Pressable
-				accessibilityLabel="Upvote"
+				accessibilityLabel={labels.upvote}
 				accessibilityState={{ selected: vote === "up" }}
 				className={slots.voteArrow()}
 				disabled={isDisabled}
@@ -106,7 +106,7 @@ export function PostVotes({
 				<PostStatCount className={slots.voteScore()} containerClassName={slots.statCount()} text={text} value={score} />
 			</View>
 			<Pressable
-				accessibilityLabel="Downvote"
+				accessibilityLabel={labels.downvote}
 				accessibilityState={{ selected: vote === "down" }}
 				className={slots.voteArrow()}
 				disabled={isDisabled}

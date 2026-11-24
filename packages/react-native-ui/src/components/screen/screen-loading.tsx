@@ -1,11 +1,13 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { useAnnouncement } from "../../hooks/use-announce";
+import type { ScreenLabels } from "../../lib/labels";
 import { Spinner } from "../spinner";
 import { resolveScreenLoadingLabel, screenVariants } from "./screen.variants";
 import { ScreenContent } from "./screen-content";
 import { ScreenNavbar } from "./screen-navbar";
 import { ScreenRoot } from "./screen-root";
+import { useScreenLabels } from "./use-screen-labels";
 
 export type ScreenLoadingProps = {
 	/** Title for the navbar, if the screen shows one. */
@@ -14,10 +16,12 @@ export type ScreenLoadingProps = {
 	onBack?: () => void;
 	/** Show the navbar at all. On by default, so the frame does not shift when the content arrives. */
 	showNavbar?: boolean;
-	/** What the screen is loading, as a screen reader names and announces it. Defaults to "Loading". */
+	/** What the screen is loading, as a screen reader names and announces it. Defaults to `labels.loading`. */
 	label?: string;
 	/** Speak the label when the screen appears. On by default; `false` leaves the busy spinner silent until focused. */
 	announce?: boolean;
+	/** The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `label` still wins. */
+	labels?: Partial<ScreenLabels>;
 };
 
 /**
@@ -40,8 +44,10 @@ export function ScreenLoading({
 	showNavbar = true,
 	label,
 	announce = true,
+	labels: labelsProp,
 }: ScreenLoadingProps): ReactElement {
-	const name = resolveScreenLoadingLabel(label);
+	const labels = useScreenLabels(labelsProp);
+	const name = resolveScreenLoadingLabel(label, labels);
 	const { accessibilityLiveRegion } = useAnnouncement(name, {
 		channel: "announcement",
 		onMount: true,
@@ -49,7 +55,7 @@ export function ScreenLoading({
 	});
 
 	return (
-		<ScreenRoot>
+		<ScreenRoot labels={labels}>
 			{showNavbar ? (
 				<ScreenNavbar>
 					{onBack ? (

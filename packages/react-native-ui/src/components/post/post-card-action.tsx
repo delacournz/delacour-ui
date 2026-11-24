@@ -1,9 +1,12 @@
 import type { ReactElement } from "react";
 import type { AccessibilityActionEvent } from "react-native";
+import type { PostLabels } from "../../lib/labels";
 import { Pressable } from "../pressable";
 import { resolvePostCardActions } from "./post.utils";
 
 export type PostCardActionProps = {
+	/** The root's resolved labels: the carrier's name and its `longpress` action. */
+	labels: PostLabels;
 	onPress?: () => void;
 	onLongPress?: () => void;
 };
@@ -21,8 +24,8 @@ export type PostCardActionProps = {
  *
  * Internal: rendered by `Post`, first in the card, only for a pressable, enabled card.
  */
-export function PostCardAction({ onPress, onLongPress }: PostCardActionProps): ReactElement {
-	const actions = resolvePostCardActions({ hasLongPress: onLongPress !== undefined });
+export function PostCardAction({ labels, onPress, onLongPress }: PostCardActionProps): ReactElement {
+	const actions = resolvePostCardActions({ hasLongPress: onLongPress !== undefined }, labels);
 	const handleAction = (event: AccessibilityActionEvent) => {
 		if (event.nativeEvent.actionName === "longpress") onLongPress?.();
 	};
@@ -30,7 +33,7 @@ export function PostCardAction({ onPress, onLongPress }: PostCardActionProps): R
 	return (
 		<Pressable
 			accessibilityActions={actions.length > 0 ? actions : undefined}
-			accessibilityLabel="Open post"
+			accessibilityLabel={labels.openPost}
 			accessibilityRole="button"
 			className="absolute top-0 left-0 h-px w-px"
 			feedback="none"

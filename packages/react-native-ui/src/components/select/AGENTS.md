@@ -20,7 +20,7 @@ engine. An app that imports no picker still never resolves it.
 | `select-trigger.tsx` | `Select.Trigger` — Input's box with the value and a turning chevron, or `asChild` to donate the press |
 | `select-item.tsx` | `Select.Item` — a prop-only marker; renders `null` |
 | `select-group.tsx` | `Select.Group` — the same, for a titled run |
-| `select-option-row.tsx` | The row leaf: label, description, leading icon, trailing check or box. Reads no context — `Combobox` draws it too |
+| `select-option-row.tsx` | The row leaf: label, description, leading icon, trailing check or box. Reads no select context (only `useLabels`) — `Combobox` draws it too |
 | `select.collect.ts` | `collectOptions` / `findChildOfType` — reads the markers into the `options` shape |
 | `select.context.tsx` | `SelectProvider`, `useSelect()`, `useSelectContext()`, `useSelectPart()` |
 | `select.types.ts` | `SelectOption`, `SelectOptionGroup`, `SelectRowOption`, `SelectEntry`, `SelectListRow`, `SelectHighlightRange` |
@@ -143,6 +143,15 @@ engine. An app that imports no picker still never resolves it.
   drawn with Checkbox's tokens (`border-input bg-card`, filling `bg-primary`)
   rather than by importing `../checkbox`, whose measured, animated box is a
   control of its own and would answer the press the row already answers.
+- **The spoken strings are the `labels` prop, not literals.** `SelectLabels` holds `opensList` (the
+  trigger's hint), `searchPlaceholder`, `empty`, `selectedCount(n)`, `limitReached`, `done` and
+  `option(label, description)` (a row's accessible name). Precedence: the explicit prop
+  (`searchPlaceholder`, `emptyText`, `formatSelectedCount`, `limitReachedText`, `doneText`) <- the root's
+  `labels` <- `DelacourProvider`'s `labels` <- English. The root resolves them once with
+  `useLabels("select", labels)` and shares them through `SelectContextValue.labels`; `SelectOptionRow` takes
+  a `labels` prop and falls back to `useLabels("select")`, so `Combobox` rows follow the provider's `select` labels.
+  `resolveSelectTriggerText` takes `labels` and `formatSelectOptionLabel` takes them as its last parameter.
+  `formatSelectedCount` is still exported, now a deprecated alias of the English `selectedCount`.
 - **The row is a leaf with no context.** `SelectOptionRow` takes the option,
   its state and a press handler, and `highlight` ranges for what a query
   matched (`splitHighlight` cuts the label). `Combobox` draws it from its own

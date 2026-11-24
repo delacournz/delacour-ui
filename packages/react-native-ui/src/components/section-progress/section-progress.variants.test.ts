@@ -239,6 +239,12 @@ describe("resolveSectionProgressAccessibilityValue", () => {
 		expect(resolveSectionProgressAccessibilityValue("", 1.3)).toBe("100 percent");
 		expect(resolveSectionProgressAccessibilityValue("Intro", -1)).toBe("Intro, 0 percent");
 	});
+
+	test("speaks through custom labels with the rounded percent", () => {
+		const labels = { pill: "Chapitres", value: (title: string, percent: number) => `${title} : ${percent} pour cent` };
+		expect(resolveSectionProgressAccessibilityValue("Tarifs", 0.426, labels)).toBe("Tarifs : 43 pour cent");
+		expect(resolveSectionProgressAccessibilityValue("", 2, labels)).toBe(" : 100 pour cent");
+	});
 });
 
 describe("resolveSectionColorToken", () => {

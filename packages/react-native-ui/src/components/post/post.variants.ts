@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type PostLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { AvatarSize } from "../avatar/avatar.variants";
 import { formatGroupedNumber } from "./post.utils";
@@ -108,9 +109,12 @@ export function resolveNextVote(current: PostVote, pressed: "up" | "down"): Post
  * What is spoken after the caller's own vote lands: the state and the new score,
  * `Upvoted, score 1,241`. The score is spoken in full, never `1.2K`.
  */
-export function resolveVoteAnnouncement(vote: PostVote, score: number | string): string {
-	const state = vote === "up" ? "Upvoted" : vote === "down" ? "Downvoted" : "Vote removed";
-	return `${state}, score ${typeof score === "number" ? formatGroupedNumber(score) : score}`;
+export function resolveVoteAnnouncement(
+	vote: PostVote,
+	score: number | string,
+	labels: PostLabels = DELACOUR_DEFAULT_LABELS.post
+): string {
+	return labels.voteAnnouncement(vote, typeof score === "number" ? formatGroupedNumber(score) : score);
 }
 
 /**

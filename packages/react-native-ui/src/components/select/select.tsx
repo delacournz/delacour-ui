@@ -2,7 +2,9 @@ import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, use
 import { useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { IconMagnifyingGlass } from "../../icons/central";
+import type { SelectLabels } from "../../lib/labels";
 import { BottomSheet, type BottomSheetProps } from "../bottom-sheet";
 import { Button } from "../button";
 import { useFieldContext } from "../field/field.context";
@@ -59,9 +61,14 @@ type SelectBaseProps = {
 	isLoading?: boolean;
 	/** A search field above the rows. Off by default — a long list is the caller's call. */
 	isSearchable?: boolean;
-	/** The search field's placeholder and accessible name. @default "Search" */
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `searchPlaceholder`,
+	 * `emptyText`, `formatSelectedCount`, `limitReachedText` and `doneText` still win over their keys.
+	 */
+	labels?: Partial<SelectLabels>;
+	/** The search field's placeholder and accessible name. Defaults to `labels.searchPlaceholder`. */
 	searchPlaceholder?: string;
-	/** What an empty list says — no options, or nothing matching the search. @default "No results" */
+	/** What an empty list says — no options, or nothing matching the search. Defaults to `labels.empty`. */
 	emptyText?: string;
 	/** Where the options open. Only `sheet` today. */
 	presentation?: SelectPresentation;
@@ -79,7 +86,7 @@ type SelectBaseProps = {
 	renderValue?: (selected: SelectOption[]) => ReactNode;
 	/** How many labels a multiple trigger joins before it shows a count. @default 2 */
 	maxLabels?: number;
-	/** The count a multiple trigger shows past `maxLabels`. @default (n) => `${n} selected` */
+	/** The count a multiple trigger shows past `maxLabels`. Defaults to `labels.selectedCount`. */
 	formatSelectedCount?: (count: number) => string;
 	/** Classes for the trigger. */
 	className?: string;
@@ -111,9 +118,9 @@ export type SelectMultipleProps = SelectBaseProps & {
 	onValueChange?: (value: string[]) => void;
 	/** Once this many are chosen, the remaining rows are disabled. */
 	maxSelected?: number;
-	/** What a row disabled by `maxSelected` says when it has no description. @default "Limit reached" */
+	/** What a row disabled by `maxSelected` says when it has no description. Defaults to `labels.limitReached`. */
 	limitReachedText?: string;
-	/** The footer button that closes the sheet. Multiple never closes on a pick. @default "Done" */
+	/** The footer button that closes the sheet. Multiple never closes on a pick. Defaults to `labels.done`. */
 	doneText?: string;
 };
 
@@ -136,8 +143,9 @@ function SelectRoot(props: SelectProps): ReactElement {
 		isReadOnly = false,
 		isLoading = false,
 		isSearchable = false,
-		searchPlaceholder = "Search",
-		emptyText = "No results",
+		labels: labelsProp,
+		searchPlaceholder: searchPlaceholderProp,
+		emptyText: emptyTextProp,
 		onClose,
 		isOpen: isOpenProp,
 		defaultOpen = false,
@@ -154,13 +162,16 @@ function SelectRoot(props: SelectProps): ReactElement {
 	const multiple = props.selectionMode === "multiple" ? props : null;
 	const single = props.selectionMode === "multiple" ? null : props;
 
+	const labels = useLabels("select", labelsProp);
+	const searchPlaceholder = searchPlaceholderProp ?? labels.searchPlaceholder;
+	const emptyText = emptyTextProp ?? labels.empty;
 	const field = useFieldContext();
 	const { height: windowHeight } = useWindowDimensions();
 	const { top: topInset } = useSafeAreaInsets();
 	const resolvedIsInvalid = isInvalid ?? field?.isInvalid ?? false;
 	const resolvedIsDisabled = isDisabled ?? field?.isDisabled ?? false;
 	const a11y = useFieldControlAccessibility({
-		accessibilityHint: isReadOnly ? undefined : "Opens a list of options",
+		accessibilityHint: isReadOnly ? undefined : labels.opensList,
 		fallbackLabel: title ?? placeholder,
 		isInvalid,
 		isRequired,
@@ -232,7 +243,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 	}, [open, registerPress]);
 
 	const selectedOptions = useMemo(() => resolveSelectedOptions(entries, selected), [entries, selected]);
-	const triggerText = resolveSelectTriggerText({ entries, formatSelectedCount, maxLabels, mode, selected });
+	const triggerText = resolveSelectTriggerText({ entries, formatSelectedCount, labels, maxLabels, mode, selected });
 	const sheetTitle = title ?? field?.label ?? undefined;
 
 	const context: SelectContextValue = {
@@ -246,6 +257,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 		isRequired: a11y.isRequired,
 		isOpen,
 		isReadOnly,
+		labels,
 		open,
 		placeholder,
 		renderValue,
@@ -290,7 +302,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 		});
 		const limitDescription =
 			state.isDisabled && state.reason === "limit" && !item.option.description
-				? (multiple?.limitReachedText ?? "Limit reached")
+				? (multiple?.limitReachedText ?? labels.limitReached)
 				: undefined;
 
 		return (
@@ -298,6 +310,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 				description={limitDescription}
 				isDisabled={state.isDisabled || !canOpen}
 				isSelected={isSelected}
+				labels={labels}
 				mode={mode}
 				onPress={toggle}
 				option={item.option}
@@ -388,7 +401,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 						{multiple ? (
 							<BottomSheet.Footer sticky>
 								<Button onPress={close} testID={testID ? `${testID}-done` : undefined}>
-									{multiple.doneText ?? "Done"}
+									{multiple.doneText ?? labels.done}
 								</Button>
 							</BottomSheet.Footer>
 						) : null}

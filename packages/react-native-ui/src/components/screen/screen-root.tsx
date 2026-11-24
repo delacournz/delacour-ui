@@ -1,8 +1,10 @@
 import type { ReactElement } from "react";
 import { View, type ViewProps } from "react-native";
+import type { ScreenLabels } from "../../lib/labels";
 import { ScreenProvider, useScreenContext } from "./screen.context";
 import { screenVariants } from "./screen.variants";
 import { ScreenScrollSourceBridge } from "./screen-scroll-source";
+import { useScreenLabels } from "./use-screen-labels";
 
 export type ScreenRootProps = ViewProps & {
 	/**
@@ -14,6 +16,12 @@ export type ScreenRootProps = ViewProps & {
 	 */
 	debug?: boolean;
 	className?: string;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `Screen.Navbar.BackButton`'s `accessibilityLabel` prop still wins. A nested screen with no
+	 * `labels` of its own keeps the outer screen's; one with its own overrides them for its subtree.
+	 */
+	labels?: Partial<ScreenLabels>;
 };
 
 /**
@@ -24,15 +32,22 @@ export type ScreenRootProps = ViewProps & {
  * `./screen` from either would close a cycle through the `Object.assign` that
  * names them. See AGENTS.md rule 3.
  */
-export function ScreenRoot({ debug = false, className, children, ...props }: ScreenRootProps): ReactElement {
+export function ScreenRoot({
+	debug = false,
+	className,
+	labels: labelsProp,
+	children,
+	...props
+}: ScreenRootProps): ReactElement {
 	// A nested screen keeps reporting to the outer one rather than starting a
 	// second, unread set of measurements.
 	const parentContext = useScreenContext();
+	const labels = useScreenLabels(labelsProp);
 
 	// The bridge republishes the scroll values as a `ScrollSource`, which is what
 	// lets the scroll family work inside a screen with no wiring.
 	return (
-		<ScreenProvider debug={debug} parentContext={parentContext}>
+		<ScreenProvider debug={debug} labels={labels} parentContext={parentContext}>
 			<ScreenScrollSourceBridge>
 				<View className={screenVariants().root({ className })} {...props}>
 					{children}

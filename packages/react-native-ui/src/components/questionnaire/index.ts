@@ -1,3 +1,4 @@
+export type { QuestionnaireLabels } from "../../lib/labels";
 export { Questionnaire } from "./questionnaire";
 export { type QuestionnaireContextValue, QuestionnaireProvider, useQuestionnaire } from "./questionnaire.context";
 export {

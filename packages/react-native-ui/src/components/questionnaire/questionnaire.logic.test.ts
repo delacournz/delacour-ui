@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import {
 	canBack,
 	canSkip,
@@ -449,6 +450,29 @@ describe("defaultErrorMessage", () => {
 		});
 	}
 
+	test("custom labels reach every error, and a required multiple picks its own key", () => {
+		const labels = {
+			...DELACOUR_DEFAULT_LABELS.questionnaire,
+			errorMaxLength: (max: number) => `max-len ${max}`,
+			errorMaxSelected: (max: number) => `max-sel ${max}`,
+			errorMinLength: (min: number) => `min-len ${min}`,
+			errorMinSelected: (min: number) => `min-sel ${min}`,
+			errorOtherRequired: "other!",
+			errorOutOfRange: (min: number, max: number) => `range ${min}-${max}`,
+			errorRequired: "required!",
+			errorRequiredChoice: "choice!",
+		};
+		const multiple: Question = { id: "m", kind: "multiple", options: [{ label: "A", value: "a" }], title: "M" };
+		expect(defaultErrorMessage({ type: "required" }, single, labels)).toBe("required!");
+		expect(defaultErrorMessage({ type: "required" }, multiple, labels)).toBe("choice!");
+		expect(defaultErrorMessage({ min: 2, type: "minSelected" }, single, labels)).toBe("min-sel 2");
+		expect(defaultErrorMessage({ max: 3, type: "maxSelected" }, single, labels)).toBe("max-sel 3");
+		expect(defaultErrorMessage({ min: 4, type: "minLength" }, single, labels)).toBe("min-len 4");
+		expect(defaultErrorMessage({ max: 5, type: "maxLength" }, single, labels)).toBe("max-len 5");
+		expect(defaultErrorMessage({ max: 10, min: 0, type: "outOfRange" }, single, labels)).toBe("range 0-10");
+		expect(defaultErrorMessage({ type: "otherRequired" }, single, labels)).toBe("other!");
+	});
+
 	test("a required multiple asks for a choice", () => {
 		expect(defaultErrorMessage({ type: "required" }, multiple)).toBe("Choose at least 1 option.");
 	});
@@ -774,6 +798,17 @@ describe("wording helpers", () => {
 	test("formatQuestionCount is one-based", () => {
 		expect(formatQuestionCount({ index: 1, ratio: 0.4, total: 5 })).toBe("Question 2 of 5");
 		expect(formatQuestionCount({ index: 0, ratio: 0, total: 0 })).toBe("");
+	});
+
+	test("formatQuestionCount and formatScaleValue speak through custom labels", () => {
+		const labels = {
+			...DELACOUR_DEFAULT_LABELS.questionnaire,
+			questionCount: (current: number, total: number) => `Frage ${current} von ${total}`,
+			scaleValue: (value: number, max: number) => `${value} von ${max}`,
+		};
+		expect(formatQuestionCount({ index: 1, ratio: 0.4, total: 5 }, labels)).toBe("Frage 2 von 5");
+		expect(formatQuestionCount({ index: 0, ratio: 0, total: 0 }, labels)).toBe("");
+		expect(formatScaleValue(7, 10, labels)).toBe("7 von 10");
 	});
 
 	test("formatScaleValue reads a value against the top of the scale", () => {

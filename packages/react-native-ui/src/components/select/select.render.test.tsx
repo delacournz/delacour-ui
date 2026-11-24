@@ -1,5 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
 import { Button } from "../button";
@@ -628,6 +629,75 @@ describe("Select in a Field", () => {
 		);
 		await openSheet("Role");
 		expect(screen.getAllByText("Role", { includeHiddenElements: true }).length).toBeGreaterThan(1);
+	});
+});
+
+describe("Select labels", () => {
+	const german = {
+		done: "Fertig",
+		empty: "Keine Treffer",
+		limitReached: "Limit erreicht",
+		opensList: "Öffnet eine Liste",
+		option: (label: string, description: string | undefined) => (description ? `${label} - ${description}` : label),
+		searchPlaceholder: "Suchen",
+		selectedCount: (count: number) => `${count} gewählt`,
+	};
+	const limited: SelectProps = {
+		defaultValue: ["designer", "engineer"],
+		isSearchable: true,
+		maxLabels: 1,
+		maxSelected: 2,
+		options: [
+			{ label: "Designer", value: "designer" },
+			{ label: "Engineer", value: "engineer" },
+			{ label: "Writer", value: "writer" },
+		],
+		selectionMode: "multiple",
+	};
+
+	test("the labels prop renames the hint, count, rows, search, empty list and Done", async () => {
+		await renderSelect({ ...limited, labels: german });
+		expect(trigger()).toHaveProp("accessibilityHint", "Öffnet eine Liste");
+		expect(trigger()).toHaveAccessibilityValue({ text: "2 gewählt" });
+		await openSheet();
+		expect(screen.getByRole("checkbox", { name: "Writer - Limit erreicht" })).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Fertig" })).toBeOnTheScreen();
+		const search = screen.getByLabelText("Suchen");
+		expect(search).toBeOnTheScreen();
+		await fireEvent.changeText(search, "qqq");
+		expect(screen.getByText("Keine Treffer")).toBeOnTheScreen();
+	});
+
+	test("a LabelsProvider's labels rename it", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ select: german }}>
+				<Select {...limited} placeholder="Choose" />
+			</LabelsProvider>,
+			{ wrapper: Sheets }
+		);
+		expect(trigger()).toHaveProp("accessibilityHint", "Öffnet eine Liste");
+		expect(trigger()).toHaveAccessibilityValue({ text: "2 gewählt" });
+		await openSheet();
+		expect(screen.getByRole("checkbox", { name: "Writer - Limit erreicht" })).toBeDisabled();
+	});
+
+	test("the existing props win over the labels", async () => {
+		await renderSelect({
+			...limited,
+			doneText: "Apply",
+			emptyText: "Nothing",
+			formatSelectedCount: (count) => `${count} roles`,
+			labels: german,
+			limitReachedText: "Full",
+			searchPlaceholder: "Find",
+		});
+		expect(trigger()).toHaveAccessibilityValue({ text: "2 roles" });
+		await openSheet();
+		expect(screen.getByRole("checkbox", { name: "Writer - Full" })).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Apply" })).toBeOnTheScreen();
+		const search = screen.getByLabelText("Find");
+		await fireEvent.changeText(search, "qqq");
+		expect(screen.getByText("Nothing")).toBeOnTheScreen();
 	});
 });
 

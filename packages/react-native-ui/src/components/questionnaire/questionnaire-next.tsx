@@ -13,7 +13,7 @@ import {
  *
  * While the answer would not pass it is dimmed but still pressable — a press
  * shows the error, announces it and buzzes once — so it reports
- * `disabled: false` with an "Answer required" hint rather than going inert.
+ * `disabled: false` with an `answerRequired` hint rather than going inert.
  * Renders nothing on the last question, where Submit takes its place.
  */
 export function QuestionnaireNext({
@@ -23,7 +23,7 @@ export function QuestionnaireNext({
 	...props
 }: QuestionnaireButtonProps): ReactElement | null {
 	const questionnaire = useQuestionnairePart("Questionnaire.Next");
-	const { axes, testID, next, isCurrentValid, isDisabled, isSubmitting } = questionnaire;
+	const { axes, labels, testID, next, isCurrentValid, isDisabled, isSubmitting } = questionnaire;
 	const shown = resolveQuestionnaireFooterButtons({
 		canBack: questionnaire.canBack,
 		canSkip: questionnaire.canSkip,
@@ -40,7 +40,7 @@ export function QuestionnaireNext({
 
 	return (
 		<Button
-			accessibilityHint={isCurrentValid ? undefined : "Answer required"}
+			accessibilityHint={isCurrentValid ? undefined : labels.answerRequired}
 			accessibilityState={{ disabled: isDisabled }}
 			className={questionnaireVariants({ isDimmed: !isCurrentValid }).action({ className })}
 			isDisabled={isDisabled || isSubmitting}
@@ -50,7 +50,7 @@ export function QuestionnaireNext({
 			variant={axes.nextVariant}
 			{...props}
 		>
-			{children ?? "Next"}
+			{children ?? labels.next}
 		</Button>
 	);
 }

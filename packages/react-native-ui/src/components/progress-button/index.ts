@@ -1,3 +1,4 @@
+export type { ProgressButtonLabels } from "../../lib/labels";
 export { ProgressButton, type ProgressButtonProps } from "./progress-button";
 export {
 	type ProgressButtonContextValue,

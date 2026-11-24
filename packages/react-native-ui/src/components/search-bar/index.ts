@@ -1,3 +1,4 @@
+export type { SearchBarLabels } from "../../lib/labels";
 export { SearchBar, type SearchBarProps } from "./search-bar";
 export {
 	type SearchBarContextValue,

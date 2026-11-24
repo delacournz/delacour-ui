@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { type ComponentRef, createRef } from "react";
 import { AccessibilityInfo } from "react-native";
 import type Animated from "react-native-reanimated";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { SectionRail, type SectionRailProps } from "./section-rail";
 
@@ -457,5 +458,35 @@ describe("SectionRail", () => {
 		} finally {
 			console.error = original;
 		}
+	});
+
+	describe("labels", () => {
+		test("the labels prop names the trigger", async () => {
+			await renderWithProviders(<Rail defaultValue="pricing" labels={{ trigger: "Abschnitte" }} />);
+			expect(screen.getByRole("adjustable", { name: "Abschnitte" })).toBeOnTheScreen();
+			expect(screen.queryByRole("adjustable", { name: "Sections" })).toBeNull();
+		});
+
+		test("a LabelsProvider names it too, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ sectionRail: { trigger: "Abschnitte" } }}>
+					<Rail defaultValue="pricing" />
+					<Rail defaultValue="pricing" labels={{ trigger: "Kapitel" }} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("adjustable", { name: "Abschnitte" })).toBeOnTheScreen();
+			expect(screen.getByRole("adjustable", { name: "Kapitel" })).toBeOnTheScreen();
+		});
+
+		test("the trigger's own accessibilityLabel still wins over labels", async () => {
+			await renderWithProviders(
+				<SectionRail labels={{ trigger: "Abschnitte" }}>
+					<SectionRail.Trigger accessibilityLabel="Jump to">
+						<SectionRail.Bar value="a" />
+					</SectionRail.Trigger>
+				</SectionRail>
+			);
+			expect(screen.getByRole("adjustable", { name: "Jump to" })).toBeOnTheScreen();
+		});
 	});
 });

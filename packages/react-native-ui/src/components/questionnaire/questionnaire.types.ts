@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { QuestionnaireLabels } from "../../lib/labels";
 import type { ButtonProps } from "../button";
 import type { HapticFeedback } from "../pressable";
 import type { QuestionnaireSize, QuestionnaireVariant } from "./questionnaire.variants";
@@ -159,8 +160,17 @@ export type QuestionnaireProps = {
 	isDisabled?: boolean;
 	/** Answers are shown and cannot change; navigation still works. */
 	isReadOnly?: boolean;
-	/** Words each validation error. English defaults are used without it. */
+	/**
+	 * Words each validation error. Defaults to the `labels` error strings; a function passed
+	 * here replaces them all.
+	 */
 	getErrorMessage?: (error: ValidationError, question: Question) => string;
+	/**
+	 * The spoken and shown strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `getErrorMessage` still wins over the error strings, a question's `yesLabel` / `noLabel` over
+	 * `yes` / `no`, and a part's `children` over `back` / `next` / `submit` / `skip`.
+	 */
+	labels?: Partial<QuestionnaireLabels>;
 	/** The questionnaire's own haptics — navigation, a blocked Next, Submit. `false` silences them. */
 	haptic?: false | HapticFeedback;
 	/**

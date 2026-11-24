@@ -3377,12 +3377,14 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"overlay",
 				"pressable",
 				"slot",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [
@@ -3439,10 +3441,12 @@
 				"icon",
 				"icons",
 				"interactive-child",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
 				"use-announce",
+				"use-labels",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -3536,8 +3540,10 @@
 				"feedback"
 			],
 			"registryDependencies": [
+				"labels",
 				"text",
-				"tv"
+				"tv",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -3585,11 +3591,13 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
 				"use-announce",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -3668,7 +3676,9 @@
 			],
 			"registryDependencies": [
 				"cn",
+				"labels",
 				"tv",
+				"use-labels",
 				"use-theme-color"
 			],
 			"dependencies": [],
@@ -3720,6 +3730,7 @@
 				"cn",
 				"field",
 				"input",
+				"labels",
 				"pressable",
 				"progress",
 				"radio",
@@ -3731,7 +3742,8 @@
 				"textarea",
 				"toggle-button",
 				"tv",
-				"use-calm-motion"
+				"use-calm-motion",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -3827,10 +3839,12 @@
 			],
 			"registryDependencies": [
 				"field",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-labels",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -3880,12 +3894,14 @@
 				"compose-refs",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"spinner",
 				"text",
 				"tv",
 				"use-announce",
 				"use-keyboard-state-sync",
+				"use-labels",
 				"use-minimum-hit-target",
 				"use-scroll-source",
 				"use-theme-color"
@@ -3933,6 +3949,7 @@
 				"ui/screen/screen.tsx",
 				"ui/screen/screen.types.ts",
 				"ui/screen/screen.variants.ts",
+				"ui/screen/use-screen-labels.ts",
 				"ui/screen/use-screen-scroll-insets.ts"
 			],
 			"testDependencies": [
@@ -4245,11 +4262,13 @@
 				"icon",
 				"icons",
 				"input",
+				"labels",
 				"pressable",
 				"spinner",
 				"tv",
 				"use-calm-motion",
 				"use-controllable-state",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [
@@ -4296,11 +4315,13 @@
 			],
 			"registryDependencies": [
 				"compose-refs",
+				"labels",
 				"modal-accessibility",
 				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-labels",
 				"use-modal-accessibility",
 				"use-scroll-sections",
 				"use-theme-color"
@@ -4351,11 +4372,13 @@
 			],
 			"registryDependencies": [
 				"compose-refs",
+				"labels",
 				"modal-accessibility",
 				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-labels",
 				"use-modal-accessibility",
 				"use-scroll-sections"
 			],
@@ -4409,13 +4432,15 @@
 				"icon",
 				"icons",
 				"input",
+				"labels",
 				"pressable",
 				"slot",
 				"spinner",
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -4464,11 +4489,13 @@
 				"button",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"separator",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -4654,11 +4681,13 @@
 				"icon",
 				"icons",
 				"interactive-child",
+				"labels",
 				"pressable",
 				"slider",
 				"toggle-button",
 				"tv",
 				"use-controllable-state",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [
@@ -4714,12 +4743,14 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"spinner",
 				"text",
 				"tv",
 				"use-announce",
 				"use-controllable-state",
+				"use-labels",
 				"use-theme-color"
 			],
 			"dependencies": [

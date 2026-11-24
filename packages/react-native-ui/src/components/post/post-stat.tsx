@@ -77,7 +77,7 @@ export function PostStat({
 	disabled,
 	...props
 }: PostStatProps): ReactElement {
-	const { size } = usePostPart("Post.Stat");
+	const { size, labels } = usePostPart("Post.Stat");
 	const slots = postVariants({ size, tone, active, align });
 	const colorToken = resolveStatTone(tone, active);
 	const fillColor = useThemeColor(colorToken);
@@ -97,7 +97,7 @@ export function PostStat({
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel ?? resolvePostStatLabel(label, value, active)}
+			accessibilityLabel={accessibilityLabel ?? resolvePostStatLabel(label, value, active, labels)}
 			accessibilityRole="button"
 			accessibilityState={{ ...accessibilityState, selected: active }}
 			className={slots.stat({ className })}

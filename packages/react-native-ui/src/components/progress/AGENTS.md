@@ -96,6 +96,13 @@ plus `Progress.Header`, `Progress.Label`, `Progress.Output`, `Progress.Track` an
   a readout the formatter cannot express — `18 of 24 seats`. While
   indeterminate the default readout renders nothing; a function still runs.
 
+- **The spoken strings are the `labels` prop, not literals.** One key, `valueOf(current, max)`,
+  the `18 of 24` over any range but 0–100; both numbers arrive already formatted with the
+  readout's `Intl.NumberFormat`, so a language can reorder them. Precedence: `valueLabel` ←
+  root `labels` ← `DelacourProvider` `labels` ← English. Resolved once in `Progress` with
+  `useLabels("progress", labels)`; the parts speak nothing so need none.
+  `resolveProgressAccessibility` takes `labels` as an option, defaulting to English.
+
 ## Accessibility
 
 - **The root is the one accessible element**, `accessibilityRole="progressbar"`,

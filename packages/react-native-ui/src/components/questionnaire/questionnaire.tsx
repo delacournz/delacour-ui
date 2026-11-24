@@ -1,5 +1,7 @@
 import { type ReactElement, useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { AccessibilityInfo, View } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
+import type { QuestionnaireLabels } from "../../lib/labels";
 import { playHaptic } from "../pressable";
 import { Surface } from "../surface";
 import { type QuestionnaireContextValue, QuestionnaireProvider } from "./questionnaire.context";
@@ -20,7 +22,7 @@ import {
 	questionnaireReducer,
 	validateAnswer,
 } from "./questionnaire.logic";
-import type { Answer, QuestionnaireProps } from "./questionnaire.types";
+import type { Answer, Question, QuestionnaireProps, ValidationError } from "./questionnaire.types";
 import {
 	QUESTIONNAIRE_DEFAULT_SIZE,
 	QUESTIONNAIRE_DEFAULT_VARIANT,
@@ -63,6 +65,7 @@ type ChangeReport = {
 	next: QuestionnaireState;
 	haptic: QuestionnaireProps["haptic"];
 	getErrorMessage: QuestionnaireProps["getErrorMessage"];
+	labels: QuestionnaireLabels;
 	onAnswersChange: QuestionnaireProps["onAnswersChange"];
 	onCurrentChange: QuestionnaireProps["onCurrentChange"];
 	submit: (submitted: QuestionnaireState) => void;
@@ -80,6 +83,7 @@ function reportChange({
 	next,
 	haptic,
 	getErrorMessage,
+	labels,
 	onAnswersChange,
 	onCurrentChange,
 	submit,
@@ -92,7 +96,11 @@ function reportChange({
 	if (hasMoved && !fromCaller && haptic !== false) playHaptic(haptic ?? "selection");
 
 	if (next.blockedCount !== previous.blockedCount)
-		announceBlocked(next, haptic, getErrorMessage ?? defaultErrorMessage);
+		announceBlocked(
+			next,
+			haptic,
+			getErrorMessage ?? ((error, question) => defaultErrorMessage(error, question, labels))
+		);
 	if (next.status === "submitted" && previous.status !== "submitted") submit(next);
 }
 
@@ -124,11 +132,13 @@ function QuestionnaireRoot({
 	isDisabled = false,
 	isReadOnly = false,
 	getErrorMessage,
+	labels: labelsProp,
 	haptic,
 	testID,
 	className,
 	children,
 }: QuestionnaireProps): ReactElement | null {
+	const labels = useLabels("questionnaire", labelsProp);
 	const [state, setState] = useState<QuestionnaireState>(() =>
 		createQuestionnaireState({
 			answers: answersProp ?? defaultAnswers,
@@ -182,6 +192,7 @@ function QuestionnaireRoot({
 				action,
 				getErrorMessage,
 				haptic,
+				labels,
 				next,
 				onAnswersChange,
 				onCurrentChange,
@@ -189,7 +200,7 @@ function QuestionnaireRoot({
 				submit: runSubmit,
 			});
 		},
-		[getErrorMessage, haptic, onAnswersChange, onCurrentChange, runSubmit]
+		[getErrorMessage, haptic, labels, onAnswersChange, onCurrentChange, runSubmit]
 	);
 
 	// Each sync runs when its prop changes and only then — not when a callback
@@ -218,7 +229,8 @@ function QuestionnaireRoot({
 		const visibleQuestions = getVisibleQuestions(state.questions, state.answers);
 		const current = visibleQuestions.find((question) => question.id === state.currentId) ?? null;
 		const progress = getProgress(state.questions, state.answers, state.currentId);
-		const formatError = getErrorMessage ?? defaultErrorMessage;
+		const formatError =
+			getErrorMessage ?? ((error: ValidationError, question: Question) => defaultErrorMessage(error, question, labels));
 		const shownError = current ? state.errors[current.id] : undefined;
 		const guard = (run: () => void) => () => {
 			if (!isInert) run();
@@ -229,7 +241,7 @@ function QuestionnaireRoot({
 			back: guard(() => dispatch({ type: "back" })),
 			canBack: canBack(state),
 			canSkip: canSkip(state),
-			countLabel: formatQuestionCount(progress),
+			countLabel: formatQuestionCount(progress, labels),
 			current,
 			direction: state.direction,
 			errorMessage: current && shownError ? formatError(shownError, current) : null,
@@ -247,6 +259,7 @@ function QuestionnaireRoot({
 			isReadOnly,
 			isSubmitted: state.status === "submitted" && !isSubmitting,
 			isSubmitting,
+			labels,
 			next: guard(() => dispatch({ type: "next" })),
 			progress,
 			questions: state.questions,
@@ -275,6 +288,7 @@ function QuestionnaireRoot({
 		isInert,
 		isReadOnly,
 		isSubmitting,
+		labels,
 		size,
 		state,
 		testID,

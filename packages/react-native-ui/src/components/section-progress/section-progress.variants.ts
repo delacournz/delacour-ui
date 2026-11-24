@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SectionProgressLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /** Where the pill floats, against the safe area of the caller's container. */
@@ -242,9 +243,12 @@ export function resolveSectionColor(
 }
 
 /** What VoiceOver reads after the pill's name: "Pricing, 42 percent". */
-export function resolveSectionProgressAccessibilityValue(title: string, progress: number): string {
-	const percent = resolveProgressPercent(progress);
-	return title === "" ? `${percent} percent` : `${title}, ${percent} percent`;
+export function resolveSectionProgressAccessibilityValue(
+	title: string,
+	progress: number,
+	labels: SectionProgressLabels = DELACOUR_DEFAULT_LABELS.sectionProgress
+): string {
+	return labels.value(title, resolveProgressPercent(progress));
 }
 
 /** The theme token a section colour paints with — read by `useThemeColor` for the ring. */

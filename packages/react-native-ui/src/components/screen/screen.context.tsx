@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use, useMemo } from "react";
 import { type SharedValue, useSharedValue } from "react-native-reanimated";
+import type { ScreenLabels } from "../../lib/labels";
 import type { ScreenPlacement } from "./screen.variants";
 
 /** What a navbar publishes about itself, for anything that has to clear it. */
@@ -55,6 +56,8 @@ export type ScreenContextValue = {
 	layoutHeight: SharedValue<number>;
 	/** Paint the screen's layout layers in debug colours. */
 	debug: boolean;
+	/** The resolved spoken strings, read by parts such as the back button. */
+	labels: ScreenLabels;
 };
 
 const ScreenContext = createContext<ScreenContextValue | null>(null);
@@ -69,6 +72,8 @@ export type ScreenProviderProps = {
 	parentContext?: ScreenContextValue | null;
 	/** Paint the screen's layout layers in debug colours. */
 	debug?: boolean;
+	/** The resolved spoken strings (see `ScreenRoot`, which resolves them). */
+	labels: ScreenLabels;
 	children: ReactNode;
 };
 
@@ -84,7 +89,12 @@ export type ScreenProviderProps = {
  * can read the context without importing `../screen` and closing a cycle
  * through `screen.tsx`. See AGENTS.md rule 3.
  */
-export function ScreenProvider({ parentContext = null, debug = false, children }: ScreenProviderProps): ReactElement {
+export function ScreenProvider({
+	parentContext = null,
+	debug = false,
+	labels,
+	children,
+}: ScreenProviderProps): ReactElement {
 	const navbarPlacement = useSharedValue<ScreenPlacement>("overlay");
 	const navbarHeight = useSharedValue<number>(0);
 
@@ -99,7 +109,7 @@ export function ScreenProvider({ parentContext = null, debug = false, children }
 	const layoutHeight = useSharedValue<number>(0);
 
 	const value = useMemo<ScreenContextValue>(() => {
-		if (parentContext) return parentContext;
+		if (parentContext) return parentContext.labels === labels ? parentContext : { ...parentContext, labels };
 
 		return {
 			navbar: { placement: navbarPlacement, height: navbarHeight },
@@ -114,6 +124,7 @@ export function ScreenProvider({ parentContext = null, debug = false, children }
 			contentHeight,
 			layoutHeight,
 			debug,
+			labels,
 		};
 	}, [
 		parentContext,
@@ -128,6 +139,7 @@ export function ScreenProvider({ parentContext = null, debug = false, children }
 		contentHeight,
 		layoutHeight,
 		debug,
+		labels,
 	]);
 
 	return <ScreenContext value={value}>{children}</ScreenContext>;

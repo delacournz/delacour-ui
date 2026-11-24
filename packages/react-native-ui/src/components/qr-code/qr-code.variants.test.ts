@@ -25,6 +25,25 @@ describe("resolveEffectiveEcc", () => {
 	});
 });
 
+describe("resolveQrLabel with labels", () => {
+	const labels = { code: (shown: string) => `Code QR : ${shown}`, unavailable: "Code QR indisponible" };
+
+	test("the code label wraps the cut value", () => {
+		expect(resolveQrLabel("https://x.co", undefined, labels)).toBe("Code QR : https://x.co");
+		const long = resolveQrLabel(`https://x.co/${"a".repeat(500)}`, undefined, labels);
+		expect(long.startsWith("Code QR : https://x.co/")).toBe(true);
+		expect(long.endsWith("…")).toBe(true);
+	});
+
+	test("an empty value reads the unavailable label", () => {
+		expect(resolveQrLabel("", undefined, labels)).toBe("Code QR indisponible");
+	});
+
+	test("a caller label still wins", () => {
+		expect(resolveQrLabel("https://x.co", "Mine", labels)).toBe("Mine");
+	});
+});
+
 describe("resolveQrLabel", () => {
 	test("the caller's label wins outright", () => {
 		expect(resolveQrLabel("https://x.co", "Join the Wi-Fi")).toBe("Join the Wi-Fi");

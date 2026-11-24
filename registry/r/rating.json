@@ -9,10 +9,12 @@
 	],
 	"registryDependencies": [
 		"field",
+		"labels",
 		"pressable",
 		"text",
 		"tv",
 		"use-controllable-state",
+		"use-labels",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -40,7 +42,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/rating/index.ts",
 			"target": "rating/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/rating/rating-output.tsx",
@@ -79,6 +87,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
 				}
@@ -92,6 +104,14 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../field/field.context",
@@ -108,6 +128,10 @@
 			"target": "rating/rating.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -148,6 +172,10 @@
 			"target": "rating/rating.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

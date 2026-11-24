@@ -115,12 +115,19 @@ and `useSelectionMode()`.
 
 ## Accessibility
 
+- **The spoken strings are the `labels` prop, not literals.** Keys: `title`, `selectedCount`,
+  `progress`, `stopSelecting`, `selectAll`, `deselectAll`, `itemHint`, `startSelecting`. Precedence:
+  the header's `title` prop (for `title`) <- root `labels` <- `DelacourProvider`'s `labels` <- English.
+  The root resolves them once with `useLabels("selectionMode", labels)` and shares them through the
+  context (`useSelectionMode().labels`); `Header` and `Item` read them there. `resolveHeaderCount` and
+  `resolveItemAccessibility` take `labels` as their last argument. `SELECTION_MODE_START_ACTION` stays
+  exported, deprecated, as the English action.
 - **While the mode is on, an item is a checkbox.** `accessibilityRole="checkbox"`,
-  `accessibilityState={{ checked, disabled }}`, hint "Double-tap to select".
+  `accessibilityState={{ checked, disabled }}`, hint `labels.itemHint` ("Double-tap to select").
   `resolveItemAccessibility` is the decision and is pure.
 - **While off, an item keeps the semantics of what it wraps** — a `button` when
   it has an `onPress`, no role otherwise — and offers a `longpress` action
-  labelled "Start selecting", so the mode can be entered without the gesture. A
+  labelled `labels.startSelecting` ("Start selecting"), so the mode can be entered without the gesture. A
   disabled item offers nothing it cannot do.
 - **The count is announced.** The header label is a polite live region on
   Android; iOS has none, so the header calls

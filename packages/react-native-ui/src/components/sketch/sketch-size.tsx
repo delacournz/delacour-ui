@@ -1,13 +1,12 @@
 import { type ReactElement, useCallback } from "react";
 import { Slider, type SliderProps } from "../slider";
 import { useSketchPart } from "./sketch.context";
-import { SKETCH_SIZE_LABEL } from "./sketch.variants";
 
 export type SketchSizeProps = Omit<
 	SliderProps,
 	"value" | "defaultValue" | "onChange" | "minValue" | "maxValue" | "children" | "isDisabled"
 > & {
-	/** The thumb's accessible name. Default "Stroke width". */
+	/** The thumb's accessible name. Defaults to `labels.size` — "Stroke width". */
 	accessibilityLabel?: string;
 };
 
@@ -18,12 +17,8 @@ export type SketchSizeProps = Omit<
  * A `Slider`, so it is already adjustable by a screen reader. The width applies
  * to the next stroke only — every mark keeps the width it was drawn at.
  */
-export function SketchSize({
-	accessibilityLabel = SKETCH_SIZE_LABEL,
-	step = 1,
-	...props
-}: SketchSizeProps): ReactElement {
-	const { size, minSize, maxSize, setSize, isDisabled } = useSketchPart("Sketch.Size");
+export function SketchSize({ accessibilityLabel, step = 1, ...props }: SketchSizeProps): ReactElement {
+	const { size, minSize, maxSize, setSize, isDisabled, labels } = useSketchPart("Sketch.Size");
 
 	const handleChange = useCallback(
 		(next: number | number[]) => {
@@ -45,7 +40,7 @@ export function SketchSize({
 		>
 			<Slider.Track>
 				<Slider.Fill />
-				<Slider.Thumb accessibilityLabel={accessibilityLabel} />
+				<Slider.Thumb accessibilityLabel={accessibilityLabel ?? labels.size} />
 			</Slider.Track>
 		</Slider>
 	);

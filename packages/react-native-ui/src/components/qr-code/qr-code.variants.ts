@@ -1,3 +1,4 @@
+import { DELACOUR_DEFAULT_LABELS, type QrCodeLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { QrErrorCorrection } from "./qr-code.constants";
 
@@ -26,7 +27,8 @@ export const QR_MIN_SAFE_QUIET_ZONE = 2;
 export const QR_DEFAULT_COLORS = { color: "#000000", backgroundColor: "#ffffff" } as const;
 
 export const QR_LABEL_MAX = 60;
-export const QR_UNAVAILABLE_LABEL = "QR code unavailable";
+/** @deprecated Read `labels.unavailable` from `useLabels("qrCode")`; this is the English default. */
+export const QR_UNAVAILABLE_LABEL = DELACOUR_DEFAULT_LABELS.qrCode.unavailable;
 /** Below this contrast a scanner struggles; light modules on a dark tile are flagged whatever the ratio. */
 export const QR_MIN_CONTRAST = 3;
 
@@ -43,12 +45,19 @@ export function resolveEffectiveEcc(requested: QrErrorCorrection, hasLogo: boole
 	return hasLogo ? "H" : requested;
 }
 
-/** The caller's label, else "QR code: " and the value, cut at 60 characters so a long URL is not read out whole. */
-export function resolveQrLabel(value: string, custom?: string): string {
+/**
+ * The caller's label, else `labels.code` of the value cut at 60 characters so a long URL is not read
+ * out whole; an empty value reads `labels.unavailable`.
+ */
+export function resolveQrLabel(
+	value: string,
+	custom?: string,
+	labels: QrCodeLabels = DELACOUR_DEFAULT_LABELS.qrCode
+): string {
 	if (custom) return custom;
-	if (value.length === 0) return QR_UNAVAILABLE_LABEL;
+	if (value.length === 0) return labels.unavailable;
 	const shown = value.length > QR_LABEL_MAX ? `${value.slice(0, QR_LABEL_MAX)}…` : value;
-	return `QR code: ${shown}`;
+	return labels.code(shown);
 }
 
 /** A named size, or a positive number of dp; anything else falls back to `md`. */

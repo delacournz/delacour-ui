@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { AccessibilityInfo, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { SelectionMode, type SelectionModeProps } from "./selection-mode";
 import { useSelectionMode } from "./selection-mode.context";
@@ -483,5 +484,48 @@ describe("SelectionMode", () => {
 		} finally {
 			console.error = original;
 		}
+	});
+
+	test("the root labels prop changes what a screen reader hears", async () => {
+		await renderWithProviders(
+			<Inbox
+				defaultActive
+				labels={{
+					itemHint: "Tippen zum Waehlen",
+					selectedCount: (n) => `${n} gewaehlt`,
+					stopSelecting: "Auswahl beenden",
+				}}
+				values={undefined}
+			/>
+		);
+		expect(screen.getByLabelText("Auswahl beenden")).toBeOnTheScreen();
+		expect(screen.getByText("0 gewaehlt")).toBeOnTheScreen();
+		expect(checkbox("a").props.accessibilityHint).toBe("Tippen zum Waehlen");
+	});
+
+	test("DelacourProvider labels reach the header and the off-state action", async () => {
+		await renderWithProviders(
+			<LabelsProvider
+				labels={{
+					selectionMode: {
+						deselectAll: "Alle abwaehlen",
+						selectAll: "Alle waehlen",
+						startSelecting: "Auswahl starten",
+					},
+				}}
+			>
+				<Inbox />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Row a" }).props.accessibilityActions).toEqual([
+			{ label: "Auswahl starten", name: "longpress" },
+		]);
+		await startSelecting(screen.getByRole("button", { name: "Row a" }));
+		expect(screen.getByRole("button", { name: "Alle waehlen" })).toBeOnTheScreen();
+	});
+
+	test("the header title prop still wins over labels.title", async () => {
+		await renderWithProviders(<Inbox defaultActive labels={{ title: "Wahl" }} />);
+		expect(screen.getByText("Pick \u00b7 0 of 3")).toBeOnTheScreen();
 	});
 });

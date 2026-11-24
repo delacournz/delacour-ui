@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { ProgressButton } from "./progress-button";
 import { useProgressButton } from "./progress-button.context";
@@ -316,5 +317,48 @@ describe("ProgressButton announcement", () => {
 		await fireEvent(screen.getByRole("button"), "accessibilityAction", activate);
 		expect(announceWithOptionsSpy).not.toHaveBeenCalled();
 		expect(announceSpy).not.toHaveBeenCalled();
+	});
+});
+
+describe("ProgressButton labels", () => {
+	const german = { completed: "Fertig", hint: "Gedrückt halten zum Bestätigen" };
+
+	afterEach(() => {
+		resetAnnouncer();
+		jest.restoreAllMocks();
+	});
+
+	test("the labels prop changes the hint a screen reader hears", async () => {
+		await renderWithProviders(<ProgressButton labels={german}>Pay</ProgressButton>);
+		expect(screen.getByRole("button")).toHaveProp("accessibilityHint", german.hint);
+	});
+
+	test("the labels prop changes the completion announcement", async () => {
+		resetAnnouncer();
+		setPlatform("ios");
+		const spy = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		try {
+			await renderWithProviders(<ProgressButton labels={german}>Pay</ProgressButton>);
+			await fireEvent(screen.getByRole("button"), "accessibilityAction", activate);
+			expect(spy).toHaveBeenCalledWith("Fertig", { queue: true });
+		} finally {
+			setPlatform(originalOS);
+		}
+	});
+
+	test("DelacourProvider labels reach the hint", async () => {
+		await renderWithProviders(<ProgressButton>Pay</ProgressButton>, {
+			wrapper: ({ children }) => <LabelsProvider labels={{ progressButton: german }}>{children}</LabelsProvider>,
+		});
+		expect(screen.getByRole("button")).toHaveProp("accessibilityHint", german.hint);
+	});
+
+	test("an explicit accessibilityHint still wins", async () => {
+		await renderWithProviders(
+			<ProgressButton accessibilityHint="Hold two seconds" labels={german}>
+				Pay
+			</ProgressButton>
+		);
+		expect(screen.getByRole("button")).toHaveProp("accessibilityHint", "Hold two seconds");
 	});
 });

@@ -13,12 +13,14 @@
 		"compose-refs",
 		"icon",
 		"icons",
+		"labels",
 		"pressable",
 		"spinner",
 		"text",
 		"tv",
 		"use-announce",
 		"use-keyboard-state-sync",
+		"use-labels",
 		"use-minimum-hit-target",
 		"use-scroll-source",
 		"use-theme-color"
@@ -45,7 +47,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/screen/index.ts",
 			"target": "screen/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/screen/screen-chat-list.tsx",
@@ -80,6 +88,10 @@
 				{
 					"from": "../../hooks/use-announce",
 					"to": "@registry/hooks/use-announce"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../text",
@@ -145,6 +157,10 @@
 					"to": "@registry/hooks/use-announce"
 				},
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../spinner",
 					"to": "@registry/ui/spinner"
 				}
@@ -155,6 +171,10 @@
 			"target": "screen/screen-navbar-back-button.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../hooks/use-minimum-hit-target",
 					"to": "@registry/hooks/use-minimum-hit-target"
@@ -208,7 +228,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/screen/screen-root.tsx",
 			"target": "screen/screen-root.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/screen/screen-scroll-area.tsx",
@@ -271,7 +297,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/screen/screen.context.tsx",
 			"target": "screen/screen.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/screen/screen.tsx",
@@ -289,8 +321,27 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/screen/use-screen-labels.ts",
+			"target": "screen/use-screen-labels.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				}
 			]
 		},
@@ -312,6 +363,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../pressable/pressable.variants",
 					"to": "@registry/ui/pressable/pressable.variants"
 				}
@@ -330,6 +385,10 @@
 				{
 					"from": "../../hooks/use-announce",
 					"to": "@registry/hooks/use-announce"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
 				},
 				{
 					"from": "../../test/render",

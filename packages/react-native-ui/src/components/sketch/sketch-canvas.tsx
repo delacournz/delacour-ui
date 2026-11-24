@@ -68,7 +68,8 @@ export const SKETCH_PAN_TEST_ID = "sketch-pan";
  * on an unmeasured canvas would export into a `0 0 0 0` viewBox.
  */
 export function SketchCanvas({ children, className, onLayout, ...props }: SketchCanvasProps): ReactElement {
-	const { items, shape, brush, isDisabled, commit, canvasSize, setCanvasSize, handle } = useSketchPart("Sketch.Canvas");
+	const { items, shape, brush, isDisabled, commit, canvasSize, setCanvasSize, handle, labels } =
+		useSketchPart("Sketch.Canvas");
 	const { tool: toolValue, shape: shapeValue, ink: inkValue, size: sizeValue } = brush;
 
 	/** Whether a stroke is under the finger, and which layer it draws in. */
@@ -250,8 +251,8 @@ export function SketchCanvas({ children, className, onLayout, ...props }: Sketch
 	return (
 		<GestureDetector gesture={gesture}>
 			<View
-				accessibilityActions={resolveSketchAccessibilityActions(items, isDisabled)}
-				accessibilityLabel={resolveSketchAccessibilityLabel(items)}
+				accessibilityActions={resolveSketchAccessibilityActions(items, isDisabled, labels)}
+				accessibilityLabel={resolveSketchAccessibilityLabel(items, labels)}
 				accessibilityRole="image"
 				accessible
 				className={sketchVariants().canvas({ className })}

@@ -1,3 +1,4 @@
+export type { SectionProgressLabels } from "../../lib/labels";
 export { SectionProgress, type SectionProgressProps, type SectionProgressScroll } from "./section-progress";
 export {
 	type SectionProgressContextValue,

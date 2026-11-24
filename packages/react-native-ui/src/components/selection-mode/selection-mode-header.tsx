@@ -9,7 +9,7 @@ import { useSelectionModePart } from "./selection-mode.context";
 import { resolveHeaderCount, SELECTION_MODE_MOTION, selectionModeVariants } from "./selection-mode.variants";
 
 export type SelectionModeHeaderProps = ViewProps & {
-	/** Leads the count when the root knows its `values`. Default `"Select"`. */
+	/** Leads the count when the root knows its `values`. Defaults to `labels.title`. */
 	title?: string;
 	/** Drop the select-all control. It is also dropped when the root has no `values` to pick from. */
 	isSelectAllHidden?: boolean;
@@ -40,17 +40,18 @@ const REDUCED_EXITING = FadeOut.duration(SELECTION_MODE_MOTION.reducedFadeMs).re
  * announcement on iOS, which has no live regions.
  */
 export function SelectionModeHeader({
-	title = "Select",
+	title: titleProp,
 	isSelectAllHidden = false,
 	closeTestID,
 	selectAllTestID,
 	className,
 	...props
 }: SelectionModeHeaderProps): ReactElement | null {
-	const { isActive, count, total, isAllSelected, exit, selectAll, clear } =
+	const { isActive, count, total, isAllSelected, exit, selectAll, clear, labels } =
 		useSelectionModePart("SelectionMode.Header");
+	const title = titleProp ?? labels.title;
 	const isReducedMotion = useReducedMotion();
-	const label = resolveHeaderCount({ count, title, total });
+	const label = resolveHeaderCount({ count, title, total }, labels);
 	const slots = selectionModeVariants();
 
 	useEffect(() => {
@@ -68,7 +69,13 @@ export function SelectionModeHeader({
 			exiting={isReducedMotion ? REDUCED_EXITING : EXITING}
 			{...props}
 		>
-			<Button accessibilityLabel="Stop selecting" onPress={exit} size="icon-md" testID={closeTestID} variant="ghost">
+			<Button
+				accessibilityLabel={labels.stopSelecting}
+				onPress={exit}
+				size="icon-md"
+				testID={closeTestID}
+				variant="ghost"
+			>
 				<Icon icon={IconCrossMedium} />
 			</Button>
 			<Text accessibilityLiveRegion="polite" className={slots.headerTitle()} numberOfLines={1}>
@@ -76,7 +83,7 @@ export function SelectionModeHeader({
 			</Text>
 			{hasSelectAll ? (
 				<Button onPress={isAllSelected ? clear : selectAll} size="sm" testID={selectAllTestID} variant="ghost">
-					<Button.Label>{isAllSelected ? "Deselect all" : "Select all"}</Button.Label>
+					<Button.Label>{isAllSelected ? labels.deselectAll : labels.selectAll}</Button.Label>
 				</Button>
 			) : null}
 		</Animated.View>

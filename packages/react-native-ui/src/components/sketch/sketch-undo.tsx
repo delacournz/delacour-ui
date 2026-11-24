@@ -13,22 +13,22 @@ export type SketchUndoProps = Omit<ButtonProps, "onPress" | "isDisabled" | "chil
  * Removes the last mark — an eraser stroke counts as one.
  *
  * Disabled when there is nothing to undo, which a screen reader announces, and
- * announces "Undone" when it works: a drawing gives no other spoken feedback.
+ * announces `labels.undone` ("Undone") when it works: a drawing gives no other spoken feedback.
  */
 export function SketchUndo({
 	children,
 	size = "icon-md",
 	variant = "ghost",
-	accessibilityLabel = "Undo",
+	accessibilityLabel,
 	...props
 }: SketchUndoProps): ReactElement {
-	const { items, handle, isDisabled, haptic } = useSketchPart("Sketch.Undo");
+	const { items, handle, isDisabled, haptic, labels } = useSketchPart("Sketch.Undo");
 
 	return (
 		<Button
 			haptic={haptic}
 			{...props}
-			accessibilityLabel={accessibilityLabel}
+			accessibilityLabel={accessibilityLabel ?? labels.undo}
 			isDisabled={isDisabled || items.length === 0}
 			onPress={handle.undo}
 			size={size}

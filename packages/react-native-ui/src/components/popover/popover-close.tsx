@@ -9,7 +9,11 @@ import { POPOVER_CLOSE_SIZE, popoverVariants } from "./popover.variants";
 
 export type PopoverCloseProps =
 	| ({ asChild: true; children: ReactElement } & Omit<PressableProps, "asChild" | "children">)
-	| ({ asChild?: false; accessibilityLabel?: string } & Omit<PressableProps, "asChild" | "children">);
+	| ({
+			asChild?: false;
+			/** The ✕'s accessible name. Defaults to `labels.close`. */
+			accessibilityLabel?: string;
+	  } & Omit<PressableProps, "asChild" | "children">);
 
 /**
  * Closes the popover.
@@ -28,7 +32,7 @@ export type PopoverCloseProps =
  * </Popover.Close>
  */
 export function PopoverClose(props: PopoverCloseProps): ReactElement {
-	const { close } = usePopoverContext();
+	const { close, labels } = usePopoverContext();
 	const slop = useMinimumHitSlop(POPOVER_CLOSE_SIZE);
 
 	if (props.asChild) {
@@ -46,7 +50,7 @@ export function PopoverClose(props: PopoverCloseProps): ReactElement {
 
 	const {
 		asChild: _asChild,
-		accessibilityLabel = "Close",
+		accessibilityLabel = labels.close,
 		className,
 		feedback = "fade",
 		hitSlop = slop,

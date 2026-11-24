@@ -65,7 +65,7 @@ Compound root plus `Questionnaire.Title`, `.Progress`, `.Question`, `.Footer`, `
   error; so does clearing a previously given answer. Answering clears it.
 - **Next is dimmed, never disabled, while the answer would not pass.** A press is how the user
   finds out why: it shows the error, announces it, and buzzes once. It therefore reports
-  `disabled: false` with an "Answer required" hint. `isDimmed` is a slot variant
+  `disabled: false` with an `answerRequired` hint. `isDimmed` is a slot variant
   (`opacity-50`), not `isDisabled`, which would swallow the press.
 - **Submit validates every visible question** and on failure moves to the first invalid one.
   A promise from `onSubmit` holds the form inert with Submit's spinner until it settles; a
@@ -108,8 +108,18 @@ Compound root plus `Questionnaire.Title`, `.Progress`, `.Question`, `.Footer`, `
 - Progress reads "Question 2 of 5" in every variant: the bar through `Progress`'s `progressbar`,
   the stepper as one `progressbar` element with its circles hidden, the count as a polite live
   region.
-- Scale buttons are labelled "7 out of 10"; Skip is labelled "Skip this question". Radio,
-  Checkbox, Rating and ToggleButton keep their own semantics.
+- Scale buttons are labelled "7 out of 10"; Skip is labelled "Skip this question" (both are
+  `labels`, below). Radio, Checkbox, Rating and ToggleButton keep their own semantics.
+- **The spoken strings are the `labels` prop, not literals**: the buttons' text and hints, the
+  "Question 2 of 5" count and its announcement, the scale buttons' names, the Other field's name
+  and placeholder, Yes / No, and every default validation error come from `lib/labels` through
+  `useLabels("questionnaire", labels)`. Precedence is explicit prop ← the root's `labels` ←
+  `DelacourProvider` `labels` ← English. Explicit props still win: `children` on Back / Next /
+  Submit / Skip, a part's own `accessibilityLabel`, a question's `yesLabel` / `noLabel`, and
+  `getErrorMessage`, which replaces the whole set of error strings. The root resolves the labels
+  once and puts them on the context (`labels`); parts and controls read them from there.
+  `defaultErrorMessage`, `formatQuestionCount` and `formatScaleValue` stay pure and take
+  `labels` as a trailing argument that defaults to English.
 
 ## Motion and haptics
 

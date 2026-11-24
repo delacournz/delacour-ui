@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { QrCodeLabels } from "../../lib/labels";
 import type { QrEncodeError, QrErrorCorrection, QrMask, QrVersion } from "./qr-code.constants";
 import type { QrModuleStyle } from "./qr-code.path";
 import type { QrSize } from "./qr-code.variants";
@@ -24,8 +25,13 @@ export type QRCodeProps = {
 	backgroundColor?: string;
 	/** The share of the code's side a `QRCode.Logo` may take, 0.1–0.3. Default 0.2. */
 	logoSize?: number;
-	/** Names the code to assistive tech. Default `"QR code: <value>"`, truncated. */
+	/** Names the code to assistive tech. Defaults to `labels.code` of the value, truncated. */
 	accessibilityLabel?: string;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `accessibilityLabel` still wins over `labels.code`.
+	 */
+	labels?: Partial<QrCodeLabels>;
 	/** Hide the code from assistive tech — for when its value is printed beside it. */
 	isDecorative?: boolean;
 	/** Called with the reason when the value cannot be encoded. The tile still renders, empty. */

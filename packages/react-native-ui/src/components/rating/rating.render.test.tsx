@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Field } from "../field";
 import { Rating } from "./rating";
@@ -398,5 +399,38 @@ describe("Rating", () => {
 			expect(onChangeEnd).not.toHaveBeenCalled();
 			await waitFor(() => expect(screen.getByRole("adjustable")).toHaveAccessibilityValue({ now: 2 }));
 		});
+	});
+});
+
+describe("Rating labels", () => {
+	const labels = { name: "Note", value: (formatted: string, count: number) => `${formatted} sur ${count}` };
+
+	test("the labels prop changes what a screen reader hears", async () => {
+		await renderWithProviders(
+			<Rating labels={labels} value={3.5}>
+				<Rating.Stars />
+			</Rating>
+		);
+		expect(screen.getByRole("adjustable", { name: "Note" })).toHaveAccessibilityValue({ text: "3.5 sur 5" });
+	});
+
+	test("a provider's labels do too", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ rating: { name: "Note" } }}>
+				<Rating value={2}>
+					<Rating.Stars />
+				</Rating>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("adjustable", { name: "Note" })).toHaveAccessibilityValue({ text: "2 out of 5" });
+	});
+
+	test("an explicit accessibilityLabel still wins", async () => {
+		await renderWithProviders(
+			<Rating labels={labels} value={1}>
+				<Rating.Stars accessibilityLabel="Your rating" />
+			</Rating>
+		);
+		expect(screen.getByRole("adjustable", { name: "Your rating" })).toHaveAccessibilityValue({ text: "1 sur 5" });
 	});
 });

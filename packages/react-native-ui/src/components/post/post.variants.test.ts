@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type PostLabels } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	POST_CONTROL_POINTS,
@@ -336,5 +337,16 @@ describe("resolveVoteAnnouncement", () => {
 		["up", "1.2K", "Upvoted, score 1.2K"],
 	] as const)("%p %p -> %p", (vote, score, expected) => {
 		expect(resolveVoteAnnouncement(vote, score)).toBe(expected);
+	});
+});
+
+describe("resolveVoteAnnouncement with labels", () => {
+	test("hands the vote and the grouped score to the catalog", () => {
+		const labels: PostLabels = {
+			...DELACOUR_DEFAULT_LABELS.post,
+			voteAnnouncement: (vote, score) => `${vote ?? "none"} -> ${score}`,
+		};
+		expect(resolveVoteAnnouncement("up", 1241, labels)).toBe("up -> 1,241");
+		expect(resolveVoteAnnouncement(null, "1.2K", labels)).toBe("none -> 1.2K");
 	});
 });

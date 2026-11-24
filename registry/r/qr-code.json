@@ -9,7 +9,9 @@
 	],
 	"registryDependencies": [
 		"cn",
+		"labels",
 		"tv",
+		"use-labels",
 		"use-theme-color"
 	],
 	"dependencies": [],
@@ -32,7 +34,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/qr-code/index.ts",
 			"target": "qr-code/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/qr-code/qr-code-logo.tsx",
@@ -101,6 +109,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../hooks/use-theme-color",
 					"to": "@registry/hooks/use-theme-color"
 				}
@@ -109,13 +121,23 @@
 		{
 			"path": "packages/react-native-ui/src/components/qr-code/qr-code.types.ts",
 			"target": "qr-code/qr-code.types.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/qr-code/qr-code.variants.ts",
 			"target": "qr-code/qr-code.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -199,6 +221,10 @@
 			"target": "qr-code/qr-code.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

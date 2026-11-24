@@ -1,8 +1,10 @@
 import type { ReactElement } from "react";
+import { useLabels } from "../../hooks/use-labels";
 import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconChevronLeft, IconCrossSmall } from "../../icons/central";
 import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
+import { useScreenContext } from "./screen.context";
 import { resolveBackButtonHitTarget, screenVariants } from "./screen.variants";
 
 /** Which affordance the control reads as: going back, or closing a modal. */
@@ -31,7 +33,8 @@ const GLYPH: Record<ScreenBackButtonGlyph, typeof IconChevronLeft> = {
 };
 
 /**
- * The navbar's leading control.
+ * The navbar's leading control. Its name is `accessibilityLabel`, else `labels.back` from the
+ * enclosing screen.
  *
  * Takes an `onPress` rather than calling a router itself. `react-native-ui` has no
  * navigation dependency and should not gain one for a chevron — the screen
@@ -53,10 +56,12 @@ export function ScreenNavbarBackButton({
 	onBeforeBack,
 	className,
 	children,
-	accessibilityLabel = "Back",
+	accessibilityLabel,
 	hitSlop,
 	...props
 }: ScreenNavbarBackButtonProps): ReactElement {
+	const standalone = useLabels("screen");
+	const labels = useScreenContext()?.labels ?? standalone;
 	const slop = useMinimumHitSlop(resolveBackButtonHitTarget());
 
 	function handlePress(): void {
@@ -66,7 +71,7 @@ export function ScreenNavbarBackButton({
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel}
+			accessibilityLabel={accessibilityLabel ?? labels.back}
 			accessibilityRole="button"
 			className={screenVariants().backButton({ className })}
 			feedback="fade"

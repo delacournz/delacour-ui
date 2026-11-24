@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type SketchLabels } from "../../lib/labels";
 import { declarationCount, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import { SKETCH_SHAPES, SKETCH_TOOLS } from "./sketch.paths";
@@ -16,6 +17,7 @@ import {
 	SKETCH_LABELS,
 	SKETCH_MAX_SIZE,
 	SKETCH_MIN_SIZE,
+	SKETCH_SIZE_LABEL,
 	SKETCH_SLOTS,
 	SKETCH_SWATCH_EDGE_PT,
 	SKETCH_SWATCH_GAP_PT,
@@ -171,6 +173,36 @@ describe("accessibility labels", () => {
 		expect(resolveSwatchLabel("primary", 0, 6)).toBe("Primary");
 		expect(resolveSwatchLabel("muted-foreground", 0, 6)).toBe("Muted foreground");
 		expect(resolveSwatchLabel("#ec4899", 2, 6)).toBe("Colour 3 of 6");
+	});
+
+	test("custom labels reach the canvas and swatch names", () => {
+		const labels: SketchLabels = {
+			...DELACOUR_DEFAULT_LABELS.sketch,
+			clear: "Leeren",
+			drawing: (n) => `Zeichnung ${n}`,
+			swatchPosition: (position, count) => `Farbe ${position}/${count}`,
+			swatchToken: (token) => `Ton ${token}`,
+			undo: "Rückgängig",
+		};
+		const mark = { color: "#111111", d: "M0 0", id: "a", kind: "stroke" as const, width: 4 };
+		expect(resolveSketchAccessibilityActions([mark], false, labels)).toEqual([
+			{ label: "Rückgängig", name: "undo" },
+			{ label: "Leeren", name: "clear" },
+		]);
+		expect(resolveSketchAccessibilityLabel([], labels)).toBe("Zeichnung 0");
+		expect(resolveSwatchLabel("muted-foreground", 0, 6, labels)).toBe("Ton muted foreground");
+		expect(resolveSwatchLabel("#ec4899", 2, 6, labels)).toBe("Farbe 3/6");
+		expect(resolveSketchSwatches(["primary", "#ec4899"], { "#ec4899": undefined, primary: "#111" }, labels)).toEqual([
+			{ color: "primary", ink: "#111", label: "Ton primary" },
+			{ color: "#ec4899", ink: "#ec4899", label: "Farbe 2/2" },
+		]);
+	});
+
+	test("SKETCH_LABELS names every tool and shape from the catalog", () => {
+		for (const key of [...SKETCH_TOOLS, ...SKETCH_SHAPES]) {
+			expect(SKETCH_LABELS[key]).toBe(DELACOUR_DEFAULT_LABELS.sketch.tool(key));
+		}
+		expect(SKETCH_SIZE_LABEL).toBe("Stroke width");
 	});
 });
 

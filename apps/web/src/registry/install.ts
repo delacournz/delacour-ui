@@ -12520,7 +12520,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 82,
+		fileCount: 83,
 		groups: [
 			{
 				name: "scroll-text",
@@ -12619,6 +12619,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/screen/screen.tsx", target: "src/components/ui/screen/screen.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen.types.ts", target: "src/components/ui/screen/screen.types.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/screen.variants.ts", target: "src/components/ui/screen/screen.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/screen/use-screen-labels.ts", target: "src/components/ui/screen/use-screen-labels.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/use-screen-scroll-insets.ts", target: "src/components/ui/screen/use-screen-scroll-insets.ts" },
 				],
 			},
@@ -18805,7 +18806,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 73,
+		fileCount: 74,
 		groups: [
 			{
 				name: "screen",
@@ -18841,6 +18842,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/screen/screen.tsx", target: "src/components/ui/screen/screen.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen.types.ts", target: "src/components/ui/screen/screen.types.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/screen.variants.ts", target: "src/components/ui/screen/screen.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/screen/use-screen-labels.ts", target: "src/components/ui/screen/use-screen-labels.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/use-screen-scroll-insets.ts", target: "src/components/ui/screen/use-screen-scroll-insets.ts" },
 				],
 			},
@@ -20148,7 +20150,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 102,
+		fileCount: 103,
 		groups: [
 			{
 				name: "page-header",
@@ -20271,6 +20273,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/screen/screen.tsx", target: "src/components/ui/screen/screen.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen.types.ts", target: "src/components/ui/screen/screen.types.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/screen.variants.ts", target: "src/components/ui/screen/screen.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/screen/use-screen-labels.ts", target: "src/components/ui/screen/use-screen-labels.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/use-screen-scroll-insets.ts", target: "src/components/ui/screen/use-screen-scroll-insets.ts" },
 				],
 			},

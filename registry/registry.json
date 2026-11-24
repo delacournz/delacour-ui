@@ -3949,6 +3949,7 @@
 				"ui/screen/screen.tsx",
 				"ui/screen/screen.types.ts",
 				"ui/screen/screen.variants.ts",
+				"ui/screen/use-screen-labels.ts",
 				"ui/screen/use-screen-scroll-insets.ts"
 			],
 			"testDependencies": [

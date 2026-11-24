@@ -20324,14 +20324,6 @@ export const install = {
 				],
 			},
 			{
-				name: "labels",
-				title: "labels",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
-				],
-			},
-			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",

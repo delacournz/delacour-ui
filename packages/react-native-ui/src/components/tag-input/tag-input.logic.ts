@@ -1,3 +1,4 @@
+import { DELACOUR_DEFAULT_LABELS, type TagInputLabels } from "../../lib/labels";
 import type { TagInputBlurBehavior, TagInputRejection, TagInputRejectReason } from "./tag-input.types";
 
 /**
@@ -316,30 +317,46 @@ export function shouldFireRejectHaptic(lastAt: number | null, now: number): bool
 }
 
 /** What a screen reader hears when a tag is refused, by reason. Override per reason with `rejectMessages`. */
-export const DEFAULT_REJECT_MESSAGES: Record<TagInputRejectReason, string> = {
-	duplicate: "Duplicate, not added",
-	empty: "Nothing to add",
-	invalid: "Not valid, not added",
-	max: "Limit reached, not added",
-};
+export const DEFAULT_REJECT_MESSAGES: Record<TagInputRejectReason, string> = rejectMessagesOf(
+	DELACOUR_DEFAULT_LABELS.tagInput
+);
 
-export function resolveAddAnnouncement(tag: string): string {
-	return `Added ${tag}`;
+function rejectMessagesOf(labels: TagInputLabels): Record<TagInputRejectReason, string> {
+	return {
+		duplicate: labels.rejectDuplicate,
+		empty: labels.rejectEmpty,
+		invalid: labels.rejectInvalid,
+		max: labels.rejectMax,
+	};
 }
 
-export function resolveRemoveAnnouncement(tag: string): string {
-	return `Removed ${tag}`;
+/** One sentence for the tags a commit added; a single tag may be passed bare. */
+export function resolveAddAnnouncement(
+	tag: string | readonly string[],
+	labels: TagInputLabels = DELACOUR_DEFAULT_LABELS.tagInput
+): string {
+	return labels.added(typeof tag === "string" ? [tag] : tag);
+}
+
+export function resolveRemoveAnnouncement(
+	tag: string,
+	labels: TagInputLabels = DELACOUR_DEFAULT_LABELS.tagInput
+): string {
+	return labels.removed(tag);
 }
 
 export function resolveRejectAnnouncement(
 	reason: TagInputRejectReason,
-	overrides?: Partial<Record<TagInputRejectReason, string>>
+	overrides?: Partial<Record<TagInputRejectReason, string>>,
+	labels: TagInputLabels = DELACOUR_DEFAULT_LABELS.tagInput
 ): string {
-	return overrides?.[reason] ?? DEFAULT_REJECT_MESSAGES[reason];
+	return overrides?.[reason] ?? rejectMessagesOf(labels)[reason];
 }
 
 /** The tag group's accessible name. */
-export function resolveTagsAccessibilityLabel(count: number): string {
-	if (count === 0) return "No tags";
-	return count === 1 ? "1 tag" : `${count} tags`;
+export function resolveTagsAccessibilityLabel(
+	count: number,
+	labels: TagInputLabels = DELACOUR_DEFAULT_LABELS.tagInput
+): string {
+	return labels.tags(count);
 }

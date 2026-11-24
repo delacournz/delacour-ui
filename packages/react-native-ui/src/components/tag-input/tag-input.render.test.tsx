@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { createRef } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { TagInput } from "./tag-input";
@@ -693,6 +694,58 @@ describe("TagInput", () => {
 				/>
 			);
 			expect(screen.getByText("count:2")).toBeOnTheScreen();
+		});
+	});
+
+	describe("labels", () => {
+		test("the own labels prop names the controls and the announcements", async () => {
+			const announce = jest.fn();
+			await renderWithProviders(
+				<TagInput
+					accessibilityLabel={LABEL}
+					announce={announce}
+					defaultValue={["a"]}
+					isClearable
+					labels={{
+						added: (tags) => `Plus ${tags.join(" and ")}`,
+						clearAll: "Empty it",
+						remove: (tag) => `Drop ${tag}`,
+					}}
+				/>
+			);
+			expect(screen.getByRole("button", { name: "Drop a" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Empty it" })).toBeOnTheScreen();
+			await fireEvent.changeText(field(), "b,");
+			expect(announce).toHaveBeenCalledWith("Plus b");
+		});
+
+		test("a LabelsProvider supplies them", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ tagInput: { remove: (tag) => `Entferne ${tag}` } }}>
+					<TagInput accessibilityLabel={LABEL} defaultValue={["a"]} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("button", { name: "Entferne a" })).toBeOnTheScreen();
+		});
+
+		test("the string props still win over labels", async () => {
+			const announce = jest.fn();
+			await renderWithProviders(
+				<TagInput
+					accessibilityLabel={LABEL}
+					announce={announce}
+					clearAccessibilityLabel="Wipe"
+					defaultValue={["a"]}
+					isClearable
+					labels={{ clearAll: "Empty it", rejectDuplicate: "Dup", remove: (tag) => `Drop ${tag}` }}
+					rejectMessages={{ duplicate: "Already added" }}
+					removeAccessibilityLabel={(tag) => `Delete ${tag}`}
+				/>
+			);
+			expect(screen.getByRole("button", { name: "Delete a" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Wipe" })).toBeOnTheScreen();
+			await fireEvent.changeText(field(), "a,");
+			expect(announce).toHaveBeenCalledWith("Already added");
 		});
 	});
 });

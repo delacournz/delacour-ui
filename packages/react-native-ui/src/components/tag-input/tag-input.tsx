@@ -18,6 +18,8 @@ import {
 	View,
 } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { TagInputLabels } from "../../lib/labels";
 import type { ChipVariant } from "../chip/chip.variants";
 import { useFieldContext } from "../field/field.context";
 import { useFieldControlAccessibility } from "../field/field-control";
@@ -61,10 +63,6 @@ type InputBlurEvent = Parameters<NonNullable<TextInputProps["onBlur"]>>[0];
 
 const DEFAULT_DELIMITERS: readonly string[] = [","];
 
-function defaultRemoveAccessibilityLabel(tag: string): string {
-	return `Remove ${tag}`;
-}
-
 function defaultAnnounce(message: string): void {
 	AccessibilityInfo.announceForAccessibility(message);
 }
@@ -101,21 +99,23 @@ function reportCommit(
 		onReject,
 		rejectMessages,
 		lastRejectHapticAt,
+		labels,
 	}: {
 		speak: (message: string) => void;
 		onReject: ((rejection: TagInputRejection) => void) | undefined;
 		rejectMessages: Partial<Record<TagInputRejectReason, string>> | undefined;
 		lastRejectHapticAt: RefObject<number | null>;
+		labels: TagInputLabels;
 	}
 ): void {
 	if (result.accepted.length > 0) {
 		playHaptic("selection");
-		speak(result.accepted.map(resolveAddAnnouncement).join(", "));
+		speak(resolveAddAnnouncement(result.accepted, labels));
 	}
 	for (const rejection of result.rejected) onReject?.(rejection);
 	const first = result.rejected[0];
 	if (!first) return;
-	speak(resolveRejectAnnouncement(first.reason, rejectMessages));
+	speak(resolveRejectAnnouncement(first.reason, rejectMessages, labels));
 	if (first.reason === "empty") return;
 	const now = Date.now();
 	if (shouldFireRejectHaptic(lastRejectHapticAt.current, now)) {
@@ -185,12 +185,17 @@ export type TagInputProps = Omit<
 	isReadOnly?: boolean;
 	/** Shown only while there are no tags. */
 	placeholder?: string;
-	/** Name of one tag's remove control. Default `Remove ${tag}`. */
+	/** Name of one tag's remove control. Defaults to `labels.remove`. */
 	removeAccessibilityLabel?: (tag: string) => string;
-	/** Name of the clear-all control. Default `Clear all`. */
+	/** Name of the clear-all control. Defaults to `labels.clearAll`. */
 	clearAccessibilityLabel?: string;
 	/** What a screen reader hears when a tag is refused, per reason. */
 	rejectMessages?: Partial<Record<TagInputRejectReason, string>>;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `removeAccessibilityLabel`, `clearAccessibilityLabel` and `rejectMessages` still win.
+	 */
+	labels?: Partial<TagInputLabels>;
 	/**
 	 * Speaks add, remove and reject messages. Default
 	 * `AccessibilityInfo.announceForAccessibility`; `false` turns them off.
@@ -233,8 +238,9 @@ function TagInputRoot({
 	isDisabled,
 	isReadOnly = false,
 	placeholder,
-	removeAccessibilityLabel = defaultRemoveAccessibilityLabel,
-	clearAccessibilityLabel = "Clear all",
+	removeAccessibilityLabel,
+	clearAccessibilityLabel,
+	labels: labelsProp,
 	rejectMessages,
 	announce = defaultAnnounce,
 	renderTag,
@@ -251,6 +257,7 @@ function TagInputRoot({
 	onKeyPress,
 	...props
 }: TagInputProps): ReactElement {
+	const labels = useLabels("tagInput", labelsProp);
 	const field = useFieldContext();
 	const fieldRef = useRef<TextInputInstance | null>(null);
 	const lastRejectHapticAt = useRef<number | null>(null);
@@ -307,7 +314,7 @@ function TagInputRoot({
 
 	const applyTags = (result: TagInputCommitResult) => {
 		if (result.accepted.length > 0) setTags(result.tags);
-		reportCommit(result, { lastRejectHapticAt, onReject, rejectMessages, speak });
+		reportCommit(result, { labels, lastRejectHapticAt, onReject, rejectMessages, speak });
 	};
 
 	// The draft is written before the commit is reported, so a caller's
@@ -326,7 +333,7 @@ function TagInputRoot({
 		setArmed(false);
 		setTags(tags.filter((_, i) => i !== index));
 		playHaptic("light");
-		speak(resolveRemoveAnnouncement(tag));
+		speak(resolveRemoveAnnouncement(tag, labels));
 	};
 
 	const clear = () => {
@@ -415,7 +422,7 @@ function TagInputRoot({
 		max,
 		pendingRemoveIndex,
 		remove,
-		removeAccessibilityLabel,
+		removeAccessibilityLabel: removeAccessibilityLabel ?? labels.remove,
 		size,
 		tags,
 		testID,
@@ -458,7 +465,7 @@ function TagInputRoot({
 							accessibilityHint={fieldA11y.accessibilityHint}
 							accessibilityLabel={fieldA11y.accessibilityLabel}
 							accessibilityLabelledBy={fieldA11y.accessibilityLabelledBy}
-							accessibilityValue={{ text: resolveTagsAccessibilityLabel(tags.length) }}
+							accessibilityValue={{ text: resolveTagsAccessibilityLabel(tags.length, labels) }}
 							autoCapitalize="none"
 							autoCorrect={false}
 							className={resolveTagInputFieldClass({ size })}
@@ -482,7 +489,7 @@ function TagInputRoot({
 					)}
 				</View>
 				<TagInputSuffix
-					clearAccessibilityLabel={clearAccessibilityLabel}
+					clearAccessibilityLabel={clearAccessibilityLabel ?? labels.clearAll}
 					isClearable={isClearable}
 					showCount={showCount}
 				/>

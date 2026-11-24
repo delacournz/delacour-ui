@@ -1,6 +1,6 @@
 ---
 title: Provider
-description: The five layers DelacourProvider composes, in order, what breaks at each, and the one it leaves to you.
+description: The seven layers DelacourProvider composes, in order, what breaks at each, and the one it leaves to you.
 icon: Layers
 ---
 
@@ -12,7 +12,7 @@ import { DelacourProvider } from "@delacour/react-native-ui/provider";
 <DelacourProvider>{children}</DelacourProvider>;
 ```
 
-## The six layers
+## The seven layers
 
 Outermost first. The order is not stylistic.
 
@@ -23,6 +23,7 @@ Outermost first. The order is not stylistic.
 | `KeyboardProvider` | Owns one pair of shared animation values for the whole app. |
 | `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. A **sibling** of the children, not a parent of them. |
 | `CalmMotionProvider` | Pure context carrying `isMotionCalm`. |
+| `MinimumHitTargetProvider` | Pure context carrying `isMaterialHitTarget`. |
 | `LabelsProvider` | Pure context carrying `labels`. Wraps the children alone. |
 
 ## One more layer is yours

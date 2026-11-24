@@ -7,8 +7,11 @@ import type { ReactElement } from "react";
 import { Presets } from "react-native-pulsar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useKeyboardAnimationGuard } from "../../hooks/use-keyboard-state-sync";
+import { useLabels } from "../../hooks/use-labels";
+import type { BottomSheetLabels } from "../../lib/labels";
 import { useOptionalOverlay } from "../overlay/overlay.context";
 import { topOverlay } from "../overlay/overlay-registry";
+import { BottomSheetLabelsContext } from "./bottom-sheet.context";
 import { BottomSheetBackground } from "./bottom-sheet-background";
 import { BottomSheetClose } from "./bottom-sheet-close";
 import { BottomSheetContainer } from "./bottom-sheet-container";
@@ -33,7 +36,13 @@ import { BottomSheetTrigger } from "./bottom-sheet-trigger";
  * `bottomInset` is the device's safe-area bottom unless a caller says
  * otherwise, and the two haptics are the library's own.
  */
-export type BottomSheetProps = HeadlessBottomSheetProps;
+export type BottomSheetProps = HeadlessBottomSheetProps & {
+	/**
+	 * The spoken strings of `Close`, `Overlay` and `Handle`, laid over
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<BottomSheetLabels>;
+};
 
 /**
  * The haptics the sheet plays, as module-scope worklets.
@@ -71,7 +80,13 @@ const closeHaptic = Presets.System.impactLight;
  * `topInset` is left at the engine's zero, so a `%` snap point is a fraction of the
  * whole window — the same fraction it was before this rewrite.
  */
-function BottomSheetRoot({ bottomInset, closeOnBack = true, ...props }: BottomSheetProps): ReactElement {
+function BottomSheetRoot({
+	bottomInset,
+	closeOnBack = true,
+	labels: labelsProp,
+	...props
+}: BottomSheetProps): ReactElement {
+	const labels = useLabels("bottomSheet", labelsProp);
 	const insets = useSafeAreaInsets();
 	const overlays = useOptionalOverlay();
 	useKeyboardAnimationGuard();
@@ -86,13 +101,15 @@ function BottomSheetRoot({ bottomInset, closeOnBack = true, ...props }: BottomSh
 	// The haptics go before the spread, not into destructuring defaults: a
 	// default also replaces an explicit `undefined`, which is the opt-out.
 	return (
-		<Headless
-			onCloseHaptic={closeHaptic}
-			onSnapPointHaptic={snapPointHaptic}
-			{...props}
-			bottomInset={bottomInset ?? insets.bottom}
-			closeOnBack={closeOnBack && !isUnderOverlay}
-		/>
+		<BottomSheetLabelsContext.Provider value={labels}>
+			<Headless
+				onCloseHaptic={closeHaptic}
+				onSnapPointHaptic={snapPointHaptic}
+				{...props}
+				bottomInset={bottomInset ?? insets.bottom}
+				closeOnBack={closeOnBack && !isUnderOverlay}
+			/>
+		</BottomSheetLabelsContext.Provider>
 	);
 }
 

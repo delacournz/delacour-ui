@@ -4098,14 +4098,6 @@ export const install = {
 				],
 			},
 			{
-				name: "labels",
-				title: "labels",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
-				],
-			},
-			{
 				name: "use-labels",
 				title: "useLabels",
 				kind: "shared",
@@ -4127,14 +4119,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
-				],
-			},
-			{
-				name: "use-labels",
-				title: "useLabels",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 		],

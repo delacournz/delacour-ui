@@ -1,3 +1,4 @@
+export type { MarkdownEditorLabels } from "../../lib/labels";
 export { MarkdownEditor, type MarkdownEditorProps } from "./markdown-editor";
 export {
 	applyMarkdownCommand,

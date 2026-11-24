@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type MarkdownEditorActionKey } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { BUTTON_ICON_SIZES } from "../button/button.variants";
 import { INPUT_SIZES, INPUT_VARIANTS, type InputVariant, inputVariants } from "../input/input.variants";
@@ -106,6 +107,24 @@ describe("toolbar actions", () => {
 	test("the announcement says what the press did", () => {
 		expect(resolveMarkdownAnnouncement("bold", false)).toBe("Bold applied");
 		expect(resolveMarkdownAnnouncement("bulletList", true)).toBe("Bulleted list removed");
+	});
+
+	test("the announcement speaks through the labels it is given", () => {
+		const french = {
+			...DELACOUR_DEFAULT_LABELS.markdownEditor,
+			actions: { ...DELACOUR_DEFAULT_LABELS.markdownEditor.actions, bold: "Gras" },
+			applied: (name: string) => `${name} appliqué`,
+			removed: (name: string) => `${name} retiré`,
+		};
+		expect(resolveMarkdownAnnouncement("bold", false, french)).toBe("Gras appliqué");
+		expect(resolveMarkdownAnnouncement("bold", true, french)).toBe("Gras retiré");
+	});
+
+	test("the catalog's action keys are the toolbar's actions", () => {
+		const keys: MarkdownEditorActionKey[] = [...MARKDOWN_TOOLBAR_ACTIONS];
+		const back: MarkdownToolbarAction[] = keys;
+		expect(Object.keys(DELACOUR_DEFAULT_LABELS.markdownEditor.actions).sort()).toEqual([...back].sort());
+		expect(MARKDOWN_ACTION_LABELS).toBe(DELACOUR_DEFAULT_LABELS.markdownEditor.actions);
 	});
 });
 

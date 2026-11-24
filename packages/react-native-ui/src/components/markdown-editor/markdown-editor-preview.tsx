@@ -13,7 +13,7 @@ import { MarkdownBlocks } from "./markdown-editor-render";
 const PREVIEW_FADE_MS = 120;
 
 export type MarkdownEditorPreviewProps = Omit<ViewProps, "children"> & {
-	/** Shown when there is nothing to render. Default "Nothing to preview". */
+	/** Shown when there is nothing to render. Default `labels.empty`, "Nothing to preview". */
 	emptyText?: string;
 	className?: string;
 };
@@ -28,7 +28,7 @@ export type MarkdownEditorPreviewProps = Omit<ViewProps, "children"> & {
  * preview pane.
  */
 export function MarkdownEditorPreview({
-	emptyText = "Nothing to preview",
+	emptyText,
 	className,
 	style,
 	...props
@@ -43,7 +43,7 @@ export function MarkdownEditorPreview({
 
 	return (
 		<Animated.View
-			accessibilityLabel="Preview"
+			accessibilityLabel={editor.labels.previewPane}
 			className={resolveMarkdownPaneClass({
 				base: slots.preview(),
 				className,
@@ -54,9 +54,14 @@ export function MarkdownEditorPreview({
 			{...props}
 		>
 			{blocks.length === 0 ? (
-				<Text.Caption>{emptyText}</Text.Caption>
+				<Text.Caption>{emptyText ?? editor.labels.empty}</Text.Caption>
 			) : (
-				<MarkdownBlocks blocks={blocks} codeClassName={slots.inlineCode()} onLinkPress={editor.onLinkPress} />
+				<MarkdownBlocks
+					blocks={blocks}
+					codeClassName={slots.inlineCode()}
+					labels={editor.labels}
+					onLinkPress={editor.onLinkPress}
+				/>
 			)}
 		</Animated.View>
 	);

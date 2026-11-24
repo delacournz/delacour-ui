@@ -1,3 +1,4 @@
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { MARKDOWN_FENCE_CLOSE, MARKDOWN_FENCE_OPEN } from "./markdown-editor.parse";
 import type {
 	MarkdownCommand,
@@ -324,7 +325,6 @@ function toggleInline(text: string, selection: MarkdownSelection, marker: Inline
 const LINK = /\[([^\]\n]*)\]\(([^)\s]*)\)/g;
 const URL_LIKE = /^(?:https?:\/\/|mailto:|tel:)\S+$/i;
 const LINK_PLACEHOLDER = "url";
-const LABEL_PLACEHOLDER = "link";
 
 type LinkMatch = { start: number; end: number; labelEnd: number };
 
@@ -353,7 +353,12 @@ function enclosingLink(links: readonly LinkMatch[], start: number, end: number):
  * slot selected. Only the first line of a range is linked: a label cannot
  * cross a line break.
  */
-function toggleLink(text: string, selection: MarkdownSelection, url: string | undefined): MarkdownEdit {
+function toggleLink(
+	text: string,
+	selection: MarkdownSelection,
+	url: string | undefined,
+	linkText: string
+): MarkdownEdit {
 	const lines = splitLines(text);
 	const line = lineAt(lines, selection.start);
 	const start = selection.start;
@@ -382,8 +387,8 @@ function toggleLink(text: string, selection: MarkdownSelection, url: string | un
 	const selected = text.slice(trimmed.start, trimmed.end);
 	if (URL_LIKE.test(selected) && url === undefined) {
 		return {
-			selection: { end: trimmed.start + 1 + LABEL_PLACEHOLDER.length, start: trimmed.start + 1 },
-			text: `${text.slice(0, trimmed.start)}[${LABEL_PLACEHOLDER}](${selected})${text.slice(trimmed.end)}`,
+			selection: { end: trimmed.start + 1 + linkText.length, start: trimmed.start + 1 },
+			text: `${text.slice(0, trimmed.start)}[${linkText}](${selected})${text.slice(trimmed.end)}`,
 		};
 	}
 
@@ -581,6 +586,8 @@ function toggleCodeBlock(text: string, selection: MarkdownSelection): MarkdownEd
  * `bulletList`, `orderedList`) apply to every touched line, and a range comes
  * back covering those lines whole.
  *
+ * `linkText` is the label a `link` command inserts and selects when the selection is a url.
+ *
  * @example
  * applyMarkdownCommand("say hi", { start: 4, end: 6 }, { type: "bold" });
  * // { text: "say **hi**", selection: { start: 6, end: 8 } }
@@ -588,7 +595,8 @@ function toggleCodeBlock(text: string, selection: MarkdownSelection): MarkdownEd
 export function applyMarkdownCommand(
 	text: string,
 	selection: MarkdownSelection,
-	command: MarkdownCommand
+	command: MarkdownCommand,
+	linkText: string = DELACOUR_DEFAULT_LABELS.markdownEditor.linkText
 ): MarkdownEdit {
 	const normalized = normalizeMarkdownSelection(text, selection);
 	switch (command.type) {
@@ -598,7 +606,7 @@ export function applyMarkdownCommand(
 		case "strikethrough":
 			return toggleInline(text, normalized, INLINE_MARKERS[command.type]);
 		case "link":
-			return toggleLink(text, normalized, command.url);
+			return toggleLink(text, normalized, command.url, linkText);
 		case "heading":
 			return toggleHeading(text, normalized, command.level);
 		case "quote":

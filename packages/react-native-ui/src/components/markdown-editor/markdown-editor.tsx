@@ -11,6 +11,8 @@ import {
 } from "react";
 import { AccessibilityInfo, Linking, type TextInputInstance, View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { MarkdownEditorLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import type { HapticFeedback } from "../pressable/pressable";
 import { applyMarkdownCommand, continueMarkdownList, getActiveMarkdownCommands } from "./markdown-editor.commands";
@@ -70,6 +72,8 @@ export type MarkdownEditorProps = Omit<ViewProps, "children"> & {
 	haptic?: false | HapticFeedback;
 	/** Opens a link tapped in the preview. Default `Linking.openURL`. Only ever called with an http, https, mailto or tel url. */
 	onLinkPress?: (url: string) => void;
+	/** Spoken and visible strings — action names, Write / Preview, the empty preview. Laid over `DelacourProvider`'s `labels`, which sit over English. */
+	labels?: Partial<MarkdownEditorLabels>;
 	ref?: Ref<MarkdownEditorHandle>;
 	className?: string;
 	/** The parts, composed. Omitted: a toolbar, the write pane and the preview. */
@@ -101,12 +105,14 @@ function MarkdownEditorRoot({
 	continueLists = true,
 	haptic = "selection",
 	onLinkPress,
+	labels: labelsProp,
 	ref,
 	className,
 	children,
 	...props
 }: MarkdownEditorProps): ReactElement {
 	const field = useFieldContext();
+	const labels = useLabels("markdownEditor", labelsProp);
 	const isDisabled = isDisabledProp ?? field?.isDisabled ?? false;
 	const isInvalid = isInvalidProp ?? field?.isInvalid ?? false;
 
@@ -165,10 +171,10 @@ function MarkdownEditorRoot({
 	const apply = useCallback(
 		(command: MarkdownCommand) => {
 			if (!canFormatRef.current) return;
-			const edit = applyMarkdownCommand(valueRef.current, selectionRef.current, command);
+			const edit = applyMarkdownCommand(valueRef.current, selectionRef.current, command, labels.linkText);
 			commit(edit.text, edit.selection);
 		},
-		[commit]
+		[commit, labels.linkText]
 	);
 
 	const applyAction = useCallback(
@@ -178,9 +184,9 @@ function MarkdownEditorRoot({
 			const current = selectionRef.current;
 			const wasActive = resolveMarkdownActionIsActive(action, getActiveMarkdownCommands(text, current));
 			apply(resolveMarkdownActionCommand(action, text, current));
-			AccessibilityInfo.announceForAccessibility(resolveMarkdownAnnouncement(action, wasActive));
+			AccessibilityInfo.announceForAccessibility(resolveMarkdownAnnouncement(action, wasActive, labels));
 		},
-		[apply]
+		[apply, labels]
 	);
 
 	const onChangeText = useCallback(
@@ -233,6 +239,7 @@ function MarkdownEditorRoot({
 			isDisabled,
 			isInvalid,
 			isReadOnly,
+			labels,
 			mode,
 			onChangeText,
 			onLinkPress: onLinkPress ?? openLink,
@@ -255,6 +262,7 @@ function MarkdownEditorRoot({
 			isDisabled,
 			isInvalid,
 			isReadOnly,
+			labels,
 			mode,
 			onChangeText,
 			onLinkPress,

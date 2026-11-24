@@ -181,6 +181,11 @@ describe("link", () => {
 		expect(run("⟦https://a.co⟧", LINK)).toBe("[⟦link⟧](https://a.co)");
 	});
 
+	test("the label a selected url gets is the one passed in", () => {
+		const { text, selection } = parse("⟦https://a.co⟧");
+		expect(draw(applyMarkdownCommand(text, selection, LINK, "lien"))).toBe("[⟦lien⟧](https://a.co)");
+	});
+
 	test("unwraps the link a caret sits in, keeping its text", () => {
 		expect(run("see [the d‸ocs](https://a.co) now", LINK)).toBe("see the d‸ocs now");
 	});

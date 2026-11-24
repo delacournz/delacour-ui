@@ -561,6 +561,8 @@ export type MarkdownEditorLabels = {
 	empty: string;
 	/** A bullet-list row's spoken text; an ordered row speaks its number instead. */
 	bulletItem: (text: string) => string;
+	/** A link inside a list row, offered as an action on the row; `text` is the link's text. */
+	openLink: (text: string) => string;
 	/** The text a link command inserts, selected, when nothing was selected. */
 	linkText: string;
 };
@@ -980,6 +982,7 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		previewPane: "Preview",
 		empty: "Nothing to preview",
 		bulletItem: (text) => `bullet ${text}`,
+		openLink: (text) => `Open link ${text}`,
 		linkText: "link",
 	},
 	menu: {

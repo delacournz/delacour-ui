@@ -124,6 +124,16 @@ knows nothing about tokens.
   the crosshair, the dot and the number all read the same row. `glide` opts
   into the continuous curve position, and the doc says what it costs.
 
+- **A series can be told apart by more than its colour.** `dash` on a config
+  entry — or `Chart.Line dash`, with `false` forcing it solid — draws that
+  line dashed, and `Chart.Legend` draws the same series' swatch as a dashed
+  sample. Colour alone fails anyone who cannot separate the two hues, a
+  greyscale print, and a low-contrast pair (WCAG 1.4.1); a cue the legend did
+  not repeat would distinguish two lines without saying which is which. The
+  lengths are what shows: the engine moves the round cap's reach out of each
+  dash, so a short gap does not close up into a solid line. The swatches are
+  hidden from assistive technology — the label beside each names the series.
+
 - **A dot rings itself in the chart's background.** A dot in the series colour
   sitting on a line of that same colour is a slight thickening and nothing
   more; the ring is what makes it a knob. That is why `surfaceColor` is

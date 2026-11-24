@@ -2717,7 +2717,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 121,
+		fileCount: 122,
 		groups: [
 			{
 				name: "tag-input",
@@ -2963,6 +2963,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -4165,7 +4173,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 55,
 		groups: [
 			{
 				name: "chip",
@@ -4302,6 +4310,14 @@ export const install = {
 				],
 			},
 			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -4344,7 +4360,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 179,
+		fileCount: 180,
 		groups: [
 			{
 				name: "combobox",
@@ -4744,6 +4760,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -5611,7 +5635,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 109,
+		fileCount: 110,
 		groups: [
 			{
 				name: "kpi",
@@ -5819,6 +5843,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -9338,7 +9370,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 124,
+		fileCount: 125,
 		groups: [
 			{
 				name: "search-bar",
@@ -9611,6 +9643,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -10527,7 +10567,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 38,
+		fileCount: 39,
 		groups: [
 			{
 				name: "badge",
@@ -10632,6 +10672,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -11649,7 +11697,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 115,
+		fileCount: 116,
 		groups: [
 			{
 				name: "support",
@@ -11867,6 +11915,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -13091,7 +13147,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 61,
+		fileCount: 62,
 		groups: [
 			{
 				name: "animated-badge",
@@ -13226,6 +13282,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -13478,7 +13542,7 @@ export const install = {
 		expo: ["expo-linear-gradient", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 57,
 		groups: [
 			{
 				name: "post",
@@ -13633,6 +13697,14 @@ export const install = {
 				],
 			},
 			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
+				],
+			},
+			{
 				name: "announce",
 				title: "announce",
 				kind: "shared",
@@ -13659,7 +13731,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 47,
+		fileCount: 48,
 		groups: [
 			{
 				name: "message",
@@ -13772,6 +13844,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{

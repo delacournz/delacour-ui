@@ -266,3 +266,37 @@ export function resolveBodyClamp(input: {
 	if (input.isExpanded) return { numberOfLines: undefined, showMore: false, showLess: true };
 	return { numberOfLines: input.numberOfLines, showMore: input.isTruncated, showLess: false };
 }
+
+/** One entry of a screen reader's actions menu. */
+export type PostCardAction = { name: "activate" | "longpress"; label: string };
+
+/**
+ * The named accessibility actions a pressable card publishes for its own presses.
+ *
+ * The card root is `accessible={false}` so its inner controls stay reachable, which leaves its
+ * `onPress` and `onLongPress` with no element to act on. `Post.Body` carries these instead: the
+ * double-tap on the text activates the post. A disabled card offers nothing.
+ */
+export function resolvePostCardActions({
+	hasPress,
+	hasLongPress,
+	disabled = false,
+}: {
+	hasPress: boolean;
+	hasLongPress: boolean;
+	disabled?: boolean;
+}): PostCardAction[] {
+	if (disabled) return [];
+	const actions: PostCardAction[] = [];
+	if (hasPress) actions.push({ name: "activate", label: "Open post" });
+	if (hasLongPress) actions.push({ name: "longpress", label: "More options" });
+	return actions;
+}
+
+/**
+ * What the "more" / "less" toggle says to a screen reader: a label that contains the visible word
+ * and whether the body is open.
+ */
+export function resolveBodyToggleA11y(isExpanded: boolean): { label: string; expanded: boolean } {
+	return isExpanded ? { label: "Show less", expanded: true } : { label: "Show more", expanded: false };
+}

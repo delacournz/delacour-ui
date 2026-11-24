@@ -6,6 +6,12 @@ export type PostContextValue = {
 	variant: PostVariant;
 	/** Type and gap density. */
 	size: PostSize;
+	/** The card's own press, for the one part that carries it as an accessibility action. */
+	onCardPress?: () => void;
+	/** The card's own long press, carried the same way. */
+	onCardLongPress?: () => void;
+	/** The card is disabled — its presses are not offered. */
+	isCardDisabled?: boolean;
 };
 
 const PostContext = createContext<PostContextValue | null>(null);

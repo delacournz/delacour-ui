@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View } from "react-native";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { Pressable, type PressableProps } from "../pressable";
 import { type PostContextValue, PostProvider } from "./post.context";
 import { type PostSize, type PostVariant, postVariants } from "./post.variants";
@@ -35,12 +36,17 @@ function PostRoot({
 	children,
 	...props
 }: PostProps): ReactElement {
-	const context = useMemo<PostContextValue>(() => ({ variant, size }), [variant, size]);
+	const context = useMemo<PostContextValue>(
+		() => ({ variant, size, onCardPress: onPress, onCardLongPress: onLongPress, isCardDisabled: disabled }),
+		[variant, size, onPress, onLongPress, disabled]
+	);
+	warnInteractiveChildInAccessible({ component: "Post", accessible: props.accessible, children });
 	const rootClass = postVariants({ variant, size, isDisabled: disabled }).root({ className });
 
 	// `accessible={false}` on a pressable card is deliberate: an accessible
 	// parent swallows its children on iOS, and the like and reply buttons inside
-	// would vanish from VoiceOver. See AGENTS.md.
+	// would vanish from VoiceOver. The card's own presses reach assistive
+	// technology as `activate` / `longpress` actions on Post.Body. See AGENTS.md.
 	const card =
 		onPress || onLongPress ? (
 			<Pressable

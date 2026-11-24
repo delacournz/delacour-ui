@@ -6,6 +6,8 @@ import {
 	formatRelativeTime,
 	resolveAuthorA11yLabel,
 	resolveBodyClamp,
+	resolveBodyToggleA11y,
+	resolvePostCardActions,
 	resolvePostStatLabel,
 	resolveVotesLabel,
 	tokenizePostBody,
@@ -273,5 +275,38 @@ describe("resolveBodyClamp", () => {
 			showMore: false,
 			showLess: false,
 		});
+	});
+});
+
+describe("resolvePostCardActions", () => {
+	test("a card with both presses offers activate and longpress", () => {
+		expect(resolvePostCardActions({ hasPress: true, hasLongPress: true })).toEqual([
+			{ name: "activate", label: "Open post" },
+			{ name: "longpress", label: "More options" },
+		]);
+	});
+
+	test("only the presses the card has are offered", () => {
+		expect(resolvePostCardActions({ hasPress: true, hasLongPress: false })).toEqual([
+			{ name: "activate", label: "Open post" },
+		]);
+		expect(resolvePostCardActions({ hasPress: false, hasLongPress: true })).toEqual([
+			{ name: "longpress", label: "More options" },
+		]);
+	});
+
+	test("a disabled or press-less card offers nothing", () => {
+		expect(resolvePostCardActions({ hasPress: false, hasLongPress: false })).toEqual([]);
+		expect(resolvePostCardActions({ hasPress: true, hasLongPress: true, disabled: true })).toEqual([]);
+	});
+});
+
+describe("resolveBodyToggleA11y", () => {
+	test("more is Show more and collapsed", () => {
+		expect(resolveBodyToggleA11y(false)).toEqual({ label: "Show more", expanded: false });
+	});
+
+	test("less is Show less and expanded", () => {
+		expect(resolveBodyToggleA11y(true)).toEqual({ label: "Show less", expanded: true });
 	});
 });

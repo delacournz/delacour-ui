@@ -1,8 +1,14 @@
 import { type ReactElement, type ReactNode, useState } from "react";
-import { type TextLayoutEvent, View } from "react-native";
+import { type AccessibilityActionEvent, type TextLayoutEvent, View } from "react-native";
 import { Text, type TextProps } from "../text";
 import { usePostPart } from "./post.context";
-import { type BodyToken, resolveBodyClamp, tokenizePostBody } from "./post.utils";
+import {
+	type BodyToken,
+	resolveBodyClamp,
+	resolveBodyToggleA11y,
+	resolvePostCardActions,
+	tokenizePostBody,
+} from "./post.utils";
 import { postVariants } from "./post.variants";
 
 export type PostBodyProps = Omit<TextProps, "children" | "numberOfLines"> & {
@@ -43,7 +49,9 @@ function handlerFor(
  *
  * `expandable` with `numberOfLines` measures the body unclamped in an
  * invisible twin laid over it, because a clamped `Text` reports only the lines
- * it drew. "More" appears only when the twin has more lines than the clamp —
+ * it drew. The "more" / "less" toggle is labelled "Show more" / "Show less" and carries
+ * `expanded`. This is also the one carrier of a pressable card's own `onPress` /
+ * `onLongPress`, as `activate` / `longpress` accessibility actions — see AGENTS.md. "More" appears only when the twin has more lines than the clamp —
  * a short post offers nothing to tap into.
  */
 export function PostBody({
@@ -57,7 +65,16 @@ export function PostBody({
 	testID,
 	...props
 }: PostBodyProps): ReactElement {
-	const { variant, size } = usePostPart("Post.Body");
+	const { variant, size, onCardPress, onCardLongPress, isCardDisabled } = usePostPart("Post.Body");
+	const cardActions = resolvePostCardActions({
+		hasPress: onCardPress !== undefined,
+		hasLongPress: onCardLongPress !== undefined,
+		disabled: isCardDisabled,
+	});
+	const onCardAccessibilityAction = (event: AccessibilityActionEvent) => {
+		if (event.nativeEvent.actionName === "activate") onCardPress?.();
+		if (event.nativeEvent.actionName === "longpress") onCardLongPress?.();
+	};
 	const slots = postVariants({ variant, size });
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [isTruncated, setIsTruncated] = useState(false);
@@ -89,10 +106,18 @@ export function PostBody({
 
 	const isMeasured = expandable && numberOfLines !== undefined;
 	const toggle = clamp.showMore || clamp.showLess;
+	const toggleA11y = resolveBodyToggleA11y(isExpanded);
 
 	return (
 		<View className={slots.bodyFrame()}>
-			<Text className={slots.body({ className })} numberOfLines={clamp.numberOfLines} testID={testID} {...props}>
+			<Text
+				accessibilityActions={cardActions.length > 0 ? cardActions : undefined}
+				className={slots.body({ className })}
+				numberOfLines={clamp.numberOfLines}
+				onAccessibilityAction={cardActions.length > 0 ? onCardAccessibilityAction : undefined}
+				testID={testID}
+				{...props}
+			>
 				{content}
 			</Text>
 			{isMeasured ? (
@@ -108,7 +133,9 @@ export function PostBody({
 			) : null}
 			{toggle ? (
 				<Text
+					accessibilityLabel={toggleA11y.label}
 					accessibilityRole="button"
+					accessibilityState={{ expanded: toggleA11y.expanded }}
 					className={slots.bodyToggle()}
 					onPress={() => setIsExpanded((open) => !open)}
 					suppressHighlighting

@@ -45,10 +45,16 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
   that kept its own count would show the wrong one the moment they disagreed. Post owns what a
   press looks like.
 - **A pressable card is `accessible={false}`.** An accessible parent swallows its children on iOS,
-  so a card that merged would hide like, reply and the author's profile tap from VoiceOver. The
-  cost is that the card's own `onPress` is not a VoiceOver stop — give the thread another
-  reachable path (a title, or the reply stat) when that matters. Without `onPress` the root is a
-  plain `View`.
+  so a card that merged would hide like, reply and the author's profile tap from VoiceOver. That
+  leaves the card's own `onPress` / `onLongPress` with no element to act on, so the root publishes
+  them through context and **`Post.Body` is the one carrier**: its text offers `activate` ("Open
+  post") and `longpress` ("More options") accessibility actions (`resolvePostCardActions`), so
+  double-tapping the body opens the post. Title, author and the rest do not repeat them. A post with
+  no `Post.Body` has no carrier — give it another path (the reply stat). A disabled or press-less
+  card offers none; without `onPress` the root is a plain `View`. Passing `accessible` to `Post`
+  yourself merges the card and swallows its controls — a development warning says so.
+- **The "more" / "less" toggle is labelled "Show more" / "Show less"** (the visible word is in the
+  name) and carries `accessibilityState.expanded`.
 - **`Post.Author` and `Post.Community` are one stop each.** Their labels are built by
   `resolveAuthorA11yLabel` — "Aria Whitlock, @aria, verified, 3 minutes ago" — so the time is read as
   words, never "3m", and four elements are not four swipes.

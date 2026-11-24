@@ -1,13 +1,13 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { useAnnouncement } from "../../hooks/use-announce";
-import { useLabels } from "../../hooks/use-labels";
 import type { ScreenLabels } from "../../lib/labels";
 import { Spinner } from "../spinner";
 import { resolveScreenLoadingLabel, screenVariants } from "./screen.variants";
 import { ScreenContent } from "./screen-content";
 import { ScreenNavbar } from "./screen-navbar";
 import { ScreenRoot } from "./screen-root";
+import { useScreenLabels } from "./use-screen-labels";
 
 export type ScreenLoadingProps = {
 	/** Title for the navbar, if the screen shows one. */
@@ -46,7 +46,7 @@ export function ScreenLoading({
 	announce = true,
 	labels: labelsProp,
 }: ScreenLoadingProps): ReactElement {
-	const labels = useLabels("screen", labelsProp);
+	const labels = useScreenLabels(labelsProp);
 	const name = resolveScreenLoadingLabel(label, labels);
 	const { accessibilityLiveRegion } = useAnnouncement(name, {
 		channel: "announcement",

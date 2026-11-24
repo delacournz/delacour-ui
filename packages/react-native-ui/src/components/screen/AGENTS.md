@@ -21,6 +21,7 @@ whole-screen states.
 | `screen-navbar-subtitle.tsx` | `Screen.Navbar.Subtitle` |
 | `screen-navbar-back-button.tsx` | `Screen.Navbar.BackButton`, and `SCREEN_BACK_BUTTON_GLYPHS` |
 | `screen-navbar-background.tsx` | The navbar's opaque backing and its bottom hairline — internal |
+| `use-screen-labels.ts` | `useScreenLabels` — the enclosing screen's labels, else the resolved ones |
 | `screen-content.tsx` | `Screen.Content` |
 | `screen-view.tsx` | `Screen.View` |
 | `screen-header.tsx` | `Screen.Header` |
@@ -293,9 +294,11 @@ the first row is still leaving.
   explicit prop (`BackButton`'s `accessibilityLabel`, `Loading`'s `label`, `Error`'s `title`) ← the
   `labels` prop ← `DelacourProvider` `labels` ← English. `ScreenRoot` resolves once and publishes
   `labels` on the screen context; `BackButton` reads it, falling back to `useLabels("screen")`
-  outside a screen. `Loading` and `Error` resolve their own `labels` prop and hand the result to
-  the root they render. A nested screen with no `labels` keeps the outer set; one with its own
-  gets a context copy (same shared values, new `labels`) for its subtree.
+  outside a screen. The root, `Loading` and `Error` share one rule, `useScreenLabels`: with no
+  `labels` of their own they keep the enclosing screen's, so a `Screen.Loading` inside a translated
+  `<Screen>` speaks what its back button does; with their own, those sit over the provider's.
+  `Loading` and `Error` hand the result to the root they render. A nested screen with its own
+  `labels` gets a context copy (same shared values, new `labels`) for its subtree.
   `resolveScreenLoadingLabel` and `resolveScreenErrorAnnouncement` take `labels` as their last
   parameter; `SCREEN_LOADING_LABEL` is a deprecated alias of the English default.
 - **A page's title is a heading.** `Screen.Navbar.Title` (a string child) and `Screen.Error`'s title

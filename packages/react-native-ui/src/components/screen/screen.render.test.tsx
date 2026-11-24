@@ -508,6 +508,18 @@ describe("Screen labels", () => {
 		expect(screen.getByText("Etwas ist schiefgelaufen")).toBeOnTheScreen();
 	});
 
+	test("Screen.Loading and Screen.Error inside a labelled screen speak its labels", async () => {
+		await renderWithProviders(
+			<Screen labels={german}>
+				<Screen.Loading onBack={() => undefined} />
+				<Screen.Error message="Offline." onBack={() => undefined} showNavbar={false} />
+			</Screen>
+		);
+		expect(screen.getByLabelText("Laden")).toBeOnTheScreen();
+		expect(screen.getByText("Etwas ist schiefgelaufen")).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Zurück" })).toBeOnTheScreen();
+	});
+
 	test("Screen.Loading and Screen.Error take their own labels, and their navbar back button follows", async () => {
 		await renderWithProviders(
 			<>

@@ -1,10 +1,10 @@
 import type { ReactElement } from "react";
 import { View, type ViewProps } from "react-native";
-import { useLabels } from "../../hooks/use-labels";
 import type { ScreenLabels } from "../../lib/labels";
 import { ScreenProvider, useScreenContext } from "./screen.context";
 import { screenVariants } from "./screen.variants";
 import { ScreenScrollSourceBridge } from "./screen-scroll-source";
+import { useScreenLabels } from "./use-screen-labels";
 
 export type ScreenRootProps = ViewProps & {
 	/**
@@ -42,8 +42,7 @@ export function ScreenRoot({
 	// A nested screen keeps reporting to the outer one rather than starting a
 	// second, unread set of measurements.
 	const parentContext = useScreenContext();
-	const own = useLabels("screen", labelsProp);
-	const labels = labelsProp === undefined && parentContext ? parentContext.labels : own;
+	const labels = useScreenLabels(labelsProp);
 
 	// The bridge republishes the scroll values as a `ScrollSource`, which is what
 	// lets the scroll family work inside a screen with no wiring.

@@ -1,13 +1,13 @@
 import type { ReactElement, ReactNode } from "react";
 import { View } from "react-native";
 import { useAnnouncement } from "../../hooks/use-announce";
-import { useLabels } from "../../hooks/use-labels";
 import type { ScreenLabels } from "../../lib/labels";
 import { Text } from "../text";
 import { resolveScreenErrorAnnouncement, screenVariants } from "./screen.variants";
 import { ScreenContent } from "./screen-content";
 import { ScreenNavbar } from "./screen-navbar";
 import { ScreenRoot } from "./screen-root";
+import { useScreenLabels } from "./use-screen-labels";
 
 export type ScreenErrorProps = {
 	/** Headline. Defaults to `labels.errorTitle`. */
@@ -54,7 +54,7 @@ export function ScreenError({
 	children,
 	labels: labelsProp,
 }: ScreenErrorProps): ReactElement {
-	const labels = useLabels("screen", labelsProp);
+	const labels = useScreenLabels(labelsProp);
 	const heading = title ?? labels.errorTitle;
 	const slots = screenVariants();
 	const { accessibilityLiveRegion } = useAnnouncement(resolveScreenErrorAnnouncement(heading, message, labels), {

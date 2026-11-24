@@ -22,11 +22,16 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
 import { type SwipeContextValue, SwipeProvider, useSwipeGroupContext } from "./swipe.context";
 import {
+	mergeSwipeAccessibilityActions,
 	partitionSwipeChildren,
 	resolveOutermostIndex,
+	resolveSwipeAccessibilityActions,
+	resolveSwipeActionByName,
+	SWIPE_ESCAPE_ACTION,
 	SWIPE_FLY_OFF_DURATION,
 	SWIPE_FULL_FRACTION,
 	SWIPE_PROJECTION,
@@ -84,6 +89,8 @@ function SwipeRoot({
 	onLayout,
 	accessibilityLabel,
 	accessibilityHint,
+	accessibilityActions: callerActions,
+	onAccessibilityAction: onCallerAccessibilityAction,
 	ref,
 	...props
 }: SwipeProps): ReactElement {
@@ -302,19 +309,34 @@ function SwipeRoot({
 		[onLayout, rowWidth]
 	);
 
-	const actions = useMemo(() => [...start, ...end].map((tile) => tile.props), [end, start]);
 	const accessibilityActions = useMemo(
 		() =>
-			actions.flatMap((action) => (action.label === undefined ? [] : [{ label: action.label, name: action.label }])),
-		[actions]
+			mergeSwipeAccessibilityActions({
+				caller: callerActions,
+				isOpen: openSide !== null,
+				swipe: resolveSwipeAccessibilityActions({ end, start }),
+			}),
+		[callerActions, end, openSide, start]
 	);
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
-			const action = actions.find((entry) => entry.label === event.nativeEvent.actionName);
-			action?.onPress?.();
+			const name = event.nativeEvent.actionName;
+			const tile = resolveSwipeActionByName(name, { end, start });
+			if (tile !== undefined) {
+				tile.onPress?.();
+				return;
+			}
+			const isOwnEscape = name === SWIPE_ESCAPE_ACTION && !callerActions?.some((entry) => entry.name === name);
+			if (isOwnEscape) {
+				close();
+				return;
+			}
+			onCallerAccessibilityAction?.(event);
 		},
-		[actions]
+		[callerActions, close, end, onCallerAccessibilityAction, start]
 	);
+
+	warnInteractiveChildInAccessible({ accessible: true, children: row, component: "Swipe" });
 
 	const context = useMemo<SwipeContextValue>(
 		() => ({ close, isRTL: IS_RTL, offset, open, openSide, runAction }),
@@ -366,7 +388,9 @@ function SwipeRoot({
  * `Swipe.Start` and `Swipe.End` are markers: their `Swipe.Action`s are lifted
  * out and laid out by the root. Everything else is the row. Every action is
  * also published as an accessibility action on the row, since a swipe is
- * invisible to a screen reader.
+ * invisible to a screen reader. The row is one accessibility element, so a
+ * control inside it is unreachable: mirror it with `accessibilityActions` and
+ * `onAccessibilityAction` on `Swipe`, which are merged with the tiles'.
  *
  * Wrap rows in `Swipe.Group` to keep one open at a time; `useSwipeGroup()`
  * closes them all. A ref exposes `open(side)` and `close()`.

@@ -55,6 +55,69 @@ export const SWIPE_END_DISPLAY_NAME = "DelacourUI.Swipe.End";
 /** What the root reads off a lifted tile — `Swipe.Action`'s props, as far as layout and dispatch need. */
 export type SwipeTileProps = { color?: SwipeActionColor; label?: string; onPress?: () => void };
 
+/** A named accessibility action — `AccessibilityActionInfo`, restated so this file imports nothing from React Native. */
+export type SwipeAccessibilityAction = { name: string; label?: string };
+
+/** The standard action a screen reader sends for a two-finger scrub (iOS) or back gesture; closes an open row. */
+export const SWIPE_ESCAPE_ACTION = "escape";
+
+/** What the open row's `escape` action is announced as. */
+export const SWIPE_CLOSE_ACTION_LABEL = "Close";
+
+/**
+ * The stable name a tile is published under: `swipe-<side>-<index>`.
+ *
+ * A tile's label is for speaking, not for dispatch: two tiles can share one, and a label such as
+ * "Activate" would collide with a standard action name.
+ */
+export function swipeActionName(side: SwipeSide, index: number): string {
+	return `swipe-${side}-${index}`;
+}
+
+/** Every labelled tile as a named accessibility action, `start` tiles first, then `end`, in source order. */
+export function resolveSwipeAccessibilityActions(tiles: {
+	start: readonly { props: SwipeTileProps }[];
+	end: readonly { props: SwipeTileProps }[];
+}): SwipeAccessibilityAction[] {
+	const actions: SwipeAccessibilityAction[] = [];
+	for (const side of SWIPE_SIDES) {
+		tiles[side].forEach((tile, index) => {
+			if (tile.props.label !== undefined) actions.push({ label: tile.props.label, name: swipeActionName(side, index) });
+		});
+	}
+	return actions;
+}
+
+/** The tile a published action name belongs to, or `undefined` for a name that is not one of this row's. */
+export function resolveSwipeActionByName(
+	name: string,
+	tiles: { start: readonly { props: SwipeTileProps }[]; end: readonly { props: SwipeTileProps }[] }
+): SwipeTileProps | undefined {
+	for (const side of SWIPE_SIDES) {
+		const index = tiles[side].findIndex((_, at) => swipeActionName(side, at) === name);
+		if (index !== -1) return tiles[side][index]?.props;
+	}
+	return undefined;
+}
+
+/**
+ * The actions the row publishes: the caller's own (mirroring a control inside the row) first, then
+ * the tiles', then `escape` while a side is open, unless the caller already declared `escape`.
+ */
+export function mergeSwipeAccessibilityActions({
+	caller,
+	isOpen,
+	swipe,
+}: {
+	caller: readonly SwipeAccessibilityAction[] | undefined;
+	isOpen: boolean;
+	swipe: readonly SwipeAccessibilityAction[];
+}): SwipeAccessibilityAction[] {
+	const own = caller ?? [];
+	const closes = isOpen && !own.some((action) => action.name === SWIPE_ESCAPE_ACTION);
+	return [...own, ...swipe, ...(closes ? [{ label: SWIPE_CLOSE_ACTION_LABEL, name: SWIPE_ESCAPE_ACTION }] : [])];
+}
+
 export type SwipeChildren = {
 	/** The tiles behind the start edge, in source order. */
 	start: ReactElement<SwipeTileProps>[];

@@ -125,12 +125,21 @@ root plus `Swipe.Start`, `Swipe.End`, `Swipe.Action` and `Swipe.Group`, with `us
 
 ## Accessibility
 
-- **Every action is published on the row as an accessibility action**, named and labelled by its
-  `label`, and dispatched by name. A swipe is invisible to a screen reader, so without this the
-  actions would not exist for one.
+- **Every action is published on the row as a named accessibility action**, labelled by its `label`
+  and dispatched by a stable name, `swipe-<side>-<index>` (`swipe-start-0`, `swipe-end-1`), from
+  `resolveSwipeAccessibilityActions` / `resolveSwipeActionByName`. The label is for speaking only: two
+  tiles may share one, and a label like "Activate" must never collide with a standard action. A swipe
+  is invisible to a screen reader, so without this the actions would not exist for one.
 - **The row is a single accessibility element** (`accessible`), the shape a list row with custom
   actions takes; `accessibilityLabel` and `accessibilityHint` passed to `Swipe` land on it. A row
   that needs its own separately focusable controls is not a swipe row.
+- **A control inside the row is unreachable**, since the merged row swallows it: an `<Item onPress>`
+  or `Pressable` in the row gets no `activate`. In development `warnInteractiveChildInAccessible`
+  warns about it. Mirror it with `accessibilityActions` and `onAccessibilityAction` on `Swipe`: the
+  caller's actions are published first, the tiles' after, and any name that is not a tile's goes to
+  the caller's handler. Hide the inner control from assistive technology to silence the warning.
+- **An open row also offers `escape`** (labelled "Close", `SWIPE_CLOSE_ACTION_LABEL`), which closes it,
+  as the shield tap does for touch. A caller who declares their own `escape` keeps it.
 - **Tiles are `button`s, hidden while the row is shut** (`accessibilityElementsHidden` and
   `importantForAccessibility="no-hide-descendants"` on each panel), so a screen reader does not
   walk into actions nobody can see.

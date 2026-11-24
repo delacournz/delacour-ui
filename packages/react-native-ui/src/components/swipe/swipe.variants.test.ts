@@ -2,8 +2,11 @@ import { describe, expect, test } from "bun:test";
 import type { ReactElement, ReactNode } from "react";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
+	mergeSwipeAccessibilityActions,
 	partitionSwipeChildren,
 	resolveOutermostIndex,
+	resolveSwipeAccessibilityActions,
+	resolveSwipeActionByName,
 	resolveSwipeActionForegroundToken,
 	resolveSwipeDrag,
 	resolveSwipeRelease,
@@ -333,5 +336,49 @@ describe("tokens", () => {
 		for (const color of SWIPE_ACTION_COLORS) {
 			expect(swipeVariants({ color }).tileLabel()).toContain(`text-${resolveSwipeActionForegroundToken(color)}`);
 		}
+	});
+});
+
+describe("swipe accessibility actions", () => {
+	const tile = (label?: string, onPress?: () => void) => ({ props: { label, onPress } });
+	const done = tile("Done");
+	const snooze = tile("Activate");
+	const remove = tile("Activate");
+	const tiles = { end: [snooze, remove], start: [done, tile()] };
+
+	test("names are stable and unique per side and index, even for equal or reserved labels", () => {
+		expect(resolveSwipeAccessibilityActions(tiles)).toEqual([
+			{ label: "Done", name: "swipe-start-0" },
+			{ label: "Activate", name: "swipe-end-0" },
+			{ label: "Activate", name: "swipe-end-1" },
+		]);
+	});
+
+	test("the reverse lookup finds the tile by name and ignores a label or standard name", () => {
+		expect(resolveSwipeActionByName("swipe-end-1", tiles)).toBe(remove.props);
+		expect(resolveSwipeActionByName("swipe-start-0", tiles)).toBe(done.props);
+		expect(resolveSwipeActionByName("Activate", tiles)).toBeUndefined();
+		expect(resolveSwipeActionByName("activate", tiles)).toBeUndefined();
+		expect(resolveSwipeActionByName("swipe-end-2", tiles)).toBeUndefined();
+	});
+
+	test("merge puts the caller's first and adds escape only while open", () => {
+		const swipe = resolveSwipeAccessibilityActions(tiles);
+		const caller = [{ label: "Open", name: "activate" }];
+		expect(mergeSwipeAccessibilityActions({ caller, isOpen: false, swipe }).map((a) => a.name)).toEqual([
+			"activate",
+			"swipe-start-0",
+			"swipe-end-0",
+			"swipe-end-1",
+		]);
+		expect(mergeSwipeAccessibilityActions({ caller: undefined, isOpen: true, swipe }).at(-1)).toEqual({
+			label: "Close",
+			name: "escape",
+		});
+	});
+
+	test("merge leaves a caller's own escape alone", () => {
+		const merged = mergeSwipeAccessibilityActions({ caller: [{ name: "escape" }], isOpen: true, swipe: [] });
+		expect(merged).toEqual([{ name: "escape" }]);
 	});
 });

@@ -12946,7 +12946,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 40,
+		fileCount: 41,
 		groups: [
 			{
 				name: "flip-card",
@@ -13051,6 +13051,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -19422,7 +19430,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 103,
+		fileCount: 104,
 		groups: [
 			{
 				name: "sketch",
@@ -19662,6 +19670,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{

@@ -82,8 +82,10 @@ A form field's layout, and the one place its state is written down. Root plus
     the "Invalid" lead.
   - **`accessibilityLabelledBy`** (Android only) at the label's `nativeID`,
     when the label is an element with no text to lend.
-  The spoken words are `FIELD_ACCESSIBILITY_LABELS`, overridable per call for
-  localisation. **A control wires all of it with `useFieldControlAccessibility`**
+  The spoken words are `FIELD_ACCESSIBILITY_LABELS`, English. The resolver and the
+  hook take a `labels` override, but **no control forwards one yet**, and
+  `Signature`, `TimePicker` and `Field.Label` hard-code "required", so the words
+  are not localisable from a component today. **A control wires all of it with `useFieldControlAccessibility`**
   (`field-control.ts`): spread `accessibilityLabel`, `accessibilityHint` and
   `accessibilityLabelledBy` on the focusable element and render with the
   returned `isInvalid`. The own `isInvalid`/`isRequired` beat the field's.

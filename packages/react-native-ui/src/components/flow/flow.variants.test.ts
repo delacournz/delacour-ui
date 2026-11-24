@@ -16,6 +16,7 @@ import {
 	resolveEdgeMarch,
 	resolveFlowCanvasToken,
 	resolveFlowChildLayer,
+	resolveGroupAccessibility,
 	resolveHandleStyle,
 	resolveNodeAccessibilityActions,
 	resolveNodeDrag,
@@ -428,5 +429,48 @@ describe("resolveEdgeMarch", () => {
 		expect(resolveEdgeMarch({ cycle: 5, hold: "calm", isAnimated: true })).toBe("rest");
 		expect(resolveEdgeMarch({ cycle: 5, hold: "screen-reader", isAnimated: true })).toBe("rest");
 		expect(resolveEdgeMarch({ cycle: 5, hold: "paused", isAnimated: true })).toBe("freeze");
+	});
+});
+
+describe("resolveGroupAccessibility", () => {
+	const moves = FLOW_ACCESSIBILITY_MOVES.map((move) => ({ label: move.label, name: move.name }));
+
+	test("a draggable group on an unlocked canvas offers the four moves", () => {
+		expect(resolveGroupAccessibility({ id: "g", isDraggable: true, isLocked: false, label: "Stage" })).toEqual({
+			actions: moves,
+			isAccessible: true,
+			label: "Stage",
+		});
+	});
+
+	test("an unlabelled but movable group is still a stop, named by its id", () => {
+		expect(resolveGroupAccessibility({ id: "g", isDraggable: true, isLocked: false, label: undefined })).toEqual({
+			actions: moves,
+			isAccessible: true,
+			label: "g",
+		});
+	});
+
+	test("a locked or non-draggable group offers no moves", () => {
+		expect(resolveGroupAccessibility({ id: "g", isDraggable: true, isLocked: true, label: "Stage" }).actions).toEqual(
+			[]
+		);
+		expect(resolveGroupAccessibility({ id: "g", isDraggable: false, isLocked: false, label: "Stage" }).actions).toEqual(
+			[]
+		);
+	});
+
+	test("a labelled group that cannot move stays a labelled stop", () => {
+		expect(resolveGroupAccessibility({ id: "g", isDraggable: false, isLocked: false, label: "Stage" })).toEqual({
+			actions: [],
+			isAccessible: true,
+			label: "Stage",
+		});
+	});
+
+	test("an unlabelled group that cannot move stays out of the tree", () => {
+		expect(
+			resolveGroupAccessibility({ id: "g", isDraggable: false, isLocked: false, label: undefined }).isAccessible
+		).toBe(false);
 	});
 });

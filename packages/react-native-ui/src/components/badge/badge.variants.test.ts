@@ -1,12 +1,18 @@
 import { describe, expect, test } from "bun:test";
-import { declaredTokens } from "../../styles/theme-tokens.test";
+import { declaredTokens, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
+	BADGE_CLOSE_HIT_SLOP_CAP,
+	BADGE_CLOSE_SIZES,
 	BADGE_COLORS,
 	BADGE_FOREGROUND_TOKEN,
+	BADGE_GAPS,
 	BADGE_SIZES,
 	BADGE_VARIANTS,
 	badgeVariants,
+	resolveBadgeCloseExposure,
+	resolveBadgeCloseHitSlop,
 	resolveBadgeInteractive,
 } from "./badge.variants";
 
@@ -265,6 +271,55 @@ describe("resolveBadgeInteractive", () => {
 		expect(resolveBadgeInteractive({ onPress: noop })).toBe(true);
 		expect(resolveBadgeInteractive({ onLongPress: noop })).toBe(true);
 		expect(resolveBadgeInteractive({ onPress: noop, onLongPress: noop })).toBe(true);
+	});
+});
+
+describe("resolveBadgeCloseExposure", () => {
+	test("no onClose means no dismiss control", () => {
+		expect(resolveBadgeCloseExposure({ hasClose: false, interactive: true })).toBe("none");
+		expect(resolveBadgeCloseExposure({ hasClose: false, interactive: false })).toBe("none");
+	});
+
+	test("a plain root leaves the close control its own element", () => {
+		expect(resolveBadgeCloseExposure({ hasClose: true, interactive: false })).toBe("element");
+	});
+
+	test("a pressable root folds the close control in, so it is offered as an action", () => {
+		expect(resolveBadgeCloseExposure({ hasClose: true, interactive: true })).toBe("action");
+	});
+});
+
+describe("the dismiss control's hit target", () => {
+	const gapOf = (size: (typeof BADGE_SIZES)[number]) => BADGE_GAPS[size];
+
+	test("its drawn edge is the icon step the root's icon slot sets", () => {
+		for (const size of BADGE_SIZES) {
+			const token = badgeVariants({ size })
+				.icon()
+				.match(/\bsize-(icon-[\w-]+)\b/)?.[1];
+			expect(token).toBeDefined();
+			expect(TOKENS_CSS).toContain(`--spacing-${token}: ${BADGE_CLOSE_SIZES[size]}px;`);
+		}
+	});
+
+	test("the gap is the one the root sets between its children", () => {
+		for (const size of BADGE_SIZES) {
+			expect(badgeVariants({ size }).root()).toContain(`gap-${gapOf(size) / 4}`);
+		}
+	});
+
+	test("slop is capped at half the gap, so it never reaches into a neighbour's touch area", () => {
+		for (const size of BADGE_SIZES) {
+			expect(BADGE_CLOSE_HIT_SLOP_CAP[size]).toBe(gapOf(size) / 2);
+			const slop = resolveBadgeCloseHitSlop(size);
+			expect(slop).toBe(resolveMinimumHitSlop(BADGE_CLOSE_SIZES[size], 44, { cap: gapOf(size) / 2 }));
+			expect(slop).toBe(gapOf(size) / 2);
+		}
+	});
+
+	test("a smaller minimum than the cap allows is honoured uncapped", () => {
+		expect(resolveBadgeCloseHitSlop("md", 18)).toBe(1);
+		expect(resolveBadgeCloseHitSlop("md", 16)).toBeUndefined();
 	});
 });
 

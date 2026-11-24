@@ -1,6 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { createRef } from "react";
 import { Platform, Pressable, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { FlipCard, type FlipCardHandle, type FlipCardProps } from "./flip-card";
 import { useFlipCard } from "./flip-card.context";
@@ -345,5 +346,35 @@ describe("FlipCard", () => {
 		} finally {
 			warn.mockRestore();
 		}
+	});
+});
+
+describe("FlipCard labels", () => {
+	const labels = { action: "Retourner", showsBack: "Montre le verso" };
+
+	test("the labels prop changes the flip button's name and hint", async () => {
+		await renderWithProviders(<Card labels={labels} />);
+		expect(screen.getByRole("button", { name: "Retourner" })).toHaveProp("accessibilityHint", "Montre le verso");
+	});
+
+	test("a provider's labels change them, and the labels prop wins", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ flipCard: { action: "Retourner", showsBack: "Montre le verso" } }}>
+				<Card />
+				<Card labels={{ action: "Girar" }} />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Retourner" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Girar" })).toBeOnTheScreen();
+	});
+
+	test("an icon-only trigger is named by the labels", async () => {
+		await renderWithProviders(
+			<FlipCard labels={{ action: "Retourner" }} trigger="manual">
+				<Faces />
+				<FlipCard.Trigger />
+			</FlipCard>
+		);
+		expect(screen.getByRole("button", { name: "Retourner" })).toBeOnTheScreen();
 	});
 });

@@ -1,9 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { DELACOUR_DEFAULT_LABELS, type FlipCardLabels } from "../../lib/labels";
 import { SURFACE_PADDINGS, SURFACE_VARIANTS } from "../surface/surface.variants";
 import {
+	FLIP_CARD_ACTION_LABEL,
 	FLIP_CARD_AXES,
+	FLIP_CARD_DEFAULT_FACE_LABELS,
 	FLIP_CARD_FACES,
 	FLIP_CARD_HAPTIC_HYSTERESIS,
 	FLIP_CARD_MOTION,
@@ -31,6 +34,14 @@ import {
 	rotationFromDrag,
 	shouldTickFlipHaptic,
 } from "./flip-card.variants";
+
+const FRENCH: FlipCardLabels = {
+	action: "Retourner la carte",
+	back: "Verso",
+	front: "Recto",
+	showsBack: "Montre le verso",
+	showsFront: "Montre le recto",
+};
 
 /** Every angle from 0 to 720 in steps of 7.3 — enough to land on both sides of every boundary. */
 function sweep(): number[] {
@@ -316,6 +327,10 @@ describe("resolveFlipCardActions", () => {
 		expect(resolveFlipCardActions("manual")).toEqual([]);
 	});
 
+	test("the action takes its name from the labels", () => {
+		expect(resolveFlipCardActions("press", FRENCH)).toEqual([{ label: "Retourner la carte", name: "activate" }]);
+	});
+
 	// A gesture-only card is unreachable to a screen reader. Every trigger with a
 	// gesture on the root must offer a non-gesture path beside it.
 	test("every gesture trigger has a non-gesture path", () => {
@@ -399,6 +414,16 @@ describe("resolveFlipCardTriggerHint", () => {
 	test("names the face a press goes to", () => {
 		expect(resolveFlipCardTriggerHint("back")).toBe("Shows the back");
 		expect(resolveFlipCardTriggerHint("front")).toBe("Shows the front");
+	});
+
+	test("takes the hints from the labels", () => {
+		expect(resolveFlipCardTriggerHint("back", FRENCH)).toBe("Montre le verso");
+		expect(resolveFlipCardTriggerHint("front", FRENCH)).toBe("Montre le recto");
+	});
+
+	test("the exported English constants are the catalog defaults", () => {
+		expect(FLIP_CARD_ACTION_LABEL).toBe(DELACOUR_DEFAULT_LABELS.flipCard.action);
+		expect(FLIP_CARD_DEFAULT_FACE_LABELS).toEqual({ back: "Back of card", front: "Front of card" });
 	});
 });
 

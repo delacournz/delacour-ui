@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type FlipCardLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { SurfacePadding, SurfaceVariant } from "../surface/surface.variants";
 
@@ -59,12 +60,13 @@ export const FLIP_CARD_RUBBER_BAND = 40;
  */
 export const FLIP_CARD_HAPTIC_HYSTERESIS = 4;
 
-/** What a screen reader offers in place of the gesture. */
-export const FLIP_CARD_ACTION_LABEL = "Flip card";
+/** What a screen reader offers in place of the gesture. English; the card reads it from `labels`. */
+export const FLIP_CARD_ACTION_LABEL = DELACOUR_DEFAULT_LABELS.flipCard.action;
 
+/** The English face announcements; the card reads them from `labels`. */
 export const FLIP_CARD_DEFAULT_FACE_LABELS = {
-	front: "Front of card",
-	back: "Back of card",
+	front: DELACOUR_DEFAULT_LABELS.flipCard.front,
+	back: DELACOUR_DEFAULT_LABELS.flipCard.back,
 } as const satisfies Record<FlipCardFace, string>;
 
 /**
@@ -320,9 +322,12 @@ export function resolveFaceA11y(face: FlipCardFace): Record<FlipCardFace, { hidd
  * trigger with a gesture on the root offers `activate` beside it. `"manual"`
  * has no gesture to replace: its path is the author's `FlipCard.Trigger`.
  */
-export function resolveFlipCardActions(trigger: FlipCardTrigger): Array<{ name: string; label: string }> {
+export function resolveFlipCardActions(
+	trigger: FlipCardTrigger,
+	labels: FlipCardLabels = DELACOUR_DEFAULT_LABELS.flipCard
+): Array<{ name: string; label: string }> {
 	if (trigger === "manual") return [];
-	return [{ label: FLIP_CARD_ACTION_LABEL, name: "activate" }];
+	return [{ label: labels.action, name: "activate" }];
 }
 
 /**
@@ -343,8 +348,11 @@ export function resolveFaceMode({ hidden, trigger }: { hidden: boolean; trigger:
 }
 
 /** What `FlipCard.Trigger` tells a screen reader a press will do. */
-export function resolveFlipCardTriggerHint(destination: FlipCardFace): string {
-	return destination === "back" ? "Shows the back" : "Shows the front";
+export function resolveFlipCardTriggerHint(
+	destination: FlipCardFace,
+	labels: FlipCardLabels = DELACOUR_DEFAULT_LABELS.flipCard
+): string {
+	return destination === "back" ? labels.showsBack : labels.showsFront;
 }
 
 /** The `displayName`s of the two faces — what the root sorts its children by. */

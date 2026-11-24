@@ -7,7 +7,6 @@ import { Surface } from "../surface";
 import { useFlipCardPart } from "./flip-card.context";
 import type { FlipCardFaceProps } from "./flip-card.types";
 import {
-	FLIP_CARD_ACTION_LABEL,
 	type FlipCardFace,
 	faceRotation,
 	oppositeFace,
@@ -50,9 +49,8 @@ export function FlipCardFaceBody({
 	className,
 	children,
 }: FlipCardFaceProps & { side: FlipCardFace }): ReactElement {
-	const { accessibilityLabel, axis, face, flip, isCalm, isDisabled, perspective, rotation, trigger } = useFlipCardPart(
-		side === "front" ? "FlipCard.Front" : "FlipCard.Back"
-	);
+	const { accessibilityLabel, axis, face, flip, isCalm, isDisabled, labels, perspective, rotation, trigger } =
+		useFlipCardPart(side === "front" ? "FlipCard.Front" : "FlipCard.Back");
 	const classes = resolveFlipCardClasses({ className, face: side, padding, variant });
 	const isHidden = resolveFaceA11y(face)[side].hidden;
 	const mode = resolveFaceMode({ hidden: isHidden, trigger });
@@ -96,7 +94,7 @@ export function FlipCardFaceBody({
 
 	return (
 		<Animated.View
-			accessibilityActions={isElement ? (isDisabled ? [] : resolveFlipCardActions(trigger)) : undefined}
+			accessibilityActions={isElement ? (isDisabled ? [] : resolveFlipCardActions(trigger, labels)) : undefined}
 			accessibilityElementsHidden={isHidden}
 			accessibilityLabel={isElement ? accessibilityLabel : undefined}
 			accessibilityState={isElement ? { disabled: isDisabled } : undefined}
@@ -110,8 +108,8 @@ export function FlipCardFaceBody({
 			{mode === "flip-button" ? (
 				<View
 					accessibilityActions={activation.accessibilityActions}
-					accessibilityHint={resolveFlipCardTriggerHint(oppositeFace(face))}
-					accessibilityLabel={FLIP_CARD_ACTION_LABEL}
+					accessibilityHint={resolveFlipCardTriggerHint(oppositeFace(face), labels)}
+					accessibilityLabel={labels.action}
 					accessibilityRole="button"
 					accessibilityState={{ disabled: isDisabled }}
 					accessible

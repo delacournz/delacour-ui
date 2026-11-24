@@ -117,12 +117,15 @@ sheets.
 - **In a bottom sheet the year list blocks the sheet's content pan** (`yearListBlocksGesture`,
   `resolveYearListGesture`). The content pan claims a drag after six points, before a `ScrollView`
   starts to scroll, so a slow drag on the years moved the sheet and the list stayed still. Given a
-  gesture, the list's native scroll runs beside a plain `Pan` that blocks it, and every drag on the
-  years scrolls them; the handle and header still move the sheet. A drag down at the top of the
-  list does not pull the sheet down — that is the trade. Three shapes failed on an iOS simulator:
-  `Gesture.Native().blocksExternalGesture(…)` (its recognizer only mirrors the scroll view's pan, so
-  the sheet still moved), adding `shouldActivateOnStart(true)` (the sheet stopped and so did the
-  list), and `simultaneousWithExternalGesture` (both moved). The engine's `BottomSheet.ScrollView`
+  gesture, the list's native scroll — declared simultaneous with that gesture, as the engine's own
+  scrollables declare theirs — runs beside a plain `Pan` that blocks it, and every drag on the years
+  scrolls them; the handle and header still move the sheet. A drag down at the top of the list does
+  not pull the sheet down — that is the trade. Both halves are needed, and each was seen failing
+  alone on an iOS simulator: the blocker without the simultaneous declaration left the scroll view
+  waiting on the blocked pan, so neither the list nor the sheet moved; the simultaneous declaration
+  without the blocker moved both. `Gesture.Native().blocksExternalGesture(…)` fails too (its
+  recognizer only mirrors the scroll view's pan, so the sheet still moved), and so does adding
+  `shouldActivateOnStart(true)` (the sheet stopped and so did the list). The engine's `BottomSheet.ScrollView`
   is a body scrollable that writes the sheet's content height, so nesting one here would break the
   sheet's sizing. The calendar imports no sheet: it takes the gesture as a prop, and `DatePicker` passes
   its sheet's (`DateTimePicker` turns its sheet's content pan off, so it passes none).

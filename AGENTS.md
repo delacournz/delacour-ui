@@ -688,6 +688,12 @@ Flow-typed source Bun's transpiler cannot parse, so mounting a component needs j
 `packages/react-native-ui/src/test/AGENTS.md`. Layout, animation and real gestures are still
 verified in the playground on a simulator.
 
+**A fixed test failure is logged.** Until 2026-12-06, every test failure you fix gets a row in
+[`.github/test-failure-log.md`](.github/test-failure-log.md), classed as a caught regression, a
+change detector or a test bug. That log decides which tests get deleted, and which patterns get
+banned here, when the window closes. A failure that a re-run made go away is a test bug to find, not
+a flake to retry.
+
 **Files.** Kebab-case, enforced by Biome. The exception is `apps/playground/src/app`,
 where Expo Router derives route names from filenames.
 

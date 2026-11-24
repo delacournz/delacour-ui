@@ -93,6 +93,12 @@ export type SelectSingleProps = SelectBaseProps & {
 	onValueChange?: (value: string | null) => void;
 	/** A second press on the chosen row clears it. @default false */
 	isClearable?: boolean;
+	/**
+	 * Fires on every pick, after `onValueChange`, including a press on the chosen row, which closes
+	 * the sheet without `onValueChange`. Never on a clear or a dismiss. Lets a form move on after the
+	 * user confirms the option it already holds.
+	 */
+	onConfirm?: (value: string) => void;
 };
 
 export type SelectMultipleProps = SelectBaseProps & {
@@ -200,7 +206,10 @@ function SelectRoot(props: SelectProps): ReactElement {
 		const result = toggleSelection(selected, value, toggleOptions);
 		if (result.change === "blocked" || result.change === "limit-reached") playHaptic("warning");
 		if (result.change !== "unchanged" && result.change !== "blocked") setSelected(result.selected);
-		if (mode === "single") close();
+		if (mode !== "single") return;
+		const confirmed = result.selected[0];
+		if (confirmed !== undefined) single?.onConfirm?.(confirmed);
+		close();
 	};
 
 	// Offered to an enclosing `Field`, so tapping its label opens the sheet the

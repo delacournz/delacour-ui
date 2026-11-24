@@ -24,6 +24,12 @@ export type DatePickerSelectionProps =
 			defaultValue?: CalendarDate | null;
 			/** Fires when a day is picked, and with `null` on Clear. */
 			onValueChange?: (value: CalendarDate | null) => void;
+			/**
+			 * Fires on every pick, after `onValueChange`, including a re-tap of the shown day, which
+			 * closes the sheet without `onValueChange`. Never on Clear or a dismiss. Lets a form move on
+			 * after the user confirms the day it already holds.
+			 */
+			onConfirm?: (value: CalendarDate) => void;
 	  }
 	| {
 			mode: "range";
@@ -34,6 +40,8 @@ export type DatePickerSelectionProps =
 			 * held inside the sheet and never reported.
 			 */
 			onValueChange?: (value: CalendarDateRange) => void;
+			/** Single mode only. */
+			onConfirm?: never;
 	  }
 	| {
 			mode: "multiple";
@@ -41,6 +49,8 @@ export type DatePickerSelectionProps =
 			defaultValue?: readonly CalendarDate[];
 			/** Fires on every toggle, sorted earliest first. */
 			onValueChange?: (value: readonly CalendarDate[]) => void;
+			/** Single mode only. */
+			onConfirm?: never;
 	  };
 
 export type DatePickerProps = Omit<ViewProps, "children"> &

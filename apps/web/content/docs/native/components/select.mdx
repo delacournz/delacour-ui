@@ -153,6 +153,10 @@ Compose `Select.Trigger` with `asChild` to open the sheet from a control of your
     onValueChange: {
       type: "(value: string | null) => void (single) · (value: string[]) => void (multiple)",
     },
+    onConfirm: {
+      type: "(value: string) => void",
+      description: "Single only. Every pick, after `onValueChange` — a press on the chosen row included, which changes nothing. Never on a clear or a dismiss.",
+    },
     options: {
       type: "(SelectOption | SelectOptionGroup)[]",
       description: "The options as data. Leave it off to compose `Select.Item` children.",

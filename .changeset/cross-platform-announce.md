@@ -6,7 +6,7 @@ Add a cross-platform screen-reader announcer. The pure helper is `lib/announce` 
 
 Components now use it, and each takes an `announce` opt-out:
 
-- **Alert** is now heard on iOS. It speaks once on appear, re-open or change.
+- **Alert** is now heard on iOS. It speaks once on appear, re-open or change, including an alert already on screen when a page opens (warning and destructive alerts interrupt). Add `announce={false}` to an alert that is static page content.
 - **Field.Error** is now heard on iOS.
 - **Toast** and **Support** are no longer spoken twice on Android, and **Support.Status** is now heard on iOS.
 - **Countdown** speaks at milestones and says "Time is up" on both platforms, instead of reading every second on Android.
@@ -18,4 +18,4 @@ Components now use it, and each takes an `announce` opt-out:
 - **Post.Votes** speaks a vote change.
 - **Skeleton** says when its content has loaded.
 - **Screen.Loading** and **Screen.Error** speak when they appear.
-- **Spinner** is named "Loading" by default. Inside a loading **Button** the spinner adds nothing to the button's name, because the button already reads as busy.
+- **Toast**'s loading spinner likewise adds nothing to the card's name. **Spinner** is named "Loading" by default. Inside a loading **Button** the spinner adds nothing to the button's name, because the button already reads as busy.

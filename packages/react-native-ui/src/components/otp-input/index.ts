@@ -1,3 +1,4 @@
+export type { OtpInputLabels, OtpInputUnit } from "../../lib/labels";
 export { OtpInput, type OtpInputProps, type OtpInputRef } from "./otp-input";
 export {
 	type OtpInputContextValue,

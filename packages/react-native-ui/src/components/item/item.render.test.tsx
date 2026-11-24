@@ -1,5 +1,5 @@
 import { describe, expect, jest, test } from "@jest/globals";
-import { Platform } from "react-native";
+import { Platform, Pressable as RNPressable, View } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { ListGroup } from "../list-group";
 import { Item } from "./item";
@@ -272,5 +272,69 @@ describe("Item", () => {
 		} finally {
 			restore();
 		}
+	});
+});
+
+describe("Item interactive children", () => {
+	function spyWarn() {
+		return jest.spyOn(console, "warn").mockImplementation(() => {});
+	}
+
+	test("warns once when a pressable item holds a control", async () => {
+		const warn = spyWarn();
+		const view = (
+			<Item onPress={() => {}}>
+				<Item.Title>Wi-Fi</Item.Title>
+				<Item.Actions>
+					<RNPressable accessibilityRole="switch" onPress={() => {}} />
+				</Item.Actions>
+			</Item>
+		);
+		await renderWithProviders(view);
+		await renderWithProviders(view);
+		const calls = warn.mock.calls.filter((call) => String(call[0]).includes("[Item]"));
+		expect(calls).toHaveLength(1);
+		warn.mockRestore();
+	});
+
+	test("accessible={false} and a static item do not warn", async () => {
+		const warn = spyWarn();
+		await renderWithProviders(
+			<Item accessible={false} onPress={() => {}}>
+				<Item.Actions>
+					<RNPressable accessibilityRole="link" onPress={() => {}} />
+				</Item.Actions>
+			</Item>
+		);
+		await renderWithProviders(
+			<Item>
+				<Item.Actions>
+					<View accessibilityRole="menuitem" />
+				</Item.Actions>
+			</Item>
+		);
+		expect(warn.mock.calls.filter((call) => String(call[0]).includes("[Item]"))).toHaveLength(0);
+		warn.mockRestore();
+	});
+
+	test("a caller accessibility action reaches the row and fires beside the press", async () => {
+		const onPress = jest.fn();
+		const onAccessibilityAction = jest.fn();
+		await renderWithProviders(
+			<Item
+				accessibilityActions={[{ label: "Toggle", name: "toggle" }]}
+				onAccessibilityAction={onAccessibilityAction}
+				onPress={onPress}
+			>
+				<Item.Title>Wi-Fi</Item.Title>
+			</Item>
+		);
+		const row = screen.getByRole("button");
+		expect(row.props.accessibilityActions).toEqual(expect.arrayContaining([{ label: "Toggle", name: "toggle" }]));
+		await fireEvent(row, "accessibilityAction", { nativeEvent: { actionName: "toggle" } });
+		expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+		expect(onPress).not.toHaveBeenCalled();
+		await fireEvent(row, "accessibilityTap");
+		expect(onPress).toHaveBeenCalledTimes(1);
 	});
 });

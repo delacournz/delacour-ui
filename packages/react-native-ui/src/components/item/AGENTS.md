@@ -26,7 +26,7 @@ A row of media, text and actions, for lists and settings. Compound root plus
 | `item.types.ts` | Prop types shared by two or more parts |
 | `item.variants.ts` | Pure `tv()` slots and the four resolvers, no RN imports |
 | `item.variants.test.ts` | |
-| `item.render.test.tsx` | Mounted under Jest — role and state, press / long press (Android action), disabled / busy guards, selected, parts, `Item.Group` list role, `ListGroup` row, context errors |
+| `item.render.test.tsx` | Mounted under Jest — role and state, press / long press (Android action), disabled / busy guards, selected, interactive-child warning and caller actions, parts, `Item.Group` list role, `ListGroup` row, context errors |
 
 ## Design
 
@@ -60,10 +60,19 @@ A row of media, text and actions, for lists and settings. Compound root plus
   `Animated.View` rather than `View` so the `ref` type is one type.
 - **A pressable item must not hold another control.** iOS merges an accessible
   element's children into it, so a `Button` in the actions of a pressable item
-  is unreachable by VoiceOver. Either leave the item static and let the actions
-  be the controls, or make the row the control: a switch row takes
+  is drawn and tappable but unreachable by a screen reader. Development warns
+  once per control (`warnInteractiveChildInAccessible`; it reads props, so a
+  control a composite child draws itself is not seen, and `accessible={false}`
+  on the item silences it). Three ways out: leave the item static and let the
+  actions be the controls; make the row the control (a switch row takes
   `accessibilityRole="switch"` and `accessibilityState={{ checked }}` on the
-  item, toggles from its `onPress`, and renders the `Switch` inside for show.
+  item, toggles from its `onPress`, and renders the `Switch` inside for show);
+  or keep the row pressable and mirror the inner control as a named
+  `accessibilityActions` entry plus `onAccessibilityAction` on the item, hiding
+  the drawn control with `accessibilityElementsHidden` and
+  `importantForAccessibility="no-hide-descendants"`. `Pressable` keeps its own
+  `activate` / `longpress` and forwards every other action to the caller. Nothing
+  is mirrored automatically.
 - **`isSelected` lays `bg-accent` over any surface**, the muted fill included —
   declared after `surface` in the `tv()` so tailwind-merge drops the losing
   `bg-*`. It also sets `accessibilityState.selected`. What marks the choice (a

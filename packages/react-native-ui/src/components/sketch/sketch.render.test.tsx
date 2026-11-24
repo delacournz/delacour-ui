@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { createRef } from "react";
 import { AccessibilityInfo, Pressable } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { LabelsProvider } from "../../hooks/use-labels";
+import type { SketchLabels } from "../../lib/labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Sketch } from "./sketch";
 import type { SketchItem } from "./sketch.paths";
@@ -542,6 +544,62 @@ describe("Sketch", () => {
 			} finally {
 				console.error = original;
 			}
+		});
+	});
+
+	describe("labels", () => {
+		const GERMAN: Partial<SketchLabels> = {
+			clear: "Leeren",
+			drawing: (n) => (n === 0 ? "Zeichnung, leer" : `Zeichnung, ${n} Striche`),
+			size: "Strichstärke",
+			swatchPosition: (position, count) => `Farbe ${position} von ${count}`,
+			swatchToken: (token) => `Ton ${token}`,
+			tool: (name) => `Werkzeug ${name}`,
+			undo: "Rückgängig",
+			undone: "Rückgängig gemacht",
+		};
+
+		test("the root labels prop changes what a screen reader hears", async () => {
+			const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility");
+			await renderWithProviders(<Sketch colors={["#111111", "#ec4899"]} defaultItems={[MARK]} labels={GERMAN} />);
+			expect(screen.getByRole("image", { name: "Zeichnung, 1 Striche" })).toBeOnTheScreen();
+			expect(screen.getByRole("image").props.accessibilityActions).toEqual([
+				{ label: "Rückgängig", name: "undo" },
+				{ label: "Leeren", name: "clear" },
+			]);
+			expect(screen.getByLabelText("Werkzeug pen")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Farbe 1 von 2")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Farbe 2 von 2")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Strichstärke")).toBeOnTheScreen();
+			await fireEvent(screen.getByRole("button", { name: "Rückgängig" }), "accessibilityTap");
+			expect(announce).toHaveBeenCalledWith("Rückgängig gemacht");
+			announce.mockRestore();
+		});
+
+		test("a DelacourProvider labels reach it too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ sketch: GERMAN }}>
+					<Sketch colors={COLORS} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("image", { name: "Zeichnung, leer" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Rückgängig" })).toBeOnTheScreen();
+		});
+
+		test("an explicit accessibilityLabel still wins", async () => {
+			await renderWithProviders(
+				<Sketch colors={COLORS} labels={GERMAN}>
+					<Sketch.Canvas />
+					<Sketch.Toolbar>
+						<Sketch.Tool accessibilityLabel="Stift" tool="pen" />
+						<Sketch.Size accessibilityLabel="Breite" />
+						<Sketch.Undo accessibilityLabel="Zurück" />
+					</Sketch.Toolbar>
+				</Sketch>
+			);
+			expect(screen.getByLabelText("Stift")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Breite")).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Zurück" })).toBeOnTheScreen();
 		});
 	});
 });

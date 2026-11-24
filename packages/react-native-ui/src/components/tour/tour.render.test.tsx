@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { AccessibilityInfo } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Tour, type TourProps } from "./tour";
@@ -128,6 +129,17 @@ describe("Tour", () => {
 		expect(screen.getByRole("button", { name: "Continue" })).toBeOnTheScreen();
 		expect(screen.getByRole("button", { name: "Not now" })).toBeOnTheScreen();
 		expect(screen.getByRole("header", { name: /^Stop 1\/3\. Search\./ })).toBeOnTheScreen();
+	});
+
+	test("a LabelsProvider names the actions and the prop wins over it", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ tour: { next: "Weiter", skip: "Überspringen" } }}>
+				<Steps defaultOpen labels={{ skip: "Später" }} />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Weiter" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Später" })).toBeOnTheScreen();
+		expect(screen.queryByRole("button", { name: "Überspringen" })).not.toBeOnTheScreen();
 	});
 
 	test("defaultStep opens on that step", async () => {

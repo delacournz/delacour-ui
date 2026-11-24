@@ -2,7 +2,9 @@ import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, use
 import { Modal, StyleSheet, View, type ViewInstance } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { focusAccessibilityTarget } from "../../hooks/use-modal-accessibility";
+import type { TourLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import { type TourContextValue, TourProvider, TourRegistryProvider, type TourRegistryValue } from "./tour.context";
 import type { TourGeometryProps, TourStepEntry } from "./tour.types";
@@ -11,13 +13,11 @@ import {
 	resolveCurrentOrder,
 	resolveStepIndex,
 	resolveStepOptions,
-	resolveTourLabels,
 	sortSteps,
 	TOUR_DEFAULT_PADDING,
 	TOUR_DEFAULT_PLACEMENT,
 	TOUR_DEFAULT_RADIUS,
 	TOUR_DEFAULT_SHAPE,
-	type TourLabels,
 	tourVariants,
 } from "./tour.variants";
 import { TourOverlay } from "./tour-overlay";
@@ -53,6 +53,10 @@ export type TourProps = TourGeometryProps & {
 	isInteractive?: boolean;
 	/** Haptic on the card's actions. Off by default. */
 	haptic?: false | HapticFeedback;
+	/**
+	 * The spoken and visible strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * Tour has no string props of its own, so nothing else competes with it.
+	 */
 	labels?: Partial<TourLabels>;
 	/** Classes merged over the card. */
 	cardClassName?: string;
@@ -183,7 +187,7 @@ function TourRoot({
 		[isOpen, current, index, total, start, next, back, skip, finish, goTo]
 	);
 
-	const labels = useMemo(() => resolveTourLabels(labelsProp), [labelsProp]);
+	const labels = useLabels("tour", labelsProp);
 
 	const overlay =
 		isOpen && entry ? (

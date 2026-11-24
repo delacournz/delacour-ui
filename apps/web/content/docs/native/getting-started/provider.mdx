@@ -111,7 +111,8 @@ const LABELS = {
 A label that carries a number is a function, so a language orders and inflects it itself. A
 component's own `labels` prop wins over the provider's, and a part's own `accessibilityLabel` wins
 over both. Declare the map at module scope: a new object every render re-renders everything that
-reads it. Pagination, Breadcrumb, Kpi and Carousel read it today; the rest of the library is moving
+reads it. Pagination, Breadcrumb, Kpi and Carousel read it today, and `motion` names the pause and
+resume actions every looping animation offers; the rest of the library is moving
 over component by component.
 
 Your own components read the same catalog with `useLabels(component)`, from

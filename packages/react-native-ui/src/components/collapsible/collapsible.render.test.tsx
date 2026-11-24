@@ -1,6 +1,8 @@
-import { describe, expect, jest, test } from "@jest/globals";
+import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { Pressable, Text } from "react-native";
+import type { SharedValue } from "react-native-reanimated";
+import { CalmMotionProvider } from "../../hooks/use-calm-motion";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Collapsible } from "./collapsible";
 import { useCollapsible } from "./collapsible.context";
@@ -239,5 +241,39 @@ describe("Collapsible", () => {
 		await expect(silenced(() => renderWithProviders(<Lost />))).rejects.toThrow(
 			"useCollapsible must be called inside a <Collapsible>."
 		);
+	});
+});
+
+// Calm motion swaps the spring for a short timing, so the travel is done inside the calm duration.
+describe("Collapsible calm motion", () => {
+	afterEach(() => {
+		jest.useRealTimers();
+	});
+
+	test("opening under calm motion reaches fully open within the calm duration", async () => {
+		jest.useFakeTimers();
+		let shared: SharedValue<number> | undefined;
+		function Reader(): ReactElement {
+			shared = useCollapsible().progress;
+			return <Text>probe</Text>;
+		}
+		const view = await renderWithProviders(
+			<CalmMotionProvider isMotionCalm>
+				<Collapsible>
+					<Body />
+					<Reader />
+				</Collapsible>
+			</CalmMotionProvider>
+		);
+		await activate();
+		const inner = screen.getByText("Body text", { includeHiddenElements: true }).parent;
+		if (!inner) throw new Error("no measured layer");
+		await fireEvent(inner, "layout", {
+			nativeEvent: { layout: { height: 100, width: 100, x: 0, y: 0 } },
+		});
+		await jest.advanceTimersByTimeAsync(200);
+		expect(trigger()).toBeExpanded();
+		expect(shared?.value).toBe(1);
+		await view.unmount();
 	});
 });

@@ -49,6 +49,27 @@ export const COLLAPSIBLE_INDICATOR_TOKEN = "muted-foreground";
  */
 export const COLLAPSIBLE_SPRING = { damping: 26, mass: 0.4, stiffness: 400 } as const;
 
+/**
+ * How long the travel takes under calm motion, in ms — a short fade-and-settle
+ * rather than a spring. `CAROUSEL_CALM_DURATION_MS`'s value, restated so
+ * `delacour add collapsible` copies one folder.
+ */
+export const COLLAPSIBLE_CALM_DURATION_MS = 150;
+
+/** How `progress` travels to its target. */
+export type CollapsibleTravel = { kind: "spring" } | { kind: "timing"; duration: number };
+
+/**
+ * Settles how the panel, its fade and the indicator travel: the spring normally,
+ * a brief eased timing under calm motion (reduce motion, or an E2E build's
+ * `isMotionCalm`), with no bounce. Under the OS reduce-motion setting Reanimated
+ * completes the timing at once, so the panel snaps; under `isMotionCalm` alone the
+ * 150 ms runs.
+ */
+export function resolveCollapsibleTravel({ isCalm }: { isCalm: boolean }): CollapsibleTravel {
+	return isCalm ? { kind: "timing", duration: COLLAPSIBLE_CALM_DURATION_MS } : { kind: "spring" };
+}
+
 /** Where the indicator points at each end of the travel, in degrees — a half turn. */
 export const COLLAPSIBLE_INDICATOR_ROTATION = { collapsed: 0, expanded: 180 } as const;
 

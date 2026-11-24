@@ -2,10 +2,10 @@ import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, use
 import { type LayoutChangeEvent, Text as NativeText, View } from "react-native";
 import { type SharedValue, useAnimatedReaction, useDerivedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLoopingMotion } from "../../hooks/use-looping-motion";
 import { cn } from "../../lib/cn";
 import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
-import type { TextAnimationBase } from "./text-animation.types";
+import type { TextAnimationBase, TextAnimationLoopingProps } from "./text-animation.types";
 import {
 	buildTypingTimeline,
 	capitalizeWords,
@@ -31,24 +31,25 @@ import { TextAnimationCaret } from "./text-animation-caret";
 import { useTextAnimationClock } from "./text-animation-clock";
 import { TextAnimationUnit, useTextAnimationClass } from "./text-animation-unit";
 
-export type TextAnimationTypingProps = TextAnimationBase & {
-	/** One phrase types once and holds. Several cycle. */
-	children: string | readonly string[];
-	/** Default `{ kind: "bar" }`. */
-	caret?: TextAnimationCaretShape;
-	/** Characters per second. Default 22. */
-	speed?: number;
-	/** Erase speed, characters per second. `0` skips the erase: the next phrase replaces the last. Default 40. */
-	eraseSpeed?: number;
-	/** The pause on a finished phrase, ms. Default 1400. */
-	holdMs?: number;
-	/** Cycle back to the first phrase after the last. Default `true` when there are several. */
-	loop?: boolean;
-	/** `false` holds the field empty, caret showing; flipping it to `true` types from the start. Default `true`. */
-	isActive?: boolean;
-	/** Called on the JS thread each time a phrase finishes typing, with its index. */
-	onPhraseTyped?: (index: number) => void;
-};
+export type TextAnimationTypingProps = TextAnimationBase &
+	TextAnimationLoopingProps & {
+		/** One phrase types once and holds. Several cycle. */
+		children: string | readonly string[];
+		/** Default `{ kind: "bar" }`. */
+		caret?: TextAnimationCaretShape;
+		/** Characters per second. Default 22. */
+		speed?: number;
+		/** Erase speed, characters per second. `0` skips the erase: the next phrase replaces the last. Default 40. */
+		eraseSpeed?: number;
+		/** The pause on a finished phrase, ms. Default 1400. */
+		holdMs?: number;
+		/** Cycle back to the first phrase after the last. Default `true` when there are several. */
+		loop?: boolean;
+		/** `false` holds the field empty, caret showing; flipping it to `true` types from the start. Default `true`. */
+		isActive?: boolean;
+		/** Called on the JS thread each time a phrase finishes typing, with its index. */
+		onPhraseTyped?: (index: number) => void;
+	};
 
 /** Joins phrases into one dependency key. A control character no phrase carries. */
 const PHRASE_SEPARATOR = "\u0000";
@@ -104,6 +105,8 @@ type CellShared = {
 	sample: SharedValue<TypingSample>;
 	phraseIndex: number;
 	isAtRest: boolean;
+	/** Holds the caret solid: at rest, or frozen by a pause mid-blink. */
+	isSteady: boolean;
 	allowFontScaling?: boolean;
 	maxFontSizeMultiplier: number;
 };
@@ -117,7 +120,7 @@ function renderCaret(shared: CellShared, visibleAt: number, measureText: string)
 			className={shared.caretClass}
 			elapsed={shared.elapsed}
 			allowFontScaling={shared.allowFontScaling}
-			isSteady={shared.isAtRest}
+			isSteady={shared.isSteady}
 			kind={shared.caretKind}
 			maxFontSizeMultiplier={shared.maxFontSizeMultiplier}
 			measureText={measureText === "" || measureText === " " ? "M" : measureText}
@@ -165,6 +168,9 @@ export function TextAnimationTyping({
 	loop,
 	isActive = true,
 	onPhraseTyped,
+	isPaused,
+	defaultPaused,
+	onPausedChange,
 	variant,
 	size,
 	weight,
@@ -178,7 +184,7 @@ export function TextAnimationTyping({
 	nativeID,
 	accessibilityHint,
 }: TextAnimationTypingProps): ReactElement {
-	const isCalm = useCalmMotion();
+	const motion = useLoopingMotion({ isPaused, defaultPaused, onPausedChange });
 	const resolvedClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
 	// Every typed cell is its own `Text`, so `capitalize` would raise each
 	// letter. The phrases are capitalized instead, before the timeline, the
@@ -199,20 +205,24 @@ export function TextAnimationTyping({
 		() => buildTypingTimeline(phrases, { speed, eraseSpeed, holdMs, loop: isLooping }),
 		[phrases, speed, eraseSpeed, holdMs, isLooping]
 	);
+	// Calm motion or a screen reader shows the finished text; a user pause freezes mid-type. A
+	// one-shot typing ends by itself, so only a looping one is paused or offers the actions.
+	const isAtRest = motion.isAtRest;
+	const isFrozen = isLooping && motion.hold === "paused";
 	const rest = resolveTypingRest(timeline);
 	const runKey = `${phrasesKey}|${speed}|${eraseSpeed}|${holdMs}|${isLooping}|${isActive}`;
 
 	const { elapsed } = useTextAnimationClock({
-		isRunning: isActive && !isCalm,
+		isRunning: isActive && !isAtRest && !isFrozen,
 		runKey,
 		limitMs: Number.POSITIVE_INFINITY,
 	});
 
 	const sample = useDerivedValue<TypingSample>(() =>
-		isCalm ? resolveTypingRest(timeline) : sampleTypingTimeline(timeline, elapsed.value)
+		isAtRest ? resolveTypingRest(timeline) : sampleTypingTimeline(timeline, elapsed.value)
 	);
 
-	const [phraseIndex, setPhraseIndex] = useState(isCalm ? rest.phraseIndex : 0);
+	const [phraseIndex, setPhraseIndex] = useState(isAtRest ? rest.phraseIndex : 0);
 	const runRef = useRef(runKey);
 	runRef.current = runKey;
 	const onPhraseTypedRef = useRef(onPhraseTyped);
@@ -245,7 +255,7 @@ export function TextAnimationTyping({
 	// Completed phrases are counted, not inferred from a phase change: with no
 	// hold and no erase one frame can jump from typing to typing.
 	useAnimatedReaction(
-		() => (isCalm ? -1 : countTypedPhrases(timeline, elapsed.value)),
+		() => (isAtRest ? -1 : countTypedPhrases(timeline, elapsed.value)),
 		(current, previous) => {
 			const range = resolveTypedRange(previous, current);
 			if (range !== null) scheduleOnRN(handleTyped, range.from, range.to, runKey);
@@ -253,8 +263,8 @@ export function TextAnimationTyping({
 	);
 
 	useEffect(() => {
-		if (isCalm) setPhraseIndex(rest.phraseIndex);
-	}, [isCalm, rest.phraseIndex]);
+		if (isAtRest) setPhraseIndex(rest.phraseIndex);
+	}, [isAtRest, rest.phraseIndex]);
 
 	const [heights, setHeights] = useState<readonly number[]>([]);
 	// Only the current phrases count: a removed phrase's height must not hold the box open.
@@ -281,7 +291,8 @@ export function TextAnimationTyping({
 		elapsed,
 		sample,
 		phraseIndex,
-		isAtRest: isCalm,
+		isAtRest,
+		isSteady: isAtRest || isFrozen,
 		allowFontScaling,
 		maxFontSizeMultiplier: fontCap,
 	};
@@ -292,11 +303,13 @@ export function TextAnimationTyping({
 	// reports its wrapped height, and the box keeps the tallest.
 	return (
 		<View
+			accessibilityActions={isLooping ? motion.accessibilityActions : undefined}
 			accessibilityHint={accessibilityHint}
 			accessibilityLabel={phrases[phrases.length - 1]}
 			accessibilityRole="text"
 			accessible
 			nativeID={nativeID}
+			onAccessibilityAction={isLooping ? motion.onAccessibilityAction : undefined}
 			testID={testID}
 		>
 			<View

@@ -136,6 +136,15 @@ file stable: its functions are the contract both consume.
   keeps moving after the user took hold of it is fighting them.
 - **Never runs under reduce motion, the app's `isMotionCalm`, or a screen
   reader** (WCAG 2.2.2). The screen reader is subscribed, not sampled.
+- **A persistent user pause is separate from "stop for good".** `isPaused` /
+  `defaultPaused` / `onPausedChange` on the root run through `useLoopingMotion`;
+  resuming restarts the timer, where a touch cannot be undone. The screen reader
+  comes from the shared `useScreenReaderEnabled`, not a private subscription.
+  When `autoplay` is set, `Carousel.Content` — already the single adjustable
+  element — adds "Pause animation" / "Resume animation" custom actions beside
+  `increment`/`decrement` (none while a screen reader or reduce motion holds
+  autoplay). They mainly serve Switch Control and Voice Control. No visible
+  toggle ships; an app wires `isPaused` to its own control.
 - **Pauses while the app is backgrounded.** A carousel scrolled off-screen keeps
   ticking: detecting that cheaply is not possible, so it is documented rather than
   solved.

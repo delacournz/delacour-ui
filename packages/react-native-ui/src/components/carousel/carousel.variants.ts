@@ -205,17 +205,21 @@ export function resolveAutoplayNext(index: number, count: number, loop: boolean)
  * Whether autoplay runs at all.
  *
  * Moving content the user did not ask for is held still under reduce motion and
- * while a screen reader is on (WCAG 2.2.2), as well as when the carousel is
+ * while a screen reader is on or the user paused it (WCAG 2.2.2), as well as when the carousel is
  * disabled or has nothing to move to.
  */
 export function resolveAutoplayEnabled(state: {
 	autoplay: boolean;
 	isCalm: boolean;
 	isScreenReader: boolean;
+	/** The user's persistent pause — unlike a touch, it can be undone. */
+	isPaused: boolean;
 	isDisabled: boolean;
 	count: number;
 }): boolean {
-	return state.autoplay && !state.isCalm && !state.isScreenReader && !state.isDisabled && state.count > 1;
+	return (
+		state.autoplay && !state.isCalm && !state.isScreenReader && !state.isPaused && !state.isDisabled && state.count > 1
+	);
 }
 
 /** What the adjustable root reads out: "2 of 5". Empty with nothing to count. */

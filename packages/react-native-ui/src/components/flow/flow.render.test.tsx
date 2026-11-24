@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
+import { AccessibilityInfo } from "react-native";
+import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Text } from "../text";
 import { FLOW_DEFAULTS } from "./flow.variants";
@@ -350,5 +352,37 @@ describe("Flow", () => {
 			}
 			await expect(renderWithProviders(<Bad />)).rejects.toThrow("<useFlow> must be rendered inside a <Flow>.");
 		});
+	});
+});
+
+describe("Flow looping motion", () => {
+	beforeEach(() => {
+		resetScreenReaderStore();
+		jest.spyOn(AccessibilityInfo, "isScreenReaderEnabled").mockImplementation(() => Promise.resolve(true));
+		jest.spyOn(AccessibilityInfo, "addEventListener").mockImplementation((() => ({
+			remove: jest.fn(),
+		})) as unknown as typeof AccessibilityInfo.addEventListener);
+	});
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	test("mounts animated edges with a screen reader on, a controlled pause and a default pause", async () => {
+		const onPausedChange = jest.fn();
+		const view = await renderWithProviders(
+			<Flow defaultPaused isPaused={false} onPausedChange={onPausedChange} testID="canvas">
+				<Flow.Node id="a" position={{ x: 0, y: 0 }}>
+					<Text>A</Text>
+					<Flow.Handle id="out" />
+				</Flow.Node>
+				<Flow.Node id="b" position={{ x: 200, y: 0 }}>
+					<Text>B</Text>
+					<Flow.Handle id="in" side="left" type="target" />
+				</Flow.Node>
+				<Flow.Edge isAnimated from="a.out" to="b.in" />
+			</Flow>
+		);
+		expect(screen.getByTestId("canvas")).toBeOnTheScreen();
+		await view.unmount();
 	});
 });

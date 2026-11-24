@@ -211,7 +211,7 @@ describe("resolveAnimatedBadgeGlyphKind", () => {
 });
 
 describe("resolveAnimatedBadgeMotion", () => {
-	const base = { isReduceMotion: false, isMotionCalm: false, status: "info", animateLayout: true } as const;
+	const base = { isReduceMotion: false, hold: "none", status: "info", animateLayout: true } as const;
 
 	test("runs everything by default, with no pulse off loading", () => {
 		expect(resolveAnimatedBadgeMotion(base)).toEqual({ roll: true, resize: "spring", layout: true, pulse: false });
@@ -238,15 +238,21 @@ describe("resolveAnimatedBadgeMotion", () => {
 		});
 	});
 
-	// Calm is for a test runner waiting on the screen to settle. A roll settles;
-	// a pulse never does.
-	test("calm motion alone stills the pulse and keeps the finite motions", () => {
-		expect(resolveAnimatedBadgeMotion({ ...base, status: "loading", isMotionCalm: true })).toEqual({
-			roll: true,
-			resize: "spring",
-			layout: true,
-			pulse: false,
-		});
+	// A roll settles; a pulse never does. Only the loop answers the hold.
+	test.each(["calm", "screen-reader", "paused"] as const)(
+		"hold %s stills the pulse and keeps the finite motions",
+		(hold) => {
+			expect(resolveAnimatedBadgeMotion({ ...base, status: "loading", hold })).toEqual({
+				roll: true,
+				resize: "spring",
+				layout: true,
+				pulse: false,
+			});
+		}
+	);
+
+	test("an explicit pulse is held too", () => {
+		expect(resolveAnimatedBadgeMotion({ ...base, pulse: true, hold: "paused" }).pulse).toBe(false);
 	});
 
 	test("animateLayout={false} drops only the layout transition", () => {

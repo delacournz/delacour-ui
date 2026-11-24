@@ -135,6 +135,24 @@ Every part ends on the real final text. The animation is garnish on a fact.
 | Counting | `value` at once, no tween — the value is information |
 | Rolling | Every wheel at its digit at once |
 
+## Looping motion and the user pause
+
+Typing (when it loops: `loop`, or several phrases) and Rotating cycle forever, so
+both read `useLoopingMotion` rather than `useCalmMotion` (WCAG 2.2.2).
+
+| Hold | Typing | Rotating |
+| --- | --- | --- |
+| Calm motion or a screen reader | The last phrase, typed in full, caret solid | The first phrase, held |
+| User pause (`isPaused` / `defaultPaused` / `onPausedChange`, or the pause action) | The clock stops, so the typed count freezes and resumes from there; caret solid | The timer stops on the phrase showing; resume waits a full interval for the next swap |
+
+- **Reveal, Counting and Rolling are not loops.** Each ends by itself, so they stay on
+  `useCalmMotion`.
+- **A one-shot Typing is not paused** and offers no action; the screen-reader rest still
+  applies, showing the final text. A single-phrase Rotating never moves, so it offers none either.
+- **The actions sit on the existing `accessible` root**, which already hides every cell and
+  layer beneath one label. No new chrome: an app wires `isPaused` to its own control.
+- **The caret goes solid while frozen** — its blink reads the stopped clock, which could park it invisible.
+
 An interrupted run lands on the new text: Reveal and Typing replay from the start
 of the new text, a new phrase list resets `Rotating` to its first phrase, and a new
 `value` retargets a count or a roll from where it is.

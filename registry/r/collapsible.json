@@ -13,6 +13,7 @@
 		"pressable",
 		"text",
 		"tv",
+		"use-calm-motion",
 		"use-controllable-state"
 	],
 	"dependencies": [
@@ -102,6 +103,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
 				}
@@ -171,6 +176,10 @@
 			"target": "collapsible/collapsible.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

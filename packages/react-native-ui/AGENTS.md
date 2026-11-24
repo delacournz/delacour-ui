@@ -40,13 +40,14 @@ src/
 │                         use-calm-motion, use-scroll-sections,
 │                         use-scroll-source, use-reduce-transparency,
 │                         use-minimum-hit-target, use-announce,
-│                         use-labels
-│                         use-modal-accessibility
+│                         use-labels, use-modal-accessibility,
+│                         use-looping-motion
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion, labels,
 │                         paging, scroll-sections, scroll-maths, scroll-edges,
-│                         wrap-text-children, announce, modal-accessibility
+│                         wrap-text-children, announce, modal-accessibility,
+│                         looping-motion
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── test/                 the render-test kit — Jest setup and renderWithProviders
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
@@ -120,6 +121,29 @@ Four rules:
   announcer coalesces the burst to its first and last message.
 - **Every announcing component takes an opt-out** — an `announce` prop (or the component's own
   equivalent) passed through as `enabled`, for an app that speaks the same event itself.
+
+### Looping motion
+
+A loop that never ends by itself — a marquee, a typing caret, a marching edge, autoplay — asks one
+hook whether to move, because WCAG 2.2.2 (Pause, Stop, Hide) wants three things of it and each
+component used to answer a different subset:
+
+| Module | What it holds |
+| --- | --- |
+| `lib/looping-motion.ts` | The pure half: `resolveLoopingMotion` (the hold — `calm`, `screen-reader`, `paused` or `none`), `resolveLoopingMotionActions` and `resolveLoopingMotionToggleLabel` |
+| `hooks/use-looping-motion.ts` | `useLoopingMotion({ isPaused, defaultPaused, onPausedChange, labels })` and `useScreenReaderEnabled()`, one shared subscription for every caller |
+
+Rules:
+
+- **Calm motion and a screen reader rest the loop; a user pause freezes it.** A rest state is the
+  whole phrase, the still strip scrolled by hand; a pause stops where it is so resume carries on.
+- **Every looping component takes `isPaused` / `defaultPaused` / `onPausedChange`.** That is the
+  persistent pause an app wires to its own control. Accessibility actions go only on an element
+  that is already one accessible element — making a container `accessible` to host them swallows
+  its children.
+- **A transition is not a loop.** A panel opening or a preview lifting ends by itself and reads
+  `useCalmMotion` directly.
+- The pause control's strings are `labels.motion` (`useLabels`).
 
 ## Components
 

@@ -1,6 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View, type ViewProps } from "react-native";
-import { cancelAnimation, useSharedValue, withSpring } from "react-native-reanimated";
+import { cancelAnimation, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { type CollapsibleContextValue, CollapsibleProvider } from "./collapsible.context";
 import {
@@ -12,6 +13,7 @@ import {
 	type CollapsibleVariant,
 	collapsibleTravelTarget,
 	collapsibleVariants,
+	resolveCollapsibleTravel,
 	toggleCollapsibleOpen,
 } from "./collapsible.variants";
 import { CollapsibleContent } from "./collapsible-content";
@@ -88,14 +90,19 @@ function CollapsibleRoot({
 
 	// The first open of a panel that has never mounted has no height to travel
 	// against, so that run waits and the measurement that follows brings it back.
+	const isCalm = useCalmMotion();
 	useEffect(() => {
 		const target = collapsibleTravelTarget({ isMeasured, isOpen });
 		if (target === null) return;
 
-		progress.value = withSpring(target, COLLAPSIBLE_SPRING);
+		const travel = resolveCollapsibleTravel({ isCalm });
+		progress.value =
+			travel.kind === "spring"
+				? withSpring(target, COLLAPSIBLE_SPRING)
+				: withTiming(target, { duration: travel.duration });
 
 		return () => cancelAnimation(progress);
-	}, [isMeasured, isOpen, progress]);
+	}, [isCalm, isMeasured, isOpen, progress]);
 
 	const context = useMemo<CollapsibleContextValue>(
 		() => ({ contentHeight, isDisabled, isOpen, onMeasured, progress, size, toggle, variant }),

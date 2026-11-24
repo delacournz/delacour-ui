@@ -11,10 +11,11 @@
 		"button",
 		"icon",
 		"icons",
+		"looping-motion",
 		"surface",
 		"text",
 		"tv",
-		"use-calm-motion",
+		"use-looping-motion",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -136,7 +137,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/flow/flow.context.tsx",
 			"target": "flow/flow.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/looping-motion",
+					"to": "@registry/lib/looping-motion"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/flow/flow.tsx",
@@ -144,8 +151,8 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../hooks/use-calm-motion",
-					"to": "@registry/hooks/use-calm-motion"
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
 				},
 				{
 					"from": "../../hooks/use-theme-color",
@@ -158,6 +165,10 @@
 			"target": "flow/flow.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/looping-motion",
+					"to": "@registry/lib/looping-motion"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -191,6 +202,10 @@
 			"target": "flow/flow.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

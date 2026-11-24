@@ -321,13 +321,14 @@ describe("resolveAutoplayNext", () => {
 });
 
 describe("resolveAutoplayEnabled", () => {
-	const on = { autoplay: true, count: 3, isCalm: false, isDisabled: false, isScreenReader: false };
+	const on = { autoplay: true, count: 3, isCalm: false, isDisabled: false, isPaused: false, isScreenReader: false };
 
 	test("runs only when asked, with motion, no screen reader, enabled and more than one slide", () => {
 		expect(resolveAutoplayEnabled(on)).toBe(true);
 		expect(resolveAutoplayEnabled({ ...on, autoplay: false })).toBe(false);
 		expect(resolveAutoplayEnabled({ ...on, isCalm: true })).toBe(false);
 		expect(resolveAutoplayEnabled({ ...on, isScreenReader: true })).toBe(false);
+		expect(resolveAutoplayEnabled({ ...on, isPaused: true })).toBe(false);
 		expect(resolveAutoplayEnabled({ ...on, isDisabled: true })).toBe(false);
 		expect(resolveAutoplayEnabled({ ...on, count: 1 })).toBe(false);
 		expect(resolveAutoplayEnabled({ ...on, count: 0 })).toBe(false);

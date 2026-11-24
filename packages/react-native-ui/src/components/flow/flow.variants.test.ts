@@ -13,6 +13,7 @@ import {
 	resolveBackgroundPattern,
 	resolveDraggedConnection,
 	resolveEdgeDash,
+	resolveEdgeMarch,
 	resolveFlowCanvasToken,
 	resolveFlowChildLayer,
 	resolveHandleStyle,
@@ -413,5 +414,19 @@ describe("resolveFlowChildLayer", () => {
 		expect(resolveFlowChildLayer("DelacourUI.Flow.Group")).toBe("nodes");
 		expect(resolveFlowChildLayer("MyEdgeWrapper")).toBe("nodes");
 		expect(resolveFlowChildLayer(undefined)).toBe("nodes");
+	});
+});
+
+describe("resolveEdgeMarch", () => {
+	test("marches only an animated dashed edge with nothing holding it", () => {
+		expect(resolveEdgeMarch({ cycle: 5, hold: "none", isAnimated: true })).toBe("march");
+		expect(resolveEdgeMarch({ cycle: 5, hold: "none", isAnimated: false })).toBe("rest");
+		expect(resolveEdgeMarch({ cycle: 0, hold: "none", isAnimated: true })).toBe("rest");
+	});
+
+	test("calm motion and a screen reader rest it; a user pause freezes it", () => {
+		expect(resolveEdgeMarch({ cycle: 5, hold: "calm", isAnimated: true })).toBe("rest");
+		expect(resolveEdgeMarch({ cycle: 5, hold: "screen-reader", isAnimated: true })).toBe("rest");
+		expect(resolveEdgeMarch({ cycle: 5, hold: "paused", isAnimated: true })).toBe("freeze");
 	});
 });

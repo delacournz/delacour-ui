@@ -38,6 +38,10 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.loading).toBe("Loading");
 	});
 
+	test("motion is today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.motion).toEqual({ pause: "Pause animation", resume: "Resume animation" });
+	});
+
 	test("pagination is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.pagination;
 		expect(labels.list).toBe("Pagination");

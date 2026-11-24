@@ -1,11 +1,19 @@
 import { type ReactElement, useState } from "react";
-import { type ColorValue, type LayoutChangeEvent, StyleSheet, Text, type TextStyle, View } from "react-native";
+import {
+	type ColorValue,
+	type LayoutChangeEvent,
+	StyleSheet,
+	Text,
+	type TextStyle,
+	View,
+	type ViewProps,
+} from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { type SharedValue, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useResolveClassNames } from "uniwind";
-import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { type LoopingMotion, useLoopingMotion } from "../../hooks/use-looping-motion";
 import { resolveTextClass } from "../text/text.variants";
-import type { CircularTextProps } from "./circular-text.types";
+import type { CircularTextPause, CircularTextProps, CircularTextSpin } from "./circular-text.types";
 import {
 	CIRCULAR_TEXT_DEFAULT_SEPARATOR,
 	countGlyphs,
@@ -17,6 +25,7 @@ import {
 	resolveRingBox,
 	resolveRingLabel,
 	resolveRingLength,
+	resolveRingPaused,
 	resolveRingText,
 	resolveSpan,
 } from "./circular-text.variants";
@@ -93,13 +102,29 @@ function createPressGesture(isPressed: SharedValue<boolean>, isEnabled: boolean)
 		});
 }
 
+/**
+ * Pause and resume as accessibility actions, only on a ring that spins on its own and that the
+ * app's controlled `pause` is not already holding — there a user pause would change nothing.
+ */
+function resolvePauseActions(
+	kind: CircularTextSpin["kind"],
+	pause: CircularTextPause,
+	motion: Pick<LoopingMotion, "accessibilityActions" | "onAccessibilityAction">
+): Pick<ViewProps, "accessibilityActions" | "onAccessibilityAction"> {
+	if (kind !== "loop" || (pause.kind === "controlled" && pause.isPaused)) return {};
+	return { accessibilityActions: motion.accessibilityActions, onAccessibilityAction: motion.onAccessibilityAction };
+}
+
 function CircularTextRoot({
 	accessibilityLabel,
 	centerContent,
 	children,
 	className,
 	color,
+	defaultPaused,
 	direction = "clockwise",
+	isPaused,
+	onPausedChange,
 	pause = { kind: "none" },
 	radius,
 	repeat = 1,
@@ -112,13 +137,13 @@ function CircularTextRoot({
 	weight = "semibold",
 	...props
 }: CircularTextProps): ReactElement | null {
-	const isCalm = useCalmMotion();
+	const motion = useLoopingMotion({ isPaused, defaultPaused, onPausedChange });
 	const isPressed = useSharedValue(false);
 	const typography = useResolveClassNames(resolveTextClass({ className, color, size, weight }));
 	const rotation = useCircularSpin({
 		direction,
-		isCalm,
-		isPaused: pause.kind === "controlled" && pause.isPaused,
+		isAtRest: motion.isAtRest,
+		isPaused: resolveRingPaused(motion.isPaused, pause),
 		isPressed,
 		spin,
 	});
@@ -128,6 +153,7 @@ function CircularTextRoot({
 		transform: [{ rotate: `${controlled ? controlled.value : rotation.value}deg` }],
 	}));
 
+	const pauseActions = resolvePauseActions(spin.kind, pause, motion);
 	const press = createPressGesture(isPressed, pause.kind === "press" && spin.kind === "loop");
 	const type = toRingTypography(typography);
 	const box = resolveRingBox(radius, type.fontSize, side);
@@ -187,6 +213,7 @@ function CircularTextRoot({
 			)}
 			<GestureDetector gesture={press}>
 				<View
+					{...pauseActions}
 					accessibilityLabel={accessibilityLabel ?? resolveRingLabel(children, separator)}
 					accessibilityRole="text"
 					accessible
@@ -228,7 +255,8 @@ const styles = StyleSheet.create({
  *
  * The ring's size is `radius`, the centreline of the type; typography is `Text`'s scale. Spinning
  * turns the whole drawing on the UI thread, eases to a halt on a pause with no snap, and holds
- * still at 0° under reduce motion or `isMotionCalm` — a `controlled` angle still follows its caller.
+ * still at 0° under reduce motion, `isMotionCalm` or a screen reader, and freezes in place under
+ * `isPaused` — a `controlled` angle still follows its caller.
  *
  * @example
  * ```tsx

@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
 	advanceMarqueeOffset,
 	clampFrameDelta,
+	isMarqueeHeldByApp,
 	MARQUEE_DEFAULT_FADE_SIZE,
 	MARQUEE_DEFAULT_SPEED,
 	MARQUEE_DIRECTIONS,
@@ -232,6 +233,13 @@ describe("resolveMarqueeHeld", () => {
 	test("none never holds", () => {
 		expect(resolveMarqueeHeld({ kind: "none" }, true)).toBe(false);
 	});
+
+	test("a user pause holds whatever the pause says, so even a strip that never holds can be frozen", () => {
+		expect(resolveMarqueeHeld({ kind: "none" }, false, true)).toBe(true);
+		expect(resolveMarqueeHeld({ kind: "press" }, false, true)).toBe(true);
+		expect(resolveMarqueeHeld({ isPaused: false, kind: "controlled" }, false, true)).toBe(true);
+		expect(resolveMarqueeHeld({ kind: "press" }, false, false)).toBe(false);
+	});
 });
 
 describe("marqueeVariants", () => {
@@ -285,5 +293,14 @@ describe("marqueeVariants", () => {
 
 	test("the default gap is md", () => {
 		expect(marqueeVariants({ axis: "horizontal" }).copy()).toContain("pr-4");
+	});
+});
+
+describe("isMarqueeHeldByApp", () => {
+	test("only a controlled pause that is paused holds the strip for the app", () => {
+		expect(isMarqueeHeldByApp({ kind: "controlled", isPaused: true })).toBe(true);
+		expect(isMarqueeHeldByApp({ kind: "controlled", isPaused: false })).toBe(false);
+		expect(isMarqueeHeldByApp({ kind: "press" })).toBe(false);
+		expect(isMarqueeHeldByApp({ kind: "none" })).toBe(false);
 	});
 });

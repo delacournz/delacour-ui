@@ -9,7 +9,7 @@
 	],
 	"registryDependencies": [
 		"text",
-		"use-calm-motion"
+		"use-looping-motion"
 	],
 	"dependencies": [],
 	"expoDependencies": [
@@ -47,8 +47,8 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../hooks/use-calm-motion",
-					"to": "@registry/hooks/use-calm-motion"
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
 				},
 				{
 					"from": "../text/text.variants",
@@ -95,13 +95,22 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
+				},
+				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../provider",
+					"to": "@registry/ui/provider"
 				}
 			]
 		}
 	],
 	"renderTestRegistryDependencies": [
+		"provider",
 		"test-kit"
 	],
 	"renderTestDependencies": [

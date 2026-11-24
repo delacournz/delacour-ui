@@ -14,6 +14,7 @@ import {
 import { CONTENT_HEIGHT_READ, jsThreadSource } from "../accordion/accordion.variants.test";
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
+	COLLAPSIBLE_CALM_DURATION_MS,
 	COLLAPSIBLE_CONTENT_FADE,
 	COLLAPSIBLE_DEFAULT_SIZE,
 	COLLAPSIBLE_DEFAULT_VARIANT,
@@ -28,6 +29,7 @@ import {
 	collapsibleTravelTarget,
 	collapsibleVariants,
 	resolveCollapsibleAccessibility,
+	resolveCollapsibleTravel,
 	toggleCollapsibleOpen,
 } from "./collapsible.variants";
 
@@ -331,5 +333,19 @@ describe("the measured height is never read on the JS thread", () => {
 	// panel's `onLayout` wrote the height can still see `COLLAPSIBLE_UNMEASURED`.
 	test.each(["collapsible.tsx", "collapsible-content.tsx"])("%s", (file) => {
 		expect(jsThreadSource(join(import.meta.dirname, file))).not.toMatch(CONTENT_HEIGHT_READ);
+	});
+});
+
+describe("resolveCollapsibleTravel", () => {
+	test("springs normally", () => {
+		expect(resolveCollapsibleTravel({ isCalm: false })).toEqual({ kind: "spring" });
+	});
+
+	test("runs a short timing under calm motion", () => {
+		expect(resolveCollapsibleTravel({ isCalm: true })).toEqual({
+			kind: "timing",
+			duration: COLLAPSIBLE_CALM_DURATION_MS,
+		});
+		expect(COLLAPSIBLE_CALM_DURATION_MS).toBeLessThanOrEqual(150);
 	});
 });

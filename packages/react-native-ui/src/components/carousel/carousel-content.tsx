@@ -84,7 +84,8 @@ export function CarouselContent({
 		variant,
 		windowSize,
 	} = useCarouselOptionsPart("Carousel.Content");
-	const { commitFromPan, geometry, position, stopAutoplay } = useCarouselMotionPart("Carousel.Content");
+	const { autoplayActions, commitFromPan, geometry, onAutoplayAction, position, stopAutoplay } =
+		useCarouselMotionPart("Carousel.Content");
 
 	const items = useMemo(() => collectItems(children), [children]);
 
@@ -212,8 +213,9 @@ export function CarouselContent({
 			if (isDisabled) return;
 			if (event.nativeEvent.actionName === "increment") next();
 			else if (event.nativeEvent.actionName === "decrement") previous();
+			else onAutoplayAction(event);
 		},
-		[isDisabled, next, previous]
+		[isDisabled, next, onAutoplayAction, previous]
 	);
 
 	const visible = resolveVisibleRange(index, items.length, loop, windowSize);
@@ -222,7 +224,7 @@ export function CarouselContent({
 	return (
 		<GestureDetector gesture={panGesture}>
 			<Animated.View
-				accessibilityActions={count > 1 ? ACCESSIBILITY_ACTIONS : undefined}
+				accessibilityActions={count > 1 ? [...ACCESSIBILITY_ACTIONS, ...autoplayActions] : undefined}
 				accessibilityLabel={accessibilityLabel}
 				accessibilityRole="adjustable"
 				accessibilityState={{ disabled: isDisabled }}

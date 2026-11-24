@@ -10,7 +10,8 @@
 	"registryDependencies": [
 		"cn",
 		"tv",
-		"use-calm-motion",
+		"use-controllable-state",
+		"use-looping-motion",
 		"use-theme-color"
 	],
 	"dependencies": [],
@@ -54,6 +55,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
 				}
@@ -80,8 +85,8 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../hooks/use-calm-motion",
-					"to": "@registry/hooks/use-calm-motion"
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
 				},
 				{
 					"from": "../../lib/cn",
@@ -122,6 +127,10 @@
 			"target": "marquee/marquee.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-looping-motion",
+					"to": "@registry/hooks/use-looping-motion"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

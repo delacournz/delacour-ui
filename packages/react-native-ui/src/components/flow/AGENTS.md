@@ -108,8 +108,14 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
   has a size, then fits once without animation.
 - **Lock disables pan, zoom, every drag and every connection.** The zoom and fit buttons
   disable with it; the lock button reports its state as `selected`.
-- **Animated dashes are decorative, so they stop under calm motion.** `useCalmMotion()` covers
-  reduce motion and an E2E build's `isMotionCalm`. A fit or zoom animates for
+- **Animated dashes are a loop, so they follow `useLoopingMotion`** (WCAG 2.2.2). The root calls
+  it once — never per edge, so fifty edges hold no extra screen-reader subscription — and
+  hands the `hold` to edges through the canvas layer value. Calm motion or a screen reader rests
+  them (still dashes at offset 0); `isPaused` / `defaultPaused` / `onPausedChange` on `<Flow>`
+  freeze them where they are and resume carries on from that offset. `resolveEdgeMarch` decides
+  march / freeze / rest. Edges are hidden Skia drawing and the root is not one accessible
+  element, so there are no accessibility actions; the app wires `isPaused` to its own control.
+  Fit and zoom are transitions, not loops: they still read `useReducedMotion`. A fit or zoom animates for
   `fitDuration` unless reduce motion is on, in which case it jumps.
 - **Controls and the minimap are absolutely positioned `Surface`s, not popovers.** No overlay
   layer is needed for something that never leaves the canvas.

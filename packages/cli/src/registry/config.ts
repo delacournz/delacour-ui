@@ -776,6 +776,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	cn: { title: "cn", description: "Class merging that understands the library's semantic size tokens." },
 	color: { title: "isLiteralColor", description: "Tells a literal colour from a theme token name." },
 	"compose-refs": { title: "composeRefs", description: "Merges several refs onto one node." },
+	"looping-motion": {
+		title: "loopingMotion",
+		description:
+			"Why a looping animation holds — calm motion, a screen reader or the user's pause — and its pause actions.",
+	},
 	labels: {
 		title: "labels",
 		description: "Every string the components speak or show on their own, with English defaults and the merge order.",
@@ -832,6 +837,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "useMinimumHitSlop",
 		description:
 			"The hitSlop that grows a small control to the minimum touch target, and the provider an Android app opts into 48dp with.",
+	},
+	"use-looping-motion": {
+		title: "useLoopingMotion",
+		description: "Holds a loop under calm motion or a screen reader, with a user pause (WCAG 2.2.2).",
 	},
 	"use-labels": {
 		title: "useLabels",

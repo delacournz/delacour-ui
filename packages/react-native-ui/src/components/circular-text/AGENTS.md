@@ -33,6 +33,7 @@ no context.
 | `span` | `full` · `arc { sweep, startAngle? }` · `natural { startAngle? }` | `full` |
 | `side` | `outside` (tops away from the centre) · `inside` (tops toward it) | `outside` |
 | `spin` | `none` · `loop { speed? }` (deg/s) · `controlled { rotation }` (deg) | `none` |
+| `isPaused` · `defaultPaused` · `onPausedChange` | the user's persistent pause of a `loop` | not paused |
 | `direction` | `clockwise` · `counterclockwise` — the sign of a `loop` | `clockwise` |
 | `pause` | `none` · `press` · `controlled { isPaused }` | `none` |
 | `repeat` / `separator` | a count or `"fill"`, and what goes after each copy | `1`, `" • "` |
@@ -96,10 +97,20 @@ no context.
   over `CIRCULAR_TEXT_EASE_MS`.
 - **The callback is inactive unless the ring loops.** `none`, `controlled` and calm rings put
   nothing on the frame loop.
-- **Calm motion holds a `loop` still at 0°.** Under the OS reduce-motion setting or
-  `DelacourProvider`'s `isMotionCalm`, `loop` behaves as `none` and the angle returns to 0, so the
-  text reads from 12 o'clock. The spin is decoration; holding it still makes the words legible and
-  costs nothing. A `controlled` spin still follows its caller, who owns that motion.
+- **Calm motion and a screen reader rest a `loop` at 0°; a user pause freezes it.** `useLoopingMotion`
+  (WCAG 2.2.2) decides. Under the OS reduce-motion setting, `DelacourProvider`'s `isMotionCalm` or
+  a running screen reader, `loop` behaves as `none` and the angle returns to 0, so the text reads
+  from 12 o'clock — a ring caught mid-turn is harder to read than a still one. `isPaused` /
+  `defaultPaused` / `onPausedChange` are the persistent pause an app wires to its own control: the
+  velocity eases to zero and the angle stays where it stopped, so resuming carries on from it.
+  `resolveSpinRun` is the pure half. A `controlled` spin still follows its caller, who owns that
+  motion — it is not a loop the component runs, so it takes no hold and offers no actions.
+- **`isPaused` is not `pause`.** `pause` is the transient hold (a press, or the app easing the
+  ring to a halt); `isPaused` is the user's persistent pause — wire a visible Pause button to it.
+  Either freezes the angle, and while a controlled `pause` holds it the ring offers no pause or
+  resume action, since neither would change anything visible.
+- **Pause and resume are accessibility actions on the ring's element** — the one already `accessible`
+  text element — and only while `spin` is `loop`. Nothing is added to a still or controlled ring.
 - **Press-to-pause is a `LongPress` with `minDuration(0)` on the ring.** It sets the pressed flag in
   both `onBegin` and `onStart` — on the iOS simulator `onBegin` never fired for it, and the ring
   kept turning under the finger until `onStart` set it too — and clears it in `onFinalize`, so a scroll that takes the touch over still resumes the ring. It is a hold, not a

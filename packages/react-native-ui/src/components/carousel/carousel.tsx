@@ -13,6 +13,7 @@ import { useSharedValue, withSpring, withTiming } from "react-native-reanimated"
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { useLabels } from "../../hooks/use-labels";
+import { useLoopingMotion } from "../../hooks/use-looping-motion";
 import type { CarouselLabels } from "../../lib/labels";
 import { resolveIndexFromPosition, resolveNearestPosition } from "../../lib/paging";
 import {
@@ -71,6 +72,16 @@ type CarouselCommonProps = {
 	autoplay?: boolean;
 	/** Milliseconds per slide while autoplaying. Default 4000. */
 	autoplayInterval?: number;
+	/**
+	 * The user's pause of autoplay, controlled. Unlike the first touch, which stops it for good, a
+	 * pause is undone by `false`. Wire it to your own visible control; it is also offered as
+	 * "Pause animation" / "Resume animation" custom actions on the carousel.
+	 */
+	isPaused?: boolean;
+	/** The pause autoplay starts with, while uncontrolled. Default `false`. */
+	defaultPaused?: boolean;
+	/** Called when the user pauses or resumes autoplay. */
+	onPausedChange?: (isPaused: boolean) => void;
 	className?: string;
 	testID?: string;
 	/** The carousel's name, e.g. "Featured". Read with the "2 of 5" value. */
@@ -99,6 +110,7 @@ type CarouselStateProps =
 
 export type CarouselProps = CarouselCommonProps & CarouselStateProps;
 
+const NO_ACTIONS: { name: string; label: string }[] = [];
 const EMPTY_GEOMETRY: CarouselGeometry = { inset: 0, pitch: 0, size: 0, viewport: 0 };
 
 function CarouselRoot({
@@ -113,6 +125,9 @@ function CarouselRoot({
 	isScrollEnabled = true,
 	autoplay = false,
 	autoplayInterval = CAROUSEL_DEFAULT_AUTOPLAY_INTERVAL_MS,
+	isPaused: isPausedProp,
+	defaultPaused,
+	onPausedChange,
 	className,
 	testID,
 	accessibilityLabel,
@@ -123,6 +138,7 @@ function CarouselRoot({
 }: CarouselProps): ReactElement {
 	const isCalm = useCalmMotion();
 	const labels = useLabels("carousel", labelsProp);
+	const looping = useLoopingMotion({ isPaused: isPausedProp, defaultPaused, onPausedChange });
 	const [count, setCount] = useState(0);
 
 	const [selected, setSelected] = useControllableState<number>({
@@ -231,12 +247,13 @@ function CarouselRoot({
 		return !loop && next >= countRef.current - 1;
 	}, [go, loop]);
 
-	const { stop: stopAutoplay } = useCarouselAutoplay({
+	const { stop: stopAutoplay, isStopped: isAutoplayStopped } = useCarouselAutoplay({
 		autoplay,
 		count,
 		interval: autoplayInterval,
 		isCalm,
 		isDisabled,
+		isPaused: looping.isPaused,
 		onTick: handleTick,
 	});
 
@@ -305,8 +322,24 @@ function CarouselRoot({
 	);
 
 	const motion = useMemo<CarouselMotionValue>(
-		() => ({ commitFromPan, geometry, position, stopAutoplay }),
-		[commitFromPan, geometry, position, stopAutoplay]
+		() => ({
+			autoplayActions: autoplay && !isAutoplayStopped ? looping.accessibilityActions : NO_ACTIONS,
+			commitFromPan,
+			geometry,
+			onAutoplayAction: looping.onAccessibilityAction,
+			position,
+			stopAutoplay,
+		}),
+		[
+			autoplay,
+			isAutoplayStopped,
+			commitFromPan,
+			geometry,
+			looping.accessibilityActions,
+			looping.onAccessibilityAction,
+			position,
+			stopAutoplay,
+		]
 	);
 
 	return (

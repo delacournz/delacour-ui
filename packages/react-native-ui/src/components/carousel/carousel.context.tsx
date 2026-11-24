@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { AccessibilityActionEvent } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import type { CarouselLabels } from "../../lib/labels";
 import type { CarouselOrientation, CarouselVariant } from "./carousel.variants";
@@ -73,6 +74,9 @@ export type CarouselMotionValue = {
 	commitFromPan: (targetPosition: number) => void;
 	/** Autoplay stops for good on the first touch. */
 	stopAutoplay: () => void;
+	/** Pause/resume custom actions for the adjustable element. Empty unless autoplay is configured and not held. */
+	autoplayActions: { name: string; label: string }[];
+	onAutoplayAction: (event: AccessibilityActionEvent) => void;
 };
 
 /** One slide's place in the run, given to it by `Carousel.Content`. */

@@ -225,6 +225,7 @@ each and the `signoff` umbrella last, on the head SHA it tested:
 | Trigger | Why |
 | --- | --- |
 | `pull_request` — `opened`, `synchronize`, `reopened`, `ready_for_review` | Every push to a pull request. `resolve` skips a draft and a fork's pull request, and every other job needs it, so neither runs anything; `ready_for_review` starts the run a draft skipped. A fork's token can neither install `@delacournz/*` nor write a status, so a maintainer dispatches it after reading the diff. The version pull request (`changeset-release/develop`) also runs `verify-expo` |
+| `merge_group` — `checks_requested` | A pull request joining `develop`'s merge queue. The run tests the queue's own commit (the squash onto `develop`, or onto the entries ahead of it) and writes the `signoff/*` statuses there. It is the full-suite gate before anything lands. `verify-expo` stays on the version pull request's own run. Inert until `develop-protected` carries a `merge_queue` rule |
 | `workflow_dispatch` | The escape hatch above. `mode: signoff` makes a green run write the statuses for the optional `pr`'s head or `signoff-sha` (else the dispatched ref's tip); `mode: report` writes nothing |
 | push to `release/playground/*` | Advisory — see [apps/playground/AGENTS.md](apps/playground/AGENTS.md#eas) |
 
@@ -233,7 +234,8 @@ signed off at its head; the merged tree can differ from that head when `develop`
 (see [Branches](#branches)), and the next pull request's signoff covers it. `main` only
 fast-forwards to a release commit, whose pull request `ci.yml` signs off on its own head. Railway does not wait on check suites, so no deploy depends on
 one either. `scripts/signoff.test.ts` fails if `ci.yml` regains a push to `develop`, drops one of the
-four pull request types, or stops skipping drafts and forks.
+four pull request types, drops `merge_group`, or stops skipping drafts and forks; it runs `resolve`'s
+script for each event and pins what it signs.
 
 Unlike a local signoff, CI ignores the path gates: `registry` and `copied tests` run on every pull
 request, and their statuses are written beside the required ones. `verify-expo` — the CLI against a

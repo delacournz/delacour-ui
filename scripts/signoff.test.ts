@@ -512,6 +512,58 @@ describe("drift guard", () => {
 		expect(signoff).toContain("needs.resolve.outputs.sign == 'true'");
 	});
 
+	test("ci.yml runs for a merge queue entry, which is where the full suite gates develop", async () => {
+		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
+			on: { merge_group?: { types?: string[] } };
+		};
+		expect(workflow.on.merge_group?.types).toEqual(["checks_requested"]);
+	});
+
+	/** Runs `resolve`'s own shell script, as the runner would, and returns what it wrote to GITHUB_OUTPUT. */
+	async function resolveOutputs(env: Record<string, string>): Promise<Record<string, string>> {
+		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
+			jobs: { resolve: { steps: { id?: string; run?: string }[] } };
+		};
+		const script = workflow.jobs.resolve.steps.find((step) => step.id === "resolve")?.run ?? "";
+		const output = `${process.env.TMPDIR ?? "/tmp"}/resolve-${crypto.randomUUID()}`;
+		const run = Bun.spawnSync(["bash", "-c", script], {
+			env: { PATH: process.env.PATH ?? "", GITHUB_OUTPUT: output, GITHUB_STEP_SUMMARY: "/dev/null", ...env },
+		});
+		expect(run.exitCode).toBe(0);
+		const text = await Bun.file(output).text();
+		await Bun.file(output).delete();
+		return Object.fromEntries(
+			text
+				.trim()
+				.split("\n")
+				.map((line) => line.split("=", 2) as [string, string])
+		);
+	}
+
+	test("resolve signs a merge queue entry's own commit, without the npm-installed verify-expo", async () => {
+		expect(await resolveOutputs({ EVENT: "merge_group", EVENT_SHA: "abc123", HEAD_REF: "" })).toEqual({
+			sha: "abc123",
+			sign: "true",
+			expo: "false",
+		});
+	});
+
+	test("resolve still signs a pull request, and runs verify-expo only for the version pull request", async () => {
+		expect(await resolveOutputs({ EVENT: "pull_request", EVENT_SHA: "def456", HEAD_REF: "feat/x" })).toEqual({
+			sha: "def456",
+			sign: "true",
+			expo: "false",
+		});
+		expect(
+			(await resolveOutputs({ EVENT: "pull_request", EVENT_SHA: "def456", HEAD_REF: "changeset-release/develop" })).expo
+		).toBe("true");
+		expect(await resolveOutputs({ EVENT: "push", EVENT_SHA: "0aa", HEAD_REF: "" })).toEqual({
+			sha: "0aa",
+			sign: "false",
+			expo: "true",
+		});
+	});
+
 	test("ci.yml's dispatch picks report or signoff from a dropdown, with an optional PR and SHA", async () => {
 		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
 			on: { workflow_dispatch: { inputs: Record<string, { type: string; required?: boolean; options?: string[] }> } };

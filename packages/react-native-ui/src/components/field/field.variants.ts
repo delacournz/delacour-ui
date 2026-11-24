@@ -171,7 +171,7 @@ export function resolveFieldErrorMessage(children: unknown): string | null {
 	return text === "" ? null : text;
 }
 
-/** The words a field adds to a control's announcement. English by default; pass your own to localise. */
+/** The words a field adds to a control's announcement. English by default. The resolver and hook take your own; no control forwards them yet. */
 export type FieldAccessibilityLabels = {
 	/** Appended to the control's name — "Email, required". Matches `Label`'s announcement. */
 	required: string;

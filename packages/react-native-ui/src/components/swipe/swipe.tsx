@@ -26,6 +26,7 @@ import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
 import { type SwipeContextValue, SwipeProvider, useSwipeGroupContext } from "./swipe.context";
 import {
+	findDuplicateSwipeActionLabels,
 	mergeSwipeAccessibilityActions,
 	partitionSwipeChildren,
 	resolveOutermostIndex,
@@ -338,6 +339,7 @@ function SwipeRoot({
 	);
 
 	warnInteractiveChildInAccessible({ accessible: true, children: row, component: "Swipe" });
+	if (process.env.NODE_ENV !== "production") warnDuplicateActionLabels(accessibilityActions);
 
 	const context = useMemo<SwipeContextValue>(
 		() => ({ close, isRTL: IS_RTL, offset, open, openSide, runAction }),
@@ -374,6 +376,22 @@ function SwipeRoot({
 			</View>
 		</SwipeProvider>
 	);
+}
+
+const WARNED_DUPLICATE_LABELS = new Set<string>();
+
+/**
+ * Warns once per label when two of the row's actions share it: iOS dispatches a custom action by its
+ * label, so VoiceOver would list both and fire the first for each. See `findDuplicateSwipeActionLabels`.
+ */
+function warnDuplicateActionLabels(actions: readonly { name: string; label?: string }[]): void {
+	for (const label of findDuplicateSwipeActionLabels(actions)) {
+		if (WARNED_DUPLICATE_LABELS.has(label)) continue;
+		WARNED_DUPLICATE_LABELS.add(label);
+		console.warn(
+			`[Swipe] two of the row's accessibility actions are labelled "${label}". VoiceOver dispatches a custom action by its label, so both fire the first one. Give each action a distinct label.`
+		);
+	}
 }
 
 /**

@@ -128,6 +128,19 @@ describe("Swipe", () => {
 		expect(onOpenChange).not.toHaveBeenLastCalledWith(null);
 	});
 
+	test("warns once in development when two of the row's actions share a label", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+		await renderWithProviders(
+			<Row accessibilityActions={[{ label: "Snooze", name: "snooze-inner" }]} onAccessibilityAction={() => {}} />
+		);
+		await renderWithProviders(
+			<Row accessibilityActions={[{ label: "Snooze", name: "snooze-inner" }]} onAccessibilityAction={() => {}} />
+		);
+		const duplicates = warn.mock.calls.filter((call) => String(call[0]).includes('labelled "Snooze"'));
+		expect(duplicates).toHaveLength(1);
+		warn.mockRestore();
+	});
+
 	test("tiles are hidden from assistive technology while the row is shut and exposed once open", async () => {
 		const ref = createRef<SwipeHandle>();
 		await renderWithProviders(<Row ref={ref} />);

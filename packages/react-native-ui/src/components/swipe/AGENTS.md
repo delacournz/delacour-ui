@@ -127,8 +127,12 @@ root plus `Swipe.Start`, `Swipe.End`, `Swipe.Action` and `Swipe.Group`, with `us
 
 - **Every action is published on the row as a named accessibility action**, labelled by its `label`
   and dispatched by a stable name, `swipe-<side>-<index>` (`swipe-start-0`, `swipe-end-1`), from
-  `resolveSwipeAccessibilityActions` / `resolveSwipeActionByName`. The label is for speaking only: two
-  tiles may share one, and a label like "Activate" must never collide with a standard action. A swipe
+  `resolveSwipeAccessibilityActions` / `resolveSwipeActionByName`. On Android the name is what
+  dispatches, so a label like "Activate" never collides with a standard action. **iOS dispatches by
+  label**: Fabric's `didActivateAccessibilityCustomAction` maps the spoken label back to the first
+  action carrying it, so two actions with one label (two tiles, or a caller's mirrored "Delete" next
+  to a "Delete" tile) both fire the first. Give every action on a row a distinct label; development
+  warns once per shared label (`findDuplicateSwipeActionLabels`). A swipe
   is invisible to a screen reader, so without this the actions would not exist for one.
 - **The row is a single accessibility element** (`accessible`), the shape a list row with custom
   actions takes; `accessibilityLabel` and `accessibilityHint` passed to `Swipe` land on it. A row

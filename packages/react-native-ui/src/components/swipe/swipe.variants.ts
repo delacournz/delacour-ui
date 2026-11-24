@@ -72,8 +72,9 @@ export const SWIPE_CLOSE_ACTION_LABEL = "Close";
 /**
  * The stable name a tile is published under: `swipe-<side>-<index>`.
  *
- * A tile's label is for speaking, not for dispatch: two tiles can share one, and a label such as
- * "Activate" would collide with a standard action name.
+ * A tile's label is for speaking; a name is what Android dispatches on, so a label such as "Activate"
+ * cannot collide with a standard action name. iOS still dispatches by label: see
+ * `findDuplicateSwipeActionLabels`.
  */
 export function swipeActionName(side: SwipeSide, index: number): string {
 	return `swipe-${side}-${index}`;
@@ -121,6 +122,24 @@ export function mergeSwipeAccessibilityActions({
 	const own = caller ?? [];
 	const closes = isOpen && !own.some((action) => action.name === SWIPE_ESCAPE_ACTION);
 	return [...own, ...swipe, ...(closes ? [{ label: SWIPE_CLOSE_ACTION_LABEL, name: SWIPE_ESCAPE_ACTION }] : [])];
+}
+
+/**
+ * The labels more than one of the row's actions carries, each once, in first-seen order.
+ *
+ * iOS dispatches a custom action by its label: Fabric's `didActivateAccessibilityCustomAction` maps the
+ * spoken label back to the **first** action carrying it, so two entries with one label both fire the
+ * first. Stable names keep Android apart, not iOS; the row warns in development instead.
+ */
+export function findDuplicateSwipeActionLabels(actions: readonly SwipeAccessibilityAction[]): string[] {
+	const seen = new Set<string>();
+	const duplicates: string[] = [];
+	for (const { label } of actions) {
+		if (label === undefined) continue;
+		if (seen.has(label) && !duplicates.includes(label)) duplicates.push(label);
+		seen.add(label);
+	}
+	return duplicates;
 }
 
 export type SwipeChildren = {

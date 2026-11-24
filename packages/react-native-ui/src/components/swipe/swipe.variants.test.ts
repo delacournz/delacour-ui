@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import type { ReactElement, ReactNode } from "react";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
+	findDuplicateSwipeActionLabels,
 	mergeSwipeAccessibilityActions,
 	partitionSwipeChildren,
 	resolveOutermostIndex,
@@ -380,5 +381,25 @@ describe("swipe accessibility actions", () => {
 	test("merge leaves a caller's own escape alone", () => {
 		const merged = mergeSwipeAccessibilityActions({ caller: [{ name: "escape" }], isOpen: true, swipe: [] });
 		expect(merged).toEqual([{ name: "escape" }]);
+	});
+});
+
+describe("findDuplicateSwipeActionLabels", () => {
+	test("returns each label more than one action carries, once, in first-seen order", () => {
+		expect(
+			findDuplicateSwipeActionLabels([
+				{ label: "Delete", name: "delete-inner" },
+				{ label: "Done", name: "swipe-start-0" },
+				{ label: "Delete", name: "swipe-end-0" },
+				{ label: "Done", name: "swipe-end-1" },
+				{ label: "Delete", name: "swipe-end-2" },
+			])
+		).toEqual(["Delete", "Done"]);
+	});
+
+	test("ignores unlabelled actions and returns nothing when every label is distinct", () => {
+		expect(findDuplicateSwipeActionLabels([{ name: "a" }, { name: "b" }, { label: "Close", name: "escape" }])).toEqual(
+			[]
+		);
 	});
 });

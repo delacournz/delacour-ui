@@ -107,6 +107,14 @@ The reference implementation for the patterns in the package
   the left edge unless it also sets `self-center`. This is what made an earlier
   `only` implementation collapse a full-width button into a small box flush
   left. Prefer not taking the width at all.
+- **A labelled button is a height floor, not a height.** `sm|md|lg` use
+  `min-h-button-*`, so a label scaled to 2x (`TEXT_MAX_FONT_SIZE_MULTIPLIER`)
+  grows the button instead of clipping; at default text size it draws exactly
+  the old height, and the root's `items-center` keeps the content centred.
+  `icon-*` squares stay a fixed `h-button-* w-button-*`: no label to clip.
+  Override contract: tailwind-merge treats `h-*` and `min-h-*` as separate
+  groups, so a caller's `min-h-*` displaces the floor while a caller's `h-*`
+  now only adds a cap beside it (the floor still applies). A test pins both.
 - **A short button reaches 44pt with `hitSlop`, not with size, sized from the
   theme's height.** By default `sm` and `icon-sm` draw at 36; a denser style
   (the playground's house style: `sm` 32, `md` 36) shortens `md` as well. The

@@ -94,7 +94,7 @@ describe("buttonVariants root slot", () => {
 	test("defaults to the primary md variant", () => {
 		const cls = buttonVariants().root();
 		expect(cls).toContain("bg-primary");
-		expect(cls).toContain("h-button-md");
+		expect(cls).toContain("min-h-button-md");
 	});
 
 	test("clips, so a pressed row fades to the edge of its own box", () => {
@@ -121,12 +121,31 @@ describe("buttonVariants root slot", () => {
 		expect(buttonVariants({ variant: "ghost" }).root()).toContain("border-transparent");
 	});
 
+	test("labelled sizes grow with their label; icon squares stay fixed", () => {
+		for (const size of BUTTON_LABEL_SIZES) {
+			const cls = buttonVariants({ size }).root();
+			expect(cls).toMatch(/\bmin-h-button-/);
+			expect(cls).not.toMatch(/(^|\s)h-button-/);
+		}
+		for (const [square] of SQUARE_PAIRS) {
+			const cls = buttonVariants({ size: square }).root();
+			expect(cls).toMatch(/(^|\s)h-button-/);
+			expect(cls).not.toMatch(/\bmin-h-button-/);
+		}
+	});
+
+	test("a caller min-h displaces the default floor; a caller h does not", () => {
+		expect(cn(buttonVariants().root(), "min-h-20")).toContain("min-h-20");
+		expect(cn(buttonVariants().root(), "min-h-20")).not.toContain("min-h-button-md");
+		expect(cn(buttonVariants().root(), "h-20")).toContain("min-h-button-md");
+	});
+
 	test("gives every labelled size a distinct height", () => {
 		const seen = new Set(BUTTON_LABEL_SIZES.map((size) => heightToken(buttonVariants({ size }).root())));
 		expect(seen.size).toBe(BUTTON_LABEL_SIZES.length);
-		expect(buttonVariants({ size: "sm" }).root()).toContain("h-button-sm");
-		expect(buttonVariants({ size: "md" }).root()).toContain("h-button-md");
-		expect(buttonVariants({ size: "lg" }).root()).toContain("h-button-lg");
+		expect(buttonVariants({ size: "sm" }).root()).toContain("min-h-button-sm");
+		expect(buttonVariants({ size: "md" }).root()).toContain("min-h-button-md");
+		expect(buttonVariants({ size: "lg" }).root()).toContain("min-h-button-lg");
 	});
 
 	test("an icon size swaps horizontal padding for a square width", () => {
@@ -982,7 +1001,7 @@ describe("a stretched member", () => {
 
 	test("keeps its own corner and height", () => {
 		const cls = buttonVariants({ groupPosition: "first", isStretched: true, size: "md" }).root();
-		expect(cls).toContain("h-button-md");
+		expect(cls).toContain("min-h-button-md");
 		expect(cls).toContain("rounded-s-button-md");
 	});
 });

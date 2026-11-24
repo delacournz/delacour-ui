@@ -80,7 +80,7 @@ type SelectBaseProps = {
 	formatSelectedCount?: (count: number) => string;
 	/** Classes for the trigger. */
 	className?: string;
-	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, close `-close`, Done `-done`. */
+	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, close `-close`, Done `-done`, header `-header`, list `-list`. */
 	testID?: string;
 	/** `Select.Item`, `Select.Group`, and optionally a `Select.Trigger` to replace the default one. */
 	children?: ReactNode;
@@ -111,6 +111,8 @@ export type SelectMultipleProps = SelectBaseProps & {
 export type SelectProps = SelectSingleProps | SelectMultipleProps;
 
 const NO_VALUES: readonly string[] = [];
+/** FlatList puts `ListHeaderComponent` at child 0, so this pins the header. Module scope keeps one reference across renders. */
+const STICKY_HEADER = [0];
 
 function SelectRoot(props: SelectProps): ReactElement {
 	const {
@@ -284,12 +286,14 @@ function SelectRoot(props: SelectProps): ReactElement {
 	};
 
 	// The title and the search field ride at the head of the list rather than
-	// above it, so they count towards the height the sheet sizes itself to. The
-	// close sits in the title's row, so it covers nothing when there is no title.
+	// above it, so they count towards the height the sheet sizes itself to, and
+	// the list pins them (`stickyHeaderIndices`) so they stay put while the rows
+	// scroll under them. The close sits in the title's row, so it covers nothing
+	// when there is no title.
 	// The search group opts out of the enclosing Field's state: the sheet only
 	// opens when the select is enabled, and a query is never the invalid value.
 	const header = (
-		<View className={slots.header()}>
+		<View className={slots.header()} testID={testID ? `${testID}-header` : undefined}>
 			<View className={slots.headerBar()}>
 				{sheetTitle ? <BottomSheet.Title className={slots.headerTitle()}>{sheetTitle}</BottomSheet.Title> : null}
 				<BottomSheet.Close className={slots.headerClose()} testID={testID ? `${testID}-close` : undefined} />
@@ -355,6 +359,8 @@ function SelectRoot(props: SelectProps): ReactElement {
 							ListHeaderComponent={header}
 							maxToRenderPerBatch={listWindow.maxToRenderPerBatch}
 							renderItem={renderRow}
+							stickyHeaderIndices={STICKY_HEADER}
+							testID={testID ? `${testID}-list` : undefined}
 							windowSize={listWindow.windowSize}
 						/>
 						{multiple ? (

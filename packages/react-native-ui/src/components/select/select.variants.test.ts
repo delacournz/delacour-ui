@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
+import { bottomSheetVariants } from "../bottom-sheet/bottom-sheet.variants";
 import { INPUT_SIZES, INPUT_VARIANTS, inputVariants } from "../input/input.variants";
 import { listGroupVariants } from "../list-group/list-group.variants";
 import type { SelectEntry, SelectOptionInput } from "./select.types";
@@ -89,6 +90,26 @@ function everySlotClass(): string[] {
 	}
 	return out;
 }
+
+describe("selectVariants header", () => {
+	test("is opaque in the sheet's colour, so pinned it hides the rows scrolling under it", () => {
+		for (const variant of INPUT_VARIANTS) {
+			for (const size of INPUT_SIZES) {
+				expect(selectVariants({ size, variant }).header().split(" ")).toContain("bg-popover");
+			}
+		}
+	});
+
+	test("carries the list's top padding, so it pins where it rests instead of riding up 8pt", () => {
+		for (const variant of INPUT_VARIANTS) {
+			for (const size of INPUT_SIZES) {
+				const slots = selectVariants({ size, variant });
+				expect(slots.header().split(" ")).toContain("pt-2");
+				expect(bottomSheetVariants().scrollContent({ className: slots.sheetBody() }).split(" ")).toContain("pt-0");
+			}
+		}
+	});
+});
 
 const FRUIT: SelectOptionInput[] = [
 	{ label: "Apple", value: "apple" },

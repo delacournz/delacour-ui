@@ -57,6 +57,13 @@ describe("Combobox", () => {
 		expect(screen.getAllByRole("radio")).toHaveLength(5);
 	});
 
+	test("the title and search stay pinned while the rows scroll", async () => {
+		await render();
+		await open();
+		expect(screen.getByTestId("cb-list")).toHaveProp("stickyHeaderIndices", [0]);
+		expect(screen.getByTestId("cb-header")).toBeOnTheScreen();
+	});
+
 	test("typing filters the options, reporting each change as a type", async () => {
 		const onInputValueChange = jest.fn();
 		await render({ onInputValueChange });

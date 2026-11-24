@@ -25,7 +25,7 @@ engine. An app that imports no picker still never resolves it.
 | `select.context.tsx` | `SelectProvider`, `useSelect()`, `useSelectContext()`, `useSelectPart()` |
 | `select.types.ts` | `SelectOption`, `SelectOptionGroup`, `SelectRowOption`, `SelectEntry`, `SelectListRow`, `SelectHighlightRange` |
 | `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports — the sheet cap, the searchable list's floor and the list's virtualisation window among them |
-| `select.render.test.tsx` | Mounted under Jest inside `BottomSheetProvider` — trigger role, expanded and value, single and multiple picks, controlled and uncontrolled, limit, search, long-list virtualisation, `Field` inheritance, parts outside a root |
+| `select.render.test.tsx` | Mounted under Jest inside `BottomSheetProvider` — trigger role, expanded and value, the pinned header, single and multiple picks, controlled and uncontrolled, limit, search, long-list virtualisation, `Field` inheritance, parts outside a root |
 | `select.variants.test.ts` | |
 | `select.collect.test.ts` | |
 
@@ -83,6 +83,16 @@ engine. An app that imports no picker still never resolves it.
   it raises is the sheet's to lift for. The close sits in a row of its own with
   the title (`headerBar`), not in the sheet's absolute corner, so with no title
   it still never covers the search field or the first row.
+- **The header is pinned while the rows scroll.** The list passes
+  `stickyHeaderIndices={[0]}` — FlatList puts `ListHeaderComponent` at child 0
+  and offsets the rows past it, and always mounts it whatever the window — so
+  the title, the close and the search stay at the top of a long list instead of
+  scrolling off with it. The `header` slot is `bg-popover`, the sheet's own
+  colour, so the rows pass under it unseen. It carries the list's `pt-2` (`sheetBody` sets `pt-0`), so it
+  rests at the list's top edge and pins where it rests; with the padding on the
+  content container it rode up 8pt before it stuck. It stays in the list rather than
+  above it, or dynamic sizing would stop counting it. Group headings are not
+  sticky.
 - **A sheet sized to its rows is capped.** `resolveSelectSheetMaxHeight` hands
   the sheet `maxDynamicContentSize` — the lower of 85% of the window and the room
   below the top inset less a 24pt gap — and the list scrolls inside it. Without
@@ -163,3 +173,16 @@ engine. An app that imports no picker still never resolves it.
 - **`presentation` is a union of one.** `"sheet"` today; an anchored member is
   added once the library has a popover. There is no platform-native picker mode
   — it would need a new native peer.
+
+## Test IDs
+
+`testID` goes on the trigger, and the sheet's parts derive from it:
+
+| Part | testID |
+| --- | --- |
+| A row | `${testID}-option-${value}` |
+| The pinned header (title, close, search) | `${testID}-header` |
+| The list | `${testID}-list` |
+| The search field | `${testID}-search` |
+| The close | `${testID}-close` |
+| Done, in multiple mode | `${testID}-done` |

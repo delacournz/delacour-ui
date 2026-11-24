@@ -79,11 +79,17 @@ hook for the live theme with no selector mounted.
   and each option a `radio` with `accessibilityState.selected`, so the native
   radio announcement is the change announcement; nothing else is added. The
   group is named by `accessibilityLabel`, else the enclosing `Field.Label`'s
-  text, else "Theme". `sm` is 36pt tall, so it reaches 4pt further each way
+  text, else `labels.group` ("Theme"). `sm` is 36pt tall, so it reaches 4pt further each way
   (`resolveOptionHitSlop`) to make 44.
-- **Labels are localisable, and a blank one is ignored.** `labels` overrides per
-  mode, `Option`'s own `label` overrides that; an empty or whitespace override
-  falls back to the default rather than drawing an unlabelled radio.
+- **Spoken strings are the `labels` prop.** Keys `system`, `light`, `dark`
+  (captions, also each radio's name) and `group` (the group's name), from
+  `DelacourLabels.themeSelector`: English, then `DelacourProvider`'s `labels`,
+  then the root's `labels`. The root resolves them with `useLabels` and puts them
+  on the context, so `Option` reads them too. `accessibilityLabel` / `Field.Label`
+  win over `group`; `Option`'s own `label` wins over a caption. An empty or
+  whitespace caption falls back to English (`resolveModeLabel`, `resolveOptions`
+  take `labels` as `Partial<ThemeSelectorLabels>`) rather than drawing an
+  unlabelled radio. `ThemeModeLabels` is a deprecated alias of the caption keys.
 - **`modes` picks and orders; it cannot empty the control.** A duplicate keeps
   its first place and an empty list means all three, because a selector with no
   option could not show the mode the app is in.

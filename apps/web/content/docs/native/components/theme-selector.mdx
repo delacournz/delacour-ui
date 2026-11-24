@@ -73,7 +73,7 @@ The button's label steps; `sm` reaches past its edges to stay a 44pt target.
 
 ## Modes and labels
 
-`modes` picks the options and their order, and `labels` renames them for localisation.
+`modes` picks the options and their order, and `labels` renames them for localisation. `labels.group` names the group when no `accessibilityLabel` or `Field.Label` does. Both sit over `DelacourProvider`'s `labels`.
 
 ```tsx
 <ThemeSelector labels={{ light: "Day", dark: "Night" }} modes={["light", "dark"]} />
@@ -163,7 +163,10 @@ each option is a `radio` announced by its label.
       description: "Apply the mode with `Uniwind.setTheme`. Off, the selector only reports.",
     },
     modes: { type: "ThemeMode[]", default: '["system", "light", "dark"]', description: "The options, in order." },
-    labels: { type: "Partial<Record<ThemeMode, string>>", description: "Per-mode label overrides." },
+    labels: {
+      type: "Partial<ThemeSelectorLabels>",
+      description: "Mode captions (`system`, `light`, `dark`) and the group name (`group`), over `DelacourProvider`'s `labels`.",
+    },
     variant: { type: '"segmented" | "cards"', default: '"segmented"' },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },
     isDisabled: { type: "boolean", description: "Inherited from an enclosing `Field`." },

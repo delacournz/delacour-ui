@@ -1,6 +1,7 @@
 import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AccessibilityInfo, AppState, View } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { useFieldContext } from "../field/field.context";
 import { Surface } from "../surface";
 import { type CalendarContextValue, CalendarProvider } from "./calendar.context";
@@ -137,6 +138,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		className,
 		children,
 		testID,
+		labels: labelsProp,
 		mode: _mode,
 		selected: _selected,
 		defaultSelected: _defaultSelected,
@@ -145,6 +147,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 	} = props;
 
 	const field = useFieldContext();
+	const labels = useLabels("calendar", labelsProp);
 	const axes = resolveCalendarAxes({ field, own: { isDisabled, isInvalid, isReadOnly, size, variant } });
 	const today = useToday(todayOverride);
 
@@ -289,6 +292,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			isInvalid: axes.isInvalid,
 			isReadOnly: axes.isReadOnly,
 			label: field?.label ?? null,
+			labels,
 			testID,
 			locale,
 			mode: selection.mode,
@@ -320,6 +324,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			canGoPrev,
 			captionLayout,
 			field?.label,
+			labels,
 			testID,
 			goNext,
 			goPrev,

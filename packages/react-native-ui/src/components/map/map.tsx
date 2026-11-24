@@ -23,13 +23,14 @@ import {
 } from "react";
 import { type LayoutChangeEvent, type NativeSyntheticEvent, StyleSheet, View, type ViewProps } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
+import { useLabels } from "../../hooks/use-labels";
 import { useThemeColor } from "../../hooks/use-theme-color";
+import type { MapLabels } from "../../lib/labels";
 import { type MapContextValue, MapProvider, MapUserLocationProvider, type MapUserLocationValue } from "./map.context";
 import type { LngLat, LngLatBounds, MapHandle, ViewState } from "./map.types";
 import {
 	buildMapStyle,
 	hasInitialViewChanged,
-	MAP_ACCESSIBILITY_LABEL,
 	MAP_STYLE_TOKENS,
 	type MapInitialView,
 	mapVariants,
@@ -75,6 +76,8 @@ export type MapProps = Omit<ViewProps, "children"> & {
 	onPress?: (lngLat: LngLat) => void;
 	/** Called once the native map has loaded. */
 	onReady?: () => void;
+	/** Spoken strings — the map's name and the controls' button names. Beat `DelacourProvider`'s `labels`; `accessibilityLabel` beats `labels.name`. */
+	labels?: Partial<MapLabels>;
 	/** Moves the camera after mount. */
 	ref?: Ref<MapHandle>;
 	/** Sizes the map. Defaults to the full width and `h-72`. */
@@ -114,11 +117,13 @@ function MapRoot({
 	onPress,
 	onReady,
 	ref,
+	labels: labelsProp,
 	className,
 	children,
-	accessibilityLabel = MAP_ACCESSIBILITY_LABEL,
+	accessibilityLabel,
 	...props
 }: MapProps): ReactElement {
+	const labels = useLabels("map", labelsProp);
 	const mapRef = useRef<MapRef>(null);
 	const cameraRef = useRef<CameraRef>(null);
 	const isReducedMotion = useReducedMotion();
@@ -258,6 +263,7 @@ function MapRoot({
 	const context = useMemo<MapContextValue>(
 		() => ({
 			handle,
+			labels,
 			zoomBy(delta) {
 				const target = currentZoom() + delta;
 				// Stepping again before the last step lands should step from where it
@@ -298,7 +304,7 @@ function MapRoot({
 				});
 			},
 		}),
-		[currentZoom, flyToUser, handle, isReducedMotion]
+		[currentZoom, flyToUser, handle, isReducedMotion, labels]
 	);
 
 	// A style reload — the theme changed — finishes loading the map again; the
@@ -334,7 +340,7 @@ function MapRoot({
 				<MapProvider value={context}>
 					<MapUserLocationProvider value={userLocation}>
 						<MapLibreMap
-							accessibilityLabel={accessibilityLabel}
+							accessibilityLabel={accessibilityLabel ?? labels.name}
 							attribution
 							attributionPosition={ATTRIBUTION_POSITION}
 							compass={false}

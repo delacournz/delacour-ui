@@ -1,5 +1,5 @@
 import { describe, expect, jest, test } from "@jest/globals";
-import { Platform, Text, View } from "react-native";
+import { Platform, Pressable as RNPressable, Text, View } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { GridItem } from "./grid-item";
 import { useGridItem, useGridItemGroup } from "./grid-item.context";
@@ -322,5 +322,75 @@ describe("GridItem", () => {
 			);
 			expect(reported).toEqual({ columns: 3, gap: 8 });
 		});
+	});
+});
+
+describe("GridItem interactive children", () => {
+	function warnings(warn: { mock: { calls: ReadonlyArray<ReadonlyArray<unknown>> } }) {
+		return warn.mock.calls.filter((call) => String(call[0]).includes("[GridItem]"));
+	}
+
+	test("warns once for a pressable tile and once for a static tile holding a control", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+		await renderWithProviders(
+			<GridItem onPress={() => {}}>
+				<GridItem.Actions>
+					<RNPressable accessibilityRole="button" onPress={() => {}} />
+				</GridItem.Actions>
+			</GridItem>
+		);
+		await renderWithProviders(
+			<GridItem>
+				<GridItem.Actions>
+					<RNPressable onLongPress={() => {}} />
+				</GridItem.Actions>
+			</GridItem>
+		);
+		expect(warnings(warn)).toHaveLength(2);
+		warn.mockRestore();
+	});
+
+	test("accessible={false} does not warn", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+		await renderWithProviders(
+			<GridItem accessible={false}>
+				<GridItem.Actions>
+					<View accessibilityRole="slider" />
+				</GridItem.Actions>
+			</GridItem>
+		);
+		expect(warnings(warn)).toHaveLength(0);
+		warn.mockRestore();
+	});
+
+	test("a caller accessibility action reaches a pressable and a static tile", async () => {
+		const onPress = jest.fn();
+		const pressableAction = jest.fn();
+		const staticAction = jest.fn();
+		const actions = [{ label: "Toggle", name: "toggle" }];
+		await renderWithProviders(
+			<>
+				<GridItem
+					accessibilityActions={actions}
+					accessibilityLabel="Pressable tile"
+					onAccessibilityAction={pressableAction}
+					onPress={onPress}
+				/>
+				<GridItem
+					accessibilityActions={actions}
+					accessibilityLabel="Static tile"
+					onAccessibilityAction={staticAction}
+				/>
+			</>
+		);
+		const pressable = screen.getByRole("button", { name: "Pressable tile" });
+		const staticTile = screen.getByLabelText("Static tile");
+		expect(pressable.props.accessibilityActions).toEqual(expect.arrayContaining(actions));
+		expect(staticTile.props.accessibilityActions).toEqual(actions);
+		await fireEvent(pressable, "accessibilityAction", { nativeEvent: { actionName: "toggle" } });
+		await fireEvent(staticTile, "accessibilityAction", { nativeEvent: { actionName: "toggle" } });
+		expect(pressableAction).toHaveBeenCalledTimes(1);
+		expect(staticAction).toHaveBeenCalledTimes(1);
+		expect(onPress).not.toHaveBeenCalled();
 	});
 });

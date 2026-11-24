@@ -69,6 +69,23 @@ outside the gesture.
   The scroll delta is folded into `dragY` in `retarget`, the one function both the pan and the frame
   callback call, so the row stays under the finger while the content moves.
 
+## Accessibility names and merged rows
+
+- **A `label` names the row.** `Sortable.Item label="Milk"` makes the handle "Reorder Milk" and the
+  actions "Move Milk up" / "Move Milk down" (`resolveSortableHandleLabel`,
+  `resolveSortableMoveActions`). Without it every handle is "Drag to reorder" and every action
+  "Move up", which a rotor lists as identical entries. Unlabelled strings are unchanged. An explicit
+  `Sortable.Handle accessibilityLabel` still wins.
+- **A `long-press` row is one stop.** A control composed into it (a checkbox, a delete button) is
+  unreachable, so `Sortable.Item` warns in development (`warnInteractiveChildInAccessible`). Mirror
+  the control as an entry in the row's own `accessibilityActions`, and hide the drawn one with
+  `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`.
+- **Caller actions merge, never clobber.** The row's `accessibilityActions` are Move up / Move down
+  followed by the caller's; `onAccessibilityAction` handles the two move names itself and forwards
+  every other name to the caller's handler. A caller action must not reuse `moveUp` / `moveDown`.
+- **A handle is drag-only.** It carries role `button` for its Move actions and has no tap: it is a
+  pan, so there is no activate path to wire.
+
 ## Gesture
 
 - **`handle` (default)** puts the pan on `Sortable.Handle` with `minDistance: 0`, the

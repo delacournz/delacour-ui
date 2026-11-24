@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 export const MENU_PLACEMENTS = ["top", "bottom"] as const;
@@ -63,8 +64,8 @@ export const MENU_ICON_TOKEN: Record<MenuItemVariant, string> = {
 /** Theme token an indicator (check, chevron) is drawn in. */
 export const MENU_INDICATOR_TOKEN = "popover-foreground";
 
-/** The accessibility hint a trigger carries. */
-export const MENU_TRIGGER_HINT = "Opens a menu";
+/** The English accessibility hint a trigger carries; the live one comes from `labels.triggerHint`. */
+export const MENU_TRIGGER_HINT = DELACOUR_DEFAULT_LABELS.menu.triggerHint;
 
 /** `align` as a screen edge: start and end swap under RTL, center does not. */
 export function resolveMenuPhysicalAlign(align: MenuAlign, isRTL: boolean): MenuPhysicalAlign {

@@ -4,6 +4,7 @@ import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import { SKETCH_SHAPES, SKETCH_TOOLS } from "./sketch.paths";
 import {
 	clampSketchSize,
+	resolveSketchAccessibilityActions,
 	resolveSketchAccessibilityLabel,
 	resolveSketchColor,
 	resolveSketchExportBackground,
@@ -154,6 +155,16 @@ describe("accessibility labels", () => {
 		expect(resolveSketchAccessibilityLabel([{ d: "M0 0", id: "a", kind: "erase", width: 4 }])).toBe("Drawing, 1 mark");
 		const three = ["a", "b", "c"].map((id) => ({ d: "M0 0", id, kind: "erase" as const, width: 4 }));
 		expect(resolveSketchAccessibilityLabel(three)).toBe("Drawing, 3 marks");
+	});
+
+	test("the canvas offers undo and clear only when there is a mark and it is not disabled", () => {
+		const mark = { color: "#111111", d: "M0 0", id: "a", kind: "stroke" as const, width: 4 };
+		expect(resolveSketchAccessibilityActions([], false)).toEqual([]);
+		expect(resolveSketchAccessibilityActions([mark], true)).toEqual([]);
+		expect(resolveSketchAccessibilityActions([mark], false)).toEqual([
+			{ label: "Undo", name: "undo" },
+			{ label: "Clear", name: "clear" },
+		]);
 	});
 
 	test("a token swatch is named for its token, a literal by position", () => {

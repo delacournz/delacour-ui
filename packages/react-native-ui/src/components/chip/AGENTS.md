@@ -112,6 +112,13 @@ and `Chip.CloseButton`.
   selection. `useChip()` exposes `isSelected` for a custom child that needs more.
 - **String children** are wrapped in a `Chip.Label` automatically, consecutive
   strings collapsing into one — the same rule as [`Badge`](../badge/AGENTS.md).
+- **The spoken strings are the `labels` prop, not literals**: the remove control's
+  name and the pressable chip's `remove` action come from `lib/labels` through
+  `useLabels("chip", labels)` (one key, `remove`). Precedence is defaults <-
+  `DelacourProvider` `labels` <- the root's prop, and `closeAccessibilityLabel` /
+  a `Chip.CloseButton`'s own `accessibilityLabel` still win. The resolved set rides
+  the chip context, so a hand-placed `Chip.CloseButton` reads it. No resolver
+  changed signature.
 - **No group, yet.** Single- and multi-select filter rows are composed from
   controlled chips (the playground's `filter-row` demo). A `Chip.Group` owning
   the value, as `Checkbox.Group` does, is the obvious next step once a second

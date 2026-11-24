@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import { INPUT_SIZES, INPUT_VARIANTS } from "../input/input.variants";
 import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
@@ -232,6 +233,30 @@ describe("accessibility text", () => {
 	test("the trigger says what it opens", () => {
 		expect(resolveTriggerAccessibilityLabel({ hex: "#f59e0b" })).toBe("Colour, #f59e0b, opens picker");
 		expect(resolveTriggerAccessibilityLabel({ hex: "#f59e0b", label: "Accent" })).toBe("Accent, #f59e0b, opens picker");
+	});
+
+	test("every resolver takes labels as a trailing argument", () => {
+		const german = {
+			...DELACOUR_DEFAULT_LABELS.colorPicker,
+			areaValue: (s: number, v: number) => `Sättigung ${s} Prozent, Helligkeit ${v} Prozent`,
+			hueValue: (degrees: number, name: string) => `Farbton ${degrees} Grad, ${name}`,
+			hueName: (hue: string) => (hue === "blue" ? "blau" : hue),
+			opacityValue: (percent: number) => `Deckkraft ${percent} Prozent`,
+			partInField: (field: string, part: string) => `${part} von ${field}`,
+			colour: "Farbe",
+			trigger: (name: string, hex: string) => `${name}, ${hex}, öffnet Auswahl`,
+		};
+		expect(describeAreaValue({ h: 0, s: 0.6, v: 0.8, a: 1 }, german)).toBe(
+			"Sättigung 60 Prozent, Helligkeit 80 Prozent"
+		);
+		expect(describeHueValue(210, german)).toBe("Farbton 210 Grad, blau");
+		expect(describeAlphaValue(0.5, german)).toBe("Deckkraft 50 Prozent");
+		expect(resolveColorPickerLabel({ part: "Farbton", label: "Akzent" }, german)).toBe("Farbton von Akzent");
+		expect(resolveColorPickerLabel({ part: "Farbton", label: "Akzent", override: "Tint" }, german)).toBe("Tint");
+		expect(resolveTriggerAccessibilityLabel({ hex: "#f59e0b" }, german)).toBe("Farbe, #f59e0b, öffnet Auswahl");
+		expect(resolveTriggerAccessibilityLabel({ hex: "#f59e0b", label: "Akzent" }, german)).toBe(
+			"Akzent, #f59e0b, öffnet Auswahl"
+		);
 	});
 
 	test("assistive steps are five percent and ten degrees", () => {

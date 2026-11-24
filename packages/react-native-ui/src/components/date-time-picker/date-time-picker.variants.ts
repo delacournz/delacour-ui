@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type DateTimePickerLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { formatTime, type HourCycle } from "../time-picker/time-picker.time";
 import { TIME_PICKER_DEFAULT_VISIBLE_ROWS, TIME_PICKER_ROW_HEIGHTS } from "../time-picker/time-picker.variants";
@@ -18,13 +19,13 @@ export type DateTimePickerSection = (typeof DATE_TIME_PICKER_SECTIONS)[number];
 
 /** Every word the picker shows or speaks when the caller names none. */
 export const DATE_TIME_PICKER_DEFAULTS = {
-	accessibilityLabel: "Date and time",
-	clearLabel: "Clear",
-	dateLabel: "Date",
-	doneLabel: "Done",
-	placeholder: "Select date and time",
-	timeLabel: "Time",
-	title: "Select date and time",
+	accessibilityLabel: DELACOUR_DEFAULT_LABELS.dateTimePicker.trigger,
+	clearLabel: DELACOUR_DEFAULT_LABELS.dateTimePicker.clear,
+	dateLabel: DELACOUR_DEFAULT_LABELS.dateTimePicker.date,
+	doneLabel: DELACOUR_DEFAULT_LABELS.dateTimePicker.done,
+	placeholder: DELACOUR_DEFAULT_LABELS.dateTimePicker.placeholder,
+	timeLabel: DELACOUR_DEFAULT_LABELS.dateTimePicker.time,
+	title: DELACOUR_DEFAULT_LABELS.dateTimePicker.title,
 } as const;
 
 /** How long the stacked layout's wheel takes to fade in or out, in milliseconds. */
@@ -123,23 +124,36 @@ export function resolveDateTimeDisplay(
 /** The time row's readout — the time alone, or an en dash while nothing is set. */
 export function resolveTimeReadout(
 	value: DateTimeValue | null,
-	context: { locale: string; hourCycle: HourCycle }
+	context: { locale: string; hourCycle: HourCycle },
+	labels: Pick<DateTimePickerLabels, "emptyTime"> = DELACOUR_DEFAULT_LABELS.dateTimePicker
 ): string {
-	return value ? formatTime(value.time, context) : "–";
+	return value ? formatTime(value.time, context) : labels.emptyTime;
 }
 
 /** What a screen reader hears as the trigger's value: every word, or "not set" rather than silence. */
 export function resolveDateTimeAccessibilityValue(
 	value: DateTimeValue | null,
-	context: { locale: string; hourCycle: HourCycle }
+	context: { locale: string; hourCycle: HourCycle },
+	labels: Pick<DateTimePickerLabels, "dateTime" | "notSet"> = DELACOUR_DEFAULT_LABELS.dateTimePicker
 ): string {
-	return value ? formatDateTimeLong(value, context) : "not set";
+	return value ? formatDateTimeLong(value, context, labels) : labels.notSet;
 }
 
 /** What Done announces: the composed value, so a VoiceOver user hears what the sheet decided. */
 export function resolveDateTimeAnnouncement(
 	value: DateTimeValue | null,
-	context: { locale: string; hourCycle: HourCycle }
+	context: { locale: string; hourCycle: HourCycle },
+	labels: Pick<DateTimePickerLabels, "dateTime" | "noneSelected" | "selected"> = DELACOUR_DEFAULT_LABELS.dateTimePicker
 ): string {
-	return value ? `Selected ${formatDateTimeLong(value, context)}` : "No date and time selected";
+	return value ? labels.selected(formatDateTimeLong(value, context, labels)) : labels.noneSelected;
+}
+
+/** The static time row's name: its label and readout, or the label and "not set" while empty. */
+export function resolveTimeRowLabel(
+	timeLabel: string,
+	value: DateTimeValue | null,
+	readout: string,
+	labels: Pick<DateTimePickerLabels, "notSet" | "timeRow"> = DELACOUR_DEFAULT_LABELS.dateTimePicker
+): string {
+	return labels.timeRow(timeLabel, value ? readout : labels.notSet);
 }

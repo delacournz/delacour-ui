@@ -11,10 +11,12 @@
 		"button",
 		"icon",
 		"icons",
+		"labels",
 		"pressable",
 		"surface",
 		"text",
 		"tv",
+		"use-labels",
 		"use-minimum-hit-target",
 		"use-theme-color"
 	],
@@ -42,7 +44,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/map/index.ts",
 			"target": "map/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/map/map-arc.tsx",
@@ -162,7 +170,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/map/map.context.tsx",
 			"target": "map/map.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/map/map.tsx",
@@ -170,8 +184,16 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../hooks/use-theme-color",
 					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				}
 			]
 		},
@@ -185,6 +207,10 @@
 			"target": "map/map.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -207,6 +233,10 @@
 			"target": "map/map.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -234,6 +264,10 @@
 			"target": "map/map.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

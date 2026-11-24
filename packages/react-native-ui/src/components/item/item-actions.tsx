@@ -12,6 +12,11 @@ import { ITEM_ACTIONS_ICON_TOKEN, itemVariants } from "./item.variants";
  * so a chevron reads as a hint that the row leads somewhere rather than
  * competing with the row's own subject. A `Button` inside sets its own icon
  * defaults and is unaffected.
+ *
+ * Inside a pressable `Item` the row is one accessibility element and swallows
+ * a control placed here. Keep the row static, or mirror the control as a named
+ * `accessibilityActions` entry on the `Item` and hide the drawn control with
+ * `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`.
  */
 export function ItemActions({ className, children, ...props }: ItemSlotProps): ReactElement {
 	const { size } = useItemPart("Item.Actions");

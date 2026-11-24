@@ -65,7 +65,7 @@ export function ChartFrame(props: ChartFrameProps): ReactElement {
 
 /** The summary sentence, from the context the chart already resolved. */
 function useChartSummary(override: string | undefined, formatValue: ChartFrameTooltip["formatValue"]): string {
-	const { series, data, formatXValue } = useChart();
+	const { series, data, formatXValue, labels } = useChart();
 	return useMemo(
 		() =>
 			resolveChartSummary({
@@ -75,8 +75,9 @@ function useChartSummary(override: string | undefined, formatValue: ChartFrameTo
 				formatX: formatXValue,
 				formatValue,
 				override,
+				labels,
 			}),
-		[series, data, formatXValue, formatValue, override]
+		[series, data, formatXValue, formatValue, override, labels]
 	);
 }
 
@@ -111,7 +112,7 @@ function ChartAdjustableFrame({
 	tooltip,
 	children,
 }: ChartFrameProps & { tooltip: ChartFrameTooltip }): ReactElement {
-	const { scrub, series, data, formatXValue, candlestick, candleColors } = useChart();
+	const { scrub, series, data, formatXValue, candlestick, candleColors, labels } = useChart();
 	const { formatHeading, formatValue } = tooltip;
 	const label = useChartSummary(accessibilityLabel, formatValue);
 	const [index, setIndex] = useState(-1);
@@ -145,10 +146,11 @@ function ChartAdjustableFrame({
 		const rows = resolveTooltipRows(
 			series,
 			candlestick === null ? null : { keys: candlestick, colors: candleColors },
-			row
+			row,
+			labels
 		);
-		return resolveChartReadout({ heading, rows, formatValue });
-	}, [row, index, formatHeading, formatXValue, series, candlestick, candleColors, formatValue]);
+		return resolveChartReadout({ heading, rows, formatValue, labels });
+	}, [row, index, formatHeading, formatXValue, series, candlestick, candleColors, formatValue, labels]);
 
 	return (
 		<View

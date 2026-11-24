@@ -53,7 +53,7 @@ const DEFAULT_SIZE = { width: 120, height: 56 };
  * swatched in the candle's own sentiment colour — see `resolveTooltipRows`.
  */
 function ChartTooltipRoot({ className, formatHeading, formatValue, size }: ChartTooltipProps): ReactElement {
-	const { scrub, slots, series, data, formatXValue, frame, candlestick, candleColors } = useChart();
+	const { scrub, slots, series, data, formatXValue, frame, candlestick, candleColors, labels } = useChart();
 	const [index, setIndex] = useState(-1);
 	const measured = size ?? DEFAULT_SIZE;
 
@@ -86,7 +86,8 @@ function ChartTooltipRoot({ className, formatHeading, formatValue, size }: Chart
 	const rows = resolveTooltipRows(
 		series,
 		candlestick === null ? null : { keys: candlestick, colors: candleColors },
-		row
+		row,
+		labels
 	);
 
 	return (

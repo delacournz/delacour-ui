@@ -73,6 +73,12 @@ Not for confirmations or warnings — those are a `Dialog`. Like every overlay i
   unhandled-rejection reporting. A synchronous `onSubmit` announces nothing (no result to await).
   `announce={false}` opts out; `sentMessage` / `failedMessage` replace the strings
   (`resolveFeedbackResultAnnouncement`). Field validity is `feedback-field.tsx`'s, not this.
+- **The spoken strings are `labels`, not literals.** "Send", "Cancel" and the sent and failed
+  announcements come from `lib/labels` through `useLabels`, resolved once on the root and shared
+  through the context: English, then `DelacourProvider`'s `labels`, then `<Feedback labels>`. Children
+  on `Submit` / `Cancel` and `sentMessage` / `failedMessage` still win. `resolveFeedbackResultAnnouncement`
+  takes the labels as a trailing argument defaulting to English; `FEEDBACK_SENT_MESSAGE` and
+  `FEEDBACK_FAILED_MESSAGE` alias those defaults. `Feedback.Close`'s "Close" is `Dialog.Close`'s.
 - **The well eases between heights; the shell never jumps.** A multi-step flow (rating → text →
   thanks) is the caller swapping the panel's and footer's children. `Feedback.Panel` measures the
   well with `onLayout` and animates a clip around it to that height over `FEEDBACK_PANEL_RESIZE_MS`

@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
+import type { AvatarLabels } from "../../lib/labels";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { type AvatarGroupContextValue, AvatarGroupProvider } from "./avatar.context";
@@ -17,6 +19,11 @@ export type AvatarGroupProps = ViewProps & {
 	overlap?: number;
 	/** Makes the `+N` tile a button — to open the full list, say. */
 	onOverflowPress?: () => void;
+	/**
+	 * Spoken and drawn strings, laid over `DelacourProvider`'s `labels`, which sit over the English
+	 * defaults. An `Avatar` inside lays its own `labels` over these, key by key.
+	 */
+	labels?: Partial<AvatarLabels>;
 	className?: string;
 	children?: ReactNode;
 };
@@ -56,6 +63,7 @@ type AvatarGroupOverflowProps = {
 	size: AvatarSize;
 	overflow: number;
 	onPress?: () => void;
+	labels: AvatarLabels;
 };
 
 /**
@@ -64,9 +72,9 @@ type AvatarGroupOverflowProps = {
  * It draws at most `99+` and reads the real number, because three digits do not
  * fit a small circle and a screen reader has room for all of them.
  */
-function AvatarGroupOverflow({ size, overflow, onPress }: AvatarGroupOverflowProps): ReactElement {
+function AvatarGroupOverflow({ size, overflow, onPress, labels }: AvatarGroupOverflowProps): ReactElement {
 	const slots = avatarVariants({ size });
-	const { text, accessibilityLabel } = resolveAvatarOverflowLabel(overflow);
+	const { text, accessibilityLabel } = resolveAvatarOverflowLabel(overflow, labels);
 	const label = (
 		<Text allowFontScaling={false} className={slots.overflowLabel()} numberOfLines={1}>
 			{text}
@@ -109,6 +117,7 @@ export function AvatarGroup({
 	total,
 	overlap,
 	onOverflowPress,
+	labels: labelsProp,
 	className,
 	children,
 	...props
@@ -117,7 +126,8 @@ export function AvatarGroup({
 	const { visible, overflow } = resolveAvatarGroup({ count: items.length, max, total });
 	const shift = resolveAvatarOverlap({ size: size ?? "md", overlap });
 	const count = visible + (overflow > 0 ? 1 : 0);
-	const context = useMemo<AvatarGroupContextValue>(() => ({ size }), [size]);
+	const labels = useLabels("avatar", labelsProp);
+	const context = useMemo<AvatarGroupContextValue>(() => ({ size, labels: labelsProp }), [size, labelsProp]);
 
 	return (
 		<AvatarGroupProvider value={context}>
@@ -129,7 +139,7 @@ export function AvatarGroup({
 				))}
 				{overflow > 0 ? (
 					<AvatarGroupItem count={count} index={visible} shift={shift}>
-						<AvatarGroupOverflow onPress={onOverflowPress} overflow={overflow} size={size ?? "md"} />
+						<AvatarGroupOverflow labels={labels} onPress={onOverflowPress} overflow={overflow} size={size ?? "md"} />
 					</AvatarGroupItem>
 				) : null}
 			</View>

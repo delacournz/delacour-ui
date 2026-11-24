@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { ChipLabels } from "../../lib/labels";
 import type { ChipColor, ChipSize, ChipVariant } from "./chip.variants";
 
 export type ChipContextValue = {
@@ -12,6 +13,8 @@ export type ChipContextValue = {
 	isSelected: boolean;
 	/** Whether the chip is disabled. */
 	isDisabled: boolean;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	labels: ChipLabels;
 };
 
 const ChipContext = createContext<ChipContextValue | null>(null);

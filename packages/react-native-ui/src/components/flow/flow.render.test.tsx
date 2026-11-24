@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { AccessibilityInfo } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Text } from "../text";
@@ -212,6 +213,40 @@ describe("Flow", () => {
 		expect(screen.getByLabelText("Inside")).toBeOnTheScreen();
 	});
 
+	test("a group offers the four moves; one assistive move shifts the group and its riders and reports each", async () => {
+		const onNodeDragEnd = jest.fn();
+		await renderWithProviders(
+			<Flow onNodeDragEnd={onNodeDragEnd}>
+				<Flow.Group id="g" label="Stage one" position={{ x: 100, y: 100 }} size={{ height: 200, width: 300 }}>
+					<Flow.Node accessibilityLabel="Rider" id="a" position={{ x: 110, y: 130 }} />
+					<Flow.Node accessibilityLabel="Fixed" id="b" isDraggable={false} position={{ x: 200, y: 130 }} />
+				</Flow.Group>
+			</Flow>
+		);
+		const group = screen.getByLabelText("Stage one");
+		expect(actionNames(group)).toEqual(["moveUp", "moveDown", "moveLeft", "moveRight"]);
+		await fireEvent(group, "accessibilityAction", action("moveRight"));
+		const step = FLOW_DEFAULTS.accessibilityMoveStep;
+		expect(onNodeDragEnd).toHaveBeenCalledWith("g", { x: 100 + step, y: 100 });
+		expect(onNodeDragEnd).toHaveBeenCalledWith("a", { x: 110 + step, y: 130 });
+		expect(onNodeDragEnd).not.toHaveBeenCalledWith("b", expect.anything());
+	});
+
+	test("an unlabelled group is a stop named by its id; a locked one offers no moves", async () => {
+		await renderWithProviders(
+			<Flow>
+				<Flow.Group id="loose" position={{ x: 0, y: 0 }} size={{ height: 100, width: 100 }} />
+				<Flow.Group id="still" isDraggable={false} position={{ x: 200, y: 0 }} size={{ height: 100, width: 100 }} />
+				<Flow.Group id="named" label="Named" position={{ x: 400, y: 0 }} size={{ height: 100, width: 100 }} />
+				<Flow.Controls />
+			</Flow>
+		);
+		expect(actionNames(screen.getByLabelText("loose"))).toContain("moveUp");
+		expect(screen.queryByLabelText("still")).not.toBeOnTheScreen();
+		await fireEvent(screen.getByRole("button", { name: "Lock canvas" }), "accessibilityTap");
+		expect(actionNames(screen.getByLabelText("Named"))).toEqual([]);
+	});
+
 	test("Controls: labelled buttons, each part switchable off", async () => {
 		const view = await renderWithProviders(
 			<Flow>
@@ -384,5 +419,49 @@ describe("Flow looping motion", () => {
 		);
 		expect(screen.getByTestId("canvas")).toBeOnTheScreen();
 		await view.unmount();
+	});
+
+	test("the labels prop renames the controls and the node actions", async () => {
+		await renderWithProviders(
+			<Flow labels={{ connect: (_from, target) => `Relier à ${target}`, delete: "Supprimer", zoomIn: "Zoom avant" }}>
+				<Flow.Node accessibilityLabel="Source" id="a" onDelete={jest.fn()} position={{ x: 0, y: 0 }}>
+					<Flow.Handle id="out" />
+				</Flow.Node>
+				<Flow.Node accessibilityLabel="Sink" id="b" position={{ x: 300, y: 0 }}>
+					<Flow.Handle id="in" side="left" type="target" />
+				</Flow.Node>
+				<Flow.Controls />
+			</Flow>
+		);
+		expect(screen.getByRole("button", { name: "Zoom avant" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Zoom out" })).toBeOnTheScreen();
+		const labels = (screen.getByLabelText("Source").props.accessibilityActions as { label: string }[]).map(
+			(candidate) => candidate.label
+		);
+		expect(labels).toContain("Relier à Sink");
+		expect(labels).toContain("Supprimer");
+	});
+
+	test("the provider's labels rename the controls", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ flow: { fit: "Ajuster" } }}>
+				<Flow>
+					<Flow.Controls />
+				</Flow>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Ajuster" })).toBeOnTheScreen();
+	});
+
+	test("the labels prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ flow: { fit: "Ajuster" } }}>
+				<Flow labels={{ fit: "Cadrer" }}>
+					<Flow.Controls />
+				</Flow>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Cadrer" })).toBeOnTheScreen();
+		expect(screen.queryByRole("button", { name: "Ajuster" })).toBeNull();
 	});
 });

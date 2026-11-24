@@ -1,6 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { MessageScroller } from "./message-scroller";
 import type { MessageScrollerContextValue } from "./message-scroller.context";
@@ -291,5 +292,68 @@ describe("MessageScroller.Provider with useMessageScrollerState", () => {
 		if (scroller) scroller.listRef.current = { scrollToEnd } as never;
 		await fireEvent(await screen.findByRole("button", { name: "Jump to latest" }), "accessibilityTap");
 		expect(scrollToEnd).toHaveBeenCalledTimes(1);
+	});
+
+	describe("labels", () => {
+		const FR = {
+			list: "Fil",
+			loadingOlder: "Chargement",
+			unreadDivider: (count: number) => `${count} nouveaux`,
+			today: "Aujourd'hui",
+		};
+
+		async function mountFr(ui: ReactElement, name = "Fil") {
+			const view = await renderWithProviders(ui);
+			const list = screen.queryByLabelText(name);
+			if (list) {
+				await fireEvent(list, "layout", { nativeEvent: { layout: { x: 0, y: 0, width: 320, height: 600 } } });
+			}
+			return view;
+		}
+
+		test("the labels prop changes the list name and the divider", async () => {
+			await mountFr(<Scroller firstUnreadKey="m1" labels={FR} separateDates={false} />);
+			expect(screen.getByLabelText("Fil")).toBeOnTheScreen();
+			expect(screen.getByRole("header", { name: "2 nouveaux" })).toBeOnTheScreen();
+		});
+
+		test("a provider's labels change the list name", async () => {
+			await mountFr(
+				<LabelsProvider labels={{ messageScroller: { list: "Fil" } }}>
+					<Scroller />
+				</LabelsProvider>
+			);
+			expect(screen.getByLabelText("Fil")).toBeOnTheScreen();
+		});
+
+		test("the prop wins over the provider", async () => {
+			await mountFr(
+				<LabelsProvider labels={{ messageScroller: { list: "Provider" } }}>
+					<Scroller labels={{ list: "Prop" }} />
+				</LabelsProvider>,
+				"Prop"
+			);
+			expect(screen.getByLabelText("Prop")).toBeOnTheScreen();
+		});
+
+		test("a standalone LoadingOlder and UnreadDivider read the provider", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ messageScroller: FR }}>
+					<MessageScroller.LoadingOlder />
+					<MessageScroller.UnreadDivider count={3} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("progressbar", { name: "Chargement" })).toBeOnTheScreen();
+			expect(screen.getByRole("header", { name: "3 nouveaux" })).toBeOnTheScreen();
+		});
+
+		test("an explicit label prop still wins", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ messageScroller: FR }}>
+					<MessageScroller.LoadingOlder label="Wait" />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("progressbar", { name: "Wait" })).toBeOnTheScreen();
+		});
 	});
 });

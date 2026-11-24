@@ -15,11 +15,7 @@ import { Icon, type IconComponent } from "../icon";
 import { ToggleButton } from "../toggle-button";
 import { useMarkdownEditorPart } from "./markdown-editor.context";
 import type { MarkdownToolbarAction } from "./markdown-editor.types";
-import {
-	MARKDOWN_ACTION_LABELS,
-	MARKDOWN_EDITOR_ACTION_SIZE,
-	resolveMarkdownActionIsActive,
-} from "./markdown-editor.variants";
+import { MARKDOWN_EDITOR_ACTION_SIZE, resolveMarkdownActionIsActive } from "./markdown-editor.variants";
 
 /** The glyph each action draws. One heading glyph: the one button steps through every level. */
 const ACTION_ICONS: Record<MarkdownToolbarAction, IconComponent> = {
@@ -58,7 +54,7 @@ export function MarkdownEditorAction({ action, testID }: MarkdownEditorActionPro
 
 	return (
 		<ToggleButton
-			accessibilityLabel={MARKDOWN_ACTION_LABELS[action]}
+			accessibilityLabel={editor.labels[action]}
 			haptic={editor.haptic}
 			isDisabled={!editor.canFormat}
 			isSelected={isSelected}

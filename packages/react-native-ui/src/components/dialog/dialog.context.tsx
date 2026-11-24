@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
+import type { DialogLabels } from "../../lib/labels";
 import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import type { DialogSize } from "./dialog.variants";
 
@@ -18,6 +19,8 @@ export type DialogContextValue = {
 	titleId: string;
 	/** The `nativeID` `Dialog.Description` carries. */
 	descriptionId: string;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	labels: DialogLabels;
 };
 
 /**

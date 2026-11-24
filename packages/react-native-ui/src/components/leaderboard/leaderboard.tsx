@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
+import type { LeaderboardLabels } from "../../lib/labels";
 import { Text } from "../text";
 import { type LeaderboardContextValue, LeaderboardProvider } from "./leaderboard.context";
 import type { LeaderboardEntry } from "./leaderboard.types";
@@ -43,8 +45,10 @@ export type LeaderboardProps = Omit<ViewProps, "children"> & {
 	renderMedia?: (entry: LeaderboardEntry, rank: number) => ReactNode;
 	/** Makes every place a button. */
 	onPressEntry?: (entry: LeaderboardEntry, rank: number) => void;
-	/** Shown when `data` is empty. Default "No entries yet". */
+	/** Shown when `data` is empty. Default `labels.empty`, "No entries yet". */
 	emptyText?: string;
+	/** Some of the board's spoken and visible strings — rank, tied, movement, the empty text. */
+	labels?: Partial<LeaderboardLabels>;
 	className?: string;
 };
 
@@ -60,11 +64,13 @@ function LeaderboardRoot({
 	unit,
 	renderMedia,
 	onPressEntry,
-	emptyText = "No entries yet",
+	emptyText,
+	labels: labelsProp,
 	className,
 	testID,
 	...props
 }: LeaderboardProps): ReactElement {
+	const labels = useLabels("leaderboard", labelsProp);
 	const ranked = useMemo(() => rankLeaderboard(data, order), [data, order]);
 	const { rows: shown, pinned } = applyLeaderboardLimit(ranked, limit, highlightId);
 	const podiumStyle = resolveLeaderboardPodium(podium, shown.length);
@@ -73,6 +79,7 @@ function LeaderboardRoot({
 
 	const context = useMemo<LeaderboardContextValue>(
 		() => ({
+			labels,
 			formatValue,
 			highlightId,
 			onPressEntry,
@@ -80,7 +87,7 @@ function LeaderboardRoot({
 			showMovement: hasMovementColumn(data),
 			unit,
 		}),
-		[data, formatValue, highlightId, onPressEntry, renderMedia, unit]
+		[data, formatValue, highlightId, labels, onPressEntry, renderMedia, unit]
 	);
 
 	const rowTestID = (id: string): string | undefined => (testID ? `${testID}-row-${id}` : undefined);
@@ -91,7 +98,7 @@ function LeaderboardRoot({
 	return (
 		<LeaderboardProvider value={context}>
 			<View className={slots.root({ className })} testID={testID} {...props}>
-				{data.length === 0 ? <LeaderboardEmpty text={emptyText} /> : null}
+				{data.length === 0 ? <LeaderboardEmpty text={emptyText ?? labels.empty} /> : null}
 				{podiumStyle === "none" ? null : (
 					<LeaderboardPodium
 						height={podiumHeight}

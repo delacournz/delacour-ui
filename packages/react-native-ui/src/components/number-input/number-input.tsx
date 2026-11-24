@@ -2,7 +2,9 @@ import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, use
 import type { TextInputInstance } from "react-native";
 import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
+import type { NumberInputLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import { InputGroup } from "../input/input-group";
@@ -84,6 +86,8 @@ export type NumberInputProps = {
 	accessibilityLabel?: string;
 	/** Forwarded to the `TextInput` — `testID`, `returnKeyType`, focus and submit handlers. */
 	inputProps?: NumberInputFieldOwnProps;
+	/** Overrides for the spoken strings (stepper names, the limit announcement). Merged over the provider's and the English defaults. */
+	labels?: Partial<NumberInputLabels>;
 	/** A custom anatomy. Defaults to `Decrement`, `Field`, `Increment`. */
 	children?: ReactNode;
 };
@@ -112,6 +116,7 @@ function NumberInputRoot({
 	className,
 	accessibilityLabel,
 	inputProps,
+	labels: labelsProp,
 	children,
 }: NumberInputProps): ReactElement {
 	if (process.env.NODE_ENV !== "production" && !(step > 0)) {
@@ -181,15 +186,16 @@ function NumberInputRoot({
 		[commit, commitDraft, config, locale, precision, setDraft]
 	);
 
+	const labels = useLabels("numberInput", labelsProp);
 	const speak = useAnnounce();
 	const announceStep = useCallback(
 		(result: StepResult, direction: 1 | -1) => {
 			const text = formatNumber(result.value, { formatOptions, locale, precision });
-			speak(resolveStepAnnouncement({ direction, reachedLimit: result.reachedLimit, text }), {
+			speak(resolveStepAnnouncement({ direction, reachedLimit: result.reachedLimit, text }, labels), {
 				enabled: shouldAnnounce,
 			});
 		},
-		[formatOptions, locale, precision, shouldAnnounce, speak]
+		[formatOptions, labels, locale, precision, shouldAnnounce, speak]
 	);
 
 	const setValue = useCallback(
@@ -285,6 +291,7 @@ function NumberInputRoot({
 			isFocused,
 			isInvalid: resolvedIsInvalid,
 			isReadOnly,
+			labels,
 			largeStepMultiplier,
 			locale,
 			max,
@@ -313,6 +320,7 @@ function NumberInputRoot({
 			isEditable,
 			isFocused,
 			isReadOnly,
+			labels,
 			largeStepMultiplier,
 			locale,
 			max,

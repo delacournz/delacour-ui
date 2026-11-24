@@ -133,7 +133,22 @@ parts.
 - **Every press is announced.** `AccessibilityInfo.announceForAccessibility`
   says "Bold applied" or "Bold removed", read from whether the format was
   active before the press. List items carry their marker in their accessible
-  text, so a screen reader says "bullet" or "2." before the item.
+  text, so a screen reader says "bullet" or "2." before the item. A row is one
+  stop, so a link inside it cannot be focused: `resolveMarkdownLinkActions`
+  mirrors each as an `Open link <text>` accessibility action on the row (a repeated
+  text gets an ordinal, `Open link here (2)`, since VoiceOver dispatches by label), which
+  calls `onLinkPress` with the same allow-listed url. A row with no link has no
+  actions. Links in paragraphs, headings and quotes are not merged and stay
+  `Text.Link` stops.
+- **The spoken strings are `labels`, not literals.** The action names, the
+  Write / Preview tabs, the preview pane's name, the empty preview, the
+  announcements, a bullet row's "bullet", the `Open link <text>` actions and the label a link command inserts
+  come from `lib/labels` through `useLabels`, resolved once on the root and
+  shared through the context — English, then `DelacourProvider`'s `labels`,
+  then the root's `labels` prop. `emptyText` and an `accessibilityLabel` on the
+  preview still win. `MARKDOWN_ACTION_LABELS` is the English default;
+  `resolveMarkdownAnnouncement` and `applyMarkdownCommand` take the labels (the
+  latter just `linkText`) as a trailing argument that defaults to English.
 - **`useMarkdownEditor()` is the custom-control hook.** A button of the
   caller's own can `apply` a command, read `active`, or `setMode`. A ref on the
   root reaches `apply`, `focus` (which switches to the write pane first) and

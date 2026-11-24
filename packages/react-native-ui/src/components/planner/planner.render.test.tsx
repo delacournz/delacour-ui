@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { AccessibilityInfo, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
+import type { PlannerLabels } from "../../lib/labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
 import { OverlayProvider } from "../overlay";
@@ -425,5 +427,64 @@ describe("Planner", () => {
 			await expect(renderWithProviders(<Probe />)).rejects.toThrow("usePlanner must be called inside a <Planner>.");
 			spy.mockRestore();
 		});
+	});
+});
+
+const FRENCH: Partial<PlannerLabels> = {
+	previousMonth: "Mois précédent",
+	nextMonth: "Mois suivant",
+	today: "Aujourd'hui",
+	entryCount: (count) => (count === 0 ? "aucune entrée" : `${count} entrées`),
+	legendCount: (name, count) => `${name} : ${count}`,
+	summary: (count, month) => `${count} en ${month}`,
+	more: (count) => `+${count} de plus`,
+};
+
+describe("Planner labels", () => {
+	test("the labels prop changes nav, today, summary, legend and day labels", async () => {
+		await renderWithProviders(<Demo labels={FRENCH} />);
+		expect(screen.getByRole("button", { name: "Mois précédent" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Mois suivant" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Aujourd'hui" })).toBeOnTheScreen();
+		expect(screen.getByText("3 en October")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Run : 2")).toBeOnTheScreen();
+		expect(day(/^Wednesday, October 14, 2 entrées, Run, Strength, today$/)).toBeOnTheScreen();
+		expect(day(/^Thursday, October 15, aucune entrée$/)).toBeOnTheScreen();
+	});
+
+	test("the provider's labels change the same strings", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ planner: FRENCH }}>
+				<Demo />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Mois suivant" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Aujourd'hui" })).toBeOnTheScreen();
+	});
+
+	test("the prop beats the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ planner: FRENCH }}>
+				<Demo labels={{ nextMonth: "Suivant" }} />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Suivant" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Mois précédent" })).toBeOnTheScreen();
+	});
+
+	test("previousLabel and nextLabel still win over labels", async () => {
+		await renderWithProviders(
+			<Planner labels={FRENCH} locale="en-US">
+				<Planner.Nav nextLabel="Go on" previousLabel="Go back" />
+			</Planner>
+		);
+		expect(screen.getByRole("button", { name: "Go back" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Go on" })).toBeOnTheScreen();
+	});
+
+	test("the calendar variant's overflow line speaks through labels", async () => {
+		const many: PlannerEntry[] = ["1", "2", "3", "4", "5"].map((id) => ({ id, date: "2026-10-14", label: `E${id}` }));
+		await renderWithProviders(<Demo entries={many} labels={FRENCH} variant="calendar" />);
+		expect(screen.getByText("+3 de plus")).toBeOnTheScreen();
 	});
 });

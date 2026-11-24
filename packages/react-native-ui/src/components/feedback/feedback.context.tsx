@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { FeedbackLabels } from "../../lib/labels";
 
 export type FeedbackContextValue = {
 	/** The draft as typed — untrimmed. */
@@ -21,6 +22,8 @@ export type FeedbackInternalValue = FeedbackContextValue & {
 	/** The title's text when it is a plain string — the field's default label. */
 	titleText: string | undefined;
 	setTitleText: (text: string | undefined) => void;
+	/** The resolved spoken and visible strings. */
+	labels: FeedbackLabels;
 };
 
 const FeedbackContext = createContext<FeedbackInternalValue | null>(null);
@@ -28,7 +31,7 @@ const FeedbackContext = createContext<FeedbackInternalValue | null>(null);
 /**
  * Supplies the feedback dialog's draft and send state to its parts.
  *
- * Its own module, importing nothing but React, so a part can read it without
+ * Its own module, importing nothing but React and a label type, so a part can read it without
  * importing `./feedback` — that import would close a cycle, and Metro serves a
  * partially initialised module for one.
  */

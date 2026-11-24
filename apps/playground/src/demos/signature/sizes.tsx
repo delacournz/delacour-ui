@@ -1,7 +1,7 @@
 import { SIGNATURE_SIZES, Signature, type SignatureSize } from "@delacour/react-native-ui/signature";
 import { Text } from "@delacour/react-native-ui/text";
 import type { ReactElement } from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -14,13 +14,18 @@ const LABELS: Record<Exclude<SignatureSize, "full">, string> = { sm: "Small", md
 
 const FIXED = SIGNATURE_SIZES.filter((size): size is Exclude<SignatureSize, "full"> => size !== "full");
 
+/** Stands in for the typed-name flow `alternative` shows in full. */
+function typeName(): void {
+	Alert.alert("Type your name", "A typed-name flow opens here.");
+}
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-5">
 			{FIXED.map((size) => (
 				<View className="gap-2" key={size}>
 					<Text.Caption color="muted">{LABELS[size]}</Text.Caption>
-					<Signature size={size} variant={size === "md" ? "secondary" : "primary"} />
+					<Signature onRequestAlternative={typeName} size={size} variant={size === "md" ? "secondary" : "primary"} />
 				</View>
 			))}
 		</View>

@@ -174,10 +174,11 @@ export function FlowNode({
 				canDelete: onDelete !== undefined,
 				canMove: drag.canDrag,
 				isValidConnection: flow.isValidConnection,
+				labels: flow.labels,
 				node: { handles: flow.entries.find((candidate) => candidate.id === id)?.handles ?? [], id, label },
 				others: flow.entries.filter((candidate) => candidate.kind === "node"),
 			}),
-		[drag.canDrag, flow.entries, flow.isValidConnection, id, label, onDelete, onPress]
+		[drag.canDrag, flow.entries, flow.isValidConnection, flow.labels, id, label, onDelete, onPress]
 	);
 
 	const { connect } = flow;

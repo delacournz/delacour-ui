@@ -2,6 +2,8 @@ import { BottomSheetProvider } from "@delacour/react-native-bottom-sheet";
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { LabelsProvider } from "../../hooks/use-labels";
+import type { DatePickerLabels } from "../../lib/labels";
 import { act, fireEvent, renderWithProviders, screen, within } from "../../test/render";
 import type { CalendarDate, CalendarDateRange } from "../calendar/calendar.date";
 import { OverlayProvider } from "../overlay";
@@ -544,5 +546,91 @@ describe("DatePicker initialView", () => {
 		await rerender(<Picker initialView="years" isOpen={false} {...bounds} />);
 		await rerender(<Picker initialView="years" isOpen {...bounds} />);
 		expect(year(1990)).toBeOnTheScreen();
+	});
+});
+
+describe("DatePicker labels", () => {
+	const german: Partial<DatePickerLabels> = {
+		title: "Datum wählen",
+		done: "Fertig",
+		clear: "Leeren",
+		trigger: "Datum",
+		triggerHint: "Öffnet den Kalender",
+		placeholder: "Datum wählen",
+		notSet: "nicht gesetzt",
+		rangeEnd: "Ende",
+		rangeStarted: (start) => `Ab ${start}, ohne Ende`,
+	};
+	const germanTrigger = () => screen.getByRole("button", { name: "Datum" });
+
+	test("the labels prop changes the trigger's name, hint, placeholder and value", async () => {
+		await renderWithProviders(<Picker labels={german} />, { wrapper: Providers });
+		expect(germanTrigger()).toHaveAccessibilityValue({ text: "nicht gesetzt" });
+		expect(germanTrigger().props.accessibilityHint).toBe("Öffnet den Kalender");
+		expect(screen.getByText("Datum wählen")).toBeOnTheScreen();
+	});
+
+	test("the labels prop changes the sheet's title and footer", async () => {
+		await renderWithProviders(<Picker defaultOpen isClearable labels={german} />, { wrapper: Providers });
+		expect(screen.getByTestId("stay-title")).toHaveTextContent("Datum wählen");
+		expect(screen.getByRole("button", { name: "Fertig" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Leeren" })).toBeOnTheScreen();
+	});
+
+	test("a half-picked range ends on the translated end and speaks the translated value", async () => {
+		await renderWithProviders(<Picker defaultOpen labels={german} mode="range" />, { wrapper: Providers });
+		await tap(day("2026-10-12"));
+		expect(screen.getByText(" Ende")).toBeOnTheScreen();
+		expect(germanTrigger().props.accessibilityValue.text).toContain("ohne Ende");
+	});
+
+	test("a LabelsProvider changes them too", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ datePicker: german }}>
+				<Picker />
+			</LabelsProvider>,
+			{ wrapper: Providers }
+		);
+		expect(germanTrigger()).toHaveAccessibilityValue({ text: "nicht gesetzt" });
+	});
+
+	test("the prop wins over the provider, key by key", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ datePicker: german }}>
+				<Picker labels={{ trigger: "Tag" }} />
+			</LabelsProvider>,
+			{ wrapper: Providers }
+		);
+		expect(screen.getByRole("button", { name: "Tag" })).toHaveAccessibilityValue({ text: "nicht gesetzt" });
+	});
+
+	test("a per-string prop still wins over labels", async () => {
+		await renderWithProviders(
+			<Picker
+				accessibilityLabel="Check in"
+				defaultOpen
+				isClearable
+				doneLabel="OK"
+				labels={german}
+				placeholder="Pick"
+				title="Stay"
+			/>,
+			{ wrapper: Providers }
+		);
+		expect(screen.getByRole("button", { name: "Check in" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "OK" })).toBeOnTheScreen();
+		expect(screen.getByTestId("stay-title")).toHaveTextContent("Stay");
+		expect(screen.getByText("Pick")).toBeOnTheScreen();
+	});
+
+	test("a translated calendar range join reaches the trigger text", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ calendar: { openRange: (start) => `ab ${start}` } }}>
+				<Picker defaultOpen mode="range" />
+			</LabelsProvider>,
+			{ wrapper: Providers }
+		);
+		await tap(day("2026-10-12"));
+		expect(screen.getByText(/^ab /)).toBeOnTheScreen();
 	});
 });

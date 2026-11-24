@@ -83,10 +83,10 @@ export function ImageViewerTrigger(props: ImageViewerTriggerProps): ReactElement
 		radius,
 		className,
 		testID,
-		accessibilityHint = "Opens full screen image viewer",
+		accessibilityHint,
 		...pressableProps
 	} = props;
-	const { images, isDataMode, isDisabled, openById, register, registerTarget, renderImage, unregister } =
+	const { images, isDataMode, isDisabled, openById, register, registerTarget, labels, renderImage, unregister } =
 		useImageViewerInternalPart("ImageViewer.Trigger");
 
 	const image: ImageViewerImage | undefined =
@@ -150,7 +150,7 @@ export function ImageViewerTrigger(props: ImageViewerTriggerProps): ReactElement
 
 	return (
 		<Pressable
-			accessibilityHint={accessibilityHint}
+			accessibilityHint={accessibilityHint ?? labels.open}
 			accessibilityLabel={image?.alt}
 			accessibilityRole="imagebutton"
 			className={slots.trigger({ className: cn(className) })}

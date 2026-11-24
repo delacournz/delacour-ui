@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type FlowLabels } from "../../lib/labels";
 import type { LoopingMotionHold } from "../../lib/looping-motion";
 import { tv } from "../../lib/tv";
 import type { FlowConnection, FlowHandleType, FlowPoint, FlowSide } from "./flow-geometry";
@@ -50,11 +51,12 @@ export type FlowBackgroundVariant = (typeof FLOW_BACKGROUND_VARIANTS)[number];
 export const FLOW_MINIMAP_CORNERS = ["top-left", "top-right", "bottom-left", "bottom-right"] as const;
 export type FlowMiniMapCorner = (typeof FLOW_MINIMAP_CORNERS)[number];
 
+/** The English control names — the defaults of `labels.fit`, `lock`, `zoomIn` and `zoomOut`. */
 export const FLOW_CONTROL_LABELS = {
-	fit: "Fit to view",
-	lock: "Lock canvas",
-	zoomIn: "Zoom in",
-	zoomOut: "Zoom out",
+	fit: DELACOUR_DEFAULT_LABELS.flow.fit,
+	lock: DELACOUR_DEFAULT_LABELS.flow.lock,
+	zoomIn: DELACOUR_DEFAULT_LABELS.flow.zoomIn,
+	zoomOut: DELACOUR_DEFAULT_LABELS.flow.zoomOut,
 } as const;
 
 export const flowVariants = tv({
@@ -207,12 +209,12 @@ export function resolveDraggedConnection(from: FlowHandleRef, to: FlowHandleRef)
 	return null;
 }
 
-/** The four assistive moves, in the order a rotor lists them. */
+/** The four assistive moves, in the order a rotor lists them. `label` is the English default of `labels[name]`. */
 export const FLOW_ACCESSIBILITY_MOVES = [
-	{ dx: 0, dy: -1, label: "Move up", name: "moveUp" },
-	{ dx: 0, dy: 1, label: "Move down", name: "moveDown" },
-	{ dx: -1, dy: 0, label: "Move left", name: "moveLeft" },
-	{ dx: 1, dy: 0, label: "Move right", name: "moveRight" },
+	{ dx: 0, dy: -1, label: DELACOUR_DEFAULT_LABELS.flow.moveUp, name: "moveUp" },
+	{ dx: 0, dy: 1, label: DELACOUR_DEFAULT_LABELS.flow.moveDown, name: "moveDown" },
+	{ dx: -1, dy: 0, label: DELACOUR_DEFAULT_LABELS.flow.moveLeft, name: "moveLeft" },
+	{ dx: 1, dy: 0, label: DELACOUR_DEFAULT_LABELS.flow.moveRight, name: "moveRight" },
 ] as const;
 
 /** How far an assistive move action shifts a node, or `null` for any other action. */
@@ -238,6 +240,31 @@ export function resolveNodeDrag({
 	return { canDrag: isDraggable && !isPinned && !isLocked, ridesGroup: isDraggable };
 }
 
+/**
+ * How a group presents to a screen reader. A group a finger can drag offers the same four moves a
+ * node does, so it is a stop even without a label (named by its id); a labelled one that cannot
+ * move stays a labelled stop with no actions; an unlabelled, immovable one is just a box.
+ */
+export function resolveGroupAccessibility({
+	id,
+	label,
+	isDraggable,
+	isLocked,
+	labels = DELACOUR_DEFAULT_LABELS.flow,
+}: {
+	id: string;
+	label: string | undefined;
+	isDraggable: boolean;
+	isLocked: boolean;
+	labels?: FlowLabels;
+}): { isAccessible: boolean; label: string | undefined; actions: { name: string; label: string }[] } {
+	const canMove = isDraggable && !isLocked;
+	const actions = canMove
+		? FLOW_ACCESSIBILITY_MOVES.map((move) => ({ label: labels[move.name], name: move.name }))
+		: [];
+	return { actions, isAccessible: canMove || label !== undefined, label: label ?? (canMove ? id : undefined) };
+}
+
 export type FlowAccessibilityHandle = { id: string; type: FlowHandleType; label?: string };
 export type FlowAccessibilityNode = { id: string; label: string; handles: readonly FlowAccessibilityHandle[] };
 export type FlowAccessibilityAction = { name: string; label: string };
@@ -248,16 +275,12 @@ function handleName(handle: FlowAccessibilityHandle): string | null {
 	return handle.id === "default" ? null : handle.id;
 }
 
-/** "Connect out to Merge, first input" — the handle and the target's handle only when they say something. */
-function connectLabel(from: string | null, target: string, into: string | null): string {
-	return `Connect${from ? ` ${from}` : ""} to ${target}${into ? `, ${into}` : ""}`;
-}
-
 /** Every connection this node can start, labelled the way a rotor reads it. */
 function connectOptions(
 	node: FlowAccessibilityNode,
 	others: readonly FlowAccessibilityNode[],
-	isValidConnection: ((connection: FlowConnection) => boolean) | undefined
+	isValidConnection: ((connection: FlowConnection) => boolean) | undefined,
+	labels: FlowLabels
 ): [string, FlowConnection][] {
 	const sources = node.handles.filter((handle) => canBeSource(handle.type));
 	return sources.flatMap((handle) =>
@@ -269,7 +292,7 @@ function connectOptions(
 					const connection = { source: node.id, sourceHandle: handle.id, target: other.id, targetHandle: target.id };
 					if (isValidConnection?.(connection) === false) return [];
 					const into = targets.length > 1 ? handleName(target) : null;
-					return [[connectLabel(handleName(handle), other.label, into), connection]];
+					return [[labels.connect(handleName(handle), other.label, into), connection]];
 				});
 			})
 	);
@@ -290,6 +313,7 @@ export function resolveNodeAccessibilityActions({
 	canMove,
 	canDelete,
 	isValidConnection,
+	labels = DELACOUR_DEFAULT_LABELS.flow,
 }: {
 	node: FlowAccessibilityNode;
 	others: readonly FlowAccessibilityNode[];
@@ -297,20 +321,21 @@ export function resolveNodeAccessibilityActions({
 	canMove: boolean;
 	canDelete: boolean;
 	isValidConnection?: (connection: FlowConnection) => boolean;
+	labels?: FlowLabels;
 }): { actions: FlowAccessibilityAction[]; connections: Record<string, FlowConnection> } {
 	const actions: FlowAccessibilityAction[] = [];
 	const connections: Record<string, FlowConnection> = {};
 
-	if (canActivate) actions.push({ label: "Select", name: "activate" });
-	if (canMove) for (const move of FLOW_ACCESSIBILITY_MOVES) actions.push({ label: move.label, name: move.name });
+	if (canActivate) actions.push({ label: labels.select, name: "activate" });
+	if (canMove) for (const move of FLOW_ACCESSIBILITY_MOVES) actions.push({ label: labels[move.name], name: move.name });
 
-	for (const [label, connection] of connectOptions(node, others, isValidConnection)) {
+	for (const [label, connection] of connectOptions(node, others, isValidConnection, labels)) {
 		const name = `connect-${Object.keys(connections).length}`;
 		connections[name] = connection;
 		actions.push({ label, name });
 	}
 
-	if (canDelete) actions.push({ label: "Delete", name: "delete" });
+	if (canDelete) actions.push({ label: labels.delete, name: "delete" });
 	return { actions, connections };
 }
 

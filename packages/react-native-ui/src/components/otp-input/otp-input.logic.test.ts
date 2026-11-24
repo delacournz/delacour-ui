@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type OtpInputLabels, type OtpInputUnit } from "../../lib/labels";
 import {
 	buildLayout,
 	charMatches,
@@ -349,5 +350,39 @@ describe("resolveOtpAxes", () => {
 		expect(
 			resolveOtpAxes({ field: { isDisabled: true, isInvalid: true }, own: { isDisabled: false, isInvalid: false } })
 		).toEqual({ isDisabled: false, isInvalid: false });
+	});
+});
+
+describe("OtpInput labels", () => {
+	const FRENCH: OtpInputLabels = {
+		defaultLabel: "Code de verification",
+		hint: (length, unit) => `Saisissez le code de ${length} ${unit === "digit" ? "chiffres" : "caracteres"}`,
+		progress: (entered, length) => `${entered} sur ${length} saisis`,
+	};
+
+	test("labels reach the value and the hint", () => {
+		expect(
+			resolveAccessibilityValue({ isMasked: true, labels: FRENCH, length: 4, pattern: "digits", value: "12" })
+		).toBe("2 sur 4 saisis");
+		expect(resolveAccessibilityHint(6, "digits", FRENCH)).toBe("Saisissez le code de 6 chiffres");
+		expect(resolveAccessibilityHint(6, "alphabetic", FRENCH)).toBe("Saisissez le code de 6 caracteres");
+	});
+
+	test("the unit a pattern passes is the catalog's OtpInputUnit", () => {
+		const seen: OtpInputUnit[] = [];
+		const spy: OtpInputLabels = {
+			...FRENCH,
+			hint: (_length, unit) => {
+				seen.push(unit);
+				return "";
+			},
+		};
+		resolveAccessibilityHint(6, "digits", spy);
+		resolveAccessibilityHint(6, /[a-z]/, spy);
+		expect(seen).toEqual(["digit", "character"]);
+	});
+
+	test("OTP_DEFAULT_LABEL aliases the catalog default", () => {
+		expect(OTP_DEFAULT_LABEL).toBe(DELACOUR_DEFAULT_LABELS.otpInput.defaultLabel);
 	});
 });

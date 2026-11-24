@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { IconPlusSmall } from "../../icons/central";
+import { useNumberInputPart } from "./number-input.context";
 import type { NumberInputStepperProps } from "./number-input.types";
 import { NumberInputStepper } from "./number-input-stepper";
 
@@ -10,9 +11,10 @@ import { NumberInputStepper } from "./number-input-stepper";
  * Sits at the end of the box by default, with its separator facing the field.
  */
 export function NumberInputIncrement({ position = "end", ...props }: NumberInputStepperProps): ReactElement {
+	const { labels } = useNumberInputPart("NumberInput.Increment");
 	return (
 		<NumberInputStepper
-			defaultLabel="Increase"
+			defaultLabel={labels.increase}
 			direction={1}
 			icon={IconPlusSmall}
 			part="NumberInput.Increment"

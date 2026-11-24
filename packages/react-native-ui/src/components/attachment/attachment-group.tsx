@@ -2,7 +2,9 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } 
 import { ScrollView, type ScrollViewProps } from "react-native";
 import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
+import type { AttachmentLabels } from "../../lib/labels";
 import {
 	type AttachmentGroupContextValue,
 	AttachmentGroupItemProvider,
@@ -23,8 +25,13 @@ export type AttachmentGroupProps = Omit<ScrollViewProps, "horizontal" | "childre
 	layout?: AttachmentLayout;
 	/** Space between attachments. Default `sm`. */
 	gap?: AttachmentGroupGap;
-	/** What a screen reader calls the list. Default `Attachments`. */
+	/** What a screen reader calls the list. Default `labels.group`, `Attachments`. */
 	accessibilityLabel?: string;
+	/**
+	 * Spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. The group reads
+	 * `group`; an attachment inside lays its own `labels` over the rest (`position`, `kind`…), key by key.
+	 */
+	labels?: Partial<AttachmentLabels>;
 	className?: string;
 	/** Classes for the scrolled row — the place for edge padding that lines the tray up with a gutter. */
 	contentContainerClassName?: string;
@@ -52,7 +59,8 @@ export function AttachmentGroup({
 	size,
 	layout,
 	gap = "sm",
-	accessibilityLabel = "Attachments",
+	accessibilityLabel,
+	labels: labelsProp,
 	className,
 	contentContainerClassName,
 	showsHorizontalScrollIndicator = false,
@@ -60,13 +68,17 @@ export function AttachmentGroup({
 	...props
 }: AttachmentGroupProps): ReactElement {
 	const isCalm = useCalmMotion();
-	const context = useMemo<AttachmentGroupContextValue>(() => ({ layout, size }), [layout, size]);
+	const labels = useLabels("attachment", labelsProp);
+	const context = useMemo<AttachmentGroupContextValue>(
+		() => ({ labels: labelsProp, layout, size }),
+		[labelsProp, layout, size]
+	);
 	const items = Children.toArray(children).filter(isValidElement);
 
 	return (
 		<AttachmentGroupProvider value={context}>
 			<ScrollView
-				accessibilityLabel={accessibilityLabel}
+				accessibilityLabel={accessibilityLabel ?? labels.group}
 				accessibilityRole="list"
 				className={cn("grow-0", className)}
 				contentContainerClassName={attachmentVariants({ gap }).group({ className: contentContainerClassName })}

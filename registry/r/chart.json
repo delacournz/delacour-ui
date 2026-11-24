@@ -10,9 +10,11 @@
 	"registryDependencies": [
 		"cn",
 		"color",
+		"labels",
 		"text",
 		"tv",
 		"use-controllable-state",
+		"use-labels",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -45,7 +47,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/chart/chart-accessibility.ts",
 			"target": "chart/chart-accessibility.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/chart/chart-area.tsx",
@@ -145,7 +153,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/chart/chart.context.tsx",
 			"target": "chart/chart.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/chart/chart.tsx",
@@ -153,8 +167,16 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../hooks/use-theme-color",
 					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				}
 			]
 		},
@@ -173,6 +195,10 @@
 					"to": "@registry/lib/color"
 				},
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
 				}
@@ -181,7 +207,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/chart/index.ts",
 			"target": "chart/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/chart/pie-chart-center.tsx",
@@ -231,7 +263,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/chart/pie-chart.context.tsx",
 			"target": "chart/pie-chart.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/chart/pie-chart.tsx",
@@ -243,8 +281,16 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../hooks/use-theme-color",
 					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				}
 			]
 		},
@@ -269,13 +315,23 @@
 		{
 			"path": "packages/react-native-ui/src/components/chart/chart-accessibility.test.ts",
 			"target": "chart/chart-accessibility.test.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/chart/chart.variants.test.ts",
 			"target": "chart/chart.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -295,6 +351,10 @@
 			"target": "chart/chart-accessibility.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
@@ -328,6 +388,10 @@
 			"target": "chart/pie-chart.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

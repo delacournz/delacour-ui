@@ -10,11 +10,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { cn } from "../../lib/cn";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { type SortableItemContextValue, SortableItemProvider, useSortablePart } from "./sortable.context";
 import {
-	resolveMoveAction,
+	resolveSortableMoveActions,
 	resolveSortablePosition,
 	SORTABLE_LIFT_SCALE,
+	SORTABLE_MOVE_DOWN_NAME,
+	SORTABLE_MOVE_UP_NAME,
 	SORTABLE_SHIFT_SPRING,
 	sortableVariants,
 } from "./sortable.variants";
@@ -29,11 +32,14 @@ export type SortableItemProps = ViewProps & {
 	isPinned?: boolean;
 	/** Classes added while the row is lifted, after the built-in raised surface. */
 	activeClassName?: string;
+	/**
+	 * What a screen reader calls this row. It names the handle "Reorder {label}" and the actions
+	 * "Move {label} up" / "Move {label} down", so a list of rows is not a list of identical
+	 * "Drag to reorder" buttons. Without it the generic strings stand.
+	 */
+	label?: string;
 	className?: string;
 };
-
-const MOVE_UP: AccessibilityActionInfo = { label: "Move up", name: "moveUp" };
-const MOVE_DOWN: AccessibilityActionInfo = { label: "Move down", name: "moveDown" };
 
 /**
  * One row of a `Sortable` — the box that is measured, lifted and moved.
@@ -51,16 +57,26 @@ const MOVE_DOWN: AccessibilityActionInfo = { label: "Move down", name: "moveDown
  * In `long-press` mode the row carries the gesture and is the accessibility element — it merges its
  * content into one stop, like a `Pressable`, and publishes Move up / Move down. In `handle` mode the
  * handle does both and the row is a plain box.
+ *
+ * **A long-press row is one stop, so a control composed into it is unreachable.** Mirror it as an
+ * entry in the row's own `accessibilityActions` and hide the drawn control from assistive
+ * technology: a caller's `accessibilityActions` and `onAccessibilityAction` are merged with Move up
+ * and Move down, and any other action name goes to the caller's handler. In development a press
+ * handler or control role found inside an accessible row warns.
  */
 export function SortableItem({
 	id,
 	isDisabled: isItemDisabled = false,
 	isPinned = false,
 	activeClassName,
+	label,
 	className,
 	onLayout,
 	style,
 	children,
+	accessible: accessibleProp,
+	accessibilityActions: callerActions,
+	onAccessibilityAction: callerOnAction,
 	...props
 }: SortableItemProps): ReactElement {
 	const root = useSortablePart("Sortable.Item");
@@ -112,22 +128,36 @@ export function SortableItem({
 	const moveUp = useCallback(() => move(id, "up"), [id, move]);
 	const moveDown = useCallback(() => move(id, "down"), [id, move]);
 
-	const accessibilityActions = useMemo(() => {
-		if (!canDrag) return [];
-		const actions: AccessibilityActionInfo[] = [];
-		if (resolveMoveAction(order, id, "up", pinned).kind === "move") actions.push(MOVE_UP);
-		if (resolveMoveAction(order, id, "down", pinned).kind === "move") actions.push(MOVE_DOWN);
-		return actions;
-	}, [canDrag, id, order, pinned]);
+	const accessibilityActions = useMemo<AccessibilityActionInfo[]>(
+		() => (canDrag ? resolveSortableMoveActions({ id, label, order, pinned }) : []),
+		[canDrag, id, label, order, pinned]
+	);
 
 	const onAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
 			if (!canDrag) return;
-			if (event.nativeEvent.actionName === MOVE_UP.name) moveUp();
-			else if (event.nativeEvent.actionName === MOVE_DOWN.name) moveDown();
+			if (event.nativeEvent.actionName === SORTABLE_MOVE_UP_NAME) moveUp();
+			else if (event.nativeEvent.actionName === SORTABLE_MOVE_DOWN_NAME) moveDown();
 		},
 		[canDrag, moveDown, moveUp]
 	);
+
+	const rowActions = useMemo(
+		() => (callerActions ? [...accessibilityActions, ...callerActions] : accessibilityActions),
+		[accessibilityActions, callerActions]
+	);
+
+	const onRowAccessibilityAction = useCallback(
+		(event: AccessibilityActionEvent) => {
+			const name = event.nativeEvent.actionName;
+			if (name === SORTABLE_MOVE_UP_NAME || name === SORTABLE_MOVE_DOWN_NAME) onAccessibilityAction(event);
+			else callerOnAction?.(event);
+		},
+		[callerOnAction, onAccessibilityAction]
+	);
+
+	const isRowAccessible = accessibleProp ?? (isLongPress ? true : undefined);
+	warnInteractiveChildInAccessible({ accessible: isRowAccessible, children, component: "Sortable.Item" });
 
 	const positionText = resolveSortablePosition(index, count);
 
@@ -141,6 +171,7 @@ export function SortableItem({
 			isActive,
 			isDisabled,
 			isPinned,
+			label,
 			moveDown,
 			moveUp,
 			onAccessibilityAction,
@@ -155,6 +186,7 @@ export function SortableItem({
 			isActive,
 			isDisabled,
 			isPinned,
+			label,
 			moveDown,
 			moveUp,
 			onAccessibilityAction,
@@ -175,11 +207,11 @@ export function SortableItem({
 
 	const row = (
 		<Animated.View
-			accessibilityActions={isLongPress ? accessibilityActions : undefined}
+			accessibilityActions={isLongPress ? rowActions : callerActions}
 			accessibilityValue={isLongPress ? { text: positionText } : undefined}
-			accessible={isLongPress ? true : undefined}
+			accessible={isRowAccessible}
 			className={rowClassName}
-			onAccessibilityAction={isLongPress ? onAccessibilityAction : undefined}
+			onAccessibilityAction={isLongPress ? onRowAccessibilityAction : callerOnAction}
 			onLayout={handleLayout}
 			style={[animatedStyle, style]}
 			{...props}

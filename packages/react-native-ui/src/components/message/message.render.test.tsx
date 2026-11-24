@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Pressable as RNPressable, Text as RNText } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
+import type { MessageLabels } from "../../lib/labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Message, useMessage } from "./index";
 import type { MessageStatus } from "./message.types";
@@ -431,5 +433,87 @@ describe("Message parts", () => {
 		await silenceConsoleError(async () => {
 			await expect(renderWithProviders(part())).rejects.toThrow(`${name} must be rendered inside a <Message>.`);
 		});
+	});
+});
+
+const FRENCH: Partial<MessageLabels> = {
+	moreActions: "Plus d'actions",
+	retry: "Réessayer",
+	status: (type, reason) => (type === "failed" ? (reason ? `Échec : ${reason}` : "Échec de l'envoi") : "Envoyé"),
+	typing: "Écrit",
+	typingBy: (author) => `${author} écrit`,
+	you: "Vous",
+};
+
+function Outgoing({ labels, onRetry }: { labels?: Partial<MessageLabels>; onRetry?: () => void }) {
+	return (
+		<Message direction="outgoing" labels={labels} onLongPress={jest.fn()} onRetry={onRetry} status={{ type: "failed" }}>
+			<Message.Bubble>
+				<Message.Text>Oui</Message.Text>
+			</Message.Bubble>
+			<Message.Status />
+		</Message>
+	);
+}
+
+describe("Message labels", () => {
+	test("the labels prop changes the receipt, Retry, actions and spoken label", async () => {
+		await renderWithProviders(<Outgoing labels={FRENCH} onRetry={jest.fn()} />);
+		expect(screen.getByText("Échec de l'envoi")).toBeOnTheScreen();
+		expect(screen.getByText("Réessayer", { includeHiddenElements: true })).toBeOnTheScreen();
+		const message = screen.getByLabelText("Vous, Oui, Échec de l'envoi");
+		expect(message.props.accessibilityActions).toEqual([
+			{ name: "longpress" },
+			{ label: "Plus d'actions", name: "more" },
+			{ label: "Réessayer", name: "retry" },
+		]);
+	});
+
+	test("the provider's labels change them", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ message: FRENCH }}>
+				<Outgoing onRetry={jest.fn()} />
+			</LabelsProvider>
+		);
+		expect(screen.getByText("Réessayer", { includeHiddenElements: true })).toBeOnTheScreen();
+		expect(screen.getByLabelText("Vous, Oui, Échec de l'envoi")).toBeOnTheScreen();
+	});
+
+	test("the prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ message: FRENCH }}>
+				<Outgoing labels={{ retry: "Renvoyer" }} onRetry={jest.fn()} />
+			</LabelsProvider>
+		);
+		expect(screen.getByText("Renvoyer", { includeHiddenElements: true })).toBeOnTheScreen();
+		expect(screen.getByLabelText("Vous, Oui, Échec de l'envoi")).toBeOnTheScreen();
+	});
+
+	test("Typing speaks the labels", async () => {
+		await renderWithProviders(
+			<Message direction="incoming" labels={FRENCH}>
+				<Message.Header>
+					<Message.Author>Aria</Message.Author>
+				</Message.Header>
+				<Message.Typing />
+			</Message>
+		);
+		expect(screen.getByLabelText("Aria écrit")).toBeOnTheScreen();
+	});
+
+	test("a failed announcement speaks the labels", async () => {
+		const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => undefined);
+		const view = await renderWithProviders(
+			<Message direction="outgoing" labels={FRENCH} status={{ type: "sent" }}>
+				<Message.Bubble />
+			</Message>
+		);
+		await view.rerender(
+			<Message direction="outgoing" labels={FRENCH} status={{ type: "failed", reason: "Hors ligne" }}>
+				<Message.Bubble />
+			</Message>
+		);
+		expect(announce).toHaveBeenCalledWith("Échec : Hors ligne");
+		announce.mockRestore();
 	});
 });

@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { PanGesture } from "react-native-gesture-handler";
+import type { CalendarLabels } from "../../lib/labels";
 import type { CalendarDate, CalendarSelectionState, Weekday } from "./calendar.date";
 import type { CalendarCaptionLayout } from "./calendar.types";
 import type { CalendarRangeRole, CalendarSize, CalendarVariant, CalendarView } from "./calendar.variants";
@@ -57,6 +58,8 @@ export type CalendarContextValue = {
 	testID: string | undefined;
 	/** The enclosing `Field.Label`'s text, which the caption reads before the month. */
 	label: string | null;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	labels: CalendarLabels;
 };
 
 const CalendarContext = createContext<CalendarContextValue | null>(null);

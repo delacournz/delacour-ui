@@ -136,9 +136,20 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
   `onDelete`). Each reports through the same callback the gesture uses.
 - **Connect actions are opaque names** (`connect-0`) mapped back to connections, so an id with a
   space or colon never has to survive a round trip through an action name.
+- **A group is one stop, and its children are not inside it.** The box draws as a sibling of its
+  children, so it never merges them (no `warnInteractiveChildInAccessible` needed). A group a
+  finger could drag (`isDraggable`, canvas unlocked) offers the same four moves as a node, by
+  `accessibilityMoveStep`, shifting the group and every rider together and reporting through
+  `onNodeDragEnd` once for the group and once per rider. It is named by `label`, else its id;
+  a labelled group that cannot move stays a labelled stop with no actions, an unlabelled one is
+  hidden. `resolveGroupAccessibility` decides.
+- **There is no edge disconnect.** Edges are app-owned children with no touch target, and no
+  callback removes one, so there is nothing for an assistive action to mirror. A disconnect
+  needs an `onDisconnect` on `<Flow>` and a finger path first; the app removes edges itself today.
 - **Handles, edges, the background and the minimap are hidden.** A line has no name of its own;
   the node's label and actions already say what it joins.
 - **Controls are labelled `Button`s** — "Zoom in", "Zoom out", "Fit to view", "Lock canvas".
+- **Spoken strings are `labels`.** Control names and the node actions (Select, the four moves, "Connect …", Delete) come from `useLabels("flow", labels)`, resolved once on the root and shared through `FlowContextValue.labels`. `resolveNodeAccessibilityActions` takes `labels` and defaults to English; `FLOW_CONTROL_LABELS` and each move's `label` are the English defaults. `Partial<FlowLabels>` on `<Flow labels>` wins over `DelacourProvider`.
 
 ## Performance
 

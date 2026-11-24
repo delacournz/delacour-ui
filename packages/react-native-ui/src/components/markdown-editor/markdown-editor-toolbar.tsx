@@ -2,7 +2,7 @@ import { type ReactElement, useEffect } from "react";
 import { ScrollView, View, type ViewProps } from "react-native";
 import { Tabs } from "../tabs";
 import { useMarkdownEditorPart } from "./markdown-editor.context";
-import type { MarkdownMode, MarkdownToolbarAction } from "./markdown-editor.types";
+import type { MarkdownToolbarAction } from "./markdown-editor.types";
 import {
 	MARKDOWN_EDITOR_TABS_SIZE,
 	type MarkdownToolbarVariant,
@@ -20,8 +20,6 @@ export type MarkdownEditorToolbarProps = Omit<ViewProps, "children"> & {
 	showModeSwitch?: boolean;
 	className?: string;
 };
-
-const MODE_LABELS: Record<MarkdownMode, string> = { preview: "Preview", write: "Write" };
 
 /**
  * Claims the touch for React Native's responder system.
@@ -92,10 +90,10 @@ export function MarkdownEditorToolbar({
 					<Tabs.List>
 						<Tabs.Indicator />
 						<Tabs.Trigger testID="markdown-mode-write" value="write">
-							{MODE_LABELS.write}
+							{editor.labels.write}
 						</Tabs.Trigger>
 						<Tabs.Trigger testID="markdown-mode-preview" value="preview">
-							{MODE_LABELS.preview}
+							{editor.labels.preview}
 						</Tabs.Trigger>
 					</Tabs.List>
 				</Tabs>

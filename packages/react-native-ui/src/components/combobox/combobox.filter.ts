@@ -1,3 +1,4 @@
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import type { SelectHighlightRange, SelectOption } from "../select/select.types";
 import { buildSelectRows, normalizeSearchText } from "../select/select.variants";
 import type {
@@ -241,7 +242,7 @@ export function resolveQueryReset(
 
 /** "1 result" / "N results". English by default; pass `format` to localise. */
 export function formatResultsCount(count: number): string {
-	return count === 1 ? "1 result" : `${count} results`;
+	return DELACOUR_DEFAULT_LABELS.combobox.results(count);
 }
 
 /**

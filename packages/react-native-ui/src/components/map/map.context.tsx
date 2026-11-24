@@ -1,7 +1,10 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { MapLabels } from "../../lib/labels";
 import type { LngLat, MapHandle } from "./map.types";
 
 export type MapContextValue = {
+	/** The spoken strings, resolved once on the root. */
+	labels: MapLabels;
 	/** Moves the camera — the same handle a `ref` on `<Map>` receives. */
 	handle: MapHandle;
 	/** Zooms by whole steps of the tile pyramid; negative zooms out. */

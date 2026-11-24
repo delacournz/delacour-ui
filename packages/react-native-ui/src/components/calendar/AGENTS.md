@@ -151,6 +151,13 @@ sheets.
 - The grid is `role="grid"`, but it is not `accessible` and RN gives `grid` no iOS trait, so
   VoiceOver never reads a label on it. **The enclosing `Field.Label` is read on the caption**
   instead (`resolveCaptionLabel`): "Date of birth, October 2026".
+- **The spoken strings are the `labels` prop, not literals**: the arrows' names (month, or year in
+  the months view), the caption's page actions, hints and years span, and a day's state words come
+  from `lib/labels` through `useLabels("calendar", labels)`. Precedence is defaults ←
+  `DelacourProvider` `labels` ← the root's prop; a `Calendar.Nav` `label` and a caption
+  `accessibilityHint` still win. The resolved set rides `CalendarContextValue.labels`.
+  `resolveCaptionLabel`, `resolveDayAccessibilityLabel` and `formatDateRange` take the keys they
+  need as a trailing argument defaulted to English, so `DatePicker`'s call keeps compiling.
 - **Paging for screen readers lives on the caption**, as increment/decrement actions. An
   adjustable grid would fold its child buttons into itself on both platforms and make the days
   unreachable.

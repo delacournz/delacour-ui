@@ -76,7 +76,7 @@ export function MessageScrollerList(): ReactElement {
 	return (
 		<KeyboardAwareLegendList
 			{...initialScroll}
-			accessibilityLabel="Conversation"
+			accessibilityLabel={scroller.labels.list}
 			accessibilityRole="list"
 			alignItemsAtEnd
 			automaticallyAdjustContentInsets={false}

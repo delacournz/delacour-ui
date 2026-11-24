@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import type { CalendarDate, CalendarSelectionState } from "./calendar.date";
 import {
@@ -507,5 +508,30 @@ describe("resolvePartTestID", () => {
 
 	test("names nothing when the calendar has no id", () => {
 		expect(resolvePartTestID(undefined, "next")).toBeUndefined();
+	});
+});
+
+describe("calendar labels", () => {
+	const german = {
+		...DELACOUR_DEFAULT_LABELS.calendar,
+		today: "Heute",
+		rangeStart: "Beginn",
+		rangeEnd: "Ende",
+		caption: (fieldLabel: string, caption: string) => `${caption} (${fieldLabel})`,
+		day: (date: string, states: readonly string[]) => [date, ...states].join(" / "),
+	};
+
+	test("resolveCaptionLabel speaks through the labels it is given", () => {
+		expect(resolveCaptionLabel("Geburtstag", "Oktober 2026", german)).toBe("Oktober 2026 (Geburtstag)");
+		expect(resolveCaptionLabel(null, "Oktober 2026", german)).toBe("Oktober 2026");
+	});
+
+	test("resolveDayAccessibilityLabel speaks through the labels it is given", () => {
+		expect(resolveDayAccessibilityLabel("Montag", { isToday: true, rangeRole: "start" }, german)).toBe(
+			"Montag / Heute / Beginn"
+		);
+		expect(resolveDayAccessibilityLabel("Freitag", { isToday: false, rangeRole: "end" }, german)).toBe(
+			"Freitag / Ende"
+		);
 	});
 });

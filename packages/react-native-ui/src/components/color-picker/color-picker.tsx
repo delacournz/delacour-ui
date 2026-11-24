@@ -2,6 +2,8 @@ import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, use
 import { AccessibilityInfo, type TextInputInstance, View, type ViewProps } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { ColorPickerLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import type { HapticFeedback } from "../pressable";
 import { formatColor, hsvToRgb, normalizeHsva, parseColor, resolveIncomingColor } from "./color-picker.color";
@@ -55,6 +57,11 @@ export type ColorPickerProps = Omit<ViewProps, "children"> & {
 	isOpen?: boolean;
 	defaultOpen?: boolean;
 	onOpenChange?: (isOpen: boolean) => void;
+	/**
+	 * The spoken strings: part names, values, the Brighter and Darker actions and the trigger. Laid over
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<ColorPickerLabels>;
 	className?: string;
 	/** The parts. Omitted, the picker renders its default anatomy. */
 	children?: ReactNode;
@@ -83,10 +90,12 @@ function ColorPickerRoot({
 	isOpen: isOpenProp,
 	defaultOpen = false,
 	onOpenChange,
+	labels: labelsProp,
 	className,
 	children,
 	...props
 }: ColorPickerProps): ReactElement {
+	const labels = useLabels("colorPicker", labelsProp);
 	const field = useFieldContext();
 	const axes = resolveColorPickerAxes({ field, own: { isDisabled, isInvalid, isReadOnly, size, variant } });
 	const slots = colorPickerVariants({ isDisabled: axes.isDisabled, size: axes.size });
@@ -201,6 +210,7 @@ function ColorPickerRoot({
 			isInvalid: axes.isInvalid,
 			isOpen,
 			isReadOnly: axes.isReadOnly,
+			labels,
 			live,
 			presentation,
 			rgba: hsvToRgb(hsva),
@@ -224,6 +234,7 @@ function ColorPickerRoot({
 			haptic,
 			hsva,
 			isOpen,
+			labels,
 			live,
 			onValueChange,
 			presentation,

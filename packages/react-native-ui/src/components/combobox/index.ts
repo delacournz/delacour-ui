@@ -1,3 +1,4 @@
+export type { ComboboxLabels } from "../../lib/labels";
 export { Combobox, type ComboboxMultipleProps, type ComboboxProps, type ComboboxSingleProps } from "./combobox";
 export { type ComboboxContextValue, useCombobox } from "./combobox.context";
 export {

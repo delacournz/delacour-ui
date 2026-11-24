@@ -1,3 +1,4 @@
+export type { MessageLabels } from "../../lib/labels";
 export { Message, type MessageProps } from "./message";
 export { type MessageContextValue, MessageProvider, useMessage, useMessageContext } from "./message.context";
 export type { MessageSlotProps, MessageStatus, MessageStatusType } from "./message.types";

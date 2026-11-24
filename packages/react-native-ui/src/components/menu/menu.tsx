@@ -1,4 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
+import type { MenuLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
 import { MenuRootProvider, useMenuRootValue } from "./menu.context";
 import { MenuBackground } from "./menu-background";
@@ -23,10 +24,12 @@ export type MenuProps = {
 	onOpenChange?: (isOpen: boolean) => void;
 	/** Played when a row is chosen. Off by default. */
 	haptic?: false | HapticFeedback;
+	/** Some of the menu's spoken strings — the trigger's hint, the dismiss target's name. Wins over `DelacourProvider`. */
+	labels?: Partial<MenuLabels>;
 };
 
-function MenuRoot({ children, isOpen, defaultOpen, onOpenChange, haptic }: MenuProps): ReactElement {
-	const value = useMenuRootValue({ defaultOpen, haptic, isOpen, onOpenChange });
+function MenuRoot({ children, isOpen, defaultOpen, onOpenChange, haptic, labels }: MenuProps): ReactElement {
+	const value = useMenuRootValue({ defaultOpen, haptic, isOpen, labels, onOpenChange });
 	return <MenuRootProvider value={value}>{children}</MenuRootProvider>;
 }
 

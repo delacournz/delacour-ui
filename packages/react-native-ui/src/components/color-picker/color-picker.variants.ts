@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type ColorPickerLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { INPUT_VARIANTS } from "../input/input.variants";
 import { describeHue } from "./color-picker.color";
@@ -207,19 +208,25 @@ export function resolveColorPickerAxes({
 }
 
 /** The area's `accessibilityValue.text` — "Saturation 60 percent, brightness 80 percent". */
-export function describeAreaValue({ s, v }: Hsva): string {
-	return `Saturation ${Math.round(s * 100)} percent, brightness ${Math.round(v * 100)} percent`;
+export function describeAreaValue(
+	{ s, v }: Hsva,
+	labels: ColorPickerLabels = DELACOUR_DEFAULT_LABELS.colorPicker
+): string {
+	return labels.areaValue(Math.round(s * 100), Math.round(v * 100));
 }
 
 /** The hue track's `accessibilityValue.text` — "Hue 210 degrees, blue". */
-export function describeHueValue(hue: number): string {
+export function describeHueValue(hue: number, labels: ColorPickerLabels = DELACOUR_DEFAULT_LABELS.colorPicker): string {
 	const degrees = Math.round(hue) % 360;
-	return `Hue ${degrees} degrees, ${describeHue(degrees)}`;
+	return labels.hueValue(degrees, labels.hueName(describeHue(degrees)));
 }
 
 /** The alpha track's `accessibilityValue.text` — "Opacity 50 percent". */
-export function describeAlphaValue(alpha: number): string {
-	return `Opacity ${Math.round(alpha * 100)} percent`;
+export function describeAlphaValue(
+	alpha: number,
+	labels: ColorPickerLabels = DELACOUR_DEFAULT_LABELS.colorPicker
+): string {
+	return labels.opacityValue(Math.round(alpha * 100));
 }
 
 /**
@@ -228,25 +235,31 @@ export function describeAlphaValue(alpha: number): string {
  * The part's own name — "Saturation and brightness", "Hue" — prefixed by the
  * enclosing `Field.Label`'s text, so VoiceOver reads "Accent, hue" rather than
  * a bare "Hue" that says nothing about what is being coloured. A caller's
- * `accessibilityLabel` wins outright.
+ * `accessibilityLabel` wins outright. How the two join is `labels.partInField`.
  */
-export function resolveColorPickerLabel({
-	part,
-	label,
-	override,
-}: {
-	part: string;
-	label?: string | null;
-	override?: string;
-}): string {
+export function resolveColorPickerLabel(
+	{
+		part,
+		label,
+		override,
+	}: {
+		part: string;
+		label?: string | null;
+		override?: string;
+	},
+	labels: ColorPickerLabels = DELACOUR_DEFAULT_LABELS.colorPicker
+): string {
 	if (override !== undefined) return override;
 	if (!label) return part;
-	return `${label}, ${part.charAt(0).toLowerCase()}${part.slice(1)}`;
+	return labels.partInField(label, part);
 }
 
 /** The trigger row's name — "Accent, #f59e0b, opens picker", or "Colour, …" outside a `Field`. */
-export function resolveTriggerAccessibilityLabel({ hex, label }: { hex: string; label?: string | null }): string {
-	return `${label || "Colour"}, ${hex}, opens picker`;
+export function resolveTriggerAccessibilityLabel(
+	{ hex, label }: { hex: string; label?: string | null },
+	labels: ColorPickerLabels = DELACOUR_DEFAULT_LABELS.colorPicker
+): string {
+	return labels.trigger(label || labels.colour, hex);
 }
 
 /**

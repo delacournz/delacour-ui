@@ -1,6 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
 import { CalmMotionProvider } from "../../hooks/use-calm-motion";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { renderWithProviders, screen } from "../../test/render";
 import { ContextMenuProvider } from "./context-menu.context";
 import { ContextMenuPreview } from "./context-menu-preview";
@@ -27,7 +28,13 @@ function Harness({ isMotionCalm }: { isMotionCalm: boolean }) {
 	return (
 		<CalmMotionProvider isMotionCalm={isMotionCalm}>
 			<ContextMenuProvider
-				value={{ content: null, invocation: null, invoke: () => undefined, registerContent: () => undefined }}
+				value={{
+					content: null,
+					invocation: null,
+					invoke: () => undefined,
+					labels: DELACOUR_DEFAULT_LABELS.contextMenu,
+					registerContent: () => undefined,
+				}}
 			>
 				<ContextMenuPreview testID="preview">
 					<Text>{`${rect.width}`}</Text>

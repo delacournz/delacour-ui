@@ -1,6 +1,8 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SignatureLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { ButtonIconSize, ButtonLabelSize } from "../button/button.variants";
+import { FIELD_ACCESSIBILITY_LABELS } from "../field/field.variants";
 
 export const SIGNATURE_SIZES = ["sm", "md", "lg", "full"] as const;
 export const SIGNATURE_VARIANTS = ["primary", "secondary"] as const;
@@ -41,8 +43,15 @@ export const SIGNATURE_GUIDELINE_Y = 0.72;
 /** The token the ink is drawn in when the caller names none. */
 export const SIGNATURE_STROKE_TOKEN = "foreground";
 
+/**
+ * The English every visible and spoken string falls back to — the catalog's
+ * `signature` entry. A component reads its strings through `useLabels("signature")`,
+ * so `DelacourProvider`'s `labels` and a part's own `labels` prop lay over these.
+ */
+export const SIGNATURE_LABELS: SignatureLabels = DELACOUR_DEFAULT_LABELS.signature;
+
 /** What the pad says while empty, when the caller names nothing. */
-export const SIGNATURE_PLACEHOLDER = "Sign here";
+export const SIGNATURE_PLACEHOLDER = SIGNATURE_LABELS.placeholder;
 
 /**
  * Each pad size's toolbar button, an icon-only square on Button's own scale.
@@ -70,10 +79,13 @@ export const SIGNATURE_TOOLBAR_LABEL_SIZE: Record<SignatureSize, ButtonLabelSize
 };
 
 /** What `Signature.Alternative` says when the caller writes nothing. */
-export const SIGNATURE_ALTERNATIVE_LABEL = "Can't sign? Type your name";
+export const SIGNATURE_ALTERNATIVE_LABEL = SIGNATURE_LABELS.alternative;
 
-/** The actions a pad offers, by the name the accessibility API uses. */
+/** The history actions a pad and its toolbar offer, by the name the accessibility API uses. */
 export type SignatureAction = "undo" | "redo" | "clear";
+
+/** Every custom action the pad lists: the history actions, and `type` — the typed-name route. */
+export type SignaturePadAction = SignatureAction | "type";
 
 /**
  * What each action is called, on the toolbar and to a screen reader alike.
@@ -81,14 +93,15 @@ export type SignatureAction = "undo" | "redo" | "clear";
  * "Clear signature" rather than "Clear", because clear is final and the label is
  * the only warning there is.
  */
-export const SIGNATURE_ACTION_LABELS: Record<SignatureAction, string> = {
-	undo: "Undo",
-	redo: "Redo",
-	clear: "Clear signature",
+export const SIGNATURE_ACTION_LABELS: Record<SignaturePadAction, string> = {
+	undo: SIGNATURE_LABELS.undo,
+	redo: SIGNATURE_LABELS.redo,
+	clear: SIGNATURE_LABELS.clear,
+	type: SIGNATURE_LABELS.type,
 };
 
 /** What a screen reader hears after the label, while the pad takes input. */
-export const SIGNATURE_ACCESSIBILITY_HINT = "Double tap and hold, then drag to draw.";
+export const SIGNATURE_ACCESSIBILITY_HINT = SIGNATURE_LABELS.drawHint;
 
 /**
  * Styling for every part of a signature.
@@ -192,47 +205,199 @@ export function resolveSignatureAxes({
  *
  * Empty, it names itself a pad so the user knows it is somewhere to draw; drawn,
  * it says so and how many strokes, because the drawing itself has no words.
- * `label` is the enclosing `Field.Label`'s text when there is one.
+ * `label` is the enclosing `Field.Label`'s text when there is one, and
+ * `requiredLabel` the word a `Field` appends for `isRequired` — the same one
+ * every other control in a field says.
  */
 export function describeSignature({
 	label,
 	strokeCount,
 	isRequired = false,
+	labels = SIGNATURE_LABELS,
+	requiredLabel = FIELD_ACCESSIBILITY_LABELS.required,
 }: {
 	label: string | null;
 	strokeCount: number;
 	isRequired?: boolean;
+	labels?: SignatureLabels;
+	requiredLabel?: string;
 }): string {
-	const name = label ?? "Signature";
-	const required = isRequired ? ", required" : "";
-	if (strokeCount === 0) return `${name} pad, empty${required}`;
-	return `${name}, drawn, ${strokeCount} ${strokeCount === 1 ? "stroke" : "strokes"}${required}`;
+	const name = label ?? labels.name;
+	const described = strokeCount === 0 ? labels.empty(name) : labels.drawn(name, strokeCount);
+	return isRequired ? `${described}, ${requiredLabel}` : described;
 }
 
 /** One custom action, in the shape `accessibilityActions` takes. */
-export type SignatureAccessibilityAction = { name: SignatureAction; label: string };
+export type SignatureAccessibilityAction = { name: SignaturePadAction; label: string };
 
 /**
  * The custom actions the pad offers a screen reader — only those that would do
  * something now, so a rotor never lists an action that is silently a no-op.
+ *
+ * `type` follows the history actions whenever the caller passed
+ * `onRequestAlternative`, drawn or empty: drawing is a path a finger has to
+ * trace, and the typed-name route is the one that needs no tracing, so it is
+ * offered on the pad itself rather than only on a link a screen reader has to
+ * find elsewhere in the toolbar.
  */
 export function resolveSignatureAccessibilityActions({
 	canUndo,
 	canRedo,
+	hasAlternative,
 	isEmpty,
 	isInteractive,
+	labels = SIGNATURE_LABELS,
 }: {
 	canUndo: boolean;
 	canRedo: boolean;
+	hasAlternative: boolean;
 	isEmpty: boolean;
 	isInteractive: boolean;
+	labels?: SignatureLabels;
 }): SignatureAccessibilityAction[] {
 	if (!isInteractive) return [];
 	const actions: SignatureAccessibilityAction[] = [];
-	if (canUndo) actions.push({ label: SIGNATURE_ACTION_LABELS.undo, name: "undo" });
-	if (canRedo) actions.push({ label: SIGNATURE_ACTION_LABELS.redo, name: "redo" });
-	if (!isEmpty) actions.push({ label: SIGNATURE_ACTION_LABELS.clear, name: "clear" });
+	if (canUndo) actions.push({ label: labels.undo, name: "undo" });
+	if (canRedo) actions.push({ label: labels.redo, name: "redo" });
+	if (!isEmpty) actions.push({ label: labels.clear, name: "clear" });
+	if (hasAlternative) actions.push({ label: labels.type, name: "type" });
 	return actions;
 }
+
+/**
+ * The pad's own hint, before an enclosing `Field` puts its error and
+ * description in front of it.
+ *
+ * An empty pad whose double tap opens the typed-name route says so first — it
+ * is the one gesture a screen reader user can make without tracing anything.
+ * A drawn pad's double tap does nothing, so it only says how to draw.
+ */
+export function resolveSignaturePadHint({
+	hasAlternative,
+	isEmpty,
+	isInteractive,
+	labels = SIGNATURE_LABELS,
+}: {
+	hasAlternative: boolean;
+	isEmpty: boolean;
+	isInteractive: boolean;
+	labels?: SignatureLabels;
+}): string | undefined {
+	if (!isInteractive) return undefined;
+	return hasAlternative && isEmpty ? `${labels.typeHint} ${labels.drawHint}` : labels.drawHint;
+}
+
+/** A pad custom action, or the `activate` Android's double tap performs. */
+export type SignaturePadAccessibilityAction = SignatureAccessibilityAction | { name: "activate"; label?: undefined };
+
+/** What the pad hands its `View` for a screen reader, and how its double tap is routed. */
+export type SignaturePadAccessibility = {
+	/** `button` while a double tap opens the typed-name route; `image` otherwise. Never `none`. */
+	accessibilityRole: "button" | "image";
+	accessibilityLabel: string;
+	accessibilityActions: SignaturePadAccessibilityAction[];
+	accessibilityState: { disabled: boolean };
+	/** Android: `activate` is listed and routes to the typed-name request. */
+	routesActivate: boolean;
+	/**
+	 * iOS: what `onAccessibilityTap` does — open the typed-name route, swallow the
+	 * double tap, or nothing at all (`null`, no handler).
+	 */
+	accessibilityTap: "alternative" | "swallow" | null;
+};
+
+/**
+ * The pad's whole accessibility surface, given its state and the `Field` around it.
+ *
+ * **Role follows what a double tap does.** An empty pad that takes input and has
+ * a typed-name route is a `button`: VoiceOver's double tap (`onAccessibilityTap`)
+ * and TalkBack's (`activate`, wired the way `resolvePressableActivation` wires
+ * a Pressable) both open that route. Anything else is an `image` — a drawing, or a blank box to draw in — because a button whose double tap does
+ * nothing is a lie. `none` is never used: it read an empty pad as plain text,
+ * with nothing to say that it was a control at all.
+ *
+ * **On iOS a double tap never draws.** With nothing answering
+ * `accessibilityActivate`, UIKit synthesises a touch at the element's centre,
+ * and the pan — which starts a stroke on touch-down — would leave a dot in the
+ * middle of the pad. So an interactive pad always answers it, with `swallow`
+ * when there is nothing to open. Double-tap-and-hold still passes a held touch
+ * through to the pan, which is how a screen reader user draws.
+ *
+ * **The name** is the caller's `accessibilityLabel` verbatim, else
+ * {@link describeSignature} over the `Field`'s label.
+ */
+export function resolveSignaturePadAccessibility({
+	accessibilityLabel,
+	canRedo,
+	canUndo,
+	fieldLabel,
+	hasAlternative,
+	isDisabled,
+	isEmpty,
+	isInteractive,
+	isRequired,
+	labels = SIGNATURE_LABELS,
+	platform,
+	requiredLabel,
+	strokeCount,
+}: {
+	accessibilityLabel?: string;
+	canRedo: boolean;
+	canUndo: boolean;
+	fieldLabel: string | null;
+	hasAlternative: boolean;
+	isDisabled: boolean;
+	isEmpty: boolean;
+	isInteractive: boolean;
+	isRequired: boolean;
+	labels?: SignatureLabels;
+	platform: string;
+	requiredLabel?: string;
+	strokeCount: number;
+}): SignaturePadAccessibility {
+	const opensAlternative = isInteractive && isEmpty && hasAlternative;
+	const routesActivate = opensAlternative && platform === "android";
+	const actions: SignaturePadAccessibilityAction[] = resolveSignatureAccessibilityActions({
+		canRedo,
+		canUndo,
+		hasAlternative,
+		isEmpty,
+		isInteractive,
+		labels,
+	});
+	if (routesActivate) actions.push({ name: "activate" });
+
+	let accessibilityTap: SignaturePadAccessibility["accessibilityTap"] = null;
+	if (platform === "ios" && isInteractive) accessibilityTap = opensAlternative ? "alternative" : "swallow";
+
+	return {
+		accessibilityActions: actions,
+		accessibilityLabel:
+			accessibilityLabel ?? describeSignature({ isRequired, label: fieldLabel, labels, requiredLabel, strokeCount }),
+		accessibilityRole: opensAlternative ? "button" : "image",
+		accessibilityState: { disabled: isDisabled },
+		accessibilityTap,
+		routesActivate,
+	};
+}
+
+/**
+ * Whether a signature should warn, in development, that it offers no way to
+ * sign without drawing — a pad that takes input with no `onRequestAlternative`.
+ * Read-only and disabled pads take no signature, so they need no route.
+ */
+export function shouldWarnMissingAlternative({
+	hasAlternative,
+	isInteractive,
+}: {
+	hasAlternative: boolean;
+	isInteractive: boolean;
+}): boolean {
+	return isInteractive && !hasAlternative;
+}
+
+/** The development warning {@link shouldWarnMissingAlternative} gates. */
+export const SIGNATURE_MISSING_ALTERNATIVE_WARNING =
+	'A Signature that takes input has no onRequestAlternative. Drawing is a path a finger has to trace, and some people cannot trace it: pass onRequestAlternative to offer a typed-name route (Signature.Alternative and the pad\'s "type" action open it).';
 
 export type SignatureVariantProps = VariantProps<typeof signatureVariants>;

@@ -1,4 +1,4 @@
-import { type ReactElement, useCallback } from "react";
+import { type ReactElement, useCallback, useMemo } from "react";
 import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
 import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue } from "react-native-reanimated";
@@ -18,7 +18,7 @@ import { ColorPickerAreaGradient } from "./color-picker-gradient";
 import { ColorPickerThumb } from "./color-picker-thumb";
 
 export type ColorPickerAreaProps = Omit<ViewProps, "children" | "style"> & {
-	/** The name a screen reader reads. Defaults to "Saturation and brightness", prefixed by the `Field.Label`. */
+	/** The name a screen reader reads. Defaults to `labels.area` ("Saturation and brightness"), prefixed by the `Field.Label`. */
 	accessibilityLabel?: string;
 	className?: string;
 };
@@ -40,7 +40,7 @@ export type ColorPickerAreaProps = Omit<ViewProps, "children" | "style"> & {
  * the colour that went down rather than to red.
  *
  * Adjustable in both axes for a screen reader: increment and decrement move
- * saturation by five percent, and two custom actions, Brighter and Darker, move
+ * saturation by five percent, and two custom actions, `labels.brighter` and `labels.darker`, move
  * brightness.
  */
 export function ColorPickerArea({
@@ -61,6 +61,7 @@ export function ColorPickerArea({
 		dragChange,
 		endDrag,
 		setHsva,
+		labels,
 	} = useColorPickerPart("ColorPicker.Area");
 	const field = useFieldContext();
 	const slots = colorPickerVariants({ size, isDisabled });
@@ -119,6 +120,16 @@ export function ColorPickerArea({
 		return { backgroundColor: `rgb(${r}, ${g}, ${b})` };
 	});
 
+	const accessibilityActions = useMemo(
+		() => [
+			{ name: "increment" },
+			{ name: "decrement" },
+			{ name: "brighter", label: labels.brighter },
+			{ name: "darker", label: labels.darker },
+		],
+		[labels.brighter, labels.darker]
+	);
+
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
 			if (isDisabled || isReadOnly) return;
@@ -132,15 +143,14 @@ export function ColorPickerArea({
 	return (
 		<GestureDetector gesture={gesture}>
 			<Animated.View
-				accessibilityActions={ACCESSIBILITY_ACTIONS}
-				accessibilityLabel={resolveColorPickerLabel({
-					label: field?.label,
-					override: accessibilityLabel,
-					part: "Saturation and brightness",
-				})}
+				accessibilityActions={accessibilityActions}
+				accessibilityLabel={resolveColorPickerLabel(
+					{ label: field?.label, override: accessibilityLabel, part: labels.area },
+					labels
+				)}
 				accessibilityRole="adjustable"
 				accessibilityState={{ disabled: isDisabled }}
-				accessibilityValue={{ text: describeAreaValue(hsva) }}
+				accessibilityValue={{ text: describeAreaValue(hsva, labels) }}
 				accessible
 				className={slots.area({ className })}
 				onAccessibilityAction={handleAccessibilityAction}
@@ -178,11 +188,3 @@ const AREA_ACTIONS: Record<AreaActionName, { channel: HsvaChannel; direction: 1 
 	brighter: { channel: "brightness", direction: 1 },
 	darker: { channel: "brightness", direction: -1 },
 };
-
-/** Module scope: a fresh array each render is a new prop every commit. */
-const ACCESSIBILITY_ACTIONS = [
-	{ name: "increment" },
-	{ name: "decrement" },
-	{ name: "brighter", label: "Brighter" },
-	{ name: "darker", label: "Darker" },
-] as const;

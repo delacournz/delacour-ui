@@ -27,19 +27,19 @@ export type ChipCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "ch
  * side follows the enclosing `Direction`, falling back to the app's `I18nManager.isRTL`.
  */
 export function ChipCloseButton({
-	accessibilityLabel = "Remove",
+	accessibilityLabel,
 	className,
 	feedback = "fade",
 	hitSlop,
 	...props
 }: ChipCloseButtonProps): ReactElement {
-	const { size, isDisabled } = useChipPart("Chip.CloseButton");
+	const { size, isDisabled, labels } = useChipPart("Chip.CloseButton");
 	const { isRTL } = useDirection();
 	const slop = resolveChipCloseHitSlop(size, useMinimumHitTarget(), { isRTL });
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel}
+			accessibilityLabel={accessibilityLabel ?? labels.remove}
 			accessibilityRole="button"
 			className={chipVariants({ size }).closeButton({ className })}
 			disabled={isDisabled}

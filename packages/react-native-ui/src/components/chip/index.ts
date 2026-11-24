@@ -1,3 +1,4 @@
+export type { ChipLabels } from "../../lib/labels";
 export { Chip, type ChipProps } from "./chip";
 export { type ChipContextValue, ChipProvider, useChip, useChipContext } from "./chip.context";
 export type { ChipSlotProps } from "./chip.types";

@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 import { View } from "react-native";
 import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import type { ComboboxLabels } from "../../lib/labels";
 import { Chip } from "../chip";
 import type { ChipVariant } from "../chip/chip.variants";
 import type { InputSize } from "../input/input.variants";
@@ -16,6 +17,8 @@ import {
 
 export type ComboboxChipRowProps = {
 	options: readonly SelectOption[];
+	/** The resolved strings the remove buttons and `+N` read. */
+	labels: ComboboxLabels;
 	size: InputSize;
 	chipVariant: ChipVariant;
 	/** The chip one more Backspace would remove, drawn destructive. */
@@ -43,6 +46,7 @@ export type ComboboxChipRowProps = {
  */
 export function ComboboxChipRow({
 	options,
+	labels,
 	size,
 	chipVariant,
 	pendingIndex = null,
@@ -69,7 +73,7 @@ export function ComboboxChipRow({
 			{options.slice(0, visible).map((option, index) => (
 				<Animated.View entering={entering} exiting={exiting} key={option.value} layout={layout}>
 					<Chip
-						closeAccessibilityLabel={`Remove ${option.label}`}
+						closeAccessibilityLabel={labels.removeChip(option.label)}
 						closeTestID={testID ? `${testID}-remove-${option.value}` : undefined}
 						color={resolveComboboxChipColor(index === pendingIndex)}
 						onClose={onRemove ? () => onRemove(option.value) : undefined}
@@ -85,13 +89,13 @@ export function ComboboxChipRow({
 			{overflow > 0 ? (
 				<Animated.View key="overflow" layout={layout}>
 					<Chip
-						accessibilityLabel={`${overflow} more`}
+						accessibilityLabel={labels.moreChips(overflow)}
 						className={slots.chipOverflow()}
 						onPress={onChipPress}
 						size={chipSize}
 						variant="outline"
 					>
-						{`+${overflow}`}
+						{labels.moreChipsShort(overflow)}
 					</Chip>
 				</Animated.View>
 			) : null}

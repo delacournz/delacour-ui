@@ -12,7 +12,9 @@ import {
 import { type AccessibilityActionEvent, AccessibilityInfo, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLabels } from "../../hooks/use-labels";
 import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
+import type { MessageLabels } from "../../lib/labels";
 import { type MessageContextValue, MessageProvider } from "./message.context";
 import type { MessageStatus } from "./message.types";
 import {
@@ -77,6 +79,8 @@ export type MessageProps = {
 	onLongPress?: () => void;
 	/** Shown as a Retry control beside a `failed` receipt, and offered as an accessibility action. */
 	onRetry?: () => void;
+	/** Some of the strings the message speaks or shows on its own — receipt words, "You", "Typing", Retry. */
+	labels?: Partial<MessageLabels>;
 	/** Replaces the label composed from the parts. */
 	accessibilityLabel?: string;
 	className?: string;
@@ -95,11 +99,13 @@ function MessageRoot({
 	onPress,
 	onLongPress,
 	onRetry,
+	labels: labelsProp,
 	accessibilityLabel,
 	className,
 	children,
 }: MessageProps): ReactElement {
 	const isCalm = useCalmMotion();
+	const labels = useLabels("message", labelsProp);
 	const isOutgoing = direction === "outgoing";
 	const status = isOutgoing ? statusProp : undefined;
 	const [labelParts, setLabelParts] = useState<ReadonlyMap<string, MessageLabelPart>>(() => new Map());
@@ -122,6 +128,7 @@ function MessageRoot({
 			isInteractive: onPress !== undefined || onLongPress !== undefined,
 			isOutgoing,
 			isSelected,
+			labels,
 			onLongPress,
 			onPress,
 			onRetry,
@@ -136,6 +143,7 @@ function MessageRoot({
 			isCompound,
 			isOutgoing,
 			isSelected,
+			labels,
 			onLongPress,
 			onPress,
 			onRetry,
@@ -152,28 +160,34 @@ function MessageRoot({
 		const previous = previousStatus.current;
 		previousStatus.current = status;
 		if (status && shouldAnnounceStatusChange(previous, status)) {
-			AccessibilityInfo.announceForAccessibility(resolveMessageStatusLabel(status));
+			AccessibilityInfo.announceForAccessibility(resolveMessageStatusLabel(status, labels));
 		}
-	}, [status]);
+	}, [status, labels]);
 
 	const parts = resolveMessageLabelParts([...labelParts.values()]);
 	const label =
 		accessibilityLabel ??
-		resolveMessageAccessibilityLabel({
-			author: parts.author,
-			direction,
-			isTyping: parts.isTyping,
-			position,
-			status,
-			statusLabel: parts.statusLabel,
-			text: parts.text,
-			time: parts.time,
-		});
-	const actions = resolveMessageAccessibilityActions({
-		hasLongPress: onLongPress !== undefined,
-		hasPress: onPress !== undefined,
-		hasRetry: onRetry !== undefined && status?.type === "failed",
-	});
+		resolveMessageAccessibilityLabel(
+			{
+				author: parts.author,
+				direction,
+				isTyping: parts.isTyping,
+				position,
+				status,
+				statusLabel: parts.statusLabel,
+				text: parts.text,
+				time: parts.time,
+			},
+			labels
+		);
+	const actions = resolveMessageAccessibilityActions(
+		{
+			hasLongPress: onLongPress !== undefined,
+			hasPress: onPress !== undefined,
+			hasRetry: onRetry !== undefined && status?.type === "failed",
+		},
+		labels
+	);
 
 	const onAccessibilityAction = (event: AccessibilityActionEvent) =>
 		runMessageAccessibilityAction(event.nativeEvent.actionName, { onLongPress, onPress, onRetry });

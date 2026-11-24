@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
@@ -261,5 +262,67 @@ describe("Alert announcements", () => {
 		await renderWithProviders(<Message announce={false} />);
 		expect(announceSpy).not.toHaveBeenCalled();
 		expect(announceWithOptionsSpy).not.toHaveBeenCalled();
+	});
+});
+
+describe("Alert labels", () => {
+	const german = {
+		dismiss: "Schließen",
+		announcement: (title: string, description: string) => `${title} – ${description}`,
+	};
+
+	beforeEach(() => {
+		resetAnnouncer();
+		announceWithOptionsSpy = jest
+			.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+			.mockImplementation(() => {});
+		setPlatform("ios");
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	test("the labels prop changes the dismiss name and the announcement", async () => {
+		await renderWithProviders(
+			<Alert testID="alert" isDismissible labels={german}>
+				<Alert.Title>Fehler</Alert.Title>
+				<Alert.Description>Bank abgelehnt</Alert.Description>
+			</Alert>
+		);
+		expect(screen.getByRole("button", { name: "Schließen" })).toBeOnTheScreen();
+		expect(announceWithOptionsSpy).toHaveBeenCalledWith("Fehler – Bank abgelehnt", { queue: true });
+	});
+
+	test("a LabelsProvider changes them too, and a hand-placed close button reads them", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ alert: german }}>
+				<Alert testID="alert">
+					<Alert.CloseButton />
+				</Alert>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Schließen" })).toBeOnTheScreen();
+	});
+
+	test("the prop wins over the provider, key by key", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ alert: german }}>
+				<Alert testID="alert" isDismissible labels={{ dismiss: "Zu" }}>
+					<Alert.Title>Fehler</Alert.Title>
+					<Alert.Description>Bank abgelehnt</Alert.Description>
+				</Alert>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Zu" })).toBeOnTheScreen();
+		expect(announceWithOptionsSpy).toHaveBeenCalledWith("Fehler – Bank abgelehnt", { queue: true });
+	});
+
+	test("closeAccessibilityLabel still wins over labels", async () => {
+		await renderWithProviders(
+			<Alert testID="alert" isDismissible closeAccessibilityLabel="Hinweis weg" labels={german} />
+		);
+		expect(screen.getByRole("button", { name: "Hinweis weg" })).toBeOnTheScreen();
 	});
 });

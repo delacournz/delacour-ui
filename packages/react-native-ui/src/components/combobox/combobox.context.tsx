@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { ComboboxLabels } from "../../lib/labels";
 import type { ChipVariant } from "../chip/chip.variants";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { SelectOption } from "../select/select.types";
@@ -36,6 +37,8 @@ export type ComboboxContextValue = {
 	inputValue: string;
 	/** How the trigger's chips are painted. */
 	chipVariant: ChipVariant;
+	/** The resolved strings: defaults, then the provider's, then the root's `labels`. */
+	labels: ComboboxLabels;
 	/** How many chips the trigger draws before a `+N`. */
 	maxVisibleChips?: number;
 	/** Opens the sheet. Does nothing while disabled or read-only. */

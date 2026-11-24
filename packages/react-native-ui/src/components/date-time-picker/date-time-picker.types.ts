@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { ViewProps } from "react-native";
+import type { DateTimePickerLabels } from "../../lib/labels";
 import type { CalendarDate, DateMatcher, Weekday } from "../calendar/calendar.date";
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
 import type { InputSize, InputVariant } from "../input/input.variants";
@@ -82,6 +83,12 @@ export type DateTimePickerProps = Omit<ViewProps, "children"> & {
 	isClearable?: boolean;
 	/** The trigger's accessible name. Omitted, the enclosing `Field.Label`'s text, else "Date and time". */
 	accessibilityLabel?: string;
+	/**
+	 * The spoken strings — the trigger's hint and value, the time row, the announcement Done makes —
+	 * laid over `DelacourProvider`'s `labels`, which sit over the English defaults. The per-string
+	 * props above still win.
+	 */
+	labels?: Partial<DateTimePickerLabels>;
 	className?: string;
 	/**
 	 * Lands on the root, and names every part after it: `-trigger`, `-calendar` (so a day is

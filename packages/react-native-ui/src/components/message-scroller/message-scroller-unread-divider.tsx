@@ -1,7 +1,9 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
 import { Text } from "../text";
+import { useMessageScroller } from "./message-scroller.context";
 import { formatUnreadDividerLabel } from "./message-scroller.utils";
 import { messageScrollerVariants } from "./message-scroller.variants";
 
@@ -25,7 +27,9 @@ export function MessageScrollerUnreadDivider({
 	testID,
 }: MessageScrollerUnreadDividerProps): ReactElement {
 	const slots = messageScrollerVariants();
-	const text = label ?? formatUnreadDividerLabel(count);
+	const own = useLabels("messageScroller");
+	const labels = useMessageScroller()?.labels ?? own;
+	const text = label ?? formatUnreadDividerLabel(count, labels);
 	return (
 		<View
 			accessibilityLabel={text}

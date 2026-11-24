@@ -22,7 +22,9 @@ import Animated, {
 import { SafeAreaInsetsContext } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
+import type { FabLabels } from "../../lib/labels";
 import { Icon, type IconComponent } from "../icon";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
@@ -61,6 +63,8 @@ export type FabGroupProps = Omit<ViewProps, "children"> &
 		testID?: string;
 		/** Required: the trigger is a glyph, and the dial it opens needs a name. */
 		accessibilityLabel: string;
+		/** The scrim's spoken name, over the provider's and the English default. */
+		labels?: Partial<FabLabels>;
 		className?: string;
 	};
 
@@ -101,6 +105,7 @@ export function FabGroup({
 	haptic = false,
 	isRotatedOnOpen = true,
 	accessibilityLabel,
+	labels: labelsProp,
 	className,
 	testID,
 	...props
@@ -110,6 +115,7 @@ export function FabGroup({
 		defaultValue: defaultOpen,
 		onChange: onOpenChange,
 	});
+	const labels = useLabels("fab", labelsProp);
 	const isReducedMotion = useReducedMotion();
 	const insets = use(SafeAreaInsetsContext);
 	const progress = useSharedValue(isOpen ? 1 : 0);
@@ -218,7 +224,7 @@ export function FabGroup({
 				{isMounted ? (
 					<Animated.View className={slots.scrim()} style={scrimStyle}>
 						<Pressable
-							accessibilityLabel="Close"
+							accessibilityLabel={labels.close}
 							accessibilityRole="button"
 							className="flex-1"
 							feedback="none"

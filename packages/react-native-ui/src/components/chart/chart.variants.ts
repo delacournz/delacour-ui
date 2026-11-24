@@ -1,5 +1,6 @@
 import { asNumber, candleSentiment, formatDateTick, formatNumberTick } from "@delacour/react-native-charts/core";
 import { isLiteralColor } from "../../lib/color";
+import { type ChartLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type {
 	ChartAreaSpec,
@@ -226,7 +227,11 @@ export type PieLabelSlice = {
  * Rounded to a whole number: `41.62%` on a wedge is more digits than the
  * wedge's width can justify.
  */
-export function pieLabelText(format: PieLabelFormat | undefined, slice: PieLabelSlice): string {
+export function pieLabelText(
+	format: PieLabelFormat | undefined,
+	slice: PieLabelSlice,
+	labels: ChartLabels = DELACOUR_DEFAULT_LABELS.chart
+): string {
 	if (typeof format === "function") return format(slice);
 	switch (format) {
 		case "value":
@@ -234,7 +239,7 @@ export function pieLabelText(format: PieLabelFormat | undefined, slice: PieLabel
 		case "label":
 			return slice.label;
 		default:
-			return `${Math.round(slice.fraction * 100)}%`;
+			return labels.piePercent(Math.round(slice.fraction * 100));
 	}
 }
 
@@ -681,8 +686,6 @@ export type ChartTooltipCandle = {
 	readonly colors: ChartCandleColors;
 };
 
-const CANDLE_FIELD_LABELS = ["Open", "High", "Low", "Close"] as const;
-
 /**
  * The rows a tooltip prints for the row under the cursor.
  *
@@ -694,7 +697,8 @@ const CANDLE_FIELD_LABELS = ["Open", "High", "Low", "Close"] as const;
 export function resolveTooltipRows(
 	series: readonly ChartResolvedSeries[],
 	candlestick: ChartTooltipCandle | null,
-	row: ChartDatum | undefined
+	row: ChartDatum | undefined,
+	labels: ChartLabels = DELACOUR_DEFAULT_LABELS.chart
 ): ChartTooltipRow[] {
 	const readField = (key: string): unknown => (row === undefined ? undefined : row[key]);
 	if (candlestick === null) {
@@ -711,9 +715,10 @@ export function resolveTooltipRows(
 	// `candleSentiment` treats a NaN as neutral, which is what a missing row is.
 	const color = colors[candleSentiment(asNumber(readField(keys.open)), asNumber(readField(keys.close)))];
 
+	const candleLabels = [labels.open, labels.high, labels.low, labels.close];
 	const rows: ChartTooltipRow[] = fields.map((key, index) => ({
 		key,
-		label: CANDLE_FIELD_LABELS[index] as string,
+		label: candleLabels[index] as string,
 		color,
 		value: readField(key),
 	}));

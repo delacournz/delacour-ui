@@ -37,8 +37,8 @@ export function PieChartLabel({
 	minSweep = 12,
 	opacity,
 }: PieChartLabelProps): ReactElement | null {
-	const { surfaceColor } = usePieChart();
-	const formatLabel = useCallback((slice: PieSliceData) => pieLabelText(format, slice), [format]);
+	const { surfaceColor, labels } = usePieChart();
+	const formatLabel = useCallback((slice: PieSliceData) => pieLabelText(format, slice, labels), [format, labels]);
 	const paint = color ?? surfaceColor;
 	if (paint === undefined) return null;
 

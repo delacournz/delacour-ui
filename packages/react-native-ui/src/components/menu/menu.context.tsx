@@ -13,6 +13,7 @@ import {
 import type { ViewInstance } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import type { MenuLabels } from "../../lib/labels";
 import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import type { HapticFeedback } from "../pressable/pressable";
 import type { MenuAnchorRect } from "./menu.variants";
@@ -36,6 +37,8 @@ export type MenuContextValue = {
 	triggerRef: RefObject<MenuMeasurable | null>;
 	/** Played when a row is chosen. */
 	haptic: false | HapticFeedback;
+	/** The root's `labels` prop. Unset for a ContextMenu, whose parts then read the provider and English. */
+	labels?: Partial<MenuLabels>;
 };
 
 const MenuContext = createContext<MenuContextValue | null>(null);
@@ -70,6 +73,7 @@ export type UseMenuRootValueOptions = {
 	defaultOpen?: boolean;
 	onOpenChange?: (isOpen: boolean) => void;
 	haptic?: false | HapticFeedback;
+	labels?: Partial<MenuLabels>;
 };
 
 /**
@@ -85,6 +89,7 @@ export function useMenuRootValue({
 	defaultOpen = false,
 	onOpenChange,
 	haptic = false,
+	labels,
 }: UseMenuRootValueOptions): MenuContextValue {
 	const changeRef = useRef(onOpenChange);
 	changeRef.current = onOpenChange;
@@ -157,8 +162,8 @@ export function useMenuRootValue({
 	}, [close, open]);
 
 	return useMemo<MenuContextValue>(
-		() => ({ anchor, close, haptic, isOpen, open, toggle, triggerRef }),
-		[anchor, close, haptic, isOpen, open, toggle]
+		() => ({ anchor, close, haptic, isOpen, labels, open, toggle, triggerRef }),
+		[anchor, close, haptic, isOpen, labels, open, toggle]
 	);
 }
 

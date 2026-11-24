@@ -31,6 +31,7 @@ import { SafeAreaInsetsContext, useSafeAreaInsets } from "react-native-safe-area
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
+import type { ImageViewerLabels } from "../../lib/labels";
 import { resolvePanOrigin, resolvePanPosition, resolveSettleTarget, resolveVisibleRange } from "../../lib/paging";
 import type { ImageViewerOrigin } from "./image-viewer.context";
 import type { ImageViewerImage, ImageViewerRenderImage } from "./image-viewer.types";
@@ -74,6 +75,7 @@ export type ImageViewerLayerProps = {
 	/** Overrides the Trigger's own corner for the flight. */
 	cornerRadius?: number;
 	renderImage?: ImageViewerRenderImage;
+	labels: ImageViewerLabels;
 	/** Measures the Trigger of the image at `index` now — for the flight home. */
 	measureOrigin: (index: number, callback: (origin: ImageViewerOrigin | null) => void) => void;
 	onIndexChange: (index: number) => void;
@@ -87,14 +89,6 @@ const MODE_NONE = 0;
 const MODE_PAGE = 1;
 const MODE_DISMISS = 2;
 const MODE_ZOOM = 3;
-
-const ZOOM_ACTIONS = [
-	{ label: "Next image", name: "increment" },
-	{ label: "Previous image", name: "decrement" },
-	{ label: "Zoom in", name: "zoomIn" },
-	{ label: "Zoom out", name: "zoomOut" },
-	{ label: "Reset zoom", name: "resetZoom" },
-];
 
 const ABSOLUTE_FILL = { bottom: 0, left: 0, position: "absolute", right: 0, top: 0 } as const;
 
@@ -128,6 +122,7 @@ export function ImageViewerLayer({
 	showsChrome,
 	cornerRadius,
 	renderImage,
+	labels,
 	measureOrigin,
 	onIndexChange,
 	onClose,
@@ -539,6 +534,17 @@ export function ImageViewerLayer({
 		[corner, dismissY, exitScale, origin, position, progress, scale, translateX, translateY]
 	);
 
+	const zoomActions = useMemo(
+		() => [
+			{ label: labels.nextImage, name: "increment" },
+			{ label: labels.previousImage, name: "decrement" },
+			{ label: labels.zoomIn, name: "zoomIn" },
+			{ label: labels.zoomOut, name: "zoomOut" },
+			{ label: labels.resetZoom, name: "resetZoom" },
+		],
+		[labels]
+	);
+
 	const visible = resolveVisibleRange(index, count, false, 1);
 	const slots = imageViewerVariants();
 	const label = activeImage ? [activeImage.alt, activeImage.caption].filter(Boolean).join(". ") : undefined;
@@ -559,10 +565,10 @@ export function ImageViewerLayer({
 					<GestureDetector gesture={gesture}>
 						<Animated.View {...modal.containerProps} style={[ABSOLUTE_FILL, stageStyle]}>
 							<View
-								accessibilityActions={ZOOM_ACTIONS}
+								accessibilityActions={zoomActions}
 								accessibilityLabel={label}
 								accessibilityRole="adjustable"
-								accessibilityValue={{ text: resolveViewerA11yValue(index, count) }}
+								accessibilityValue={{ text: resolveViewerA11yValue(index, count, labels) }}
 								accessible
 								onAccessibilityAction={handleAccessibilityAction}
 								ref={pagerRef}
@@ -573,6 +579,7 @@ export function ImageViewerLayer({
 									if (!image) return null;
 									return (
 										<ImageViewerPage
+											failedText={labels.loadFailed}
 											fitted={fittedFor(image, pageIndex)}
 											image={image}
 											isActive={pageIndex === index}
@@ -598,6 +605,7 @@ export function ImageViewerLayer({
 									fade={fade}
 									index={index}
 									insets={insets}
+									counter={labels.counter}
 									isVisible={isChromeVisible}
 									progress={progress}
 									scale={scale}

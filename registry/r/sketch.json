@@ -12,6 +12,7 @@
 		"color",
 		"icon",
 		"icons",
+		"interactive-child",
 		"pressable",
 		"slider",
 		"toggle-button",
@@ -51,7 +52,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/sketch/sketch-canvas.tsx",
 			"target": "sketch/sketch-canvas.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/sketch/sketch-size.tsx",

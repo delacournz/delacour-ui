@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type MarkdownEditorActionKey } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { BUTTON_ICON_SIZES } from "../button/button.variants";
 import { INPUT_SIZES, INPUT_VARIANTS, type InputVariant, inputVariants } from "../input/input.variants";
@@ -20,6 +21,7 @@ import {
 	resolveMarkdownActionCommand,
 	resolveMarkdownActionIsActive,
 	resolveMarkdownAnnouncement,
+	resolveMarkdownLinkActions,
 	resolveMarkdownListMarker,
 	resolveMarkdownPaneClass,
 	resolveMarkdownToolbarActions,
@@ -105,6 +107,25 @@ describe("toolbar actions", () => {
 	test("the announcement says what the press did", () => {
 		expect(resolveMarkdownAnnouncement("bold", false)).toBe("Bold applied");
 		expect(resolveMarkdownAnnouncement("bulletList", true)).toBe("Bulleted list removed");
+	});
+
+	test("the announcement speaks through the labels it is given", () => {
+		const french = {
+			...DELACOUR_DEFAULT_LABELS.markdownEditor,
+			bold: "Gras",
+			applied: (name: string) => `${name} appliqué`,
+			removed: (name: string) => `${name} retiré`,
+		};
+		expect(resolveMarkdownAnnouncement("bold", false, french)).toBe("Gras appliqué");
+		expect(resolveMarkdownAnnouncement("bold", true, french)).toBe("Gras retiré");
+	});
+
+	test("the catalog's action keys are the toolbar's actions", () => {
+		const keys: MarkdownEditorActionKey[] = [...MARKDOWN_TOOLBAR_ACTIONS];
+		const back: MarkdownToolbarAction[] = keys;
+		expect(Object.keys(MARKDOWN_ACTION_LABELS).sort()).toEqual([...back].sort());
+		for (const action of back)
+			expect(MARKDOWN_ACTION_LABELS[action]).toBe(DELACOUR_DEFAULT_LABELS.markdownEditor[action]);
 	});
 });
 
@@ -217,5 +238,34 @@ describe("tokens", () => {
 			expect(light.has(name)).toBe(true);
 			expect(dark.has(name)).toBe(true);
 		}
+	});
+});
+
+describe("resolveMarkdownLinkActions", () => {
+	test("links sharing their text get distinct labels, since VoiceOver dispatches a custom action by label", () => {
+		const link = (url: string): MarkdownInline => ({ children: [{ type: "text", value: "here" }], type: "link", url });
+		const inline: MarkdownInline[] = [link("https://a.test"), { type: "text", value: " or " }, link("https://b.test")];
+		expect(resolveMarkdownLinkActions(inline).map(({ label, url }) => ({ label, url }))).toEqual([
+			{ label: "Open link here", url: "https://a.test" },
+			{ label: "Open link here (2)", url: "https://b.test" },
+		]);
+	});
+
+	test("a row with no link has no actions", () => {
+		expect(resolveMarkdownLinkActions([{ type: "text", value: "plain" }])).toEqual([]);
+	});
+
+	test("each link becomes a named action in reading order, through nested formats", () => {
+		const inline: MarkdownInline[] = [
+			{ children: [{ type: "text", value: "docs" }], type: "link", url: "https://a.test" },
+			{
+				children: [{ children: [{ type: "text", value: "api" }], type: "link", url: "https://b.test" }],
+				type: "bold",
+			},
+		];
+		expect(resolveMarkdownLinkActions(inline)).toEqual([
+			{ label: "Open link docs", name: "markdown-link-0", url: "https://a.test" },
+			{ label: "Open link api", name: "markdown-link-1", url: "https://b.test" },
+		]);
 	});
 });

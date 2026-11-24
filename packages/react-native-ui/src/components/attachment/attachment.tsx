@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLabels } from "../../hooks/use-labels";
+import { type AttachmentLabels, mergeLabelOverrides } from "../../lib/labels";
 import { Pressable } from "../pressable";
 import {
 	type AttachmentContextValue,
@@ -70,6 +72,12 @@ type AttachmentOwnProps = {
 	onRetry?: () => void;
 	/** What a screen reader calls the remove action. Default `Remove <name>`, or `Cancel upload`. */
 	removeAccessibilityLabel?: string;
+	/**
+	 * Spoken strings, laid over `DelacourProvider`'s `labels`, which sit over the English defaults. An
+	 * enclosing `Attachment.Group`'s `labels` sit beneath these, key by key. `removeAccessibilityLabel`
+	 * and `accessibilityLabel` still win.
+	 */
+	labels?: Partial<AttachmentLabels>;
 	/** `testID` for the composed remove control. */
 	removeTestID?: string;
 	/** `testID` for the composed retry control. */
@@ -96,7 +104,7 @@ type LooseMedia = {
  * it, which is a row scrolling back into view rather than news. The nudge is
  * decoration, so calm motion stills it; the notice is not.
  */
-function useErrorEntry(status: AttachmentStatus, name: string) {
+function useErrorEntry(status: AttachmentStatus, name: string, labels: AttachmentLabels) {
 	const isCalm = useCalmMotion();
 	const offset = useSharedValue(0);
 	const errorMessage = status.type === "error" ? status.message : undefined;
@@ -108,7 +116,7 @@ function useErrorEntry(status: AttachmentStatus, name: string) {
 		if (errorMessage === undefined || was) return;
 
 		if (Platform.OS === "ios") {
-			AccessibilityInfo.announceForAccessibility(`Upload failed, ${name}, ${errorMessage}`);
+			AccessibilityInfo.announceForAccessibility(labels.uploadFailedAnnouncement(name, errorMessage));
 		}
 		if (isCalm) return;
 
@@ -118,7 +126,7 @@ function useErrorEntry(status: AttachmentStatus, name: string) {
 			withTiming(-distance, { duration: stepMs }),
 			withTiming(0, { duration: stepMs })
 		);
-	}, [errorMessage, isCalm, name, offset]);
+	}, [errorMessage, isCalm, labels, name, offset]);
 
 	return useAnimatedStyle(() => ({ transform: [{ translateX: offset.value }] }));
 }
@@ -127,6 +135,7 @@ type AttachmentActionsInput = Pick<AttachmentOwnProps, "onLongPress" | "onPress"
 	Pick<ViewProps, "accessibilityActions" | "onAccessibilityAction"> & {
 		isDisabled: boolean;
 		isInteractive: boolean;
+		labels: AttachmentLabels;
 		removeLabel: string;
 		status: AttachmentStatus;
 	};
@@ -140,6 +149,7 @@ function useAttachmentActions({
 	accessibilityActions,
 	isDisabled,
 	isInteractive,
+	labels,
 	onAccessibilityAction,
 	onLongPress,
 	onPress,
@@ -148,17 +158,32 @@ function useAttachmentActions({
 	removeLabel,
 	status,
 }: AttachmentActionsInput) {
-	const actions = [
-		...(accessibilityActions ?? []),
-		...resolveAttachmentActions({
-			hasLongPress: isInteractive && onLongPress !== undefined,
-			hasPress: isInteractive && onPress !== undefined,
-			hasRemove: !isDisabled && onRemove !== undefined,
-			hasRetry: !isDisabled && onRetry !== undefined,
+	const actions = useMemo(
+		() => [
+			...(accessibilityActions ?? []),
+			...resolveAttachmentActions({
+				hasLongPress: isInteractive && onLongPress !== undefined,
+				hasPress: isInteractive && onPress !== undefined,
+				hasRemove: !isDisabled && onRemove !== undefined,
+				hasRetry: !isDisabled && onRetry !== undefined,
+				labels,
+				removeLabel,
+				status,
+			}),
+		],
+		[
+			accessibilityActions,
+			isDisabled,
+			isInteractive,
+			labels,
+			onLongPress,
+			onPress,
+			onRemove,
+			onRetry,
 			removeLabel,
 			status,
-		}),
-	];
+		]
+	);
 
 	const handlers: Record<string, (() => void) | undefined> = {
 		activate: isInteractive ? onPress : undefined,
@@ -293,6 +318,7 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 		removeAccessibilityLabel,
 		removeTestID,
 		retryTestID,
+		labels: labelsProp,
 		accessibilityLabel,
 		accessibilityHint,
 		accessibilityActions,
@@ -304,13 +330,19 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 
 	const group = useAttachmentGroupContext();
 	const groupItem = useAttachmentGroupItem();
+	const groupLabels = group?.labels;
+	const ownLabels = useMemo(
+		() => mergeLabelOverrides({ attachment: groupLabels }, { attachment: labelsProp }).attachment,
+		[groupLabels, labelsProp]
+	);
+	const labels = useLabels("attachment", ownLabels);
 	const layout = layoutProp ?? group?.layout ?? "chip";
 	const size = sizeProp ?? group?.size ?? "md";
 	const extension = kind === "file" ? (extensionProp ?? resolveFileExtension(name)) : undefined;
 
 	const hasHandler = onPress !== undefined || onLongPress !== undefined;
 	const isInteractive = resolveAttachmentInteractive({ isDisabled, onLongPress, onPress, status });
-	const removeLabel = resolveRemoveLabel({ label: removeAccessibilityLabel, name, status });
+	const removeLabel = resolveRemoveLabel({ label: removeAccessibilityLabel, labels, name, status });
 	const parts = resolveAttachmentParts({
 		hasRemove: onRemove !== undefined,
 		hasRetry: onRetry !== undefined,
@@ -324,6 +356,7 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 			isDisabled,
 			isInteractive,
 			kind,
+			labels,
 			layout,
 			name,
 			onRemove,
@@ -340,6 +373,7 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 			isDisabled,
 			isInteractive,
 			kind,
+			labels,
 			layout,
 			name,
 			onRemove,
@@ -352,7 +386,7 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 		]
 	);
 
-	const nudgeStyle = useErrorEntry(status, name);
+	const nudgeStyle = useErrorEntry(status, name, labels);
 
 	const slots = attachmentVariants({ isDisabled, kind, layout, size, status: status.type });
 
@@ -360,6 +394,7 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 		accessibilityActions,
 		isDisabled,
 		isInteractive,
+		labels,
 		onAccessibilityAction,
 		onLongPress,
 		onPress,
@@ -370,8 +405,8 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 	});
 
 	const label =
-		accessibilityLabel ?? resolveAttachmentAccessibilityLabel({ durationMs, kind, name, sizeBytes, status });
-	const hint = accessibilityHint ?? (groupItem ? `${groupItem.index + 1} of ${groupItem.count}` : undefined);
+		accessibilityLabel ?? resolveAttachmentAccessibilityLabel({ durationMs, kind, labels, name, sizeBytes, status });
+	const hint = accessibilityHint ?? (groupItem ? labels.position(groupItem.index + 1, groupItem.count) : undefined);
 
 	return (
 		<AttachmentProvider value={context}>

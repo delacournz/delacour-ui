@@ -1,4 +1,4 @@
-import { type ReactElement, useCallback } from "react";
+import { type ReactElement, useCallback, useMemo } from "react";
 import { type AccessibilityActionEvent, View, type ViewProps } from "react-native";
 import { IconChevronDownSmall } from "../../icons/central";
 import { Icon } from "../icon";
@@ -11,11 +11,6 @@ import { calendarVariants, resolveCaptionLabel, resolveCaptionPage, resolvePartT
 export type CalendarCaptionProps = Omit<ViewProps, "children"> & {
 	className?: string;
 };
-
-const PAGE_ACTIONS = [
-	{ name: "decrement", label: "Previous" },
-	{ name: "increment", label: "Next" },
-];
 
 /**
  * The month and year above the grid.
@@ -43,6 +38,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 		goPrev,
 		isDisabled,
 		label: fieldLabel,
+		labels,
 		locale,
 		setView,
 		size,
@@ -59,9 +55,16 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 			? formatMonthYear(visibleMonth, locale)
 			: view === "months"
 				? formatYear(visibleMonth.year, locale)
-				: `${formatYear(yearSpan.from, locale)} – ${formatYear(yearSpan.to, locale)}`;
+				: labels.yearSpan(formatYear(yearSpan.from, locale), formatYear(yearSpan.to, locale));
 
-	const accessibilityLabel = resolveCaptionLabel(fieldLabel, text);
+	const accessibilityLabel = resolveCaptionLabel(fieldLabel, text, labels);
+	const pageActions = useMemo(
+		() => [
+			{ name: "decrement", label: labels.previous },
+			{ name: "increment", label: labels.next },
+		],
+		[labels.next, labels.previous]
+	);
 
 	const handleAction = useCallback(
 		(event: AccessibilityActionEvent) => {
@@ -87,7 +90,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 	if (captionLayout === "label") {
 		return (
 			<View
-				accessibilityActions={PAGE_ACTIONS}
+				accessibilityActions={pageActions}
 				accessibilityLabel={accessibilityLabel}
 				accessibilityRole="adjustable"
 				accessible
@@ -101,16 +104,11 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 		);
 	}
 
-	const hint =
-		view === "days"
-			? "Opens the month and year picker"
-			: view === "months"
-				? "Opens the year list"
-				: "Returns to the month";
+	const hint = view === "days" ? labels.openMonths : view === "months" ? labels.openYears : labels.returnToMonth;
 
 	return (
 		<Pressable
-			accessibilityActions={PAGE_ACTIONS}
+			accessibilityActions={pageActions}
 			accessibilityHint={hint}
 			accessibilityLabel={accessibilityLabel}
 			className={slots.caption({ className })}

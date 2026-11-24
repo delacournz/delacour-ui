@@ -4,7 +4,9 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo, u
 import type { LayoutChangeEvent } from "react-native";
 import { View } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { useThemeColor } from "../../hooks/use-theme-color";
+import type { ChartLabels } from "../../lib/labels";
 import type { ChartConfig, ChartDatum } from "./chart.types";
 import {
 	type ChartSize,
@@ -58,6 +60,11 @@ export type PieChartProps = {
 	 * already speaks elsewhere.
 	 */
 	accessible?: boolean;
+	/**
+	 * Some of the spoken strings: the summary, each slice's name and the percentages. Laid over
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<ChartLabels>;
 	className?: string;
 	/** Named on the frame, so a capture flow or a test can find the plot. */
 	testID?: string;
@@ -82,10 +89,12 @@ function PieChartRoot({
 	onSelect,
 	accessibilityLabel,
 	accessible = true,
+	labels: labelsProp,
 	className,
 	testID,
 	children,
 }: PieChartProps): ReactElement {
+	const labels = useLabels("chart", labelsProp);
 	const slots = chartVariants({ size });
 	const [frame, setFrame] = useState({ width: 0, height: 0 });
 
@@ -143,8 +152,23 @@ function PieChartRoot({
 			innerRadius,
 			selectedIndex: selected,
 			select,
+			labels,
 		}),
-		[series, resolved, slices, slots, size, surfaceColor, frame, nameKey, valueKey, innerRadius, selected, select]
+		[
+			series,
+			resolved,
+			slices,
+			slots,
+			size,
+			surfaceColor,
+			frame,
+			nameKey,
+			valueKey,
+			innerRadius,
+			selected,
+			select,
+			labels,
+		]
 	);
 
 	const { canvas, overlay, below, selectable, tooltipProps } = useMemo(
@@ -168,6 +192,7 @@ function PieChartRoot({
 		values: resolved.values,
 		total: resolved.total,
 		override: accessibilityLabel,
+		labels,
 	});
 
 	// A not-selectable pie is one image: the frame itself is the accessible

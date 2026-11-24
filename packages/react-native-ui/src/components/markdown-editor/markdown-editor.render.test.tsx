@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Linking } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { MarkdownEditor } from "./markdown-editor";
@@ -275,6 +276,22 @@ describe("MarkdownEditor", () => {
 			expect(onLinkPress).toHaveBeenCalledWith("https://example.com/a");
 		});
 
+		test("a link inside a list row is an accessibility action on the row", async () => {
+			const onLinkPress = jest.fn();
+			await renderWithProviders(
+				<MarkdownEditor
+					defaultMode="preview"
+					defaultValue={"- read the [docs](https://example.com/a)\n- plain"}
+					onLinkPress={onLinkPress}
+				/>
+			);
+			const row = screen.getByLabelText("bullet read the docs");
+			expect(row.props.accessibilityActions).toEqual([{ label: "Open link docs", name: "markdown-link-0" }]);
+			await fireEvent(row, "accessibilityAction", { nativeEvent: { actionName: "markdown-link-0" } });
+			expect(onLinkPress).toHaveBeenCalledWith("https://example.com/a");
+			expect(screen.getByLabelText("bullet plain").props.accessibilityActions).toBeUndefined();
+		});
+
 		test("the default link handler opens a safe url with Linking", async () => {
 			const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
 			await renderWithProviders(<MarkdownEditor defaultMode="preview" defaultValue="[mail](mailto:a@b.co)" />);
@@ -441,6 +458,90 @@ describe("MarkdownEditor", () => {
 			} finally {
 				restore();
 			}
+		});
+	});
+
+	describe("labels", () => {
+		const FRENCH = {
+			bold: "Gras",
+			bulletItem: (text: string) => `puce ${text}`,
+			openLink: (text: string) => `Ouvrir le lien ${text}`,
+			empty: "Rien à voir",
+			preview: "Aperçu",
+			previewPane: "Aperçu du texte",
+			write: "Écrire",
+		};
+
+		test("the labels prop changes the toolbar, the tabs, the empty preview and the pane", async () => {
+			await renderWithProviders(<MarkdownEditor defaultMode="preview" labels={FRENCH} />);
+			expect(screen.getByLabelText("Gras")).toBeOnTheScreen();
+			expect(screen.getByText("Écrire")).toBeOnTheScreen();
+			expect(screen.getByText("Aperçu")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Aperçu du texte")).toBeOnTheScreen();
+			expect(screen.getByText("Rien à voir")).toBeOnTheScreen();
+		});
+
+		test("a bullet row speaks through bulletItem", async () => {
+			await renderWithProviders(<MarkdownEditor defaultMode="preview" defaultValue="- un" labels={FRENCH} />);
+			expect(screen.getByLabelText("puce un")).toBeOnTheScreen();
+		});
+
+		test("a link action on a bullet row speaks through openLink", async () => {
+			await renderWithProviders(
+				<MarkdownEditor defaultMode="preview" defaultValue="- lire [docs](https://example.com/a)" labels={FRENCH} />
+			);
+			const row = screen.getByLabelText("puce lire docs");
+			expect(row.props.accessibilityActions).toEqual([{ label: "Ouvrir le lien docs", name: "markdown-link-0" }]);
+		});
+
+		test("the announcement uses the labels", async () => {
+			const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => undefined);
+			await renderWithProviders(
+				<MarkdownEditor
+					defaultValue="hi"
+					labels={{ bold: FRENCH.bold, applied: (name) => `${name} appliqué` }}
+					placeholder="Write something"
+				/>
+			);
+			await select(0, 2);
+			await press("Gras");
+			expect(announce).toHaveBeenLastCalledWith("Gras appliqué");
+		});
+
+		test("a link command inserts linkText", async () => {
+			const onValueChange = jest.fn();
+			await renderWithProviders(
+				<MarkdownEditor
+					defaultValue="https://a.co"
+					labels={{ linkText: "lien" }}
+					onValueChange={onValueChange}
+					placeholder="Write something"
+				/>
+			);
+			await select(0, 12);
+			await press("Link");
+			expect(onValueChange).toHaveBeenLastCalledWith("[lien](https://a.co)");
+		});
+
+		test("the provider's labels change the strings, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ markdownEditor: { write: "Schreiben", preview: "Vorschau" } }}>
+					<MarkdownEditor labels={{ preview: "Aperçu" }} />
+				</LabelsProvider>
+			);
+			expect(screen.getByText("Schreiben")).toBeOnTheScreen();
+			expect(screen.getByText("Aperçu")).toBeOnTheScreen();
+			expect(screen.queryByText("Vorschau")).not.toBeOnTheScreen();
+		});
+
+		test("emptyText and an accessibilityLabel on the preview win over the labels", async () => {
+			await renderWithProviders(
+				<MarkdownEditor defaultMode="preview" labels={FRENCH}>
+					<MarkdownEditor.Preview accessibilityLabel="Mine" emptyText="Vide" />
+				</MarkdownEditor>
+			);
+			expect(screen.getByText("Vide")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Mine")).toBeOnTheScreen();
 		});
 	});
 

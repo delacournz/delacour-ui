@@ -11,9 +11,9 @@ export type FeedbackSubmitProps = Omit<ButtonProps, "onPress"> & {
 	canSubmitEmpty?: boolean;
 	/** Announce the result of a promise `onSubmit` to a screen reader — sent, or failed. Default true. */
 	announce?: boolean;
-	/** Spoken when the promise resolves. Default "Feedback sent". */
+	/** Spoken when the promise resolves. Default `labels.sent`, "Feedback sent". */
 	sentMessage?: string;
-	/** Spoken when the promise rejects. Default "Couldn't send feedback". */
+	/** Spoken when the promise rejects. Default `labels.failed`, "Couldn't send feedback". */
 	failedMessage?: string;
 };
 
@@ -23,7 +23,7 @@ function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
 }
 
 /**
- * Sends the message — a primary `Button` labelled "Send" unless given children.
+ * Sends the message — a primary `Button` labelled `labels.submit` ("Send") unless given children.
  *
  * Disabled while `canSubmitFeedback` says no: an empty or whitespace draft,
  * unless `canSubmitEmpty`. `onSubmit` receives the trimmed text.
@@ -53,10 +53,10 @@ export function FeedbackSubmit({
 	announce: shouldAnnounce = true,
 	sentMessage,
 	failedMessage,
-	children = "Send",
+	children,
 	...props
 }: FeedbackSubmitProps): ReactElement {
-	const { value, isSending, setSending } = useFeedbackPart("Feedback.Submit");
+	const { value, isSending, setSending, labels } = useFeedbackPart("Feedback.Submit");
 	const canSubmit = canSubmitFeedback({ canSubmitEmpty, isDisabled, value });
 
 	const handlePress = useCallback(() => {
@@ -66,7 +66,11 @@ export function FeedbackSubmit({
 
 		setSending(true);
 		const speak = (outcome: "sent" | "failed") => {
-			const { message, politeness } = resolveFeedbackResultAnnouncement(outcome, { failedMessage, sentMessage });
+			const { message, politeness } = resolveFeedbackResultAnnouncement(
+				outcome,
+				{ failedMessage, sentMessage },
+				labels
+			);
 			announce(message, { enabled: shouldAnnounce, key: "feedback-result", politeness });
 		};
 		void Promise.resolve(result).then(
@@ -80,7 +84,7 @@ export function FeedbackSubmit({
 				throw error;
 			}
 		);
-	}, [canSubmit, failedMessage, isSending, onSubmit, sentMessage, setSending, shouldAnnounce, value]);
+	}, [canSubmit, failedMessage, isSending, labels, onSubmit, sentMessage, setSending, shouldAnnounce, value]);
 
 	return (
 		<Button
@@ -90,7 +94,7 @@ export function FeedbackSubmit({
 			variant="primary"
 			{...props}
 		>
-			{children}
+			{children ?? labels.submit}
 		</Button>
 	);
 }

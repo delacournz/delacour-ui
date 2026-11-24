@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
 	buildComboboxRows,
 	filterItems,
+	formatResultsCount,
 	getHighlightRanges,
 	matchOption,
 	normalizeComboboxOptions,
@@ -272,7 +273,9 @@ describe("resolveResultsAnnouncement", () => {
 		expect(resolveResultsAnnouncement({ count: 4, emptyText: "None", query: " " })).toBeNull();
 	});
 
-	test("takes a formatter to localise", () => {
+	test("takes a formatter to localise, and the default is the catalog's English", () => {
+		expect(formatResultsCount(1)).toBe("1 result");
+		expect(formatResultsCount(3)).toBe("3 results");
 		expect(
 			resolveResultsAnnouncement({ count: 2, emptyText: "Aucun", format: (n) => `${n} résultats`, query: "a" })
 		).toBe("2 résultats");

@@ -1,3 +1,4 @@
+export type { ColorPickerHueName, ColorPickerLabels } from "../../lib/labels";
 export { ColorPicker, type ColorPickerProps } from "./color-picker";
 export {
 	areaToHsv,

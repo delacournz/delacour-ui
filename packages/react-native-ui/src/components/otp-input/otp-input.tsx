@@ -12,6 +12,8 @@ import {
 } from "react";
 import { Platform, TextInput, type TextInputInstance, type TextInputProps, View } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { OtpInputLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import { useFieldControlAccessibility } from "../field/field-control";
 import type { InputSize, InputVariant } from "../input/input.variants";
@@ -20,7 +22,6 @@ import { type OtpInputContextValue, OtpInputProvider } from "./otp-input.context
 import {
 	buildLayout,
 	clampOtpLength,
-	OTP_DEFAULT_LABEL,
 	type OtpPattern,
 	resolveAccessibilityHint,
 	resolveAccessibilityValue,
@@ -97,6 +98,8 @@ export type OtpInputProps = {
 	accessibilityHint?: string;
 	/** Lands on the hidden `TextInput` — the element a test types into. */
 	testID?: string;
+	/** The spoken name, hint and value strings, over the provider's and the English defaults. */
+	labels?: Partial<OtpInputLabels>;
 	/** A custom anatomy of `OtpInput.Group`, `OtpInput.Slot` and `OtpInput.Separator`. */
 	children?: ReactNode;
 	ref?: Ref<OtpInputRef>;
@@ -129,18 +132,20 @@ function OtpInputRoot({
 	accessibilityLabel,
 	accessibilityHint,
 	testID,
+	labels: labelsProp,
 	children,
 	ref,
 }: OtpInputProps): ReactElement {
+	const labels = useLabels("otpInput", labelsProp);
 	const field = useFieldContext();
 	const axes = resolveOtpAxes({ field, own: { isDisabled, isInvalid } });
 	const total = clampOtpLength(length);
 	// The one hook call: the hidden `TextInput` is the only accessible element, so it alone takes
 	// the name, required state, error and description and claims `Field.Label` from the tree.
 	const a11y = useFieldControlAccessibility({
-		accessibilityHint: accessibilityHint ?? resolveAccessibilityHint(total, pattern),
+		accessibilityHint: accessibilityHint ?? resolveAccessibilityHint(total, pattern, labels),
 		accessibilityLabel,
-		fallbackLabel: OTP_DEFAULT_LABEL,
+		fallbackLabel: labels.defaultLabel,
 		isInvalid,
 		isRequired,
 	});
@@ -272,7 +277,9 @@ function OtpInputRoot({
 					accessibilityLabel={a11y.accessibilityLabel}
 					accessibilityLabelledBy={a11y.accessibilityLabelledBy}
 					accessibilityState={{ disabled: axes.isDisabled }}
-					accessibilityValue={{ text: resolveAccessibilityValue({ isMasked, length: total, pattern, value: code }) }}
+					accessibilityValue={{
+						text: resolveAccessibilityValue({ isMasked, labels, length: total, pattern, value: code }),
+					}}
 					autoCapitalize={uppercase ? "characters" : "none"}
 					autoComplete={resolveAutofill(Platform.OS)}
 					autoCorrect={false}

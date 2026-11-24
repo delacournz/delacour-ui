@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { BadgeLabels } from "../../lib/labels";
 import type { BadgeColor, BadgeMaterial, BadgeSize, BadgeVariant } from "./badge.variants";
 
 export type BadgeContextValue = {
@@ -11,6 +12,8 @@ export type BadgeContextValue = {
 	/** Whether the badge is disabled. */
 	isDisabled: boolean;
 	material: BadgeMaterial;
+	/** The resolved spoken strings, so a hand-placed part reads the same set as the root. */
+	labels: BadgeLabels;
 };
 
 const BadgeContext = createContext<BadgeContextValue | null>(null);

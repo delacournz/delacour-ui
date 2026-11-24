@@ -113,6 +113,15 @@ read those before touching behaviour, because behaviour is not here.
   the heading role; the preset contributes the type. The `title` slot carries
   `pr-8` for the close control and nothing else — a `text-lg` there would be a
   second definition of `Text.Header` — and the test asserts it.
+- **The spoken strings are the `labels` prop, not literals**: `close`, `overlay`,
+  `handle`, `closed` and `snapPoint(position, count)` come from `lib/labels`
+  through `useLabels("bottomSheet", labels)` on the root and ride
+  `BottomSheetLabelsContext` to every part; a part outside a root reads the
+  provider's. Precedence is a part's own `accessibilityLabel` / `accessibilityValue`
+  ← the root's `labels` ← `DelacourProvider` `labels` ← English. The engine's own
+  English ("Close", "Bottom sheet", "Closed", "Snap point i of n") is only a
+  fallback it never reaches: `Overlay` and `Handle` pass theirs in, the handle's
+  value computed here from `useBottomSheet()`.
 - **`Close` and `Trigger` are this library's `Pressable`**, through `asChild`.
   The engine's press handler is donated to the pressable rather than wrapping
   it, because two tap gestures in an ancestor/descendant pair give the touch to

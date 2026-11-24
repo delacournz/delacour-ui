@@ -307,3 +307,21 @@ describe("flattenAvatarChildren", () => {
 		expect(new Set(keys).size).toBe(2);
 	});
 });
+
+describe("avatar labels", () => {
+	const german = {
+		button: "Avatar-Schaltfläche",
+		overflow: (count: number) => `${count} weitere`,
+		overflowText: (count: number, max: number) => (count > max ? `${max}+` : `${count} +`),
+	};
+
+	test("resolveAvatarOverflowLabel speaks through the labels", () => {
+		expect(resolveAvatarOverflowLabel(2, german)).toEqual({ text: "2 +", accessibilityLabel: "2 weitere" });
+		expect(resolveAvatarOverflowLabel(1234, german)).toEqual({ text: "99+", accessibilityLabel: "1234 weitere" });
+	});
+
+	test("resolveAvatarAccessibilityLabel names a nameless button from the labels", () => {
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true }, german)).toBe("Avatar-Schaltfläche");
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true, name: "Aria" }, german)).toBe("Aria");
+	});
+});

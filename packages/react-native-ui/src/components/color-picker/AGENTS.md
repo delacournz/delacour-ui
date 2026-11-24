@@ -101,6 +101,15 @@ registers a press: tapping the label opens the sheet, or focuses the hex field i
 
 ## Accessibility
 
+- **The spoken strings are the `labels` prop, not literals**: part names, the area, hue and
+  opacity values, the hue's colour name, the Brighter / Darker actions, the trigger's name and
+  the Field join (`partInField`) come from `lib/labels` through `useLabels("colorPicker", labels)`.
+  Precedence is defaults <- `DelacourProvider` `labels` <- the root's prop; a part's own
+  `accessibilityLabel` still wins. The resolved set rides the picker context.
+  `describeAreaValue`, `describeHueValue`, `describeAlphaValue`, `resolveColorPickerLabel` and
+  `resolveTriggerAccessibilityLabel` take it as a trailing argument. `describeHue` returns the
+  `ColorPickerHueName` key (still the English word); the spoken name is `labels.hueName(key)`.
+
 - Area: `adjustable`; increment/decrement step saturation by 5%, custom `brighter` / `darker`
   step brightness. Value text "Saturation 60 percent, brightness 80 percent".
 - Hue: `adjustable`, 0–360, 10° a step, wrapping; text "Hue 210 degrees, blue".

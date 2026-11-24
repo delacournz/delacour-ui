@@ -297,6 +297,47 @@ export function resolveMoveAction(
 	return { kind: "blocked" };
 }
 
+/** What a screen reader calls a handle that was given no `accessibilityLabel`. */
+export const SORTABLE_DEFAULT_HANDLE_LABEL = "Drag to reorder";
+
+/** The action names a row publishes. A caller's own action must not reuse them. */
+export const SORTABLE_MOVE_UP_NAME = "moveUp";
+export const SORTABLE_MOVE_DOWN_NAME = "moveDown";
+
+/** "Reorder Milk" for a labelled row, the generic "Drag to reorder" for an unlabelled one. */
+export function resolveSortableHandleLabel(label: string | undefined): string {
+	return label ? `Reorder ${label}` : SORTABLE_DEFAULT_HANDLE_LABEL;
+}
+
+/** A named accessibility action, structurally what React Native's `AccessibilityActionInfo` is. */
+export type SortableMoveActionInfo = { name: string; label: string };
+
+/**
+ * The Move up / Move down actions a row publishes: only those it can perform, and named for the
+ * row when it has a `label` ("Move Milk up"), since a list of identical "Move up" rotor entries
+ * says nothing about which row each belongs to.
+ */
+export function resolveSortableMoveActions({
+	order,
+	id,
+	pinned,
+	label,
+}: {
+	order: readonly string[];
+	id: string;
+	pinned?: readonly boolean[];
+	label?: string;
+}): SortableMoveActionInfo[] {
+	const actions: SortableMoveActionInfo[] = [];
+	if (resolveMoveAction(order, id, "up", pinned).kind === "move") {
+		actions.push({ label: label ? `Move ${label} up` : "Move up", name: SORTABLE_MOVE_UP_NAME });
+	}
+	if (resolveMoveAction(order, id, "down", pinned).kind === "move") {
+		actions.push({ label: label ? `Move ${label} down` : "Move down", name: SORTABLE_MOVE_DOWN_NAME });
+	}
+	return actions;
+}
+
 /** The row's place in the list, as a screen reader hears it. One-based. */
 export function resolveSortablePosition(index: number, count: number): string {
 	return `Position ${index + 1} of ${count}`;

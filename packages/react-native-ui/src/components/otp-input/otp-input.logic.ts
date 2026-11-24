@@ -1,3 +1,5 @@
+import { DELACOUR_DEFAULT_LABELS, type OtpInputLabels, type OtpInputUnit } from "../../lib/labels";
+
 /**
  * The pure half of `OtpInput`: what a keystroke, a paste or an autofill is allowed to leave in the
  * field, which cell is active, when the code counts as complete, and what a screen reader hears.
@@ -16,7 +18,7 @@ export const OTP_MAX_LENGTH = 12;
 export const OTP_MASK_CHAR = "•";
 
 /** The accessible name when neither the caller nor an enclosing `Field.Label` gives one. */
-export const OTP_DEFAULT_LABEL = "Verification code";
+export const OTP_DEFAULT_LABEL = DELACOUR_DEFAULT_LABELS.otpInput.defaultLabel;
 
 const NAMED_PATTERNS: Record<Exclude<OtpPattern, RegExp>, RegExp> = {
 	digits: /^[0-9]$/,
@@ -167,7 +169,7 @@ export function resolveAutofill(platform: string): OtpAutofill {
 	return "off";
 }
 
-function unitOf(pattern: OtpPattern): "digit" | "character" {
+function unitOf(pattern: OtpPattern): OtpInputUnit {
 	return pattern === "digits" ? "digit" : "character";
 }
 
@@ -183,20 +185,26 @@ export function resolveAccessibilityValue({
 	length,
 	isMasked,
 	pattern,
+	labels = DELACOUR_DEFAULT_LABELS.otpInput,
 }: {
 	value: string;
 	length: number;
 	isMasked: boolean;
 	pattern: OtpPattern;
+	labels?: OtpInputLabels;
 }): string {
 	const chars = Array.from(value);
-	if (isMasked || chars.length === 0) return `${chars.length} of ${length} ${unitOf(pattern)}s entered`;
+	if (isMasked || chars.length === 0) return labels.progress(chars.length, length, unitOf(pattern));
 	return chars.join(" ");
 }
 
 /** The hint that tells a screen-reader user what to type. */
-export function resolveAccessibilityHint(length: number, pattern: OtpPattern): string {
-	return `Enter the ${length} ${unitOf(pattern)} code`;
+export function resolveAccessibilityHint(
+	length: number,
+	pattern: OtpPattern,
+	labels: OtpInputLabels = DELACOUR_DEFAULT_LABELS.otpInput
+): string {
+	return labels.hint(length, unitOf(pattern));
 }
 
 export type OtpStateAxes = { isInvalid: boolean; isDisabled: boolean };

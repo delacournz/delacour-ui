@@ -13,7 +13,7 @@ export type PlannerTodayProps = Omit<ButtonProps, "onPress"> & { onPress?: () =>
  * "Today" unless given children; `onPress` runs after the planner has moved.
  */
 export function PlannerToday({ children, onPress, isDisabled, ...props }: PlannerTodayProps): ReactElement {
-	const { month, today, goToToday } = usePlannerPart("Planner.Today");
+	const { month, today, goToToday, labels } = usePlannerPart("Planner.Today");
 	return (
 		<Button
 			isDisabled={isDisabled ?? isCurrentMonth(month, today)}
@@ -25,7 +25,7 @@ export function PlannerToday({ children, onPress, isDisabled, ...props }: Planne
 			variant="outline"
 			{...props}
 		>
-			{children ?? <Button.Label>Today</Button.Label>}
+			{children ?? <Button.Label>{labels.today}</Button.Label>}
 		</Button>
 	);
 }

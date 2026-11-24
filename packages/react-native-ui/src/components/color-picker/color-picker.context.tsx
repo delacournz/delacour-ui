@@ -1,6 +1,7 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import type { TextInputInstance } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
+import type { ColorPickerLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import type { ColorFormat, ColorPickerPresentation, Hsva, Rgba } from "./color-picker.types";
 import type { ColorPickerSize, ColorPickerVariant } from "./color-picker.variants";
@@ -36,6 +37,8 @@ export type ColorPickerContextValue = ColorPickerState & {
 	 */
 	live: SharedValue<Hsva>;
 	format: ColorFormat;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	labels: ColorPickerLabels;
 	haptic: false | HapticFeedback;
 	presentation: ColorPickerPresentation;
 	/** Whether a caller listens per frame. When nobody does, a drag never crosses to JS until it ends. */

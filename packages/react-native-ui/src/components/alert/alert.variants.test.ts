@@ -246,6 +246,18 @@ describe("resolveAlertAnnouncement", () => {
 		expect(resolveAlertAnnouncement({ title: "Failed!", description: "Try again" })).toBe("Failed! Try again");
 	});
 
+	test("speaks through custom labels when both parts have text", () => {
+		const labels = {
+			dismiss: "Schließen",
+			announcement: (title: string, description: string) => `${title} – ${description}`,
+		};
+		expect(resolveAlertAnnouncement({ title: "Fehler", description: "Bank abgelehnt" }, labels)).toBe(
+			"Fehler – Bank abgelehnt"
+		);
+		expect(resolveAlertAnnouncement({ title: "Nur Titel", description: "" }, labels)).toBe("Nur Titel");
+		expect(resolveAlertAnnouncement({ title: "", description: "" }, labels)).toBeNull();
+	});
+
 	test("speaks whichever part exists, and null when neither does", () => {
 		expect(resolveAlertAnnouncement({ title: "Saved", description: "" })).toBe("Saved");
 		expect(resolveAlertAnnouncement({ title: "", description: "Body only" })).toBe("Body only");

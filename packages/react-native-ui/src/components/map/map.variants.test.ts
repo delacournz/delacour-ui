@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { BUTTON_HEIGHTS } from "../button/button.variants";
 import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
@@ -304,6 +305,7 @@ describe("hasInitialViewChanged", () => {
 describe("mapVariants", () => {
 	test("the map is labelled", () => {
 		expect(MAP_ACCESSIBILITY_LABEL).toBe("Map");
+		expect(MAP_ACCESSIBILITY_LABEL).toBe(DELACOUR_DEFAULT_LABELS.map.name);
 	});
 
 	test("every corner pins the controls to it", () => {

@@ -23,6 +23,7 @@ export {
 	useSheetStep,
 } from "@delacour/react-native-bottom-sheet";
 export { resolveSheetBottomInset, resolveSheetScrollEndPadding } from "@delacour/react-native-bottom-sheet/core";
+export type { BottomSheetLabels } from "../../lib/labels";
 export { BottomSheet, type BottomSheetProps } from "./bottom-sheet";
 export {
 	BOTTOM_SHEET_BACKDROP_INDICES,

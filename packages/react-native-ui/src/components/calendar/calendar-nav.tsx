@@ -8,7 +8,7 @@ import { resolvePartTestID } from "./calendar.variants";
 export type CalendarNavProps = Omit<ButtonProps, "children" | "onPress"> & {
 	/** Which way the arrow pages. */
 	direction: "prev" | "next";
-	/** The arrow's accessible name. Defaults to "Previous month" / "Next month" — or year, in the months view. */
+	/** The arrow's accessible name. Defaults to `labels` (English: "Previous month" / "Next month" — or year, in the months view). */
 	label?: string;
 };
 
@@ -26,16 +26,24 @@ export function CalendarNav({ direction, label, isDisabled, ...props }: Calendar
 		goNext,
 		goPrev,
 		isDisabled: calendarDisabled,
+		labels,
 		testID,
 		view,
 	} = useCalendarPart("Calendar.Nav");
 	const isPrev = direction === "prev";
 	const canGo = (isPrev ? canGoPrev : canGoNext) && view !== "years";
-	const unit = view === "months" ? "year" : "month";
+	const name =
+		view === "months"
+			? isPrev
+				? labels.previousYear
+				: labels.nextYear
+			: isPrev
+				? labels.previousMonth
+				: labels.nextMonth;
 
 	return (
 		<Button
-			accessibilityLabel={label ?? `${isPrev ? "Previous" : "Next"} ${unit}`}
+			accessibilityLabel={label ?? name}
 			haptic="selection"
 			isDisabled={isDisabled ?? (calendarDisabled || !canGo)}
 			onPress={isPrev ? goPrev : goNext}

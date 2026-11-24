@@ -1,5 +1,5 @@
-import { type ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
-import { type AccessibilityActionEvent, type LayoutChangeEvent, View, type ViewProps } from "react-native";
+import { type ReactElement, useCallback, useEffect, useRef } from "react";
+import { type AccessibilityActionEvent, type LayoutChangeEvent, Platform, View, type ViewProps } from "react-native";
 import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
@@ -13,11 +13,10 @@ import { useSignaturePart } from "./signature.context";
 import { shouldAddPoint } from "./signature.stroke";
 import type { SignaturePoint, SignatureStroke } from "./signature.types";
 import {
-	describeSignature,
-	resolveSignatureAccessibilityActions,
-	SIGNATURE_ACCESSIBILITY_HINT,
+	resolveSignaturePadAccessibility,
+	resolveSignaturePadHint,
 	SIGNATURE_GUIDELINE_Y,
-	type SignatureAction,
+	type SignaturePadAction,
 	signatureVariants,
 } from "./signature.variants";
 import { SignatureInk } from "./signature-ink";
@@ -59,9 +58,26 @@ export type SignaturePadProps = Omit<ViewProps, "children" | "style"> & {
  *
  * To a screen reader the pad is one element: it says whether it is empty and
  * how many strokes it holds, and offers undo, redo and clear as custom actions
- * whenever they would do something.
+ * whenever they would do something. With `onRequestAlternative` it also offers
+ * `type`, the route that needs no drawing.
+ *
+ * **The role follows what a double tap does.** An empty pad with a typed-name
+ * route is a `button` — a double tap opens it (`onAccessibilityTap` on iOS,
+ * `activate` on Android). Every other pad is an `image`, never `none`. On iOS a
+ * double tap never draws a stray dot: the pad always answers it, doing nothing
+ * when there is no route. A caller's own `onAccessibilityAction` and
+ * `onAccessibilityTap` run after the pad's, so neither is lost. A `Field`'s
+ * invalid state, error and description lead the hint, the only channel React
+ * Native has for them.
  */
-export function SignaturePad({ className, onLayout, ...props }: SignaturePadProps): ReactElement {
+export function SignaturePad({
+	className,
+	onLayout,
+	accessibilityLabel,
+	onAccessibilityAction,
+	onAccessibilityTap,
+	...props
+}: SignaturePadProps): ReactElement {
 	const {
 		strokes,
 		isEmpty,
@@ -80,6 +96,8 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 		guidelineLabel,
 		placeholder,
 		haptic,
+		onRequestAlternative,
+		labels,
 		clearCount,
 		commitStroke,
 		beginStroke,
@@ -87,9 +105,11 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 		runAction,
 	} = useSignaturePart("Signature.Pad");
 	const field = useFieldContext();
+	const hasAlternative = onRequestAlternative !== undefined;
 	const fieldA11y = useFieldControlAccessibility({
-		accessibilityHint: isInteractive ? SIGNATURE_ACCESSIBILITY_HINT : undefined,
-		fallbackLabel: "Signature",
+		accessibilityHint: resolveSignaturePadHint({ hasAlternative, isEmpty, isInteractive, labels }),
+		accessibilityLabel,
+		fallbackLabel: labels.name,
 		isInvalid,
 	});
 	const slots = signatureVariants({ isDisabled, isInvalid, size, variant });
@@ -167,34 +187,49 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 		[onLayout, setPadSize]
 	);
 
-	const accessibilityActions = useMemo(
-		() => resolveSignatureAccessibilityActions({ canRedo, canUndo, isEmpty, isInteractive }),
-		[canRedo, canUndo, isEmpty, isInteractive]
-	);
+	const pad = resolveSignaturePadAccessibility({
+		accessibilityLabel,
+		canRedo,
+		canUndo,
+		fieldLabel: field?.label ?? null,
+		hasAlternative,
+		isDisabled,
+		isEmpty,
+		isInteractive,
+		isRequired: fieldA11y.isRequired,
+		labels,
+		platform: Platform.OS,
+		strokeCount,
+	});
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
 			const name = event.nativeEvent.actionName;
-			if (isSignatureAction(name)) runAction(name);
+			if (isSignaturePadAction(name)) runAction(name);
+			else if (name === "activate" && pad.routesActivate) runAction("type");
+			onAccessibilityAction?.(event);
 		},
-		[runAction]
+		[onAccessibilityAction, pad.routesActivate, runAction]
 	);
+
+	const handleAccessibilityTap = useCallback(() => {
+		if (pad.accessibilityTap === "alternative") runAction("type");
+		onAccessibilityTap?.();
+	}, [onAccessibilityTap, pad.accessibilityTap, runAction]);
 
 	return (
 		<GestureDetector gesture={gesture}>
 			<View
-				accessibilityActions={accessibilityActions}
+				accessibilityActions={pad.accessibilityActions}
 				accessibilityHint={fieldA11y.accessibilityHint}
-				accessibilityLabel={describeSignature({
-					isRequired: fieldA11y.isRequired,
-					label: field?.label ?? null,
-					strokeCount,
-				})}
-				accessibilityRole={isEmpty ? "none" : "image"}
-				accessibilityState={{ disabled: isDisabled }}
+				accessibilityLabel={pad.accessibilityLabel}
+				accessibilityLabelledBy={fieldA11y.accessibilityLabelledBy}
+				accessibilityRole={pad.accessibilityRole}
+				accessibilityState={pad.accessibilityState}
 				accessible
 				className={slots.pad({ className })}
 				onAccessibilityAction={handleAccessibilityAction}
+				onAccessibilityTap={pad.accessibilityTap === null ? onAccessibilityTap : handleAccessibilityTap}
 				onLayout={handleLayout}
 				{...props}
 			>
@@ -225,6 +260,6 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 }
 SignaturePad.displayName = "DelacourUI.Signature.Pad";
 
-function isSignatureAction(name: string): name is SignatureAction {
-	return name === "undo" || name === "redo" || name === "clear";
+function isSignaturePadAction(name: string): name is SignaturePadAction {
+	return name === "undo" || name === "redo" || name === "clear" || name === "type";
 }

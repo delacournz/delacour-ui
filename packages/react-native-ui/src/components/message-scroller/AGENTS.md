@@ -132,3 +132,14 @@ the button. `stick-to-bottom`, `date-separators` and `unread-divider` are stills
 to where the clip began. `jump-to-latest` keeps arriving for the same reason. Its seed therefore
 ends on a run of Aria's messages in the same form as the arrivals, so the newest end has the same
 shape whenever the clip loops.
+
+- **The spoken and visible strings are `labels`, not literals.** The list's name, the jump
+  button's label and unread suffix, the loading and divider text, `Today` / `Yesterday`, the
+  weekday and month words and their date order, and the arrival announcement come from
+  `lib/labels` through `useLabels`, resolved once on the root (or in `useMessageScrollerState`)
+  and shared through the context: English, then `DelacourProvider`'s `labels`, then the root's
+  `labels` prop. Standalone `LoadingOlder` and `UnreadDivider` call `useLabels` themselves. The
+  resolvers take the labels as a trailing argument defaulting to English (`formatSeparatorDate`'s
+  is the fourth, after `locale`). With a `locale`, `Intl` writes weekdays and dates and labels
+  still give Today/Yesterday. `label` props and a custom `formatDate` still win. The
+  announcement is built from a timer, so it reads the latest labels through a ref.

@@ -1,10 +1,17 @@
 import type { ReactElement, ReactNode } from "react";
-import { View } from "react-native";
+import { type AccessibilityActionEvent, View } from "react-native";
+import type { MarkdownEditorLabels } from "../../lib/labels";
 import { Text } from "../text";
 import type { MarkdownBlock, MarkdownInline } from "./markdown-editor.parse";
-import { markdownEditorVariants, markdownInlineToText, resolveMarkdownListMarker } from "./markdown-editor.variants";
+import {
+	markdownEditorVariants,
+	markdownInlineToText,
+	resolveMarkdownLinkActions,
+	resolveMarkdownListMarker,
+} from "./markdown-editor.variants";
 
 type RenderContext = {
+	labels: MarkdownEditorLabels;
 	onLinkPress: (url: string) => void;
 	/** Extra class for an inline code run — lifts it off a filled preview. */
 	codeClassName: string | undefined;
@@ -20,7 +27,7 @@ type InlineProps = RenderContext & {
  * is for. Strikethrough has no preset, so it is a bare `Text` with the one
  * utility.
  */
-function MarkdownInlines({ nodes, onLinkPress, codeClassName }: InlineProps): ReactNode {
+function MarkdownInlines({ nodes, labels, onLinkPress, codeClassName }: InlineProps): ReactNode {
 	return nodes.map((node, index) => {
 		const key = `${node.type}-${index}`;
 		switch (node.type) {
@@ -35,25 +42,45 @@ function MarkdownInlines({ nodes, onLinkPress, codeClassName }: InlineProps): Re
 			case "bold":
 				return (
 					<Text.Strong key={key}>
-						<MarkdownInlines codeClassName={codeClassName} nodes={node.children} onLinkPress={onLinkPress} />
+						<MarkdownInlines
+							codeClassName={codeClassName}
+							nodes={node.children}
+							labels={labels}
+							onLinkPress={onLinkPress}
+						/>
 					</Text.Strong>
 				);
 			case "italic":
 				return (
 					<Text.Emphasis key={key}>
-						<MarkdownInlines codeClassName={codeClassName} nodes={node.children} onLinkPress={onLinkPress} />
+						<MarkdownInlines
+							codeClassName={codeClassName}
+							nodes={node.children}
+							labels={labels}
+							onLinkPress={onLinkPress}
+						/>
 					</Text.Emphasis>
 				);
 			case "strikethrough":
 				return (
 					<Text className="line-through" key={key}>
-						<MarkdownInlines codeClassName={codeClassName} nodes={node.children} onLinkPress={onLinkPress} />
+						<MarkdownInlines
+							codeClassName={codeClassName}
+							nodes={node.children}
+							labels={labels}
+							onLinkPress={onLinkPress}
+						/>
 					</Text>
 				);
 			case "link":
 				return (
 					<Text.Link accessibilityHint={node.url} key={key} onPress={() => onLinkPress(node.url)}>
-						<MarkdownInlines codeClassName={codeClassName} nodes={node.children} onLinkPress={onLinkPress} />
+						<MarkdownInlines
+							codeClassName={codeClassName}
+							nodes={node.children}
+							labels={labels}
+							onLinkPress={onLinkPress}
+						/>
 					</Text.Link>
 				);
 			default: {
@@ -71,26 +98,45 @@ type ListProps = RenderContext & {
 
 /**
  * A list's rows. Each row's accessible text starts with its marker, so a screen
- * reader says "bullet" or "2." before the item rather than nothing.
+ * reader says "bullet" or "2." before the item rather than nothing. A row stays
+ * one stop, so a link inside it is mirrored as an "Open link <text>" action on
+ * the row; a row with no link carries no actions.
  */
-function MarkdownList({ list, onLinkPress, codeClassName }: ListProps): ReactElement {
+function MarkdownList({ list, labels, onLinkPress, codeClassName }: ListProps): ReactElement {
 	const slots = markdownEditorVariants();
 	const rows = list.items.map((item, index) => {
 		const marker = resolveMarkdownListMarker(list.ordered, list.start, index);
 		return {
 			id: `item-${index}`,
 			item,
-			label: `${list.ordered ? marker : "bullet"} ${markdownInlineToText(item)}`,
+			label: list.ordered ? `${marker} ${markdownInlineToText(item)}` : labels.bulletItem(markdownInlineToText(item)),
+			links: resolveMarkdownLinkActions(item, labels),
 			marker,
 		};
 	});
 	return (
 		<View className="gap-1">
 			{rows.map((row) => (
-				<View accessibilityLabel={row.label} accessible className={slots.listItem()} key={row.id}>
+				<View
+					accessibilityActions={
+						row.links.length > 0 ? row.links.map(({ name, label }) => ({ label, name })) : undefined
+					}
+					accessibilityLabel={row.label}
+					accessible
+					className={slots.listItem()}
+					key={row.id}
+					onAccessibilityAction={
+						row.links.length > 0
+							? (event: AccessibilityActionEvent) => {
+									const link = row.links.find((candidate) => candidate.name === event.nativeEvent.actionName);
+									if (link) onLinkPress(link.url);
+								}
+							: undefined
+					}
+				>
 					<Text.Paragraph className={slots.listMarker()}>{row.marker}</Text.Paragraph>
 					<Text.Paragraph className="flex-1">
-						<MarkdownInlines codeClassName={codeClassName} nodes={row.item} onLinkPress={onLinkPress} />
+						<MarkdownInlines codeClassName={codeClassName} nodes={row.item} labels={labels} onLinkPress={onLinkPress} />
 					</Text.Paragraph>
 				</View>
 			))}
@@ -111,7 +157,7 @@ type BlocksProps = RenderContext & {
  * muted and deliberately not announced as a heading. All three carry the
  * `header` role.
  */
-export function MarkdownBlocks({ blocks, onLinkPress, codeClassName }: BlocksProps): ReactElement {
+export function MarkdownBlocks({ blocks, labels, onLinkPress, codeClassName }: BlocksProps): ReactElement {
 	const slots = markdownEditorVariants();
 	return (
 		<>
@@ -120,7 +166,12 @@ export function MarkdownBlocks({ blocks, onLinkPress, codeClassName }: BlocksPro
 				switch (block.type) {
 					case "heading": {
 						const content = (
-							<MarkdownInlines codeClassName={codeClassName} nodes={block.children} onLinkPress={onLinkPress} />
+							<MarkdownInlines
+								codeClassName={codeClassName}
+								nodes={block.children}
+								labels={labels}
+								onLinkPress={onLinkPress}
+							/>
 						);
 						if (block.level === 1) return <Text.Title key={key}>{content}</Text.Title>;
 						if (block.level === 2) return <Text.Header key={key}>{content}</Text.Header>;
@@ -133,13 +184,23 @@ export function MarkdownBlocks({ blocks, onLinkPress, codeClassName }: BlocksPro
 					case "paragraph":
 						return (
 							<Text.Paragraph key={key}>
-								<MarkdownInlines codeClassName={codeClassName} nodes={block.children} onLinkPress={onLinkPress} />
+								<MarkdownInlines
+									codeClassName={codeClassName}
+									nodes={block.children}
+									labels={labels}
+									onLinkPress={onLinkPress}
+								/>
 							</Text.Paragraph>
 						);
 					case "quote":
 						return (
 							<View className={slots.quote()} key={key}>
-								<MarkdownBlocks blocks={block.children} codeClassName={codeClassName} onLinkPress={onLinkPress} />
+								<MarkdownBlocks
+									blocks={block.children}
+									codeClassName={codeClassName}
+									labels={labels}
+									onLinkPress={onLinkPress}
+								/>
 							</View>
 						);
 					case "codeBlock":
@@ -151,7 +212,15 @@ export function MarkdownBlocks({ blocks, onLinkPress, codeClassName }: BlocksPro
 							</View>
 						);
 					case "list":
-						return <MarkdownList codeClassName={codeClassName} key={key} list={block} onLinkPress={onLinkPress} />;
+						return (
+							<MarkdownList
+								codeClassName={codeClassName}
+								key={key}
+								list={block}
+								labels={labels}
+								onLinkPress={onLinkPress}
+							/>
+						);
 					default: {
 						const exhaustive: never = block;
 						return exhaustive;

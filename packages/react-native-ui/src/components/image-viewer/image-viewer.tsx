@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { ImageViewerLabels } from "../../lib/labels";
 import {
 	type ImageViewerContextValue,
 	ImageViewerInternalProvider,
@@ -71,6 +73,8 @@ type ImageViewerCommonProps = {
 	showsChrome?: boolean;
 	/** The corner the image wears at the thumbnail's frame. Default: the Trigger's own. */
 	cornerRadius?: number;
+	/** Some of the viewer's spoken and visible strings, over the provider's and the English defaults. */
+	labels?: Partial<ImageViewerLabels>;
 };
 
 export type ImageViewerProps = ImageViewerCommonProps & ImageViewerStateProps & ImageViewerIndexProps;
@@ -92,6 +96,7 @@ function ImageViewerRoot({
 	isDisabled = false,
 	showsChrome = true,
 	cornerRadius,
+	labels: labelsProp,
 	open: openProp,
 	defaultOpen,
 	onOpenChange,
@@ -99,6 +104,7 @@ function ImageViewerRoot({
 	defaultIndex,
 	onIndexChange,
 }: ImageViewerProps): ReactElement {
+	const labels = useLabels("imageViewer", labelsProp);
 	const [isOpen, setOpen] = useControllableState<boolean>({
 		value: openProp,
 		defaultValue: defaultOpen ?? false,
@@ -230,13 +236,14 @@ function ImageViewerRoot({
 			images,
 			isDataMode: imagesProp !== undefined,
 			isDisabled,
+			labels,
 			openById,
 			register,
 			registerTarget,
 			renderImage,
 			unregister,
 		}),
-		[images, imagesProp, isDisabled, openById, register, registerTarget, renderImage, unregister]
+		[images, imagesProp, isDisabled, labels, openById, register, registerTarget, renderImage, unregister]
 	);
 
 	return (
@@ -251,6 +258,7 @@ function ImageViewerRoot({
 						index={index}
 						isDismissible={isDismissible}
 						isOpen={isOpen}
+						labels={labels}
 						maxScale={maxScale}
 						measureOrigin={measureOrigin}
 						onClose={close}

@@ -114,6 +114,12 @@ keeps a type with one consumer in that consumer's file.
   hundred and twenty-three". Masked, "2 of 4 digits entered", because reading a PIN aloud defeats the
   mask. Empty is counted in both modes so the reader hears the length. The hint is "Enter the 6
   digit code" (or "character", for letter patterns).
+- **The spoken strings are `labels`, not literals.** The default name ("Verification code"), the
+  "N of M digits entered" count and the "Enter the N digit code" hint live in `lib/labels` and resolve once on
+  the root through `useLabels("otpInput", labels)` — English, then `DelacourProvider`'s `labels`, then the
+  `labels` prop. `accessibilityLabel` and `accessibilityHint` still win. The resolvers take the labels as a
+  trailing argument defaulting to English, so they stay pure; `OTP_DEFAULT_LABEL` aliases the catalog default.
+  No context carries them: no part speaks.
 - **An error is announced by `Field.Error`'s live region**, not by this component.
 
 ## Autofill

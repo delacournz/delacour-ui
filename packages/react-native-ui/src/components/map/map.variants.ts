@@ -1,5 +1,6 @@
 import type { StyleSpecification, SymbolLayerSpecification } from "@maplibre/maplibre-react-native";
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { type HitSlopInsets, normalizeHitSlop } from "../pressable/pressable.variants";
 import type { LngLat, LngLatBounds } from "./map.types";
@@ -34,8 +35,8 @@ export type MapLabelTone = (typeof MAP_LABEL_TONES)[number];
 /** A point in a view's unit square — `{ x: 0.5, y: 1 }` is bottom centre. */
 export type MapAnchorPoint = { x: number; y: number };
 
-/** What the map view is announced as. */
-export const MAP_ACCESSIBILITY_LABEL = "Map";
+/** What the map view is announced as, in English — the catalog default. */
+export const MAP_ACCESSIBILITY_LABEL = DELACOUR_DEFAULT_LABELS.map.name;
 
 /** How long a camera move takes when the caller names no duration, in ms. */
 export const MAP_CAMERA_DURATION = 600;

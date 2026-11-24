@@ -1,3 +1,4 @@
+export type { LeaderboardLabels } from "../../lib/labels";
 export { Leaderboard, type LeaderboardProps } from "./leaderboard";
 export type { LeaderboardEntry, RankedEntry } from "./leaderboard.types";
 export {

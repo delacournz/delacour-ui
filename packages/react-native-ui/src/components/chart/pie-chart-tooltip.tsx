@@ -39,7 +39,7 @@ export function PieChartTooltip({
 	formatPercent,
 	size,
 }: PieChartTooltipProps): ReactElement | null {
-	const { series, values, total, slices, slots, frame, selectedIndex } = usePieChart();
+	const { series, values, total, slices, slots, frame, selectedIndex, labels } = usePieChart();
 	const [measured, setMeasured] = useState(DEFAULT_SIZE);
 	const box = size ?? measured;
 
@@ -77,7 +77,9 @@ export function PieChartTooltip({
 				<Text className={slots.tooltipName()}>{entry.label}</Text>
 				<Text className={slots.tooltipValue()}>{formatValue?.(value, entry.label) ?? formatPieValue(value)}</Text>
 			</View>
-			<Text className={slots.tooltipHeading()}>{formatPercent?.(percent) ?? `${Math.round(percent)}%`}</Text>
+			<Text className={slots.tooltipHeading()}>
+				{formatPercent?.(percent) ?? labels.piePercent(Math.round(percent))}
+			</Text>
 		</View>
 	);
 }

@@ -102,8 +102,9 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   title's `nativeID`. Focus moves to the title once the entrance finishes — the panel itself when
   there is no `Drawer.Title` — and back to the trigger once the exit does. The back button also
   closes it when dismissible. `Drawer.Trigger` carries `accessibilityState.expanded` while open. The
-  scrim is not accessible. The ✕ is labelled `"Close"`. Android containment comes from
+  scrim is not accessible. The ✕ is named by `labels.close` ("Close"). Android containment comes from
   `Overlay.Portal`/`OverlayProvider`, which the drawer draws through.
+- **The spoken strings are `labels`, not literals.** The ✕'s name is `labels.close`, resolved once on the root through `useLabels("drawer", labels)` — English, then `DelacourProvider`'s `labels`, then the root's own — and shared through the context. `Drawer.Close`'s `accessibilityLabel` still wins. No resolver or constant holds a string.
 - **No blur backdrop.** Frosted scrims need `expo-blur`, not a peer; a follow-up for every overlay.
 
 ## Preview capture

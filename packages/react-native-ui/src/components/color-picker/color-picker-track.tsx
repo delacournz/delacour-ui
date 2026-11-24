@@ -28,8 +28,8 @@ export type ColorPickerTrackProps = Omit<ViewProps, "children" | "style"> & {
 
 /** The two channels a track can drive, and everything that differs between them. */
 const CHANNELS = {
-	hue: { max: 360, step: COLOR_PICKER_HUE_STEP, part: "Hue", channel: "hue" },
-	alpha: { max: 1, step: COLOR_PICKER_STEP, part: "Opacity", channel: "alpha" },
+	hue: { max: 360, step: COLOR_PICKER_HUE_STEP, part: "hue", channel: "hue" },
+	alpha: { max: 1, step: COLOR_PICKER_STEP, part: "opacity", channel: "alpha" },
 } as const;
 
 /**
@@ -66,6 +66,7 @@ export function ColorPickerTrack({
 		dragChange,
 		endDrag,
 		setHsva,
+		labels,
 	} = useColorPickerPart(channelName === "hue" ? "ColorPicker.Hue" : "ColorPicker.Alpha");
 	const field = useFieldContext();
 	const slots = colorPickerVariants({ size, isDisabled });
@@ -151,18 +152,17 @@ export function ColorPickerTrack({
 		<GestureDetector gesture={gesture}>
 			<Animated.View
 				accessibilityActions={ACCESSIBILITY_ACTIONS}
-				accessibilityLabel={resolveColorPickerLabel({
-					label: field?.label,
-					override: accessibilityLabel,
-					part: spec.part,
-				})}
+				accessibilityLabel={resolveColorPickerLabel(
+					{ label: field?.label, override: accessibilityLabel, part: labels[spec.part] },
+					labels
+				)}
 				accessibilityRole="adjustable"
 				accessibilityState={{ disabled: isDisabled }}
 				accessibilityValue={{
 					max: isHue ? 360 : 100,
 					min: 0,
 					now,
-					text: isHue ? describeHueValue(hsva.h) : describeAlphaValue(hsva.a),
+					text: isHue ? describeHueValue(hsva.h, labels) : describeAlphaValue(hsva.a, labels),
 				}}
 				accessible
 				className={slots.touchArea({ className })}

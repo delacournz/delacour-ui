@@ -9,6 +9,8 @@ export type ImageViewerChromeProps = {
 	index: number;
 	count: number;
 	caption?: string;
+	/** The visible "2 / 5", one-based. */
+	counter: (current: number, count: number) => string;
 	/** Whether a single tap has hidden it. Read on the JS side too, so a hidden close cannot be tapped. */
 	isVisible: boolean;
 	insets: { top: number; bottom: number };
@@ -32,6 +34,7 @@ export function ImageViewerChrome({
 	index,
 	count,
 	caption,
+	counter,
 	isVisible,
 	insets,
 	windowHeight,
@@ -63,7 +66,7 @@ export function ImageViewerChrome({
 				<ImageViewerClose />
 				{count > 1 ? (
 					<Text className={slots.counter()} testID="image-viewer-counter">
-						{`${index + 1} / ${count}`}
+						{counter(index + 1, count)}
 					</Text>
 				) : null}
 			</View>

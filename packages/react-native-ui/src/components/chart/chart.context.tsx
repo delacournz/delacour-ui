@@ -1,5 +1,6 @@
 import type { ChartOrientation, ChartScrubState } from "@delacour/react-native-charts";
 import { createContext, type ReactNode, useContext } from "react";
+import type { ChartLabels } from "../../lib/labels";
 import type {
 	ChartBarLayout,
 	ChartCandleColors,
@@ -51,6 +52,8 @@ export type ChartContextValue = {
 	 */
 	readonly pointKeys: readonly string[];
 	readonly orientation: ChartOrientation;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	readonly labels: ChartLabels;
 };
 
 /**

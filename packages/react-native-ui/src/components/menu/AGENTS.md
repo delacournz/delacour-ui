@@ -151,7 +151,8 @@ rows run actions, they never become the trigger's value. Compound root plus
   choice of several. Checkbox and radio → `checked`, sub-trigger → `expanded`,
   all → `disabled`. One source: `resolveMenuItemAccessibility`, a
   discriminated union on `kind`.
-- Trigger: `accessibilityState={{ expanded }}`, hint "Opens a menu".
+- Trigger: `accessibilityState={{ expanded }}`, hint "Opens a menu" (`labels.triggerHint`).
+- Spoken strings are `labels` (`MenuLabels`: `close`, `triggerHint`): `Menu`'s `labels` prop goes through context (optional, so ContextMenu leaves it unset); `Menu.Trigger` and `Menu.Content` each call `useLabels("menu", context.labels)`, so ContextMenu gets the provider and English defaults. A caller's `accessibilityHint` on the trigger still wins. `MENU_TRIGGER_HINT` aliases the catalog default.
 - A closed submenu is out of the accessibility tree, not just clipped.
 
 ## Reuse contract for ContextMenu

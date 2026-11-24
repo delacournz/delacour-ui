@@ -13,9 +13,11 @@ import { GRID_ITEM_ACTIONS_ICON_TOKEN, gridItemVariants } from "./grid-item.vari
  * mirrors under right-to-left and lines up with the content's edge. A bare
  * icon inherits the muted token a step below the media's size.
  *
- * A pressable tile merges its children into one accessibility element, which
- * would swallow a control here. Put real controls on a static tile, and give
- * that tile `accessible={false}` so each control is reachable on its own.
+ * A tile is one accessibility element, pressable or static, which would
+ * swallow a control here. Give the tile `accessible={false}` so each control is
+ * reachable on its own, or keep one stop and mirror the control as a named
+ * `accessibilityActions` entry on the tile, hiding the drawn control with
+ * `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`.
  */
 export function GridItemActions({ className, children, ...props }: GridItemSlotProps): ReactElement {
 	const { size } = useGridItemPart("GridItem.Actions");

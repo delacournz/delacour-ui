@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { ViewProps } from "react-native";
 import type { PanGesture } from "react-native-gesture-handler";
+import type { CalendarLabels } from "../../lib/labels";
 import type { CalendarDate, CalendarDateRange, DateMatcher, Weekday } from "./calendar.date";
 import type { CalendarSize, CalendarVariant, CalendarView } from "./calendar.variants";
 
@@ -101,6 +102,11 @@ export type CalendarProps = Omit<ViewProps, "children"> &
 		/** Overrides today — for a demo, a screenshot or a test. */
 		today?: CalendarDate;
 		className?: string;
+		/**
+		 * Some of the spoken strings: the arrows' names, the caption's hints and actions, a day's state
+		 * words. Laid over `DelacourProvider`'s `labels`, which sit over the English defaults.
+		 */
+		labels?: Partial<CalendarLabels>;
 		/** A custom anatomy. Omitted, the header, the weekday row and the grid. */
 		children?: ReactNode;
 	};

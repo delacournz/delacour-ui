@@ -1,3 +1,4 @@
+export type { NumberInputLabels } from "../../lib/labels";
 export { NumberInput, type NumberInputProps } from "./number-input";
 export {
 	type NumberInputContextValue,

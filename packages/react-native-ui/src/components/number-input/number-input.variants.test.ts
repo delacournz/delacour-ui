@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type NumberInputLabels } from "../../lib/labels";
 import { INPUT_SIZES, resolveInputGroupClass } from "../input/input.variants";
 import {
 	NUMBER_INPUT_GROUP_CLASS,
@@ -111,5 +112,30 @@ describe("resolveStepAnnouncement", () => {
 
 	test("names the minimum when a decrement reaches it", () => {
 		expect(resolveStepAnnouncement({ direction: -1, reachedLimit: true, text: "1" })).toBe("1, minimum");
+	});
+
+	test("speaks the labels it is handed, in the order the language wants", () => {
+		const labels: NumberInputLabels = {
+			decrease: "Diminuer",
+			increase: "Augmenter",
+			limit: (text, bound) => `${bound === "max" ? "maximum" : "minimum"} : ${text}`,
+		};
+		expect(resolveStepAnnouncement({ direction: 1, reachedLimit: true, text: "10" }, labels)).toBe("maximum : 10");
+		expect(resolveStepAnnouncement({ direction: -1, reachedLimit: true, text: "1" }, labels)).toBe("minimum : 1");
+		expect(resolveStepAnnouncement({ direction: 1, reachedLimit: false, text: "5" }, labels)).toBe("5");
+	});
+
+	test("the bound argument is exactly max or min", () => {
+		const seen: string[] = [];
+		const labels: NumberInputLabels = {
+			...DELACOUR_DEFAULT_LABELS.numberInput,
+			limit: (_text, bound) => {
+				seen.push(bound);
+				return bound;
+			},
+		};
+		resolveStepAnnouncement({ direction: 1, reachedLimit: true, text: "1" }, labels);
+		resolveStepAnnouncement({ direction: -1, reachedLimit: true, text: "1" }, labels);
+		expect(seen).toEqual(["max", "min"]);
 	});
 });

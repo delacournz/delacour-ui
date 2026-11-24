@@ -4,7 +4,7 @@ import { Button } from "../button";
 import { Icon } from "../icon";
 import { Surface } from "../surface";
 import { useFlowPart } from "./flow.context";
-import { FLOW_CONTROL_LABELS, FLOW_DEFAULTS, flowVariants } from "./flow.variants";
+import { FLOW_DEFAULTS, flowVariants } from "./flow.variants";
 
 export type FlowControlsProps = {
 	/** Zoom in and zoom out buttons. */
@@ -32,14 +32,14 @@ export function FlowControls({
 	step = FLOW_DEFAULTS.controlsStep,
 	className,
 }: FlowControlsProps): ReactElement {
-	const { zoomBy, fitView, isLocked, setLocked } = useFlowPart("Flow.Controls");
+	const { zoomBy, fitView, isLocked, labels, setLocked } = useFlowPart("Flow.Controls");
 	const slots = flowVariants();
 
 	return (
 		<Surface className={slots.controls({ className })} padding="none">
 			{showZoom ? (
 				<Button
-					accessibilityLabel={FLOW_CONTROL_LABELS.zoomIn}
+					accessibilityLabel={labels.zoomIn}
 					isDisabled={isLocked}
 					onPress={() => zoomBy(step)}
 					size="icon-sm"
@@ -51,7 +51,7 @@ export function FlowControls({
 			) : null}
 			{showZoom ? (
 				<Button
-					accessibilityLabel={FLOW_CONTROL_LABELS.zoomOut}
+					accessibilityLabel={labels.zoomOut}
 					isDisabled={isLocked}
 					onPress={() => zoomBy(1 / step)}
 					size="icon-sm"
@@ -63,7 +63,7 @@ export function FlowControls({
 			) : null}
 			{showFit ? (
 				<Button
-					accessibilityLabel={FLOW_CONTROL_LABELS.fit}
+					accessibilityLabel={labels.fit}
 					isDisabled={isLocked}
 					onPress={() => fitView()}
 					size="icon-sm"
@@ -75,7 +75,7 @@ export function FlowControls({
 			) : null}
 			{showLock ? (
 				<Button
-					accessibilityLabel={FLOW_CONTROL_LABELS.lock}
+					accessibilityLabel={labels.lock}
 					accessibilityState={{ selected: isLocked }}
 					onPress={() => setLocked(!isLocked)}
 					size="icon-sm"

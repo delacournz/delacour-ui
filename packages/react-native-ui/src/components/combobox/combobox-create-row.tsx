@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { IconPlusSmall } from "../../icons/central";
+import type { ComboboxLabels } from "../../lib/labels";
 import { Icon } from "../icon";
 import type { InputSize } from "../input/input.variants";
 import { Pressable } from "../pressable";
@@ -13,6 +14,8 @@ export type ComboboxCreateRowProps = {
 	query: string;
 	/** What the row reads. */
 	label: string;
+	/** The resolved strings the accessible name reads. */
+	labels: ComboboxLabels;
 	onPress: (query: string) => void;
 	size: InputSize;
 	isDisabled?: boolean;
@@ -31,6 +34,7 @@ export type ComboboxCreateRowProps = {
 export function ComboboxCreateRow({
 	query,
 	label,
+	labels,
 	onPress,
 	size,
 	isDisabled = false,
@@ -41,7 +45,7 @@ export function ComboboxCreateRow({
 
 	return (
 		<Pressable
-			accessibilityLabel={`Add ${query}`}
+			accessibilityLabel={labels.createAccessibility(query)}
 			accessibilityRole="button"
 			className={row.row({ className: own.createRow() })}
 			disabled={isDisabled}

@@ -122,6 +122,14 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   with the long form — "Monday 5 October 2026 at 3:30 PM" — or "not set". `Field` cascade is
   nearest-wins `??`, and the root registers `open` with the field's `registerPress` through a
   ref-backed trampoline, as `TimePicker` does. Inline registers nothing.
+- **The spoken strings are the `labels` prop, not literals**: `labels?: Partial<DateTimePickerLabels>`
+  through `useLabels("dateTimePicker", labels)` — the trigger's hint and fallback name, the "not set"
+  value, Done's announcement, the long "date at time" join, the time row's name and the wheel hint.
+  Precedence is the per-string prop (`title`, `doneLabel`, `clearLabel`, `dateLabel`, `timeLabel`,
+  `placeholder`, `accessibilityLabel`, the trigger's `accessibilityHint`) ← `labels` ← `DelacourProvider`
+  `labels` ← English. The resolved set rides the context as `labels`; `resolveTimeReadout`,
+  `resolveDateTimeAccessibilityValue`, `resolveDateTimeAnnouncement`, `resolveTimeRowLabel` and
+  `formatDateTimeLong` take it as a trailing argument. `DATE_TIME_PICKER_DEFAULTS` aliases the catalog.
 - **Disabled and read-only never open.** Disabled also freezes and fades the whole panel, inline
   included; read-only shows the panel and refuses every change.
 - **Done announces the composed value** ("Selected Monday 5 October 2026 at 3:30 PM") and plays

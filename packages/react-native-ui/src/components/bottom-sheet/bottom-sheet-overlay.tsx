@@ -4,6 +4,7 @@ import {
 } from "@delacour/react-native-bottom-sheet";
 import type { ReactElement } from "react";
 import { withUniwind } from "uniwind";
+import { useBottomSheetLabels } from "./bottom-sheet.context";
 import {
 	BOTTOM_SHEET_BACKDROP_INDICES,
 	BOTTOM_SHEET_OVERLAY_OPACITY,
@@ -44,6 +45,7 @@ export type BottomSheetOverlayProps = HeadlessProps & {
  * <BottomSheet.Overlay pressBehavior="none" />
  */
 export function BottomSheetOverlay({
+	accessibilityLabel,
 	appearsOnIndex = BOTTOM_SHEET_BACKDROP_INDICES.appearsOnIndex,
 	className,
 	disappearsOnIndex = BOTTOM_SHEET_BACKDROP_INDICES.disappearsOnIndex,
@@ -51,8 +53,10 @@ export function BottomSheetOverlay({
 	opacity = BOTTOM_SHEET_OVERLAY_OPACITY,
 	...props
 }: BottomSheetOverlayProps): ReactElement {
+	const labels = useBottomSheetLabels();
 	return (
 		<StyledOverlay
+			accessibilityLabel={accessibilityLabel ?? labels.overlay}
 			appearsOnIndex={appearsOnIndex}
 			className={bottomSheetVariants().overlay({ className })}
 			disappearsOnIndex={disappearsOnIndex}

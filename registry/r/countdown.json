@@ -9,10 +9,12 @@
 	],
 	"registryDependencies": [
 		"cn",
+		"labels",
 		"text",
 		"tv",
 		"use-announce",
-		"use-calm-motion"
+		"use-calm-motion",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -77,8 +79,16 @@
 					"to": "@registry/hooks/use-calm-motion"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../text",
@@ -92,6 +102,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
 				}
@@ -100,7 +114,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/countdown/index.ts",
 			"target": "countdown/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/countdown/use-countdown-clock.ts",
@@ -112,7 +132,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/countdown/countdown.variants.test.ts",
 			"target": "countdown/countdown.variants.test.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"testDependencies": [
@@ -127,6 +153,10 @@
 				{
 					"from": "../../hooks/use-announce",
 					"to": "@registry/hooks/use-announce"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
 				},
 				{
 					"from": "../../test/render",

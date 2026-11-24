@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
+import type { PlannerLabels } from "../../lib/labels";
 import type { PlannerCategory, PlannerEntry } from "./planner.types";
 import type { PlannerVariant } from "./planner.variants";
 import type { PlannerWeekStart } from "./planner-dates";
@@ -48,6 +49,8 @@ export type PlannerContextValue = {
 	locale: string | undefined;
 	showOutsideDays: boolean;
 	isFramed: boolean;
+	/** The spoken and visible strings, resolved once on the root. */
+	labels: PlannerLabels;
 	/** Internal: the month change in flight. See {@link PlannerPendingPage}. */
 	pendingRef: RefObject<PlannerPendingPage | null>;
 };

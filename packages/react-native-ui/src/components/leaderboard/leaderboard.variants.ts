@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type LeaderboardLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { LeaderboardEntry, RankedEntry } from "./leaderboard.types";
 
@@ -280,13 +281,16 @@ export function resolveMovement(change: number | undefined): LeaderboardMovement
 }
 
 /** The movement as words — "up 3 places", "no change" — or nothing when there is none. */
-export function resolveMovementLabel(movement: LeaderboardMovement): string | undefined {
+export function resolveMovementLabel(
+	movement: LeaderboardMovement,
+	labels: LeaderboardLabels = DELACOUR_DEFAULT_LABELS.leaderboard
+): string | undefined {
 	switch (movement.kind) {
 		case "up":
 		case "down":
-			return `${movement.kind} ${movement.places} ${movement.places === 1 ? "place" : "places"}`;
+			return labels.moved(movement.kind, movement.places);
 		case "same":
-			return "no change";
+			return labels.noChange;
 		case "none":
 			return undefined;
 	}
@@ -319,23 +323,26 @@ export function defaultFormatValue(value: number, locale?: string): string {
  * places". Rank comes first because it is what a board is for; the unit
  * follows the value because a bare number is not a score.
  */
-export function resolveLeaderboardAccessibilityLabel({
-	ranked,
-	formattedValue,
-	unit,
-}: {
-	ranked: RankedEntry;
-	formattedValue: string;
-	unit?: string;
-}): string {
+export function resolveLeaderboardAccessibilityLabel(
+	{
+		ranked,
+		formattedValue,
+		unit,
+	}: {
+		ranked: RankedEntry;
+		formattedValue: string;
+		unit?: string;
+	},
+	labels: LeaderboardLabels = DELACOUR_DEFAULT_LABELS.leaderboard
+): string {
 	const { entry, rank, isTied } = ranked;
 	const parts = [
-		`Rank ${rank}`,
-		isTied ? "tied" : undefined,
+		labels.rank(rank),
+		isTied ? labels.tied : undefined,
 		entry.name,
 		entry.subtitle,
 		unit ? `${formattedValue} ${unit}` : formattedValue,
-		resolveMovementLabel(resolveMovement(entry.change)),
+		resolveMovementLabel(resolveMovement(entry.change), labels),
 	];
 	return parts.filter((part): part is string => part !== undefined && part !== "").join(", ");
 }

@@ -1,5 +1,6 @@
 import { Signature } from "@delacour/react-native-ui/signature";
 import type { ReactElement } from "react";
+import { Alert } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -9,9 +10,14 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch", flow: true, hero: true },
 };
 
+/** Stands in for the typed-name flow `alternative` shows in full. */
+function typeName(): void {
+	Alert.alert("Type your name", "A typed-name flow opens here.");
+}
+
 export function Demo(): ReactElement {
 	return (
-		<Signature>
+		<Signature onRequestAlternative={typeName}>
 			<Signature.Pad testID="signature-pad" />
 			<Signature.Toolbar>
 				<Signature.Undo testID="signature-undo" />

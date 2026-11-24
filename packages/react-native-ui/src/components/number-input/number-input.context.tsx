@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import type { TextInputInstance } from "react-native";
+import type { NumberInputLabels } from "../../lib/labels";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { HapticFeedback } from "../pressable";
 import type { NumberInputConfig, NumberInputValue, StepResult } from "./number-input.format";
@@ -49,6 +50,8 @@ export type NumberInputInternalContextValue = NumberInputContextValue & {
 	isEditable: boolean;
 	placeholder: string | undefined;
 	haptic: false | HapticFeedback;
+	/** The spoken strings, resolved once on the root. */
+	labels: NumberInputLabels;
 	/** Speaks the value a stepper just produced. The field's own adjustable actions do not call it: the platform speaks those. */
 	announceStep: (result: StepResult, direction: 1 | -1) => void;
 	largeStepMultiplier: number;

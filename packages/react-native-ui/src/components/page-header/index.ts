@@ -1,3 +1,4 @@
+export type { PageHeaderLabels } from "../../lib/labels";
 export { PageHeader, type PageHeaderProps } from "./page-header";
 export {
 	type PageHeaderContextValue,

@@ -12,12 +12,14 @@
 		"cn",
 		"icon",
 		"icons",
+		"labels",
 		"paging",
 		"pressable",
 		"text",
 		"tv",
 		"use-calm-motion",
 		"use-controllable-state",
+		"use-labels",
 		"use-modal-accessibility"
 	],
 	"dependencies": [
@@ -92,6 +94,10 @@
 					"to": "@registry/hooks/use-modal-accessibility"
 				},
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/paging",
 					"to": "@registry/lib/paging"
 				}
@@ -138,7 +144,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer.context.tsx",
 			"target": "image-viewer/image-viewer.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer.tsx",
@@ -148,6 +160,14 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				}
 			]
 		},
@@ -162,6 +182,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
 				}
@@ -170,7 +194,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/image-viewer/index.ts",
 			"target": "image-viewer/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -179,6 +209,10 @@
 			"target": "image-viewer/image-viewer.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -198,6 +232,14 @@
 			"target": "image-viewer/image-viewer.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

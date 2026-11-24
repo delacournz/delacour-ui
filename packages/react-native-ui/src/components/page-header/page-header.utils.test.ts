@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import {
 	formatStatCount,
 	isEmptyText,
@@ -127,5 +128,19 @@ describe("isEmptyText", () => {
 	test("an array is empty only when every entry is", () => {
 		expect(isEmptyText(["", null, " "])).toBe(true);
 		expect(isEmptyText(["", "x"])).toBe(false);
+	});
+});
+
+describe("resolvePageHeaderAvatarLabel labels", () => {
+	const french = { verifiedAvatar: (name: string) => `${name}, vérifié`, verified: "Vérifié" };
+
+	test("speaks the supplied labels", () => {
+		expect(resolvePageHeaderAvatarLabel("Aria", true, french)).toBe("Aria, vérifié");
+		expect(resolvePageHeaderAvatarLabel(undefined, true, french)).toBe("Vérifié");
+		expect(resolvePageHeaderAvatarLabel("Aria", false, french)).toBe("Aria");
+	});
+
+	test("defaults to the English catalog", () => {
+		expect(resolvePageHeaderAvatarLabel("Aria", true, DELACOUR_DEFAULT_LABELS.pageHeader)).toBe("Aria, verified");
 	});
 });

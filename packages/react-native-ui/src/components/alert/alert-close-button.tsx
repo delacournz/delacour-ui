@@ -21,18 +21,18 @@ export type AlertCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "c
  * 44-point minimum the glyph alone falls short of.
  */
 export function AlertCloseButton({
-	accessibilityLabel = "Dismiss",
+	accessibilityLabel,
 	className,
 	feedback = "fade",
 	hitSlop = 10,
 	onPress,
 	...props
 }: AlertCloseButtonProps): ReactElement {
-	const { size, dismiss } = useAlertPart("Alert.CloseButton");
+	const { size, dismiss, labels } = useAlertPart("Alert.CloseButton");
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel}
+			accessibilityLabel={accessibilityLabel ?? labels.dismiss}
 			accessibilityRole="button"
 			className={alertVariants({ size }).closeButton({ className })}
 			feedback={feedback}

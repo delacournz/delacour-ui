@@ -22,6 +22,7 @@ standalone SVG document, or as a PNG.
 | `signature-redo.tsx` | `Signature.Redo` |
 | `signature-clear.tsx` | `Signature.Clear` |
 | `signature-alternative.tsx` | `Signature.Alternative` — the typed-name link |
+| `signature.warn.ts` | The development warning for an interactive pad with no `onRequestAlternative`, once per process. Internal |
 | `signature.context.tsx` | `SignatureContext`, `useSignature()`, `useSignatureContext()`, `useSignaturePart()` |
 | `signature.types.ts` | `SignaturePoint`, `SignatureStroke`, `SignatureValue`, `SignatureHandle`, `SignatureExportOptions`, `SignaturePngOptions` |
 | `signature.stroke.ts` | Pure, no RN: point filter, smoother and path tracer (worklets), history reducer, bounds, re-fit, the export frame and PNG size, SVG export, JSON round trip |
@@ -105,6 +106,19 @@ standalone SVG document, or as a PNG.
   `foreground` against, so a token name falls back to `#000000` ink and no
   background. Black rather than the pad's colour: dark mode's near-white ink
   would export an invisible signature. Every attribute is escaped.
+- **The default toolbar is Alternative, Undo, Redo, Clear.** Redo is there so a sighted
+  user has what a screen reader's rotor already offers. Write the anatomy out to drop
+  or reorder one.
+- **Every string is a label.** The root takes `labels?: Partial<SignatureLabels>`,
+  resolved with `useLabels("signature", labels)` — the prop over `DelacourProvider`'s
+  `labels` over the English defaults — and puts the result on context. The pad's name
+  and hints, the action buttons' accessibility labels, the typed-name link and the
+  announcements all read `labels` from there, so one override reaches every part.
+- **A typed-name entry is the caller's, and development says so.** `SignatureValue`
+  is strokes only, so the library cannot hold a typed name itself; `onRequestAlternative`
+  hands off to a flow the caller owns. An interactive signature (not read-only, not
+  disabled) mounted without it warns once per process from an effect, gated by
+  `shouldWarnMissingAlternative`. Production never warns.
 - **The toolbar disables what would do nothing**, and an explicit `isDisabled`
   still wins. It renders nothing while read-only — an undo button beside a
   signature on a receipt, even a disabled one, says it could be changed.
@@ -116,6 +130,26 @@ standalone SVG document, or as a PNG.
   "Signature cleared" — and the alternative link hands off to a typed-name flow
   the caller owns. It renders only when `onRequestAlternative` is passed, and it
   stays enabled while the pad is disabled.
+- **The pad's role follows what a double tap does.** An empty pad with
+  `onRequestAlternative` is a `button`: VoiceOver's double tap (`onAccessibilityTap`)
+  and TalkBack's (`activate`) open the typed-name route. Every other pad is an
+  `image`. It is never `none`, which read an empty pad as plain text with nothing
+  to say it was a control. A button whose double tap did nothing would be a lie, so
+  without a route an empty pad stays an `image`, and the development warning covers it.
+- **`type` is on the pad itself.** Whenever `onRequestAlternative` is set, drawn or
+  empty, the pad lists a `type` custom action after undo, redo and clear. A screen
+  reader user then does not have to hunt for the link in the toolbar.
+- **On iOS a double tap never draws.** With nothing answering `accessibilityActivate`,
+  UIKit synthesises a touch at the element's centre, and the pan, which starts a stroke
+  on touch-down, would leave a dot. An interactive pad therefore always answers the
+  double tap, doing nothing when there is no route. Double-tap-and-hold still passes
+  a held touch through, which is how a screen reader user draws.
+- **A `Field`'s validity is spoken through the hint.** React Native 0.88 has no
+  `aria-invalid`, so "Invalid: <error>" and the description lead the hint, through
+  `useFieldControlAccessibility`, and "required" ends the name. A caller's
+  `accessibilityLabel`, `onAccessibilityAction` and `onAccessibilityTap` are kept: the
+  pad's handlers run first, then the caller's. All of this is settled by the pure
+  `resolveSignaturePadAccessibility` and `resolveSignaturePadHint`.
 - **`Field` reaches the state axes and the name, not the press.** `isInvalid` and
   `isDisabled` cascade and an explicit prop wins; `Field.Label`'s text names the
   pad. The pad registers no press: a tap on the label cannot sign for anyone, and

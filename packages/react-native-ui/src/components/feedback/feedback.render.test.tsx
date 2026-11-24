@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import type { ReactElement, ReactNode } from "react";
 import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { Field } from "../field";
@@ -319,6 +320,64 @@ describe("Feedback", () => {
 			});
 			await press("Send");
 			expect(withOptions).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("labels", () => {
+		const originalOS = Platform.OS;
+
+		afterEach(() => {
+			Object.defineProperty(Platform, "OS", { configurable: true, get: () => originalOS });
+			jest.restoreAllMocks();
+		});
+
+		test("the labels prop changes Send and Cancel", async () => {
+			await renderWithProviders(<Harness defaultOpen labels={{ cancel: "Annuler", submit: "Envoyer" }} />, {
+				wrapper: Overlays,
+			});
+			expect(screen.getByText("Envoyer")).toBeOnTheScreen();
+			expect(screen.getByText("Annuler")).toBeOnTheScreen();
+			expect(screen.queryByText("Send")).toBeNull();
+		});
+
+		test("the provider's labels change Send and Cancel", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ feedback: { cancel: "Annuler", submit: "Envoyer" } }}>
+					<Harness defaultOpen />
+				</LabelsProvider>,
+				{ wrapper: Overlays }
+			);
+			expect(screen.getByText("Envoyer")).toBeOnTheScreen();
+			expect(screen.getByText("Annuler")).toBeOnTheScreen();
+		});
+
+		test("the prop wins over the provider", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ feedback: { submit: "Envoyer" } }}>
+					<Harness defaultOpen labels={{ submit: "Enviar" }} />
+				</LabelsProvider>,
+				{ wrapper: Overlays }
+			);
+			expect(screen.getByText("Enviar")).toBeOnTheScreen();
+		});
+
+		test("the labels change the announced result", async () => {
+			Object.defineProperty(Platform, "OS", { configurable: true, get: () => "ios" });
+			resetAnnouncer();
+			const withOptions = jest
+				.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions")
+				.mockImplementation(() => {});
+			await renderWithProviders(
+				<Harness
+					defaultOpen
+					defaultValue="hi"
+					labels={{ sent: "Retour envoye", submit: "Envoyer" }}
+					onSubmit={async () => undefined}
+				/>,
+				{ wrapper: Overlays }
+			);
+			await press("Envoyer");
+			await waitFor(() => expect(withOptions).toHaveBeenCalledWith("Retour envoye", { queue: true }));
 		});
 	});
 });

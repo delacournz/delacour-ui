@@ -1,7 +1,9 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
 import { View, type ViewProps } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
+import type { PageHeaderLabels } from "../../lib/labels";
 import { useScreenContext } from "../screen/screen.context";
 import { Surface } from "../surface";
 import { useSurfaceContext } from "../surface/surface.context";
@@ -33,6 +35,8 @@ export type PageHeaderProps = Omit<ViewProps, "children"> & {
 	/** Where the face and the text sit: `center` over the cover's middle, `start` on the leading edge. Default `center`. */
 	align?: PageHeaderAlign;
 	className?: string;
+	/** Overrides for the header's spoken strings (the verified avatar label). Wins over `DelacourProvider`'s `labels`. */
+	labels?: Partial<PageHeaderLabels>;
 	children?: ReactNode;
 };
 
@@ -41,9 +45,11 @@ function PageHeaderRoot({
 	align = "center",
 	className,
 	style,
+	labels: labelsProp,
 	children,
 	...props
 }: PageHeaderProps): ReactElement {
+	const labels = useLabels("pageHeader", labelsProp);
 	const [hasCover, setHasCover] = useState(false);
 	const registerCover = useCallback((isMounted: boolean) => setHasCover(isMounted), []);
 	const screen = useScreenContext();
@@ -57,8 +63,8 @@ function PageHeaderRoot({
 			: parentPlane;
 	const avatarSize = resolvePageHeaderAvatarSize(align);
 	const context = useMemo<PageHeaderContextValue>(
-		() => ({ variant, align, hasCover, avatarSize, plane }),
-		[variant, align, hasCover, avatarSize, plane]
+		() => ({ variant, align, hasCover, avatarSize, plane, labels }),
+		[variant, align, hasCover, avatarSize, plane, labels]
 	);
 
 	const slots = pageHeaderVariants({ variant, align, isBleeding: variant === "page" && isInScreen });

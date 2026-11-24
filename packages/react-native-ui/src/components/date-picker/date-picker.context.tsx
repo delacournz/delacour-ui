@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { DatePickerLabels } from "../../lib/labels";
 import type { CalendarDate, CalendarSelectionState, DateMatcher, Weekday } from "../calendar/calendar.date";
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
 import type { CalendarSize, CalendarView } from "../calendar/calendar.variants";
@@ -20,6 +21,8 @@ export type DatePickerContextValue = {
 	placeholder: string;
 	/** What a screen reader hears as the trigger's value. */
 	accessibilityValue: string;
+	/** The resolved spoken strings: English, `DelacourProvider`'s, then the root's `labels`. */
+	labels: DatePickerLabels;
 	/** The trigger's accessible name. */
 	accessibilityLabel: string;
 	isOpen: boolean;

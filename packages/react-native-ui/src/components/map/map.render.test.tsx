@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { LocationManager } from "@maplibre/maplibre-react-native";
 import { act } from "@testing-library/react-native";
 import type { ReactElement } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Text } from "../text";
 // biome-ignore lint/suspicious/noShadowRestrictedNames: the component is a map; consumers import it by name from its own subpath
@@ -456,5 +457,70 @@ describe("compound parts outside a Map", () => {
 
 	test.each(parts)("%s throws its documented error", async (_name, element, message) => {
 		await expect(renderWithProviders(element)).rejects.toThrow(message);
+	});
+});
+
+const FRENCH = {
+	name: "Carte",
+	pointNorth: "Orienter au nord",
+	recenter: "Recentrer la carte",
+	showMyLocation: "Afficher ma position",
+	zoomIn: "Zoom avant",
+	zoomOut: "Zoom arrière",
+} as const;
+
+function AllControls(): ReactElement {
+	return <Map.Controls showCompass showLocate showRecenter />;
+}
+
+describe("Map labels", () => {
+	test("the labels prop renames the map and every control", async () => {
+		await renderMap(
+			<Map center={WELLINGTON} labels={FRENCH} testID="map-root" zoom={12}>
+				<AllControls />
+			</Map>
+		);
+		expect(screen.getByLabelText("Carte")).toBeOnTheScreen();
+		for (const name of [
+			"Zoom avant",
+			"Zoom arrière",
+			"Orienter au nord",
+			"Recentrer la carte",
+			"Afficher ma position",
+		]) {
+			expect(screen.getByRole("button", { name })).toBeOnTheScreen();
+		}
+		expect(screen.queryByRole("button", { name: "Zoom in" })).not.toBeOnTheScreen();
+	});
+
+	test("the provider's labels change them", async () => {
+		await renderMap(
+			<LabelsProvider labels={{ map: FRENCH }}>
+				<Map center={WELLINGTON} testID="map-root" zoom={12}>
+					<AllControls />
+				</Map>
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Carte")).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Zoom avant" })).toBeOnTheScreen();
+	});
+
+	test("the prop beats the provider, and accessibilityLabel beats labels.name", async () => {
+		await renderMap(
+			<LabelsProvider labels={{ map: FRENCH }}>
+				<Map
+					accessibilityLabel="Store map"
+					center={WELLINGTON}
+					labels={{ zoomIn: "Closer" }}
+					testID="map-root"
+					zoom={12}
+				>
+					<Map.Controls />
+				</Map>
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Store map")).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Closer" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Zoom arrière" })).toBeOnTheScreen();
 	});
 });

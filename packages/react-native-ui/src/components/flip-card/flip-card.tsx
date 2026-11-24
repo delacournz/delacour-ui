@@ -24,11 +24,12 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { FlipCardLabels } from "../../lib/labels";
 import { type HapticFeedback, playHaptic } from "../pressable";
 import { type FlipCardContextValue, FlipCardProvider } from "./flip-card.context";
 import {
 	FLIP_CARD_CALM_DURATION,
-	FLIP_CARD_DEFAULT_FACE_LABELS,
 	FLIP_CARD_DEFAULT_PERSPECTIVE,
 	FLIP_CARD_MOTION,
 	FLIP_CARD_PRESS_SPRING,
@@ -41,6 +42,7 @@ import {
 	flipCardVariants,
 	isFlipCardFaceName,
 	oppositeFace,
+	resolveFlipCardFaceAnnouncements,
 	resolveFlipTarget,
 	resolveRubberBand,
 	resolveSwipeVelocity,
@@ -78,8 +80,13 @@ type FlipCardBaseProps = Omit<ViewProps, "children" | "accessibilityLabel"> & {
 	haptic?: false | HapticFeedback;
 	/** Blocks the gesture and every `FlipCard.Trigger`. A ref or a controlled `face` still turns it. */
 	isDisabled?: boolean;
-	/** Spoken after the card settles. Default "Front of card" / "Back of card". */
+	/** Spoken after the card settles. Default: `labels`' `front` / `back` ("Front of card" / "Back of card"). */
 	faceLabels?: Record<FlipCardFace, string>;
+	/**
+	 * Some of the spoken strings: the flip control's name and hints and the face announcements.
+	 * Laid over `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<FlipCardLabels>;
 	/** Names the card as a whole. */
 	accessibilityLabel?: string;
 	/** The card's footprint — `h-48`, `aspect-[1.586]`. The front is in flow; the back fills it. */
@@ -145,7 +152,8 @@ function FlipCardRoot(props: FlipCardProps): ReactElement {
 		motion = "default",
 		haptic = "light",
 		isDisabled = false,
-		faceLabels = FLIP_CARD_DEFAULT_FACE_LABELS,
+		faceLabels,
+		labels: labelsProp,
 		accessibilityLabel,
 		className,
 		children,
@@ -156,11 +164,13 @@ function FlipCardRoot(props: FlipCardProps): ReactElement {
 	}: FlipCardResolvedProps = props;
 
 	const isCalm = useCalmMotion();
+	const labels = useLabels("flipCard", labelsProp);
+	const announced = useMemo(() => resolveFlipCardFaceAnnouncements(faceLabels, labels), [faceLabels, labels]);
 
 	// Ref-backed, so a caller passing a fresh arrow every render does not change
 	// the identity of every callback below.
-	const callbacks = useRef({ faceLabels, onFaceChange, onFlipEnd });
-	callbacks.current = { faceLabels, onFaceChange, onFlipEnd };
+	const callbacks = useRef({ faceLabels: announced, onFaceChange, onFlipEnd });
+	callbacks.current = { faceLabels: announced, onFaceChange, onFlipEnd };
 	const handleFaceChange = useCallback((next: FlipCardFace) => callbacks.current.onFaceChange?.(next), []);
 
 	const [face, setFace] = useControllableState<FlipCardFace>({
@@ -344,11 +354,25 @@ function FlipCardRoot(props: FlipCardProps): ReactElement {
 			isCalm,
 			isDisabled,
 			isFlipping,
+			labels,
 			perspective,
 			rotation,
 			trigger,
 		}),
-		[accessibilityLabel, axis, face, flip, flipTo, isCalm, isDisabled, isFlipping, perspective, rotation, trigger]
+		[
+			accessibilityLabel,
+			axis,
+			face,
+			flip,
+			flipTo,
+			isCalm,
+			isDisabled,
+			isFlipping,
+			labels,
+			perspective,
+			rotation,
+			trigger,
+		]
 	);
 
 	const { faces, rest } = splitFlipCardChildren(children);

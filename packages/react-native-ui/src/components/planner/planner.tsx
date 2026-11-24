@@ -1,7 +1,9 @@
 import { type ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
 import { AccessibilityInfo, View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
+import type { PlannerLabels } from "../../lib/labels";
 import { Card } from "../card";
 import {
 	type PlannerContextValue,
@@ -67,6 +69,8 @@ export type PlannerProps = ViewProps & {
 	showOutsideDays?: boolean;
 	/** Draw the planner on a `Card`. Defaults to `true`. */
 	isFramed?: boolean;
+	/** Spoken and visible strings, laid over `DelacourProvider`'s `labels`, which sit over English. */
+	labels?: Partial<PlannerLabels>;
 	className?: string;
 };
 
@@ -87,10 +91,12 @@ function PlannerRoot({
 	locale,
 	showOutsideDays = true,
 	isFramed = true,
+	labels: labelsProp,
 	className,
 	children,
 	...props
 }: PlannerProps): ReactElement {
+	const labels = useLabels("planner", labelsProp);
 	const today = usePlannerToday();
 	const todayKey = toDayKey(today);
 
@@ -174,6 +180,7 @@ function PlannerRoot({
 			locale,
 			showOutsideDays,
 			isFramed,
+			labels,
 			pendingRef,
 		}),
 		[
@@ -197,6 +204,7 @@ function PlannerRoot({
 			locale,
 			showOutsideDays,
 			isFramed,
+			labels,
 		]
 	);
 

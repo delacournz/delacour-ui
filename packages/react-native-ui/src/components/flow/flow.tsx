@@ -28,8 +28,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { Canvas, Group } from "react-native-skia";
 import { scheduleOnRN } from "react-native-worklets";
+import { useLabels } from "../../hooks/use-labels";
 import { useLoopingMotion } from "../../hooks/use-looping-motion";
 import { useThemeColors } from "../../hooks/use-theme-color";
+import type { FlowLabels } from "../../lib/labels";
 import {
 	FlowCanvasLayerProvider,
 	type FlowCanvasLayerValue,
@@ -97,6 +99,8 @@ export type FlowProps = {
 	defaultPaused?: boolean;
 	/** The pause changed. Wire `isPaused` to your own visible control. */
 	onPausedChange?: (isPaused: boolean) => void;
+	/** Some of the canvas's spoken strings — control names and node actions. Wins over `DelacourProvider`. */
+	labels?: Partial<FlowLabels>;
 	className?: string;
 	testID?: string;
 	children?: ReactNode;
@@ -162,10 +166,12 @@ function FlowRoot({
 	isPaused,
 	defaultPaused,
 	onPausedChange,
+	labels: labelsProp,
 	className,
 	testID,
 	children,
 }: FlowProps): ReactElement {
+	const labels = useLabels("flow", labelsProp);
 	const [registry] = useState(createFlowRegistry);
 	const [entries, setEntries] = useState<readonly FlowSnapshotEntry[]>([]);
 	const [isLocked, setLocked] = useState(false);
@@ -342,6 +348,7 @@ function FlowRoot({
 			getNodeRect,
 			isLocked,
 			isValidConnection,
+			labels,
 			maxZoom,
 			minZoom,
 			notifyMeasured: fitWhenReady,
@@ -365,6 +372,7 @@ function FlowRoot({
 			handleNodeDragEnd,
 			isLocked,
 			isValidConnection,
+			labels,
 			maxZoom,
 			minZoom,
 			notifyRegistry,

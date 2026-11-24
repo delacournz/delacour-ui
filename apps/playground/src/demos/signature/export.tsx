@@ -2,7 +2,7 @@ import { Button } from "@delacour/react-native-ui/button";
 import { Signature, type SignatureHandle, type SignatureValue } from "@delacour/react-native-ui/signature";
 import { Text } from "@delacour/react-native-ui/text";
 import { type ReactElement, useRef, useState } from "react";
-import { Image, View } from "react-native";
+import { Alert, Image, View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -27,6 +27,11 @@ function sampleSignature(): SignatureValue {
 
 const SAMPLE = sampleSignature();
 
+/** Stands in for the typed-name flow `alternative` shows in full. */
+function typeName(): void {
+	Alert.alert("Type your name", "A typed-name flow opens here.");
+}
+
 export function Demo(): ReactElement {
 	const pad = useRef<SignatureHandle>(null);
 	const [svg, setSvg] = useState<string | null>(null);
@@ -34,7 +39,7 @@ export function Demo(): ReactElement {
 
 	return (
 		<View className="gap-4">
-			<Signature defaultValue={SAMPLE} ref={pad} testID="signature-export" />
+			<Signature defaultValue={SAMPLE} onRequestAlternative={typeName} ref={pad} testID="signature-export" />
 			<View className="flex-row gap-2">
 				<Button
 					className="flex-1"

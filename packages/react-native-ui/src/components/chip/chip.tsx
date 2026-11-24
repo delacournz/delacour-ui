@@ -1,6 +1,8 @@
 import { Children, type ReactElement, type ReactNode, useCallback, useMemo } from "react";
 import { type AccessibilityActionEvent, View } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { ChipLabels } from "../../lib/labels";
 import { IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { TextClassProvider } from "../text/text.context";
@@ -38,10 +40,15 @@ export type ChipProps = Omit<PressableProps, "asChild" | "busy" | "children" | "
 	isDisabled?: boolean;
 	/** Composes a trailing remove control in. Its press never toggles the chip or reaches `onPress`. */
 	onClose?: () => void;
-	/** Name a screen reader gives the remove control. Defaults to `Remove`. */
+	/** Name a screen reader gives the remove control. Defaults to the catalog's `remove`, "Remove". */
 	closeAccessibilityLabel?: string;
 	/** `testID` for the remove control, so a test or automation can press it. */
 	closeTestID?: string;
+	/**
+	 * Some of the spoken strings: the remove control's name and the `remove` action. Laid over
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<ChipLabels>;
 	children?: ReactNode;
 };
 
@@ -56,6 +63,7 @@ function ChipRoot({
 	onClose,
 	closeAccessibilityLabel,
 	closeTestID,
+	labels: labelsProp,
 	onPress,
 	onLongPress,
 	haptic,
@@ -69,6 +77,7 @@ function ChipRoot({
 	children,
 	...props
 }: ChipProps): ReactElement {
+	const labels = useLabels("chip", labelsProp);
 	const mode = resolveChipMode({ defaultSelected, isSelected, onLongPress, onPress, onSelectedChange });
 	const closeExposure = resolveChipCloseExposure({ hasClose: onClose !== undefined, mode });
 
@@ -85,8 +94,8 @@ function ChipRoot({
 	}, [mode, onPress, selected, setSelected]);
 
 	const context = useMemo<ChipContextValue>(
-		() => ({ color, isDisabled, isSelected: selected, size, variant }),
-		[color, isDisabled, selected, size, variant]
+		() => ({ color, isDisabled, isSelected: selected, labels, size, variant }),
+		[color, isDisabled, labels, selected, size, variant]
 	);
 
 	const slots = chipVariants({ color, isDisabled, isSelected: selected, size, variant });
@@ -125,10 +134,13 @@ function ChipRoot({
 		</IconDefaultsProvider>
 	);
 
-	const actions =
-		closeExposure === "action"
-			? [...(accessibilityActions ?? []), { label: closeAccessibilityLabel ?? "Remove", name: "remove" }]
-			: accessibilityActions;
+	const actions = useMemo(
+		() =>
+			closeExposure === "action"
+				? [...(accessibilityActions ?? []), { label: closeAccessibilityLabel ?? labels.remove, name: "remove" }]
+				: accessibilityActions,
+		[accessibilityActions, closeAccessibilityLabel, closeExposure, labels.remove]
+	);
 
 	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
 		if (closeExposure === "action" && event.nativeEvent.actionName === "remove" && !isDisabled) {

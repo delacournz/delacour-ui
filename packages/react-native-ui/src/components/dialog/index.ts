@@ -1,3 +1,4 @@
+export type { DialogLabels } from "../../lib/labels";
 export { Dialog, type DialogProps } from "./dialog";
 export { type DialogContextValue, useDialog, useDialogContext } from "./dialog.context";
 export {

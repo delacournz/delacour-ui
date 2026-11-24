@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { ContextMenu, type ContextMenuProps } from "./context-menu";
 import { ContextMenuContent } from "./context-menu-content";
@@ -197,5 +198,33 @@ describe("ContextMenu", () => {
 		expect(panel.props.accessibilityViewIsModal).toBe(true);
 		await act(() => panel.props.onAccessibilityEscape());
 		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+	});
+
+	describe("labels", () => {
+		const german = { show: "Menü anzeigen" };
+		const actionsOf = () => screen.getByRole("button", { name: "Message" }).props.accessibilityActions;
+
+		test("the labels prop names the long-press action", async () => {
+			await renderWithProviders(<Message labels={german} onPress={jest.fn()} />);
+			expect(actionsOf()).toEqual([{ name: "activate" }, { label: "Menü anzeigen", name: "longpress" }]);
+		});
+
+		test("a LabelsProvider names it too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ contextMenu: german }}>
+					<Message onPress={jest.fn()} />
+				</LabelsProvider>
+			);
+			expect(actionsOf()).toEqual([{ name: "activate" }, { label: "Menü anzeigen", name: "longpress" }]);
+		});
+
+		test("the prop wins over the provider", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ contextMenu: german }}>
+					<Message labels={{ show: "Zeigen" }} onPress={jest.fn()} />
+				</LabelsProvider>
+			);
+			expect(actionsOf()).toEqual([{ name: "activate" }, { label: "Zeigen", name: "longpress" }]);
+		});
 	});
 });

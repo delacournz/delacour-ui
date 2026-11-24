@@ -2,6 +2,8 @@ import { type ReactElement, type ReactNode, useCallback, useMemo, useState } fro
 import Animated, { FadeOut } from "react-native-reanimated";
 import { useAnnouncement } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { AlertLabels } from "../../lib/labels";
 import { IconDefaultsProvider } from "../icon";
 import { Surface, type SurfaceProps } from "../surface";
 import { type AlertContextValue, AlertProvider, type AlertTextPart } from "./alert.context";
@@ -41,10 +43,15 @@ export type AlertProps = Omit<SurfaceProps, "variant" | "padding"> & {
 	defaultOpen?: boolean;
 	/** Called with `false` when the alert is dismissed, controlled or not. */
 	onOpenChange?: (isOpen: boolean) => void;
-	/** Name a screen reader gives the dismiss control. Defaults to `Dismiss`. */
+	/** Name a screen reader gives the dismiss control. Wins over `labels.dismiss`. */
 	closeAccessibilityLabel?: string;
 	/** `testID` for the dismiss control, so a test or automation can press it. */
 	closeTestID?: string;
+	/**
+	 * The strings the alert speaks — the dismiss control's name and the announcement — laid over
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<AlertLabels>;
 	/**
 	 * Whether the alert speaks its title and description when it appears, re-opens or changes.
 	 * Defaults to `true`; pass `false` for an alert that is part of a screen's static content.
@@ -63,11 +70,13 @@ function AlertRoot({
 	onOpenChange,
 	closeAccessibilityLabel,
 	closeTestID,
+	labels: labelsProp,
 	announce = true,
 	className,
 	children,
 	...props
 }: AlertProps): ReactElement | null {
+	const labels = useLabels("alert", labelsProp);
 	const [open, setOpen] = useControllableState({ defaultValue: defaultOpen, onChange: onOpenChange, value: isOpen });
 	const dismiss = useCallback(() => setOpen(false), [setOpen]);
 
@@ -79,13 +88,13 @@ function AlertRoot({
 	);
 
 	const context = useMemo<AlertContextValue>(
-		() => ({ dismiss, registerText, size, status, variant }),
-		[dismiss, registerText, size, status, variant]
+		() => ({ dismiss, labels, registerText, size, status, variant }),
+		[dismiss, labels, registerText, size, status, variant]
 	);
 
 	// Parts register their text after mount and clear it on unmount, so a dismissed alert's message
 	// returns to null and a re-opened one speaks again. `onMount` speaks the first message too.
-	const { accessibilityLiveRegion } = useAnnouncement(resolveAlertAnnouncement(texts), {
+	const { accessibilityLiveRegion } = useAnnouncement(resolveAlertAnnouncement(texts, labels), {
 		channel: "announcement",
 		enabled: announce,
 		onMount: true,

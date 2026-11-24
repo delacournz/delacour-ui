@@ -1,3 +1,4 @@
+export type { FlipCardLabels } from "../../lib/labels";
 export { FlipCard, type FlipCardHandle, type FlipCardProps } from "./flip-card";
 export {
 	type FlipCardContextValue,

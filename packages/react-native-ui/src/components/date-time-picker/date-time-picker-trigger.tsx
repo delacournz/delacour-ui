@@ -18,7 +18,7 @@ export type DateTimePickerTriggerProps = Omit<PressableProps, "asChild" | "busy"
  * Omitted children are `DateTimePicker.Value` then `DateTimePicker.Icon`. Renders nothing inline.
  */
 export function DateTimePickerTrigger({
-	accessibilityHint = "Opens date and time picker",
+	accessibilityHint,
 	children,
 	className,
 	feedback = "fade",
@@ -32,7 +32,7 @@ export function DateTimePickerTrigger({
 
 	return (
 		<Pressable
-			accessibilityHint={accessibilityHint}
+			accessibilityHint={accessibilityHint ?? picker.labels.triggerHint}
 			accessibilityLabel={picker.accessibilityLabel}
 			accessibilityRole="button"
 			accessibilityState={{ disabled: !state.canOpen, expanded: picker.isOpen }}

@@ -23,7 +23,7 @@ export type DatePickerTriggerProps = Omit<PressableProps, "asChild" | "busy" | "
  * Omitted children are `DatePicker.Value` then `DatePicker.Icon`.
  */
 export function DatePickerTrigger({
-	accessibilityHint = "Opens calendar",
+	accessibilityHint,
 	children,
 	className,
 	feedback = "fade",
@@ -37,7 +37,7 @@ export function DatePickerTrigger({
 
 	return (
 		<Pressable
-			accessibilityHint={state.canOpen ? accessibilityHint : undefined}
+			accessibilityHint={state.canOpen ? (accessibilityHint ?? picker.labels.triggerHint) : undefined}
 			accessibilityLabel={picker.accessibilityLabel}
 			accessibilityRole={state.canOpen || state.isDisabled ? "button" : "text"}
 			accessibilityState={{ disabled: state.isDisabled, expanded: picker.isOpen }}

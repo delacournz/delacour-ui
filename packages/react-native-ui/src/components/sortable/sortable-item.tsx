@@ -129,8 +129,8 @@ export function SortableItem({
 	const moveDown = useCallback(() => move(id, "down"), [id, move]);
 
 	const accessibilityActions = useMemo<AccessibilityActionInfo[]>(
-		() => (canDrag ? resolveSortableMoveActions({ id, label, order, pinned }) : []),
-		[canDrag, id, label, order, pinned]
+		() => (canDrag ? resolveSortableMoveActions({ id, label, labels: root.labels, order, pinned }) : []),
+		[canDrag, id, label, root.labels, order, pinned]
 	);
 
 	const onAccessibilityAction = useCallback(
@@ -159,7 +159,7 @@ export function SortableItem({
 	const isRowAccessible = accessibleProp ?? (isLongPress ? true : undefined);
 	warnInteractiveChildInAccessible({ accessible: isRowAccessible, children, component: "Sortable.Item" });
 
-	const positionText = resolveSortablePosition(index, count);
+	const positionText = resolveSortablePosition(index, count, root.labels);
 
 	const context = useMemo<SortableItemContextValue>(
 		() => ({

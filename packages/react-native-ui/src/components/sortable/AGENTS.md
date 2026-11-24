@@ -76,6 +76,14 @@ outside the gesture.
   `resolveSortableMoveActions`). Without it every handle is "Drag to reorder" and every action
   "Move up", which a rotor lists as identical entries. Unlabelled strings are unchanged. An explicit
   `Sortable.Handle accessibilityLabel` still wins.
+- **The spoken strings are the `labels` prop, not literals.** Seven keys (`handle`, `handleFor`,
+  `moveUp`, `moveUpFor`, `moveDown`, `moveDownFor`, `position`) come from `lib/labels` through
+  `useLabels("sortable", labels)` at the root, and ride the list context as `labels`. Precedence is a
+  handle's `accessibilityLabel` ← the root's `labels` ← `DelacourProvider` `labels` ← English. A row's
+  `label` is app text and feeds the `*For` functions. `Sortable.Item` (actions, position) and
+  `Sortable.Handle` read `root.labels`; `resolveSortableHandleLabel`, `resolveSortableMoveActions`
+  (a `labels` field) and `resolveSortablePosition` take labels as a defaulted trailing argument.
+  `SORTABLE_DEFAULT_HANDLE_LABEL` is an alias of the default `handle`.
 - **A `long-press` row is one stop.** A control composed into it (a checkbox, a delete button) is
   unreachable, so `Sortable.Item` warns in development (`warnInteractiveChildInAccessible`). Mirror
   the control as an entry in the row's own `accessibilityActions`, and hide the drawn one with

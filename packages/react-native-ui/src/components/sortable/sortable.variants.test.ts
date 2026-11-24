@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import type { SortableLabels } from "../../lib/labels";
 import { THEME_CSS } from "../../styles/theme-tokens.test";
 import {
 	clampAutoscrollStep,
@@ -432,5 +433,37 @@ describe("resolveSortableMoveActions", () => {
 		expect(resolveSortableMoveActions({ order, id: "a" }).map((a) => a.name)).toEqual(["moveDown"]);
 		expect(resolveSortableMoveActions({ order, id: "c" }).map((a) => a.name)).toEqual(["moveUp"]);
 		expect(resolveSortableMoveActions({ order, id: "b", pinned: [false, true, false] })).toEqual([]);
+	});
+});
+
+describe("sortable labels", () => {
+	const de: SortableLabels = {
+		handle: "Zum Sortieren ziehen",
+		handleFor: (label) => `${label} sortieren`,
+		moveDown: "Nach unten",
+		moveDownFor: (label) => `${label} nach unten`,
+		moveUp: "Nach oben",
+		moveUpFor: (label) => `${label} nach oben`,
+		position: (current, count) => `Platz ${current} von ${count}`,
+	};
+
+	test("the handle label reads the labels", () => {
+		expect(resolveSortableHandleLabel(undefined, de)).toBe("Zum Sortieren ziehen");
+		expect(resolveSortableHandleLabel("Milch", de)).toBe("Milch sortieren");
+	});
+
+	test("the move actions read the labels", () => {
+		expect(resolveSortableMoveActions({ id: "b", labels: de, order: ["a", "b", "c"] })).toEqual([
+			{ label: "Nach oben", name: "moveUp" },
+			{ label: "Nach unten", name: "moveDown" },
+		]);
+		expect(resolveSortableMoveActions({ id: "b", label: "Milch", labels: de, order: ["a", "b", "c"] })).toEqual([
+			{ label: "Milch nach oben", name: "moveUp" },
+			{ label: "Milch nach unten", name: "moveDown" },
+		]);
+	});
+
+	test("the position reads the labels, one-based", () => {
+		expect(resolveSortablePosition(1, 5, de)).toBe("Platz 2 von 5");
 	});
 });

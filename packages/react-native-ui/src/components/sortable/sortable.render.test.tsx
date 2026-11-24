@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { Pressable, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Sortable } from "./sortable";
 import { useSortableItem } from "./sortable.context";
@@ -291,5 +292,54 @@ describe("Sortable parts outside their root", () => {
 			"useSortableItem must be called inside a <Sortable.Item>."
 		);
 		spy.mockRestore();
+	});
+
+	describe("labels", () => {
+		const de = {
+			handle: "Ziehen",
+			handleFor: (label: string) => `${label} sortieren`,
+			moveUp: "Nach oben",
+			moveUpFor: (label: string) => `${label} nach oben`,
+			position: (current: number, count: number) => `Platz ${current} von ${count}`,
+		};
+
+		function Labelled({ handleLabel }: { handleLabel?: string }): ReactElement {
+			return (
+				<Sortable labels={de} onReorder={jest.fn()} value={["a", "b"]}>
+					<Sortable.Item id="a">
+						<Sortable.Handle accessibilityLabel={handleLabel} />
+					</Sortable.Item>
+					<Sortable.Item id="b" label="Milch">
+						<Sortable.Handle accessibilityLabel={handleLabel} />
+					</Sortable.Item>
+				</Sortable>
+			);
+		}
+
+		test("the labels prop names the handle, actions and position", async () => {
+			await renderWithProviders(<Labelled />);
+			expect(screen.getByRole("button", { name: "Ziehen" })).toBeOnTheScreen();
+			const handle = screen.getByRole("button", { name: "Milch sortieren" });
+			expect(handle.props.accessibilityValue).toEqual({ text: "Platz 2 von 2" });
+			expect(handle.props.accessibilityActions).toEqual([{ label: "Milch nach oben", name: "moveUp" }]);
+		});
+
+		test("a LabelsProvider names them too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ sortable: { handle: "Ziehen" } }}>
+					<Sortable onReorder={jest.fn()} value={["a"]}>
+						<Sortable.Item id="a">
+							<Sortable.Handle />
+						</Sortable.Item>
+					</Sortable>
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("button", { name: "Ziehen" })).toBeOnTheScreen();
+		});
+
+		test("the handle's accessibilityLabel still wins over labels", async () => {
+			await renderWithProviders(<Labelled handleLabel="Griff" />);
+			expect(screen.getAllByRole("button", { name: "Griff" })).toHaveLength(2);
+		});
 	});
 });

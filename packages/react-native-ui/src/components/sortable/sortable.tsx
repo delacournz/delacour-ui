@@ -22,6 +22,8 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
+import { useLabels } from "../../hooks/use-labels";
+import type { SortableLabels } from "../../lib/labels";
 import { playHaptic } from "../pressable";
 import { type SortableContextValue, SortableProvider } from "./sortable.context";
 import type { SortableDrag, SortableReorderDetails } from "./sortable.types";
@@ -71,6 +73,11 @@ export type SortableProps = Omit<ViewProps, "children"> & {
 	haptic?: false | SortableHaptic;
 	/** No row can be lifted or moved. */
 	isDisabled?: boolean;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. A
+	 * handle's `accessibilityLabel` still wins over `labels.handle`.
+	 */
+	labels?: Partial<SortableLabels>;
 	/** The enclosing scroller, for auto-scroll near its edges. */
 	scrollRef?: AnimatedRef<Animated.ScrollView>;
 	/** Points from the scroller's edge where auto-scroll starts. Default 72. */
@@ -91,6 +98,7 @@ function SortableRoot({
 	longPressDelay = SORTABLE_DEFAULT_LONG_PRESS_DELAY,
 	haptic,
 	isDisabled = false,
+	labels: labelsProp,
 	scrollRef,
 	autoscrollThreshold = SORTABLE_DEFAULT_AUTOSCROLL_THRESHOLD,
 	autoscrollSpeed = SORTABLE_DEFAULT_AUTOSCROLL_SPEED,
@@ -102,6 +110,7 @@ function SortableRoot({
 	...props
 }: SortableProps): ReactElement {
 	const isReducedMotion = useReducedMotion();
+	const labels = useLabels("sortable", labelsProp);
 	// Primitives, not the object: the worklets below close over them.
 	const { lift: liftHaptic, pass: passHaptic } = resolveSortableHaptics(haptic);
 	const rootRef = useAnimatedRef<Animated.View>();
@@ -336,9 +345,9 @@ function SortableRoot({
 			const action = resolveMoveAction(value, id, direction, pinned);
 			if (action.kind === "blocked") return;
 			onReorder(reorderItems(value, action.from, action.to, pinned), { from: action.from, id, to: action.to });
-			AccessibilityInfo.announceForAccessibility(resolveSortablePosition(action.to, value.length));
+			AccessibilityInfo.announceForAccessibility(resolveSortablePosition(action.to, value.length, labels));
 		},
-		[onReorder, pinned, value]
+		[labels, onReorder, pinned, value]
 	);
 
 	const context = useMemo<SortableContextValue>(
@@ -349,6 +358,7 @@ function SortableRoot({
 			dragY,
 			isDisabled,
 			isReducedMotion,
+			labels,
 			lift,
 			longPressDelay,
 			move,
@@ -365,6 +375,7 @@ function SortableRoot({
 			dragY,
 			isDisabled,
 			isReducedMotion,
+			labels,
 			lift,
 			longPressDelay,
 			move,

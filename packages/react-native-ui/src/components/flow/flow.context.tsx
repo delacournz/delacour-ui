@@ -1,6 +1,7 @@
 import { createContext, type ReactElement, type ReactNode, useContext } from "react";
 import type { GestureType } from "react-native-gesture-handler";
 import type { SharedValue } from "react-native-reanimated";
+import type { FlowLabels } from "../../lib/labels";
 import type { LoopingMotionHold } from "../../lib/looping-motion";
 import type { FlowHandleRef } from "./flow.variants";
 import type { FlowConnection, FlowPoint, FlowRect, FlowSide, FlowSize, FlowViewport } from "./flow-geometry";
@@ -11,6 +12,8 @@ export type FlowConnectionPreview = { isActive: boolean; from: FlowPoint; fromSi
 
 export type FlowContextValue = {
 	registry: FlowRegistry;
+	/** The resolved spoken strings, resolved once on the root. */
+	labels: FlowLabels;
 	/** The mounted nodes and groups, rebuilt whenever one mounts, unmounts or changes a handle. */
 	entries: readonly FlowSnapshotEntry[];
 	/** Re-reads the registry into `entries`. Called from a part's effects. */

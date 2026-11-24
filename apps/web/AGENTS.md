@@ -1149,19 +1149,26 @@ gitignored, and excluded from Biome.
 
 ### `typecheck` depends on `codegen`, and must keep doing so
 
-`tsc` cannot check this app until `src/routeTree.gen.ts` exists, and that file is written by the
-TanStack Start Vite plugin during `buildStart` — so on a clean checkout it is absent and **every
-route fails to typecheck**. `turbo.jsonc` therefore gives `@delacour/web#typecheck` an edge to
-`@delacour/web#codegen`, which is `vite build`.
+`tsc` cannot check this app until `src/routeTree.gen.ts` exists. The file is gitignored, so on a
+clean checkout it is absent and **every route fails to typecheck**. `turbo.jsonc` therefore gives
+`@delacour/web#typecheck` an edge to `@delacour/web#codegen`.
 
-Do not remove that edge as redundant because the file happens to be on your disk: it is there
-because you ran `dev` or `build` at some point, and CI never has. It costs about two seconds of
-wall clock, since turbo runs it alongside the other packages' typechecks.
+Do not remove that edge as redundant because the file happens to be on your disk. It is there
+because you ran `dev`, `build` or `codegen` at some point, and CI never has.
 
-`@tanstack/router-generator`'s `Generator` is **not** a lighter substitute. It writes the route
-tree but omits the `declare module "@tanstack/react-start"` block carrying `Register`, which is
-what gives the routes their types — without it every `createFileRoute("/docs/$")` fails with
-*Argument of type '"/docs/$"' is not assignable to parameter of type 'undefined'*.
+`codegen` is `scripts/gen-route-tree.ts`, which takes under a second, not a `vite build`, which
+took about 25s in CI. TanStack Start's Vite plugin writes the file during `buildStart` by running
+`@tanstack/router-generator`'s `Generator` with a footer. That footer is the
+`declare module "@tanstack/react-start"` block carrying `Register`, which gives the routes their
+types. The bare `Generator` omits it, and every `createFileRoute("/docs/$")` then fails with
+*Argument of type '"/docs/$"' is not assignable to parameter of type 'undefined'*. So the script
+builds the same footer itself (`startFooter`, ported from `start-plugin-core`'s
+`route-tree-footer.ts`).
+
+**A copy of upstream's footer can drift, so CI holds it to the original.** CI's `build` job runs
+the real `vite build`, then `bun scripts/gen-route-tree.ts --check`. The check regenerates the file
+and fails unless the result is byte-identical to what the plugin wrote. After a TanStack Start
+upgrade fails that check, update `startFooter()`.
 
 ### `react` and `react-dom` come from the catalog
 
@@ -1192,7 +1199,7 @@ breaks hooks. Hydration warnings in the console are the first symptom.
 
 `content/docs/native/releases/` holds one hand-written page, `channels.mdx`; the rest are
 **generated and gitignored**. `bun run release-notes` (`scripts/generate-release-notes.ts`, run
-first by `dev`, `build` and `codegen`) writes `index.md` — what is pending plus the latest release,
+first by `dev` and `build`) writes `index.md` — what is pending plus the latest release,
 across every package — and one page per published package (`react-native-ui.md`, `cli.md`,
 `react-native-charts.md`, `react-native-bottom-sheet.md`), which `meta.json` lists under
 `---Packages---`. Ported from warden's docs site.

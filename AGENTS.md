@@ -179,7 +179,7 @@ The checks are defined once, in `scripts/signoff-checks.ts`:
 | `signoff/tests` | no | the library, an engine, the CLI, design system, skills, types, registry or a manifest changed | `verify:expo --tests <runner> --dir .verify/tests-<runner> --keep --max-workers 25%` for `bun`, `jest` and `vitest`, at once — every component's suites copied into an installed app and run by that runner |
 | `signoff` | yes | — | the umbrella, written only when every applicable check passed |
 
-`registry`'s two runs share `packages/cli/.verify/app` and hold its pool lock. `typecheck` and `build` hold a lock of their own on `apps/web/.output`: `build`'s `vite build` writes there, and so does `typecheck`'s `@delacour/web#codegen` on a cache miss, and two at once failed with `ENOTEMPTY`. `tests` runs its three
+`registry`'s two runs share `packages/cli/.verify/app` and hold its pool lock. `typecheck` and `build` hold a lock of their own on `apps/web/src/routeTree.gen.ts`, which `build`'s `vite build` and `typecheck`'s `@delacour/web#codegen` both write. Before codegen stopped being a `vite build`, both also rewrote `apps/web/.output`, and two at once failed with `ENOTEMPTY`. `tests` runs its three
 runners at the same time, each in its own `--dir` with its own CLI build and packed engines beside
 it, so it shares nothing with `registry` or with itself and needs no lock. Each runner takes a quarter of the cores (`--max-workers 25%`) and `react-native-ui`'s own Jest run half (`maxWorkers: "50%"`): at their defaults each takes nearly every core, and a 100 ms render starved that way blew Jest's 5 s test timeout. `tests` installs from npm. It used to take 8–16 minutes,
 nearly all of it the scaffolded app's `tsc` under TypeScript 5.9, which spends four minutes on
@@ -320,7 +320,8 @@ flags it and `--fix` would put 6 back.
 reading the same `tsconfig.json` and reporting the same errors as `tsc` 7. A forced
 `turbo typecheck` spends about 6s type checking across the workspaces, where `tsc` 7 spent about 16s
 and `tsc` 6 about 40s — the playground alone went 12.4s → 3.8s → 1.5s. The turbo wall time barely
-moves, because `@delacour/web#codegen`'s `vite build` is its critical path.
+moved, because `@delacour/web#codegen`'s `vite build` was its critical path; `codegen` is now the
+router generator alone (`apps/web/scripts/gen-route-tree.ts`), well under a second.
 
 - **`--no-script` is not optional.** `bun check` runs a `check` script when the package has one, and
   every workspace's `check` is Biome. Without the flag, `typecheck` would lint.
@@ -649,10 +650,12 @@ workflows set a `working_directory`, are in
 | pre-push | `bun run typecheck` across every workspace |
 
 `@delacour/web#typecheck` depends on `@delacour/web#codegen` in `turbo.jsonc`, which is what
-makes the pre-push hook usable at all: TanStack Router generates the gitignored
-`apps/web/src/routeTree.gen.ts` during `vite build`, so on a fresh clone `tsc` used to fail with a
-wall of `Property '_splat' does not exist on type 'never'` before anything had been built. The edge
-is scoped to `apps/web` on purpose — no other workspace needs a build to typecheck.
+makes the pre-push hook usable at all: `apps/web/src/routeTree.gen.ts` is generated and
+gitignored, so on a fresh clone `tsc` used to fail with a wall of
+`Property '_splat' does not exist on type 'never'` before anything had been built. `codegen` writes
+it with the router generator (`apps/web/scripts/gen-route-tree.ts`, under a second), not a
+`vite build`. The edge is scoped to `apps/web` on purpose — no other workspace needs generated code
+to typecheck.
 
 A commit can therefore rewrite its own staged files. If a commit fails, the fix
 is usually already applied and staged — re-read the diff before changing

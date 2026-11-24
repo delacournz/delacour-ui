@@ -1,3 +1,5 @@
+import { DELACOUR_DEFAULT_LABELS, type MessageScrollerLabels } from "../../lib/labels";
+
 /**
  * The pure decisions behind `MessageScroller`: how messages become rows, when the reader counts as
  * "at the end", when the jump button shows, what counts as unread, when to ask for older history and
@@ -44,14 +46,14 @@ export const ANNOUNCE_COALESCE_MS = 1500;
 /** Above this the badge reads `99+`. */
 export const UNREAD_COUNT_CAP = 99;
 
-export const DEFAULT_JUMP_LABEL = "Jump to latest";
+/** The English jump label, an alias of the catalog default. */
+export const DEFAULT_JUMP_LABEL = DELACOUR_DEFAULT_LABELS.messageScroller.jumpToLatest;
+
+const DEFAULT_LABELS = DELACOUR_DEFAULT_LABELS.messageScroller;
 
 /** Prefixes for the rows the scroller inserts, chosen so they cannot collide with an app's message key. */
 const DATE_KEY_PREFIX = "\u0000message-scroller:date:";
 const UNREAD_KEY = "\u0000message-scroller:unread";
-
-const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
 
 const DAY_MS = 86_400_000;
 
@@ -111,16 +113,22 @@ function calendarDaysBetween(date: Date, now: Date): number {
  * The label a day separator shows: `Today`, `Yesterday`, a weekday inside the last six days,
  * `12 Sep` earlier this year, and `12 Sep 2025` before that. A future date is written out.
  *
- * Without a `locale` the words are English and spelled here, not by `Intl`: ICU versions disagree on
- * the short form of September, and a separator that changes spelling between devices reads as a bug.
- * With one, `Intl.DateTimeFormat` writes the weekday and date in that locale.
+ * Without a `locale` the words come from `labels` (English by default), not from `Intl`: ICU
+ * versions disagree on the short form of September, and a separator that changes spelling between
+ * devices reads as a bug. With one, `Intl.DateTimeFormat` writes the weekday and date in that
+ * locale; `Today` and `Yesterday` still come from `labels`.
  */
-export function formatSeparatorDate(date: Date, now: Date, locale?: string): string {
+export function formatSeparatorDate(
+	date: Date,
+	now: Date,
+	locale?: string,
+	labels: MessageScrollerLabels = DEFAULT_LABELS
+): string {
 	const days = calendarDaysBetween(date, now);
-	if (days === 0) return "Today";
-	if (days === 1) return "Yesterday";
+	if (days === 0) return labels.today;
+	if (days === 1) return labels.yesterday;
 	if (days > 1 && days <= 6) {
-		return locale ? new Intl.DateTimeFormat(locale, { weekday: "long" }).format(date) : (WEEKDAYS[date.getDay()] ?? "");
+		return locale ? new Intl.DateTimeFormat(locale, { weekday: "long" }).format(date) : labels.weekday(date.getDay());
 	}
 	const sameYear = date.getFullYear() === now.getFullYear();
 	if (locale) {
@@ -130,8 +138,7 @@ export function formatSeparatorDate(date: Date, now: Date, locale?: string): str
 			...(sameYear ? {} : { year: "numeric" }),
 		}).format(date);
 	}
-	const dayMonth = `${date.getDate()} ${MONTHS[date.getMonth()] ?? ""}`;
-	return sameYear ? dayMonth : `${dayMonth} ${date.getFullYear()}`;
+	return labels.date(date.getDate(), labels.month(date.getMonth()), sameYear ? undefined : date.getFullYear());
 }
 
 /** Local `YYYY-MM-DD`, for a separator's key. */
@@ -327,9 +334,11 @@ export function shouldAnnounceNewMessages(input: {
 }
 
 /** What a screen reader hears for an arrival, or a burst of them. */
-export function resolveAnnouncementText(input: { count: number; senderName?: string }): string {
-	if (input.count === 1) return input.senderName ? `New message from ${input.senderName}` : "New message";
-	return `${input.count} new messages`;
+export function resolveAnnouncementText(
+	input: { count: number; senderName?: string },
+	labels: MessageScrollerLabels = DEFAULT_LABELS
+): string {
+	return labels.newMessages(input.count, input.count === 1 ? input.senderName : undefined);
 }
 
 /** The badge text: empty at zero, capped at `99+`. */
@@ -339,12 +348,17 @@ export function formatUnreadCount(count: number): string {
 }
 
 /** The jump button's accessibility label, with the unread count when there is one. */
-export function resolveJumpButtonLabel(unreadCount: number, base: string = DEFAULT_JUMP_LABEL): string {
-	if (unreadCount <= 0) return base;
-	return `${base}, ${formatUnreadCount(unreadCount)} unread`;
+export function resolveJumpButtonLabel(
+	unreadCount: number,
+	base: string | undefined = undefined,
+	labels: MessageScrollerLabels = DEFAULT_LABELS
+): string {
+	const name = base ?? labels.jumpToLatest;
+	if (unreadCount <= 0) return name;
+	return labels.jumpToLatestUnread(name, formatUnreadCount(unreadCount));
 }
 
 /** The unread divider's text. */
-export function formatUnreadDividerLabel(count: number): string {
-	return count === 1 ? "1 new message" : `${count} new messages`;
+export function formatUnreadDividerLabel(count: number, labels: MessageScrollerLabels = DEFAULT_LABELS): string {
+	return labels.unreadDivider(count);
 }

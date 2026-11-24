@@ -10,7 +10,7 @@ import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useMessageScrollerPart } from "./message-scroller.context";
 import type { MessageScrollerJumpButtonProps } from "./message-scroller.types";
-import { DEFAULT_JUMP_LABEL, formatUnreadCount, resolveJumpButtonLabel } from "./message-scroller.utils";
+import { formatUnreadCount, resolveJumpButtonLabel } from "./message-scroller.utils";
 import {
 	MESSAGE_SCROLLER_JUMP_TIMING_MS,
 	messageScrollerVariants,
@@ -31,7 +31,7 @@ const HIT_SLOP = { top: 4, bottom: 4, left: 4, right: 4 };
  * covers it.
  */
 export function MessageScrollerJumpButton({
-	label = DEFAULT_JUMP_LABEL,
+	label,
 	placement,
 	showCount = true,
 	onPress,
@@ -39,7 +39,7 @@ export function MessageScrollerJumpButton({
 	className,
 	testID,
 }: MessageScrollerJumpButtonProps): ReactElement {
-	const { state, controller, isJumpVisible, isCalm, keyboardOffset, bottomInset } =
+	const { state, controller, isJumpVisible, isCalm, keyboardOffset, bottomInset, labels } =
 		useMessageScrollerPart("MessageScroller.JumpButton");
 	const keyboard = useReanimatedKeyboardAnimation();
 	const [isShown, setIsShown] = useState(false);
@@ -76,7 +76,7 @@ export function MessageScrollerJumpButton({
 			style={animatedStyle}
 		>
 			<Pressable
-				accessibilityLabel={resolveJumpButtonLabel(state.unreadCount, label)}
+				accessibilityLabel={resolveJumpButtonLabel(state.unreadCount, label ?? labels.jumpToLatest, labels)}
 				accessibilityRole="button"
 				className={cn(slots.jumpButton(), className)}
 				hitSlop={HIT_SLOP}

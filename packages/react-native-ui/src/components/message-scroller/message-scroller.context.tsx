@@ -2,6 +2,7 @@ import type { LegendListRef } from "@legendapp/list/react-native";
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import type { LayoutChangeEvent } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
+import type { MessageScrollerLabels } from "../../lib/labels";
 import type {
 	MessageScrollerController,
 	MessageScrollerRenderInfo,
@@ -43,6 +44,8 @@ export type MessageScrollerContextValue = {
 	 * `maintainScrollAtEnd` measures in. `undefined` until the viewport has a height.
 	 */
 	maintainScrollAtEndThreshold: number | undefined;
+	/** The resolved spoken and visible strings, shared with every part. */
+	labels: MessageScrollerLabels;
 };
 
 /**

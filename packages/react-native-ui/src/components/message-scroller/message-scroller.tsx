@@ -38,7 +38,8 @@ function MessageScrollerRoot<T>({
 	viewerId,
 	runWindowMs = DEFAULT_RUN_WINDOW_MS,
 	separateDates = true,
-	formatDate = formatSeparatorDate,
+	formatDate: formatDateProp,
+	labels: labelsProp,
 	firstUnreadKey,
 	hasOlder = false,
 	isLoadingOlder = false,
@@ -101,7 +102,13 @@ function MessageScrollerRoot<T>({
 		bottomInset,
 		onAtEndChange,
 		onScrollerReady,
+		labels: labelsProp,
 	});
+	const { labels } = scroller;
+	const formatDate = useMemo(
+		() => formatDateProp ?? ((date: Date, now: Date) => formatSeparatorDate(date, now, undefined, labels)),
+		[formatDateProp, labels]
+	);
 
 	const rows = useMemo(
 		() =>

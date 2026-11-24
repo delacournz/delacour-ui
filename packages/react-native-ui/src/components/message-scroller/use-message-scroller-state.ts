@@ -4,6 +4,8 @@ import { AccessibilityInfo, type LayoutChangeEvent } from "react-native";
 import { useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLabels } from "../../hooks/use-labels";
+import type { MessageScrollerLabels } from "../../lib/labels";
 import type { MessageScrollerContextValue } from "./message-scroller.context";
 import type { MessageScrollerController } from "./message-scroller.types";
 import {
@@ -32,6 +34,8 @@ export type UseMessageScrollerStateOptions = {
 	bottomInset?: number;
 	onAtEndChange?: (isAtEnd: boolean) => void;
 	onScrollerReady?: (controller: MessageScrollerController) => void;
+	/** Some of the scroller's strings, laid over the provider's and the English defaults. */
+	labels?: Partial<MessageScrollerLabels>;
 };
 
 const NEVER_OWN = (): boolean => false;
@@ -68,8 +72,12 @@ export function useMessageScrollerState({
 	bottomInset = 0,
 	onAtEndChange,
 	onScrollerReady,
+	labels: labelsProp,
 }: UseMessageScrollerStateOptions): MessageScrollerContextValue {
 	const isCalm = useCalmMotion();
+	const labels = useLabels("messageScroller", labelsProp);
+	const labelsRef = useRef(labels);
+	labelsRef.current = labels;
 	const listRef = useRef<LegendListRef | null>(null);
 	const scrollOffset = useSharedValue(0);
 	const contentHeight = useSharedValue(0);
@@ -150,7 +158,7 @@ export function useMessageScrollerState({
 			return;
 		}
 		AccessibilityInfo.announceForAccessibility(
-			resolveAnnouncementText({ count: queue.pending, senderName: queue.senderName })
+			resolveAnnouncementText({ count: queue.pending, senderName: queue.senderName }, labelsRef.current)
 		);
 		queue.pending = 0;
 		queue.senderName = undefined;
@@ -235,6 +243,7 @@ export function useMessageScrollerState({
 		isCalm,
 		keyboardOffset,
 		bottomInset,
+		labels,
 		maintainScrollAtEndThreshold: viewportHeight > 0 ? stickThreshold / viewportHeight : undefined,
 	};
 }

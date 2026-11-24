@@ -1,3 +1,4 @@
+export type { MessageScrollerLabels } from "../../lib/labels";
 export { MessageScroller } from "./message-scroller";
 export {
 	type MessageScrollerContextValue,

@@ -1,7 +1,9 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type MessageScrollerLabels } from "../../lib/labels";
 import {
 	ANNOUNCE_COALESCE_MS,
 	buildMessageRows,
+	DEFAULT_JUMP_LABEL,
 	DEFAULT_RUN_WINDOW_MS,
 	detectChange,
 	distanceFromEnd,
@@ -426,5 +428,53 @@ describe("formatUnreadDividerLabel", () => {
 	test("singular and plural", () => {
 		expect(formatUnreadDividerLabel(1)).toBe("1 new message");
 		expect(formatUnreadDividerLabel(3)).toBe("3 new messages");
+	});
+});
+
+const FRENCH: MessageScrollerLabels = {
+	list: "Conversation",
+	jumpToLatest: "Aller au dernier",
+	jumpToLatestUnread: (base, count) => `${base}, ${count} non lus`,
+	loadingOlder: "Chargement",
+	today: "Aujourd'hui",
+	yesterday: "Hier",
+	weekday: (day) => ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"][day] ?? "",
+	month: (month) =>
+		["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."][month] ?? "",
+	date: (day, month, year) => (year === undefined ? `${day} ${month}` : `${day} ${month} ${year}`),
+	unreadDivider: (count) => `${count} nouveaux`,
+	newMessages: (count, name) => (count === 1 && name ? `Nouveau message de ${name}` : `${count} nouveaux messages`),
+};
+
+describe("labels reach the resolvers", () => {
+	test("formatSeparatorDate speaks through labels", () => {
+		expect(formatSeparatorDate(new Date(2026, 9, 5, 9), NOW, undefined, FRENCH)).toBe("Aujourd'hui");
+		expect(formatSeparatorDate(new Date(2026, 9, 4, 9), NOW, undefined, FRENCH)).toBe("Hier");
+		expect(formatSeparatorDate(new Date(2026, 9, 1, 12), NOW, undefined, FRENCH)).toBe("jeudi");
+		expect(formatSeparatorDate(new Date(2026, 8, 12, 12), NOW, undefined, FRENCH)).toBe("12 sept.");
+		expect(formatSeparatorDate(new Date(2025, 8, 12, 12), NOW, undefined, FRENCH)).toBe("12 sept. 2025");
+	});
+
+	test("Today and Yesterday still come from labels when a locale is given", () => {
+		expect(formatSeparatorDate(new Date(2026, 9, 5, 9), NOW, "fr", FRENCH)).toBe("Aujourd'hui");
+	});
+
+	test("every weekday and month index resolves in English", () => {
+		const english = DELACOUR_DEFAULT_LABELS.messageScroller;
+		for (let day = 0; day < 7; day++) expect(english.weekday(day)).not.toBe("");
+		for (let month = 0; month < 12; month++) expect(english.month(month)).not.toBe("");
+	});
+
+	test("the announcement, jump label and divider speak through labels", () => {
+		expect(resolveAnnouncementText({ count: 1, senderName: "Aria" }, FRENCH)).toBe("Nouveau message de Aria");
+		expect(resolveAnnouncementText({ count: 3, senderName: "Aria" }, FRENCH)).toBe("3 nouveaux messages");
+		expect(resolveJumpButtonLabel(120, undefined, FRENCH)).toBe("Aller au dernier, 99+ non lus");
+		expect(resolveJumpButtonLabel(0, "Fin", FRENCH)).toBe("Fin");
+		expect(formatUnreadDividerLabel(2, FRENCH)).toBe("2 nouveaux");
+	});
+
+	test("DEFAULT_JUMP_LABEL is the catalog default", () => {
+		expect(DEFAULT_JUMP_LABEL).toBe(DELACOUR_DEFAULT_LABELS.messageScroller.jumpToLatest);
+		expect(DEFAULT_JUMP_LABEL).toBe("Jump to latest");
 	});
 });

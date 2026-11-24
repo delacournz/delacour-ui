@@ -579,6 +579,14 @@ describe("shouldEmitSelection", () => {
 });
 
 describe("extractRadioText", () => {
+	test("content holding a child-less element is unreadable, not partial text", () => {
+		expect(extractRadioText(["I accept the ", createElement("link", { key: "a" })])).toBeUndefined();
+	});
+
+	test("trims the text it returns", () => {
+		expect(extractRadioText("  Accept  ")).toBe("Accept");
+	});
+
 	test("reads a string and nested element children", () => {
 		expect(extractRadioText(["Free ", createElement("span", { key: "a" }, "plan")])).toBe("Free plan");
 	});

@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { Text } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Pressable } from "../pressable";
@@ -19,6 +20,11 @@ function ToggleBoth() {
 	);
 }
 
+/** Renders its own words, so a parent cannot read them before render. */
+function TermsLink() {
+	return <Text>terms</Text>;
+}
+
 const tap = (element: Parameters<typeof fireEvent>[0]) => fireEvent(element, "accessibilityTap");
 
 describe("Checkbox", () => {
@@ -28,6 +34,17 @@ describe("Checkbox", () => {
 		expect(control).toBeOnTheScreen();
 		expect(control).not.toBeChecked();
 		expect(screen.getByText("Remember me")).toBeOnTheScreen();
+	});
+
+	test("a Checkbox whose content mixes text with a component that renders words keeps the full tree name", async () => {
+		await renderWithProviders(
+			<Field>
+				<Checkbox>
+					I accept the <TermsLink />
+				</Checkbox>
+			</Field>
+		);
+		expect(screen.getByRole("checkbox", { name: "I accept the terms" })).toBeOnTheScreen();
 	});
 
 	test("Checkbox.Label inside the root names it", async () => {

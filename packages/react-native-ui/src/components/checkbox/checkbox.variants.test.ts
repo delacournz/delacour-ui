@@ -588,6 +588,14 @@ describe("resolveCheckboxHitSlop", () => {
 });
 
 describe("extractCheckboxText", () => {
+	test("content holding a child-less element is unreadable, not partial text", () => {
+		expect(extractCheckboxText(["I accept the ", createElement("link", { key: "a" })])).toBeUndefined();
+	});
+
+	test("trims the text it returns", () => {
+		expect(extractCheckboxText("  Accept  ")).toBe("Accept");
+	});
+
 	test("is undefined for no content", () => {
 		expect(extractCheckboxText(undefined)).toBeUndefined();
 		expect(extractCheckboxText(false)).toBeUndefined();

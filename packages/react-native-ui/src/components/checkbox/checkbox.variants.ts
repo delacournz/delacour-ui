@@ -459,14 +459,28 @@ export function resolveCheckboxLabelColor(isInvalid: boolean): TextColor | undef
  * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function extractCheckboxText(node: ReactNode): string | undefined {
-	const text = collectText(node);
-	return text.trim() === "" ? undefined : text;
+	const text = collectText(node)?.trim();
+	return text === undefined || text === "" ? undefined : text;
 }
 
-function collectText(node: ReactNode): string {
+function collectText(node: ReactNode): string | undefined {
 	if (typeof node === "string" || typeof node === "number") return String(node);
-	if (Array.isArray(node)) return node.map(collectText).join("");
-	if (isValidElement<{ children?: ReactNode }>(node)) return collectText(node.props.children);
+	if (node === null || node === undefined || typeof node === "boolean") return "";
+	if (Array.isArray(node)) {
+		let text = "";
+		for (const child of node) {
+			const part = collectText(child);
+			if (part === undefined) return undefined;
+			text += part;
+		}
+		return text;
+	}
+	if (isValidElement<{ children?: ReactNode }>(node)) {
+		// A child-less element may render its own words (`<TermsLink />`), which
+		// cannot be read before render, so the whole content is unreadable.
+		if (node.props.children === undefined) return undefined;
+		return collectText(node.props.children);
+	}
 	return "";
 }
 

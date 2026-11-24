@@ -112,7 +112,11 @@ function RadioRoot({
 	// option would read the same — so it needs its own `accessibilityLabel`.
 	// Content whose words cannot be read before render — a custom component —
 	// names the radio through the tree, so no label is set over it at all.
-	const ownText = extractRadioText(content);
+	// The ring draws no words, so it is left out: it is a child-less element and
+	// would otherwise make every radio's content read as unreadable.
+	const ownText = extractRadioText(
+		Children.toArray(content).filter((child) => !(isValidElement(child) && child.type === RadioIndicator))
+	);
 	const namedByContent = ownText === undefined && accessibilityLabel === undefined && hasOwnContent(children);
 	const fieldA11y = useFieldControlAccessibility({
 		accessibilityHint,

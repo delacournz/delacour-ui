@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
+import { Text } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Radio } from "./radio";
@@ -7,6 +8,11 @@ import { Radio } from "./radio";
 /** Option content whose words only exist after render — the hook cannot read them. */
 function PlanName({ name }: { name: string }): ReactElement {
 	return <Radio.Label>{name}</Radio.Label>;
+}
+
+/** Renders its own words, so a parent cannot read them before render. */
+function TermsLink() {
+	return <Text>terms</Text>;
 }
 
 const ACTIVATE = { nativeEvent: { actionName: "activate" } };
@@ -36,6 +42,17 @@ describe("Radio", () => {
 		const radio = screen.getByRole("radio", { name: "Express" });
 		expect(radio).toBeOnTheScreen();
 		expect(radio).not.toBeChecked();
+	});
+
+	test("a Radio whose content mixes text with a component that renders words keeps the full tree name", async () => {
+		await renderWithProviders(
+			<Field>
+				<Radio>
+					I accept the <TermsLink />
+				</Radio>
+			</Field>
+		);
+		expect(screen.getByRole("radio", { name: "I accept the terms" })).toBeOnTheScreen();
 	});
 
 	test("an icon-only radio is named by accessibilityLabel", async () => {

@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SlideButtonLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /**
@@ -364,17 +365,20 @@ export type SlideAnnouncementEvent = "pending" | "success" | "failure";
  * a view that is not announced. Failure is assertive — the handle has gone home and the
  * action did not happen.
  */
-export function resolveSlideAnnouncement(event: SlideAnnouncementEvent): {
+export function resolveSlideAnnouncement(
+	event: SlideAnnouncementEvent,
+	labels: SlideButtonLabels = DELACOUR_DEFAULT_LABELS.slideButton
+): {
 	message: string;
 	politeness: "polite" | "assertive";
 } {
 	switch (event) {
 		case "pending":
-			return { message: "Working", politeness: "polite" };
+			return { message: labels.working, politeness: "polite" };
 		case "success":
-			return { message: "Confirmed", politeness: "polite" };
+			return { message: labels.confirmed, politeness: "polite" };
 		case "failure":
-			return { message: "Failed. Slide to try again", politeness: "assertive" };
+			return { message: labels.failed, politeness: "assertive" };
 	}
 }
 

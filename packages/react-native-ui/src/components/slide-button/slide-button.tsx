@@ -22,6 +22,8 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { SlideButtonLabels } from "../../lib/labels";
 import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SlideButtonContextValue, SlideButtonProvider } from "./slide-button.context";
 import {
@@ -88,8 +90,13 @@ export type SlideButtonProps = Omit<ViewProps, "children" | "style"> & {
 	isLoading?: boolean;
 	/** Played as a drag crosses the threshold; a success knock follows on commit. Off by default. */
 	haptic?: false | HapticFeedback;
-	/** What the screen reader's activate action is called. Imperative, naming the outcome. Default "Confirm". */
+	/** What the screen reader's activate action is called. Imperative, naming the outcome. Defaults to `labels.confirm`. */
 	accessibilityActionLabel?: string;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `accessibilityActionLabel` still wins over `confirm`; `announce` still gates the rest.
+	 */
+	labels?: Partial<SlideButtonLabels>;
 	/**
 	 * Speaks the outcome to a screen reader: "Working" while a returned promise is pending or
 	 * `isLoading` turns on, "Confirmed" on success and an assertive "Failed" when the promise
@@ -114,7 +121,8 @@ function SlideButtonRoot({
 	isDisabled = false,
 	isLoading = false,
 	haptic = false,
-	accessibilityActionLabel = "Confirm",
+	accessibilityActionLabel,
+	labels: labelsProp,
 	announce = true,
 	accessibilityLabel,
 	...props
@@ -167,13 +175,14 @@ function SlideButtonRoot({
 	const onCompleteRef = useRef(onComplete);
 	onCompleteRef.current = onComplete;
 
+	const labels = useLabels("slideButton", labelsProp);
 	const speak = useAnnounce();
 	const say = useCallback(
 		(event: SlideAnnouncementEvent) => {
-			const { message, politeness } = resolveSlideAnnouncement(event);
+			const { message, politeness } = resolveSlideAnnouncement(event, labels);
 			speak(message, { enabled: announce, key: `slide-button-${event}`, politeness });
 		},
-		[announce, speak]
+		[announce, labels, speak]
 	);
 	// Whether the promise's resolution already said "Confirmed", so a controlled
 	// parent's `isCompleted` arriving afterwards does not say it again.
@@ -350,8 +359,8 @@ function SlideButtonRoot({
 	);
 
 	const accessibilityActions = useMemo(
-		() => [{ label: accessibilityActionLabel, name: "activate" }],
-		[accessibilityActionLabel]
+		() => [{ label: accessibilityActionLabel ?? labels.confirm, name: "activate" }],
+		[accessibilityActionLabel, labels.confirm]
 	);
 
 	const context = useMemo<SlideButtonContextValue>(

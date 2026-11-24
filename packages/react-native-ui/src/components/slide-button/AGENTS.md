@@ -124,13 +124,18 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
   one shared value. Children on `SlideButton.Thumb` replace both marks.
 - **Screen readers confirm with one action.** The rail is a `button` whose label
   is the `SlideButton.Label` text (or an explicit `accessibilityLabel`), with an
-  `activate` action labelled by `accessibilityActionLabel` — default "Confirm";
+  `activate` action labelled by `accessibilityActionLabel` — default `labels.confirm` ("Confirm");
   pass an imperative that names the outcome, "Ship order". Activating moves the
   handle to the end and fires `onComplete`. `accessibilityState` carries
   `disabled` and `checked: isCompleted`.
+- **The spoken strings are the `labels` prop, not literals**: `confirm` (the activate action),
+  `working`, `confirmed`, `failed`, from `lib/labels` through `useLabels("slideButton", labels)`,
+  resolved once at the root. Precedence is `accessibilityActionLabel` (for `confirm`) ← the root's
+  `labels` ← `DelacourProvider` `labels` ← English. `announce` still gates the three outcomes.
+  `resolveSlideAnnouncement(event, labels)` takes labels as its last argument; no part needs them.
 - **The outcome is spoken, once per platform.** A slide's result is otherwise silent: the tick is
   drawn and `checked` changes on a view no screen reader announces. The root speaks through
-  `useAnnounce` (`resolveSlideAnnouncement` holds the English): "Working" when a returned promise is
+  `useAnnounce` (`resolveSlideAnnouncement` takes the labels): "Working" when a returned promise is
   pending or `isLoading` turns on, "Confirmed" on success, and an assertive "Failed. Slide to try
   again" when the promise rejects. There is no live region on the rail, so Android is never spoken
   to twice. Success is said once: on the promise's resolution when there is one, else when

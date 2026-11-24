@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { AccessibilityInfo, Platform, Text } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { SLIDE_BUTTON_GESTURE_TEST_ID, SlideButton } from "./slide-button";
 import { useSlideButton } from "./slide-button.context";
@@ -430,5 +431,36 @@ describe("SlideButton announcements", () => {
 		await fireEvent(screen.getByRole("button"), "accessibilityTap");
 		await waitFor(() => expect(isChecked(screen.getByRole("button"))).toBe(false));
 		expect(spy).not.toHaveBeenCalled();
+	});
+
+	describe("labels", () => {
+		test("the labels prop names the activate action and the outcomes", async () => {
+			await renderWithProviders(slide({ labels: { confirm: "Bestätigen", confirmed: "Bestätigt" } }));
+			expect(screen.getByRole("button").props.accessibilityActions).toEqual([
+				{ label: "Bestätigen", name: "activate" },
+			]);
+			await fireEvent(screen.getByRole("button"), "accessibilityTap");
+			await waitFor(() => expect(spy).toHaveBeenCalledWith("Bestätigt"));
+		});
+
+		test("a LabelsProvider speaks through too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ slideButton: { confirm: "Bestätigen", working: "Läuft" } }}>
+					{slide({ onComplete: () => Promise.resolve() })}
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("button").props.accessibilityActions).toEqual([
+				{ label: "Bestätigen", name: "activate" },
+			]);
+			await fireEvent(screen.getByRole("button"), "accessibilityTap");
+			await waitFor(() => expect(spy).toHaveBeenCalledWith("Läuft"));
+		});
+
+		test("accessibilityActionLabel still wins over labels.confirm", async () => {
+			await renderWithProviders(slide({ accessibilityActionLabel: "Ship order", labels: { confirm: "Bestätigen" } }));
+			expect(screen.getByRole("button").props.accessibilityActions).toEqual([
+				{ label: "Ship order", name: "activate" },
+			]);
+		});
 	});
 });

@@ -338,4 +338,14 @@ describe("resolveSlideAnnouncement", () => {
 			politeness: "assertive",
 		});
 	});
+
+	test("custom labels reach every outcome and politeness stays", () => {
+		const labels = { confirm: "Bestätigen", confirmed: "Bestätigt", failed: "Fehlgeschlagen", working: "Läuft" };
+		expect(resolveSlideAnnouncement("pending", labels)).toEqual({ message: "Läuft", politeness: "polite" });
+		expect(resolveSlideAnnouncement("success", labels)).toEqual({ message: "Bestätigt", politeness: "polite" });
+		expect(resolveSlideAnnouncement("failure", labels)).toEqual({
+			message: "Fehlgeschlagen",
+			politeness: "assertive",
+		});
+	});
 });

@@ -2384,9 +2384,11 @@
 				"button",
 				"icon",
 				"icons",
+				"pressable",
 				"surface",
 				"text",
 				"tv",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [

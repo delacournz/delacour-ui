@@ -153,10 +153,6 @@
 				{
 					"from": "../badge/badge.variants",
 					"to": "@registry/ui/badge/badge.variants"
-				},
-				{
-					"from": "../pressable/pressable.variants",
-					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}

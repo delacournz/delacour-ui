@@ -11,9 +11,11 @@
 		"button",
 		"icon",
 		"icons",
+		"pressable",
 		"surface",
 		"text",
 		"tv",
+		"use-minimum-hit-target",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -58,6 +60,10 @@
 			"target": "map/map-controls.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
@@ -182,6 +188,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}
@@ -200,6 +210,14 @@
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}

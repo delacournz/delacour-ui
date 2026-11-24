@@ -170,11 +170,10 @@ export function Pressable({
 	...props
 }: PressableProps): ReactElement {
 	const pressed = useSharedValue(0);
-	// The slop goes to the gestures as well as the view, and as primitives so the
-	// gesture's memo holds. On iOS the view's own `hitSlop` only gets the touch
-	// delivered: the tap still checks the point against the view's bounds
-	// (`shouldCancelWhenOutside`) and fails, so a slop on the view alone was a
-	// slop on Android only. See AGENTS.md.
+	// The slop goes to the view and to the gestures, and each platform reads a
+	// different one: iOS hit-tests the view's `hitSlop`, Gesture Handler's
+	// Android orchestrator only the gesture's. As primitives, so the gesture's
+	// memo holds. See AGENTS.md.
 	const slop = normalizeHitSlop(hitSlop);
 	const slopTop = slop?.top ?? 0;
 	const slopRight = slop?.right ?? 0;

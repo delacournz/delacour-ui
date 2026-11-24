@@ -90,13 +90,22 @@ and only `onPress` and `onLongPress` cross back to JS.
   Verified on an iOS simulator with `AXPress` through Simulator.app's
   accessibility bridge, which calls `accessibilityActivate` — `warden ui press`
   does not, it synthesises a touch, so it cannot tell the two paths apart.
-- **`hitSlop` reaches the gestures, not only the view.** A Gesture Handler
-  tap with `shouldCancelWhenOutside` checks the touch against the view's own
-  bounds plus the *gesture's* `hitSlop`, never the view's. On iOS the view's
-  slop gets the touch delivered and the tap then fails it as outside, so a slop
-  on the view alone only ever worked on Android. `Pressable` normalises its
-  `hitSlop` to four numbers (`normalizeHitSlop`) and hands it to the tap and the
-  long press as well as the view, as primitives so the gesture's memo holds.
+- **`hitSlop` goes to the view and to the gestures, because each platform
+  reads a different one.** On iOS the view's `hitSlop` is what gets a touch
+  outside the bounds delivered at all; a gesture's slop alone never sees it. On
+  Android Gesture Handler's orchestrator does its own hit test and reads only
+  the gesture's slop, so a slop on the view alone did nothing there. `Pressable`
+  normalises its `hitSlop` to four numbers (`normalizeHitSlop`) and hands it to
+  the tap and the long press as well as the view, as primitives so the
+  gesture's memo holds. Both were checked on a simulator and an emulator with
+  a tap a few points outside a `sm` Pagination item.
+- **On Android, slop does not reach past a pressable that clips.** The
+  orchestrator only descends into a child that clips (`overflow-hidden`) when
+  the touch is inside its bounds, so a pressable whose own root is
+  `overflow-hidden` — `Button`, `Chip`, `Badge`, a Pagination item — keeps its
+  drawn size there whatever its slop. A bare glyph (a ✕, a back chevron, a
+  clear button) does not clip, and its slop works on both platforms. An
+  ancestor that clips bounds the slop on both.
 - **A small control reaches the minimum target with `hitSlop`, sized from what
   it draws.** `resolveMinimumHitSlop(size, min)` gives half the shortfall to each
   side of a short axis — a number for a square, insets for anything else,

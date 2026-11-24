@@ -115,6 +115,10 @@ The reference implementation for the patterns in the package
   outright. The heights are `BUTTON_HEIGHTS`, pinned to `--spacing-button-*`;
   an app that retunes density at runtime moves the drawn height and not the
   slop, which is the trade for not measuring every button on layout.
+  On Android the slop does not land yet: the root's `overflow-hidden`
+  (load-bearing, see above) stops Gesture Handler's orchestrator descending
+  into the button for a touch outside its bounds — see
+  [Pressable](../pressable/AGENTS.md). iOS takes it.
 
 ## Button.Group
 

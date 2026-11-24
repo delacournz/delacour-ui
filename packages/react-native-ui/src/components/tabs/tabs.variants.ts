@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { type HitSlopInsets, MIN_HIT_TARGET, resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import type { TextSize } from "../text/text.variants";
 
 /** How the bar is painted. `primary` is a capsule in a track, `secondary` an underline. */
@@ -24,6 +25,42 @@ export type TabsScrollAlign = (typeof TABS_SCROLL_ALIGNS)[number];
 export const TABS_DEFAULT_VARIANT: TabsVariant = "primary";
 export const TABS_DEFAULT_SIZE: TabsSize = "md";
 export const TABS_DEFAULT_SCROLL_ALIGN: TabsScrollAlign = "center";
+
+/** A trigger's drawn height, in points. The `trigger` slot writes it as `min-h-*`; a test pins the two. */
+export const TABS_TRIGGER_HEIGHT: Record<TabsSize, number> = { sm: 36, md: 44, lg: 48 };
+
+/**
+ * The padding the `list` slot puts around its triggers, in points. The list is
+ * `overflow-hidden` and a parent's bounds end a child's hit test, so this is the
+ * furthest a trigger's vertical slop can reach. A test pins it to the compound
+ * variants' `p-*` classes.
+ */
+export const TABS_LIST_PADDING: Record<TabsVariant, Record<TabsSize, number>> = {
+	primary: { sm: 2, md: 4, lg: 4 },
+	secondary: { sm: 0, md: 0, lg: 0 },
+};
+
+/**
+ * The `hitSlop` that grows a trigger toward `min`. Vertical only: triggers sit side
+ * by side with no gap, so a horizontal slop would overlap its neighbour and hand the
+ * press to whichever is later in the tree. Capped at the list's padding, because the
+ * list clips anything further out — a `secondary` bar has none and gets nothing.
+ */
+export function resolveTabsTriggerHitSlop({
+	size,
+	variant,
+	min = MIN_HIT_TARGET,
+}: {
+	size: TabsSize;
+	variant: TabsVariant;
+	min?: number;
+}): HitSlopInsets | undefined {
+	const slop = resolveMinimumHitSlop({ height: TABS_TRIGGER_HEIGHT[size], width: min }, min, {
+		cap: TABS_LIST_PADDING[variant][size],
+	});
+	// Width is passed at `min`, so the horizontal edge is 0 and a nonzero slop is always insets.
+	return typeof slop === "object" ? slop : undefined;
+}
 
 /**
  * The `Text` size step each bar size hands its label.

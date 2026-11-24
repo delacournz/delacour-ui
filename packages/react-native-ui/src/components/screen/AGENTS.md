@@ -298,6 +298,9 @@ the first row is still leaving.
   loading swap, icon inheritance, haptics, accessibility — so a navbar action is
   written as `<Button size="icon-sm" variant="secondary">`. A second
   definition of props a component does not change is one that can drift.
+- **`Screen.Navbar.BackButton` reaches the minimum touch target with `hitSlop`, not padding.** The
+  glyph is 20pt, so the control tops itself up to 44pt (48dp under `isMaterialHitTarget`) without
+  moving a pixel; a caller's own `hitSlop` wins.
 - **`Screen.Navbar.BackButton` takes an `onPress`.** This library has no
   navigation dependency and must not gain one for a chevron. The app wires
   `router.back()`. `Screen.Footer`'s `isFocused` prop is the same trade: an app

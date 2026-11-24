@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { MIN_HIT_TARGET, resolveMinimumHitSlop } from "../pressable/pressable.variants";
 
 /** How the surface is painted. Orthogonal to {@link BADGE_COLORS}. */
 export const BADGE_VARIANTS = ["solid", "soft", "outline", "ghost"] as const;
@@ -253,6 +254,61 @@ export function resolveBadgeInteractive({
 	onLongPress?: () => void;
 }): boolean {
 	return onPress !== undefined || onLongPress !== undefined;
+}
+
+/** Edge, in points, of the dismiss glyph at each size: the `--spacing-icon-*` step the `icon` slot sets. */
+export const BADGE_CLOSE_SIZES: Record<BadgeSize, number> = { sm: 14, md: 16, lg: 18 };
+
+/** The gap, in points, the root sets between its children at each size: `gap-1`, `gap-1.5`, `gap-2`. */
+export const BADGE_GAPS: Record<BadgeSize, number> = { sm: 4, md: 6, lg: 8 };
+
+/**
+ * How far the dismiss control's slop may reach, per side.
+ *
+ * Half the root's gap: the label beside it is the neighbour, and slop that
+ * overlapped it would take presses from the badge's own body. The glyph is
+ * bare, so the cap — not the 44pt minimum — is what sets the slop here.
+ */
+export const BADGE_CLOSE_HIT_SLOP_CAP: Record<BadgeSize, number> = {
+	sm: BADGE_GAPS.sm / 2,
+	md: BADGE_GAPS.md / 2,
+	lg: BADGE_GAPS.lg / 2,
+};
+
+/**
+ * The `hitSlop` for the dismiss glyph at `size`, bounded by
+ * {@link BADGE_CLOSE_HIT_SLOP_CAP}. `min` is the app's minimum touch target.
+ * Pure, so it is unit-testable; the component reaches it through `useMinimumHitSlop`.
+ */
+export function resolveBadgeCloseHitSlop(
+	size: BadgeSize,
+	min = MIN_HIT_TARGET
+): ReturnType<typeof resolveMinimumHitSlop> {
+	return resolveMinimumHitSlop(BADGE_CLOSE_SIZES[size], min, { cap: BADGE_CLOSE_HIT_SLOP_CAP[size] });
+}
+
+/**
+ * How a screen reader reaches the dismiss control.
+ *
+ * - `none` — there is no `onClose`.
+ * - `element` — a plain root is not an accessibility element, so the control
+ *   is announced on its own, as a button.
+ * - `action` — a pressable root is one accessibility element and iOS folds its
+ *   descendants into it: the control is unreachable by swipe. It is hidden and
+ *   offered as a `remove` accessibility action on the root instead.
+ */
+export type BadgeCloseExposure = "none" | "element" | "action";
+
+/** See {@link BadgeCloseExposure}. Pure, so it is unit-testable. */
+export function resolveBadgeCloseExposure({
+	hasClose,
+	interactive,
+}: {
+	hasClose: boolean;
+	interactive: boolean;
+}): BadgeCloseExposure {
+	if (!hasClose) return "none";
+	return interactive ? "action" : "element";
 }
 
 export type BadgeVariantProps = VariantProps<typeof badgeVariants>;

@@ -12,12 +12,16 @@ import {
 	resolveTableRowTone,
 	resolveTableSortAccessibility,
 	resolveTableSortGlyph,
+	resolveTableSortHitSlop,
 	splitTableBodyChildren,
 	splitTableCaption,
 	TABLE_ALIGNS,
 	TABLE_EDGE_FADE_RAMP,
+	TABLE_HEAD_PADDING_X,
+	TABLE_ROW_HEIGHT,
 	TABLE_ROW_TONES,
 	TABLE_SIZES,
+	TABLE_SORT_HEIGHT,
 	TABLE_VARIANTS,
 	tableVariants,
 } from "./table.variants";
@@ -531,5 +535,40 @@ describe("table axes", () => {
 		expect(TABLE_SIZES).toEqual(["sm", "md"]);
 		expect(TABLE_VARIANTS).toEqual(["plain", "outline"]);
 		expect(TABLE_ALIGNS).toEqual(["start", "center", "end"]);
+	});
+});
+
+describe("resolveTableSortHitSlop", () => {
+	const rowMinHeight = { md: "min-h-11", sm: "min-h-9" } as const;
+	const headPadding = { md: "px-4", sm: "px-3" } as const;
+
+	test("the constants match the slots they describe", () => {
+		for (const size of TABLE_SIZES) {
+			const slots = tableVariants({ size });
+			expect(slots.row()).toContain(rowMinHeight[size]);
+			expect(slots.head()).toContain(headPadding[size]);
+			expect(TABLE_ROW_HEIGHT[size]).toBe({ md: 44, sm: 36 }[size]);
+			expect(TABLE_HEAD_PADDING_X[size]).toBe({ md: 16, sm: 12 }[size]);
+		}
+	});
+
+	test("never reaches past the room the cell leaves, so no row's slop meets another's", () => {
+		for (const size of TABLE_SIZES) {
+			for (const min of [44, 48]) {
+				const slop = resolveTableSortHitSlop(size, min);
+				const room = (TABLE_ROW_HEIGHT[size] - TABLE_SORT_HEIGHT[size]) / 2;
+				expect(slop.top).toBe(slop.bottom);
+				expect(slop.top).toBeLessThanOrEqual(room);
+				expect(slop.left).toBe(slop.right);
+				expect(slop.left).toBeLessThanOrEqual(TABLE_HEAD_PADDING_X[size]);
+			}
+		}
+	});
+
+	test("md reaches the minimum vertically; sm gets all its row leaves", () => {
+		const md = resolveTableSortHitSlop("md");
+		expect(TABLE_SORT_HEIGHT.md + 2 * md.top).toBe(44);
+		const sm = resolveTableSortHitSlop("sm");
+		expect(TABLE_SORT_HEIGHT.sm + 2 * sm.top).toBe(TABLE_ROW_HEIGHT.sm);
 	});
 });

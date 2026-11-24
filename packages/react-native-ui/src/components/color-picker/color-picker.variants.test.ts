@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import { INPUT_SIZES, INPUT_VARIANTS } from "../input/input.variants";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	COLOR_PICKER_AREA_HEIGHT_PT,
 	COLOR_PICKER_CHECKERBOARD_TOKENS,
@@ -11,6 +12,8 @@ import {
 	COLOR_PICKER_SIZES,
 	COLOR_PICKER_STEP,
 	COLOR_PICKER_SWATCH_EDGE_PT,
+	COLOR_PICKER_SWATCH_GAP_PT,
+	COLOR_PICKER_SWATCH_SLOP_CAP,
 	COLOR_PICKER_THUMB_ANIMATION,
 	COLOR_PICKER_VARIANTS,
 	colorPickerVariants,
@@ -33,7 +36,7 @@ function cls(value: string | undefined): string {
 	return value ?? "";
 }
 
-function step(value: string, utility: "h" | "size" | "py"): number {
+function step(value: string, utility: "h" | "size" | "py" | "gap"): number {
 	return Number(value.match(new RegExp(`\\b${utility}-(\\d+(?:\\.\\d+)?)\\b`))?.[1]);
 }
 
@@ -249,5 +252,33 @@ describe("resolveTrackInset", () => {
 
 	test("a thumb wider than the track collapses to the middle", () => {
 		expect(resolveTrackInset(10, 40)).toEqual({ start: 0.5, end: 0.5 });
+	});
+});
+
+describe("swatch hit target", () => {
+	test("the gap is the swatches row's gap class, and the cap is half of it", () => {
+		const gap = step(cls(colorPickerVariants().swatches()), "gap");
+		expect(gap * POINTS_PER_STEP).toBe(COLOR_PICKER_SWATCH_GAP_PT);
+		expect(COLOR_PICKER_SWATCH_SLOP_CAP).toBe(COLOR_PICKER_SWATCH_GAP_PT / 2);
+	});
+
+	test("slop never overlaps a neighbour's: the gap holds both slops", () => {
+		for (const size of COLOR_PICKER_SIZES) {
+			const slop = resolveMinimumHitSlop(COLOR_PICKER_SWATCH_EDGE_PT[size], MINIMUM_TARGET_PT, {
+				cap: COLOR_PICKER_SWATCH_SLOP_CAP,
+			});
+			const each = typeof slop === "number" ? slop : 0;
+			expect(typeof slop === "number" || slop === undefined).toBe(true);
+			expect(COLOR_PICKER_SWATCH_GAP_PT).toBeGreaterThanOrEqual(2 * each);
+		}
+	});
+
+	test("reach is 32, 40 and 44 points: only lg clears the minimum under the cap", () => {
+		const reach = COLOR_PICKER_SIZES.map((size) => {
+			const edge = COLOR_PICKER_SWATCH_EDGE_PT[size];
+			const slop = resolveMinimumHitSlop(edge, MINIMUM_TARGET_PT, { cap: COLOR_PICKER_SWATCH_SLOP_CAP });
+			return edge + 2 * (typeof slop === "number" ? slop : 0);
+		});
+		expect(reach).toEqual([32, 40, 44]);
 	});
 });

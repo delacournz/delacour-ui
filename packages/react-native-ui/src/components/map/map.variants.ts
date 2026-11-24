@@ -1,6 +1,7 @@
 import type { StyleSpecification, SymbolLayerSpecification } from "@maplibre/maplibre-react-native";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { type HitSlopInsets, normalizeHitSlop } from "../pressable/pressable.variants";
 import type { LngLat, LngLatBounds } from "./map.types";
 import { fitBoundsCamera } from "./map-geometry";
 
@@ -41,6 +42,29 @@ export const MAP_CAMERA_DURATION = 600;
 
 /** How far one press of a zoom control moves — one step of the tile pyramid. */
 export const MAP_ZOOM_STEP = 1;
+
+/** What each `Map.Controls` button draws at: Button's `icon-sm`, 36 points square. */
+export const MAP_CONTROL_SIZE = 36;
+
+/** Which of the two stacked zoom buttons a slop is for. */
+export type MapZoomButton = "in" | "out";
+
+/**
+ * The zoom pair's slop, with nothing on the edge the two buttons share.
+ *
+ * Zoom in and Zoom out abut in one `Surface` with no gap, and React Native
+ * hit-tests the later sibling first: with Button's default slop on every side,
+ * Zoom out's top slop covers the bottom of Zoom in, and a press on the drawn
+ * "+" zooms out. The outer edges keep the minimum target's slop.
+ */
+export function resolveMapZoomHitSlop(
+	slop: number | HitSlopInsets | undefined,
+	button: MapZoomButton
+): HitSlopInsets | undefined {
+	const insets = normalizeHitSlop(slop);
+	if (insets === undefined) return undefined;
+	return button === "in" ? { ...insets, bottom: 0 } : { ...insets, top: 0 };
+}
 
 /** What a map shows when it is given neither a centre nor a box. */
 export const MAP_DEFAULT_ZOOM = 2;

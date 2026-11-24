@@ -1,6 +1,7 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { type HitSlopInsets, MIN_HIT_TARGET } from "../pressable/pressable.variants";
 import type { SurfacePlane } from "../surface/surface.variants";
 
 export const TABLE_SIZES = ["sm", "md"] as const;
@@ -12,6 +13,34 @@ export const TABLE_SORT_DIRECTIONS = ["asc", "desc"] as const;
 export const TABLE_SECTIONS = ["header", "body", "footer"] as const;
 
 export type TableSize = (typeof TABLE_SIZES)[number];
+
+/** A row's minimum height, in points. The `row` slot writes it as `min-h-*`; a test pins the two. */
+export const TABLE_ROW_HEIGHT: Record<TableSize, number> = { sm: 36, md: 44 };
+
+/** A head cell's horizontal padding, in points — the `head` slot's `px-*`; a test pins the two. */
+export const TABLE_HEAD_PADDING_X: Record<TableSize, number> = { sm: 12, md: 16 };
+
+/**
+ * A sort button's drawn height, in points: its label's line (`text-xs` is 16, `text-sm` 20),
+ * since the glyph beside it is shorter. Its width is its label's, which no table can know.
+ */
+export const TABLE_SORT_HEIGHT: Record<TableSize, number> = { sm: 16, md: 20 };
+
+/**
+ * The `hitSlop` of a sortable head's button. It is a content-sized button inside a
+ * cell, so its room is the cell's: vertically the row's minimum height, horizontally
+ * the cell's own padding (neighbouring buttons sit a whole padding apart each side, so
+ * the slop never meets theirs). Both are what a parent's bounds would clip anyway.
+ * Rows abut, so nothing reaches past the head cell. Horizontal slop is the full
+ * padding because the label's width is unknown; a wide label simply keeps more than it
+ * needs, inside the cell.
+ */
+export function resolveTableSortHitSlop(size: TableSize, min: number = MIN_HIT_TARGET): HitSlopInsets {
+	const room = Math.max(0, (TABLE_ROW_HEIGHT[size] - TABLE_SORT_HEIGHT[size]) / 2);
+	const vertical = Math.min(room, Math.max(0, (min - TABLE_SORT_HEIGHT[size]) / 2));
+	const horizontal = TABLE_HEAD_PADDING_X[size];
+	return { bottom: vertical, left: horizontal, right: horizontal, top: vertical };
+}
 export type TableVariant = (typeof TABLE_VARIANTS)[number];
 export type TableAlign = (typeof TABLE_ALIGNS)[number];
 export type TableRowTone = (typeof TABLE_ROW_TONES)[number];

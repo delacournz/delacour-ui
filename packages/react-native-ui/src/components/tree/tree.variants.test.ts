@@ -278,13 +278,25 @@ describe("resolveTreeIndicatorRotation", () => {
 });
 
 describe("resolveTreeIndicatorHitSlop", () => {
-	test("pads the indicator's column out to the minimum touch target", () => {
+	test("pads the indicator's column out to the minimum touch target across the row", () => {
 		for (const size of TREE_SIZES) {
 			const slop = resolveTreeIndicatorHitSlop(size);
 			expect(TREE_INDICATOR_WIDTH[size] + slop.left + slop.right).toBe(TREE_MIN_TOUCH);
-			expect(TREE_ROW_HEIGHT[size] + slop.top + slop.bottom).toBe(TREE_MIN_TOUCH);
 		}
 		expect(TREE_MIN_TOUCH).toBe(44);
+	});
+
+	test("never grows vertically, because rows abut with no gap", () => {
+		for (const size of TREE_SIZES) {
+			const slop = resolveTreeIndicatorHitSlop(size);
+			expect(slop.top).toBe(0);
+			expect(slop.bottom).toBe(0);
+		}
+	});
+
+	test("follows a larger minimum, 48 on Material", () => {
+		const slop = resolveTreeIndicatorHitSlop("sm", 48);
+		expect(TREE_INDICATOR_WIDTH.sm + slop.left + slop.right).toBe(48);
 	});
 
 	test("never negative", () => {

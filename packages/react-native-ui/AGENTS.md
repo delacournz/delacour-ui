@@ -38,7 +38,8 @@ src/
 ├── hooks/                use-controllable-state, use-theme-color,
 │                         use-keyboard-state-sync, use-navigation-theme,
 │                         use-calm-motion, use-scroll-sections,
-│                         use-scroll-source, use-reduce-transparency
+│                         use-scroll-source, use-reduce-transparency,
+│                         use-minimum-hit-target
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,

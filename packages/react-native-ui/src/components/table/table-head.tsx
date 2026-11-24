@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
+import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { IconArrowDown, IconArrowUp, IconSortArrowUpDown } from "../../icons/central";
 import { Icon, type IconComponent } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
@@ -11,6 +12,7 @@ import {
 	resolveCellLayout,
 	resolveTableSortAccessibility,
 	resolveTableSortGlyph,
+	resolveTableSortHitSlop,
 	type TableHeadSort,
 	type TableSortGlyph,
 	tableVariants,
@@ -55,6 +57,7 @@ export function TableHead({
 }: TableHeadProps): ReactElement {
 	const { columns, size } = useTablePart("Table.Head");
 	const cell = useTableCell();
+	const minimumHitTarget = useMinimumHitTarget();
 	const layout = resolveCellLayout(columns, cell?.index ?? 0, column);
 	const glyph = resolveTableSortGlyph(sort);
 	const isSorted = glyph === "asc" || glyph === "desc";
@@ -77,6 +80,7 @@ export function TableHead({
 				className={slots.sort()}
 				feedback="fade"
 				haptic={haptic}
+				hitSlop={resolveTableSortHitSlop(size, minimumHitTarget)}
 				onPress={sort.onPress}
 			>
 				{label}

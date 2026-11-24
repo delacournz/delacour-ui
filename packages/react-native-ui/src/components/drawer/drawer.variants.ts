@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 
 /** The logical sides a drawer opens from. `start` and `end` follow the layout direction. */
 export const DRAWER_SIDES = ["start", "end", "top", "bottom"] as const;
@@ -52,8 +53,11 @@ export const DRAWER_RELEASE_MS = { min: 80, max: 220 } as const;
 /** The scrim's token — the foundation's, named here so the test can pin it. */
 export const DRAWER_SCRIM_TOKEN = "overlay";
 
-/** Slop around the header ✕ — a bare glyph has no capsule to bring it toward 44pt. */
-export const DRAWER_CLOSE_HIT_SLOP = 8;
+/** The drawn edge of the default ✕ — `Icon`'s `size-icon-lg`, with no padding of its own. */
+export const DRAWER_CLOSE_SIZE = 20;
+
+/** Slop that takes the ✕ to 44pt — a bare glyph has no capsule. The component asks `useMinimumHitSlop` so Android can opt up to 48. */
+export const DRAWER_CLOSE_HIT_SLOP = resolveMinimumHitSlop(DRAWER_CLOSE_SIZE);
 
 export const drawerVariants = tv({
 	slots: {

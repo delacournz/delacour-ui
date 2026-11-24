@@ -21,6 +21,7 @@ import {
 	dispatchPressableAccessibilityAction,
 	invokePressableHandler,
 	isPressableInteractive,
+	normalizeHitSlop,
 	type PressableFeedback,
 	resolvePressableAccessibilityState,
 	resolvePressableActivation,
@@ -164,10 +165,21 @@ export function Pressable({
 	accessibilityActions,
 	onAccessibilityAction,
 	onAccessibilityTap,
+	hitSlop,
 	ref,
 	...props
 }: PressableProps): ReactElement {
 	const pressed = useSharedValue(0);
+	// The slop goes to the view and to the gestures, and each platform reads a
+	// different one: iOS hit-tests the view's `hitSlop`, Gesture Handler's
+	// Android orchestrator only the gesture's. As primitives, so the gesture's
+	// memo holds. See AGENTS.md.
+	const slop = normalizeHitSlop(hitSlop);
+	const slopTop = slop?.top ?? 0;
+	const slopRight = slop?.right ?? 0;
+	const slopBottom = slop?.bottom ?? 0;
+	const slopLeft = slop?.left ?? 0;
+	const hasSlop = slop !== undefined;
 	const interactive = isPressableInteractive({ busy, disabled });
 	// Destructured to primitives on purpose. Reanimated's plugin collects what
 	// the worklet closes over, and a fresh object each render would rebuild the
@@ -179,6 +191,7 @@ export function Pressable({
 	const restOpacity = resolveRestOpacity(useResolveClassNames(className ?? "").opacity);
 
 	const gesture = useMemo(() => {
+		const insets = { bottom: slopBottom, left: slopLeft, right: slopRight, top: slopTop };
 		const tap = Gesture.Tap()
 			.enabled(interactive)
 			.shouldCancelWhenOutside(true)
@@ -196,6 +209,7 @@ export function Pressable({
 				pressed.value = withSpring(0, PRESS_SPRING);
 			});
 
+		if (hasSlop) tap.hitSlop(insets);
 		if (!onLongPress) return tap;
 
 		const longPress = Gesture.LongPress()
@@ -206,8 +220,10 @@ export function Pressable({
 				scheduleOnRN(onLongPress);
 			});
 
+		if (hasSlop) longPress.hitSlop(insets);
+
 		return Gesture.Simultaneous(tap, longPress);
-	}, [haptic, interactive, onLongPress, onPress, pressed]);
+	}, [hasSlop, haptic, interactive, onLongPress, onPress, pressed, slopBottom, slopLeft, slopRight, slopTop]);
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		opacity: restOpacity * (1 - pressed.value * (1 - targetOpacity)),
@@ -257,6 +273,7 @@ export function Pressable({
 			accessibilityState: state,
 			accessible: true,
 			className,
+			hitSlop,
 			ref,
 			style: animatedStyle,
 			...props,
@@ -272,6 +289,7 @@ export function Pressable({
 			// element, which is what a control should be.
 			accessible
 			className={className}
+			hitSlop={hitSlop}
 			ref={ref}
 			style={animatedStyle}
 			{...props}

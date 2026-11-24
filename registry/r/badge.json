@@ -12,7 +12,8 @@
 		"icons",
 		"pressable",
 		"text",
-		"tv"
+		"tv",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -36,6 +37,10 @@
 			"target": "badge/badge-close-button.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
@@ -108,6 +113,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		},
@@ -130,6 +139,10 @@
 				{
 					"from": "../../styles/tokens",
 					"to": "@registry/styles/tokens"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}

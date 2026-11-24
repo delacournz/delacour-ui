@@ -63,8 +63,9 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   chained ahead of the child's own, for `BottomSheet.Trigger`'s reason: two tap gestures in an
   ancestor/descendant pair are not simultaneous, so a pressable wrapped around a `Button` never
   fires. The child has to be something that handles `onPress`.
-- **The corner ✕ presses with `fade` and 8pt of slop.** A scale on a glyph this small reads as a
-  jitter, and a bare glyph has no capsule to bring it toward 44pt. It sits out of the flow, and
+- **The corner ✕ presses with `fade` and slop that reaches 44pt.** A scale on a glyph this small reads as a
+  jitter, and a bare glyph has no capsule, so its 20pt edge plus `useMinimumHitSlop` (12pt a side; 14 under
+  `isMaterialHitTarget` on Android) is the target. It sits out of the flow, and
   `Dialog.Title`'s `pr-8` reserves its clearance on every dialog, so adding a close never reflows
   the title.
 - **The title and description carry no type of their own.** They *are* `Text.Header` and a muted

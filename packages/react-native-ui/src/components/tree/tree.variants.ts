@@ -167,13 +167,15 @@ export function resolveTreeIndicatorRotation({ isExpanded, isRTL }: { isExpanded
 export type TreeHitSlop = { top: number; bottom: number; left: number; right: number };
 
 /**
- * The slop that grows the indicator's column out to {@link TREE_MIN_TOUCH} on
- * each axis. Symmetric, so it never needs to know which way the layout runs.
+ * The slop that grows the indicator's column out to `min` (default
+ * {@link TREE_MIN_TOUCH}) across the row. Horizontal only: rows abut with no gap, so
+ * a vertical slop would reach into the neighbouring row's press and, being later
+ * or earlier in the tree, steal or lose it. Symmetric, so it never needs to know
+ * which way the layout runs.
  */
-export function resolveTreeIndicatorHitSlop(size: TreeSize): TreeHitSlop {
-	const horizontal = Math.max(0, TREE_MIN_TOUCH - TREE_INDICATOR_WIDTH[size]) / 2;
-	const vertical = Math.max(0, TREE_MIN_TOUCH - TREE_ROW_HEIGHT[size]) / 2;
-	return { top: vertical, bottom: vertical, left: horizontal, right: horizontal };
+export function resolveTreeIndicatorHitSlop(size: TreeSize, min: number = TREE_MIN_TOUCH): TreeHitSlop {
+	const horizontal = Math.max(0, min - TREE_INDICATOR_WIDTH[size]) / 2;
+	return { top: 0, bottom: 0, left: horizontal, right: horizontal };
 }
 
 /**

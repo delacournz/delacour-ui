@@ -23,7 +23,8 @@
 		"text",
 		"tv",
 		"use-calm-motion",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -142,6 +143,10 @@
 				{
 					"from": "../../hooks/use-calm-motion",
 					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
 				},
 				{
 					"from": "../../icons/central",
@@ -318,6 +323,10 @@
 				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				},
 				{
 					"from": "../select/select.types",

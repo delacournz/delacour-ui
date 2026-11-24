@@ -102,11 +102,11 @@ describe("Badge", () => {
 			const onClose = jest.fn();
 			const onPress = jest.fn();
 			await renderWithProviders(
-				<Badge onClose={onClose} onPress={onPress}>
+				<Badge closeTestID="close" onClose={onClose} onPress={onPress}>
 					Tag
 				</Badge>
 			);
-			await fireEvent(screen.getByRole("button", { name: "Remove" }), "accessibilityTap");
+			await fireEvent(screen.getByTestId("close", { includeHiddenElements: true }), "accessibilityTap");
 			expect(onClose).toHaveBeenCalledTimes(1);
 			expect(onPress).not.toHaveBeenCalled();
 		});
@@ -127,6 +127,87 @@ describe("Badge", () => {
 			expect(close).toBeDisabled();
 			await fireEvent(close, "accessibilityTap");
 			expect(onClose).not.toHaveBeenCalled();
+		});
+
+		test("a pressable badge offers remove as an accessibility action and hides the folded-in control", async () => {
+			const onClose = jest.fn();
+			const onPress = jest.fn();
+			await renderWithProviders(
+				<Badge
+					closeAccessibilityLabel="Remove React"
+					closeTestID="close"
+					onClose={onClose}
+					onPress={onPress}
+					testID="badge"
+				>
+					React
+				</Badge>
+			);
+			const root = screen.getByTestId("badge");
+			expect(root.props.accessibilityActions).toEqual([{ label: "Remove React", name: "remove" }]);
+			expect(screen.getByTestId("close", { includeHiddenElements: true })).toHaveProp("accessible", false);
+			await fireEvent(root, "accessibilityAction", { nativeEvent: { actionName: "remove" } });
+			expect(onClose).toHaveBeenCalledTimes(1);
+			expect(onPress).not.toHaveBeenCalled();
+		});
+
+		test("the remove action keeps a caller's actions and forwards every other one", async () => {
+			const onAccessibilityAction = jest.fn();
+			await renderWithProviders(
+				<Badge
+					accessibilityActions={[{ label: "Share", name: "share" }]}
+					onAccessibilityAction={onAccessibilityAction}
+					onClose={() => undefined}
+					onPress={() => undefined}
+					testID="badge"
+				>
+					React
+				</Badge>
+			);
+			const root = screen.getByTestId("badge");
+			expect(root.props.accessibilityActions).toEqual([
+				{ label: "Share", name: "share" },
+				{ label: "Remove", name: "remove" },
+			]);
+			await fireEvent(root, "accessibilityAction", { nativeEvent: { actionName: "share" } });
+			expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+		});
+
+		test("a disabled pressable badge's remove action does nothing", async () => {
+			const onClose = jest.fn();
+			await renderWithProviders(
+				<Badge isDisabled onClose={onClose} onPress={() => undefined} testID="badge">
+					React
+				</Badge>
+			);
+			await fireEvent(screen.getByTestId("badge"), "accessibilityAction", { nativeEvent: { actionName: "remove" } });
+			expect(onClose).not.toHaveBeenCalled();
+		});
+
+		test("a plain badge keeps the control its own element and adds no action", async () => {
+			await renderWithProviders(
+				<Badge onClose={() => undefined} testID="badge">
+					Tag
+				</Badge>
+			);
+			expect(screen.getByTestId("badge").props.accessibilityActions).toBeUndefined();
+			expect(screen.getByRole("button", { name: "Remove" })).toBeOnTheScreen();
+		});
+
+		test("the dismiss control carries capped slop, and a caller's hitSlop wins", async () => {
+			await renderWithProviders(
+				<>
+					<Badge closeTestID="a" onClose={() => undefined}>
+						A
+					</Badge>
+					<Badge onClose={() => undefined} size="lg">
+						B
+						<Badge.CloseButton hitSlop={9} testID="b" />
+					</Badge>
+				</>
+			);
+			expect(screen.getByTestId("a")).toHaveProp("hitSlop", 3);
+			expect(screen.getByTestId("b")).toHaveProp("hitSlop", 9);
 		});
 
 		test("no dismiss control without onClose", async () => {

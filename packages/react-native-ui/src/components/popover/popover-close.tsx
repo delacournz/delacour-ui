@@ -1,10 +1,11 @@
 import type { ReactElement } from "react";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconCrossSmall } from "../../icons/central";
 import { Slot } from "../../lib/slot";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { usePopoverContext } from "./popover.context";
-import { POPOVER_CLOSE_HIT_SLOP, popoverVariants } from "./popover.variants";
+import { POPOVER_CLOSE_SIZE, popoverVariants } from "./popover.variants";
 
 export type PopoverCloseProps =
 	| ({ asChild: true; children: ReactElement } & Omit<PressableProps, "asChild" | "children">)
@@ -14,7 +15,7 @@ export type PopoverCloseProps =
  * Closes the popover.
  *
  * Without `asChild` it is the ✕ in the panel's top-right corner: out of the
- * flow, `fade` feedback and an 8pt slop for `BottomSheet.Close`'s reasons, and
+ * flow, `fade` feedback and a 12pt slop for `BottomSheet.Close`'s reasons, and
  * `Popover.Title` reserves its clearance. With `asChild` it donates the close to
  * its child's `onPress` — a "Done" button in the panel's footer.
  *
@@ -28,6 +29,7 @@ export type PopoverCloseProps =
  */
 export function PopoverClose(props: PopoverCloseProps): ReactElement {
 	const { close } = usePopoverContext();
+	const slop = useMinimumHitSlop(POPOVER_CLOSE_SIZE);
 
 	if (props.asChild) {
 		const { asChild: _asChild, children, onPress, ...rest } = props;
@@ -47,7 +49,7 @@ export function PopoverClose(props: PopoverCloseProps): ReactElement {
 		accessibilityLabel = "Close",
 		className,
 		feedback = "fade",
-		hitSlop = POPOVER_CLOSE_HIT_SLOP,
+		hitSlop = slop,
 		onPress,
 		...rest
 	} = props;

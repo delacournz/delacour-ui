@@ -3,9 +3,14 @@ import {
 	dispatchPressableAccessibilityAction,
 	invokePressableHandler,
 	isPressableInteractive,
+	MATERIAL_MIN_HIT_TARGET,
+	MIN_HIT_TARGET,
+	normalizeHitSlop,
 	PRESSABLE_FEEDBACK,
 	PRESSABLE_FEEDBACK_FALLBACK,
 	PRESSABLE_FEEDBACKS,
+	resolveMinimumHitSlop,
+	resolveMinimumHitTarget,
 	resolvePressableAccessibilityState,
 	resolvePressableActivation,
 	resolvePressedState,
@@ -439,5 +444,81 @@ describe("dispatchPressableAccessibilityAction", () => {
 			})
 		).toBe(false);
 		expect(calls).toEqual({ longPress: 0, press: 0 });
+	});
+});
+
+describe("resolveMinimumHitTarget", () => {
+	test("is 44 everywhere by default", () => {
+		expect(resolveMinimumHitTarget({ platform: "ios" })).toBe(MIN_HIT_TARGET);
+		expect(resolveMinimumHitTarget({ platform: "android" })).toBe(44);
+	});
+
+	test("Material's 48dp is an Android opt-in only", () => {
+		expect(resolveMinimumHitTarget({ isMaterialHitTarget: true, platform: "android" })).toBe(MATERIAL_MIN_HIT_TARGET);
+		expect(MATERIAL_MIN_HIT_TARGET).toBe(48);
+		expect(resolveMinimumHitTarget({ isMaterialHitTarget: true, platform: "ios" })).toBe(44);
+		expect(resolveMinimumHitTarget({ isMaterialHitTarget: true, platform: "web" })).toBe(44);
+	});
+});
+
+describe("resolveMinimumHitSlop", () => {
+	test("needs nothing at or above the minimum", () => {
+		expect(resolveMinimumHitSlop(44)).toBeUndefined();
+		expect(resolveMinimumHitSlop(52)).toBeUndefined();
+		expect(resolveMinimumHitSlop({ height: 44, width: 120 })).toBeUndefined();
+	});
+
+	test("a square short of the minimum gets one number, half the shortfall a side", () => {
+		expect(resolveMinimumHitSlop(36)).toBe(4);
+		expect(resolveMinimumHitSlop(20)).toBe(12);
+		expect(resolveMinimumHitSlop(36, 48)).toBe(6);
+	});
+
+	test("a wide target grows only the axis that is short", () => {
+		expect(resolveMinimumHitSlop({ height: 36, width: 120 })).toEqual({ bottom: 4, left: 0, right: 0, top: 4 });
+		expect(resolveMinimumHitSlop({ height: 60, width: 24 })).toEqual({ bottom: 0, left: 10, right: 10, top: 0 });
+	});
+
+	test("an equal shortfall on both axes collapses to a number", () => {
+		expect(resolveMinimumHitSlop({ height: 28, width: 28 })).toBe(8);
+	});
+
+	test("size plus twice the slop always reaches the minimum", () => {
+		for (const edge of [0, 1, 7, 13, 20, 24, 28, 32, 33, 36, 40, 43]) {
+			for (const min of [44, 48]) {
+				const slop = resolveMinimumHitSlop(edge, min);
+				expect(typeof slop).toBe("number");
+				expect(edge + 2 * (slop as number)).toBeGreaterThanOrEqual(min);
+			}
+		}
+	});
+
+	test("a cap keeps dense neighbours from overlapping, at the cost of the minimum", () => {
+		expect(resolveMinimumHitSlop(32, 44, { cap: 4 })).toBe(4);
+		expect(resolveMinimumHitSlop({ height: 20, width: 20 }, 44, { cap: 3 })).toBe(3);
+		expect(resolveMinimumHitSlop(40, 44, { cap: 4 })).toBe(2);
+		expect(resolveMinimumHitSlop(32, 44, { cap: 0 })).toBeUndefined();
+	});
+
+	test("a negative or non-finite size is treated as nothing drawn", () => {
+		expect(resolveMinimumHitSlop(-10)).toBe(22);
+		expect(resolveMinimumHitSlop(Number.NaN)).toBe(22);
+	});
+});
+
+describe("normalizeHitSlop", () => {
+	test("nothing stays nothing", () => {
+		expect(normalizeHitSlop(undefined)).toBeUndefined();
+		expect(normalizeHitSlop(null)).toBeUndefined();
+		expect(normalizeHitSlop(0)).toBeUndefined();
+		expect(normalizeHitSlop({})).toBeUndefined();
+	});
+
+	test("a number is every side", () => {
+		expect(normalizeHitSlop(4)).toEqual({ bottom: 4, left: 4, right: 4, top: 4 });
+	});
+
+	test("missing sides are zero", () => {
+		expect(normalizeHitSlop({ top: 6 })).toEqual({ bottom: 0, left: 0, right: 0, top: 6 });
 	});
 });

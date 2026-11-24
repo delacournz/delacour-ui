@@ -1,11 +1,14 @@
 import { describe, expect, test } from "bun:test";
 import { cn } from "../../lib/cn";
+import { TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { BUTTON_RADIUS_TOKENS, ICON_SIZE_TOKENS } from "../../styles/tokens";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	BUTTON_FOREGROUND_TOKEN,
 	BUTTON_GROUP_ORIENTATIONS,
 	BUTTON_GROUP_POSITIONS,
 	BUTTON_GROUP_SEPARATOR_ORIENTATION,
+	BUTTON_HEIGHTS,
 	BUTTON_ICON_SIZES,
 	BUTTON_LABEL_SIZES,
 	BUTTON_MATERIALS,
@@ -16,6 +19,7 @@ import {
 	type ButtonLabelSize,
 	buttonVariants,
 	resolveButtonFeedback,
+	resolveButtonHitTarget,
 	resolveButtonLayout,
 	resolveGroupedButtonSize,
 	resolveGroupMemberStretch,
@@ -997,5 +1001,55 @@ describe("resolveGroupMemberStretch", () => {
 		for (const orientation of BUTTON_GROUP_ORIENTATIONS) {
 			expect(resolveGroupMemberStretch({ isFullWidth: false, orientation })).toBe(false);
 		}
+	});
+});
+
+describe("BUTTON_HEIGHTS", () => {
+	test("matches the --spacing-button-* tokens", () => {
+		for (const step of BUTTON_LABEL_SIZES) {
+			const px = TOKENS_CSS.match(new RegExp(`--spacing-button-${step}:\\s*(\\d+)px`))?.[1];
+			expect(Number(px)).toBe(BUTTON_HEIGHTS[step]);
+		}
+	});
+});
+
+describe("resolveButtonHitTarget", () => {
+	const UNBOUNDED = Number.MAX_SAFE_INTEGER;
+
+	test("a sm label button is short only in height", () => {
+		expect(resolveButtonHitTarget({ size: "sm" })).toEqual({ height: 36, width: UNBOUNDED });
+		expect(resolveMinimumHitSlop(resolveButtonHitTarget({ size: "sm" }))).toEqual({
+			bottom: 4,
+			left: 0,
+			right: 0,
+			top: 4,
+		});
+	});
+
+	test("an icon-sm button is a 36pt square that reaches 44", () => {
+		expect(resolveButtonHitTarget({ size: "icon-sm" })).toBe(36);
+		expect(resolveMinimumHitSlop(resolveButtonHitTarget({ size: "icon-sm" }))).toBe(4);
+		expect(resolveMinimumHitSlop(resolveButtonHitTarget({ size: "icon-sm" }), 48)).toBe(6);
+	});
+
+	test("md and lg need no slop", () => {
+		for (const size of ["md", "lg", "icon-md", "icon-lg"] as const) {
+			expect(resolveMinimumHitSlop(resolveButtonHitTarget({ size }))).toBeUndefined();
+		}
+	});
+
+	test("inside a group the slop never reaches along the run, into a neighbour", () => {
+		expect(resolveButtonHitTarget({ orientation: "horizontal", size: "icon-sm" })).toEqual({
+			height: 36,
+			width: UNBOUNDED,
+		});
+		expect(resolveButtonHitTarget({ orientation: "vertical", size: "icon-sm" })).toEqual({
+			height: UNBOUNDED,
+			width: 36,
+		});
+		expect(resolveButtonHitTarget({ orientation: "vertical", size: "sm" })).toEqual({
+			height: UNBOUNDED,
+			width: UNBOUNDED,
+		});
 	});
 });

@@ -222,7 +222,8 @@
 				"icons",
 				"pressable",
 				"text",
-				"tv"
+				"tv",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -265,7 +266,8 @@
 				"icons",
 				"pressable",
 				"text",
-				"tv"
+				"tv",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -457,7 +459,8 @@
 				"separator",
 				"spinner",
 				"text",
-				"tv"
+				"tv",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -801,12 +804,14 @@
 			],
 			"registryDependencies": [
 				"badge",
+				"direction",
 				"icon",
 				"icons",
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -983,6 +988,7 @@
 				"tv",
 				"use-calm-motion",
 				"use-controllable-state",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -1057,7 +1063,8 @@
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1393,7 +1400,8 @@
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1483,7 +1491,8 @@
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2376,9 +2385,11 @@
 				"button",
 				"icon",
 				"icons",
+				"pressable",
 				"surface",
 				"text",
 				"tv",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -3189,7 +3200,8 @@
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -3435,7 +3447,8 @@
 			],
 			"registryDependencies": [
 				"use-calm-motion",
-				"use-keyboard-state-sync"
+				"use-keyboard-state-sync",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [],
 			"expoDependencies": [
@@ -3684,6 +3697,7 @@
 				"text",
 				"tv",
 				"use-keyboard-state-sync",
+				"use-minimum-hit-target",
 				"use-scroll-source",
 				"use-theme-color"
 			],
@@ -4046,7 +4060,8 @@
 				"spinner",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -4444,7 +4459,8 @@
 				"slider",
 				"toggle-button",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -5148,6 +5164,7 @@
 				"surface",
 				"text",
 				"tv",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -5204,6 +5221,7 @@
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-minimum-hit-target",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -5931,7 +5949,8 @@
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-minimum-hit-target"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -6033,6 +6052,21 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-keyboard-state-sync.tsx"
+			]
+		},
+		{
+			"name": "use-minimum-hit-target",
+			"type": "registry:hook",
+			"title": "useMinimumHitSlop",
+			"description": "The hitSlop that grows a small control to the minimum touch target, and the provider an Android app opts into 48dp with.",
+			"registryDependencies": [
+				"pressable"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-minimum-hit-target.tsx"
 			]
 		},
 		{

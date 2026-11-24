@@ -11,13 +11,13 @@ everything — a root layout, an `App.tsx`.
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/provider` |
 | `provider.tsx` | `DelacourProvider` — the app's root layer stack; its `displayName` is `DelacourUI.Provider`, because prefix-plus-symbol would stutter and this matches its export subpath |
-| `provider.render.test.tsx` | Mounted under Jest — children render, gesture root lets a Button mount, `isMotionCalm` reaches `useCalmMotion`, `initialMetrics` seeds insets, `style` forwarded |
+| `provider.render.test.tsx` | Mounted under Jest — children render, gesture root lets a Button mount, `isMotionCalm` reaches `useCalmMotion`, `isMaterialHitTarget` reaches `useMinimumHitTarget`, `initialMetrics` seeds insets, `style` forwarded |
 
 ## Design
 
-- **Five layers, outermost first**: `GestureHandlerRootView` →
+- **Six layers, outermost first**: `GestureHandlerRootView` →
   `SafeAreaProvider` → `KeyboardProvider` → `<KeyboardStateSync />` beside
-  `CalmMotionProvider`, which wraps the children. The order is not stylistic. The gesture root has to be an ancestor
+  `CalmMotionProvider` → `MinimumHitTargetProvider`, which wraps the children. The order is not stylistic. The gesture root has to be an ancestor
   native view of every handler a `Pressable` creates, and its absence is
   *silent* — no error, no warning, presses simply stop landing.
   `KeyboardStateSync` has to be a CHILD of `KeyboardProvider`, because it calls
@@ -77,6 +77,13 @@ everything — a root layout, an `App.tsx`.
   `Progress` are the behaviour and keep moving. The context defaults to `false`,
   so a component used without this provider (a `delacour add` copy in an app
   with its own stack) still honours reduce motion.
+- **`isMaterialHitTarget` is Android's opt-in to 48dp targets.** It feeds
+  `MinimumHitTargetProvider` (`hooks/use-minimum-hit-target.tsx`), which
+  `useMinimumHitSlop()` reads to size the `hitSlop` every small control adds —
+  a `sm` Button, a Badge's ✕, a Calendar arrow. Off, every platform's minimum is
+  the HIG's 44; on, Android's is Material's 48 and iOS stays at 44. Nothing
+  drawn moves either way. The context defaults to `false`, so a copy used
+  without this provider still reaches 44.
 - **Deliberately not idempotent.** It does not detect an enclosing copy of
   itself. Nesting `GestureHandlerRootView` costs a `View`; nesting
   `SafeAreaProvider` seeds from the parent's insets and costs a native view;

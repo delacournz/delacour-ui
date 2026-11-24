@@ -9,7 +9,8 @@
 	],
 	"registryDependencies": [
 		"use-calm-motion",
-		"use-keyboard-state-sync"
+		"use-keyboard-state-sync",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [],
 	"expoDependencies": [
@@ -49,6 +50,10 @@
 					"to": "@registry/hooks/use-keyboard-state-sync"
 				},
 				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
+				{
 					"from": "@delacour/react-native-ui/bottom-sheet",
 					"to": "@registry/ui/bottom-sheet"
 				},
@@ -68,6 +73,10 @@
 				{
 					"from": "../../hooks/use-calm-motion",
 					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
 				},
 				{
 					"from": "../../test/render",

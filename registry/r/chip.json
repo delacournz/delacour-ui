@@ -9,12 +9,14 @@
 	],
 	"registryDependencies": [
 		"badge",
+		"direction",
 		"icon",
 		"icons",
 		"pressable",
 		"text",
 		"tv",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -39,8 +41,16 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
+				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../direction/direction.context",
+					"to": "@registry/ui/direction/direction.context"
 				},
 				{
 					"from": "../icon",
@@ -118,6 +128,10 @@
 				{
 					"from": "../badge/badge.variants",
 					"to": "@registry/ui/badge/badge.variants"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		},
@@ -163,6 +177,10 @@
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../direction/direction.context",
+					"to": "@registry/ui/direction/direction.context"
 				}
 			]
 		}

@@ -3,6 +3,7 @@ import { declaredTokens } from "../../styles/theme-tokens.test";
 import { OVERLAY_SCRIM_TOKEN } from "../overlay/overlay.variants";
 import {
 	DRAWER_CLOSE_HIT_SLOP,
+	DRAWER_CLOSE_SIZE,
 	DRAWER_DISMISS_FRACTION,
 	DRAWER_EDGES,
 	DRAWER_FLING_VELOCITY,
@@ -87,7 +88,7 @@ describe("constants", () => {
 	});
 
 	test("the close glyph gets slop toward 44pt", () => {
-		expect(DRAWER_CLOSE_HIT_SLOP).toBe(8);
+		expect(DRAWER_CLOSE_SIZE + 2 * Number(DRAWER_CLOSE_HIT_SLOP)).toBeGreaterThanOrEqual(44);
 	});
 
 	test("a release animation is finite and ordered", () => {

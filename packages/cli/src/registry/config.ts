@@ -811,6 +811,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "useCalmMotion",
 		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",
 	},
+	"use-minimum-hit-target": {
+		title: "useMinimumHitSlop",
+		description:
+			"The hitSlop that grows a small control to the minimum touch target, and the provider an Android app opts into 48dp with.",
+	},
 	"use-reduce-transparency": {
 		title: "useReduceTransparency",
 		description: "Whether iOS's Reduce Transparency is on, live, so a blur can swap for an opaque wash.",

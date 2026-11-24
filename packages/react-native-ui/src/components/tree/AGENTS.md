@@ -83,10 +83,12 @@ are selected.
 - **`single` keeps a re-pressed node selected.** `Radio.Group`'s rule: a stray tap never
   leaves the tree with nothing chosen, and `onValueChange` is not called for a change that
   did not happen. `multiple` toggles, as a flat set.
-- **The indicator's column is narrower than a touch target**, so it takes a symmetric hit
-  slop out to 44pt on both axes (`resolveTreeIndicatorHitSlop`). Where that slop overlaps
-  the body, the body is later in the tree and wins the touch; the slop's real reach is into
-  the indent.
+- **The indicator's column is narrower than a touch target**, so it takes a symmetric
+  *horizontal* hit slop out to the app's minimum touch target (`resolveTreeIndicatorHitSlop`,
+  44pt, 48 on Material). **It never grows vertically**: rows abut with no gap, so a vertical
+  slop would reach into the next row's press and take touches from it. Where the horizontal
+  slop overlaps the body, the body is later in the tree and wins the touch; the slop's real
+  reach is into the indent.
 - **`className` styles the outer row; every other prop reaches the body**, as on
   `Steps.Item` — `testID` and the accessibility props belong to what is pressed.
 

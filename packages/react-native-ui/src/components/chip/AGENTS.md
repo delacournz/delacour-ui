@@ -74,8 +74,13 @@ and `Chip.CloseButton`.
 - **Hit slop is vertical and capped at four points.** Chips wrap with `gap-2`;
   slop past half that gap reaches into the neighbouring row and makes a tap
   between two chips ambiguous. `CHIP_HIT_SLOP` is never horizontal for the same
-  reason. The close glyph gets `CHIP_CLOSE_HIT_SLOP` on every side instead — it
-  is 14–18 points, and its slop only reaches into its own chip's padding.
+  reason, so `sm` and `md` chips fall short of 44 tall on purpose. The close
+  glyph is 14–18 points and bare, so it grows with `useMinimumHitSlop` on every
+  side, capped by `CHIP_CLOSE_HIT_CAP` at its chip's edge plus half a gap — more
+  would land on the next chip, and the later sibling wins the press. Its leading
+  side stops at `CHIP_CLOSE_LEADING_CAP`, half the label gap: the close button is
+  the inner target, hit-tested first, so more would remove a pressable chip on a
+  press meant to toggle it.
 - **`onClose` is its own pressable, never a mode of the root.** The remove
   control is a `Chip.CloseButton` composed in last, so its tap is claimed by the
   inner detector and never also toggles the chip. It presses with `fade` —

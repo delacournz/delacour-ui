@@ -19,7 +19,8 @@
 		"spinner",
 		"tv",
 		"use-calm-motion",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -72,6 +73,10 @@
 			"target": "search-bar/search-bar-clear.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
@@ -182,6 +187,10 @@
 				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}

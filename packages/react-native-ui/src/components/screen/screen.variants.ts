@@ -478,3 +478,14 @@ export function resolveScreenViewPadding(state: {
 }
 
 export type ScreenVariantProps = VariantProps<typeof screenVariants>;
+
+/** `--spacing-icon-lg`: the back-button glyph box, in pt. */
+export const SCREEN_BACK_BUTTON_GLYPH = 20;
+
+/**
+ * The back button's drawn size when it holds only its glyph. Children widen
+ * it, which only makes the horizontal slop surplus.
+ */
+export function resolveBackButtonHitTarget(): { width: number; height: number } {
+	return { width: SCREEN_BACK_BUTTON_GLYPH, height: SCREEN_BACK_BUTTON_GLYPH };
+}

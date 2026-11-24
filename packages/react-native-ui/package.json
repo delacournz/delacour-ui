@@ -150,6 +150,7 @@
 		"./hooks/use-calm-motion": "./src/hooks/use-calm-motion.tsx",
 		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",
 		"./hooks/use-keyboard-state-sync": "./src/hooks/use-keyboard-state-sync.tsx",
+		"./hooks/use-minimum-hit-target": "./src/hooks/use-minimum-hit-target.tsx",
 		"./hooks/use-navigation-theme": "./src/hooks/use-navigation-theme.ts",
 		"./hooks/use-reduce-transparency": "./src/hooks/use-reduce-transparency.ts",
 		"./hooks/use-scroll-sections": "./src/hooks/use-scroll-sections.ts",

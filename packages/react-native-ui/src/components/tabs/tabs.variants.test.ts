@@ -18,6 +18,7 @@ import {
 	resolveTabIndex,
 	resolveTabOrder,
 	resolveTabSelectedness,
+	resolveTabsTriggerHitSlop,
 	resolveTabsTriggerState,
 	resolveVisualIndex,
 	shouldEmitTabChange,
@@ -26,12 +27,14 @@ import {
 	TABS_DEFAULT_VARIANT,
 	TABS_FOREGROUND_TOKEN,
 	TABS_LABEL_TEXT_SIZE,
+	TABS_LIST_PADDING,
 	TABS_PAN,
 	TABS_SCROLL_ALIGNS,
 	TABS_SCROLL_INSET,
 	TABS_SEPARATOR_FADE,
 	TABS_SETTLE_SPRING,
 	TABS_SIZES,
+	TABS_TRIGGER_HEIGHT,
 	TABS_VARIANTS,
 	TABS_VISUAL_HYSTERESIS,
 	tabsVariants,
@@ -1016,5 +1019,64 @@ describe("resolveScrollOffset", () => {
 
 	test("leaves the bar alone before it has measured", () => {
 		expect(resolveScrollOffset({ ...base, align: "center", viewportWidth: 0 })).toBe(120);
+	});
+});
+
+describe("resolveTabsTriggerHitSlop", () => {
+	const classes = (slot: string, variant: "primary" | "secondary", size: "sm" | "md" | "lg"): string =>
+		tabsVariants({ size, variant })[slot as "list" | "trigger"]();
+
+	test("TABS_TRIGGER_HEIGHT matches each size's min-h class", () => {
+		const minH = { sm: "min-h-9", md: "min-h-11", lg: "min-h-12" } as const;
+		for (const size of TABS_SIZES) {
+			expect(classes("trigger", "primary", size)).toContain(minH[size]);
+			expect(TABS_TRIGGER_HEIGHT[size]).toBe({ sm: 36, md: 44, lg: 48 }[size]);
+		}
+	});
+
+	test("TABS_LIST_PADDING matches the list's p-* class", () => {
+		const pad = { 0: "", 2: "p-0.5", 4: "p-1" } as const;
+		for (const variant of TABS_VARIANTS) {
+			for (const size of TABS_SIZES) {
+				const padding = TABS_LIST_PADDING[variant][size] as 0 | 2 | 4;
+				const list = classes("list", variant, size);
+				if (padding === 0) expect(list).not.toMatch(/\bp-/);
+				else expect(list).toContain(pad[padding]);
+			}
+		}
+	});
+
+	test("is vertical only, never past the list's padding, and never negative", () => {
+		for (const variant of TABS_VARIANTS) {
+			for (const size of TABS_SIZES) {
+				for (const min of [44, 48]) {
+					const slop = resolveTabsTriggerHitSlop({ min, size, variant });
+					if (slop === undefined) continue;
+					expect(slop.left).toBe(0);
+					expect(slop.right).toBe(0);
+					expect(slop.top).toBe(slop.bottom);
+					expect(slop.top).toBeGreaterThan(0);
+					expect(slop.top).toBeLessThanOrEqual(TABS_LIST_PADDING[variant][size]);
+					expect(TABS_TRIGGER_HEIGHT[size] + 2 * slop.top).toBeLessThanOrEqual(min);
+				}
+			}
+		}
+	});
+
+	test("reaches the minimum wherever the list leaves room", () => {
+		expect(resolveTabsTriggerHitSlop({ size: "md", variant: "primary" })).toBeUndefined();
+		expect(resolveTabsTriggerHitSlop({ size: "lg", variant: "primary", min: 48 })).toBeUndefined();
+		const md = resolveTabsTriggerHitSlop({ min: 48, size: "md", variant: "primary" });
+		expect(md && TABS_TRIGGER_HEIGHT.md + 2 * md.top).toBe(48);
+	});
+
+	test("a primary sm bar gets what its 2pt track allows; a secondary bar has no room and gets none", () => {
+		expect(resolveTabsTriggerHitSlop({ size: "sm", variant: "primary" })).toEqual({
+			bottom: 2,
+			left: 0,
+			right: 0,
+			top: 2,
+		});
+		expect(resolveTabsTriggerHitSlop({ size: "sm", variant: "secondary" })).toBeUndefined();
 	});
 });

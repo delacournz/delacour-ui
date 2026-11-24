@@ -95,6 +95,13 @@ describe("Select trigger", () => {
 		expect(screen.getByRole("radio", { name: "Designer" })).toBeOnTheScreen();
 	});
 
+	test("the title and search stay pinned while the rows scroll", async () => {
+		await renderSelect({ isSearchable: true, title: "Your role" });
+		await openSheet("Your role");
+		expect(screen.getByTestId("select-list")).toHaveProp("stickyHeaderIndices", [0]);
+		expect(screen.getByTestId("select-header")).toBeOnTheScreen();
+	});
+
 	test("a disabled select is disabled and never opens", async () => {
 		await renderSelect({ isDisabled: true });
 		expect(trigger()).toBeDisabled();

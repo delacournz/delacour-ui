@@ -164,8 +164,8 @@ export const selectVariants = tv({
 		rowCheckbox: "items-center justify-center overflow-hidden border border-input bg-card",
 		/** Layout only — the heading is a `Text.Overline`, which owns its type. */
 		groupHeading: "pb-1.5 pt-4",
-		/** The sheet's title and search field, above the rows. */
-		header: "gap-3 pb-3",
+		/** The sheet's title and search field, pinned above the rows. Opaque, so rows scroll under it unseen. */
+		header: "gap-3 bg-popover pb-3",
 		/**
 		 * The close and the optional title, in one row above the search.
 		 *

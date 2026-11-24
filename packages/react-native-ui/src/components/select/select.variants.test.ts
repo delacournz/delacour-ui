@@ -90,6 +90,16 @@ function everySlotClass(): string[] {
 	return out;
 }
 
+describe("selectVariants header", () => {
+	test("is opaque in the sheet's colour, so pinned it hides the rows scrolling under it", () => {
+		for (const variant of INPUT_VARIANTS) {
+			for (const size of INPUT_SIZES) {
+				expect(selectVariants({ size, variant }).header().split(" ")).toContain("bg-popover");
+			}
+		}
+	});
+});
+
 const FRUIT: SelectOptionInput[] = [
 	{ label: "Apple", value: "apple" },
 	{ label: "Banana", value: "banana" },

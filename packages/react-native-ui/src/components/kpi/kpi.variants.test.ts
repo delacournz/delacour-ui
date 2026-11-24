@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type KpiLabels } from "../../lib/labels";
 import { CARD_PLANES, CARD_SIZES, cardVariants } from "../card/card.variants";
 import {
 	formatKpiTrend,
@@ -424,5 +425,30 @@ describe("kpiVariants rule 1", () => {
 				expect(cls).not.toMatch(/(^|\s)text-/);
 			}
 		}
+	});
+});
+
+const FRENCH: KpiLabels = {
+	...DELACOUR_DEFAULT_LABELS.kpi,
+	up: "Hausse",
+	down: "Baisse",
+	flat: "Stable",
+	percent: (magnitude) => `${magnitude} pour cent`,
+	sparkline: (points, first, last) => `${points} points, de ${first} a ${last}`,
+	noTrendData: "Aucune donnee",
+};
+
+describe("kpi labels reach the resolvers", () => {
+	test("the trend speaks the supplied direction and amount", () => {
+		expect(kpiTrendAccessibilityLabel({ caption: "ce mois", direction: "up", value: 7.8 }, FRENCH)).toBe(
+			"Hausse 7.8 pour cent, ce mois"
+		);
+		expect(kpiTrendAccessibilityLabel({ direction: "down", formatted: "-4", value: -4 }, FRENCH)).toBe("Baisse, -4");
+		expect(kpiTrendAccessibilityLabel({ direction: "flat", value: 0 }, FRENCH)).toBe("Stable");
+	});
+
+	test("the sparkline speaks the supplied name", () => {
+		expect(kpiSparklineAccessibilityLabel([1, 2, 3], String, FRENCH)).toBe("3 points, de 1 a 3");
+		expect(kpiSparklineAccessibilityLabel([], String, FRENCH)).toBe("Aucune donnee");
 	});
 });

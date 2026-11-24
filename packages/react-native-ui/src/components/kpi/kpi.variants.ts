@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type KpiLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { BadgeColor } from "../badge/badge.variants";
 import { CARD_SIZES } from "../card/card.variants";
@@ -232,8 +233,6 @@ export function formatKpiTrend(value: number): string {
 	return `${value > 0 ? "+" : MINUS}${magnitude}%`;
 }
 
-const DIRECTION_WORD: Record<KpiDirection, string> = { up: "Up", down: "Down", flat: "No change" };
-
 /**
  * What a screen reader says for a trend, as one string.
  *
@@ -241,23 +240,26 @@ const DIRECTION_WORD: Record<KpiDirection, string> = { up: "Up", down: "Down", f
  * read as three unrelated stops. A caller's own `formatted` text may not be a
  * percentage at all, so it is read as written after the direction.
  */
-export function kpiTrendAccessibilityLabel({
-	value,
-	direction,
-	caption,
-	formatted,
-}: {
-	value: number;
-	direction: KpiDirection;
-	caption?: string;
-	formatted?: string;
-}): string {
+export function kpiTrendAccessibilityLabel(
+	{
+		value,
+		direction,
+		caption,
+		formatted,
+	}: {
+		value: number;
+		direction: KpiDirection;
+		caption?: string;
+		formatted?: string;
+	},
+	labels: KpiLabels = DELACOUR_DEFAULT_LABELS.kpi
+): string {
 	const head =
 		direction === "flat"
-			? DIRECTION_WORD.flat
+			? labels.flat
 			: formatted === undefined
-				? `${DIRECTION_WORD[direction]} ${Math.abs(value).toFixed(1)} percent`
-				: `${DIRECTION_WORD[direction]}, ${formatted}`;
+				? `${labels[direction]} ${labels.percent(Math.abs(value).toFixed(1))}`
+				: `${labels[direction]}, ${formatted}`;
 	return caption === undefined || caption === "" ? head : `${head}, ${caption}`;
 }
 
@@ -337,11 +339,12 @@ export function resolveSparklineFilled({ layout, filled }: { layout: KpiLayout; 
  */
 export function kpiSparklineAccessibilityLabel(
 	values: readonly number[],
-	format: (value: number) => string = String
+	format: (value: number) => string = String,
+	labels: KpiLabels = DELACOUR_DEFAULT_LABELS.kpi
 ): string {
 	const finite = values.filter(Number.isFinite);
 	const first = finite[0];
 	const last = finite[finite.length - 1];
-	if (first === undefined || last === undefined) return "No trend data";
-	return `Trend over ${values.length} points, from ${format(first)} to ${format(last)}`;
+	if (first === undefined || last === undefined) return labels.noTrendData;
+	return labels.sparkline(values.length, format(first), format(last));
 }

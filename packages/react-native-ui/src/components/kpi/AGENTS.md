@@ -118,6 +118,14 @@ One number, what it is doing, and the shape it made getting there — a
   `muted-foreground` at 15%, not `bg-muted`: `muted` is the secondary fill, and
   the first build's placeholders vanished on a secondary card. A translucent
   foreground reads on every plane, and a test forbids a fill token there.
+- **The spoken strings are `labels`, not literals.** The trend's direction and
+  amount, the sparkline's name and the loading placeholder come from
+  `lib/labels` through `useLabels`, resolved once on the root and shared through
+  the context — English, then `DelacourProvider`'s `labels`, then the card's own
+  prop — so an app translates them without forking a part. The resolvers take
+  the labels as an argument and default to English, which keeps them pure and
+  their callers' signatures unchanged. An explicit `accessibilityLabel` on a
+  sparkline still wins.
 - **No interaction on the card.** Like `Card`, a KPI that selects or navigates
   is a `Pressable` around it, which keeps the role, the haptic and the pressed
   state at the call site that knows what the press means. The playground's

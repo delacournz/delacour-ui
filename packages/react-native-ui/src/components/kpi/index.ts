@@ -1,3 +1,4 @@
+export type { KpiLabels } from "../../lib/labels";
 export { Kpi, type KpiProps } from "./kpi";
 export {
 	type KpiContextValue,

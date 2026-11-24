@@ -74,7 +74,7 @@ export function KpiTrend({
 	...props
 }: KpiTrendProps): ReactElement {
 	const context = useKpiPart("Kpi.Trend");
-	const { size, isLoading } = context;
+	const { size, isLoading, labels } = context;
 	const goodDirection = goodDirectionProp ?? context.goodDirection;
 	const { direction, tone } = resolveKpiTrend({ goodDirection, threshold, value });
 	const slots = kpiVariants({ size, tone });
@@ -85,7 +85,7 @@ export function KpiTrend({
 
 	const formatted = format?.(value);
 	const text = formatted ?? formatKpiTrend(value);
-	const accessibilityLabel = kpiTrendAccessibilityLabel({ caption, direction, formatted, value });
+	const accessibilityLabel = kpiTrendAccessibilityLabel({ caption, direction, formatted, value }, labels);
 
 	return (
 		<View accessibilityLabel={accessibilityLabel} accessible className={slots.trend({ className })} {...props}>

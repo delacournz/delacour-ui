@@ -120,7 +120,9 @@ export function KpiSparkline(props: KpiSparklineProps): ReactElement {
 
 	return (
 		<View
-			accessibilityLabel={accessibilityLabel ?? kpiSparklineAccessibilityLabel(series.values, formatValue)}
+			accessibilityLabel={
+				accessibilityLabel ?? kpiSparklineAccessibilityLabel(series.values, formatValue, context.labels)
+			}
 			accessibilityRole="image"
 			accessible
 			className={slots.sparkline({ className })}

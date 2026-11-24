@@ -8,7 +8,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
+import { type AccessibilityActionEvent, type LayoutChangeEvent, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { cancelAnimation, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
@@ -25,7 +25,7 @@ import {
 	CAROUSEL_PAN,
 	CAROUSEL_SPRING,
 	carouselVariants,
-	resolveCarouselA11yValue,
+	resolveCarouselPositionAccessibility,
 	resolveItemInset,
 	resolveItemPitch,
 	resolveItemSize,
@@ -41,8 +41,9 @@ export type CarouselContentProps = ViewProps & {
 };
 
 /**
- * The clipped viewport the slides are placed in, the surface the pan is claimed
- * on, and the element assistive tech adjusts.
+ * The clipped viewport the slides are placed in and the surface the pan is claimed on.
+ * It is NOT `accessible`: a merged viewport would read every slide's text as one label and hide
+ * the controls inside a slide, so each slide is reachable in its own right.
  *
  * **It walks its direct children for `Carousel.Item`s**, as `ListGroup` finds its
  * rows and `Tabs` its panels: the walk is the count, the order and the window. An
@@ -57,9 +58,11 @@ export type CarouselContentProps = ViewProps & {
  * `Screen.ScrollArea` and a `Pressable` in a slide still taps. Not
  * `blocksExternalGesture` — React Native's `ScrollView` has no handler tag.
  *
- * **It is the adjustable element**, not the root, so `Carousel.Previous` and
- * `Carousel.Next` stay reachable in their own right. A VoiceOver or TalkBack
- * swipe up or down moves a slide and the OS reads the new "2 of 5".
+ * **A small position element is the adjustable one** — first child, so it is read before the slides,
+ * absolute and `pointerEvents="none"`, wrapping nothing. `Carousel.Previous` and `Carousel.Next`
+ * stay reachable in their own right. A VoiceOver or TalkBack swipe up or down on it moves a slide
+ * and the OS reads the new "2 of 5". No element is both `accessible` and a parent of children, so
+ * `warnInteractiveChildInAccessible` has nothing to guard here.
  */
 export function CarouselContent({
 	children,
@@ -224,18 +227,25 @@ export function CarouselContent({
 	return (
 		<GestureDetector gesture={panGesture}>
 			<Animated.View
-				accessibilityActions={count > 1 ? [...ACCESSIBILITY_ACTIONS, ...autoplayActions] : undefined}
-				accessibilityLabel={accessibilityLabel}
-				accessibilityRole="adjustable"
-				accessibilityState={{ disabled: isDisabled }}
-				accessibilityValue={{ text: resolveCarouselA11yValue(index, count, labels) }}
-				accessible
+				accessible={false}
 				className={cn(slots.viewport(), className)}
-				onAccessibilityAction={handleAccessibilityAction}
 				onLayout={handleLayout}
 				style={[isHorizontal && aspectRatio !== undefined ? { aspectRatio } : null, style]}
 				{...props}
 			>
+				<View
+					{...resolveCarouselPositionAccessibility({
+						accessibilityLabel,
+						autoplayActions,
+						count,
+						index,
+						isDisabled,
+						labels,
+					})}
+					onAccessibilityAction={handleAccessibilityAction}
+					pointerEvents="none"
+					style={POSITION_STYLE}
+				/>
 				{visible.map((slide) => (
 					<CarouselSlideProvider
 						key={slideKey(items[slide], slide)}
@@ -250,8 +260,13 @@ export function CarouselContent({
 }
 CarouselContent.displayName = "DelacourUI.Carousel.Content";
 
-/** The two actions an assistive swipe on an `adjustable` maps to. */
-const ACCESSIBILITY_ACTIONS = [{ name: "increment" }, { name: "decrement" }];
+/**
+ * The position element's frame: one point, pinned to the viewport's start corner and out of flow, so
+ * it moves no pixel and takes no touch. It has no fill and no children, so it draws nothing. Not
+ * `opacity: 0`: UIKit and TalkBack treat a fully transparent view as hidden and skip it, and a
+ * zero-sized or `display: none` view is skipped the same way.
+ */
+const POSITION_STYLE = { height: 1, left: 0, position: "absolute", top: 0, width: 1 } as const;
 
 /**
  * The `Carousel.Item`s among `children`, in source order.

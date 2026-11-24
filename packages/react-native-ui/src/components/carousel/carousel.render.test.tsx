@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
-import { AccessibilityInfo } from "react-native";
+import { AccessibilityInfo, Pressable } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { LabelsProvider } from "../../hooks/use-labels";
 import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
@@ -58,6 +58,26 @@ describe("Carousel", () => {
 		await renderWithProviders(<TestCarousel />);
 		expect(viewport()).toHaveAccessibilityValue({ text: "1 of 3" });
 		expect(viewport()).not.toBeDisabled();
+	});
+
+	test("the adjustable wraps nothing, so a control inside a slide is reachable", async () => {
+		await renderWithProviders(
+			<Carousel accessibilityLabel="Featured">
+				<Carousel.Content>
+					<Carousel.Item>
+						<Pressable accessibilityRole="button" accessibilityLabel="Open slide" onPress={() => undefined}>
+							<Text>One</Text>
+						</Pressable>
+					</Carousel.Item>
+					<Carousel.Item>
+						<Text>Two</Text>
+					</Carousel.Item>
+				</Carousel.Content>
+			</Carousel>
+		);
+		expect(screen.getByRole("button", { name: "Open slide" })).toBeOnTheScreen();
+		expect(viewport().children).toHaveLength(0);
+		expect(viewport().parent?.props.accessible).not.toBe(true);
 	});
 
 	test("mounts its slides", async () => {

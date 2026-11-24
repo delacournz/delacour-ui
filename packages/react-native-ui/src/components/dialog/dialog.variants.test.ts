@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	DIALOG_CLOSE_HIT_SLOP,
+	DIALOG_CLOSE_SIZE,
 	DIALOG_ENTER_SCALE,
 	DIALOG_ENTER_TRANSLATE_Y,
 	DIALOG_FOOTER_VARIANTS,
@@ -178,7 +179,7 @@ describe("motion constants", () => {
 
 describe("DIALOG_CLOSE_HIT_SLOP", () => {
 	test("brings a bare corner glyph up toward the 44pt minimum", () => {
-		expect(DIALOG_CLOSE_HIT_SLOP).toBe(8);
+		expect(DIALOG_CLOSE_SIZE + 2 * Number(DIALOG_CLOSE_HIT_SLOP)).toBeGreaterThanOrEqual(44);
 	});
 });
 

@@ -106,6 +106,7 @@ export function MenuContent({
 	hasScrim = false,
 	anchor: anchorProp,
 	backdrop,
+	onAccessibilityEscape,
 	...props
 }: MenuContentProps): ReactElement | null {
 	const { anchor: contextAnchor, close, isOpen, triggerRef } = useMenuPart("Menu.Content");
@@ -173,10 +174,15 @@ export function MenuContent({
 		[]
 	);
 
+	const handleEscape = useCallback(() => {
+		close();
+		onAccessibilityEscape?.();
+	}, [close, onAccessibilityEscape]);
+
 	const modal = useModalAccessibility({
 		initialFocus: [panelRef],
 		isOpen,
-		onEscape: close,
+		onEscape: handleEscape,
 		returnFocus: triggerRef as RefObject<ModalFocusTarget | null>,
 	});
 	const { focusInitial, restoreFocus } = modal;

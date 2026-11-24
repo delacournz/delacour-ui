@@ -39,6 +39,7 @@ const originalOS = Platform.OS;
 const checked = (name: string) => screen.getByRole("menuitem", { name }).props.accessibilityState?.checked;
 const press = (name: string) => fireEvent(screen.getByRole("button", { name }), "accessibilityTap");
 const choose = (name: string) => fireEvent(screen.getByRole("menuitem", { name }), "accessibilityTap");
+const chooseRadio = (name: string) => fireEvent(screen.getByRole("radio", { name }), "accessibilityTap");
 
 /**
  * The panel measures its trigger with `measureInWindow` and the rows with layout, and Jest has
@@ -255,8 +256,8 @@ describe("Menu", () => {
 
 		test("announces the selected item", async () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" />, { wrapper: Overlays });
-			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
-			expect(screen.getByRole("menuitem", { name: "Comfortable" })).not.toBeSelected();
+			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
+			expect(screen.getByRole("radio", { name: "Comfortable" })).not.toBeChecked();
 		});
 
 		test("uncontrolled: choosing moves the selection, reports the value and closes", async () => {
@@ -267,7 +268,7 @@ describe("Menu", () => {
 				{ wrapper: Overlays }
 			);
 
-			await choose("Comfortable");
+			await chooseRadio("Comfortable");
 			expect(onValueChange).toHaveBeenCalledWith("comfortable");
 			expect(onOpenChange).toHaveBeenLastCalledWith(false);
 		});
@@ -276,17 +277,17 @@ describe("Menu", () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" isClosedOnSelect={false} />, {
 				wrapper: Overlays,
 			});
-			await choose("Comfortable");
-			expect(screen.getByRole("menuitem", { name: "Comfortable" })).toBeSelected();
-			expect(screen.getByRole("menuitem", { name: "Compact" })).not.toBeSelected();
+			await chooseRadio("Comfortable");
+			expect(screen.getByRole("radio", { name: "Comfortable" })).toBeChecked();
+			expect(screen.getByRole("radio", { name: "Compact" })).not.toBeChecked();
 		});
 
 		test("re-choosing the selected item keeps it selected", async () => {
 			await renderWithProviders(<DensityMenu defaultValue="compact" isClosedOnSelect={false} />, {
 				wrapper: Overlays,
 			});
-			await choose("Compact");
-			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
+			await chooseRadio("Compact");
+			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
 		});
 
 		test("controlled: waits for the prop before the selection moves", async () => {
@@ -298,12 +299,12 @@ describe("Menu", () => {
 				}
 			);
 
-			await choose("Comfortable");
+			await chooseRadio("Comfortable");
 			expect(onValueChange).toHaveBeenCalledWith("comfortable");
-			expect(screen.getByRole("menuitem", { name: "Compact" })).toBeSelected();
+			expect(screen.getByRole("radio", { name: "Compact" })).toBeChecked();
 
 			await view.rerender(<DensityMenu isClosedOnSelect={false} onValueChange={onValueChange} value="comfortable" />);
-			expect(screen.getByRole("menuitem", { name: "Comfortable" })).toBeSelected();
+			expect(screen.getByRole("radio", { name: "Comfortable" })).toBeChecked();
 		});
 
 		test("a RadioItem outside a RadioGroup throws", async () => {
@@ -497,6 +498,23 @@ describe("Menu accessibility", () => {
 		expect(panel.props.accessibilityViewIsModal).toBe(true);
 		await act(() => panel.props.onAccessibilityEscape());
 		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+	});
+
+	test("a caller's onAccessibilityEscape runs after the escape scrub closes the menu", async () => {
+		const onOpenChange = jest.fn();
+		const onAccessibilityEscape = jest.fn();
+		await renderWithProviders(
+			<Menu defaultOpen onOpenChange={onOpenChange}>
+				<Menu.Content onAccessibilityEscape={onAccessibilityEscape} testID="panel">
+					<Menu.Item>Rename</Menu.Item>
+				</Menu.Content>
+			</Menu>,
+			{ wrapper: Overlays }
+		);
+		const panel = screen.getByTestId("panel", { includeHiddenElements: true });
+		await act(() => panel.props.onAccessibilityEscape());
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		expect(onAccessibilityEscape).toHaveBeenCalledTimes(1);
 	});
 
 	test("focus lands on the first enabled row once the panel has entered", async () => {

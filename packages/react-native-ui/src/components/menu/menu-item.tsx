@@ -17,6 +17,7 @@ import {
 	menuVariants,
 	resolveCloseOnSelect,
 	resolveMenuItemAccessibility,
+	resolveMenuRowRole,
 } from "./menu.variants";
 
 export type { MenuItemProps } from "./menu.types";
@@ -158,7 +159,7 @@ export function MenuRow({
 	return (
 		<GestureDetector gesture={gesture}>
 			<Animated.View
-				accessibilityRole="menuitem"
+				accessibilityRole={resolveMenuRowRole(kind)}
 				accessibilityState={accessibilityState ?? resolveMenuItemAccessibility({ isDisabled, kind: "item" })}
 				accessibilityActions={accessibilityActions}
 				accessible

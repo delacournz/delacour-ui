@@ -18,7 +18,10 @@ import {
 	resolveComboboxClearHitSlop,
 	resolveComboboxSheetHeight,
 	resolveComboboxSheetMaxHeight,
+	resolveComboboxTriggerActionOutcome,
+	resolveComboboxTriggerActions,
 	resolveComboboxTriggerClass,
+	resolveComboboxTriggerLabel,
 	resolveComboboxTriggerText,
 	resolveExpectedKeyboardHeight,
 	resolveVisibleChips,
@@ -331,5 +334,92 @@ describe("resolveComboboxClearHitSlop", () => {
 
 	test("a minimum the glyph already meets needs no slop", () => {
 		expect(resolveComboboxClearHitSlop("md", 18)).toBeUndefined();
+	});
+});
+
+describe("resolveComboboxTriggerActions", () => {
+	const chips = [
+		{ label: "Australia", value: "au" },
+		{ label: "Fiji", value: "fj" },
+	];
+	const labels = { clear: "Clear", removeChip: (label: string) => `Remove ${label}` };
+
+	test("offers clear and one remove per drawn chip, named by value", () => {
+		expect(resolveComboboxTriggerActions({ canClear: true, chips, isEditable: true, labels })).toEqual([
+			{ label: "Clear", name: "clear" },
+			{ label: "Remove Australia", name: "remove:au" },
+			{ label: "Remove Fiji", name: "remove:fj" },
+		]);
+	});
+
+	test("clear only when it is drawn", () => {
+		const names = resolveComboboxTriggerActions({ canClear: false, chips, isEditable: true, labels }).map(
+			(a) => a.name
+		);
+		expect(names).toEqual(["remove:au", "remove:fj"]);
+	});
+
+	test("offers nothing while read-only or disabled", () => {
+		expect(resolveComboboxTriggerActions({ canClear: true, chips, isEditable: false, labels })).toEqual([]);
+	});
+
+	test("names stay unique when labels repeat", () => {
+		const dupes = [
+			{ label: "Same", value: "a" },
+			{ label: "Same", value: "b" },
+		];
+		const names = resolveComboboxTriggerActions({ canClear: false, chips: dupes, isEditable: true, labels }).map(
+			(a) => a.name
+		);
+		expect(new Set(names).size).toBe(2);
+	});
+});
+
+describe("resolveComboboxTriggerActionOutcome", () => {
+	const actions = [
+		{ label: "Clear", name: "clear" },
+		{ label: "Remove Fiji", name: "remove:fj" },
+	];
+
+	test("maps clear and remove to their outcome", () => {
+		expect(resolveComboboxTriggerActionOutcome("clear", actions)).toEqual({ type: "clear" });
+		expect(resolveComboboxTriggerActionOutcome("remove:fj", actions)).toEqual({ type: "remove", value: "fj" });
+	});
+
+	test("ignores a name that was not offered", () => {
+		expect(resolveComboboxTriggerActionOutcome("remove:au", actions)).toEqual({ type: "none" });
+		expect(resolveComboboxTriggerActionOutcome("activate", actions)).toEqual({ type: "none" });
+	});
+});
+
+describe("resolveComboboxTriggerLabel", () => {
+	const triggerInField = (field: string, placeholder: string) => `${field}, ${placeholder}`;
+
+	test("composes the field name with a shown placeholder", () => {
+		expect(
+			resolveComboboxTriggerLabel({
+				hasValue: false,
+				label: "Country",
+				placeholder: "Choose a country",
+				triggerInField,
+			})
+		).toBe("Country, Choose a country");
+	});
+
+	test("a shown value stays in the value, not the name", () => {
+		expect(
+			resolveComboboxTriggerLabel({ hasValue: true, label: "Country", placeholder: "Choose a country", triggerInField })
+		).toBe("Country");
+	});
+
+	test("no composition when the label already holds the placeholder or either is missing", () => {
+		const base = { hasValue: false, triggerInField };
+		expect(resolveComboboxTriggerLabel({ ...base, label: "Pick", placeholder: "Pick" })).toBe("Pick");
+		expect(resolveComboboxTriggerLabel({ ...base, label: "Pick a country", placeholder: "country" })).toBe(
+			"Pick a country"
+		);
+		expect(resolveComboboxTriggerLabel({ ...base, label: undefined, placeholder: "Pick" })).toBe("Pick");
+		expect(resolveComboboxTriggerLabel({ ...base, label: "Country", placeholder: undefined })).toBe("Country");
+		expect(resolveComboboxTriggerLabel({ ...base, label: undefined, placeholder: undefined })).toBeUndefined();
 	});
 });

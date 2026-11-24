@@ -87,8 +87,21 @@ typed text can become a value.
 - **Chips are Chip.** Imported from `../chip` (README decision 4). `sm` at field
   sizes `sm`/`md`, `md` at `lg`, so the box's padding shows around them. Each
   remove control is labelled "Remove {label}". On the trigger the chips sit
-  inside the trigger's button, so a screen reader hears "N selected" there and
-  removes chips from the sheet's chip row, where each chip is its own element.
+  inside the trigger's one accessible button, so the chip row and the clear button
+  are hidden from assistive technology (`isHiddenFromAccessibility` on the chip
+  row; hiding props on existing nodes, no wrapper) and offered as actions on the
+  trigger instead: `clear` (`labels.clear`) and one `remove:<value>`
+  (`labels.removeChip(label)`) per drawn chip, only while editable and the control
+  is drawn (`resolveComboboxTriggerActions`; `resolveComboboxTriggerActionOutcome`
+  maps a name back to clear or remove). A caller's own `accessibilityActions` and
+  `onAccessibilityAction` still apply. The sheet's chip row keeps its chips
+  reachable, each its own element. The trigger passes its own `children` to
+  `warnInteractiveChildInAccessible`; while `isLoading` it reports `busy`.
+- **The trigger's name holds its placeholder.** While the placeholder shows and a
+  `Field.Label` or `title` names the combobox, the name is
+  `labels.triggerInField(label, placeholder)` ("Country, Choose a country") so the
+  visible text is in the name (`resolveComboboxTriggerLabel`). A shown value stays
+  in the accessibility value. The create row is named by its visible text, `Use “Fiji”`.
 - **The chip trigger is Input's multiline box.** With chips the fixed height
   becomes a floor, the vertical padding returns and the row aligns to the first
   line, so wrapped chips grow the field the way a textarea grows. The chip row
@@ -147,13 +160,14 @@ typed text can become a value.
   can land in a chip's remove hit slop; tests and capture flows open a
   multiple-mode trigger from the chevron instead.
 - **The spoken strings are the `labels` prop, not literals**: `create`,
-  `createAccessibility`, `empty`, `search`, `searchInField`, `clearSearch`, `clear`,
+  `empty`, `search`, `searchInField`, `triggerInField`, `clearSearch`, `clear`,
   `triggerHint`, `results`, `selected`, `limitReached`, `done`, `removeChip`,
   `moreChips` and `moreChipsShort` come from `lib/labels` through
   `useLabels("combobox", labels)`. Precedence is the per-string prop (`createLabel`,
   `emptyText`, `searchPlaceholder`, `formatResultsCount`, `limitReachedText`,
-  `doneText`) ← the root's `labels` ← `DelacourProvider` `labels` ← English. The
-  resolved set rides the combobox context; the chip row and create row take it as a
+  `doneText`) ← the root's `labels` ← `DelacourProvider` `labels` ← English. `createAccessibility` is deprecated and no longer read: the
+  create row is named by `create`. The
+  resolved set rides the combobox context; the chip row takes it as a
   prop. `formatResultsCount` stays exported and returns the English default;
   `resolveResultsAnnouncement` is unchanged (the root passes `format` and
   `emptyText` from the resolved set), and `resolveComboboxTriggerText` gets

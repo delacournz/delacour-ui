@@ -416,7 +416,6 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 			return (
 				<ComboboxCreateRow
 					isDisabled={maxSelected !== undefined && selected.length >= maxSelected}
-					labels={labels}
 					label={formatCreate(item.query)}
 					onPress={create}
 					query={item.query}

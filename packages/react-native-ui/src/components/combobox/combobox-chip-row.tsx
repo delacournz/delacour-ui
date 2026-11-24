@@ -30,6 +30,12 @@ export type ComboboxChipRowProps = {
 	/** Cap the chips and fold the rest into `+N`. Leave it off to draw every chip. */
 	maxVisible?: number;
 	className?: string;
+	/**
+	 * Hide the whole row from assistive technology. The trigger sets it: its chips sit inside
+	 * the trigger's one accessible button, which offers each remove as an action instead.
+	 * Leave it off in the sheet, where every chip is its own element.
+	 */
+	isHiddenFromAccessibility?: boolean;
 	/** Chips take `${testID}-chip-${value}`, their remove controls `-remove-${value}`. */
 	testID?: string;
 };
@@ -54,6 +60,7 @@ export function ComboboxChipRow({
 	onChipPress,
 	maxVisible,
 	className,
+	isHiddenFromAccessibility = false,
 	testID,
 }: ComboboxChipRowProps): ReactElement {
 	const isCalm = useCalmMotion();
@@ -69,7 +76,11 @@ export function ComboboxChipRow({
 	const exiting = isCalm ? undefined : FadeOut.duration(COMBOBOX_CHIP_LAYOUT_MS);
 
 	return (
-		<View className={slots.chips({ className })}>
+		<View
+			accessibilityElementsHidden={isHiddenFromAccessibility || undefined}
+			className={slots.chips({ className })}
+			importantForAccessibility={isHiddenFromAccessibility ? "no-hide-descendants" : undefined}
+		>
 			{options.slice(0, visible).map((option, index) => (
 				<Animated.View entering={entering} exiting={exiting} key={option.value} layout={layout}>
 					<Chip

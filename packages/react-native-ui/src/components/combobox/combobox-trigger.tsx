@@ -1,8 +1,10 @@
 import { type ReactElement, type ReactNode, useEffect } from "react";
+import type { AccessibilityActionEvent } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
 import { IconChevronDownSmall, IconCrossSmall } from "../../icons/central";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { Slot } from "../../lib/slot";
 import { Icon } from "../icon";
 import type { InputSize } from "../input/input.variants";
@@ -11,7 +13,15 @@ import { resolveSelectIconToken, SELECT_CHEVRON_CALM_DURATION_MS, selectVariants
 import { Spinner } from "../spinner";
 import { Text } from "../text";
 import { useComboboxPart } from "./combobox.context";
-import { comboboxVariants, resolveComboboxClearHitSlop, resolveComboboxTriggerClass } from "./combobox.variants";
+import {
+	comboboxVariants,
+	resolveComboboxClearHitSlop,
+	resolveComboboxTriggerActionOutcome,
+	resolveComboboxTriggerActions,
+	resolveComboboxTriggerClass,
+	resolveComboboxTriggerLabel,
+	resolveVisibleChips,
+} from "./combobox.variants";
 import { ComboboxChipRow } from "./combobox-chip-row";
 
 export type ComboboxTriggerProps = Omit<PressableProps, "onPress" | "disabled" | "children"> & {
@@ -73,11 +83,12 @@ ComboboxChevron.displayName = "DelacourUI.Combobox.Chevron";
  * chevron when the combobox is clearable and holds a value.
  *
  * The box is Select's, which is Input's — see `resolveComboboxTriggerClass` —
- * and it rings while the sheet is open. A screen reader hears a button named
- * by the enclosing `Field.Label`, valued with the label in single mode or
- * "N selected" in multiple; each chip is its own element with a `remove`
- * action. Read-only draws the chips without their remove control and never
- * opens.
+ * and it rings while the sheet is open. A screen reader hears one button named
+ * by the enclosing `Field.Label` (with the placeholder while it shows), valued
+ * with the label in single mode or "N selected" in multiple. The drawn clear
+ * button and chip remove controls are hidden from it and offered as actions on
+ * that button instead — `clear` and `remove:<value>`. Read-only draws the chips
+ * without their remove control, offers no actions and never opens.
  *
  * @example
  * <Combobox options={people}>
@@ -90,6 +101,8 @@ export function ComboboxTrigger({
 	asChild = false,
 	className,
 	children,
+	accessibilityActions,
+	onAccessibilityAction,
 	...props
 }: ComboboxTriggerProps): ReactElement {
 	const combobox = useComboboxPart("Combobox.Trigger");
@@ -117,26 +130,65 @@ export function ComboboxTrigger({
 		variant,
 	} = combobox;
 
+	const isEditable = !isDisabled && !isReadOnly;
+	const hasValue = selectedOptions.length > 0;
+	const hasChips = selectionMode === "multiple" && hasValue && children === undefined;
+	const hasClear = isClearable && hasValue && isEditable;
+
 	const accessibility = {
 		accessibilityHint: isReadOnly ? undefined : labels.triggerHint,
-		accessibilityLabel: accessibilityLabel ?? placeholder,
+		accessibilityLabel: asChild
+			? (accessibilityLabel ?? placeholder)
+			: resolveComboboxTriggerLabel({
+					hasValue: triggerText !== undefined || children !== undefined,
+					label: accessibilityLabel,
+					placeholder,
+					triggerInField: labels.triggerInField,
+				}),
 		accessibilityRole: "button" as const,
-		accessibilityState: { expanded: isOpen },
+		accessibilityState: { busy: isLoading || undefined, expanded: isOpen },
 		accessibilityValue: { text: triggerText ?? "" },
 		testID,
 	};
 
 	if (asChild) {
 		return (
-			<Slot {...accessibility} disabled={isDisabled} onPress={open} {...props}>
+			<Slot
+				{...accessibility}
+				accessibilityActions={accessibilityActions}
+				disabled={isDisabled}
+				onAccessibilityAction={onAccessibilityAction}
+				onPress={open}
+				{...props}
+			>
 				{children}
 			</Slot>
 		);
 	}
 
-	const isEditable = !isDisabled && !isReadOnly;
-	const hasValue = selectedOptions.length > 0;
-	const hasChips = selectionMode === "multiple" && hasValue && children === undefined;
+	warnInteractiveChildInAccessible({ accessible: true, children, component: "Combobox.Trigger" });
+
+	const drawnChips = hasChips
+		? selectedOptions.slice(
+				0,
+				maxVisibleChips === undefined
+					? selectedOptions.length
+					: resolveVisibleChips({ count: selectedOptions.length, max: maxVisibleChips }).visible
+			)
+		: [];
+	const triggerActions = resolveComboboxTriggerActions({
+		canClear: hasClear,
+		chips: drawnChips,
+		isEditable,
+		labels,
+	});
+	const actions = [...(accessibilityActions ?? []), ...triggerActions];
+	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
+		const outcome = resolveComboboxTriggerActionOutcome(event.nativeEvent.actionName, triggerActions);
+		if (outcome.type === "clear") clear();
+		else if (outcome.type === "remove") remove(outcome.value);
+		else onAccessibilityAction?.(event);
+	};
 	const select = selectVariants({ size, variant });
 	const slots = comboboxVariants({ size, variant });
 	const iconToken = resolveSelectIconToken(isInvalid);
@@ -148,6 +200,7 @@ export function ComboboxTrigger({
 		(hasChips ? (
 			<ComboboxChipRow
 				chipVariant={chipVariant}
+				isHiddenFromAccessibility
 				labels={labels}
 				maxVisible={maxVisibleChips}
 				onChipPress={isEditable ? open : undefined}
@@ -162,20 +215,22 @@ export function ComboboxTrigger({
 			</Text>
 		));
 
-	const clearButton =
-		isClearable && hasValue && isEditable ? (
-			<Pressable
-				accessibilityLabel={labels.clear}
-				accessibilityRole="button"
-				className={slots.clear()}
-				feedback="fade"
-				hitSlop={resolveComboboxClearHitSlop(size, minimumHitTarget)}
-				onPress={clear}
-				testID={testID ? `${testID}-clear` : undefined}
-			>
-				<Icon color={iconToken} icon={IconCrossSmall} size={size} />
-			</Pressable>
-		) : null;
+	const clearButton = hasClear ? (
+		<Pressable
+			accessibilityElementsHidden
+			accessibilityLabel={labels.clear}
+			accessibilityRole="button"
+			accessible={false}
+			className={slots.clear()}
+			feedback="fade"
+			hitSlop={resolveComboboxClearHitSlop(size, minimumHitTarget)}
+			importantForAccessibility="no-hide-descendants"
+			onPress={clear}
+			testID={testID ? `${testID}-clear` : undefined}
+		>
+			<Icon color={iconToken} icon={IconCrossSmall} size={size} />
+		</Pressable>
+	) : null;
 
 	const suffix = isLoading ? (
 		<Spinner color={iconToken} size={size} />
@@ -192,6 +247,7 @@ export function ComboboxTrigger({
 	return (
 		<Pressable
 			{...accessibility}
+			accessibilityActions={actions.length > 0 ? actions : undefined}
 			className={resolveComboboxTriggerClass({
 				className,
 				hasChips,
@@ -203,6 +259,7 @@ export function ComboboxTrigger({
 			})}
 			disabled={isDisabled}
 			feedback={isReadOnly ? "none" : "fade"}
+			onAccessibilityAction={handleAccessibilityAction}
 			onPress={open}
 			{...props}
 		>

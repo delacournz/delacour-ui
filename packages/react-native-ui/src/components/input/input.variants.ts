@@ -163,14 +163,16 @@ export const inputVariants = tv({
 	compoundVariants: [
 		// The height and the vertical rhythm are declared together rather than
 		// fighting each other in the merge, the way a button's square footprint
-		// and its horizontal padding are.
+		// and its horizontal padding are. The height is a floor: the value is
+		// capped at 2x, and a fixed height would clip it. The box is the
+		// `TextInput` itself, which centres a single line vertically.
 		//
 		// `py-0` on a single-line field is load-bearing on Android: React
 		// Native's `TextInput` inherits the platform's own vertical padding,
 		// which would push the value off centre inside a fixed height.
-		{ isMultiline: false, size: "sm", class: { root: "h-input-sm py-0" } },
-		{ isMultiline: false, size: "md", class: { root: "h-input-md py-0" } },
-		{ isMultiline: false, size: "lg", class: { root: "h-input-lg py-0" } },
+		{ isMultiline: false, size: "sm", class: { root: "min-h-input-sm py-0" } },
+		{ isMultiline: false, size: "md", class: { root: "min-h-input-md py-0" } },
+		{ isMultiline: false, size: "lg", class: { root: "min-h-input-lg py-0" } },
 		// A multiline field grows with its text, so the height becomes a floor.
 		// The row aligns to the top with it: centred decorators would drift down
 		// the side of a paragraph instead of sitting on its first line.

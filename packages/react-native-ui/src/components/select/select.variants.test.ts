@@ -458,8 +458,8 @@ describe("the trigger", () => {
 	});
 
 	test("lets a caller's class win", () => {
-		expect(resolveSelectTriggerClass({ className: "h-20" })).toContain("h-20");
-		expect(resolveSelectTriggerClass({ className: "h-20" })).not.toContain("h-input-md");
+		expect(resolveSelectTriggerClass({ className: "min-h-20" })).toContain("min-h-20");
+		expect(resolveSelectTriggerClass({ className: "min-h-20" })).not.toContain("min-h-input-md");
 	});
 
 	test("holds no text utility, which would never reach the Text inside", () => {

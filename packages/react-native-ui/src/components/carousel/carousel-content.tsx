@@ -58,7 +58,7 @@ export type CarouselContentProps = ViewProps & {
  * `Screen.ScrollArea` and a `Pressable` in a slide still taps. Not
  * `blocksExternalGesture` — React Native's `ScrollView` has no handler tag.
  *
- * **A small position element is the adjustable one** — first child, so it is read before the slides,
+ * **A small position element is the adjustable one** — the viewport's preceding sibling, so it is read before the slides,
  * absolute and `pointerEvents="none"`, wrapping nothing. `Carousel.Previous` and `Carousel.Next`
  * stay reachable in their own right. A VoiceOver or TalkBack swipe up or down on it moves a slide
  * and the OS reads the new "2 of 5". No element is both `accessible` and a parent of children, so
@@ -225,44 +225,48 @@ export function CarouselContent({
 	const slots = carouselVariants({ orientation, variant });
 
 	return (
-		<GestureDetector gesture={panGesture}>
-			<Animated.View
-				accessible={false}
-				className={cn(slots.viewport(), className)}
-				onLayout={handleLayout}
-				style={[isHorizontal && aspectRatio !== undefined ? { aspectRatio } : null, style]}
-				{...props}
-			>
-				<View
-					{...resolveCarouselPositionAccessibility({
-						accessibilityLabel,
-						autoplayActions,
-						count,
-						index,
-						isDisabled,
-						labels,
-					})}
-					onAccessibilityAction={handleAccessibilityAction}
-					pointerEvents="none"
-					style={POSITION_STYLE}
-				/>
-				{visible.map((slide) => (
-					<CarouselSlideProvider
-						key={slideKey(items[slide], slide)}
-						value={{ index: slide, isActive: slide === index, isPeek }}
-					>
-						{items[slide]}
-					</CarouselSlideProvider>
-				))}
-			</Animated.View>
-		</GestureDetector>
+		<>
+			<View
+				{...resolveCarouselPositionAccessibility({
+					accessibilityLabel,
+					autoplayActions,
+					count,
+					index,
+					isDisabled,
+					labels,
+				})}
+				onAccessibilityAction={handleAccessibilityAction}
+				pointerEvents="none"
+				style={POSITION_STYLE}
+			/>
+			<GestureDetector gesture={panGesture}>
+				<Animated.View
+					accessible={false}
+					className={cn(slots.viewport(), className)}
+					onLayout={handleLayout}
+					style={[isHorizontal && aspectRatio !== undefined ? { aspectRatio } : null, style]}
+					{...props}
+				>
+					{visible.map((slide) => (
+						<CarouselSlideProvider
+							key={slideKey(items[slide], slide)}
+							value={{ index: slide, isActive: slide === index, isPeek }}
+						>
+							{items[slide]}
+						</CarouselSlideProvider>
+					))}
+				</Animated.View>
+			</GestureDetector>
+		</>
 	);
 }
 CarouselContent.displayName = "DelacourUI.Carousel.Content";
 
 /**
- * The position element's frame: one point, pinned to the viewport's start corner and out of flow, so
- * it moves no pixel and takes no touch. It has no fill and no children, so it draws nothing. Not
+ * The position element's frame: one point, pinned to the carousel's start corner and out of flow, so
+ * it moves no pixel and takes no touch. It is the viewport's preceding sibling, not its first child:
+ * slides carry a `zIndex`, and Android orders a parent's children by it, which read the element
+ * after the slides. It has no fill and no children, so it draws nothing. Not
  * `opacity: 0`: UIKit and TalkBack treat a fully transparent view as hidden and skip it, and a
  * zero-sized or `display: none` view is skipped the same way.
  */

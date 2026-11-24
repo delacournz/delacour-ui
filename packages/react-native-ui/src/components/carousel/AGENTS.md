@@ -154,7 +154,7 @@ file stable: its functions are the contract both consume.
 
 - **The viewport is not `accessible`.** A merged viewport read every slide's
   text as its name and hid any control inside a slide. The adjustable is a small
-  position element instead: first child of the viewport (read before the slides),
+  position element instead: the viewport's preceding sibling (read before the slides; as a child, the slides' `zIndex` reordered it after them on Android),
   1x1, absolute, `pointerEvents="none"`, with no fill and nothing inside, so it
   draws nothing, moves no pixel and takes no touch. Never `opacity: 0`: a fully
   transparent view is skipped by VoiceOver and TalkBack. Its props come from

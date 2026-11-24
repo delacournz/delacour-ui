@@ -59,6 +59,12 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   the touch — the app under an alert dialog must not be pressable — but does nothing; the back
   button is not subscribed; `onAccessibilityEscape` is not set; and the card announces as
   `alertdialog`. `Dialog.Close` still closes it: it is one of the dialog's own actions.
+- **The spoken string is the `labels` prop, not a literal**: the corner ✕'s name (`close`) comes from
+  `lib/labels` through `useLabels("dialog", labels)` on the root and rides the dialog context, so
+  `Dialog.Close` reads it wherever it is placed. Precedence is defaults <- `DelacourProvider`
+  `labels` <- the root's prop; an own `accessibilityLabel` on `Dialog.Close` still wins. `asChild`
+  closes carry the child's own name. `Dialog.Close` throws outside a `<Dialog>`, so it needs no
+  standalone fallback.
 - **Triggers and closes donate the press.** With `asChild` they hand `onPress` to the child,
   chained ahead of the child's own, for `BottomSheet.Trigger`'s reason: two tap gestures in an
   ancestor/descendant pair are not simultaneous, so a pressable wrapped around a `Button` never

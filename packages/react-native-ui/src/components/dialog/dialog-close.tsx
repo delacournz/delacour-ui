@@ -19,7 +19,8 @@ export type DialogCloseProps =
  * Without children it is the ✕ in the card's corner: this library's
  * `Pressable` with `fade` feedback — a scale on a glyph this small reads as a
  * jitter — 12pt of slop because a bare glyph has no capsule to bring it toward
- * 44pt, and `"Close"` as its label. It sits out of the flow; `Dialog.Title`
+ * 44pt, and the catalog's `close` as its label (`labels` on the root; an own
+ * `accessibilityLabel` wins). It sits out of the flow; `Dialog.Title`
  * reserves the clearance.
  *
  * With `asChild` it donates the close to its child, chained ahead of the
@@ -39,7 +40,7 @@ export type DialogCloseProps =
  * </Dialog.Close>
  */
 export function DialogClose(props: DialogCloseProps): ReactElement {
-	const { close } = useDialogPart("Dialog.Close");
+	const { close, labels } = useDialogPart("Dialog.Close");
 	const slop = useMinimumHitSlop(DIALOG_CLOSE_SIZE);
 	const { onPress } = props;
 
@@ -59,7 +60,7 @@ export function DialogClose(props: DialogCloseProps): ReactElement {
 
 	const {
 		asChild: _asChild,
-		accessibilityLabel = "Close",
+		accessibilityLabel,
 		className,
 		feedback = "fade",
 		hitSlop = slop,
@@ -69,7 +70,7 @@ export function DialogClose(props: DialogCloseProps): ReactElement {
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel}
+			accessibilityLabel={accessibilityLabel ?? labels.close}
 			accessibilityRole="button"
 			className={dialogVariants().close({ className })}
 			feedback={feedback}

@@ -1,6 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { AccessibilityInfo, View } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { Overlay, OverlayProvider } from "../overlay";
@@ -125,5 +126,53 @@ describe("Dialog accessibility", () => {
 		await renderWithProviders(<WithPopover />, { wrapper: Overlays });
 		expect(card().props.accessibilityViewIsModal).toBe(false);
 		expect(card().props.onAccessibilityEscape).toBeUndefined();
+	});
+});
+
+describe("Dialog labels", () => {
+	function CornerDialog(props: Omit<DialogProps, "children"> & { closeLabel?: string }): ReactElement {
+		const { closeLabel, ...rest } = props;
+		return (
+			<Dialog defaultOpen {...rest}>
+				<Dialog.Content>
+					<Dialog.Close accessibilityLabel={closeLabel} />
+					<Dialog.Title>Delete file?</Dialog.Title>
+				</Dialog.Content>
+			</Dialog>
+		);
+	}
+
+	test("the corner close is named Close by default", async () => {
+		await renderWithProviders(<CornerDialog />, { wrapper: Overlays });
+		expect(screen.getByRole("button", { name: "Close" })).toBeOnTheScreen();
+	});
+
+	test("the labels prop renames it", async () => {
+		await renderWithProviders(<CornerDialog labels={{ close: "Schließen" }} />, { wrapper: Overlays });
+		expect(screen.getByRole("button", { name: "Schließen" })).toBeOnTheScreen();
+	});
+
+	test("a LabelsProvider renames it, and the prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ dialog: { close: "Schließen" } }}>
+				<CornerDialog />
+			</LabelsProvider>,
+			{ wrapper: Overlays }
+		);
+		expect(screen.getByRole("button", { name: "Schließen" })).toBeOnTheScreen();
+		await renderWithProviders(
+			<LabelsProvider labels={{ dialog: { close: "Schließen" } }}>
+				<CornerDialog labels={{ close: "Zu" }} />
+			</LabelsProvider>,
+			{ wrapper: Overlays }
+		);
+		expect(screen.getByRole("button", { name: "Zu" })).toBeOnTheScreen();
+	});
+
+	test("an own accessibilityLabel still wins over labels", async () => {
+		await renderWithProviders(<CornerDialog closeLabel="Dismiss" labels={{ close: "Schließen" }} />, {
+			wrapper: Overlays,
+		});
+		expect(screen.getByRole("button", { name: "Dismiss" })).toBeOnTheScreen();
 	});
 });

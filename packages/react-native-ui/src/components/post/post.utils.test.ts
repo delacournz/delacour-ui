@@ -4,6 +4,7 @@ import {
 	formatCompactCount,
 	formatGroupedNumber,
 	formatRelativeTime,
+	hasPostCardCarrier,
 	resolveAuthorA11yLabel,
 	resolveBodyClamp,
 	resolveBodyToggleA11y,
@@ -279,25 +280,25 @@ describe("resolveBodyClamp", () => {
 });
 
 describe("resolvePostCardActions", () => {
-	test("a card with both presses offers activate and longpress", () => {
-		expect(resolvePostCardActions({ hasPress: true, hasLongPress: true })).toEqual([
-			{ name: "activate", label: "Open post" },
-			{ name: "longpress", label: "More options" },
-		]);
+	test("a card with a long press offers a labelled longpress", () => {
+		expect(resolvePostCardActions({ hasLongPress: true })).toEqual([{ name: "longpress", label: "More options" }]);
 	});
 
-	test("only the presses the card has are offered", () => {
-		expect(resolvePostCardActions({ hasPress: true, hasLongPress: false })).toEqual([
-			{ name: "activate", label: "Open post" },
-		]);
-		expect(resolvePostCardActions({ hasPress: false, hasLongPress: true })).toEqual([
-			{ name: "longpress", label: "More options" },
-		]);
+	test("no long press, or a disabled card, offers nothing", () => {
+		expect(resolvePostCardActions({ hasLongPress: false })).toEqual([]);
+		expect(resolvePostCardActions({ hasLongPress: true, disabled: true })).toEqual([]);
+	});
+});
+
+describe("hasPostCardCarrier", () => {
+	test("any press on an enabled card earns a carrier", () => {
+		expect(hasPostCardCarrier({ hasPress: true, hasLongPress: false })).toBe(true);
+		expect(hasPostCardCarrier({ hasPress: false, hasLongPress: true })).toBe(true);
 	});
 
-	test("a disabled or press-less card offers nothing", () => {
-		expect(resolvePostCardActions({ hasPress: false, hasLongPress: false })).toEqual([]);
-		expect(resolvePostCardActions({ hasPress: true, hasLongPress: true, disabled: true })).toEqual([]);
+	test("a plain or disabled card does not", () => {
+		expect(hasPostCardCarrier({ hasPress: false, hasLongPress: false })).toBe(false);
+		expect(hasPostCardCarrier({ hasPress: true, hasLongPress: true, disabled: true })).toBe(false);
 	});
 });
 

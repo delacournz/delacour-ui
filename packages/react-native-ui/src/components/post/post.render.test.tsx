@@ -57,40 +57,62 @@ describe("Post", () => {
 		expect(onPress).toHaveBeenCalledTimes(1);
 	});
 
-	test("the body carries the card's press and long press as accessibility actions", async () => {
+	test("a pressable card has one carrier and the body carries no actions", async () => {
 		const onPress = jest.fn();
 		const onLongPress = jest.fn();
+		const originalOS = Platform.OS;
 		await renderWithProviders(
 			<Post onLongPress={onLongPress} onPress={onPress} testID="card">
-				<Post.Title>Title</Post.Title>
 				<Post.Body testID="body">Hi</Post.Body>
 			</Post>
 		);
-		const body = screen.getByTestId("body");
-		expect(body.props.accessibilityActions).toEqual([
-			{ name: "activate", label: "Open post" },
-			{ name: "longpress", label: "More options" },
-		]);
-		expect(screen.getByRole("header").props.accessibilityActions).toBeUndefined();
-		await fireEvent(body, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
-		expect(onPress).toHaveBeenCalledTimes(1);
-		await fireEvent(body, "accessibilityAction", { nativeEvent: { actionName: "longpress" } });
+		const carrier = screen.getByTestId("post-card-action");
+		expect(carrier.props.accessibilityLabel).toBe("Open post");
+		expect(carrier.props.accessible).toBe(true);
+		expect(carrier.props.pointerEvents).toBe("none");
+		expect(screen.getByTestId("body").props.accessibilityActions).toBeUndefined();
+		expect(screen.getByTestId("body").props.onAccessibilityAction).toBeUndefined();
+		expect(carrier.props.accessibilityActions).toEqual(
+			expect.arrayContaining([{ name: "longpress", label: "More options" }])
+		);
+
+		await fireEvent(carrier, "accessibilityAction", { nativeEvent: { actionName: "longpress" } });
 		expect(onLongPress).toHaveBeenCalledTimes(1);
+
+		try {
+			Platform.OS = "ios";
+			await renderWithProviders(
+				<Post onPress={onPress}>
+					<Post.Body>Hi</Post.Body>
+				</Post>
+			);
+			const iosCarrier = screen.getAllByTestId("post-card-action").at(-1);
+			if (!iosCarrier) throw new Error("no carrier");
+			await fireEvent(iosCarrier, "accessibilityTap");
+			expect(onPress).toHaveBeenCalledTimes(1);
+
+			Platform.OS = "android";
+			await renderWithProviders(
+				<Post onPress={onPress}>
+					<Post.Body>Hi</Post.Body>
+				</Post>
+			);
+			const androidCarrier = screen.getAllByTestId("post-card-action").at(-1);
+			if (!androidCarrier) throw new Error("no carrier");
+			await fireEvent(androidCarrier, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+			expect(onPress).toHaveBeenCalledTimes(2);
+		} finally {
+			Platform.OS = originalOS;
+		}
 	});
 
-	test("a plain or disabled card puts no actions on the body", async () => {
-		const view = await renderWithProviders(
-			<Post>
-				<Post.Body testID="body">Hi</Post.Body>
-			</Post>
-		);
-		expect(screen.getByTestId("body").props.accessibilityActions).toBeUndefined();
-		await view.rerender(
-			<Post disabled onPress={jest.fn()}>
-				<Post.Body testID="body">Hi</Post.Body>
-			</Post>
-		);
-		expect(screen.getByTestId("body").props.accessibilityActions).toBeUndefined();
+	test("a carrier exists only for a pressable, enabled card", async () => {
+		const view = await renderWithProviders(<Post testID="card" />);
+		expect(screen.queryByTestId("post-card-action")).not.toBeOnTheScreen();
+		await view.rerender(<Post disabled onPress={jest.fn()} />);
+		expect(screen.queryByTestId("post-card-action")).not.toBeOnTheScreen();
+		await view.rerender(<Post onPress={jest.fn()} />);
+		expect(screen.getByTestId("post-card-action")).toBeOnTheScreen();
 	});
 
 	test("warns when an accessible card wraps a control", async () => {

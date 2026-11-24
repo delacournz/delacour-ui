@@ -1,15 +1,9 @@
 import { type ReactElement, type ReactNode, useState } from "react";
-import { type AccessibilityActionEvent, type TextLayoutEvent, View } from "react-native";
+import { type TextLayoutEvent, View } from "react-native";
 import { Pressable } from "../pressable";
 import { Text, type TextProps } from "../text";
 import { usePostPart } from "./post.context";
-import {
-	type BodyToken,
-	resolveBodyClamp,
-	resolveBodyToggleA11y,
-	resolvePostCardActions,
-	tokenizePostBody,
-} from "./post.utils";
+import { type BodyToken, resolveBodyClamp, resolveBodyToggleA11y, tokenizePostBody } from "./post.utils";
 import { postVariants } from "./post.variants";
 
 export type PostBodyProps = Omit<TextProps, "children" | "numberOfLines"> & {
@@ -52,8 +46,7 @@ function handlerFor(
  * invisible twin laid over it, because a clamped `Text` reports only the lines
  * it drew. The "more" / "less" toggle is labelled "Show more" / "Show less" and carries
  * `expanded`, as one `Pressable` stop around a plain `Text` — a `Text` with `onPress` is a second
- * VoiceOver element on iOS. This is also the one carrier of a pressable card's own `onPress` /
- * `onLongPress`, as `activate` / `longpress` accessibility actions — see AGENTS.md. "More" appears only when the twin has more lines than the clamp —
+ * VoiceOver element on iOS. "More" appears only when the twin has more lines than the clamp —
  * a short post offers nothing to tap into.
  */
 export function PostBody({
@@ -67,16 +60,7 @@ export function PostBody({
 	testID,
 	...props
 }: PostBodyProps): ReactElement {
-	const { variant, size, onCardPress, onCardLongPress, isCardDisabled } = usePostPart("Post.Body");
-	const cardActions = resolvePostCardActions({
-		hasPress: onCardPress !== undefined,
-		hasLongPress: onCardLongPress !== undefined,
-		disabled: isCardDisabled,
-	});
-	const onCardAccessibilityAction = (event: AccessibilityActionEvent) => {
-		if (event.nativeEvent.actionName === "activate") onCardPress?.();
-		if (event.nativeEvent.actionName === "longpress") onCardLongPress?.();
-	};
+	const { variant, size } = usePostPart("Post.Body");
 	const slots = postVariants({ variant, size });
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [isTruncated, setIsTruncated] = useState(false);
@@ -112,14 +96,7 @@ export function PostBody({
 
 	return (
 		<View className={slots.bodyFrame()}>
-			<Text
-				accessibilityActions={cardActions.length > 0 ? cardActions : undefined}
-				className={slots.body({ className })}
-				numberOfLines={clamp.numberOfLines}
-				onAccessibilityAction={cardActions.length > 0 ? onCardAccessibilityAction : undefined}
-				testID={testID}
-				{...props}
-			>
+			<Text className={slots.body({ className })} numberOfLines={clamp.numberOfLines} testID={testID} {...props}>
 				{content}
 			</Text>
 			{isMeasured ? (

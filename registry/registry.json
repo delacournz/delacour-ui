@@ -3392,6 +3392,7 @@
 				"ui/post/post-action.tsx",
 				"ui/post/post-author.tsx",
 				"ui/post/post-body.tsx",
+				"ui/post/post-card-action.tsx",
 				"ui/post/post-community.tsx",
 				"ui/post/post-footer.tsx",
 				"ui/post/post-header.tsx",

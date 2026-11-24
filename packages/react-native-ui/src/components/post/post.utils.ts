@@ -267,17 +267,30 @@ export function resolveBodyClamp(input: {
 	return { numberOfLines: input.numberOfLines, showMore: input.isTruncated, showLess: false };
 }
 
-/** One entry of a screen reader's actions menu. */
-export type PostCardAction = { name: "activate" | "longpress"; label: string };
+/** The long-press entry of a screen reader's actions menu. */
+export type PostCardAction = { name: "longpress"; label: string };
 
 /**
- * The named accessibility actions a pressable card publishes for its own presses.
+ * The extra accessibility actions a pressable card's carrier publishes.
  *
- * The card root is `accessible={false}` so its inner controls stay reachable, which leaves its
- * `onPress` and `onLongPress` with no element to act on. `Post.Body` carries these instead: the
- * double-tap on the text activates the post. A disabled card offers nothing.
+ * The carrier is a library `Pressable`, which already routes a screen reader's activation to
+ * `onPress` on both platforms and offers `longpress` only on Android. This adds a named, labelled
+ * `longpress` on every platform so iOS reaches the card's `onLongPress` through the actions rotor.
+ * A disabled card, or one with no long press, adds nothing.
  */
 export function resolvePostCardActions({
+	hasLongPress,
+	disabled = false,
+}: {
+	hasLongPress: boolean;
+	disabled?: boolean;
+}): PostCardAction[] {
+	if (disabled || !hasLongPress) return [];
+	return [{ name: "longpress", label: "More options" }];
+}
+
+/** Whether a card gets a screen-reader carrier: it has a press or long press and is not disabled. */
+export function hasPostCardCarrier({
 	hasPress,
 	hasLongPress,
 	disabled = false,
@@ -285,12 +298,8 @@ export function resolvePostCardActions({
 	hasPress: boolean;
 	hasLongPress: boolean;
 	disabled?: boolean;
-}): PostCardAction[] {
-	if (disabled) return [];
-	const actions: PostCardAction[] = [];
-	if (hasPress) actions.push({ name: "activate", label: "Open post" });
-	if (hasLongPress) actions.push({ name: "longpress", label: "More options" });
-	return actions;
+}): boolean {
+	return !disabled && (hasPress || hasLongPress);
 }
 
 /**

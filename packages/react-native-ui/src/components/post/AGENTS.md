@@ -46,13 +46,17 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
   press looks like.
 - **A pressable card is `accessible={false}`.** An accessible parent swallows its children on iOS,
   so a card that merged would hide like, reply and the author's profile tap from VoiceOver. That
-  leaves the card's own `onPress` / `onLongPress` with no element to act on, so the root publishes
-  them through context and **`Post.Body` is the one carrier**: its text offers `activate` ("Open
-  post") and `longpress` ("More options") accessibility actions (`resolvePostCardActions`), so
-  double-tapping the body opens the post. Title, author and the rest do not repeat them. A post with
-  no `Post.Body` has no carrier — give it another path (the reply stat). A disabled or press-less
-  card offers none; without `onPress` the root is a plain `View`. Passing `accessible` to `Post`
-  yourself merges the card and swallows its controls — a development warning says so.
+  leaves the card's own `onPress` / `onLongPress` with no element to act on, so a pressable, enabled
+  card renders `PostCardAction` as its first child: a one-point, transparent library `Pressable`
+  ("Open post", role button) pinned to the corner, out of flow, with `pointerEvents="none"` so a
+  finger still lands on the card. `Pressable` routes a screen reader's activation to `onPress` per
+  platform (`onAccessibilityTap` on iOS, `activate` on Android); `longpress` ("More options") is
+  added on every platform by `resolvePostCardActions`. It works for a post with no `Post.Body`.
+  Not a `Text` — on iOS Fabric a paragraph is never the accessibility element, so actions on it never
+  fire — and not a merged body frame, which would hide the body's own links. Not `opacity: 0`: UIKit
+  and TalkBack skip a transparent view. A disabled or press-less card has no carrier; without
+  `onPress` the root is a plain `View`. Passing `accessible` to `Post` yourself merges the card and
+  swallows its controls — a development warning says so.
 - **The "more" / "less" toggle is labelled "Show more" / "Show less"** (the visible word is in the
   name) and carries `accessibilityState.expanded`. It is one `Pressable` stop
   (`feedback="none"`) around a plain `Text`: a `Text` with `onPress` is a second VoiceOver stop on iOS.

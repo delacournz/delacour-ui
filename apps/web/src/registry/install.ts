@@ -13542,7 +13542,7 @@ export const install = {
 		expo: ["expo-linear-gradient", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 57,
+		fileCount: 58,
 		groups: [
 			{
 				name: "post",
@@ -13554,6 +13554,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/post/post-action.tsx", target: "src/components/ui/post/post-action.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-author.tsx", target: "src/components/ui/post/post-author.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-body.tsx", target: "src/components/ui/post/post-body.tsx" },
+					{ source: "packages/react-native-ui/src/components/post/post-card-action.tsx", target: "src/components/ui/post/post-card-action.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-community.tsx", target: "src/components/ui/post/post-community.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-footer.tsx", target: "src/components/ui/post/post-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/post/post-header.tsx", target: "src/components/ui/post/post-header.tsx" },

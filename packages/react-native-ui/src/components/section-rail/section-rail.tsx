@@ -3,6 +3,8 @@ import { BackHandler, I18nManager, type LayoutChangeEvent, View, type ViewProps 
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { SectionRailLabels } from "../../lib/labels";
 import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import type { HapticFeedback } from "../pressable";
 import { type SectionRailContextValue, SectionRailProvider } from "./section-rail.context";
@@ -49,6 +51,11 @@ export type SectionRailProps = Omit<ViewProps, "children"> & {
 	offset?: number;
 	/** Ticked once per section crossed while scrubbing, and on opening. Off by default. */
 	haptic?: false | HapticFeedback;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `trigger` is
+	 * the rail's accessible name; `accessibilityLabel` on `SectionRail.Trigger` still wins.
+	 */
+	labels?: Partial<SectionRailLabels>;
 	className?: string;
 	children: ReactNode;
 };
@@ -66,10 +73,12 @@ function SectionRailRoot(rootProps: SectionRailProps): ReactElement {
 		closeDelay = SECTION_RAIL_DEFAULT_CLOSE_DELAY,
 		offset = SECTION_RAIL_DEFAULT_OFFSET,
 		haptic = false,
+		labels: labelsProp,
 		className,
 		children,
 		...props
 	} = rootProps;
+	const spoken = useLabels("sectionRail", labelsProp);
 
 	// `useControllableState` reads `undefined` as "uncontrolled", but a scroll
 	// hook's `activeId` is `undefined` until the first scroll. Whether the caller
@@ -222,6 +231,7 @@ function SectionRailRoot(rootProps: SectionRailProps): ReactElement {
 			placement,
 			registerItem,
 			setOpen,
+			spoken,
 			step,
 			triggerRef,
 			committedRowRef,
@@ -242,6 +252,7 @@ function SectionRailRoot(rootProps: SectionRailProps): ReactElement {
 			placement,
 			registerItem,
 			setOpen,
+			spoken,
 			step,
 			value,
 		]

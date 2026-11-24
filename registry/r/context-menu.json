@@ -10,7 +10,8 @@
 	"registryDependencies": [
 		"menu",
 		"pressable",
-		"tv"
+		"tv",
+		"use-calm-motion"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -62,7 +63,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/context-menu/context-menu-preview.tsx",
 			"target": "context-menu/context-menu-preview.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/context-menu/context-menu-trigger.tsx",
@@ -190,6 +197,21 @@
 		"@types/bun"
 	],
 	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/context-menu-preview.render.test.tsx",
+			"target": "context-menu/context-menu-preview.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		},
 		{
 			"path": "packages/react-native-ui/src/components/context-menu/context-menu.render.test.tsx",
 			"target": "context-menu/context-menu.render.test.tsx",

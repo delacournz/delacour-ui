@@ -120,6 +120,11 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   abandoned. `isClearable` defaults on for range and multiple, off for single.
 - **The calendar keeps its own size.** `calendarSize` (default `md`) is independent of the trigger's
   `size`: a `sm` field must not shrink day targets below 44pt.
+- **The year list scrolls, not the sheet.** `DatePicker.Calendar` passes the sheet's content pan
+  to the calendar as `yearListBlocksGesture`, read with the engine's
+  `useOptionalBottomSheetInternal()`, so a slow drag on the years scrolls them instead of moving the
+  sheet. Inline, outside a sheet, it passes nothing. The calendar's `AGENTS.md` has the gesture
+  and the shapes that failed.
 - **`presentation` is a union, not a boolean**, so an anchored `"popover"` can join it once the
   Overlays category ships one, without a breaking change. Today: `sheet` (default) and `inline`,
   which draws the calendar on a card in place and renders no trigger. There is no popover import

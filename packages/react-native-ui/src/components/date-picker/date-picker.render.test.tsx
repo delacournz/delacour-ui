@@ -1,6 +1,7 @@
 import { BottomSheetProvider } from "@delacour/react-native-bottom-sheet";
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
+import { getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { act, fireEvent, renderWithProviders, screen, within } from "../../test/render";
 import type { CalendarDate, CalendarDateRange } from "../calendar/calendar.date";
 import { OverlayProvider } from "../overlay";
@@ -514,6 +515,22 @@ describe("DatePicker initialView", () => {
 		await tap(trigger());
 		expect(caption()).toHaveAccessibleName("March 1990");
 		expect(year(1990)).not.toBeOnTheScreen();
+	});
+
+	test("in the sheet, the year list blocks the sheet's content pan", async () => {
+		await renderWithProviders(<Picker defaultOpen initialView="years" {...bounds} />, { wrapper: Providers });
+		expect(screen.getByTestId("stay-calendar-years")).toBeOnTheScreen();
+		const blocked = getByGestureTestId("stay-calendar-years-pan").config.blocksHandlers ?? [];
+		expect(blocked).toHaveLength(1);
+		expect(blocked[0]?.handlerName).toBe("PanGestureHandler");
+	});
+
+	test("inline, the year list blocks nothing", async () => {
+		await renderWithProviders(<Picker initialView="years" presentation="inline" {...bounds} />, {
+			wrapper: Providers,
+		});
+		expect(screen.getByTestId("stay-calendar-years")).toBeOnTheScreen();
+		expect(() => getByGestureTestId("stay-calendar-years-pan")).toThrow();
 	});
 
 	test("starts again on the years each time the sheet opens while empty", async () => {

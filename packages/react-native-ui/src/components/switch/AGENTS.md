@@ -126,7 +126,7 @@ section to read first — what follows is only where a switch differs.
   none of it.** The track, the thumb and both content layers fade between two
   token *values* off the one `progress`, and a colour being interpolated cannot
   be a class — `Checkbox`'s border, four times over. The slot set keeps
-  `bg-input` and `bg-muted-foreground` as the resting appearance those styles start
+  `bg-input` and `bg-background` as the resting appearance those styles start
   from and names no colour anywhere else; the maps are the single source. There
   is deliberately **no `color` axis in the `tv()`** — a `bg-*` per colour there
   would be a second source for one surface, which is how a class and a style end
@@ -136,17 +136,19 @@ section to read first — what follows is only where a switch differs.
   theme forces: there is no `--foreground-foreground`, and `background` is
   what content drawn on the page's ink actually is. A test pins the whole map
   against the track's.
-- **The resting knob is `muted-foreground`, for contrast.** With no On/Off text
-  beside it, the knob is the only sign of the state, so it must reach 3:1
-  against the resting track and the surface behind it (WCAG 1.4.11). A knob in
-  the page's own colour reached 1.21:1 on the light `input` track and 1.47:1 on
-  the dark one; the grey knob reaches 3.76:1 and 4.39:1 at the least. A test
-  computes the ratios from `theme.css`, and another holds the slot class to the
-  token. One known gap: a glyph *inside* the knob takes the track's on colour (a
-  prop, so it cannot fade with the knob). That colour reads on the on knob but
-  not on the grey off knob — about 2.5:1 for `default` in dark, and near 1:1 for
-  the semantic colours — so keep knob glyphs decorative. Content in
-  `Switch.StartContent` and `.EndContent` sits on the track and is unaffected.
+- **Off-state contrast (WCAG 1.4.11, 3:1) is carried by two tokens.** The off
+  track is `input`, which clears 3:1 against `background` and `card` in both
+  modes (3.10 to 3.34, the dark one measured composited, as it is translucent).
+  The off knob is `background`, which clears 3:1 against that track (3.10 or
+  more). It was `muted-foreground` while `input` was a pale border grey; once
+  `input` darkened, that grey knob fell to 1.57:1 in light. `secondary` or
+  `muted-foreground` in either slot would fail again. `switch.variants.test.ts`
+  pins both tokens and computes the ratios from `theme.css`, and another test
+  holds the slot class to the token. One known gap: a glyph *inside* the knob
+  takes the track's on colour (a prop, so it cannot fade with the knob), which
+  reads on the on knob but not on the off one, so keep knob glyphs decorative.
+  Content in `Switch.StartContent` and `.EndContent` sits on the track and is
+  unaffected.
 - **`Switch.StartContent` and `.EndContent` crossfade themselves.** Start sits at
   the leading edge, which the knob vacates as the switch turns **on**, so it fades
   in with `progress`; end is the mirror. That is the whole reason both can be

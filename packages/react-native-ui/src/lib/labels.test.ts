@@ -636,6 +636,194 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.confirmed).toBe("Confirmed");
 		expect(labels.failed).toBe("Failed. Slide to try again");
 	});
+
+	test("slider is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.slider;
+		expect(labels.minimum).toBe("Minimum");
+		expect(labels.maximum).toBe("Maximum");
+		expect(labels.minimumOf("Price range")).toBe("Price range, minimum");
+		expect(labels.maximumOf("Price range")).toBe("Price range, maximum");
+		expect(labels.positionOf("Stops", 2, 3)).toBe("Stops, 2 of 3");
+		expect(labels.position(3, 3)).toBe("Thumb 3 of 3");
+	});
+
+	test("sortable is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.sortable;
+		expect(labels.handle).toBe("Drag to reorder");
+		expect(labels.handleFor("Milk")).toBe("Reorder Milk");
+		expect(labels.moveUp).toBe("Move up");
+		expect(labels.moveUpFor("Milk")).toBe("Move Milk up");
+		expect(labels.moveDown).toBe("Move down");
+		expect(labels.moveDownFor("Milk")).toBe("Move Milk down");
+		expect(labels.position(2, 5)).toBe("Position 2 of 5");
+	});
+
+	test("splitView is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.splitView;
+		expect(labels.dragArea).toBe("Resize panes");
+		expect(labels.position(2, 3)).toBe("Position 2 of 3");
+		expect(labels.nextPosition).toBe("Next position");
+	});
+
+	test("splitter is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.splitter;
+		expect(labels.handle).toBe("Resize");
+		expect(labels.value(35)).toBe("35 percent");
+		expect(labels.value(33.333)).toBe("33 percent");
+		expect(labels.resetAction).toBe("Reset sizes");
+		expect(labels.collapseAction).toBe("Collapse");
+		expect(labels.expandAction).toBe("Expand");
+		expect(labels.reset).toBe("Sizes reset");
+		expect(labels.collapsed).toBe("Pane collapsed");
+		expect(labels.expanded).toBe("Pane expanded");
+	});
+
+	test("stackCard is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.stackCard;
+		expect([labels.swipeDown, labels.swipeLeft, labels.swipeRight, labels.swipeUp]).toEqual([
+			"Swipe down",
+			"Swipe left",
+			"Swipe right",
+			"Swipe up",
+		]);
+		expect(labels.undo).toBe("Undo");
+		expect(labels.empty).toBe("No more cards");
+		expect(labels.position(2, 3)).toBe("Card 2 of 3");
+		expect(labels.throwAnnouncement("Like", "Grace")).toBe("Like. Next: Grace");
+		expect(labels.emptyAnnouncement("Like", "No more cards")).toBe("Like. No more cards");
+		expect(labels.undoAnnouncement("Grace")).toBe("Undone. Grace");
+	});
+
+	test("steps is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.steps;
+		expect(labels.position(2, 3)).toBe("Step 2 of 3");
+		expect(labels.position(2, 0)).toBe("Step 2");
+		expect([labels.completed, labels.current, labels.upcoming, labels.error, labels.loading]).toEqual([
+			"completed",
+			"current",
+			"upcoming",
+			"has an error",
+			"loading",
+		]);
+		expect(labels.value(["Step 2 of 3", "current", "loading"])).toBe("Step 2 of 3, current, loading");
+	});
+
+	test("support is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.support;
+		expect(labels.availability("away")).toBe("Away");
+		expect(labels.availabilitySpoken("away")).toBe("away");
+		expect(labels.availabilityStatus("online")).toBe("We're online");
+		expect(labels.ticketStatus("pending")).toBe("Waiting on you");
+		expect(labels.ticketStatusSpoken("pending")).toBe("waiting on you");
+		expect(labels.statusSpoken("Away", "Back tomorrow")).toBe("Away. Back tomorrow");
+		expect(labels.agentStatusLine("Support", "Online")).toBe("Support · Online");
+		expect(labels.agentSpoken(["Omar Haddad", "Support", "online"])).toBe("Omar Haddad, Support, online");
+		expect(labels.typing("Omar")).toBe("Omar is typing");
+		expect(labels.someone).toBe("Someone");
+		expect(labels.meta(["#4821", "2h"])).toBe("#4821 · 2h");
+		expect(labels.conversationSpoken(["Refund", "solved", "unread reply", "2h"])).toBe(
+			"Refund, solved, unread reply, 2h"
+		);
+		expect(labels.conversationWithPreview("Refund, solved", "Done.")).toBe("Refund, solved. Done.");
+		expect(labels.unreadReply).toBe("unread reply");
+		expect(labels.updated).toBe("updated");
+		expect(labels.topicSpoken("Billing", "Invoices")).toBe("Billing. Invoices");
+		expect(labels.escalateHint).toBe("Talk to a person");
+	});
+
+	test("table is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.table;
+		expect(labels.sortedAscending).toBe("sorted ascending");
+		expect(labels.sortedDescending).toBe("sorted descending");
+		expect(labels.notSorted).toBe("not sorted");
+		expect(labels.cell("Qty", 3)).toBe("Qty, 3");
+		expect(labels.row(["Widget", "3", "$9"])).toBe("Widget, 3, $9");
+	});
+
+	test("tagInput is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.tagInput;
+		expect(labels.remove("design")).toBe("Remove design");
+		expect(labels.clearAll).toBe("Clear all");
+		expect(labels.added(["a", "b"])).toBe("Added a, b");
+		expect(labels.removed("alice")).toBe("Removed alice");
+		expect(labels.rejectDuplicate).toBe("Duplicate, not added");
+		expect(labels.rejectEmpty).toBe("Nothing to add");
+		expect(labels.rejectInvalid).toBe("Not valid, not added");
+		expect(labels.rejectMax).toBe("Limit reached, not added");
+		expect([labels.tags(0), labels.tags(1), labels.tags(3)]).toEqual(["No tags", "1 tag", "3 tags"]);
+	});
+
+	test("textarea is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.textarea;
+		expect(labels.count(12, 280)).toBe("12 of 280 characters");
+		expect(labels.remaining(1)).toBe("1 character remaining");
+		expect(labels.remaining(19)).toBe("19 characters remaining");
+		expect(labels.limitReached).toBe("Character limit reached");
+	});
+
+	test("themeSelector is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.themeSelector;
+		expect([labels.system, labels.light, labels.dark, labels.group]).toEqual(["System", "Light", "Dark", "Theme"]);
+	});
+
+	test("timePicker is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.timePicker;
+		expect([labels.title, labels.done, labels.clear, labels.placeholder]).toEqual([
+			"Select time",
+			"Done",
+			"Clear",
+			"Select time",
+		]);
+		expect(labels.trigger).toBe("Time");
+		expect(labels.triggerHint).toBe("Opens time picker");
+		expect(labels.notSet).toBe("not set");
+		expect([labels.hour, labels.minute, labels.second, labels.period]).toEqual([
+			"Hour",
+			"Minute",
+			"Second",
+			"AM or PM",
+		]);
+		expect(labels.column("Reminder", "Hour", undefined)).toBe("Reminder, Hour");
+		expect(labels.column("Reminder", "Hour", "required")).toBe("Reminder, Hour, required");
+		expect(labels.hourValue(3)).toBe("3 o'clock");
+		expect([labels.minuteValue(1), labels.minuteValue(30)]).toEqual(["1 minute", "30 minutes"]);
+		expect([labels.secondValue(1), labels.secondValue(15)]).toEqual(["1 second", "15 seconds"]);
+	});
+
+	test("timeline is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.timeline;
+		expect(labels.itemValue({ position: 2, count: 6, status: labels.completed, tone: labels.toneSuccess })).toBe(
+			"Event 2 of 6, completed, success"
+		);
+		expect(labels.itemValue({ position: 1, count: 3, status: labels.current, tone: undefined })).toBe(
+			"Event 1 of 3, current"
+		);
+		expect(labels.itemValue({ position: 5, count: 0, status: labels.upcoming, tone: undefined })).toBe(
+			"Event 5, upcoming"
+		);
+		expect([labels.toneInfo, labels.toneWarning, labels.toneDestructive]).toEqual(["info", "warning", "error"]);
+	});
+
+	test("toast is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.toast;
+		expect(labels.dismiss).toBe("Dismiss");
+		expect(labels.action).toBe("Action");
+		expect(labels.announcement("Saved", "Draft stored")).toBe("Saved. Draft stored");
+	});
+
+	test("tour is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.tour;
+		expect([labels.next, labels.back, labels.skip, labels.finish]).toEqual(["Next", "Back", "Skip", "Done"]);
+		expect(labels.progress(2, 5)).toBe("2 of 5");
+		expect(labels.announcement(2, 5)).toBe("Step 2 of 5");
+	});
+
+	test("tree is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.tree;
+		expect(labels.level(2)).toBe("Level 2");
+		expect(labels.expand).toBe("Expand");
+		expect(labels.collapse).toBe("Collapse");
+	});
 });
 
 describe("resolveLabels", () => {

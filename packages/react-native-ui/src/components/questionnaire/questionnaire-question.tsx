@@ -77,11 +77,15 @@ export function QuestionnaireQuestion({
 	const isCalm = useCalmMotion();
 	const headingRef = useRef<ViewInstance>(null);
 	const currentId = current?.id;
-	const title = current?.title;
+	/**
+	 * Composed in render so the effect keys on the words, not on `labels`' identity: an inline
+	 * function label is a new object every render, and must not re-announce or pull focus back.
+	 */
+	const announcement = labels.questionAnnouncement(countLabel, current?.title ?? "");
 
 	useEffect(() => {
 		if (!hasNavigated || currentId === undefined) return;
-		AccessibilityInfo.announceForAccessibility(labels.questionAnnouncement(countLabel, title ?? ""));
+		AccessibilityInfo.announceForAccessibility(announcement);
 		const timer = setTimeout(
 			() => {
 				if (headingRef.current) AccessibilityInfo.sendAccessibilityEvent(headingRef.current, "focus");
@@ -89,7 +93,7 @@ export function QuestionnaireQuestion({
 			isCalm ? QUESTIONNAIRE_TRANSITION_MS.calm : QUESTIONNAIRE_TRANSITION_MS.full
 		);
 		return () => clearTimeout(timer);
-	}, [countLabel, currentId, hasNavigated, isCalm, labels, title]);
+	}, [announcement, currentId, hasNavigated, isCalm]);
 
 	const onAnswer = useCallback(
 		(answer: Answer | undefined) => {

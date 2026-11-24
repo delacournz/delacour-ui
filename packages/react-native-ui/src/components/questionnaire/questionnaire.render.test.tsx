@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
+import type { ReactElement } from "react";
 import { AccessibilityInfo, Text } from "react-native";
 import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
@@ -597,6 +598,25 @@ describe("Questionnaire: labels", () => {
 		await fireEvent(screen.getByRole("button", { name: "Go" }), "accessibilityTap");
 		expect(spy).toHaveBeenCalledWith("mine");
 		expect(screen.queryByRole("button", { name: "Weiter" })).not.toBeOnTheScreen();
+	});
+
+	test("an inline announcement label with the same words does not re-announce the question", async () => {
+		const spy = announce();
+		const flow = (): ReactElement => (
+			<Questionnaire
+				haptic={false}
+				labels={{ questionAnnouncement: (count: string, title: string) => `${count} - ${title}` }}
+				questions={FLOW}
+			/>
+		);
+		const view = await renderWithProviders(flow());
+		await fireEvent.changeText(screen.getByPlaceholderText("Your name"), "Ada");
+		await fireEvent(screen.getByRole("button", { name: "Next" }), "accessibilityTap");
+		const announced = spy.mock.calls.filter(([message]) => message === "Question 2 of 3 - Do you agree?").length;
+		expect(announced).toBe(1);
+		await view.rerender(flow());
+		await view.rerender(flow());
+		expect(spy.mock.calls.filter(([message]) => message === "Question 2 of 3 - Do you agree?")).toHaveLength(1);
 	});
 
 	test("a question's yesLabel and noLabel win over the labels", async () => {

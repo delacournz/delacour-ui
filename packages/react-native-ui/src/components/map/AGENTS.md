@@ -108,6 +108,12 @@ no directions.
   `absolute inset-0` layer beside the map with `pointerEvents="box-none"`, so a pan
   on empty space still reaches the map. Each group is a `Surface` of ghost
   `Button`s at `icon-sm`, each labelled by what it does.
+- **The spoken strings are `labels`, not literals.** The map's name and the five
+  control buttons' names ("Zoom in", "Zoom out", "Point north", "Recenter map",
+  "Show my location") come from `lib/labels` through `useLabels`, resolved once on
+  the root and shared through the map context — English, then `DelacourProvider`'s
+  `labels`, then `<Map labels>`. An explicit `accessibilityLabel` on `<Map>` still
+  beats `labels.name`; `MAP_ACCESSIBILITY_LABEL` is an alias of the English default.
 - **The zoom buttons step from where the camera is going.** The zoom is read from
   the last `onRegionDidChange`; a press writes its target back at once, so a second
   press before the first lands steps on from it rather than repeating it.

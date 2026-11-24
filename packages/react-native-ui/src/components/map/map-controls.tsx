@@ -69,7 +69,7 @@ export function MapControls({
 			{showZoom ? (
 				<Surface padding="none" variant="default">
 					<Button
-						accessibilityLabel="Zoom in"
+						accessibilityLabel={map.labels.zoomIn}
 						hitSlop={resolveMapZoomHitSlop(controlSlop, "in")}
 						onPress={() => map.zoomBy(MAP_ZOOM_STEP)}
 						size="icon-sm"
@@ -79,7 +79,7 @@ export function MapControls({
 						<Icon icon={IconPlusSmall} />
 					</Button>
 					<Button
-						accessibilityLabel="Zoom out"
+						accessibilityLabel={map.labels.zoomOut}
 						hitSlop={resolveMapZoomHitSlop(controlSlop, "out")}
 						onPress={() => map.zoomBy(-MAP_ZOOM_STEP)}
 						size="icon-sm"
@@ -93,7 +93,7 @@ export function MapControls({
 			{showCompass ? (
 				<Surface padding="none" variant="default">
 					<Button
-						accessibilityLabel="Point north"
+						accessibilityLabel={map.labels.pointNorth}
 						onPress={() => map.resetBearing()}
 						size="icon-sm"
 						testID="map-controls-compass"
@@ -106,7 +106,7 @@ export function MapControls({
 			{showRecenter ? (
 				<Surface padding="none" variant="default">
 					<Button
-						accessibilityLabel="Recenter map"
+						accessibilityLabel={map.labels.recenter}
 						onPress={() => map.handle.recenter()}
 						size="icon-sm"
 						testID="map-controls-recenter"
@@ -119,7 +119,7 @@ export function MapControls({
 			{showLocate ? (
 				<Surface padding="none" variant="default">
 					<Button
-						accessibilityLabel="Show my location"
+						accessibilityLabel={map.labels.showMyLocation}
 						onPress={() => map.locate(onLocate)}
 						size="icon-sm"
 						testID="map-controls-locate"

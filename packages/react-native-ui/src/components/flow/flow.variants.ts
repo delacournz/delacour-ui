@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import type { LoopingMotionHold } from "../../lib/looping-motion";
 import { tv } from "../../lib/tv";
 import type { FlowConnection, FlowHandleType, FlowPoint, FlowSide } from "./flow-geometry";
 
@@ -160,6 +161,26 @@ export function resolveEdgeDash({
 }): { dashArray?: number[]; cycle: number } {
 	if (!isDashed && !isAnimated) return { cycle: 0 };
 	return { cycle: width * 5, dashArray: [width * 3, width * 2] };
+}
+
+export type FlowEdgeMarch = "march" | "freeze" | "rest";
+
+/**
+ * What an edge's dashes do. Only an animated, dashed edge marches; calm motion or a screen reader
+ * rests it (still dashes at offset 0), and a user pause freezes it where it is so resume carries on.
+ */
+export function resolveEdgeMarch({
+	isAnimated,
+	cycle,
+	hold,
+}: {
+	isAnimated: boolean;
+	cycle: number;
+	hold: LoopingMotionHold;
+}): FlowEdgeMarch {
+	if (!isAnimated || cycle <= 0) return "rest";
+	if (hold === "none") return "march";
+	return hold === "paused" ? "freeze" : "rest";
 }
 
 export type FlowHandleRef = { nodeId: string; handleId: string; type: FlowHandleType };

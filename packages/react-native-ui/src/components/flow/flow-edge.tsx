@@ -9,7 +9,13 @@ import {
 } from "react-native-reanimated";
 import { DashPathEffect, Group, Path, Skia, type SkPath } from "react-native-skia";
 import { useFlowCanvasLayer, useFlowPart } from "./flow.context";
-import { FLOW_DEFAULTS, resolveArrowSize, resolveEdgeDash, resolveFlowCanvasToken } from "./flow.variants";
+import {
+	FLOW_DEFAULTS,
+	resolveArrowSize,
+	resolveEdgeDash,
+	resolveEdgeMarch,
+	resolveFlowCanvasToken,
+} from "./flow.variants";
 import {
 	type FlowEdgeVariant,
 	type FlowEndpointReference,
@@ -31,7 +37,8 @@ export type FlowEdgeProps = {
 	to: FlowEndpointReference;
 	/** How the line is routed between the two ends. */
 	variant?: FlowEdgeVariant;
-	/** Marches the dashes toward the target. Holds still under calm motion. */
+	/** Marches the dashes toward the target. Holds still under calm motion or a screen reader, and
+	 * freezes while the Flow is paused (`isPaused` on `<Flow>`). */
 	isAnimated?: boolean;
 	isDashed?: boolean;
 	/** A theme token or a literal. Defaults to `muted-foreground`. */
@@ -83,7 +90,7 @@ export function FlowEdge({
 }: FlowEdgeProps): ReactElement | null {
 	const { registry } = useFlowPart("Flow.Edge");
 	const layer = useFlowCanvasLayer();
-	const isCalm = layer?.isCalm ?? false;
+	const hold = layer?.hold ?? "none";
 	const token = resolveFlowCanvasToken(FlowEdge.displayName, color);
 	const stroke = (token === undefined ? undefined : layer?.colors[token]) ?? "transparent";
 
@@ -115,22 +122,28 @@ export function FlowEdge({
 	);
 
 	const dashOffset = useSharedValue(0);
-	const shouldMarch = isAnimated && !isCalm && dash.cycle > 0;
+	const march = resolveEdgeMarch({ cycle: dash.cycle, hold, isAnimated });
 
 	useEffect(() => {
-		if (!shouldMarch) {
+		if (march === "rest") {
 			cancelAnimation(dashOffset);
 			dashOffset.value = 0;
 			return;
 		}
-		dashOffset.value = 0;
+		if (march === "freeze") {
+			cancelAnimation(dashOffset);
+			return;
+		}
+		// One cycle shifts the pattern onto itself, so each repeat restarts at the offset it began
+		// from without a visible jump — and a resume carries on from where a pause froze it.
+		const start = dashOffset.value;
 		dashOffset.value = withRepeat(
-			withTiming(-dash.cycle, { duration: FLOW_DEFAULTS.dashDuration, easing: Easing.linear }),
+			withTiming(start - dash.cycle, { duration: FLOW_DEFAULTS.dashDuration, easing: Easing.linear }),
 			-1,
 			false
 		);
 		return () => cancelAnimation(dashOffset);
-	}, [dash.cycle, dashOffset, shouldMarch]);
+	}, [dash.cycle, dashOffset, march]);
 
 	const linePath = useDerivedValue(() => toSkiaPath(geometry.value?.d));
 	const lineOpacity = useDerivedValue(() => (geometry.value ? 1 : 0));

@@ -7,7 +7,7 @@ import Animated, {
 	useSharedValue,
 	withSpring,
 } from "react-native-reanimated";
-import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLoopingMotion } from "../../hooks/use-looping-motion";
 import type { IconComponent } from "../icon";
 import type { AnimatedBadgeFrame } from "./animated-badge.types";
 import {
@@ -54,6 +54,16 @@ export type AnimatedBadgeProps = Omit<ViewProps, "children"> &
 		/** A gentle repeating swell on the glyph. Defaults to `true` when `status` is `loading`. */
 		pulse?: boolean;
 		/**
+		 * Hold the pulse still, at the glyph's rest state. Controlled: pair it with
+		 * `onPausedChange` and your own visible control (WCAG 2.2.2). Leave it unset
+		 * to let the badge keep the pause itself.
+		 */
+		isPaused?: boolean;
+		/** The pause an uncontrolled badge starts with. Default `false`. */
+		defaultPaused?: boolean;
+		/** Called when the pause changes — from `isPaused`' owner or the badge's own accessibility action. */
+		onPausedChange?: (isPaused: boolean) => void;
+		/**
 		 * Spring to a new position when the layout around the badge moves. Default
 		 * `true`. Turn it off inside flowing text, or the badge slides across lines
 		 * when the sentence reflows.
@@ -71,6 +81,9 @@ function AnimatedBadgeRoot({
 	children,
 	contentKey,
 	pulse,
+	isPaused,
+	defaultPaused,
+	onPausedChange,
 	animateLayout = true,
 	announce = true,
 	icon,
@@ -81,13 +94,16 @@ function AnimatedBadgeRoot({
 	style,
 	...props
 }: AnimatedBadgeProps): ReactElement {
+	const loop = useLoopingMotion({ isPaused, defaultPaused, onPausedChange });
 	const motion = resolveAnimatedBadgeMotion({
 		isReduceMotion: useReducedMotion(),
-		isMotionCalm: useCalmMotion(),
+		hold: loop.hold,
 		pulse,
 		status,
 		animateLayout,
 	});
+
+	const wantsPulse = pulse ?? status === "loading";
 
 	const frame: AnimatedBadgeFrame = {
 		key: resolveAnimatedBadgeKey({ status, children, contentKey }),
@@ -124,9 +140,11 @@ function AnimatedBadgeRoot({
 
 	return (
 		<Animated.View
+			accessibilityActions={wantsPulse ? loop.accessibilityActions : undefined}
 			accessibilityLabel={accessibilityLabel ?? shown.text}
 			accessibilityLiveRegion={announce ? "polite" : "none"}
 			accessibilityRole="text"
+			onAccessibilityAction={wantsPulse ? loop.onAccessibilityAction : undefined}
 			accessibilityState={{ busy: status === "loading" }}
 			accessible
 			className={slots.root}
@@ -164,8 +182,9 @@ function AnimatedBadgeRoot({
  * A caller wanting composed content or a tappable tag uses `Badge`.
  *
  * Reduce motion swaps the content, sets the width and skips the layout spring.
- * The pulse — on by default for `loading` — also holds still under the app's
- * `isMotionCalm`.
+ * The pulse — on by default for `loading` — is the one loop. It rests under
+ * calm motion or a screen reader, and the user can pause it: `isPaused`, or the
+ * pause and resume actions on the badge itself.
  *
  * @example
  * <AnimatedBadge status={job.status}>{job.label}</AnimatedBadge>

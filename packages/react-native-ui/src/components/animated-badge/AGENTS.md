@@ -96,12 +96,20 @@ one job, a small closed API.
   number, or an array of only those (`status:joined`) — then the status alone. A
   non-text label therefore rolls only on a status change unless it is given a
   `contentKey`. The same key across a re-render does nothing.
-- **Reduce motion cuts over; calm motion stills only the pulse.**
+- **Reduce motion cuts over; only the pulse answers the looping hold.**
   `resolveAnimatedBadgeMotion` returns `{ roll, resize, layout, pulse }`. Under
   `useReducedMotion()` the content swaps, the width is set, no layout transition
-  runs and nothing pulses. Under the app's `isMotionCalm` alone (E2E) the roll
-  and springs still run — they settle, which is all a test runner waits for —
-  and only the endless pulse holds still.
+  runs and nothing pulses. The pulse is the one `withRepeat(-1)` — a loop, so
+  WCAG 2.2.2 applies — and it reads `useLoopingMotion`'s `hold`: calm motion, a
+  screen reader or the user's pause all stop it. The roll and springs settle on
+  their own, so they are transitions and ignore the hold. A held pulse rests at
+  the glyph's base scale and opacity rather than freezing mid-swell: a pulse has
+  no meaningful frozen frame, and `isPaused` therefore reads as "stopped".
+- **Pause.** `isPaused` / `defaultPaused` / `onPausedChange` are the persistent
+  pause an app wires to its own visible control. The root is already a single
+  `accessible` element, so it also carries the pause/resume accessibility
+  actions — only while the badge wants a pulse (`pulse`, or `loading` by
+  default); a badge that never pulses has nothing to pause. No visible chrome.
 - **The pulse is on the glyph, not the capsule.** A swelling capsule pushes the
   layout around it and reads as noise; a swelling glyph reads as breathing. It
   defaults on for `loading`, and an explicit `pulse={false}` wins. Its repeat

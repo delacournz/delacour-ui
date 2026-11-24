@@ -135,6 +135,12 @@ rule keeps such a type in its consumer's file.
 
 ## Accessibility
 
+- **The spoken strings are the `labels` prop, not literals.** The pill's name (`pill`) and its
+  spoken value (`value(title, percent)`) come from `lib/labels` through `useLabels`, resolved once on
+  the root and shared through the context: explicit `accessibilityLabel` (name only), then the root's
+  `labels`, then `DelacourProvider`'s `labels`, then English. `resolveSectionProgressAccessibilityValue`
+  takes the labels as an optional last argument defaulting to English; the percent is rounded and
+  clamped before the label sees it.
 - **The pill is one button**: name `accessibilityLabel` ("Sections"), value
   `resolveSectionProgressAccessibilityValue` ("Pricing, 42 percent"), state `expanded`.
 - **The percent reaches React only while a screen reader is on.** Keeping the accessibility value

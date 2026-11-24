@@ -2,6 +2,7 @@ import { describe, expect, jest, test } from "@jest/globals";
 import { type ComponentRef, type ReactElement, type RefObject, useRef } from "react";
 import { AccessibilityInfo } from "react-native";
 import type Animated from "react-native-reanimated";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { SectionProgress, type SectionProgressProps } from "./section-progress";
 import { useSectionProgress } from "./section-progress.context";
@@ -281,5 +282,32 @@ describe("SectionProgress", () => {
 			await activate(item("FAQ"));
 			await waitFor(() => expect(focused()).toEqual(["intro", "pill"]));
 		});
+	});
+});
+
+describe("SectionProgress labels", () => {
+	const labels = { pill: "Chapitres", value: (title: string, percent: number) => `${title}, ${percent} pour cent` };
+
+	test("the labels prop changes the spoken name and value", async () => {
+		await renderWithProviders(<Pill defaultValue="pricing" labels={labels} />);
+		expect(screen.getByRole("button", { name: "Chapitres" })).toHaveAccessibilityValue({
+			text: "Pricing, 0 pour cent",
+		});
+	});
+
+	test("a provider's labels change the spoken name and value", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ sectionProgress: labels }}>
+				<Pill defaultValue="pricing" />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Chapitres" })).toHaveAccessibilityValue({
+			text: "Pricing, 0 pour cent",
+		});
+	});
+
+	test("an explicit accessibilityLabel still wins over labels.pill", async () => {
+		await renderWithProviders(<Pill accessibilityLabel="Chapters" defaultValue="intro" labels={labels} />);
+		expect(screen.getByRole("button", { name: "Chapters" })).toBeOnTheScreen();
 	});
 });

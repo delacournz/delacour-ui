@@ -1,6 +1,7 @@
 import { type ComponentRef, createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import type Animated from "react-native-reanimated";
 import type { SharedValue } from "react-native-reanimated";
+import type { SectionProgressLabels } from "../../lib/labels";
 import type { ModalContainerAccessibility } from "../../lib/modal-accessibility";
 import type { SectionProgressColor, SectionProgressPlacement } from "./section-progress.variants";
 
@@ -22,6 +23,8 @@ export type SectionProgressContextValue = {
 	color: SectionProgressColor;
 	/** The ring's fill, 0–1, read on the UI thread. */
 	progress: SharedValue<number>;
+	/** The spoken strings, resolved once on the root. */
+	labels: SectionProgressLabels;
 	/** The pill's accessible name. */
 	accessibilityLabel: string;
 	/** "Pricing, 42 percent". */

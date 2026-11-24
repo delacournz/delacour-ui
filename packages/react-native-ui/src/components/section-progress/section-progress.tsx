@@ -22,8 +22,10 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { useModalAccessibility } from "../../hooks/use-modal-accessibility";
 import type { UseScrollSectionsResult } from "../../hooks/use-scroll-sections";
+import type { SectionProgressLabels } from "../../lib/labels";
 import { type HapticFeedback, Pressable, playHaptic } from "../pressable";
 import { type SectionProgressContextValue, SectionProgressProvider } from "./section-progress.context";
 import {
@@ -71,8 +73,13 @@ export type SectionProgressProps = Omit<ViewProps, "children"> & {
 	revealAt?: number;
 	/** Played when the active section changes. Default off. */
 	haptic?: false | HapticFeedback;
-	/** The pill's accessible name. Default "Sections". */
+	/** The pill's accessible name. Defaults to `labels.pill`. */
 	accessibilityLabel?: string;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. An explicit
+	 * `accessibilityLabel` still wins over `labels.pill`.
+	 */
+	labels?: Partial<SectionProgressLabels>;
 	/** `SectionProgress.Item`s, one per section. */
 	children: ReactNode;
 	className?: string;
@@ -97,7 +104,8 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 		offset = 16,
 		revealAt = 64,
 		haptic = false,
-		accessibilityLabel = "Sections",
+		accessibilityLabel: accessibilityLabelProp,
+		labels: labelsProp,
 		children,
 		className,
 		testID,
@@ -252,7 +260,9 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 	const index = entries.findIndex((entry) => entry.value === value);
 	const label = resolveSectionLabel(entries, value ?? undefined);
 	const color = resolveSectionColor(entries, value ?? undefined);
-	const accessibilityValue = resolveSectionProgressAccessibilityValue(label, percent / 100);
+	const labels = useLabels("sectionProgress", labelsProp);
+	const accessibilityLabel = accessibilityLabelProp ?? labels.pill;
+	const accessibilityValue = resolveSectionProgressAccessibilityValue(label, percent / 100, labels);
 
 	const context = useMemo<SectionProgressContextValue>(
 		() => ({
@@ -266,6 +276,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 			index,
 			isOpen,
 			label,
+			labels,
 			pillTestID: testID === undefined ? undefined : `${testID}-pill`,
 			pillRef,
 			placement,
@@ -282,6 +293,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 			index,
 			isOpen,
 			label,
+			labels,
 			modal.containerProps,
 			placement,
 			ringProgress,

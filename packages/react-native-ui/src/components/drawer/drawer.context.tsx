@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
 import { I18nManager } from "react-native";
+import type { DrawerLabels } from "../../lib/labels";
 import type { ModalFocusTarget } from "../../lib/modal-accessibility";
 import { type DrawerEdge, type DrawerSide, resolveDrawerEdge } from "./drawer.variants";
 
@@ -27,6 +28,8 @@ export type DrawerRootValue = Omit<DrawerContextValue, "side" | "edge"> & {
 	titleId: string;
 	/** The `nativeID` `Drawer.Description` carries. */
 	descriptionId: string;
+	/** The drawer's resolved spoken strings: English, the provider's, then the root's `labels` prop. */
+	labels: DrawerLabels;
 	/** The trigger, so focus can return to it on close. */
 	triggerRef: RefObject<DrawerFocusTarget | null>;
 	/** The title, so focus can land on it on open. */

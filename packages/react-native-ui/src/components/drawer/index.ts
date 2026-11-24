@@ -1,3 +1,4 @@
+export type { DrawerLabels } from "../../lib/labels";
 export { Drawer, type DrawerProps } from "./drawer";
 export { type DrawerContextValue, useDrawer, useDrawerContext } from "./drawer.context";
 export {

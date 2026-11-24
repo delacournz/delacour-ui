@@ -75,9 +75,16 @@ measuring text inherit the identical class.
 - **The stagger fits inside the window.** Slot `span = 1 / (1 + (n−1)(1−overlap))`, step
   `span·(1−overlap)`; the last unit ends exactly at 1, so the block is fully revealed the moment its
   top reaches `end`, whatever `n` and `overlap` are.
-- **The text is never hidden.** `fade` and `rise` floors are clamped to at least 0.15 opacity, and the
-  `colour` effect's floor is `muted-foreground`, so un-revealed text keeps contrast for someone
-  scrolling slowly.
+- **The text is never hidden, and never below AA.** `fade` and `rise` floors are clamped up to
+  `SCROLL_TEXT_MIN_OPACITY` = 0.6, and a caller's `from` below it (or `NaN`) is raised to it, never passed
+  through. Foreground over the page at 0.6 is 5.18:1 worst case (light `background`; light `card` 5.25,
+  dark `background` 7.04, dark `card` 6.79), clearing WCAG 1.4.3's 4.5:1 for someone who stops
+  scrolling mid-reveal. 0.55 gives 4.35:1 and fails; the old 0.15 was ~1.4:1. 4.5 not the large-text 3:1,
+  because `size` is the caller's and ScrollText cannot know the text is large. The `colour` effect's
+  floor is `muted-foreground`, which the design-system contrast audit already holds to 4.5:1 on
+  `background` and `card`; `highlight` leaves the text at full opacity and `foreground`, and its band
+  fades in from zero alpha. Reduce motion and `isMotionCalm` pin progress to 1, so text rests at
+  full opacity and full colour.
 - **A default highlight is `primary` at 20%; a named one is drawn at full strength.** `primary` at full
   alpha buries the text it marks, but a caller who names `accent` chose that fill. The band fades in
   from its own colour at zero alpha (`transparentOf`), never from the keyword `transparent`, which is

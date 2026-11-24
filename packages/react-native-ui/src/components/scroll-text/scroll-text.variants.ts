@@ -20,7 +20,7 @@ export type ScrollTextColor = "foreground" | "muted-foreground" | "primary" | "a
 export type ScrollTextEffect =
 	/** Colour travels between two tokens. Default `muted-foreground` → `foreground`. */
 	| { kind: "colour"; from?: ScrollTextColor; to?: ScrollTextColor }
-	/** Opacity rises from `from`, default and minimum 0.15. */
+	/** Opacity rises from `from`, default and minimum 0.6 (`SCROLL_TEXT_MIN_OPACITY`, AA 4.5:1). */
 	| { kind: "fade"; from?: number }
 	/** Rises `distance` points into place (default 14) while fading up from `from`. */
 	| { kind: "rise"; distance?: number; from?: number }
@@ -58,8 +58,13 @@ export const SCROLL_TEXT_DEFAULT_WINDOW: ScrollTextWindow = { start: 0.85, end: 
 /** 0 = one after another, 1 = all together. */
 export const SCROLL_TEXT_DEFAULT_OVERLAP = 0.4;
 
-/** The dimmest a unit is ever drawn: un-revealed text stays legible to someone scrolling slowly. */
-export const SCROLL_TEXT_MIN_OPACITY = 0.15;
+/**
+ * The dimmest a unit is ever drawn. Foreground at this opacity over the page clears WCAG 1.4.3's
+ * 4.5:1 for body text on `background` and `card` in both default modes (worst case 5.18:1, light
+ * `background`; 0.55 gives 4.35:1 and fails). 4.5 rather than the large-text 3:1, because ScrollText
+ * takes any `Text` size.
+ */
+export const SCROLL_TEXT_MIN_OPACITY = 0.6;
 
 /** How far a `rise` unit starts below its place, in points. */
 export const SCROLL_TEXT_RISE_DISTANCE = 14;
@@ -335,7 +340,8 @@ export function resolveRevealProgress(progress: number, index: number, count: nu
 /** Opacity, never below the legible floor. */
 function floorOpacity(from: number | undefined): number {
 	"worklet";
-	return Math.min(1, Math.max(SCROLL_TEXT_MIN_OPACITY, from ?? SCROLL_TEXT_MIN_OPACITY));
+	if (from === undefined || Number.isNaN(from)) return SCROLL_TEXT_MIN_OPACITY;
+	return Math.min(1, Math.max(SCROLL_TEXT_MIN_OPACITY, from));
 }
 
 /** Where an un-revealed unit sits: its opacity and how far below its place. */

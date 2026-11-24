@@ -340,7 +340,7 @@ describe("resolveEffectFloor", () => {
 			opacity: SCROLL_TEXT_MIN_OPACITY,
 			translate: SCROLL_TEXT_RISE_DISTANCE,
 		});
-		expect(resolveEffectFloor({ kind: "rise", distance: 24, from: 0.5 })).toEqual({ opacity: 0.5, translate: 24 });
+		expect(resolveEffectFloor({ kind: "rise", distance: 24, from: 0.8 })).toEqual({ opacity: 0.8, translate: 24 });
 	});
 
 	test("highlight keeps the text whole and moves nothing", () => {
@@ -353,16 +353,55 @@ describe("resolveEffectFloor", () => {
 		expect(resolveEffectFloor({ kind: "fade", from: 4 }).opacity).toBe(1);
 	});
 
-	test("the legible floor is 0.15 and the default rise 14pt", () => {
-		expect(SCROLL_TEXT_MIN_OPACITY).toBe(0.15);
+	test("a caller's from below the floor is clamped up, never passed through", () => {
+		expect(resolveEffectFloor({ kind: "fade", from: 0.15 }).opacity).toBe(SCROLL_TEXT_MIN_OPACITY);
+		expect(resolveEffectFloor({ kind: "rise", from: 0.5 }).opacity).toBe(SCROLL_TEXT_MIN_OPACITY);
+		expect(resolveEffectFloor({ kind: "fade", from: 0.9 }).opacity).toBe(0.9);
+	});
+
+	test("no input resolves below the floor", () => {
+		for (const from of [undefined, -1, 0, 0.1, 0.15, 0.3, 0.5, 0.59, Number.NaN]) {
+			for (const kind of ["fade", "rise"] as const) {
+				expect(resolveEffectFloor({ kind, from }).opacity).toBeGreaterThanOrEqual(SCROLL_TEXT_MIN_OPACITY);
+			}
+		}
+	});
+
+	test("the floor clears WCAG AA 4.5:1 for default foreground on background and card, both modes", () => {
+		const pairs = [
+			{ fg: 10, bg: 250 },
+			{ fg: 10, bg: 255 },
+			{ fg: 250, bg: 10 },
+			{ fg: 250, bg: 33 },
+		];
+		const linear = (channel: number): number => {
+			const c = channel / 255;
+			return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+		};
+		for (const { fg, bg } of pairs) {
+			const text = linear(fg * SCROLL_TEXT_MIN_OPACITY + bg * (1 - SCROLL_TEXT_MIN_OPACITY));
+			const page = linear(bg);
+			const [hi, lo] = text > page ? [text, page] : [page, text];
+			expect((hi + 0.05) / (lo + 0.05)).toBeGreaterThanOrEqual(4.5);
+		}
+	});
+
+	test("the legible floor is 0.6 and the default rise 14pt", () => {
+		expect(SCROLL_TEXT_MIN_OPACITY).toBe(0.6);
 		expect(SCROLL_TEXT_RISE_DISTANCE).toBe(14);
 	});
 });
 
 describe("resolveEffectFrame", () => {
 	test("fade at 0 is its floor", () => {
-		expect(resolveEffectFrame({ kind: "fade", from: 0.3 }, 0).opacity).toBe(0.3);
+		expect(resolveEffectFrame({ kind: "fade", from: 0.8 }, 0).opacity).toBe(0.8);
 		expect(resolveEffectFrame({ kind: "fade" }, 0).opacity).toBe(SCROLL_TEXT_MIN_OPACITY);
+	});
+
+	test("reduce motion pins every effect at full opacity once revealed", () => {
+		for (const kind of SCROLL_TEXT_EFFECT_KINDS) {
+			expect(resolveEffectFrame(DEFAULT_EFFECTS[kind], 1, true).opacity).toBe(1);
+		}
 	});
 
 	for (const kind of SCROLL_TEXT_EFFECT_KINDS) {

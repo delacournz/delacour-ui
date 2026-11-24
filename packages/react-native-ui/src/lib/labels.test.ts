@@ -378,6 +378,14 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.limit("1", "min")).toBe("1, minimum");
 	});
 
+	test("otpInput is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.otpInput;
+		expect(labels.defaultLabel).toBe("Verification code");
+		expect(labels.progress(2, 4, "digit")).toBe("2 of 4 digits entered");
+		expect(labels.progress(0, 1, "character")).toBe("0 of 1 characters entered");
+		expect(labels.hint(6, "digit")).toBe("Enter the 6 digit code");
+	});
+
 	test("pageHeader is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.pageHeader;
 		expect(labels.verifiedAvatar("Aria")).toBe("Aria, verified");

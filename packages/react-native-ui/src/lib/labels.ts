@@ -641,6 +641,19 @@ export type NumberInputLabels = {
 	limit: (text: string, bound: "max" | "min") => string;
 };
 
+/** What an OtpInput cell takes, for the words around it: `digits` is "digit", any other pattern "character". */
+export type OtpInputUnit = "digit" | "character";
+
+/** OtpInput's spoken strings. */
+export type OtpInputLabels = {
+	/** The accessible name when neither `accessibilityLabel` nor an enclosing `Field.Label` gives one. */
+	defaultLabel: string;
+	/** The value while masked or empty, how many cells are filled: "2 of 4 digits entered". */
+	progress: (entered: number, length: number, unit: OtpInputUnit) => string;
+	/** The hint saying what to type: "Enter the 6 digit code". Its `accessibilityHint` wins. */
+	hint: (length: number, unit: OtpInputUnit) => string;
+};
+
 /** PageHeader's spoken strings. */
 export type PageHeaderLabels = {
 	/** A verified, named avatar's label: "Aria, verified". `name` is trimmed and non-empty. */
@@ -706,6 +719,7 @@ export type DelacourLabels = {
 	messageScroller: MessageScrollerLabels;
 	motion: MotionLabels;
 	numberInput: NumberInputLabels;
+	otpInput: OtpInputLabels;
 	pageHeader: PageHeaderLabels;
 	pagination: PaginationLabels;
 };
@@ -1054,6 +1068,11 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		decrease: "Decrease",
 		increase: "Increase",
 		limit: (text, bound) => `${text}, ${bound === "max" ? "maximum" : "minimum"}`,
+	},
+	otpInput: {
+		defaultLabel: "Verification code",
+		progress: (entered, length, unit) => `${entered} of ${length} ${unit}s entered`,
+		hint: (length, unit) => `Enter the ${length} ${unit} code`,
 	},
 	pageHeader: {
 		verifiedAvatar: (name) => `${name}, verified`,

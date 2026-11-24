@@ -4,8 +4,11 @@ import {
 	formatCompactCount,
 	formatGroupedNumber,
 	formatRelativeTime,
+	hasPostCardCarrier,
 	resolveAuthorA11yLabel,
 	resolveBodyClamp,
+	resolveBodyToggleA11y,
+	resolvePostCardActions,
 	resolvePostStatLabel,
 	resolveVotesLabel,
 	tokenizePostBody,
@@ -273,5 +276,38 @@ describe("resolveBodyClamp", () => {
 			showMore: false,
 			showLess: false,
 		});
+	});
+});
+
+describe("resolvePostCardActions", () => {
+	test("a card with a long press offers a labelled longpress", () => {
+		expect(resolvePostCardActions({ hasLongPress: true })).toEqual([{ name: "longpress", label: "More options" }]);
+	});
+
+	test("no long press, or a disabled card, offers nothing", () => {
+		expect(resolvePostCardActions({ hasLongPress: false })).toEqual([]);
+		expect(resolvePostCardActions({ hasLongPress: true, disabled: true })).toEqual([]);
+	});
+});
+
+describe("hasPostCardCarrier", () => {
+	test("any press on an enabled card earns a carrier", () => {
+		expect(hasPostCardCarrier({ hasPress: true, hasLongPress: false })).toBe(true);
+		expect(hasPostCardCarrier({ hasPress: false, hasLongPress: true })).toBe(true);
+	});
+
+	test("a plain or disabled card does not", () => {
+		expect(hasPostCardCarrier({ hasPress: false, hasLongPress: false })).toBe(false);
+		expect(hasPostCardCarrier({ hasPress: true, hasLongPress: true, disabled: true })).toBe(false);
+	});
+});
+
+describe("resolveBodyToggleA11y", () => {
+	test("more is Show more and collapsed", () => {
+		expect(resolveBodyToggleA11y(false)).toEqual({ label: "Show more", expanded: false });
+	});
+
+	test("less is Show less and expanded", () => {
+		expect(resolveBodyToggleA11y(true)).toEqual({ label: "Show less", expanded: true });
 	});
 });

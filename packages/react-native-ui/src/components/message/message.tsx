@@ -12,6 +12,7 @@ import {
 import { type AccessibilityActionEvent, AccessibilityInfo, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { type MessageContextValue, MessageProvider } from "./message.context";
 import type { MessageStatus } from "./message.types";
 import {
@@ -176,6 +177,8 @@ function MessageRoot({
 
 	const onAccessibilityAction = (event: AccessibilityActionEvent) =>
 		runMessageAccessibilityAction(event.nativeEvent.actionName, { onLongPress, onPress, onRetry });
+
+	warnInteractiveChildInAccessible({ accessible: !isCompound, children, component: "Message" });
 
 	const { column, gutter } = partitionMessageChildren(children);
 

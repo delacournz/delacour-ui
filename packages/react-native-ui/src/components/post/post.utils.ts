@@ -266,3 +266,46 @@ export function resolveBodyClamp(input: {
 	if (input.isExpanded) return { numberOfLines: undefined, showMore: false, showLess: true };
 	return { numberOfLines: input.numberOfLines, showMore: input.isTruncated, showLess: false };
 }
+
+/** The long-press entry of a screen reader's actions menu. */
+export type PostCardAction = { name: "longpress"; label: string };
+
+/**
+ * The extra accessibility actions a pressable card's carrier publishes.
+ *
+ * The carrier is a library `Pressable`, which already routes a screen reader's activation to
+ * `onPress` on both platforms and offers `longpress` only on Android. This adds a named, labelled
+ * `longpress` on every platform so iOS reaches the card's `onLongPress` through the actions rotor.
+ * A disabled card, or one with no long press, adds nothing.
+ */
+export function resolvePostCardActions({
+	hasLongPress,
+	disabled = false,
+}: {
+	hasLongPress: boolean;
+	disabled?: boolean;
+}): PostCardAction[] {
+	if (disabled || !hasLongPress) return [];
+	return [{ name: "longpress", label: "More options" }];
+}
+
+/** Whether a card gets a screen-reader carrier: it has a press or long press and is not disabled. */
+export function hasPostCardCarrier({
+	hasPress,
+	hasLongPress,
+	disabled = false,
+}: {
+	hasPress: boolean;
+	hasLongPress: boolean;
+	disabled?: boolean;
+}): boolean {
+	return !disabled && (hasPress || hasLongPress);
+}
+
+/**
+ * What the "more" / "less" toggle says to a screen reader: a label that contains the visible word
+ * and whether the body is open.
+ */
+export function resolveBodyToggleA11y(isExpanded: boolean): { label: string; expanded: boolean } {
+	return isExpanded ? { label: "Show less", expanded: true } : { label: "Show more", expanded: false };
+}

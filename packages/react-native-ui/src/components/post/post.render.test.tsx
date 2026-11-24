@@ -57,6 +57,78 @@ describe("Post", () => {
 		expect(onPress).toHaveBeenCalledTimes(1);
 	});
 
+	test("a pressable card has one carrier and the body carries no actions", async () => {
+		const onPress = jest.fn();
+		const onLongPress = jest.fn();
+		const originalOS = Platform.OS;
+		await renderWithProviders(
+			<Post onLongPress={onLongPress} onPress={onPress} testID="card">
+				<Post.Body testID="body">Hi</Post.Body>
+			</Post>
+		);
+		const carrier = screen.getByTestId("post-card-action");
+		expect(carrier.props.accessibilityLabel).toBe("Open post");
+		expect(carrier.props.accessible).toBe(true);
+		expect(carrier.props.pointerEvents).toBe("none");
+		expect(screen.getByTestId("body").props.accessibilityActions).toBeUndefined();
+		expect(screen.getByTestId("body").props.onAccessibilityAction).toBeUndefined();
+		expect(carrier.props.accessibilityActions).toEqual(
+			expect.arrayContaining([{ name: "longpress", label: "More options" }])
+		);
+
+		await fireEvent(carrier, "accessibilityAction", { nativeEvent: { actionName: "longpress" } });
+		expect(onLongPress).toHaveBeenCalledTimes(1);
+
+		try {
+			Platform.OS = "ios";
+			await renderWithProviders(
+				<Post onPress={onPress}>
+					<Post.Body>Hi</Post.Body>
+				</Post>
+			);
+			const iosCarrier = screen.getAllByTestId("post-card-action").at(-1);
+			if (!iosCarrier) throw new Error("no carrier");
+			await fireEvent(iosCarrier, "accessibilityTap");
+			expect(onPress).toHaveBeenCalledTimes(1);
+
+			Platform.OS = "android";
+			await renderWithProviders(
+				<Post onPress={onPress}>
+					<Post.Body>Hi</Post.Body>
+				</Post>
+			);
+			const androidCarrier = screen.getAllByTestId("post-card-action").at(-1);
+			if (!androidCarrier) throw new Error("no carrier");
+			await fireEvent(androidCarrier, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+			expect(onPress).toHaveBeenCalledTimes(2);
+		} finally {
+			Platform.OS = originalOS;
+		}
+	});
+
+	test("a carrier exists only for a pressable, enabled card", async () => {
+		const view = await renderWithProviders(<Post testID="card" />);
+		expect(screen.queryByTestId("post-card-action")).not.toBeOnTheScreen();
+		await view.rerender(<Post disabled onPress={jest.fn()} />);
+		expect(screen.queryByTestId("post-card-action")).not.toBeOnTheScreen();
+		await view.rerender(<Post onPress={jest.fn()} />);
+		expect(screen.getByTestId("post-card-action")).toBeOnTheScreen();
+	});
+
+	test("warns when an accessible card wraps a control", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+		try {
+			await renderWithProviders(
+				<Post accessible>
+					<Post.Action accessibilityLabel="More" onPress={jest.fn()} />
+				</Post>
+			);
+			expect(warn).toHaveBeenCalled();
+		} finally {
+			warn.mockRestore();
+		}
+	});
+
 	test("on Android the card answers activate and longpress, and ignores them when disabled", async () => {
 		const platform = Platform.OS;
 		Platform.OS = "android";
@@ -280,13 +352,21 @@ describe("Post", () => {
 			expect(screen.queryByTestId("body-more")).not.toBeOnTheScreen();
 
 			await fireEvent(twin, "textLayout", lines(4));
-			expect(screen.getByRole("button", { name: "more" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Show more" })).toBeOnTheScreen();
 
-			await fireEvent.press(screen.getByRole("button", { name: "more" }));
-			expect(screen.getByRole("button", { name: "less" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Show more" }).props.accessibilityState).toMatchObject({
+				expanded: false,
+			});
+			expect(screen.getAllByRole("button")).toHaveLength(1);
+			expect(screen.getByText("more").props.onPress).toBeUndefined();
+			await fireEvent.press(screen.getByTestId("body-more"));
+			expect(screen.getByRole("button", { name: "Show less" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Show less" }).props.accessibilityState).toMatchObject({
+				expanded: true,
+			});
 
-			await fireEvent.press(screen.getByRole("button", { name: "less" }));
-			expect(screen.getByRole("button", { name: "more" })).toBeOnTheScreen();
+			await fireEvent.press(screen.getByRole("button", { name: "Show less" }));
+			expect(screen.getByRole("button", { name: "Show more" })).toBeOnTheScreen();
 		});
 	});
 

@@ -165,6 +165,7 @@
 		"./lib/cn": "./src/lib/cn.ts",
 		"./lib/color": "./src/lib/color.ts",
 		"./lib/compose-refs": "./src/lib/compose-refs.ts",
+		"./lib/interactive-child": "./src/lib/interactive-child.ts",
 		"./lib/keyboard-animation": "./src/lib/keyboard-animation.ts",
 		"./lib/labels": "./src/lib/labels.ts",
 		"./lib/looping-motion": "./src/lib/looping-motion.ts",

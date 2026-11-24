@@ -802,6 +802,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The pure maths behind the scroll-linked components.",
 	},
 	"merge-props": { title: "mergeProps", description: "Merges slot props onto a child's own." },
+	"interactive-child": {
+		title: "interactiveChild",
+		description: "A development warning when an accessible container swallows a control a screen reader cannot reach.",
+	},
 	paging: {
 		title: "paging",
 		description: "Worklet-safe maths of paging through slides on one fractional position.",

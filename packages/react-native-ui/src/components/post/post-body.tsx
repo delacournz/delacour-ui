@@ -1,8 +1,9 @@
 import { type ReactElement, type ReactNode, useState } from "react";
 import { type TextLayoutEvent, View } from "react-native";
+import { Pressable } from "../pressable";
 import { Text, type TextProps } from "../text";
 import { usePostPart } from "./post.context";
-import { type BodyToken, resolveBodyClamp, tokenizePostBody } from "./post.utils";
+import { type BodyToken, resolveBodyClamp, resolveBodyToggleA11y, tokenizePostBody } from "./post.utils";
 import { postVariants } from "./post.variants";
 
 export type PostBodyProps = Omit<TextProps, "children" | "numberOfLines"> & {
@@ -43,7 +44,9 @@ function handlerFor(
  *
  * `expandable` with `numberOfLines` measures the body unclamped in an
  * invisible twin laid over it, because a clamped `Text` reports only the lines
- * it drew. "More" appears only when the twin has more lines than the clamp —
+ * it drew. The "more" / "less" toggle is labelled "Show more" / "Show less" and carries
+ * `expanded`, as one `Pressable` stop around a plain `Text` — a `Text` with `onPress` is a second
+ * VoiceOver element on iOS. "More" appears only when the twin has more lines than the clamp —
  * a short post offers nothing to tap into.
  */
 export function PostBody({
@@ -89,6 +92,7 @@ export function PostBody({
 
 	const isMeasured = expandable && numberOfLines !== undefined;
 	const toggle = clamp.showMore || clamp.showLess;
+	const toggleA11y = resolveBodyToggleA11y(isExpanded);
 
 	return (
 		<View className={slots.bodyFrame()}>
@@ -107,15 +111,16 @@ export function PostBody({
 				</Text>
 			) : null}
 			{toggle ? (
-				<Text
+				<Pressable
+					accessibilityLabel={toggleA11y.label}
 					accessibilityRole="button"
-					className={slots.bodyToggle()}
+					accessibilityState={{ expanded: toggleA11y.expanded }}
+					feedback="none"
 					onPress={() => setIsExpanded((open) => !open)}
-					suppressHighlighting
 					testID={testID ? `${testID}-more` : "post-body-more"}
 				>
-					{clamp.showMore ? "more" : "less"}
-				</Text>
+					<Text className={slots.bodyToggle()}>{clamp.showMore ? "more" : "less"}</Text>
+				</Pressable>
 			) : null}
 		</View>
 	);

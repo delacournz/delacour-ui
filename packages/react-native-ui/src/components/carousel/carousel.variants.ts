@@ -232,6 +232,45 @@ export function resolveCarouselA11yValue(
 	return labels.position(index + 1, count);
 }
 
+/** The two actions an assistive swipe on an `adjustable` maps to. */
+export const CAROUSEL_POSITION_ACTIONS = [{ name: "increment" }, { name: "decrement" }];
+
+/**
+ * The accessibility props of the small position element that is the carousel's one adjustable stop.
+ *
+ * The viewport wraps the slides, so it must NOT be `accessible`: a merged element reads every
+ * slide's text as its own name and hides any control inside a slide. This element carries the role,
+ * the carousel's label, "2 of 5" and the actions instead, and wraps nothing. With no label given it
+ * has no name, because a fallback would be a hard-coded string. Autoplay's pause / play actions ride
+ * on it too, after increment and decrement.
+ */
+export function resolveCarouselPositionAccessibility(state: {
+	accessibilityLabel: string | undefined;
+	/** Autoplay's pause / play actions, offered beside increment and decrement while it runs. */
+	autoplayActions?: ReadonlyArray<{ name: string; label: string }>;
+	count: number;
+	index: number;
+	isDisabled: boolean;
+	labels: CarouselLabels;
+}): {
+	accessible: true;
+	accessibilityActions: ReadonlyArray<{ name: string; label?: string }> | undefined;
+	accessibilityLabel: string | undefined;
+	accessibilityRole: "adjustable";
+	accessibilityState: { disabled: boolean };
+	accessibilityValue: { text: string };
+} {
+	return {
+		accessible: true,
+		accessibilityActions:
+			state.count > 1 ? [...CAROUSEL_POSITION_ACTIONS, ...(state.autoplayActions ?? [])] : undefined,
+		accessibilityLabel: state.accessibilityLabel,
+		accessibilityRole: "adjustable",
+		accessibilityState: { disabled: state.isDisabled },
+		accessibilityValue: { text: resolveCarouselA11yValue(state.index, state.count, state.labels) },
+	};
+}
+
 /** Whether Previous and Next have anywhere to go. */
 export function resolveNavigationState(
 	index: number,

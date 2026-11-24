@@ -281,6 +281,7 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -2144,6 +2145,22 @@
 			]
 		},
 		{
+			"name": "interactive-child",
+			"type": "registry:lib",
+			"title": "interactiveChild",
+			"description": "A development warning when an accessible container swallows a control a screen reader cannot reach.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/interactive-child.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
 			"name": "item",
 			"type": "registry:ui",
 			"title": "Item",
@@ -2750,6 +2767,7 @@
 				"cn",
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -3352,6 +3370,7 @@
 				"cn",
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -3373,6 +3392,7 @@
 				"ui/post/post-action.tsx",
 				"ui/post/post-author.tsx",
 				"ui/post/post-body.tsx",
+				"ui/post/post-card-action.tsx",
 				"ui/post/post-community.tsx",
 				"ui/post/post-footer.tsx",
 				"ui/post/post-header.tsx",

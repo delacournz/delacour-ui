@@ -105,7 +105,16 @@ Compound root plus `Message.Avatar`, `.Header`, `.Author`, `.Bubble`, `.Text`,
   a link, a pressable attachment, buttons in `Message.Actions` — would have that
   control hidden inside the merged element. `isCompound` leaves the root and the
   bubble non-accessible so each part is read on its own; exposing the message's
-  own press and long press is then the app's job.
+  own press and long press is then the app's job. In development a merged root
+  warns once (`warnInteractiveChildInAccessible`) when a child carries `onPress`,
+  `onLongPress` or a control role — a `Pressable` in `Message.Actions`, a
+  pressable chip in `Message.Reactions` — because it cannot mirror those: they
+  are the app's children, not the message's. The fix is `isCompound`.
+- **The drawn Retry is the root's `retry` action.** Merged, `Message.Status`
+  hides its Retry from assistive technology (`resolveMessageHiddenProps`:
+  `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`),
+  so it is not a duplicate or unreachable stop; under `isCompound` it is its own
+  stop.
 - **Typing** is read as "Aria is typing" when an author is given and sits in a
   polite live region.
 

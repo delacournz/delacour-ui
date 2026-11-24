@@ -10,6 +10,7 @@ import {
 	CAROUSEL_DOT_POINTS,
 	CAROUSEL_GAP_POINTS,
 	CAROUSEL_PAN,
+	CAROUSEL_POSITION_ACTIONS,
 	CAROUSEL_SPRING,
 	COVERFLOW_MIN_OPACITY,
 	COVERFLOW_MIN_SCALE,
@@ -20,6 +21,7 @@ import {
 	resolveAutoplayNext,
 	resolveCaptionOpacity,
 	resolveCarouselA11yValue,
+	resolveCarouselPositionAccessibility,
 	resolveClampedIndex,
 	resolveCoverflow,
 	resolveDotLength,
@@ -409,5 +411,54 @@ describe("resolveSlideAccessibility", () => {
 			accessibilityElementsHidden: false,
 			importantForAccessibility: "auto",
 		});
+	});
+});
+
+describe("resolveCarouselPositionAccessibility", () => {
+	const labels = DELACOUR_DEFAULT_LABELS.carousel;
+
+	test("offers autoplay's actions after increment and decrement", () => {
+		const props = resolveCarouselPositionAccessibility({
+			accessibilityLabel: "Featured",
+			autoplayActions: [{ label: "Pause", name: "pause" }],
+			count: 3,
+			index: 0,
+			isDisabled: false,
+			labels,
+		});
+		expect(props.accessibilityActions).toEqual([
+			{ name: "increment" },
+			{ name: "decrement" },
+			{ label: "Pause", name: "pause" },
+		]);
+	});
+
+	test("is an adjustable named by the label, valued 'n of count', with both actions", () => {
+		const props = resolveCarouselPositionAccessibility({
+			accessibilityLabel: "Featured",
+			count: 5,
+			index: 1,
+			isDisabled: false,
+			labels,
+		});
+		expect(props.accessible).toBe(true);
+		expect(props.accessibilityRole).toBe("adjustable");
+		expect(props.accessibilityLabel).toBe("Featured");
+		expect(props.accessibilityValue).toEqual({ text: "2 of 5" });
+		expect(props.accessibilityState).toEqual({ disabled: false });
+		expect(props.accessibilityActions).toEqual(CAROUSEL_POSITION_ACTIONS);
+	});
+
+	test("offers no actions for a single slide and reports disabled", () => {
+		const props = resolveCarouselPositionAccessibility({
+			accessibilityLabel: undefined,
+			count: 1,
+			index: 0,
+			isDisabled: true,
+			labels,
+		});
+		expect(props.accessibilityActions).toBeUndefined();
+		expect(props.accessibilityState).toEqual({ disabled: true });
+		expect(props.accessibilityLabel).toBeUndefined();
 	});
 });

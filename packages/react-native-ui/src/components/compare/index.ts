@@ -1,3 +1,4 @@
+export type { CompareLabels } from "../../lib/labels";
 export { Compare, type CompareProps } from "./compare";
 export { type CompareContextValue, CompareProvider, useCompare, useCompareContext } from "./compare.context";
 export type { CompareLayerProps } from "./compare.types";

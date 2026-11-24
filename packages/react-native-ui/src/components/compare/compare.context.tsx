@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { CompareLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
 import type { CompareColor, CompareOrientation, ComparePosition, CompareSide, CompareSize } from "./compare.variants";
 
@@ -40,6 +41,8 @@ export type CompareContextValue = {
 	accessibilityLabel: string | undefined;
 	/** The two sides' names, as their `Compare.Label`s registered them. */
 	labels: { before?: string; after?: string };
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels` prop. */
+	spokenLabels: CompareLabels;
 	/** A `Compare.Label` offers its plain-string text here; `null` on unmount. */
 	registerLabel: (side: CompareSide, text: string | null) => void;
 	/** Steps the seam from the **JS thread** — the assistive path, with no gesture behind it. */

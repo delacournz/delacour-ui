@@ -16,9 +16,8 @@ const ACCESSIBILITY_ACTIONS = [{ name: "increment" }, { name: "decrement" }] as 
  * adjustable", and a swipe up or down moves a page — so the whole control is
  * usable from this one stop, without hunting for the arrows either side.
  *
- * The readout does not scale with the OS text size: it shares a row with
- * fixed-size targets, and the page it shows is already in the accessibility
- * value.
+ * The readout scales with the OS text size up to the library cap: its box
+ * is a `min-h`, so a 2× readout grows the row rather than clipping.
  *
  * Internal — the root renders it for `variant="compact"`.
  */
@@ -47,9 +46,7 @@ export function PaginationCompact({ className, ...props }: PaginationCompactProp
 			onAccessibilityAction={handleAccessibilityAction}
 			{...props}
 		>
-			<Text allowFontScaling={false} className={slots.compactLabel()}>
-				{formatCompact(page, count)}
-			</Text>
+			<Text className={slots.compactLabel()}>{formatCompact(page, count)}</Text>
 		</View>
 	);
 }

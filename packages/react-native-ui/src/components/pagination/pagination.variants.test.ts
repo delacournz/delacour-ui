@@ -405,12 +405,26 @@ describe("paginationVariants", () => {
 	test("each size's item edge is the button token of the same name", () => {
 		for (const size of PAGINATION_SIZES) {
 			const slots = paginationVariants({ size });
-			expect(cls(slots.item())).toContain(`h-button-${size}`);
+			expect(cls(slots.item())).toContain(`min-h-button-${size}`);
 			expect(cls(slots.item())).toContain(`min-w-button-${size}`);
-			expect(cls(slots.control())).toContain(`h-button-${size}`);
+			expect(cls(slots.control())).toContain(`min-h-button-${size}`);
 			expect(cls(slots.control())).toContain(`min-w-button-${size}`);
-			expect(cls(slots.ellipsis())).toContain(`h-button-${size}`);
+			expect(cls(slots.ellipsis())).toContain(`min-h-button-${size}`);
 			expect(cls(slots.ellipsis())).toContain(`min-w-button-${size}`);
+		}
+	});
+
+	test("text-bearing chrome grows with the text: no fixed height, a min-h that a caller's min-h displaces", () => {
+		for (const size of PAGINATION_SIZES) {
+			const slots = paginationVariants({ size });
+			for (const slot of [slots.item(), slots.control(), slots.ellipsis(), slots.compact()]) {
+				expect(cls(slot)).not.toMatch(/(?:^|\s)h-/);
+				expect(cls(slot)).toContain(`min-h-button-${size}`);
+			}
+			expect(cls(slots.compact({ className: "min-h-20" }))).toContain("min-h-20");
+			expect(cls(slots.compact({ className: "min-h-20" }))).not.toContain(`min-h-button-${size}`);
+			expect(cls(slots.item({ className: "h-20" }))).toContain("h-20");
+			expect(cls(slots.item({ className: "h-20" }))).toContain(`min-h-button-${size}`);
 		}
 	});
 

@@ -6,7 +6,7 @@ import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { type AvatarGroupContextValue, AvatarGroupProvider } from "./avatar.context";
 import { flattenAvatarChildren, resolveAvatarGroup, resolveAvatarOverflowLabel } from "./avatar.utils";
-import { type AvatarSize, avatarVariants, resolveAvatarOverlap } from "./avatar.variants";
+import { type AvatarSize, avatarVariants, resolveAvatarLabelFit, resolveAvatarOverlap } from "./avatar.variants";
 
 export type AvatarGroupProps = ViewProps & {
 	/** Size for every avatar in the stack. A child's own `size` still wins. Default `md`. */
@@ -75,8 +75,15 @@ type AvatarGroupOverflowProps = {
 function AvatarGroupOverflow({ size, overflow, onPress, labels }: AvatarGroupOverflowProps): ReactElement {
 	const slots = avatarVariants({ size });
 	const { text, accessibilityLabel } = resolveAvatarOverflowLabel(overflow, labels);
+	const fit = resolveAvatarLabelFit({ size, glyphs: [...text].length });
 	const label = (
-		<Text allowFontScaling={false} className={slots.overflowLabel()} numberOfLines={1}>
+		<Text
+			adjustsFontSizeToFit
+			className={slots.overflowLabel()}
+			maxFontSizeMultiplier={fit.maxFontSizeMultiplier}
+			minimumFontScale={fit.minimumFontScale}
+			numberOfLines={1}
+		>
 			{text}
 		</Text>
 	);

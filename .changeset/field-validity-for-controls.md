@@ -4,7 +4,7 @@
 
 Field: a control inside a `Field` now tells a screen reader everything the field shows. `Field` takes `isRequired`, and the control's name becomes "Email, required"; `isInvalid`, the `Field.Error` text and the `Field.Description` text become its hint — "Invalid: Enter a valid email. We never share it." React Native has no `aria-invalid`, `aria-required` or `aria-describedby`, so speech is the channel. On Android a label made of elements is linked with `accessibilityLabelledBy`.
 
-`Field.Label` steps out of the accessibility tree once a control takes its text as its name, so it is no longer read twice, and draws the required asterisk. `Field.Legend` is a header. `Field.Error` announces through one mechanism — a polite live region — and no longer carries `role="alert"`.
+`Field.Label` steps out of the accessibility tree once a control takes its text as its name, so it is no longer read twice, and draws the required asterisk. `Field.Legend` is a header. `Field.Error` is spoken through the one announce route (`useAnnouncement`) and its text also joins the control's hint, so it is heard wherever focus is.
 
 New: `useFieldControlAccessibility` and the pure `resolveFieldControlAccessibility` / `resolveFieldLabelHidden` (from `@delacour/react-native-ui/field`), and `FIELD_ACCESSIBILITY_LABELS`, the English words they speak. The resolver and hook take a `labels` override, but no control forwards one yet, so the spoken words are English until they do.
 

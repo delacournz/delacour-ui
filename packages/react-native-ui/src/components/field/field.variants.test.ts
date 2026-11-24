@@ -6,8 +6,8 @@ import {
 	FIELD_TEXT_PARTS,
 	type FieldTextPart,
 	fieldVariants,
-	resolveFieldErrorMessage,
 	resolveFieldControlAccessibility,
+	resolveFieldErrorMessage,
 	resolveFieldInteractive,
 	resolveFieldLabelHidden,
 	resolveFieldLabelText,
@@ -265,6 +265,9 @@ describe("resolveFieldErrorMessage", () => {
 
 	test("conditional gaps in an array are skipped", () => {
 		expect(resolveFieldErrorMessage([null, "Too short.", false])).toBe("Too short.");
+	});
+});
+
 describe("resolveFieldControlAccessibility", () => {
 	const field = {
 		description: null,

@@ -275,3 +275,86 @@ describe("Signature", () => {
 		}
 	});
 });
+
+describe("Signature.Pad accessibility", () => {
+	function actionNames(element: { props: { accessibilityActions?: { name: string }[] } }): string[] {
+		return (element.props.accessibilityActions ?? []).map((action) => action.name);
+	}
+
+	test("an empty pad with no typed-name route is an image and offers no actions", async () => {
+		await renderWithProviders(<Signature />);
+		const pad = screen.getByLabelText("Signature pad, empty");
+		expect(pad.props.accessibilityRole).toBe("image");
+		expect(actionNames(pad)).not.toContain("type");
+		expect(actionNames(pad)).toHaveLength(0);
+	});
+
+	test("an empty pad with onRequestAlternative is a button and lists type", async () => {
+		const onRequestAlternative = jest.fn();
+		await renderWithProviders(<Signature onRequestAlternative={onRequestAlternative} />);
+		const pad = screen.getByLabelText("Signature pad, empty");
+		expect(pad.props.accessibilityRole).toBe("button");
+		expect(actionNames(pad)).toContain("type");
+	});
+
+	test("the type action and the iOS double tap call onRequestAlternative", async () => {
+		const onRequestAlternative = jest.fn();
+		await renderWithProviders(<Signature onRequestAlternative={onRequestAlternative} />);
+		const pad = screen.getByLabelText("Signature pad, empty");
+		await fireEvent(pad, "accessibilityAction", { nativeEvent: { actionName: "type" } });
+		expect(onRequestAlternative).toHaveBeenCalledTimes(1);
+		await fireEvent(pad, "accessibilityTap");
+		expect(onRequestAlternative).toHaveBeenCalledTimes(2);
+	});
+
+	test("a drawn pad is an image that keeps the type action and swallows the iOS double tap", async () => {
+		const onRequestAlternative = jest.fn();
+		await renderWithProviders(<Signature defaultValue={ONE_STROKE} onRequestAlternative={onRequestAlternative} />);
+		const pad = screen.getByLabelText("Signature, drawn, 1 stroke");
+		expect(pad.props.accessibilityRole).toBe("image");
+		expect(actionNames(pad)).toContain("type");
+		await fireEvent(pad, "accessibilityTap");
+		expect(onRequestAlternative).not.toHaveBeenCalled();
+	});
+
+	test("an interactive pad with no route still answers the iOS double tap so it draws nothing", async () => {
+		await renderWithProviders(<Signature />);
+		const pad = screen.getByLabelText("Signature pad, empty");
+		expect(pad.props.onAccessibilityTap).toBeDefined();
+	});
+
+	test("a Field's invalid state and error reach the pad's hint", async () => {
+		await renderWithProviders(
+			<Field isInvalid>
+				<Field.Label>Witness</Field.Label>
+				<Signature />
+				<Field.Error>Signature needed.</Field.Error>
+			</Field>
+		);
+		const pad = screen.getByLabelText(/^Witness/);
+		expect(pad.props.accessibilityHint).toContain("Invalid: Signature needed.");
+	});
+
+	test("the pad's own isInvalid reaches the hint outside a Field", async () => {
+		await renderWithProviders(<Signature isInvalid />);
+		const pad = screen.getByLabelText("Signature pad, empty");
+		expect(pad.props.accessibilityHint).toContain("Invalid");
+	});
+
+	test("a labels override renames the pad", async () => {
+		await renderWithProviders(<Signature labels={{ name: "Firma" }} />);
+		expect(screen.getByLabelText(/Firma/)).toBeOnTheScreen();
+	});
+
+	test("a caller's onAccessibilityAction still runs beside the pad's", async () => {
+		const onAccessibilityAction = jest.fn();
+		await renderWithProviders(
+			<Signature>
+				<Signature.Pad onAccessibilityAction={onAccessibilityAction} />
+			</Signature>
+		);
+		const pad = screen.getByLabelText("Signature pad, empty");
+		await fireEvent(pad, "accessibilityAction", { nativeEvent: { actionName: "custom" } });
+		expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+	});
+});

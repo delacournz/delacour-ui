@@ -116,6 +116,26 @@ standalone SVG document, or as a PNG.
   "Signature cleared" — and the alternative link hands off to a typed-name flow
   the caller owns. It renders only when `onRequestAlternative` is passed, and it
   stays enabled while the pad is disabled.
+- **The pad's role follows what a double tap does.** An empty pad with
+  `onRequestAlternative` is a `button`: VoiceOver's double tap (`onAccessibilityTap`)
+  and TalkBack's (`activate`) open the typed-name route. Every other pad is an
+  `image`. It is never `none`, which read an empty pad as plain text with nothing
+  to say it was a control. A button whose double tap did nothing would be a lie, so
+  without a route an empty pad stays an `image`, and the development warning covers it.
+- **`type` is on the pad itself.** Whenever `onRequestAlternative` is set, drawn or
+  empty, the pad lists a `type` custom action after undo, redo and clear. A screen
+  reader user then does not have to hunt for the link in the toolbar.
+- **On iOS a double tap never draws.** With nothing answering `accessibilityActivate`,
+  UIKit synthesises a touch at the element's centre, and the pan, which starts a stroke
+  on touch-down, would leave a dot. An interactive pad therefore always answers the
+  double tap, doing nothing when there is no route. Double-tap-and-hold still passes
+  a held touch through, which is how a screen reader user draws.
+- **A `Field`'s validity is spoken through the hint.** React Native 0.88 has no
+  `aria-invalid`, so "Invalid: <error>" and the description lead the hint, through
+  `useFieldControlAccessibility`, and "required" ends the name. A caller's
+  `accessibilityLabel`, `onAccessibilityAction` and `onAccessibilityTap` are kept: the
+  pad's handlers run first, then the caller's. All of this is settled by the pure
+  `resolveSignaturePadAccessibility` and `resolveSignaturePadHint`.
 - **`Field` reaches the state axes and the name, not the press.** `isInvalid` and
   `isDisabled` cascade and an explicit prop wins; `Field.Label`'s text names the
   pad. The pad registers no press: a tap on the label cannot sign for anyone, and

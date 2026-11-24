@@ -1,8 +1,10 @@
 import { describe, expect, test } from "bun:test";
+import { MIN_HIT_TARGET, resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	CHAT_COMPOSER_GAP,
 	footerAboveKeyboard,
 	footerOccupancy,
+	resolveBackButtonHitTarget,
 	resolveFooterBorderOpacity,
 	resolveNavbarBorderOpacity,
 	resolveScreenEdgePadding,
@@ -604,5 +606,16 @@ describe("resolveScrollTopInset", () => {
 				expect(scroll).toBe(view.paddingTop);
 			}
 		}
+	});
+});
+
+describe("resolveBackButtonHitTarget", () => {
+	test("is the glyph box, so the slop tops it up to the minimum touch target", () => {
+		const target = resolveBackButtonHitTarget();
+		const slop = resolveMinimumHitSlop(target);
+		expect(typeof slop).toBe("number");
+		const each = typeof slop === "number" ? slop : 0;
+		expect(target.width + 2 * each).toBeGreaterThanOrEqual(MIN_HIT_TARGET);
+		expect(target.height + 2 * each).toBeGreaterThanOrEqual(MIN_HIT_TARGET);
 	});
 });

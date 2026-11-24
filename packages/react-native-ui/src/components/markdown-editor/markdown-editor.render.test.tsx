@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Linking } from "react-native";
 import { LabelsProvider } from "../../hooks/use-labels";
-import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { MarkdownEditor } from "./markdown-editor";
@@ -464,7 +463,7 @@ describe("MarkdownEditor", () => {
 
 	describe("labels", () => {
 		const FRENCH = {
-			actions: { ...DELACOUR_DEFAULT_LABELS.markdownEditor.actions, bold: "Gras" },
+			bold: "Gras",
 			bulletItem: (text: string) => `puce ${text}`,
 			openLink: (text: string) => `Ouvrir le lien ${text}`,
 			empty: "Rien à voir",
@@ -500,7 +499,7 @@ describe("MarkdownEditor", () => {
 			await renderWithProviders(
 				<MarkdownEditor
 					defaultValue="hi"
-					labels={{ actions: FRENCH.actions, applied: (name) => `${name} appliqué` }}
+					labels={{ bold: FRENCH.bold, applied: (name) => `${name} appliqué` }}
 					placeholder="Write something"
 				/>
 			);

@@ -276,10 +276,6 @@
 					"to": "@registry/hooks/use-labels"
 				},
 				{
-					"from": "../../lib/labels",
-					"to": "@registry/lib/labels"
-				},
-				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
 				},

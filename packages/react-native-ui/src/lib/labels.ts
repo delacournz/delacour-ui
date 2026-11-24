@@ -543,10 +543,11 @@ export type MarkdownEditorActionKey =
 	| "bulletList"
 	| "orderedList";
 
-/** MarkdownEditor's visible and spoken strings. */
-export type MarkdownEditorLabels = {
-	/** Each toolbar button's accessible name, and the subject of its announcement. */
-	actions: Record<MarkdownEditorActionKey, string>;
+/**
+ * MarkdownEditor's visible and spoken strings. Each toolbar action is a key of its own — its button's
+ * accessible name and the subject of its announcement — so renaming one leaves the rest alone.
+ */
+export type MarkdownEditorLabels = { [Action in MarkdownEditorActionKey]: string } & {
 	/** Announced after a toolbar press switches a format on; `name` is the action's name. */
 	applied: (name: string) => string;
 	/** Announced after a toolbar press switches a format off. */
@@ -1021,18 +1022,16 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		showMyLocation: "Show my location",
 	},
 	markdownEditor: {
-		actions: {
-			bold: "Bold",
-			bulletList: "Bulleted list",
-			code: "Inline code",
-			codeBlock: "Code block",
-			heading: "Heading",
-			italic: "Italic",
-			link: "Link",
-			orderedList: "Numbered list",
-			quote: "Quote",
-			strikethrough: "Strikethrough",
-		},
+		bold: "Bold",
+		bulletList: "Bulleted list",
+		code: "Inline code",
+		codeBlock: "Code block",
+		heading: "Heading",
+		italic: "Italic",
+		link: "Link",
+		orderedList: "Numbered list",
+		quote: "Quote",
+		strikethrough: "Strikethrough",
 		applied: (name) => `${name} applied`,
 		removed: (name) => `${name} removed`,
 		write: "Write",

@@ -112,7 +112,7 @@ describe("toolbar actions", () => {
 	test("the announcement speaks through the labels it is given", () => {
 		const french = {
 			...DELACOUR_DEFAULT_LABELS.markdownEditor,
-			actions: { ...DELACOUR_DEFAULT_LABELS.markdownEditor.actions, bold: "Gras" },
+			bold: "Gras",
 			applied: (name: string) => `${name} appliqué`,
 			removed: (name: string) => `${name} retiré`,
 		};
@@ -123,8 +123,9 @@ describe("toolbar actions", () => {
 	test("the catalog's action keys are the toolbar's actions", () => {
 		const keys: MarkdownEditorActionKey[] = [...MARKDOWN_TOOLBAR_ACTIONS];
 		const back: MarkdownToolbarAction[] = keys;
-		expect(Object.keys(DELACOUR_DEFAULT_LABELS.markdownEditor.actions).sort()).toEqual([...back].sort());
-		expect(MARKDOWN_ACTION_LABELS).toBe(DELACOUR_DEFAULT_LABELS.markdownEditor.actions);
+		expect(Object.keys(MARKDOWN_ACTION_LABELS).sort()).toEqual([...back].sort());
+		for (const action of back)
+			expect(MARKDOWN_ACTION_LABELS[action]).toBe(DELACOUR_DEFAULT_LABELS.markdownEditor[action]);
 	});
 });
 

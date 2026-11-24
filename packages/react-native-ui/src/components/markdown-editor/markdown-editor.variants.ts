@@ -66,8 +66,9 @@ export const MARKDOWN_TOOLBAR_ACTIONS = [
 export const MARKDOWN_DEFAULT_TOOLBAR_ACTIONS: readonly MarkdownToolbarAction[] = MARKDOWN_TOOLBAR_ACTIONS;
 
 /** The spoken name of each action — its accessibility label, and the subject of its announcement. */
-export const MARKDOWN_ACTION_LABELS: Record<MarkdownToolbarAction, string> =
-	DELACOUR_DEFAULT_LABELS.markdownEditor.actions;
+export const MARKDOWN_ACTION_LABELS: Record<MarkdownToolbarAction, string> = Object.fromEntries(
+	MARKDOWN_TOOLBAR_ACTIONS.map((action) => [action, DELACOUR_DEFAULT_LABELS.markdownEditor[action]])
+) as Record<MarkdownToolbarAction, string>;
 
 /** The square button an action draws at each editor size — the button's own `icon-*` step, never a number. */
 export const MARKDOWN_EDITOR_ACTION_SIZE: Record<MarkdownEditorSize, ButtonIconSize> = {
@@ -222,7 +223,7 @@ export function resolveMarkdownAnnouncement(
 	wasActive: boolean,
 	labels: MarkdownEditorLabels = DELACOUR_DEFAULT_LABELS.markdownEditor
 ): string {
-	const name = labels.actions[action];
+	const name = labels[action];
 	return wasActive ? labels.removed(name) : labels.applied(name);
 }
 

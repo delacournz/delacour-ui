@@ -307,7 +307,8 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 
 	test("markdownEditor is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.markdownEditor;
-		expect(labels.actions).toEqual({
+		const { applied, removed, write, preview, previewPane, empty, bulletItem, linkText, ...actions } = labels;
+		expect(actions).toEqual({
 			bold: "Bold",
 			bulletList: "Bulleted list",
 			code: "Inline code",
@@ -423,6 +424,11 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 });
 
 describe("resolveLabels", () => {
+	test("one MarkdownEditor action renamed on each layer leaves the other actions alone", () => {
+		const labels = resolveLabels("markdownEditor", { markdownEditor: { bold: "Gras" } }, { italic: "Italique" });
+		expect([labels.bold, labels.italic, labels.link]).toEqual(["Gras", "Italique", "Link"]);
+	});
+
 	test("no overrides gives the defaults", () => {
 		expect(resolveLabels("pagination", undefined, undefined)).toEqual(DELACOUR_DEFAULT_LABELS.pagination);
 	});

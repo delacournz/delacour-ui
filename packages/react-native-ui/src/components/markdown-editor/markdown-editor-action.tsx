@@ -54,7 +54,7 @@ export function MarkdownEditorAction({ action, testID }: MarkdownEditorActionPro
 
 	return (
 		<ToggleButton
-			accessibilityLabel={editor.labels.actions[action]}
+			accessibilityLabel={editor.labels[action]}
 			haptic={editor.haptic}
 			isDisabled={!editor.canFormat}
 			isSelected={isSelected}

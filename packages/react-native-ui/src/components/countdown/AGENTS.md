@@ -109,6 +109,14 @@ export.
   `Time is up`. `resolveCountdownAccessibilityLabel` owns the rule, and a
   caller's `labels` name the units there too. A caller `accessibilityLabel`
   wins.
+- **The spoken strings are the `labels` prop, not literals.** `CountdownLabels`: the four captions
+  (`days`…`seconds`), `dayCount`/`hourCount`/`minuteCount`/`secondCount`, `timeUp`, `remaining`
+  and `inlineDays`. Precedence: `accessibilityLabel` → `labels` prop → `DelacourProvider` → English.
+  A caption set on the component's own `labels` with no matching `<unit>Count` beside it still names
+  the unit aloud (`2 Tage`); the provider layer does not. `resolveCountdownAccessibilityLabel` and
+  `resolveCountdownAnnouncement` take `(seconds, units, own, labels)` — `own` is the raw prop —
+  and `formatCountdownInline` takes `labels` last, all defaulting to English. Never rebuild the
+  `labels` object in render: Countdown re-renders every second.
 - **Not a live region: it announces at milestones, through the announcement channel.** The
   spoken label changes every second in the final minute, so a live region on it made TalkBack
   read every tick — and iOS has no live regions, so VoiceOver heard nothing, expiry included.

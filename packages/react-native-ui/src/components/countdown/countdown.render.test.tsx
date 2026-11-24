@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, renderWithProviders, screen } from "../../test/render";
 import { Countdown } from "./countdown";
 
@@ -257,5 +258,55 @@ describe("Countdown announcements", () => {
 		await run(4);
 		expect(withOptionsSpy).not.toHaveBeenCalled();
 		expect(screen.getByRole("timer").props.accessibilityLiveRegion).toBe("none");
+	});
+
+	describe("labels", () => {
+		const german = {
+			days: "Tage",
+			timeUp: "Zeit abgelaufen",
+			remaining: (amounts: readonly string[]) => `noch ${amounts.join(" und ")}`,
+			dayCount: (n: number) => `${n} Tage`,
+			minuteCount: (n: number) => `${n} Min.`,
+			inlineDays: (n: number) => `${n}T`,
+		};
+
+		test("the prop changes the spoken label and the inline run", async () => {
+			await renderWithProviders(<Countdown labels={german} to={at(2 * DAY + 5 * MINUTE)} variant="inline" />);
+			expect(screen.getByRole("timer").props.accessibilityLabel).toBe("noch 2 Tage und 5 Min.");
+			expect(screen.getByText("2T 00:05:00", hidden)).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider changes them too, and the prop wins key by key", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ countdown: german }}>
+					<Countdown labels={{ minuteCount: (n) => `${n} Minuten` }} to={at(2 * DAY + 5 * MINUTE)} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("timer").props.accessibilityLabel).toBe("noch 2 Tage und 5 Minuten");
+			expect(screen.getByText("Tage", hidden)).toBeOnTheScreen();
+		});
+
+		test("an explicit accessibilityLabel still wins", async () => {
+			await renderWithProviders(<Countdown accessibilityLabel="Sale" labels={german} to={at(5 * MINUTE)} />);
+			expect(screen.getByRole("timer", { name: "Sale" })).toBeOnTheScreen();
+		});
+
+		test("old unit captions still name the unit aloud across ticks, without a render loop", async () => {
+			await renderWithProviders(<Countdown labels={{ days: "Tage" }} to={at(2 * DAY + 5 * SECOND)} />);
+			expect(screen.getByRole("timer").props.accessibilityLabel).toBe("2 Tage left");
+			await act(async () => {
+				jest.advanceTimersByTime(3 * SECOND);
+			});
+			expect(screen.getByRole("timer").props.accessibilityLabel).toBe("2 Tage left");
+		});
+
+		test("an inline function label survives a ticking clock", async () => {
+			await renderWithProviders(<Countdown labels={{ secondCount: (n) => `${n} Sek.` }} to={at(10 * SECOND)} />);
+			expect(screen.getByRole("timer").props.accessibilityLabel).toBe("10 Sek. left");
+			await act(async () => {
+				jest.advanceTimersByTime(4 * SECOND);
+			});
+			expect(screen.getByRole("timer").props.accessibilityLabel).toBe("6 Sek. left");
+		});
 	});
 });

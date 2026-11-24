@@ -3,10 +3,11 @@ import { View, type ViewProps } from "react-native";
 import { LayoutAnimationConfig } from "react-native-reanimated";
 import { useAnnouncement } from "../../hooks/use-announce";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
+import type { CountdownLabels } from "../../lib/labels";
 import { Text } from "../text";
 import {
-	COUNTDOWN_DEFAULT_LABELS,
 	COUNTDOWN_DEFAULT_SIZE,
 	COUNTDOWN_DEFAULT_VARIANT,
 	COUNTDOWN_DIGIT_TEXT_VARIANT,
@@ -32,8 +33,11 @@ export type CountdownProps = Omit<ViewProps, "children"> & {
 	units?: readonly CountdownUnit[];
 	/** Drop leading units that read zero, never below the smallest two selected. Defaults to `true`. */
 	trim?: boolean;
-	/** Captions under the segmented boxes, and the unit names a screen reader hears. */
-	labels?: Partial<Record<CountdownUnit, string>>;
+	/**
+	 * The captions under the segmented boxes and the spoken strings, laid over `DelacourProvider`'s
+	 * `labels`, which sit over English. A caption set here alone also names its unit aloud.
+	 */
+	labels?: Partial<CountdownLabels>;
 	/** At or below this many seconds left, the digits turn destructive. */
 	urgentBelow?: number;
 	variant?: CountdownVariant;
@@ -53,7 +57,7 @@ function CountdownRoot({
 	to,
 	units: rawUnits,
 	trim = true,
-	labels,
+	labels: labelsProp,
 	urgentBelow,
 	variant = COUNTDOWN_DEFAULT_VARIANT,
 	size = COUNTDOWN_DEFAULT_SIZE,
@@ -65,6 +69,7 @@ function CountdownRoot({
 	accessibilityLabel,
 	...props
 }: CountdownProps): ReactElement {
+	const labels = useLabels("countdown", labelsProp);
 	const seconds = useCountdownClock({ now, onComplete, onTick, to });
 	const isCalm = useCalmMotion();
 
@@ -75,15 +80,21 @@ function CountdownRoot({
 	const textVariant = COUNTDOWN_DIGIT_TEXT_VARIANT[size];
 	const slots = countdownVariants({ isUrgent, size, variant });
 
-	const spoken = useMemo(() => resolveCountdownAccessibilityLabel(seconds, units, labels), [seconds, units, labels]);
+	const spoken = useMemo(
+		() => resolveCountdownAccessibilityLabel(seconds, units, labelsProp, labels),
+		[seconds, units, labelsProp, labels]
+	);
 
 	// The label changes every second in the final minute, so it is not a live region: the
 	// announcement channel speaks the sparse milestone message instead — on iOS (no live regions)
 	// and on Android alike, and exactly once at expiry.
-	const { accessibilityLiveRegion } = useAnnouncement(resolveCountdownAnnouncement(seconds, units, labels), {
-		channel: "announcement",
-		enabled: announce,
-	});
+	const { accessibilityLiveRegion } = useAnnouncement(
+		resolveCountdownAnnouncement(seconds, units, labelsProp, labels),
+		{
+			channel: "announcement",
+			enabled: announce,
+		}
+	);
 
 	// One accessible element: the role and the coarse label live on the root, and the digits
 	// beneath are hidden so a screen reader never walks them one by one.
@@ -100,7 +111,7 @@ function CountdownRoot({
 			<LayoutAnimationConfig skipEntering>
 				{variant === "inline" ? (
 					<Text className={slots.value()} importantForAccessibility="no-hide-descendants" variant={textVariant}>
-						{formatCountdownInline(parts, visible)}
+						{formatCountdownInline(parts, visible, labels)}
 					</Text>
 				) : (
 					<View className={slots.root()} importantForAccessibility="no-hide-descendants">
@@ -109,7 +120,7 @@ function CountdownRoot({
 								isAnimated={!isCalm}
 								isUrgent={isUrgent}
 								key={unit}
-								label={labels?.[unit] ?? COUNTDOWN_DEFAULT_LABELS[unit]}
+								label={labels[unit]}
 								size={size}
 								value={parts[unit]}
 								variant={textVariant}

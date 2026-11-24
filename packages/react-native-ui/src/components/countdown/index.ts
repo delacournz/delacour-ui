@@ -1,3 +1,4 @@
+export type { CountdownLabels } from "../../lib/labels";
 export { Countdown, type CountdownProps } from "./countdown";
 export {
 	COUNTDOWN_DEFAULT_LABELS,

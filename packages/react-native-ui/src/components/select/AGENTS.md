@@ -88,7 +88,9 @@ engine. An app that imports no picker still never resolves it.
   and offsets the rows past it, and always mounts it whatever the window — so
   the title, the close and the search stay at the top of a long list instead of
   scrolling off with it. The `header` slot is `bg-popover`, the sheet's own
-  colour, so the rows pass under it unseen. It stays in the list rather than
+  colour, so the rows pass under it unseen. It carries the list's `pt-2` (`sheetBody` sets `pt-0`), so it
+  rests at the list's top edge and pins where it rests; with the padding on the
+  content container it rode up 8pt before it stuck. It stays in the list rather than
   above it, or dynamic sizing would stop counting it. Group headings are not
   sticky.
 - **A sheet sized to its rows is capped.** `resolveSelectSheetMaxHeight` hands

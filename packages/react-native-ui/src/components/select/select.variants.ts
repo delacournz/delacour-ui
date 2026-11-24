@@ -164,8 +164,13 @@ export const selectVariants = tv({
 		rowCheckbox: "items-center justify-center overflow-hidden border border-input bg-card",
 		/** Layout only — the heading is a `Text.Overline`, which owns its type. */
 		groupHeading: "pb-1.5 pt-4",
-		/** The sheet's title and search field, pinned above the rows. Opaque, so rows scroll under it unseen. */
-		header: "gap-3 bg-popover pb-3",
+		/**
+		 * The sheet's title and search field, pinned above the rows. Opaque, so
+		 * rows scroll under it unseen. It carries the list's top padding (`pt-2`,
+		 * taken off `sheetBody`), so it rests at the list's top edge and pins
+		 * exactly where it rests rather than riding up the padding first.
+		 */
+		header: "gap-3 bg-popover pb-3 pt-2",
 		/**
 		 * The close and the optional title, in one row above the search.
 		 *
@@ -178,8 +183,8 @@ export const selectVariants = tv({
 		/** The bar already clears the close, so the title needs no gutter. */
 		headerTitle: "flex-1 pr-0",
 		empty: "items-center justify-center py-8",
-		/** Overrides the sheet's list gutter gap: rows touch, the way a list's do. */
-		sheetBody: "gap-0",
+		/** Overrides the sheet's list gutter gap — rows touch, the way a list's do — and hands its top padding to `header`. */
+		sheetBody: "gap-0 pt-0",
 	},
 	variants: {
 		variant: {

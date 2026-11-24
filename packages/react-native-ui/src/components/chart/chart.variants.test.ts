@@ -130,6 +130,12 @@ describe("resolveChartSeries", () => {
 		]);
 	});
 
+	test("carries a dash through, and adds no key without one", () => {
+		const resolved = resolveChartSeries({ a: { label: "A", dash: [4, 3] }, b: { label: "B" } });
+		expect(resolved[0]?.dash).toEqual([4, 3]);
+		expect("dash" in (resolved[1] ?? {})).toBe(false);
+	});
+
 	test("an explicit token overrides the position", () => {
 		expect(resolveChartSeries(config)[1]?.color).toBe("chart-4");
 	});

@@ -2,8 +2,11 @@ import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { BADGE_COLORS, BADGE_FOREGROUND_TOKEN, BADGE_SIZES, badgeVariants } from "../badge/badge.variants";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
+	CHIP_CLOSE_HIT_CAP,
 	CHIP_CLOSE_HIT_SLOP,
+	CHIP_CLOSE_SIZE,
 	CHIP_COLORS,
 	CHIP_FOREGROUND_TOKEN,
 	CHIP_HIT_SLOP,
@@ -12,6 +15,7 @@ import {
 	CHIP_VARIANTS,
 	chipVariants,
 	resolveChipCloseExposure,
+	resolveChipCloseHitTarget,
 	resolveChipForegroundToken,
 	resolveChipMode,
 	resolveChipSurface,
@@ -305,10 +309,24 @@ describe("hit slop", () => {
 		}
 	});
 
-	test("the close glyph grows its target with the chip", () => {
-		const slops = CHIP_SIZES.map((size) => CHIP_CLOSE_HIT_SLOP[size]);
-		expect(slops.every((slop) => slop > 0)).toBe(true);
-		expect([...slops]).toEqual([...slops].sort((a, b) => a - b));
+	test("the close glyph reaches as far as its cap allows, and 44 where the cap is not the limit", () => {
+		for (const size of CHIP_SIZES) {
+			const target = resolveChipCloseHitTarget(size);
+			const slop = resolveMinimumHitSlop(target.size, 44, { cap: target.cap });
+			expect(typeof slop).toBe("number");
+			const reach = target.size + 2 * (slop as number);
+			expect(reach).toBe(Math.min(44, target.size + 2 * CHIP_CLOSE_HIT_CAP[size]));
+		}
+		expect(resolveMinimumHitSlop(CHIP_CLOSE_SIZE.lg, 44, { cap: CHIP_CLOSE_HIT_CAP.lg })).toBe(13);
+	});
+
+	// Chip height = line height + py + border: 16+8+2, 20+12+2, 24+16+2.
+	test("the close slop stays within its chip plus half a gap-2", () => {
+		const chipHeight = { sm: 26, md: 34, lg: 42 } as const;
+		for (const size of CHIP_SIZES) {
+			const beyondGlyph = (chipHeight[size] - CHIP_CLOSE_SIZE[size]) / 2;
+			expect(CHIP_CLOSE_HIT_CAP[size]).toBeLessThanOrEqual(beyondGlyph + 4);
+		}
 	});
 });
 
@@ -331,5 +349,11 @@ describe("resolveChipCloseExposure", () => {
 	test("a pressable chip offers removal as an accessibility action", () => {
 		expect(resolveChipCloseExposure({ mode: "button", hasClose: true })).toBe("action");
 		expect(resolveChipCloseExposure({ mode: "toggle", hasClose: true })).toBe("action");
+	});
+});
+
+describe("CHIP_CLOSE_HIT_SLOP", () => {
+	test("is the 44pt slop held to each size's cap", () => {
+		expect(CHIP_CLOSE_HIT_SLOP).toEqual({ sm: 10, md: 13, lg: 13 });
 	});
 });

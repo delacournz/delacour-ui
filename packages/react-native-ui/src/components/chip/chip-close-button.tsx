@@ -1,9 +1,10 @@
 import type { ReactElement } from "react";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconCrossSmall } from "../../icons/central";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { useChipPart } from "./chip.context";
-import { CHIP_CLOSE_HIT_SLOP, chipVariants } from "./chip.variants";
+import { chipVariants, resolveChipCloseHitTarget } from "./chip.variants";
 
 export type ChipCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "children" | "disabled">;
 
@@ -19,8 +20,8 @@ export type ChipCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "ch
  *
  * The glyph is left bare: it inherits the chip's icon size and its current
  * surface's colour from the root's `IconDefaultsProvider`, so it turns with the
- * label when the chip is selected. `CHIP_CLOSE_HIT_SLOP` grows a 14–18 point
- * glyph into something a thumb can find.
+ * label when the chip is selected. The 14–18 point glyph grows towards the minimum
+ * touch target with `hitSlop`, capped so it never reaches a neighbouring chip.
  */
 export function ChipCloseButton({
 	accessibilityLabel = "Remove",
@@ -30,6 +31,8 @@ export function ChipCloseButton({
 	...props
 }: ChipCloseButtonProps): ReactElement {
 	const { size, isDisabled } = useChipPart("Chip.CloseButton");
+	const target = resolveChipCloseHitTarget(size);
+	const slop = useMinimumHitSlop(target.size, { cap: target.cap });
 
 	return (
 		<Pressable
@@ -38,7 +41,7 @@ export function ChipCloseButton({
 			className={chipVariants({ size }).closeButton({ className })}
 			disabled={isDisabled}
 			feedback={feedback}
-			hitSlop={hitSlop ?? CHIP_CLOSE_HIT_SLOP[size]}
+			hitSlop={hitSlop ?? slop}
 			{...props}
 		>
 			<Icon icon={IconCrossSmall} />

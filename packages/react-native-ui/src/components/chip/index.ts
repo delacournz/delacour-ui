@@ -2,7 +2,9 @@ export { Chip, type ChipProps } from "./chip";
 export { type ChipContextValue, ChipProvider, useChip, useChipContext } from "./chip.context";
 export type { ChipSlotProps } from "./chip.types";
 export {
+	CHIP_CLOSE_HIT_CAP,
 	CHIP_CLOSE_HIT_SLOP,
+	CHIP_CLOSE_SIZE,
 	CHIP_COLORS,
 	CHIP_FOREGROUND_TOKEN,
 	CHIP_HIT_SLOP,

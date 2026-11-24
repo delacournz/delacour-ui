@@ -55,6 +55,93 @@ export const SWIPE_END_DISPLAY_NAME = "DelacourUI.Swipe.End";
 /** What the root reads off a lifted tile — `Swipe.Action`'s props, as far as layout and dispatch need. */
 export type SwipeTileProps = { color?: SwipeActionColor; label?: string; onPress?: () => void };
 
+/** A named accessibility action — `AccessibilityActionInfo`, restated so this file imports nothing from React Native. */
+export type SwipeAccessibilityAction = { name: string; label?: string };
+
+/**
+ * The name of the custom action an open row offers to close itself, announced as "Close" in VoiceOver's
+ * actions rotor and TalkBack's actions menu. Neither gesture sends it: VoiceOver's two-finger Z-scrub
+ * reaches the row through `onAccessibilityEscape` (Fabric's `accessibilityPerformEscape`), and
+ * TalkBack's back gesture sends nothing to the row.
+ */
+export const SWIPE_ESCAPE_ACTION = "escape";
+
+/** What the open row's `escape` action is announced as. */
+export const SWIPE_CLOSE_ACTION_LABEL = "Close";
+
+/**
+ * The stable name a tile is published under: `swipe-<side>-<index>`.
+ *
+ * A tile's label is for speaking; a name is what Android dispatches on, so a label such as "Activate"
+ * cannot collide with a standard action name. iOS still dispatches by label: see
+ * `findDuplicateSwipeActionLabels`.
+ */
+export function swipeActionName(side: SwipeSide, index: number): string {
+	return `swipe-${side}-${index}`;
+}
+
+/** Every labelled tile as a named accessibility action, `start` tiles first, then `end`, in source order. */
+export function resolveSwipeAccessibilityActions(tiles: {
+	start: readonly { props: SwipeTileProps }[];
+	end: readonly { props: SwipeTileProps }[];
+}): SwipeAccessibilityAction[] {
+	const actions: SwipeAccessibilityAction[] = [];
+	for (const side of SWIPE_SIDES) {
+		tiles[side].forEach((tile, index) => {
+			if (tile.props.label !== undefined) actions.push({ label: tile.props.label, name: swipeActionName(side, index) });
+		});
+	}
+	return actions;
+}
+
+/** The tile a published action name belongs to, or `undefined` for a name that is not one of this row's. */
+export function resolveSwipeActionByName(
+	name: string,
+	tiles: { start: readonly { props: SwipeTileProps }[]; end: readonly { props: SwipeTileProps }[] }
+): SwipeTileProps | undefined {
+	for (const side of SWIPE_SIDES) {
+		const index = tiles[side].findIndex((_, at) => swipeActionName(side, at) === name);
+		if (index !== -1) return tiles[side][index]?.props;
+	}
+	return undefined;
+}
+
+/**
+ * The actions the row publishes: the caller's own (mirroring a control inside the row) first, then
+ * the tiles', then `escape` while a side is open, unless the caller already declared `escape`.
+ */
+export function mergeSwipeAccessibilityActions({
+	caller,
+	isOpen,
+	swipe,
+}: {
+	caller: readonly SwipeAccessibilityAction[] | undefined;
+	isOpen: boolean;
+	swipe: readonly SwipeAccessibilityAction[];
+}): SwipeAccessibilityAction[] {
+	const own = caller ?? [];
+	const closes = isOpen && !own.some((action) => action.name === SWIPE_ESCAPE_ACTION);
+	return [...own, ...swipe, ...(closes ? [{ label: SWIPE_CLOSE_ACTION_LABEL, name: SWIPE_ESCAPE_ACTION }] : [])];
+}
+
+/**
+ * The labels more than one of the row's actions carries, each once, in first-seen order.
+ *
+ * iOS dispatches a custom action by its label: Fabric's `didActivateAccessibilityCustomAction` maps the
+ * spoken label back to the **first** action carrying it, so two entries with one label both fire the
+ * first. Stable names keep Android apart, not iOS; the row warns in development instead.
+ */
+export function findDuplicateSwipeActionLabels(actions: readonly SwipeAccessibilityAction[]): string[] {
+	const seen = new Set<string>();
+	const duplicates: string[] = [];
+	for (const { label } of actions) {
+		if (label === undefined) continue;
+		if (seen.has(label) && !duplicates.includes(label)) duplicates.push(label);
+		seen.add(label);
+	}
+	return duplicates;
+}
+
 export type SwipeChildren = {
 	/** The tiles behind the start edge, in source order. */
 	start: ReactElement<SwipeTileProps>[];

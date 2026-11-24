@@ -53,9 +53,9 @@ describe("Swipe", () => {
 		const row = screen.getByLabelText("Invoice");
 		expect(row.props.accessible).toBe(true);
 		expect(row.props.accessibilityActions).toEqual([
-			{ label: "Done", name: "Done" },
-			{ label: "Snooze", name: "Snooze" },
-			{ label: "Delete", name: "Delete" },
+			{ label: "Done", name: "swipe-start-0" },
+			{ label: "Snooze", name: "swipe-end-0" },
+			{ label: "Delete", name: "swipe-end-1" },
 		]);
 	});
 
@@ -63,9 +63,82 @@ describe("Swipe", () => {
 		const onDone = jest.fn();
 		const onDelete = jest.fn();
 		await renderWithProviders(<Row onDelete={onDelete} onDone={onDone} />);
-		await fireEvent(screen.getByLabelText("Invoice"), "accessibilityAction", { nativeEvent: { actionName: "Delete" } });
+		await fireEvent(screen.getByLabelText("Invoice"), "accessibilityAction", {
+			nativeEvent: { actionName: "swipe-end-1" },
+		});
 		expect(onDelete).toHaveBeenCalledTimes(1);
 		expect(onDone).not.toHaveBeenCalled();
+	});
+
+	test("a caller's accessibility actions come first and run their own handler", async () => {
+		const onAccessibilityAction = jest.fn();
+		const onDone = jest.fn();
+		await renderWithProviders(
+			<Row
+				accessibilityActions={[{ label: "Open invoice", name: "activate" }]}
+				onAccessibilityAction={onAccessibilityAction}
+				onDone={onDone}
+			/>
+		);
+		const row = screen.getByLabelText("Invoice");
+		expect(row.props.accessibilityActions[0]).toEqual({ label: "Open invoice", name: "activate" });
+		await fireEvent(row, "accessibilityAction", { nativeEvent: { actionName: "activate" } });
+		expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+		expect(onDone).not.toHaveBeenCalled();
+		await fireEvent(row, "accessibilityAction", { nativeEvent: { actionName: "swipe-start-0" } });
+		expect(onDone).toHaveBeenCalledTimes(1);
+		expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
+	});
+
+	test("an open row offers escape, which closes it", async () => {
+		const ref = createRef<SwipeHandle>();
+		const onOpenChange = jest.fn();
+		await renderWithProviders(<Row onOpenChange={onOpenChange} ref={ref} />);
+		const names = () =>
+			screen.getByLabelText("Invoice").props.accessibilityActions.map((a: { name: string }) => a.name);
+		expect(names()).not.toContain("escape");
+		await act(async () => ref.current?.open("end"));
+		expect(names().at(-1)).toBe("escape");
+		await fireEvent(screen.getByLabelText("Invoice"), "accessibilityAction", { nativeEvent: { actionName: "escape" } });
+		expect(onOpenChange).toHaveBeenLastCalledWith(null);
+		expect(names()).not.toContain("escape");
+	});
+
+	test("VoiceOver's escape gesture (onAccessibilityEscape) closes an open row, and a shut row takes none", async () => {
+		const ref = createRef<SwipeHandle>();
+		const onOpenChange = jest.fn();
+		await renderWithProviders(<Row onOpenChange={onOpenChange} ref={ref} />);
+		expect(screen.getByLabelText("Invoice").props.onAccessibilityEscape).toBeUndefined();
+		await act(async () => ref.current?.open("end"));
+		await fireEvent(screen.getByLabelText("Invoice"), "accessibilityEscape");
+		expect(onOpenChange).toHaveBeenLastCalledWith(null);
+		expect(screen.getByLabelText("Invoice").props.onAccessibilityEscape).toBeUndefined();
+	});
+
+	test("a caller's onAccessibilityEscape runs instead of the row's own close", async () => {
+		const ref = createRef<SwipeHandle>();
+		const onOpenChange = jest.fn();
+		const onAccessibilityEscape = jest.fn();
+		await renderWithProviders(
+			<Row onAccessibilityEscape={onAccessibilityEscape} onOpenChange={onOpenChange} ref={ref} />
+		);
+		await act(async () => ref.current?.open("end"));
+		await fireEvent(screen.getByLabelText("Invoice"), "accessibilityEscape");
+		expect(onAccessibilityEscape).toHaveBeenCalledTimes(1);
+		expect(onOpenChange).not.toHaveBeenLastCalledWith(null);
+	});
+
+	test("warns once in development when two of the row's actions share a label", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+		await renderWithProviders(
+			<Row accessibilityActions={[{ label: "Snooze", name: "snooze-inner" }]} onAccessibilityAction={() => {}} />
+		);
+		await renderWithProviders(
+			<Row accessibilityActions={[{ label: "Snooze", name: "snooze-inner" }]} onAccessibilityAction={() => {}} />
+		);
+		const duplicates = warn.mock.calls.filter((call) => String(call[0]).includes('labelled "Snooze"'));
+		expect(duplicates).toHaveLength(1);
+		warn.mockRestore();
 	});
 
 	test("tiles are hidden from assistive technology while the row is shut and exposed once open", async () => {

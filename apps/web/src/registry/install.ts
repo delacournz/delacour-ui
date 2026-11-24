@@ -673,7 +673,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 37,
+		fileCount: 38,
 		groups: [
 			{
 				name: "swipe",
@@ -771,6 +771,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -6697,7 +6705,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 55,
 		groups: [
 			{
 				name: "timeline",
@@ -6826,6 +6834,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -10787,7 +10803,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 58,
+		fileCount: 59,
 		groups: [
 			{
 				name: "item",
@@ -10918,6 +10934,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -15461,7 +15485,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 31,
+		fileCount: 32,
 		groups: [
 			{
 				name: "sortable",
@@ -15553,6 +15577,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{
@@ -19533,7 +19565,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 43,
+		fileCount: 44,
 		groups: [
 			{
 				name: "grid-item",
@@ -19635,6 +19667,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{

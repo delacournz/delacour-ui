@@ -11,6 +11,7 @@
 		"cn",
 		"icon",
 		"icons",
+		"interactive-child",
 		"pressable",
 		"tv"
 	],
@@ -63,6 +64,10 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
 				}
 			]
 		},

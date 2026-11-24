@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"icon",
 		"icons",
+		"interactive-child",
 		"pressable",
 		"surface",
 		"text",
@@ -112,7 +113,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/timeline/timeline-item.tsx",
 			"target": "timeline/timeline-item.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/timeline/timeline-list.tsx",

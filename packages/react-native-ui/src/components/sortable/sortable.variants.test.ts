@@ -7,7 +7,9 @@ import {
 	resolveAutoscrollStep,
 	resolveMoveAction,
 	resolveShifts,
+	resolveSortableHandleLabel,
 	resolveSortableHaptics,
+	resolveSortableMoveActions,
 	resolveSortablePosition,
 	resolveTargetIndex,
 	SORTABLE_ACTIVATIONS,
@@ -395,5 +397,40 @@ describe("sortableVariants", () => {
 
 	test("the handle glyph's colour token is one theme.css declares", () => {
 		expect(THEME_CSS).toContain(`--${SORTABLE_HANDLE_ICON_TOKEN}:`);
+	});
+});
+
+describe("resolveSortableHandleLabel", () => {
+	test("no label keeps the generic name", () => {
+		expect(resolveSortableHandleLabel(undefined)).toBe("Drag to reorder");
+		expect(resolveSortableHandleLabel("")).toBe("Drag to reorder");
+	});
+
+	test("a label names the row", () => {
+		expect(resolveSortableHandleLabel("Milk")).toBe("Reorder Milk");
+	});
+});
+
+describe("resolveSortableMoveActions", () => {
+	const order = ["a", "b", "c"];
+
+	test("without a label the strings are unchanged", () => {
+		expect(resolveSortableMoveActions({ order, id: "b" })).toEqual([
+			{ label: "Move up", name: "moveUp" },
+			{ label: "Move down", name: "moveDown" },
+		]);
+	});
+
+	test("a label names the row in each action", () => {
+		expect(resolveSortableMoveActions({ order, id: "b", label: "Milk" })).toEqual([
+			{ label: "Move Milk up", name: "moveUp" },
+			{ label: "Move Milk down", name: "moveDown" },
+		]);
+	});
+
+	test("only the moves the row can make", () => {
+		expect(resolveSortableMoveActions({ order, id: "a" }).map((a) => a.name)).toEqual(["moveDown"]);
+		expect(resolveSortableMoveActions({ order, id: "c" }).map((a) => a.name)).toEqual(["moveUp"]);
+		expect(resolveSortableMoveActions({ order, id: "b", pinned: [false, true, false] })).toEqual([]);
 	});
 });

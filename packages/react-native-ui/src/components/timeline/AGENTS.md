@@ -33,7 +33,7 @@ Read-only and content-heavy. Compound root plus `Timeline.Item`, `Indicator`, `C
 | `timeline.types.ts` | Prop types the root and `List` share |
 | `timeline.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `timeline.variants.test.ts` | |
-| `timeline.render.test.tsx` | Mounted under Jest — per-event accessibility value (position, status, tone), `value`/`isCompleted` rules, marker hidden, masthead header, horizontal tick, `Timeline.List` step/count, parts and hooks outside their roots throwing |
+| `timeline.render.test.tsx` | Mounted under Jest — per-event accessibility value (position, status, tone), `value`/`isCompleted` rules, marker hidden, merged-control warning and `accessibilityActions` pass-through, masthead header, horizontal tick, `Timeline.List` step/count, parts and hooks outside their roots throwing |
 
 ## Design
 
@@ -132,6 +132,15 @@ Read-only and content-heavy. Compound root plus `Timeline.Item`, `Indicator`, `C
   `resolveTimelineAccessibilityValue` — "Event 2 of 6, completed, success". The default tone is not
   read, `destructive` is read as "error", and an uncounted timeline claims no total. Pass
   `accessibilityLabel` to name it by something shorter than its whole text.
+- **A control inside an item needs one of two escape hatches.** The merged item swallows a
+  `Button` or link composed into its content, aside or trailing: drawn and tappable, never focused
+  by a screen reader. `warnInteractiveChildInAccessible` (`lib/interactive-child.ts`) warns once in
+  development, reading the item's effective `accessible` (a caller's prop wins) and its children.
+  (1) **Mirror it as a named action and hide the drawn one** — `accessibilityActions={[{ name:
+  "open", label: "Open receipt" }]}` plus `onAccessibilityAction` on the item (both pass through
+  `...props`), and `accessibilityElementsHidden` with `importantForAccessibility="no-hide-descendants"`
+  on the inner control. (2) **`accessible={false}`** releases the item so each control is its own
+  stop; the position and status value stop reading. Nothing is mirrored automatically.
 - **The marker, rail and tick are hidden** — they restate what the value already reads.
 - **The masthead is a header**, one element, so the rotor stops on it.
 - **The horizontal strip is not `adjustable`.** Every column stays individually reachable; an

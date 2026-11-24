@@ -47,6 +47,8 @@ export type SortableItemContextValue = {
 	moveUp: () => void;
 	/** Moves the row down one slot, past pinned rows. A no-op when it cannot. */
 	moveDown: () => void;
+	/** The row's `label`, if it was given one. */
+	label?: string;
 	/** "Position 2 of 5". */
 	positionText: string;
 	/** The Move up / Move down actions this row can perform right now — none when disabled or pinned. */

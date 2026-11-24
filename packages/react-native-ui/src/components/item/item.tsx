@@ -1,6 +1,7 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import type { AccessibilityState } from "react-native";
 import Animated from "react-native-reanimated";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { wrapTextChildren } from "../../lib/wrap-text-children";
 import { useListGroupContext } from "../list-group/list-group.context";
 import { Pressable, type PressableProps } from "../pressable";
@@ -80,6 +81,7 @@ function ItemRoot({
 	const render = resolveItemRender({ isDisabled, onLongPress, onPress });
 
 	if (render === "pressable") {
+		warnInteractiveChildInAccessible({ accessible: props.accessible !== false, children, component: "Item" });
 		return (
 			<ItemProvider value={context}>
 				<Pressable
@@ -142,7 +144,17 @@ function wrapItemText(children: ReactNode, asChild: boolean | undefined): ReactN
  *
  * Give it an `onPress` and it renders as a `Pressable` announced as a button;
  * leave it off and it is a plain view, so a static row never claims to be a
- * control. `resolveItemRender` makes that call, and a disabled one too. `size` is set once here — the media, the title and the description
+ * control. `resolveItemRender` makes that call, and a disabled one too.
+ *
+ * A pressable row is one accessibility element, so a `Button`, `Switch` or link
+ * in `Item.Actions` is drawn and tappable but unreachable by a screen reader
+ * (development warns). Either leave the row static, or keep it pressable and
+ * mirror the control as a named `accessibilityActions` entry on the item, with
+ * the drawn control hidden (`accessibilityElementsHidden` and
+ * `importantForAccessibility="no-hide-descendants"`). The pressable keeps its
+ * own activation action and hands every other action to `onAccessibilityAction`.
+ *
+ * `size` is set once here — the media, the title and the description
  * read it from context.
  *
  * It drops straight into a `ListGroup` as a row: inside one it takes the

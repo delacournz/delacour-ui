@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
+import { Pressable, Text } from "react-native";
 import { renderWithProviders, screen } from "../../test/render";
 import { Timeline } from "./timeline";
 import { useTimeline, useTimelineItem } from "./timeline.context";
@@ -233,6 +234,77 @@ describe("Timeline", () => {
 			</Timeline>,
 			"useTimelineItem must be called inside a <Timeline.Item>."
 		);
+	});
+});
+
+describe("Timeline.Item merged controls", () => {
+	test("a released item (accessible false) does not warn about a control inside it", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+		await renderWithProviders(
+			<Timeline value={0}>
+				<Timeline.Item accessibilityLabel="Paid" accessible={false} step={0}>
+					<Timeline.Title>Paid</Timeline.Title>
+					<Pressable accessibilityRole="button" onPress={() => undefined}>
+						<Text>Receipt</Text>
+					</Pressable>
+				</Timeline.Item>
+			</Timeline>
+		);
+		expect(warn).not.toHaveBeenCalled();
+	});
+
+	test("a hidden, mirrored control does not warn", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+		await renderWithProviders(
+			<Timeline value={0}>
+				<Timeline.Item accessibilityLabel="Paid" step={0}>
+					<Pressable
+						accessibilityElementsHidden
+						importantForAccessibility="no-hide-descendants"
+						onLongPress={() => undefined}
+					>
+						<Text>Hidden</Text>
+					</Pressable>
+				</Timeline.Item>
+			</Timeline>
+		);
+		expect(warn).not.toHaveBeenCalled();
+	});
+
+	test("a merged item wrapping a Pressable warns once", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+		const item = (
+			<Timeline.Item accessibilityLabel="Paid" step={0}>
+				<Timeline.Title>Paid</Timeline.Title>
+				<Pressable onPress={() => undefined}>
+					<Text>Receipt</Text>
+				</Pressable>
+			</Timeline.Item>
+		);
+		const view = await renderWithProviders(<Timeline value={0}>{item}</Timeline>);
+		view.rerender(<Timeline value={0}>{item}</Timeline>);
+		const messages = warn.mock.calls.map((call) => String(call[0])).filter((m) => m.includes("[Timeline.Item]"));
+		expect(messages).toHaveLength(1);
+	});
+
+	test("caller accessibilityActions reach the merged item and fire", async () => {
+		const onAction = jest.fn();
+		await renderWithProviders(
+			<Timeline value={0}>
+				<Timeline.Item
+					accessibilityActions={[{ label: "Open receipt", name: "open" }]}
+					accessibilityLabel="Paid"
+					onAccessibilityAction={onAction}
+					step={0}
+				>
+					<Timeline.Title>Paid</Timeline.Title>
+				</Timeline.Item>
+			</Timeline>
+		);
+		const item = screen.getByLabelText("Paid");
+		expect(item.props.accessibilityActions).toEqual([{ label: "Open receipt", name: "open" }]);
+		item.props.onAccessibilityAction({ nativeEvent: { actionName: "open" } });
+		expect(onAction).toHaveBeenCalledTimes(1);
 	});
 });
 

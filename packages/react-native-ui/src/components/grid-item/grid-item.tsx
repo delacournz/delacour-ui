@@ -1,6 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
 import type { AccessibilityState } from "react-native";
 import Animated from "react-native-reanimated";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { Pressable, type PressableProps } from "../pressable";
 import {
 	type GridItemContextValue,
@@ -96,6 +97,8 @@ function GridItemRoot({
 		className,
 	});
 
+	warnInteractiveChildInAccessible({ accessible: props.accessible !== false, children, component: "GridItem" });
+
 	if (resolveGridItemRender({ onLongPress, onPress }) === "pressable") {
 		return (
 			<GridItemProvider value={context}>
@@ -150,7 +153,10 @@ function GridItemRoot({
  * Give it an `onPress` and it renders as a `Pressable` announced as a button,
  * scaling gently on press; leave it off and it is a plain view. Either way it
  * is one accessibility stop, labelled from its title, value and description
- * unless given an `accessibilityLabel`.
+ * unless given an `accessibilityLabel`. That one stop swallows any control in
+ * `GridItem.Actions` (development warns): give the tile `accessible={false}`,
+ * or mirror the control as a named `accessibilityActions` entry on the tile and
+ * hide the drawn one from assistive technology.
  *
  * @example
  * <GridItem.Group columns={4} gap={12}>

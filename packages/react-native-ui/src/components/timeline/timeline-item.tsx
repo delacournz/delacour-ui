@@ -1,5 +1,6 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import {
 	type TimelineItemContextValue,
 	TimelineItemProvider,
@@ -50,6 +51,31 @@ export type TimelineItemProps = Omit<ViewProps, "children"> & {
  * it by something shorter than its whole text. An empty horizontal column is a
  * tick, and hidden.
  *
+ * A merged item swallows any control composed into it: a `Button` or link in the
+ * content, aside or trailing is drawn and tappable, but a screen reader never
+ * focuses it, and development warns. Two ways out. Mirror the control as a named
+ * action and hide the drawn one:
+ *
+ * ```tsx
+ * <Timeline.Item
+ *   accessibilityActions={[{ name: "open", label: "Open receipt" }]}
+ *   onAccessibilityAction={(event) => event.nativeEvent.actionName === "open" && openReceipt()}
+ *   step={0}
+ * >
+ *   <Timeline.Title>Paid</Timeline.Title>
+ *   <Button
+ *     accessibilityElementsHidden
+ *     importantForAccessibility="no-hide-descendants"
+ *     onPress={openReceipt}
+ *   >
+ *     Receipt
+ *   </Button>
+ * </Timeline.Item>
+ * ```
+ *
+ * Or pass `accessible={false}` to release the item so each control is its own
+ * stop; the position and status value then no longer read.
+ *
  * `step`, `isLast` and `width` all come from context inside a `Timeline.List`,
  * so a `renderItem` needs none of them; a prop still wins when written.
  */
@@ -87,6 +113,9 @@ export function TimelineItem({
 	);
 	const hasContent = content.length > 0 || aside.length > 0 || trailing.length > 0;
 	const slots = timelineVariants({ isLast, orientation, size, status, variant });
+
+	const isAccessible = props.accessible ?? (orientation === "vertical" || hasContent);
+	warnInteractiveChildInAccessible({ accessible: isAccessible, children, component: "Timeline.Item" });
 
 	const accessibilityValue = { text: resolveTimelineAccessibilityValue({ count, status, step, tone }) };
 

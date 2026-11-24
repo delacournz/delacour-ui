@@ -8,7 +8,7 @@ export type DatePickerValueProps = Omit<TextPresetProps, "children">;
 /**
  * The trigger's text: the selection, formatted, or the placeholder in the muted tone.
  *
- * A half-picked range reads "5 Oct 2026 –" with "End" after it in the placeholder's tone, so the
+ * A half-picked range reads "5 Oct 2026 –" with the end label after it in the placeholder's tone, so the
  * missing end is shown as missing rather than as a dangling dash.
  */
 export function DatePickerValue({ className, ...props }: DatePickerValueProps): ReactElement {
@@ -19,7 +19,7 @@ export function DatePickerValue({ className, ...props }: DatePickerValueProps): 
 	return (
 		<Text className={slots.value({ className })} numberOfLines={1} {...props}>
 			{picker.display ?? picker.placeholder}
-			{isHalfRange ? <Text className={slots.valuePlaceholder()}> End</Text> : null}
+			{isHalfRange ? <Text className={slots.valuePlaceholder()}>{` ${picker.labels.rangeEnd}`}</Text> : null}
 		</Text>
 	);
 }

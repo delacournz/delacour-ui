@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { ViewProps } from "react-native";
+import type { DatePickerLabels } from "../../lib/labels";
 import type { CalendarDate, CalendarDateRange, DateMatcher, Weekday } from "../calendar/calendar.date";
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
 import type { CalendarSize, CalendarView } from "../calendar/calendar.variants";
@@ -129,8 +130,15 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		clearLabel?: string;
 		/** Offers Clear. Omitted, on for a range or several days and off for one. */
 		isClearable?: boolean;
-		/** The trigger's accessible name. Omitted, the enclosing `Field.Label`'s text, else "Date". */
+		/** The trigger's accessible name. Omitted, the enclosing `Field.Label`'s text, else `labels.trigger` ("Date"). */
 		accessibilityLabel?: string;
+		/**
+		 * Some of the visible and spoken strings: the title, Done and Clear, the placeholders, the
+		 * trigger's name and hint, and how a value is counted and read. Laid over `DelacourProvider`'s
+		 * `labels`, which sit over the English defaults. `title`, `doneLabel`, `clearLabel`,
+		 * `placeholder` and `accessibilityLabel` still win for their string.
+		 */
+		labels?: Partial<DatePickerLabels>;
 		className?: string;
 		/** A custom anatomy. Omitted, the trigger and the sheet — or, inline, the calendar. */
 		children?: ReactNode;

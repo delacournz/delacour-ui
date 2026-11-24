@@ -1,4 +1,5 @@
 import { describe, expect, jest, test } from "@jest/globals";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Steps } from "./steps";
 import { useSteps, useStepsItem } from "./steps.context";
@@ -313,6 +314,59 @@ describe("Steps", () => {
 			} finally {
 				spy.mockRestore();
 			}
+		});
+	});
+
+	describe("labels", () => {
+		const german = {
+			position: (step: number, count: number) => `Schritt ${step} von ${count}`,
+			completed: "erledigt",
+			current: "aktuell",
+		};
+
+		test("the labels prop speaks each step's value", async () => {
+			await renderWithProviders(
+				<Steps labels={german} value={1}>
+					<Steps.Item step={0} testID="a">
+						A
+					</Steps.Item>
+					<Steps.Item step={1} testID="b">
+						B
+					</Steps.Item>
+				</Steps>
+			);
+			expect(screen.getByTestId("a")).toHaveAccessibilityValue({ text: "Schritt 1 von 2, erledigt" });
+			expect(screen.getByTestId("b")).toHaveAccessibilityValue({ text: "Schritt 2 von 2, aktuell" });
+		});
+
+		test("a LabelsProvider speaks it too, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ steps: { current: "jetzt" } }}>
+					<Steps value={0}>
+						<Steps.Item step={0} testID="a">
+							A
+						</Steps.Item>
+					</Steps>
+					<Steps labels={{ current: "hier" }} value={0}>
+						<Steps.Item step={0} testID="b">
+							B
+						</Steps.Item>
+					</Steps>
+				</LabelsProvider>
+			);
+			expect(screen.getByTestId("a")).toHaveAccessibilityValue({ text: "Step 1 of 1, jetzt" });
+			expect(screen.getByTestId("b")).toHaveAccessibilityValue({ text: "Step 1 of 1, hier" });
+		});
+
+		test("a partial labels prop leaves the other keys English", async () => {
+			await renderWithProviders(
+				<Steps labels={{ loading: "lädt" }} value={0}>
+					<Steps.Item isLoading step={0} testID="a">
+						A
+					</Steps.Item>
+				</Steps>
+			);
+			expect(screen.getByTestId("a")).toHaveAccessibilityValue({ text: "Step 1 of 1, current, lädt" });
 		});
 	});
 });

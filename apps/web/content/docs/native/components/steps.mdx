@@ -191,6 +191,11 @@ Extends `ViewProps`. Steps are zero-based; the indicator draws them one-based.
       description: "Steps render as plain views. Defaults to true for a controlled `value` with no `onValueChange`.",
     },
     isDisabled: { type: "boolean", description: "Disables every step, over a step's own prop." },
+    labels: {
+      type: "Partial<StepsLabels>",
+      description:
+        "The spoken strings of each step's accessibility value (position, status words, error, loading), laid over `DelacourProvider`'s `labels`.",
+    },
     className: { type: "string" },
   }}
 />

@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type StepsLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { TextSize } from "../text/text.variants";
 
@@ -406,8 +407,6 @@ export function shouldEmitStep(current: number, next: number): boolean {
 	return current !== next;
 }
 
-const STATUS_WORD: Record<StepStatus, string> = { completed: "completed", current: "current", upcoming: "upcoming" };
-
 /**
  * What VoiceOver and TalkBack read after a step's title.
  *
@@ -422,18 +421,20 @@ export function resolveStepAccessibilityValue({
 	status,
 	isInvalid = false,
 	isLoading = false,
+	labels = DELACOUR_DEFAULT_LABELS.steps,
 }: {
 	step: number;
 	count: number;
 	status: StepStatus;
 	isInvalid?: boolean;
 	isLoading?: boolean;
+	/** The spoken strings; English unless the caller resolved others. */
+	labels?: StepsLabels;
 }): string {
-	const position = count > 0 ? `Step ${step + 1} of ${count}` : `Step ${step + 1}`;
-	const parts = [position, STATUS_WORD[status]];
-	if (isInvalid) parts.push("has an error");
-	if (isLoading) parts.push("loading");
-	return parts.join(", ");
+	const parts = [labels.position(step + 1, count), labels[status]];
+	if (isInvalid) parts.push(labels.error);
+	if (isLoading) parts.push(labels.loading);
+	return labels.value(parts);
 }
 
 /** What the indicator draws inside its circle. */

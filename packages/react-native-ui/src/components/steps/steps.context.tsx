@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { StepsLabels } from "../../lib/labels";
 import type { StepStatus, StepsOrientation, StepsSize, StepsVariant } from "./steps.variants";
 
 export type StepsContextValue = {
@@ -17,6 +18,8 @@ export type StepsContextValue = {
 	isLinear: boolean;
 	/** Raw rather than resolved, so one step can still disable itself — see `RadioGroupContextValue`. */
 	isDisabled?: boolean;
+	/** The resolved spoken strings. */
+	labels: StepsLabels;
 };
 
 export type StepsItemContextValue = {

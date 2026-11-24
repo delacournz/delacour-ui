@@ -299,7 +299,7 @@ describe("Combobox", () => {
 
 	test("no Clear button without isClearable or without a value", async () => {
 		await render({ defaultValue: "fj" });
-		expect(screen.queryByRole("button", { hidden: true, name: "Clear" })).not.toBeOnTheScreen();
+		expect(screen.queryByTestId("cb-clear", { hidden: true })).not.toBeOnTheScreen();
 		expect(actionNames(trigger())).not.toContain("clear");
 	});
 
@@ -344,7 +344,7 @@ describe("Combobox", () => {
 
 	test("read-only hides the clear button", async () => {
 		await render({ defaultValue: "fj", isClearable: true, isReadOnly: true });
-		expect(screen.queryByRole("button", { hidden: true, name: "Clear" })).not.toBeOnTheScreen();
+		expect(screen.queryByTestId("cb-clear", { hidden: true })).not.toBeOnTheScreen();
 		expect(actionNames(trigger())).toEqual([]);
 	});
 
@@ -467,7 +467,8 @@ describe("Combobox multiple", () => {
 		expect(actionNames(trigger())).toEqual(expect.arrayContaining(["clear", "remove:au", "remove:fj"]));
 		expect(trigger().props.accessibilityActions).toContainEqual({ label: "Remove Fiji", name: "remove:fj" });
 		expect(screen.queryByTestId("cb-chip-au")).not.toBeOnTheScreen();
-		expect(screen.queryByRole("button", { name: "Clear" })).not.toBeOnTheScreen();
+		expect(screen.getByTestId("cb-clear", { hidden: true })).toBeOnTheScreen();
+		expect(screen.queryByTestId("cb-clear")).not.toBeOnTheScreen();
 		expect(screen.getByTestId("cb-chip-au", { hidden: true })).toBeOnTheScreen();
 		await act(trigger(), "remove:fj");
 		expect(onValueChange).toHaveBeenLastCalledWith(["au"]);

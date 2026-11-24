@@ -26,6 +26,7 @@ export function TimePickerWheelSlot({ className, testID }: TimePickerWheelSlotPr
 			{...picker.wheel}
 			accessibilityHint={picker.wheelAccessibility?.hint}
 			accessibilityLabel={picker.wheelAccessibility?.label}
+			labels={picker.labels}
 			isRequired={picker.wheelAccessibility?.isRequired}
 			className={className}
 			hourCycle={picker.hourCycle}

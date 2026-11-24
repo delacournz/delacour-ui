@@ -1,6 +1,7 @@
 import { Fragment, type ReactElement, useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 import { Presets } from "react-native-pulsar";
+import { useLabels } from "../../hooks/use-labels";
 import { useFieldContext } from "../field/field.context";
 import { Text } from "../text";
 import {
@@ -66,9 +67,11 @@ export function TimePickerWheel({
 	accessibilityLabel,
 	accessibilityHint,
 	isRequired,
+	labels: labelsProp,
 	className,
 	testID,
 }: TimePickerWheelProps): ReactElement {
+	const labels = useLabels("timePicker", labelsProp);
 	const field = useFieldContext();
 	const resolvedDisabled = isDisabled ?? field?.isDisabled ?? false;
 	const cycle = useMemo(() => (hourCycle === "auto" ? resolveHourCycle(locale) : hourCycle), [hourCycle, locale]);
@@ -120,8 +123,10 @@ export function TimePickerWheel({
 								isRequired,
 								kind: column.kind,
 								label: accessibilityLabel,
+								labels,
 							})}
 							isDisabled={resolvedDisabled}
+							labels={labels}
 							kind={column.kind}
 							onSettle={handleSettle}
 							rowHeight={rowHeight}

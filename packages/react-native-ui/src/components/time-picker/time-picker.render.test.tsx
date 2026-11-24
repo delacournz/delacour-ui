@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
 import { Field } from "../field";
@@ -514,6 +515,62 @@ describe("TimePicker", () => {
 		test("an inline picker outside a Field keeps the bare column names", async () => {
 			await renderWithProviders(<TimePicker hourCycle={24} presentation="inline" />);
 			expect(screen.getByRole("adjustable", { name: "Hour" })).toBeOnTheScreen();
+		});
+	});
+	describe("labels", () => {
+		test("the labels prop names the trigger, its hint, value and placeholder", async () => {
+			await renderWithProviders(
+				<TimePicker
+					labels={{ trigger: "Uhrzeit", triggerHint: "Öffnet", notSet: "leer", placeholder: "Zeit wählen" }}
+				/>,
+				sheets
+			);
+			const trigger = screen.getByRole("button", { name: "Uhrzeit" });
+			expect(trigger).toHaveProp("accessibilityHint", "Öffnet");
+			expect(trigger).toHaveAccessibilityValue({ text: "leer" });
+			expect(screen.getByText("Zeit wählen")).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider supplies them and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ timePicker: { trigger: "Uhrzeit", placeholder: "Zeit wählen" } }}>
+					<TimePicker labels={{ placeholder: "Wählen" }} />
+				</LabelsProvider>,
+				sheets
+			);
+			expect(screen.getByRole("button", { name: "Uhrzeit" })).toBeOnTheScreen();
+			expect(screen.getByText("Wählen")).toBeOnTheScreen();
+		});
+
+		test("placeholder and accessibilityLabel still win over labels", async () => {
+			await renderWithProviders(
+				<TimePicker
+					accessibilityLabel="Alarm"
+					labels={{ trigger: "Uhrzeit", placeholder: "Zeit wählen" }}
+					placeholder="Pick"
+				/>,
+				sheets
+			);
+			expect(screen.getByRole("button", { name: "Alarm" })).toBeOnTheScreen();
+			expect(screen.getByText("Pick")).toBeOnTheScreen();
+		});
+
+		test("the inline wheel names its columns and speaks their values from labels", async () => {
+			await renderWithProviders(
+				<TimePicker
+					defaultValue={{ hour: 9, minute: 30 }}
+					hourCycle={24}
+					labels={{ hour: "Stunde", minute: "Minute", minuteValue: (m) => `${m} min`, hourValue: (h) => `${h} Uhr` }}
+					presentation="inline"
+				/>
+			);
+			expect(screen.getByRole("adjustable", { name: "Stunde" })).toHaveAccessibilityValue({ text: "9 Uhr" });
+			expect(screen.getByRole("adjustable", { name: "Minute" })).toHaveAccessibilityValue({ text: "30 min" });
+		});
+
+		test("the sheet's wheel reads them too", async () => {
+			await renderWithProviders(<TimePicker defaultOpen hourCycle={24} labels={{ hour: "Stunde" }} />, sheets);
+			expect(screen.getByRole("adjustable", { name: "Stunde" })).toBeOnTheScreen();
 		});
 	});
 });

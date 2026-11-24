@@ -214,6 +214,7 @@ formatTime({ hour: 15, minute: 5 }, { locale: "en-US", hourCycle: 12 }); // "3:0
     clearable: { type: "boolean", default: "false", description: "Adds Clear to the sheet's footer." },
     clearLabel: { type: "string", default: '"Clear"' },
     accessibilityLabel: { type: "string", description: "Falls back to Field.Label, then \"Time\"." },
+    labels: { type: "Partial<TimePickerLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. `placeholder`, `title`, `doneLabel`, `clearLabel` and `accessibilityLabel` still win." },
     className: { type: "string", description: "Lands on the trigger in a sheet, on the wheel inline." },
     children: { type: "ReactNode", description: "Omit for the default anatomy." },
   }}

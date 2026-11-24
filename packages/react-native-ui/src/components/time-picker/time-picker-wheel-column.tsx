@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import type { TimePickerLabels } from "../../lib/labels";
 import type { InputSize } from "../input/input.variants";
 import { playHaptic } from "../pressable";
 import { Text } from "../text";
@@ -33,6 +34,8 @@ const STILL_RELEASE_VELOCITY = 0.05;
 export type TimeWheelColumnProps = {
 	/** The column's spoken name, already resolved — "Hour", or "Reminder, Hour, required". */
 	accessibilityLabel: string;
+	/** The picker's resolved strings, for the column's spoken value. */
+	labels: TimePickerLabels;
 	/** Spoken after the value, on every column of a field. */
 	accessibilityHint?: string;
 	kind: TimeWheelColumnKind;
@@ -79,6 +82,7 @@ export type TimeWheelColumnProps = {
 export function TimeWheelColumn({
 	accessibilityHint,
 	accessibilityLabel,
+	labels,
 	kind,
 	rows,
 	selectedIndex,
@@ -172,7 +176,7 @@ export function TimeWheelColumn({
 			accessibilityLabel={accessibilityLabel}
 			accessibilityRole="adjustable"
 			accessibilityState={{ disabled: isDisabled }}
-			accessibilityValue={{ text: current ? resolveColumnAccessibilityValue(kind, current.label) : "" }}
+			accessibilityValue={{ text: current ? resolveColumnAccessibilityValue(kind, current.label, labels) : "" }}
 			accessible
 			className={slots.column()}
 			onAccessibilityAction={handleAccessibilityAction}

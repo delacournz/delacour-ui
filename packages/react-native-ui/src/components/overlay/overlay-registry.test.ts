@@ -282,6 +282,15 @@ describe("isModalOnTop", () => {
 		expect(isModalOnTop(state, "dialog")).toBe(false);
 	});
 
+	test("a passive overlay over a dialog does not take the top from it", () => {
+		const state = apply(
+			{ type: "open", id: "dialog", layer: "modal" },
+			{ type: "open", id: "tooltip", layer: "anchored", isPassive: true }
+		);
+		expect(isModalOnTop(state, "dialog")).toBe(true);
+		expect(isModalOnTop(state, "tooltip")).toBe(false);
+	});
+
 	test("an exiting overlay is not on top, and the one under it is again", () => {
 		const state = apply(
 			{ type: "open", id: "a", layer: "modal" },

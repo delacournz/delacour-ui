@@ -77,6 +77,12 @@ A multiline text field, sized in rows. One component, no parts: it renders an
   `useAnnounce` (the count has no live region, so Android is not doubled) and only with `showCount`;
   `announce={false}` silences it. The count stays readable on focus either way.
   <!-- registry:omit -->Pinned in `textarea.variants.test.ts` and the render suite.<!-- /registry:omit -->
+- **The spoken strings are the `labels` prop, not literals**: `count` (the count's spoken name),
+  `remaining` (the warning-band announcement) and `limitReached` (the limit announcement) come from
+  `lib/labels` through `useLabels("textarea", labels)`. Precedence is the root's `labels` ←
+  `DelacourProvider` `labels` ← English. `resolveTextareaCount` and
+  `resolveTextareaThresholdAnnouncement` take `labels` as a defaulted trailing argument and stay pure.
+  The visible `12/280` is digits and is not a label.
 - **The count works controlled and uncontrolled.** A `value` is read directly;
   without one, the last text the field reported is, seeded from `defaultValue`
   so the first frame is already right.

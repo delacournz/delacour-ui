@@ -1,3 +1,4 @@
+export type { ThemeSelectorLabels } from "../../lib/labels";
 export { ThemeSelector, type ThemeSelectorProps } from "./theme-selector";
 export {
 	type ThemeSelectorContextValue,

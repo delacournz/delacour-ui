@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type TourLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 export const TOUR_SHAPES = ["rect", "circle"] as const;
@@ -39,26 +40,10 @@ export const TOUR_CARD_MAX_WIDTH = 360;
 /** The theme token the scrim is painted in. Declared in both themes — the suite pins it. */
 export const TOUR_SCRIM_TOKEN = "overlay";
 
-export type TourLabels = {
-	next: string;
-	back: string;
-	skip: string;
-	/** The last step's primary action. */
-	finish: string;
-	/** The visible position, "2 of 5". One-based. */
-	progress: (current: number, total: number) => string;
-	/** What a screen reader hears before the title, "Step 2 of 5". One-based. */
-	announcement: (current: number, total: number) => string;
-};
+export type { TourLabels };
 
-export const TOUR_DEFAULT_LABELS: TourLabels = {
-	next: "Next",
-	back: "Back",
-	skip: "Skip",
-	finish: "Done",
-	progress: (current, total) => `${current} of ${total}`,
-	announcement: (current, total) => `Step ${current} of ${total}`,
-};
+/** English, as the catalog has it. Kept as an alias for callers that import the constant. */
+export const TOUR_DEFAULT_LABELS: TourLabels = DELACOUR_DEFAULT_LABELS.tour;
 
 /** A box in points. Window coordinates unless a resolver says otherwise. */
 export type TourRect = { x: number; y: number; width: number; height: number };

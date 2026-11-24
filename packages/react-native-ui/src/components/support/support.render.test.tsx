@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Platform, Text } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Support } from "./support";
@@ -412,5 +413,43 @@ describe("Support.Resolution and Support.Note", () => {
 			</Support>
 		);
 		expect(screen.getByText("Replies may take a day.")).toBeOnTheScreen();
+	});
+});
+
+describe("labels", () => {
+	test("the root's labels reach a part, a part's own labels win, a LabelsProvider sits beneath", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ support: { availability: () => "Provider", escalateHint: "Provider hint" } }}>
+				<Support labels={{ availability: (a) => `Root ${a}` }}>
+					<Support.Status testID="root" />
+					<Support.Status labels={{ availability: () => "Own" }} testID="own" />
+					<Support.Reply escalates label="Human" />
+				</Support>
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Root offline")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Own")).toBeOnTheScreen();
+		expect(screen.getByHintText("Provider hint")).toBeOnTheScreen();
+	});
+
+	test("a part works with no root, and a string prop still wins", async () => {
+		await renderWithProviders(
+			<>
+				<Support.Agent labels={{ typing: (name) => `${name} tippt` }} name="Omar Haddad" typing />
+				<Support.Topics>
+					<Support.Topic
+						accessibilityLabel="Mine"
+						description="d"
+						label="Billing"
+						labels={{ topicSpoken: (l, d) => `${l} - ${d}` }}
+						value="b"
+					/>
+					<Support.Topic description="d" label="Plans" labels={{ topicSpoken: (l, d) => `${l} - ${d}` }} value="p" />
+				</Support.Topics>
+			</>
+		);
+		expect(screen.getByLabelText("Omar Haddad tippt")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Mine")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Plans - d")).toBeOnTheScreen();
 	});
 });

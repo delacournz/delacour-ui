@@ -180,6 +180,7 @@ A double tap on a handle resets the layout.
       default: '"light"',
       description: "Played when a seam meets a bound or a pane collapses.",
     },
+    labels: { type: "Partial<SplitterLabels>", description: "The spoken strings (handle name, value, action names, announcements), laid over `DelacourProvider`'s `labels`." },
     className: { type: "string" },
     children: { type: "ReactNode", description: "Alternating Splitter.Pane and Splitter.Handle, starting and ending with a pane." },
   }}
@@ -204,7 +205,7 @@ A double tap on a handle resets the layout.
   type={{
     isDisabled: { type: "boolean", default: "false", description: "Freezes this seam alone." },
     withGrip: { type: "boolean", default: "true", description: "Draw the grip capsule. A bare seam is still draggable." },
-    accessibilityLabel: { type: "string", default: '"Resize"', description: "Read before the value. Say which panes." },
+    accessibilityLabel: { type: "string", default: '"Resize"', description: "Read before the value. Say which panes. Wins over `labels.handle`." },
     hitSlop: { type: "number", default: "0", description: "Widens the touch box along the axis, in points." },
     className: { type: "string" },
   }}

@@ -1,3 +1,4 @@
+export type { SplitViewLabels } from "../../lib/labels";
 export { SplitView, type SplitViewProps } from "./split-view";
 export { type SplitViewContextValue, useSplitView, useSplitViewContext } from "./split-view.context";
 export type { SplitViewPaneProps, SplitViewSlotProps } from "./split-view.types";

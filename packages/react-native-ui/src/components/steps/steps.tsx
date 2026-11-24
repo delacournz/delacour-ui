@@ -1,6 +1,8 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useCallback, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { StepsLabels } from "../../lib/labels";
 import { type StepsContextValue, StepsProvider } from "./steps.context";
 import {
 	resolveStepsReadOnly,
@@ -20,6 +22,11 @@ import { StepsPanel } from "./steps-panel";
 import { StepsTitle } from "./steps-title";
 
 export type StepsProps = ViewProps & {
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * The position, status words and error / loading suffixes of each step's accessibility value.
+	 */
+	labels?: Partial<StepsLabels>;
 	/** The current step, zero-based. Controlled. */
 	value?: number;
 	/** The first current step while uncontrolled. */
@@ -54,10 +61,12 @@ function StepsRoot({
 	isLinear = false,
 	isReadOnly,
 	isDisabled,
+	labels: labelsProp,
 	className,
 	children,
 	...props
 }: StepsProps): ReactElement {
+	const labels = useLabels("steps", labelsProp);
 	const [value, setValue] = useControllableState<number>({
 		value: valueProp,
 		defaultValue,
@@ -97,6 +106,7 @@ function StepsRoot({
 			count,
 			isDisabled,
 			isLinear,
+			labels,
 			isReadOnly: resolvedIsReadOnly,
 			orientation,
 			select,
@@ -104,7 +114,7 @@ function StepsRoot({
 			value,
 			variant,
 		}),
-		[count, isDisabled, isLinear, resolvedIsReadOnly, orientation, select, size, value, variant]
+		[count, isDisabled, isLinear, labels, resolvedIsReadOnly, orientation, select, size, value, variant]
 	);
 
 	return (

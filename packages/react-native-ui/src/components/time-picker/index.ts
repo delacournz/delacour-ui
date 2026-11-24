@@ -1,3 +1,4 @@
+export type { TimePickerLabels } from "../../lib/labels";
 export { TimePicker } from "./time-picker";
 export {
 	type TimePickerContextValue,

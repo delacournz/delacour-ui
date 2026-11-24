@@ -1,3 +1,4 @@
+export type { SortableLabels } from "../../lib/labels";
 export { Sortable, type SortableProps } from "./sortable";
 export {
 	type SortableContextValue,

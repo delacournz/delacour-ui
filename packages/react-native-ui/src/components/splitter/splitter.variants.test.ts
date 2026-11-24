@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import {
 	adjacentCollapsibleIndex,
@@ -513,6 +514,14 @@ describe("formatSplitterValue", () => {
 		expect(formatSplitterValue(35)).toBe("35 percent");
 		expect(formatSplitterValue(33.333)).toBe("33 percent");
 	});
+
+	test("reads the value through custom labels", () => {
+		const labels = {
+			...DELACOUR_DEFAULT_LABELS.splitter,
+			value: (percent: number) => `${Math.round(percent)} Prozent`,
+		};
+		expect(formatSplitterValue(35, labels)).toBe("35 Prozent");
+	});
 });
 
 describe("describeSplitterChildren", () => {
@@ -620,5 +629,12 @@ describe("resolveSplitterAnnouncement", () => {
 		expect(resolveSplitterAnnouncement("reset")).toBe("Sizes reset");
 		expect(resolveSplitterAnnouncement("collapse")).toBe("Pane collapsed");
 		expect(resolveSplitterAnnouncement("expand")).toBe("Pane expanded");
+	});
+
+	test("speaks custom labels", () => {
+		const labels = { ...DELACOUR_DEFAULT_LABELS.splitter, collapsed: "A", expanded: "B", reset: "C" };
+		expect(resolveSplitterAnnouncement("reset", labels)).toBe("C");
+		expect(resolveSplitterAnnouncement("collapse", labels)).toBe("A");
+		expect(resolveSplitterAnnouncement("expand", labels)).toBe("B");
 	});
 });

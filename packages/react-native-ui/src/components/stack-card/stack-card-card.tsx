@@ -41,7 +41,8 @@ function actionName(direction: StackCardDirection): string {
  * `announce` is `false`).
  */
 export function StackCardCard({ className, children, ...props }: StackCardCardProps): ReactElement {
-	const { directions, labelFor, swipeFromCard, undoFromCard, canUndo, focusToken } = useStackCardPart("StackCard.Card");
+	const { directions, labelFor, labels, swipeFromCard, undoFromCard, canUndo, focusToken } =
+		useStackCardPart("StackCard.Card");
 	const slot = useStackCardSlot();
 	const isTop = slot?.isTop ?? false;
 
@@ -50,9 +51,9 @@ export function StackCardCard({ className, children, ...props }: StackCardCardPr
 			label: labelFor(direction),
 			name: actionName(direction),
 		}));
-		if (canUndo) list.push({ label: "Undo", name: UNDO_ACTION });
+		if (canUndo) list.push({ label: labels.undo, name: UNDO_ACTION });
 		return list;
-	}, [canUndo, directions, labelFor]);
+	}, [canUndo, directions, labelFor, labels.undo]);
 
 	// Asks for screen-reader focus when the card's own action moved the top card and this card is
 	// now on top. The token is read at mount, so a card mounting later never focuses itself.

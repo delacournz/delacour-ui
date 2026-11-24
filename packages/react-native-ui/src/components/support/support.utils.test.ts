@@ -1,8 +1,10 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import {
 	resolveAgentA11yLabel,
 	resolveAgentStatusLine,
 	resolveAvailabilityLabel,
+	resolveAvailabilityWord,
 	resolveConversationA11yLabel,
 	resolveConversationDot,
 	resolveNextTopic,
@@ -210,5 +212,56 @@ describe("the unions", () => {
 	test("list every availability and status once", () => {
 		expect(SUPPORT_AVAILABILITIES).toEqual(["online", "away", "offline"]);
 		expect(SUPPORT_TICKET_STATUSES).toEqual(["open", "pending", "solved", "closed"]);
+	});
+});
+
+describe("labels", () => {
+	const labels = {
+		...DELACOUR_DEFAULT_LABELS.support,
+		availability: (a: "online" | "away" | "offline") => `A-${a}`,
+		availabilitySpoken: (a: "online" | "away" | "offline") => `a-${a}`,
+		availabilityStatus: (a: "online" | "away" | "offline") => `S-${a}`,
+		ticketStatus: (s: string) => `T-${s}`,
+		ticketStatusSpoken: (s: string) => `t-${s}`,
+		statusSpoken: (word: string, wording: string) => `${word} / ${wording}`,
+		agentStatusLine: (title: string, word: string) => `${title} | ${word}`,
+		agentSpoken: (parts: readonly string[]) => parts.join(" + "),
+		typing: (name: string) => `${name} tippt`,
+		someone: "Jemand",
+		conversationSpoken: (parts: readonly string[]) => parts.join(" + "),
+		conversationWithPreview: (head: string, preview: string) => `${head} // ${preview}`,
+		unreadReply: "ungelesen",
+		updated: "aktualisiert",
+		topicSpoken: (label: string, description: string) => `${label} - ${description}`,
+		escalateHint: "Mensch",
+	};
+
+	test("every resolver speaks through the labels it is given", () => {
+		expect(resolveAvailabilityWord("away", labels)).toBe("A-away");
+		expect(resolveAvailabilityLabel("online", undefined, labels)).toBe("S-online");
+		expect(resolveAvailabilityLabel("online", "Bald", labels)).toBe("Bald");
+		expect(resolveStatusA11yLabel("away", "Bald", labels)).toBe("A-away / Bald");
+		expect(resolveStatusA11yLabel("away", undefined, labels)).toBe("A-away");
+		expect(resolveTicketStatus("pending", labels).label).toBe("T-pending");
+		expect(resolveTicketStatus("pending", labels).needsReader).toBe(true);
+		expect(resolveAgentStatusLine({ name: "Omar Haddad", availability: "online", typing: true }, labels).text).toBe(
+			"Omar tippt"
+		);
+		expect(resolveAgentStatusLine({ name: "Omar", title: "Hilfe", availability: "online" }, labels).text).toBe(
+			"Hilfe | A-online"
+		);
+		expect(resolveAgentA11yLabel({ name: " ", availability: "online", typing: true }, labels)).toBe("Jemand tippt");
+		expect(resolveAgentA11yLabel({ name: "Omar", title: "Hilfe", availability: "away" }, labels)).toBe(
+			"Omar + Hilfe + a-away"
+		);
+		expect(
+			resolveConversationA11yLabel(
+				{ title: "Refund", status: "solved", dot: "unread", timestamp: "2h", preview: "Fertig" },
+				labels
+			)
+		).toBe("Refund + t-solved + ungelesen + 2h // Fertig");
+		expect(resolveTopicA11yLabel("Billing", "Rechnungen", labels)).toBe("Billing - Rechnungen");
+		expect(resolveReplyA11yHint(true, labels)).toBe("Mensch");
+		expect(resolveReplyA11yHint(false, labels)).toBeUndefined();
 	});
 });

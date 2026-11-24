@@ -5,6 +5,7 @@ import { State } from "react-native-gesture-handler";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { makeMutable, type SharedValue } from "react-native-reanimated";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { OverlayProvider } from "../overlay";
 import { Toast } from "./toast";
@@ -762,5 +763,77 @@ describe("Toast offset", () => {
 		});
 		await settle();
 		expect(liftOf("toast-stack-top")).toBe(44);
+	});
+});
+
+describe("Toast labels", () => {
+	beforeEach(() => {
+		jest.useFakeTimers();
+		resetAnnouncer();
+	});
+
+	afterEach(() => {
+		jest.useRealTimers();
+		setPlatform(originalOS);
+	});
+
+	const german = {
+		dismiss: "Schließen",
+		action: "Aktion",
+		announcement: (title: string, description: string) => `${title} – ${description}`,
+	};
+
+	test("the labels prop names the close control, the dismiss action and a non-string action", async () => {
+		await renderWithProviders(
+			<Toast testID="card" labels={german}>
+				<Toast.Title>Fehler</Toast.Title>
+				<Toast.Action>{<Toast.Title>Go</Toast.Title>}</Toast.Action>
+				<Toast.Close />
+			</Toast>
+		);
+		expect(screen.getByRole("button", { name: "Schließen" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Aktion" })).toBeOnTheScreen();
+		const actions = (screen.getByTestId("card").props as { accessibilityActions: { name: string; label?: string }[] })
+			.accessibilityActions;
+		expect(actions.find((entry) => entry.name === "dismiss")?.label).toBe("Schließen");
+	});
+
+	test("a LabelsProvider changes them too, and the prop wins key by key", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ toast: german }}>
+				<Toast labels={{ dismiss: "Zu" }}>
+					<Toast.Close />
+				</Toast>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("button", { name: "Zu" })).toBeOnTheScreen();
+	});
+
+	test("an accessibilityLabel beats labels", async () => {
+		await renderWithProviders(
+			<Toast labels={german}>
+				<Toast.Close accessibilityLabel="Weg" />
+			</Toast>
+		);
+		expect(screen.getByRole("button", { name: "Weg" })).toBeOnTheScreen();
+	});
+
+	test("the viewport announces through the provider's announcement", async () => {
+		const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		announce.mockClear();
+		setPlatform("ios");
+		const harness = makeHarness();
+		await renderWithProviders(
+			<LabelsProvider labels={{ toast: german }}>
+				<ToastViewport store={harness.store} />
+			</LabelsProvider>,
+			{ wrapper: Overlays }
+		);
+		await act(async () => {
+			harness.toast({ title: "Fehler", description: "Bank" });
+		});
+		expect(announce).toHaveBeenCalledWith("Fehler – Bank", expect.anything());
+		announce.mockRestore();
+		setPlatform(originalOS);
 	});
 });

@@ -1,6 +1,7 @@
 import { type ReactElement, useCallback, useMemo } from "react";
 import type { FlatListProps, ListRenderItemInfo } from "react-native";
 import Animated from "react-native-reanimated";
+import { useLabels } from "../../hooks/use-labels";
 import { type TimelineContextValue, TimelineListItemProvider, TimelineProvider } from "./timeline.context";
 import type { TimelineAxesProps, TimelineOrientationProps } from "./timeline.types";
 import {
@@ -52,6 +53,7 @@ function TimelineListBody<T>({
 	value = TIMELINE_DEFAULT_VALUE,
 	variant = TIMELINE_DEFAULT_VARIANT,
 	size = TIMELINE_DEFAULT_SIZE,
+	labels: labelsProp,
 	horizontal,
 	onScroll,
 	getItemLayout,
@@ -73,10 +75,11 @@ function TimelineListBody<T>({
 	});
 	const count = items.length;
 	const orientation = isHorizontal ? "horizontal" : "vertical";
+	const labels = useLabels("timeline", labelsProp);
 
 	const context = useMemo<TimelineContextValue>(
-		() => ({ activeColumn: isHorizontal ? activeColumn : null, count, orientation, size, value, variant }),
-		[activeColumn, count, isHorizontal, orientation, size, value, variant]
+		() => ({ activeColumn: isHorizontal ? activeColumn : null, count, labels, orientation, size, value, variant }),
+		[activeColumn, count, isHorizontal, labels, orientation, size, value, variant]
 	);
 
 	const renderCell = useCallback(

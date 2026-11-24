@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type TreeLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { IconSize } from "../icon/icon.variants";
 import type { TextSize } from "../text/text.variants";
@@ -226,6 +227,7 @@ export function resolveTreeAccessibility({
 	selectionMode,
 	isDisabled,
 	level,
+	labels = DELACOUR_DEFAULT_LABELS.tree,
 }: {
 	isBranch: boolean;
 	isExpanded: boolean;
@@ -233,6 +235,7 @@ export function resolveTreeAccessibility({
 	selectionMode: TreeSelectionMode;
 	isDisabled: boolean;
 	level: number;
+	labels?: TreeLabels;
 }): TreeAccessibility {
 	const state: TreeAccessibility["state"] = { disabled: isDisabled };
 	if (isBranch) state.expanded = isExpanded;
@@ -240,10 +243,10 @@ export function resolveTreeAccessibility({
 
 	const actions: TreeAccessibilityAction[] =
 		isBranch && !isDisabled
-			? [isExpanded ? { name: "collapse", label: "Collapse" } : { name: "expand", label: "Expand" }]
+			? [isExpanded ? { name: "collapse", label: labels.collapse } : { name: "expand", label: labels.expand }]
 			: [];
 
-	return { role: "button", state, value: { text: `Level ${level}` }, actions };
+	return { role: "button", state, value: { text: labels.level(level) }, actions };
 }
 
 /** Whether a custom accessibility action should toggle the branch. An action that would change nothing does not. */

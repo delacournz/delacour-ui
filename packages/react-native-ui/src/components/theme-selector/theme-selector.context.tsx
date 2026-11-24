@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
-import type { ThemeMode, ThemeModeLabels } from "./theme-selector.logic";
+import type { ThemeSelectorLabels } from "../../lib/labels";
+import type { ThemeMode } from "./theme-selector.logic";
 import type { ThemeSelectorAxes } from "./theme-selector.types";
 
 export type ThemeSelectorContextValue = ThemeSelectorAxes & {
@@ -7,8 +8,8 @@ export type ThemeSelectorContextValue = ThemeSelectorAxes & {
 	mode: ThemeMode;
 	/** What a press does: applies the mode unless `applyTheme` is off, then reports it. */
 	setMode: (mode: ThemeMode) => void;
-	/** Per-mode label overrides the root was given. */
-	labels: ThemeModeLabels | undefined;
+	/** The resolved strings: English, the provider's, then the root's `labels`. */
+	labels: ThemeSelectorLabels;
 };
 
 const ThemeSelectorContext = createContext<ThemeSelectorContextValue | null>(null);

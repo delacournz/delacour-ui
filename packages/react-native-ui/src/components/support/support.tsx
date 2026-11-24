@@ -1,5 +1,6 @@
 import { type ReactElement, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
+import type { SupportLabels } from "../../lib/labels";
 import { type SupportContextValue, SupportProvider } from "./support.context";
 import type { SupportAvailability } from "./support.types";
 import { supportVariants } from "./support.variants";
@@ -27,11 +28,15 @@ export type SupportProps = ViewProps & {
 	 * so a screen is never half "we are here" and half "we are not". Default `offline`.
 	 */
 	availability?: SupportAvailability;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. Parts read it; a part's own `labels` sits over it.
+	 */
+	labels?: Partial<SupportLabels>;
 	className?: string;
 };
 
-function SupportRoot({ availability = "offline", className, children, ...props }: SupportProps): ReactElement {
-	const context = useMemo<SupportContextValue>(() => ({ availability }), [availability]);
+function SupportRoot({ availability = "offline", labels, className, children, ...props }: SupportProps): ReactElement {
+	const context = useMemo<SupportContextValue>(() => ({ availability, labels }), [availability, labels]);
 
 	return (
 		<SupportProvider value={context}>

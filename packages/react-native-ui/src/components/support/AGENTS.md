@@ -30,7 +30,7 @@ above the composer and the closing question. Compound root plus seventeen option
 | `support.context.tsx` | `SupportProvider`, `useSupport()`, `useSupportContext()`, `SupportTopicsProvider`, `useSupportTopics()` |
 | `support.types.ts` | `SupportAvailability`, `SupportTicketStatus`, their tuples, `SupportSectionProps` |
 | `support.variants.ts` | The slotted `tv()`, the badge/chip/icon-token constants, `resolveReplyColor` |
-| `support.utils.ts` | Labels, spoken labels, the dot and the topic resolvers — no RN imports |
+| `support.utils.ts` | Spoken labels (all strings come from `labels`), the dot and the topic resolvers — no RN imports |
 | `support.render.test.tsx` | Mounted under Jest — availability, channel/conversation/article/ticket presses, topics radiogroup (controlled, uncontrolled, disabled, outside-root error), agent typing and handoff announcements, replies, resolution |
 | `support.variants.test.ts` | |
 | `support.utils.test.ts` | |
@@ -154,3 +154,8 @@ a `<Preview id>` for an uncaptured demo throws at render.
 - `disabled-channel`: the shut "Call us" row is present, dimmed and `enabled: false`.
 - `help-screen`: unread (accent) and updated (grey) dots differ, and both rows speak the dot and
   status in their label.
+
+## Spoken strings
+
+- **The spoken strings are the `labels` prop, not literals.** `Support` takes `labels?: Partial<SupportLabels>` (catalog key `support`, `lib/labels`) and carries it on its context; every speaking part (`Agent`, `Status`, `Conversation`, `Ticket`, `Topic`, `Reply`) takes its own. Precedence: a part's own `accessibilityLabel` / `accessibilityHint` / `replyTime` ← the part's `labels` ← the root's `labels` ← `DelacourProvider` `labels` ← English. Parts resolve through `useSupportLabels(own)` in `support.context.tsx`, which also works with no root.
+- **Every `resolve*` in `support.utils.ts` takes `labels` as a defaulted trailing argument** (`= DELACOUR_DEFAULT_LABELS.support`) and stays pure; `resolveConversationA11yLabel`, `resolveAgentStatusLine` and `resolveAgentA11yLabel` take it after their options object. The `TICKET_STATUS` map keeps only `color` and `needsReader`; the words are `labels.ticketStatus`. Spoken (lowercase) words are their own keys, `availabilitySpoken` and `ticketStatusSpoken`, never `toLowerCase()`.

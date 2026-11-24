@@ -67,7 +67,7 @@ export function TableRow({
 	children,
 	...props
 }: TableRowProps): ReactElement {
-	const { size, striped, headerLabels } = useTablePart("Table.Row");
+	const { size, striped, headerLabels, labels } = useTablePart("Table.Row");
 	const section = useTableSection() ?? "body";
 	const position = useTableRowPosition();
 	const index = indexProp ?? position?.index;
@@ -109,9 +109,10 @@ export function TableRow({
 					if (!isTableCellElement(item)) return undefined;
 					return (
 						item.props.accessibilityLabel ??
-						resolveCellAccessibilityLabel(headerLabels[column], readNodeText(item.props.children))
+						resolveCellAccessibilityLabel(headerLabels[column], readNodeText(item.props.children), labels)
 					);
-				})
+				}),
+				labels
 			);
 
 		return (

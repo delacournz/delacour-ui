@@ -3,6 +3,7 @@ import { createRef, type ReactElement } from "react";
 import { AccessibilityInfo, Platform } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Text } from "../text";
 import { StackCard, type StackCardHandle, type StackCardProps, useStackCard } from "./index";
@@ -396,5 +397,29 @@ describe("StackCard announcements", () => {
 		await cardAction("Ada", "swipe-left");
 		expect(spoken).not.toHaveBeenCalled();
 		expect(focus).not.toHaveBeenCalled();
+	});
+
+	describe("labels", () => {
+		test("the labels prop names the actions and the undo", async () => {
+			await renderWithProviders(<Deck labels={{ swipeLeft: "Links", undo: "Zurück" }} />);
+			expect(card("Ada").props.accessibilityActions).toContainEqual({ label: "Links", name: "swipe-left" });
+			expect(card("Ada").props.accessibilityActions).not.toContainEqual({ label: "Undo", name: "undo" });
+		});
+
+		test("a LabelsProvider names them too, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ stackCard: { swipeLeft: "Links", swipeRight: "Rechts" } }}>
+					<Deck labels={{ swipeRight: "Ja" }} />
+				</LabelsProvider>
+			);
+			const actions = card("Ada").props.accessibilityActions;
+			expect(actions).toContainEqual({ label: "Links", name: "swipe-left" });
+			expect(actions).toContainEqual({ label: "Ja", name: "swipe-right" });
+		});
+
+		test("directionLabels still wins over labels", async () => {
+			await renderWithProviders(<Deck directionLabels={{ left: "Pass" }} labels={{ swipeLeft: "Links" }} />);
+			expect(card("Ada").props.accessibilityActions).toContainEqual({ label: "Pass", name: "swipe-left" });
+		});
 	});
 });

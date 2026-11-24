@@ -12,8 +12,10 @@
 		"icon",
 		"icons",
 		"interactive-child",
+		"labels",
 		"pressable",
-		"tv"
+		"tv",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -39,7 +41,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/sortable/index.ts",
 			"target": "sortable/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/sortable/sortable-handle.tsx",
@@ -74,13 +82,27 @@
 		{
 			"path": "packages/react-native-ui/src/components/sortable/sortable.context.tsx",
 			"target": "sortable/sortable.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/sortable/sortable.tsx",
 			"target": "sortable/sortable.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
@@ -97,6 +119,10 @@
 			"target": "sortable/sortable.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -120,6 +146,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
 				}
@@ -138,6 +168,10 @@
 			"target": "sortable/sortable.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

@@ -41,7 +41,7 @@ asks for it.
 ```tsx
 <TimePicker value? defaultValue? onValueChange? minTime? maxTime? minuteStep? showSeconds? hourCycle? locale?
             format? placeholder? presentation? isOpen? defaultOpen? onOpenChange? isDisabled? isReadOnly? isInvalid?
-            variant? size? visibleRows? title? doneLabel? clearable? clearLabel? accessibilityLabel?>
+            variant? size? visibleRows? title? doneLabel? clearable? clearLabel? accessibilityLabel? labels?>
   <TimePicker.Trigger>
     <TimePicker.Value placeholder? />
     <TimePicker.Icon icon? />
@@ -131,6 +131,18 @@ returns the root's state for a custom trigger or footer.
   `TimePicker.Wheel` keeps bare "Hour"/"Minute" and no hint — the sheet has its
   title and the trigger already said it. `TimePickerWheel` takes
   `accessibilityLabel`, `accessibilityHint` and `isRequired` for standalone use.
+- **The spoken strings are the `labels` prop, not literals**: `title`, `done`, `clear`,
+  `placeholder` (the sheet and trigger defaults), `trigger` (the fallback name, "Time"),
+  `triggerHint`, `notSet`, the column names `hour`/`minute`/`second`/`period`, `column`
+  (`(field, column, required | undefined)` → "Reminder, Hour, required") and the value
+  sentences `hourValue`/`minuteValue`/`secondValue`, from `lib/labels` through
+  `useLabels("timePicker", labels)`. Precedence is `placeholder` / `title` / `doneLabel` /
+  `clearLabel` / `accessibilityLabel` ← the root's `labels` ← `DelacourProvider` `labels` ←
+  English. The resolved set rides the picker context; `TimePicker.Wheel` and the trigger read
+  it, and the bare `TimePickerWheel` takes its own `labels`. `resolveColumnAccessibilityValue`
+  and `resolveColumnAccessibilityLabel` take `labels` as a defaulted last argument / options
+  field; the required word stays `requiredLabel` (it belongs to `Field`).
+  `TIME_WHEEL_COLUMN_LABELS` aliases the catalog's column names.
 - **Read-only shows the value and refuses the press; disabled also fades.** Both
   leave the trigger a button to assistive technology, with the disabled state on
   the one that is.

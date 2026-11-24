@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { type ReactElement, useState } from "react";
 import { Text } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { SplitView, useSplitView } from "./index";
 
@@ -419,5 +420,64 @@ describe("SplitView", () => {
 			});
 			expect(onSnapIndexChange).not.toHaveBeenCalled();
 		});
+	});
+});
+
+describe("labels", () => {
+	const german = {
+		dragArea: "Bereiche ziehen",
+		nextPosition: "Nächste Stellung",
+		position: (current: number, count: number) => `Stellung ${current} von ${count}`,
+	};
+
+	test("the labels prop names the drag row, its value and its activate action", async () => {
+		await renderWithProviders(
+			<SplitView labels={german}>
+				<SplitView.Top>
+					<Text>Map</Text>
+				</SplitView.Top>
+				<SplitView.DragArea />
+				<SplitView.Bottom>
+					<Text>List</Text>
+				</SplitView.Bottom>
+			</SplitView>
+		);
+		const row = screen.getByRole("adjustable", { name: "Bereiche ziehen" });
+		expect(row).toHaveAccessibilityValue({ text: "Stellung 2 von 3" });
+		expect(row.props.accessibilityActions).toContainEqual({ label: "Nächste Stellung", name: "activate" });
+	});
+
+	test("a LabelsProvider names it too, and the prop wins over it", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ splitView: { dragArea: "Bereiche ziehen" } }}>
+				<Harness />
+				<SplitView labels={{ dragArea: "Weg" }}>
+					<SplitView.Top>
+						<Text>A</Text>
+					</SplitView.Top>
+					<SplitView.DragArea />
+					<SplitView.Bottom>
+						<Text>B</Text>
+					</SplitView.Bottom>
+				</SplitView>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("adjustable", { name: "Bereiche ziehen" })).toBeOnTheScreen();
+		expect(screen.getByRole("adjustable", { name: "Weg" })).toBeOnTheScreen();
+	});
+
+	test("accessibilityLabel on the drag row still wins over labels", async () => {
+		await renderWithProviders(
+			<SplitView labels={german}>
+				<SplitView.Top>
+					<Text>Map</Text>
+				</SplitView.Top>
+				<SplitView.DragArea accessibilityLabel="Resize map" />
+				<SplitView.Bottom>
+					<Text>List</Text>
+				</SplitView.Bottom>
+			</SplitView>
+		);
+		expect(screen.getByRole("adjustable", { name: "Resize map" })).toBeOnTheScreen();
 	});
 });

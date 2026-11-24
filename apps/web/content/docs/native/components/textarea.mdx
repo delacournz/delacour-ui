@@ -134,6 +134,11 @@ height comes from `rows`.
     maxRows: { type: "number", default: "10", description: "The tallest `autoGrow` goes. Only accepted with `autoGrow`." },
     showCount: { type: "boolean", default: "false", description: "Show the character count under the field. Requires `maxLength`." },
     maxLength: { type: "number" },
+    announce: { type: "boolean", default: "true", description: "Speak the count at its thresholds. Only heard with `showCount`." },
+    labels: {
+      type: "Partial<TextareaLabels>",
+      description: "The count's spoken name and the two threshold announcements, over `DelacourProvider`'s `labels`.",
+    },
     variant: { type: '"primary" | "secondary"', default: '"primary"' },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },
     isInvalid: { type: "boolean", description: "Read from an enclosing `Field` when unset." },

@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { TimePickerLabels } from "../../lib/labels";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { HourCycle, TimeValue } from "./time-picker.time";
 import type { TimePickerWheelOptions } from "./time-picker.types";
@@ -24,6 +25,8 @@ export type TimePickerContextValue = {
 	/** The value as the trigger shows it, or `""` while none is set. */
 	display: string;
 	placeholder: string;
+	/** The resolved spoken strings: the root's `labels` over the provider's over English. */
+	labels: TimePickerLabels;
 	isDisabled: boolean;
 	isInvalid: boolean;
 	isReadOnly: boolean;

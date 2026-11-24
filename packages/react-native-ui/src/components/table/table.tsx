@@ -1,5 +1,7 @@
 import { isValidElement, type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
 import { type LayoutChangeEvent, View, type ViewProps } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
+import type { TableLabels } from "../../lib/labels";
 import { type TableContextValue, TableProvider } from "./table.context";
 import {
 	collectTableHeaderLabels,
@@ -41,6 +43,11 @@ export type TableProps = ViewProps & {
 	 * scrolls sideways with a fade at each edge that has more columns past it.
 	 */
 	minWidth?: number;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. A cell's or
+	 * row's own `accessibilityLabel` still wins over them.
+	 */
+	labels?: Partial<TableLabels>;
 	className?: string;
 	children?: ReactNode;
 };
@@ -59,20 +66,22 @@ function TableRoot({
 	variant = TABLE_DEFAULT_VARIANT,
 	striped = false,
 	minWidth,
+	labels: labelsProp,
 	className,
 	onLayout,
 	children,
 	...props
 }: TableProps): ReactElement {
 	const [containerWidth, setContainerWidth] = useState(0);
+	const labels = useLabels("table", labelsProp);
 
 	const headerLabels = useMemo(() => collectTableHeaderLabels(children, HEADER_PREDICATES), [children]);
 	const { content, captions } = splitTableCaption(children, isCaption);
 	const layout = resolveTableContentWidth(minWidth, containerWidth);
 
 	const context = useMemo<TableContextValue>(
-		() => ({ columns, headerLabels, size, striped, variant }),
-		[columns, headerLabels, size, striped, variant]
+		() => ({ columns, headerLabels, labels, size, striped, variant }),
+		[columns, headerLabels, labels, size, striped, variant]
 	);
 
 	const handleLayout = useCallback(

@@ -1,9 +1,10 @@
 import { type ReactElement, useEffect, useMemo } from "react";
 import { View } from "react-native";
+import type { SupportLabels } from "../../lib/labels";
 import { IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Text } from "../text";
-import { useSupportTopics } from "./support.context";
+import { useSupportLabels, useSupportTopics } from "./support.context";
 import { resolveTopicA11yLabel } from "./support.utils";
 import { SUPPORT_TOPIC_ICON_TOKEN, supportVariants } from "./support.variants";
 
@@ -15,6 +16,10 @@ export type SupportTopicProps = Omit<PressableProps, "asChild" | "children" | "d
 	label: string;
 	description?: string;
 	isDisabled?: boolean;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `accessibilityLabel` still wins.
+	 */
+	labels?: Partial<SupportLabels>;
 	className?: string;
 };
 
@@ -35,9 +40,11 @@ export function SupportTopic({
 	feedback = "fade",
 	accessibilityLabel,
 	accessibilityState,
+	labels: labelsProp,
 	className,
 	...props
 }: SupportTopicProps): ReactElement {
+	const labels = useSupportLabels(labelsProp);
 	const { value: selected, select, registerDisabled } = useSupportTopics();
 	const isSelected = selected === value;
 	const slots = supportVariants({ selected: isSelected, isDisabled });
@@ -51,7 +58,7 @@ export function SupportTopic({
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel ?? resolveTopicA11yLabel(label, description)}
+			accessibilityLabel={accessibilityLabel ?? resolveTopicA11yLabel(label, description, labels)}
 			accessibilityRole="radio"
 			accessibilityState={{ ...accessibilityState, checked: isSelected }}
 			className={slots.topic({ className })}

@@ -1,3 +1,4 @@
+export type { StepsLabels } from "../../lib/labels";
 export { Steps, type StepsProps } from "./steps";
 export {
 	type StepsContextValue,

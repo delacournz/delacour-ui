@@ -96,6 +96,12 @@ long table goes in a `FlatList` using the same row parts.
   matching head holds text (`resolveCellAccessibilityLabel`). The root reads the head text out
   of its element tree (`collectTableHeaderLabels`) rather than collecting it as heads mount,
   so the first frame's cells are already named.
+- **Spoken strings are the `labels` prop.** `Table` takes `labels?: Partial<TableLabels>` over
+  `DelacourProvider`'s `labels` over English (`sortedAscending`, `sortedDescending`, `notSorted`,
+  `cell`, `row`). The resolved set rides the table context; `Table.Head`, `Table.Cell` and
+  `Table.Row` read it. `resolveTableSortAccessibility`, `resolveCellAccessibilityLabel` and
+  `resolveTableRowAccessibilityLabel` take it as a defaulted trailing argument. A cell's or row's
+  own `accessibilityLabel` wins.
 - **A pressable row is one element.** `Pressable` is `accessible`, which merges the cells into
   it; its label is every cell's label joined in order (`resolveTableRowAccessibilityLabel`),
   and `isSelected` is its `selected` state. Built from the cells' props, not measured, so it

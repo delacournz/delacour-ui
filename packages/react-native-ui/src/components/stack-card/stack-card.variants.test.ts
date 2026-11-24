@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { createElement, type ReactNode } from "react";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	partitionStackChildren,
@@ -394,5 +395,35 @@ describe("resolveStackCardAnnouncement", () => {
 	test("an undo names the restored card", () => {
 		expect(resolveStackCardAnnouncement({ cardLabel: "Ada", count: 3, index: 0, kind: "undo" })).toBe("Undone. Ada");
 		expect(resolveStackCardAnnouncement({ count: 3, index: 0, kind: "undo" })).toBe("Undone. Card 1 of 3");
+	});
+});
+
+describe("stack card labels", () => {
+	const german = {
+		...DELACOUR_DEFAULT_LABELS.stackCard,
+		empty: "Keine Karten mehr",
+		position: (position: number, count: number) => `Karte ${position} von ${count}`,
+		throwAnnouncement: (direction: string, card: string) => `${direction}. Weiter: ${card}`,
+		emptyAnnouncement: (direction: string, empty: string) => `${direction}! ${empty}`,
+		undoAnnouncement: (card: string) => `Rückgängig. ${card}`,
+	};
+
+	test("resolveStackCardPosition uses the labels", () => {
+		expect(resolveStackCardPosition(1, 3, german)).toBe("Karte 2 von 3");
+	});
+
+	test("resolveStackCardAnnouncement uses the labels", () => {
+		expect(
+			resolveStackCardAnnouncement(
+				{ cardLabel: "Grace", count: 3, directionLabel: "Like", index: 1, kind: "throw" },
+				german
+			)
+		).toBe("Like. Weiter: Grace");
+		expect(resolveStackCardAnnouncement({ count: 3, directionLabel: "Like", index: 3, kind: "throw" }, german)).toBe(
+			"Like! Keine Karten mehr"
+		);
+		expect(resolveStackCardAnnouncement({ count: 3, index: 0, kind: "undo" }, german)).toBe(
+			"Rückgängig. Karte 1 von 3"
+		);
 	});
 });

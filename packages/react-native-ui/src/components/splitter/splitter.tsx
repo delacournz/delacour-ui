@@ -18,6 +18,8 @@ import {
 	withSpring,
 } from "react-native-reanimated";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { SplitterLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import { SplitterIndexProvider, type SplitterPartContextValue, SplitterProvider } from "./splitter.context";
 import type { SplitterSlotProps } from "./splitter.types";
@@ -62,6 +64,11 @@ export type SplitterProps = Omit<ViewProps, "children" | "style"> &
 		step?: number;
 		/** Played when a seam meets a bound or a pane collapses. `false` silences it. */
 		haptic?: false | HapticFeedback;
+		/**
+		 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. A
+		 * `Splitter.Handle`'s own `accessibilityLabel` still wins over `labels.handle`.
+		 */
+		labels?: Partial<SplitterLabels>;
 		/** Alternating `Splitter.Pane` and `Splitter.Handle`, starting and ending with a pane. */
 		children: ReactNode;
 	};
@@ -87,11 +94,13 @@ function SplitterRoot({
 	isDisabled = false,
 	step: stepProp,
 	haptic = "light",
+	labels: labelsProp,
 	className,
 	onLayout,
 	children,
 	...props
 }: SplitterProps): ReactElement {
+	const labels = useLabels("splitter", labelsProp);
 	const items = Children.toArray(children);
 	const kinds = items.map(kindOf);
 	const paneConstraints = items.flatMap((child, index) =>
@@ -234,6 +243,7 @@ function SplitterRoot({
 			haptic,
 			interrupt,
 			isDisabled,
+			labels,
 			layout,
 			orientation,
 			reset,
@@ -253,6 +263,7 @@ function SplitterRoot({
 			haptic,
 			interrupt,
 			isDisabled,
+			labels,
 			layout,
 			orientation,
 			reset,

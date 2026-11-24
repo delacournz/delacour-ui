@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type TimelineLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { TextSize } from "../text/text.variants";
 
@@ -442,32 +443,37 @@ export function resolveTimelineItemLayout(
 	return { index, length, offset };
 }
 
-/** What a tone is read as. `destructive` is a token name, not a word anyone says. */
-const TONE_WORD: Record<Exclude<TimelineTone, "default">, string> = {
-	info: "info",
-	success: "success",
-	warning: "warning",
-	destructive: "error",
-};
+/** Which catalog key names a tone. `destructive` is a token name; its word is `labels.toneDestructive`. */
+const TONE_KEY = {
+	info: "toneInfo",
+	success: "toneSuccess",
+	warning: "toneWarning",
+	destructive: "toneDestructive",
+} as const satisfies Record<Exclude<TimelineTone, "default">, keyof TimelineLabels>;
 
 /**
  * What VoiceOver and TalkBack read after an event's name: "Event 2 of 6,
  * completed, success". One-based. The default tone is not read, and an
  * uncounted timeline — its items behind a wrapper — claims no total.
  */
-export function resolveTimelineAccessibilityValue({
-	step,
-	count,
-	status,
-	tone,
-}: {
-	step: number;
-	count: number;
-	status: TimelineStatus;
-	tone: TimelineTone;
-}): string {
-	const position = count > 0 ? `Event ${step + 1} of ${count}` : `Event ${step + 1}`;
-	const parts = [position, status];
-	if (tone !== "default") parts.push(TONE_WORD[tone]);
-	return parts.join(", ");
+export function resolveTimelineAccessibilityValue(
+	{
+		step,
+		count,
+		status,
+		tone,
+	}: {
+		step: number;
+		count: number;
+		status: TimelineStatus;
+		tone: TimelineTone;
+	},
+	labels: TimelineLabels = DELACOUR_DEFAULT_LABELS.timeline
+): string {
+	return labels.itemValue({
+		count,
+		position: step + 1,
+		status: labels[status],
+		tone: tone === "default" ? undefined : labels[TONE_KEY[tone]],
+	});
 }

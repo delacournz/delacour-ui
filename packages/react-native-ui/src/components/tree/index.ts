@@ -1,3 +1,4 @@
+export type { TreeLabels } from "../../lib/labels";
 export { Tree, type TreeExpandedChangeDetails, type TreeProps, type TreeSelection } from "./tree";
 export {
 	type TreeContextValue,

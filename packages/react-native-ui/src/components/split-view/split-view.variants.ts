@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SplitViewLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { clamp } from "../splitter/splitter.math";
 
@@ -253,20 +254,27 @@ export type SnapAccessibility = {
 };
 
 /** The drag row's adjustable value, and which directions are worth offering. */
-export function resolveSnapAccessibility({ index, count }: { index: number; count: number }): SnapAccessibility {
+export function resolveSnapAccessibility(
+	{ index, count }: { index: number; count: number },
+	labels: SplitViewLabels = DELACOUR_DEFAULT_LABELS.splitView
+): SnapAccessibility {
 	return {
 		canDecrement: index > 0,
 		canIncrement: index < count - 1,
 		max: Math.max(count - 1, 0),
 		min: 0,
 		now: index,
-		text: formatSnapPosition(index, count),
+		text: formatSnapPosition(index, count, labels),
 	};
 }
 
 /** `"Position 2 of 3"` — what VoiceOver reads for the drag row and what an announcement says. */
-export function formatSnapPosition(index: number, count: number): string {
-	return `Position ${index + 1} of ${count}`;
+export function formatSnapPosition(
+	index: number,
+	count: number,
+	labels: SplitViewLabels = DELACOUR_DEFAULT_LABELS.splitView
+): string {
+	return labels.position(index + 1, count);
 }
 
 /**

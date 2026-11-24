@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SliderLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { FIELD_ACCESSIBILITY_LABELS } from "../field/field.variants";
 import type { TextSize } from "../text/text.variants";
@@ -610,7 +611,11 @@ export function resolveSliderAxes({ own, field }: { own?: SliderOwnAxes; field?:
  * Written out once so the two ends and the counted form cannot drift apart, and
  * so the playground and the docs can quote the same words.
  */
-export const SLIDER_THUMB_NAMES = { minimum: "Minimum", maximum: "Maximum", thumb: "Thumb" } as const;
+export const SLIDER_THUMB_NAMES = {
+	minimum: DELACOUR_DEFAULT_LABELS.slider.minimum,
+	maximum: DELACOUR_DEFAULT_LABELS.slider.maximum,
+	thumb: "Thumb",
+} as const;
 
 /**
  * The accessible name a `Slider.Thumb` announces.
@@ -636,9 +641,12 @@ export function resolveThumbAccessibilityLabel({
 	override,
 	isRequired = false,
 	requiredLabel = FIELD_ACCESSIBILITY_LABELS.required,
+	labels = DELACOUR_DEFAULT_LABELS.slider,
 }: {
 	/** Whether the enclosing `Field` is required; the name ends ", required". */
 	isRequired?: boolean;
+	/** The spoken names of a thumb nothing names. English by default. */
+	labels?: SliderLabels;
 	/** The spoken word for required, for localisation. */
 	requiredLabel?: string;
 	/** The slider's own name — a `Field.Label`'s text, or nothing. */
@@ -658,12 +666,11 @@ export function resolveThumbAccessibilityLabel({
 	if (count <= 1) return name === undefined ? undefined : withRequired(name);
 
 	if (count === 2) {
-		const end = index === 0 ? SLIDER_THUMB_NAMES.minimum : SLIDER_THUMB_NAMES.maximum;
-		return withRequired(name ? `${name}, ${end.toLowerCase()}` : end);
+		if (index === 0) return withRequired(name ? labels.minimumOf(name) : labels.minimum);
+		return withRequired(name ? labels.maximumOf(name) : labels.maximum);
 	}
 
-	const position = `${index + 1} of ${count}`;
-	return withRequired(name ? `${name}, ${position}` : `${SLIDER_THUMB_NAMES.thumb} ${position}`);
+	return withRequired(name ? labels.positionOf(name, index + 1, count) : labels.position(index + 1, count));
 }
 
 export type SliderVariantProps = VariantProps<typeof sliderVariants>;

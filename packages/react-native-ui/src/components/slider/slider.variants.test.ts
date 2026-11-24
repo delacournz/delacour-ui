@@ -867,3 +867,30 @@ describe("resolveThumbAccessibilityLabel", () => {
 		expect(resolveThumbAccessibilityLabel({ label: "  Volume ", index: 0, count: 1 })).toBe("Volume");
 	});
 });
+
+describe("resolveThumbAccessibilityLabel with custom labels", () => {
+	const labels = {
+		minimum: "Minimal",
+		maximum: "Maximal",
+		minimumOf: (name: string) => `${name} (min)`,
+		maximumOf: (name: string) => `${name} (max)`,
+		positionOf: (name: string, index: number, count: number) => `${name} ${index}/${count}`,
+		position: (index: number, count: number) => `Griff ${index}/${count}`,
+	};
+
+	test("names a range's ends from labels, with and without a name", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "Preis", index: 0, count: 2, labels })).toBe("Preis (min)");
+		expect(resolveThumbAccessibilityLabel({ label: "Preis", index: 1, count: 2, labels })).toBe("Preis (max)");
+		expect(resolveThumbAccessibilityLabel({ index: 0, count: 2, labels })).toBe("Minimal");
+		expect(resolveThumbAccessibilityLabel({ index: 1, count: 2, labels })).toBe("Maximal");
+	});
+
+	test("counts thumbs past two from labels, one-based", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "Stufen", index: 1, count: 3, labels })).toBe("Stufen 2/3");
+		expect(resolveThumbAccessibilityLabel({ index: 2, count: 3, labels })).toBe("Griff 3/3");
+	});
+
+	test("an override still wins over labels", () => {
+		expect(resolveThumbAccessibilityLabel({ index: 0, count: 2, override: "Low", labels })).toBe("Low");
+	});
+});

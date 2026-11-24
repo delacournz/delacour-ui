@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { AccessibilityInfo, Platform, Text } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Splitter, type SplitterLayout } from "./index";
 import { useSplitter } from "./splitter.context";
@@ -377,6 +378,82 @@ describe("Splitter", () => {
 			await fireEvent(screen.getByRole("adjustable"), "accessibilityAction", action("collapse"));
 			await fireEvent(screen.getByRole("adjustable"), "accessibilityAction", action("reset"));
 			expect(spoken).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("labels", () => {
+		test("the labels prop names the handle, its value and its actions", async () => {
+			await renderWithProviders(
+				<Splitter
+					defaultLayout={[30, 70]}
+					labels={{
+						collapseAction: "Einklappen",
+						handle: "Ziehen",
+						resetAction: "Zurücksetzen",
+						value: (percent) => `${Math.round(percent)} Prozent`,
+					}}
+				>
+					<Splitter.Pane isCollapsible minSize={20} />
+					<Splitter.Handle />
+					<Splitter.Pane />
+				</Splitter>
+			);
+			const handle = screen.getByRole("adjustable", { name: "Ziehen" });
+			expect(handle).toHaveAccessibilityValue({ now: 30, text: "30 Prozent" });
+			expect(handle.props.accessibilityActions).toEqual([
+				{ name: "increment" },
+				{ name: "decrement" },
+				{ label: "Zurücksetzen", name: "reset" },
+				{ label: "Einklappen", name: "collapse" },
+			]);
+		});
+
+		test("a LabelsProvider names it too, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ splitter: { handle: "Ziehen" } }}>
+					<Splitter>
+						<Splitter.Pane />
+						<Splitter.Handle />
+						<Splitter.Pane />
+					</Splitter>
+					<Splitter labels={{ handle: "Weg" }}>
+						<Splitter.Pane />
+						<Splitter.Handle />
+						<Splitter.Pane />
+					</Splitter>
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("adjustable", { name: "Ziehen" })).toBeOnTheScreen();
+			expect(screen.getByRole("adjustable", { name: "Weg" })).toBeOnTheScreen();
+		});
+
+		test("the handle's accessibilityLabel still wins over labels", async () => {
+			await renderWithProviders(
+				<Splitter labels={{ handle: "Ziehen" }}>
+					<Splitter.Pane />
+					<Splitter.Handle accessibilityLabel="Resize sidebar" />
+					<Splitter.Pane />
+				</Splitter>
+			);
+			expect(screen.getByRole("adjustable", { name: "Resize sidebar" })).toBeOnTheScreen();
+		});
+
+		test("announcements and the expand action come from labels", async () => {
+			resetAnnouncer();
+			const spoken = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => undefined);
+			setPlatform("android");
+			await renderWithProviders(
+				<Splitter defaultLayout={[0, 100]} labels={{ expandAction: "Ausklappen", expanded: "Ausgeklappt" }}>
+					<Splitter.Pane isCollapsible minSize={20} />
+					<Splitter.Handle />
+					<Splitter.Pane />
+				</Splitter>
+			);
+			const handle = screen.getByRole("adjustable");
+			expect(handle.props.accessibilityActions).toContainEqual({ label: "Ausklappen", name: "expand" });
+			await fireEvent(handle, "accessibilityAction", action("expand"));
+			expect(spoken).toHaveBeenLastCalledWith("Ausgeklappt");
+			jest.restoreAllMocks();
 		});
 	});
 });

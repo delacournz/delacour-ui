@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
 import { type AccessibilityActionEvent, View, type ViewProps } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
+import type { ToastLabels } from "../../lib/labels";
 import { IconDefaultsProvider } from "../icon";
 import {
 	type ToastContextValue,
@@ -22,6 +24,11 @@ export type ToastProps = ViewProps & {
 	status?: ToastStatus;
 	/** Hides the toast — the close control, the action and a screen reader's dismiss call it. Inside the viewport it defaults to hiding the toast being drawn. */
 	onHide?: () => void;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. An
+	 * action's or close control's own `accessibilityLabel` still wins.
+	 */
+	labels?: Partial<ToastLabels>;
 	children?: ReactNode;
 };
 
@@ -30,6 +37,7 @@ function noop(): void {}
 function ToastRoot({
 	status = "default",
 	onHide,
+	labels: labelsProp,
 	className,
 	children,
 	accessibilityActions,
@@ -39,10 +47,14 @@ function ToastRoot({
 	...props
 }: ToastProps): ReactElement {
 	const item = useToastItemContext();
+	const labels = useLabels("toast", labelsProp);
 	const hide = onHide ?? item?.hide ?? noop;
 	const [action, setAction] = useState<ToastRegisteredAction | null>(null);
 
-	const context = useMemo<ToastContextValue>(() => ({ status, hide, registerAction: setAction }), [status, hide]);
+	const context = useMemo<ToastContextValue>(
+		() => ({ status, labels, hide, registerAction: setAction }),
+		[status, labels, hide]
+	);
 
 	const slots = toastVariants({ status });
 	const iconClassName = slots.icon();
@@ -53,10 +65,10 @@ function ToastRoot({
 		() => [
 			...(action ? [{ name: "activate", label: action.label }] : []),
 			{ name: "escape" },
-			{ name: "dismiss", label: "Dismiss" },
+			{ name: "dismiss", label: labels.dismiss },
 			...(accessibilityActions ?? []),
 		],
-		[action, accessibilityActions]
+		[action, accessibilityActions, labels.dismiss]
 	);
 
 	const handleAccessibilityAction = useCallback(

@@ -1,3 +1,4 @@
+export type { SliderLabels } from "../../lib/labels";
 export { Slider, type SliderProps } from "./slider";
 export {
 	type SliderContextValue,

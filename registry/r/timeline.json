@@ -11,10 +11,12 @@
 		"icon",
 		"icons",
 		"interactive-child",
+		"labels",
 		"pressable",
 		"surface",
 		"text",
 		"tv",
+		"use-labels",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -40,7 +42,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/timeline/index.ts",
 			"target": "timeline/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/timeline/timeline-aside.tsx",
@@ -124,7 +132,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/timeline/timeline-list.tsx",
 			"target": "timeline/timeline-list.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/timeline/timeline-masthead.tsx",
@@ -192,18 +206,34 @@
 		{
 			"path": "packages/react-native-ui/src/components/timeline/timeline.context.tsx",
 			"target": "timeline/timeline.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/timeline/timeline.tsx",
 			"target": "timeline/timeline.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/timeline/timeline.types.ts",
 			"target": "timeline/timeline.types.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../text",
 					"to": "@registry/ui/text"
@@ -215,6 +245,10 @@
 			"target": "timeline/timeline.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -244,6 +278,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
 				}
@@ -262,6 +300,10 @@
 			"target": "timeline/timeline.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

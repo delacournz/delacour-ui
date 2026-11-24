@@ -208,6 +208,8 @@ swap it for a thank-you once it is answered.
 <TypeTable
   type={{
     availability: { type: '"online" | "away" | "offline"', default: '"offline"', description: "Whether anyone is there. Read by Status, Agent and Note." },
+    labels: { type: "Partial<SupportLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. Every part reads them; a part's own `labels` sits over these." },
+
     className: { type: "string" },
     children: { type: "ReactNode" },
   }}
@@ -229,6 +231,7 @@ swap it for a thank-you once it is answered.
   type={{
     replyTime: { type: "string", description: "Caller wording. Absent ⇒ the availability's own line." },
     availability: { type: '"online" | "away" | "offline"', description: "Overrides the root for this one status." },
+    labels: { type: "Partial<SupportLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. Over the root's. `replyTime` still wins over the sentence." },
   }}
 />
 
@@ -277,6 +280,7 @@ swap it for a thank-you once it is answered.
     description: { type: "string" },
     icon: { type: "ReactElement" },
     isDisabled: { type: "boolean" },
+    labels: { type: "Partial<SupportLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. Over the root's. `accessibilityLabel` still wins." },
   }}
 />
 
@@ -302,6 +306,7 @@ swap it for a thank-you once it is answered.
     title: { type: "string", required: true },
     collection: { type: "string", description: "The help-centre collection, as a caption." },
     onPress: { type: "() => void" },
+    labels: { type: "Partial<SupportLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. Over the root's. `accessibilityLabel` still wins." },
   }}
 />
 
@@ -315,6 +320,7 @@ swap it for a thank-you once it is answered.
     typing: { type: "boolean", default: "false", description: "Replaces the status line with three dots." },
     availability: { type: '"online" | "away" | "offline"', description: "Absent ⇒ the root's, or offline with no root." },
     typingTestID: { type: "string", description: "testID for the typing dots." },
+    labels: { type: "Partial<SupportLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. Over the root's." },
   }}
 />
 
@@ -326,6 +332,7 @@ swap it for a thank-you once it is answered.
     status: { type: '"open" | "pending" | "solved" | "closed"', required: true },
     reference: { type: "string" },
     onPress: { type: "() => void" },
+    labels: { type: "Partial<SupportLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. Over the root's." },
   }}
 />
 
@@ -364,6 +371,7 @@ swap it for a thank-you once it is answered.
     icon: { type: "ReactElement" },
     escalates: { type: "boolean", default: "false", description: "The way out to a person — primary-soft, with a hint." },
     onPress: { type: "() => void" },
+    labels: { type: "Partial<SupportLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. Over the root's. `accessibilityHint` still wins." },
   }}
 />
 
@@ -380,7 +388,7 @@ swap it for a thank-you once it is answered.
 
 <TypeTable
   type={{
-    "useSupport()": { type: "{ availability }", description: "Never throws — offline outside a root." },
+    "useSupport()": { type: "{ availability, labels }", description: "Never throws — offline outside a root." },
     "useSupportTopics()": { type: "{ value, select }", description: "The enclosing Topics' selection. Throws outside one." },
   }}
 />

@@ -1,5 +1,7 @@
 import type { ReactElement } from "react";
+import type { SupportLabels } from "../../lib/labels";
 import { Chip, type ChipProps } from "../chip";
+import { useSupportLabels } from "./support.context";
 import { resolveReplyA11yHint } from "./support.utils";
 import { resolveReplyColor } from "./support.variants";
 
@@ -12,6 +14,10 @@ export type SupportReplyProps = Omit<
 	icon?: ReactElement;
 	/** The way out to a person. Painted primary-soft and announced with the hint "Talk to a person". */
 	escalates?: boolean;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `accessibilityHint` still wins.
+	 */
+	labels?: Partial<SupportLabels>;
 	className?: string;
 };
 
@@ -24,11 +30,13 @@ export function SupportReply({
 	icon,
 	escalates = false,
 	accessibilityHint,
+	labels: labelsProp,
 	...props
 }: SupportReplyProps): ReactElement {
+	const labels = useSupportLabels(labelsProp);
 	return (
 		<Chip
-			accessibilityHint={accessibilityHint ?? resolveReplyA11yHint(escalates)}
+			accessibilityHint={accessibilityHint ?? resolveReplyA11yHint(escalates, labels)}
 			color={resolveReplyColor(escalates)}
 			variant="soft"
 			{...props}

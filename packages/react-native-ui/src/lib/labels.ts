@@ -1030,6 +1030,310 @@ export type SlideButtonLabels = {
 	failed: string;
 };
 
+/** Slider's spoken strings: a thumb's name when nothing names it. */
+export type SliderLabels = {
+	/** A range's first thumb with no name to hang it on. */
+	minimum: string;
+	/** A range's second thumb with no name to hang it on. */
+	maximum: string;
+	/** A range's first thumb after the slider's name: "Price range, minimum". */
+	minimumOf: (name: string) => string;
+	/** A range's second thumb after the slider's name: "Price range, maximum". */
+	maximumOf: (name: string) => string;
+	/** A thumb past the second, after the slider's name; `index` is one-based: "Stops, 3 of 3". */
+	positionOf: (name: string, index: number, count: number) => string;
+	/** A thumb past the second with no name; `index` is one-based: "Thumb 3 of 3". */
+	position: (index: number, count: number) => string;
+};
+
+/** Sortable's spoken strings. */
+export type SortableLabels = {
+	/** The drag handle's name when its row has no `label`. */
+	handle: string;
+	/** The drag handle's name for a labelled row: "Reorder Milk". */
+	handleFor: (label: string) => string;
+	/** The Move up action's name when the row has no `label`. */
+	moveUp: string;
+	/** The Move up action's name for a labelled row: "Move Milk up". */
+	moveUpFor: (label: string) => string;
+	/** The Move down action's name when the row has no `label`. */
+	moveDown: string;
+	/** The Move down action's name for a labelled row: "Move Milk down". */
+	moveDownFor: (label: string) => string;
+	/** A row's place, one-based, read as its value and announced after a move: "Position 2 of 5". */
+	position: (current: number, count: number) => string;
+};
+
+/** SplitView's spoken strings. */
+export type SplitViewLabels = {
+	/** The drag row's accessible name when the app gives none. */
+	dragArea: string;
+	/** The drag row's value and the cycle announcement, one-based: "Position 2 of 3". */
+	position: (current: number, count: number) => string;
+	/** The drag row's activate action: move to the next snap point. */
+	nextPosition: string;
+};
+
+/** Splitter's spoken strings. */
+export type SplitterLabels = {
+	/** A handle's name when the caller gives none. */
+	handle: string;
+	/** A handle's value, the leading pane's share; `percent` is unrounded: "35 percent". */
+	value: (percent: number) => string;
+	/** The reset action's name. */
+	resetAction: string;
+	/** The collapse action's name, offered while the adjacent pane is open. */
+	collapseAction: string;
+	/** The expand action's name, offered while the adjacent pane is collapsed. */
+	expandAction: string;
+	/** Spoken once after a reset. */
+	reset: string;
+	/** Spoken once after a collapse. */
+	collapsed: string;
+	/** Spoken once after an expand. */
+	expanded: string;
+};
+
+/** StackCard's spoken strings. */
+export type StackCardLabels = {
+	/** A downward throw's action and button name, and the answer spoken after one. */
+	swipeDown: string;
+	/** A throw to the left's action and button name, and the answer spoken after one. */
+	swipeLeft: string;
+	/** A throw to the right's action and button name, and the answer spoken after one. */
+	swipeRight: string;
+	/** An upward throw's action and button name, and the answer spoken after one. */
+	swipeUp: string;
+	/** The undo action's and the undo button's name. */
+	undo: string;
+	/** Read when a throw empties a deck that has no `Empty` text. */
+	empty: string;
+	/** What a card with no `accessibilityLabel` is called; one-based: "Card 2 of 3". */
+	position: (position: number, count: number) => string;
+	/** Spoken after a throw, the answer then the card now on top: "Like. Next: Grace". */
+	throwAnnouncement: (direction: string, card: string) => string;
+	/** Spoken after a throw that empties the deck: "Like. No more cards". */
+	emptyAnnouncement: (direction: string, empty: string) => string;
+	/** Spoken after an undo, with the restored card: "Undone. Grace". */
+	undoAnnouncement: (card: string) => string;
+};
+
+/** Steps' spoken strings. */
+export type StepsLabels = {
+	/** A step's place, one-based; `count` is 0 when the root could not count: "Step 2 of 3", "Step 2". */
+	position: (step: number, count: number) => string;
+	/** The status word for a step before the value. */
+	completed: string;
+	/** The status word for the step at the value. */
+	current: string;
+	/** The status word for a step after the value. */
+	upcoming: string;
+	/** Read when the step is invalid. */
+	error: string;
+	/** Read while the step loads. */
+	loading: string;
+	/** A step's whole spoken value, its non-empty parts joined: "Step 2 of 3, current, loading". */
+	value: (parts: readonly string[]) => string;
+};
+
+/** How available a support team is, as the catalog names it. Restates `SupportAvailability`. */
+export type SupportLabelAvailability = "online" | "away" | "offline";
+
+/** A support ticket's state, as the catalog names it. Restates `SupportTicketStatus`. */
+export type SupportLabelTicketStatus = "open" | "pending" | "solved" | "closed";
+
+/** Support's visible and spoken strings. */
+export type SupportLabels = {
+	/** The availability word, shown and spoken first: "Online". */
+	availability: (availability: SupportLabelAvailability) => string;
+	/** The availability word inside a spoken sentence: "online". */
+	availabilitySpoken: (availability: SupportLabelAvailability) => string;
+	/** The status line's sentence when the app gives no reply time: "We're online". */
+	availabilityStatus: (availability: SupportLabelAvailability) => string;
+	/** A ticket status badge's words: "Waiting on you". */
+	ticketStatus: (status: SupportLabelTicketStatus) => string;
+	/** A ticket status inside a spoken sentence: "waiting on you". */
+	ticketStatusSpoken: (status: SupportLabelTicketStatus) => string;
+	/** The status row's spoken label, the word then the app's wording: "Away. Back tomorrow". */
+	statusSpoken: (word: string, wording: string) => string;
+	/** The agent row's visible line when it has a title: "Support · Online". */
+	agentStatusLine: (title: string, word: string) => string;
+	/** The agent row's spoken label, its non-empty parts joined: "Omar Haddad, Support, online". */
+	agentSpoken: (parts: readonly string[]) => string;
+	/** Typing, shown with the first name and spoken with the full one: "Omar is typing". */
+	typing: (name: string) => string;
+	/** The stand-in for a blank name. */
+	someone: string;
+	/** A row's reference and time joined for the visible meta line: "#4821 · 2h". */
+	meta: (parts: readonly string[]) => string;
+	/** The conversation row's spoken head, its non-empty parts joined: "Refund, solved, unread reply, 2h". */
+	conversationSpoken: (parts: readonly string[]) => string;
+	/** The conversation row's spoken label with a preview: "Refund, solved. We've issued it." */
+	conversationWithPreview: (head: string, preview: string) => string;
+	/** Read for a thread with an unread reply. */
+	unreadReply: string;
+	/** Read for a thread that moved with nothing new. */
+	updated: string;
+	/** A topic's spoken label with its description: "Billing. Invoices, refunds and plans". */
+	topicSpoken: (label: string, description: string) => string;
+	/** The hint on a reply that reaches a person. */
+	escalateHint: string;
+};
+
+/** Table's spoken strings. */
+export type TableLabels = {
+	/** A sortable head's value while it sorts ascending. */
+	sortedAscending: string;
+	/** A sortable head's value while it sorts descending. */
+	sortedDescending: string;
+	/** A sortable head's value while another column sorts. */
+	notSorted: string;
+	/** A cell's name, its column's header then its value: "Qty, 3". Called only when the header has text. */
+	cell: (header: string, value: string | number) => string;
+	/** A pressable row's name, every cell's non-empty label in order: "Widget, 3, $9". */
+	row: (parts: readonly string[]) => string;
+};
+
+/** TagInput's spoken strings. */
+export type TagInputLabels = {
+	/** One tag's remove control and the chip's remove action: "Remove design". */
+	remove: (tag: string) => string;
+	/** The clear-all control's accessible name. */
+	clearAll: string;
+	/** Spoken after a commit adds tags: "Added design, react". */
+	added: (tags: readonly string[]) => string;
+	/** Spoken after a tag is removed: "Removed design". */
+	removed: (tag: string) => string;
+	/** Spoken when a tag is refused as a duplicate. */
+	rejectDuplicate: string;
+	/** Spoken when a commit has nothing to add. */
+	rejectEmpty: string;
+	/** Spoken when `validate` refuses a tag. */
+	rejectInvalid: string;
+	/** Spoken when `max` is already reached. */
+	rejectMax: string;
+	/** The field's spoken value: "No tags", "1 tag", "3 tags". */
+	tags: (count: number) => string;
+};
+
+/** Textarea's spoken strings. */
+export type TextareaLabels = {
+	/** The character count's spoken name: "12 of 280 characters". */
+	count: (length: number, maxLength: number) => string;
+	/** Spoken once on entering the last tenth of the limit: "19 characters remaining". */
+	remaining: (remaining: number) => string;
+	/** Spoken once at the limit. */
+	limitReached: string;
+};
+
+/** ThemeSelector's visible and spoken strings. */
+export type ThemeSelectorLabels = {
+	/** The System option's caption, which is also its name. */
+	system: string;
+	/** The Light option's caption, which is also its name. */
+	light: string;
+	/** The Dark option's caption, which is also its name. */
+	dark: string;
+	/** The group's name when no `accessibilityLabel` or `Field.Label` gives one. */
+	group: string;
+};
+
+/** TimePicker's visible and spoken strings. */
+export type TimePickerLabels = {
+	/** The sheet's heading. */
+	title: string;
+	/** The sheet's confirm button. */
+	done: string;
+	/** The sheet's clear button. */
+	clear: string;
+	/** The trigger's text while no time is set. */
+	placeholder: string;
+	/** The trigger's name when neither a prop nor `Field.Label` gives one. */
+	trigger: string;
+	/** The trigger's hint when it opens a sheet. */
+	triggerHint: string;
+	/** The trigger's spoken value while no time is set. */
+	notSet: string;
+	/** The hour wheel's name. */
+	hour: string;
+	/** The minute wheel's name. */
+	minute: string;
+	/** The second wheel's name. */
+	second: string;
+	/** The AM/PM wheel's name. */
+	period: string;
+	/**
+	 * An inline wheel's name, led by the field's: "Reminder, Hour". `required` is the field's
+	 * required word when the field is required: "Reminder, Hour, required".
+	 */
+	column: (field: string, column: string, required: string | undefined) => string;
+	/** The hour wheel's spoken value: "3 o'clock". */
+	hourValue: (hour: number) => string;
+	/** The minute wheel's spoken value: "30 minutes". */
+	minuteValue: (minutes: number) => string;
+	/** The second wheel's spoken value: "15 seconds". */
+	secondValue: (seconds: number) => string;
+};
+
+/** Timeline's spoken strings. */
+export type TimelineLabels = {
+	/**
+	 * An event's whole spoken value. `position` is one-based, `count` is 0 when the root could not
+	 * count, and `tone` is undefined for the default tone: "Event 2 of 6, completed, success".
+	 */
+	itemValue: (parts: { position: number; count: number; status: string; tone: string | undefined }) => string;
+	/** The status word for a passed event. */
+	completed: string;
+	/** The status word for the event at the value. */
+	current: string;
+	/** The status word for an event not yet reached. */
+	upcoming: string;
+	/** The tone word for an info event. */
+	toneInfo: string;
+	/** The tone word for a success event. */
+	toneSuccess: string;
+	/** The tone word for a warning event. */
+	toneWarning: string;
+	/** The tone word for a destructive event. */
+	toneDestructive: string;
+};
+
+/** Toast's spoken strings. */
+export type ToastLabels = {
+	/** `Toast.Close`'s name, and the card's dismiss action. */
+	dismiss: string;
+	/** `Toast.Action`'s name when it has no `accessibilityLabel` and no string child. */
+	action: string;
+	/** The sentence spoken when a toast appears or changes. Called only with a description. */
+	announcement: (title: string, description: string) => string;
+};
+
+/** Tour's visible and spoken strings. */
+export type TourLabels = {
+	/** The primary action on every step but the last. */
+	next: string;
+	/** The action that returns to the previous step. */
+	back: string;
+	/** The action that ends the tour early. */
+	skip: string;
+	/** The last step's primary action. */
+	finish: string;
+	/** The visible position, "2 of 5". One-based. */
+	progress: (current: number, total: number) => string;
+	/** What a screen reader hears before the title, "Step 2 of 5". One-based. */
+	announcement: (current: number, total: number) => string;
+};
+
+/** Tree's spoken strings. */
+export type TreeLabels = {
+	/** A row's spoken value, its depth: "Level 2". */
+	level: (level: number) => string;
+	/** The action on a closed branch. */
+	expand: string;
+	/** The action on an open branch. */
+	collapse: string;
+};
+
 /** Every component's labels, as the library ships them. */
 export type DelacourLabels = {
 	alert: AlertLabels;
@@ -1085,6 +1389,22 @@ export type DelacourLabels = {
 	signature: SignatureLabels;
 	sketch: SketchLabels;
 	slideButton: SlideButtonLabels;
+	slider: SliderLabels;
+	sortable: SortableLabels;
+	splitView: SplitViewLabels;
+	splitter: SplitterLabels;
+	stackCard: StackCardLabels;
+	steps: StepsLabels;
+	support: SupportLabels;
+	table: TableLabels;
+	tagInput: TagInputLabels;
+	textarea: TextareaLabels;
+	themeSelector: ThemeSelectorLabels;
+	timePicker: TimePickerLabels;
+	timeline: TimelineLabels;
+	toast: ToastLabels;
+	tour: TourLabels;
+	tree: TreeLabels;
 };
 
 /** A component whose strings the catalog holds. */
@@ -1671,6 +1991,158 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		working: "Working",
 		confirmed: "Confirmed",
 		failed: "Failed. Slide to try again",
+	},
+	slider: {
+		minimum: "Minimum",
+		maximum: "Maximum",
+		minimumOf: (name) => `${name}, minimum`,
+		maximumOf: (name) => `${name}, maximum`,
+		positionOf: (name, index, count) => `${name}, ${index} of ${count}`,
+		position: (index, count) => `Thumb ${index} of ${count}`,
+	},
+	sortable: {
+		handle: "Drag to reorder",
+		handleFor: (label) => `Reorder ${label}`,
+		moveUp: "Move up",
+		moveUpFor: (label) => `Move ${label} up`,
+		moveDown: "Move down",
+		moveDownFor: (label) => `Move ${label} down`,
+		position: (current, count) => `Position ${current} of ${count}`,
+	},
+	splitView: {
+		dragArea: "Resize panes",
+		position: (current, count) => `Position ${current} of ${count}`,
+		nextPosition: "Next position",
+	},
+	splitter: {
+		handle: "Resize",
+		value: (percent) => `${Math.round(percent)} percent`,
+		resetAction: "Reset sizes",
+		collapseAction: "Collapse",
+		expandAction: "Expand",
+		reset: "Sizes reset",
+		collapsed: "Pane collapsed",
+		expanded: "Pane expanded",
+	},
+	stackCard: {
+		swipeDown: "Swipe down",
+		swipeLeft: "Swipe left",
+		swipeRight: "Swipe right",
+		swipeUp: "Swipe up",
+		undo: "Undo",
+		empty: "No more cards",
+		position: (position, count) => `Card ${position} of ${count}`,
+		throwAnnouncement: (direction, card) => `${direction}. Next: ${card}`,
+		emptyAnnouncement: (direction, empty) => `${direction}. ${empty}`,
+		undoAnnouncement: (card) => `Undone. ${card}`,
+	},
+	steps: {
+		position: (step, count) => (count > 0 ? `Step ${step} of ${count}` : `Step ${step}`),
+		completed: "completed",
+		current: "current",
+		upcoming: "upcoming",
+		error: "has an error",
+		loading: "loading",
+		value: (parts) => parts.join(", "),
+	},
+	support: {
+		availability: (availability) => ({ online: "Online", away: "Away", offline: "Offline" })[availability],
+		availabilitySpoken: (availability) => ({ online: "online", away: "away", offline: "offline" })[availability],
+		availabilityStatus: (availability) =>
+			({ online: "We're online", away: "We're away", offline: "We're offline" })[availability],
+		ticketStatus: (status) => ({ open: "Open", pending: "Waiting on you", solved: "Solved", closed: "Closed" })[status],
+		ticketStatusSpoken: (status) =>
+			({ open: "open", pending: "waiting on you", solved: "solved", closed: "closed" })[status],
+		statusSpoken: (word, wording) => `${word}. ${wording}`,
+		agentStatusLine: (title, word) => `${title} · ${word}`,
+		agentSpoken: (parts) => parts.join(", "),
+		typing: (name) => `${name} is typing`,
+		someone: "Someone",
+		meta: (parts) => parts.join(" · "),
+		conversationSpoken: (parts) => parts.join(", "),
+		conversationWithPreview: (head, preview) => `${head}. ${preview}`,
+		unreadReply: "unread reply",
+		updated: "updated",
+		topicSpoken: (label, description) => `${label}. ${description}`,
+		escalateHint: "Talk to a person",
+	},
+	table: {
+		sortedAscending: "sorted ascending",
+		sortedDescending: "sorted descending",
+		notSorted: "not sorted",
+		cell: (header, value) => `${header}, ${value}`,
+		row: (parts) => parts.join(", "),
+	},
+	tagInput: {
+		remove: (tag) => `Remove ${tag}`,
+		clearAll: "Clear all",
+		added: (tags) => `Added ${tags.join(", ")}`,
+		removed: (tag) => `Removed ${tag}`,
+		rejectDuplicate: "Duplicate, not added",
+		rejectEmpty: "Nothing to add",
+		rejectInvalid: "Not valid, not added",
+		rejectMax: "Limit reached, not added",
+		tags: (count) => (count === 0 ? "No tags" : `${count} ${plural(count, "tag", "tags")}`),
+	},
+	textarea: {
+		count: (length, maxLength) => `${length} of ${maxLength} characters`,
+		remaining: (remaining) => `${remaining} ${plural(remaining, "character", "characters")} remaining`,
+		limitReached: "Character limit reached",
+	},
+	themeSelector: {
+		system: "System",
+		light: "Light",
+		dark: "Dark",
+		group: "Theme",
+	},
+	timePicker: {
+		title: "Select time",
+		done: "Done",
+		clear: "Clear",
+		placeholder: "Select time",
+		trigger: "Time",
+		triggerHint: "Opens time picker",
+		notSet: "not set",
+		hour: "Hour",
+		minute: "Minute",
+		second: "Second",
+		period: "AM or PM",
+		column: (field, column, required) =>
+			required === undefined ? `${field}, ${column}` : `${field}, ${column}, ${required}`,
+		hourValue: (hour) => `${hour} o'clock`,
+		minuteValue: (minutes) => `${minutes} ${plural(minutes, "minute", "minutes")}`,
+		secondValue: (seconds) => `${seconds} ${plural(seconds, "second", "seconds")}`,
+	},
+	timeline: {
+		itemValue: ({ position, count, status, tone }) => {
+			const place = count > 0 ? `Event ${position} of ${count}` : `Event ${position}`;
+			return tone === undefined ? `${place}, ${status}` : `${place}, ${status}, ${tone}`;
+		},
+		completed: "completed",
+		current: "current",
+		upcoming: "upcoming",
+		toneInfo: "info",
+		toneSuccess: "success",
+		toneWarning: "warning",
+		toneDestructive: "error",
+	},
+	toast: {
+		dismiss: "Dismiss",
+		action: "Action",
+		announcement: (title, description) => `${title}. ${description}`,
+	},
+	tour: {
+		next: "Next",
+		back: "Back",
+		skip: "Skip",
+		finish: "Done",
+		progress: (current, total) => `${current} of ${total}`,
+		announcement: (current, total) => `Step ${current} of ${total}`,
+	},
+	tree: {
+		level: (level) => `Level ${level}`,
+		expand: "Expand",
+		collapse: "Collapse",
 	},
 };
 

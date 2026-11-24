@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import {
 	commitDraft,
 	DEFAULT_REJECT_MESSAGES,
@@ -410,5 +411,28 @@ describe("resolveSubmit", () => {
 	test("Return on an empty or whitespace field blurs it", () => {
 		expect(resolveSubmit("")).toBe("blur");
 		expect(resolveSubmit("   ")).toBe("blur");
+	});
+});
+
+describe("labels", () => {
+	const labels = {
+		...DELACOUR_DEFAULT_LABELS.tagInput,
+		added: (tags: readonly string[]) => `Plus ${tags.join(" + ")}`,
+		removed: (tag: string) => `Gone ${tag}`,
+		rejectMax: "Full",
+		tags: (count: number) => `${count} Tags`,
+	};
+
+	test("the announcements and the value read the labels they are handed", () => {
+		expect(resolveAddAnnouncement(["a", "b"], labels)).toBe("Plus a + b");
+		expect(resolveAddAnnouncement("a", labels)).toBe("Plus a");
+		expect(resolveRemoveAnnouncement("a", labels)).toBe("Gone a");
+		expect(resolveRejectAnnouncement("max", undefined, labels)).toBe("Full");
+		expect(resolveRejectAnnouncement("max", { max: "Mine" }, labels)).toBe("Mine");
+		expect(resolveTagsAccessibilityLabel(2, labels)).toBe("2 Tags");
+	});
+
+	test("a list of tags is one sentence", () => {
+		expect(resolveAddAnnouncement(["a", "b"])).toBe("Added a, b");
 	});
 });

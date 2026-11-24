@@ -382,3 +382,22 @@ describe("stepsVariants", () => {
 		expect(cls(stepsVariants().root({ className: "flex-col" }))).not.toMatch(/\bflex-row\b/);
 	});
 });
+
+describe("resolveStepAccessibilityValue labels", () => {
+	const labels = {
+		position: (step: number, count: number) => (count > 0 ? `Schritt ${step} von ${count}` : `Schritt ${step}`),
+		completed: "erledigt",
+		current: "aktuell",
+		upcoming: "folgt",
+		error: "hat einen Fehler",
+		loading: "lädt",
+		value: (parts: readonly string[]) => parts.join(" | "),
+	};
+
+	test("every part and the joiner come from the labels", () => {
+		expect(
+			resolveStepAccessibilityValue({ step: 1, count: 3, status: "current", isInvalid: true, isLoading: true, labels })
+		).toBe("Schritt 2 von 3 | aktuell | hat einen Fehler | lädt");
+		expect(resolveStepAccessibilityValue({ step: 0, count: 0, status: "upcoming", labels })).toBe("Schritt 1 | folgt");
+	});
+});

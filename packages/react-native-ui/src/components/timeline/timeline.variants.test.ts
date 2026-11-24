@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type TimelineLabels } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	isTimelineRailComplete,
@@ -259,6 +260,30 @@ describe("columns", () => {
 		const offsets = resolveTimelineColumnOffsets(widths);
 		expect(resolveTimelineItemLayout(widths, offsets, 2)).toEqual({ index: 2, length: 160, offset: 184 });
 		expect(resolveTimelineItemLayout(widths, offsets, 9)).toEqual({ index: 9, length: 0, offset: 344 });
+	});
+});
+
+describe("resolveTimelineAccessibilityValue with labels", () => {
+	const german: TimelineLabels = {
+		...DELACOUR_DEFAULT_LABELS.timeline,
+		completed: "erledigt",
+		toneDestructive: "Fehler",
+		itemValue: ({ position, count, status, tone }) =>
+			[count > 0 ? `Ereignis ${position} von ${count}` : `Ereignis ${position}`, status, ...(tone ? [tone] : [])].join(
+				"; "
+			),
+	};
+
+	test("the whole sentence, the status word and the tone word come from labels", () => {
+		expect(
+			resolveTimelineAccessibilityValue({ count: 4, status: "completed", step: 1, tone: "destructive" }, german)
+		).toBe("Ereignis 2 von 4; erledigt; Fehler");
+	});
+
+	test("the default tone passes no tone word and an uncounted root no total", () => {
+		expect(resolveTimelineAccessibilityValue({ count: 0, status: "current", step: 0, tone: "default" }, german)).toBe(
+			"Ereignis 1; current"
+		);
 	});
 });
 

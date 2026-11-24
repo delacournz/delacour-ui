@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { TimePickerLabels } from "../../lib/labels";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { HourCycle, TimeMinuteStep, TimeValue } from "./time-picker.time";
 import type { TimePickerLayout, TimePickerPresentation, TimePickerVisibleRows } from "./time-picker.variants";
@@ -43,6 +44,8 @@ export type TimePickerWheelProps = TimePickerWheelOptions & {
 	accessibilityHint?: string;
 	/** Ends each column's name with ", required". Needs `accessibilityLabel`. */
 	isRequired?: boolean;
+	/** The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `accessibilityLabel` still wins over the column names' lead. */
+	labels?: Partial<TimePickerLabels>;
 	className?: string;
 	testID?: string;
 };
@@ -87,6 +90,11 @@ export type TimePickerProps = TimePickerWheelOptions & {
 	className?: string;
 	/** Lands where `className` does: the trigger in a sheet, the wheel inline. */
 	testID?: string;
+	/**
+	 * The spoken and default strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `placeholder`, `title`, `doneLabel`, `clearLabel` and `accessibilityLabel` still win over it.
+	 */
+	labels?: Partial<TimePickerLabels>;
 	/** Omit for the default anatomy: a trigger with the value and a clock, and a sheet with the wheel. */
 	children?: ReactNode;
 };

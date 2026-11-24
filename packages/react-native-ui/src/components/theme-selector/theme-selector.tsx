@@ -1,4 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
+import { useLabels } from "../../hooks/use-labels";
+import type { ThemeSelectorLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import type { HapticFeedback } from "../pressable";
 import { ToggleButton } from "../toggle-button";
@@ -9,7 +11,6 @@ import {
 	resolveOptions,
 	resolveOptionTestID,
 	type ThemeMode,
-	type ThemeModeLabels,
 } from "./theme-selector.logic";
 import {
 	resolveGroupProps,
@@ -32,8 +33,11 @@ export type ThemeSelectorProps = {
 	applyTheme?: boolean;
 	/** The modes to offer, in order. Default `["system", "light", "dark"]`. */
 	modes?: readonly ThemeMode[];
-	/** Per-mode label overrides, for localisation. */
-	labels?: ThemeModeLabels;
+	/**
+	 * The mode captions and the group's name, laid over `DelacourProvider`'s `labels`, which sit
+	 * over English. `accessibilityLabel` and `Option`'s `label` still win; a blank caption is ignored.
+	 */
+	labels?: Partial<ThemeSelectorLabels>;
 	/** `segmented` joins the options into one run; `cards` stands them apart as tiles. Default `segmented`. */
 	variant?: ThemeSelectorVariant;
 	/** The button's label steps. Default `md`. */
@@ -56,7 +60,7 @@ function ThemeSelectorRoot({
 	onValueChange,
 	applyTheme = true,
 	modes,
-	labels,
+	labels: labelsProp,
 	variant = "segmented",
 	size = "md",
 	isDisabled,
@@ -66,6 +70,7 @@ function ThemeSelectorRoot({
 	testID,
 	children,
 }: ThemeSelectorProps): ReactElement {
+	const labels = useLabels("themeSelector", labelsProp);
 	const field = useFieldContext();
 	const live = useThemeSelection();
 	const applyMode = live.setMode;
@@ -115,7 +120,7 @@ function ThemeSelectorRoot({
 		<ThemeSelectorProvider value={context}>
 			<ToggleButton.Group
 				{...group}
-				accessibilityLabel={accessibilityLabel ?? field?.label ?? "Theme"}
+				accessibilityLabel={accessibilityLabel ?? field?.label ?? labels.group}
 				className={themeSelectorVariants({ size, variant }).root({ className })}
 				haptic={haptic}
 				isDisabled={resolvedIsDisabled}

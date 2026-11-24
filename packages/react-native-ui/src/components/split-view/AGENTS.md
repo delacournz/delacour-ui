@@ -154,6 +154,13 @@ over its table.
 - **Disabled**: the pan and tap are disabled, `accessibilityState.disabled`, no
   actions registered, the grip at half opacity.
 - Panes are layout and have no role. Reading order: top, drag row, bottom.
+- **The spoken strings are the `labels` prop, not literals**: `dragArea` (the row's name),
+  `position(current, count)` (its value text and the cycle announcement, one-based) and
+  `nextPosition` (the activate action), from `lib/labels` through `useLabels("splitView", labels)`.
+  Precedence is `DragArea`'s `accessibilityLabel`, then `labels`, then `DelacourProvider`'s
+  `labels`, then English. The root resolves them once and the part context carries them to
+  `DragArea`. `resolveSnapAccessibility` and `formatSnapPosition` take `labels` as a defaulted
+  trailing argument and stay pure. The activate action is memoised on `nextPosition`.
 
 ## Out of scope
 

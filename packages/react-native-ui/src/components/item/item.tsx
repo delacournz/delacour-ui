@@ -152,7 +152,9 @@ function wrapItemText(children: ReactNode, asChild: boolean | undefined): ReactN
  * mirror the control as a named `accessibilityActions` entry on the item, with
  * the drawn control hidden (`accessibilityElementsHidden` and
  * `importantForAccessibility="no-hide-descendants"`). The pressable keeps its
- * own activation action and hands every other action to `onAccessibilityAction`. `size` is set once here — the media, the title and the description
+ * own activation action and hands every other action to `onAccessibilityAction`.
+ *
+ * `size` is set once here — the media, the title and the description
  * read it from context.
  *
  * It drops straight into a `ListGroup` as a row: inside one it takes the

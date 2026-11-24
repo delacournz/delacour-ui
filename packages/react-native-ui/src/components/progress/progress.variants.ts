@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type ProgressLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { TextSize } from "../text/text.variants";
 
@@ -222,6 +223,9 @@ export type ProgressAccessibility = {
  * and "seventy-five percent" makes the listener do the division back.
  * `valueLabel` replaces both.
  *
+ * **The count's wording is `labels.valueOf`.** It is handed both numbers already formatted with the
+ * readout's `Intl.NumberFormat`, not raw, so a language that orders them differently only reorders.
+ *
  * **An indeterminate bar reports `busy` and no value at all.** A `now` of zero
  * would be read out as "zero percent", which is a lie about work that is under
  * way.
@@ -233,7 +237,12 @@ export function resolveProgressAccessibility({
 	formatOptions,
 	isIndeterminate,
 	valueLabel,
-}: ProgressFormatInput & { isIndeterminate: boolean; valueLabel?: string }): ProgressAccessibility {
+	labels = DELACOUR_DEFAULT_LABELS.progress,
+}: ProgressFormatInput & {
+	isIndeterminate: boolean;
+	valueLabel?: string;
+	labels?: ProgressLabels;
+}): ProgressAccessibility {
 	if (isIndeterminate) return { busy: true, value: undefined };
 
 	const ratio = progressRatio(value, minValue, maxValue);
@@ -249,7 +258,7 @@ export function resolveProgressAccessibility({
 				undefined,
 				isPercentFormat(formatOptions) ? { maximumFractionDigits: 2 } : formatOptions
 			);
-			text = `${format.format(now)} of ${format.format(maxValue)}`;
+			text = labels.valueOf(format.format(now), format.format(maxValue));
 		}
 	}
 

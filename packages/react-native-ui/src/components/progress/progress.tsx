@@ -1,6 +1,8 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
+import { useLabels } from "../../hooks/use-labels";
+import type { ProgressLabels } from "../../lib/labels";
 import { type ProgressContextValue, ProgressProvider } from "./progress.context";
 import type { ProgressRenderProps } from "./progress.types";
 import {
@@ -34,6 +36,11 @@ export type ProgressProps = Omit<ViewProps, "children"> & {
 	formatOptions?: Intl.NumberFormatOptions;
 	/** Replaces the formatted readout, on screen and to assistive technology. */
 	valueLabel?: string;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `valueLabel` still replaces the spoken value outright.
+	 */
+	labels?: Partial<ProgressLabels>;
 	/** What the filled part of the track means. */
 	color?: ProgressColor;
 	size?: ProgressSize;
@@ -48,6 +55,7 @@ function ProgressRoot({
 	isIndeterminate,
 	formatOptions,
 	valueLabel,
+	labels: labelsProp,
 	color,
 	size,
 	className,
@@ -55,6 +63,7 @@ function ProgressRoot({
 	...props
 }: ProgressProps): ReactElement {
 	const axes = resolveProgressAxes({ color, isIndeterminate, size });
+	const labels = useLabels("progress", labelsProp);
 	const trackSize = useSharedValue(0);
 
 	const ratio = progressRatio(value, minValue, maxValue);
@@ -72,9 +81,10 @@ function ProgressRoot({
 				maxValue,
 				minValue,
 				value,
+				labels,
 				valueLabel,
 			}),
-		[axes.isIndeterminate, formatOptions, maxValue, minValue, value, valueLabel]
+		[axes.isIndeterminate, formatOptions, labels, maxValue, minValue, value, valueLabel]
 	);
 
 	const renderProps = useMemo<ProgressRenderProps>(

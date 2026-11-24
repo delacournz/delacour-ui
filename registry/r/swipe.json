@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"cn",
 		"icon",
+		"interactive-child",
 		"pressable",
 		"text",
 		"tv"
@@ -99,6 +100,10 @@
 			"target": "swipe/swipe.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				},
 				{
 					"from": "../pressable/pressable",
 					"to": "@registry/ui/pressable/pressable"

@@ -9,6 +9,7 @@
 	],
 	"registryDependencies": [
 		"icon",
+		"interactive-child",
 		"list-group",
 		"pressable",
 		"separator",
@@ -125,6 +126,10 @@
 			"target": "item/item.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				},
 				{
 					"from": "../../lib/wrap-text-children",
 					"to": "@registry/lib/wrap-text-children"

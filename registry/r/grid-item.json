@@ -9,6 +9,7 @@
 	],
 	"registryDependencies": [
 		"icon",
+		"interactive-child",
 		"pressable",
 		"text",
 		"tv",
@@ -124,6 +125,10 @@
 			"target": "grid-item/grid-item.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				},
 				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"

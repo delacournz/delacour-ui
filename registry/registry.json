@@ -1941,6 +1941,7 @@
 			],
 			"registryDependencies": [
 				"icon",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv",
@@ -2170,6 +2171,7 @@
 			],
 			"registryDependencies": [
 				"icon",
+				"interactive-child",
 				"list-group",
 				"pressable",
 				"separator",
@@ -4764,6 +4766,7 @@
 				"cn",
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"tv"
 			],
@@ -5187,6 +5190,7 @@
 			"registryDependencies": [
 				"cn",
 				"icon",
+				"interactive-child",
 				"pressable",
 				"text",
 				"tv"
@@ -5811,6 +5815,7 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"interactive-child",
 				"pressable",
 				"surface",
 				"text",

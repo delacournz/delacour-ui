@@ -116,3 +116,8 @@ optional Cancel action and debounced change reporting, over `Input.Group`. Root 
   glyph is 16–20pt, so its `hitSlop` grows to the app's 44 up and down, where only the box's
   padding sits. Sideways it stops at the row gap beside it: slop past that would swallow taps meant
   to place the caret at the end of the text.
+- **The spoken strings are the `labels` prop, not literals.** `cancel`, `clear`, `placeholder`
+  and `removeToken(label)` resolve once at the root, `labels` prop over `DelacourProvider`'s
+  `labels` over English, and reach the parts through the context's `labels`. The existing
+  `cancelLabel`, `clearAccessibilityLabel` and `placeholder` props still win over their keys.
+  No resolver in `search-bar.variants.ts` speaks, so none takes labels.

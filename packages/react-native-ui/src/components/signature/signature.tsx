@@ -10,6 +10,8 @@ import {
 	useState,
 } from "react";
 import { AccessibilityInfo, PixelRatio, View, type ViewProps } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
+import type { SignatureLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import { type HapticFeedback, playHaptic } from "../pressable";
 import { type SignatureContextValue, SignatureProvider } from "./signature.context";
@@ -32,9 +34,8 @@ import {
 import type { SignatureHandle, SignatureStroke, SignatureValue } from "./signature.types";
 import {
 	resolveSignatureAxes,
-	SIGNATURE_PLACEHOLDER,
 	SIGNATURE_STROKE_TOKEN,
-	type SignatureAction,
+	type SignaturePadAction,
 	type SignatureSize,
 	type SignatureVariant,
 	signatureVariants,
@@ -45,10 +46,6 @@ import { SignaturePad } from "./signature-pad";
 import { SignatureRedo } from "./signature-redo";
 import { SignatureToolbar } from "./signature-toolbar";
 import { SignatureUndo } from "./signature-undo";
-
-/** What a screen reader hears when the first stroke lands, and when the pad is cleared. */
-const ANNOUNCE_CAPTURED = "Signature captured";
-const ANNOUNCE_CLEARED = "Signature cleared";
 
 export type SignatureProps = Omit<ViewProps, "children" | "style"> & {
 	/**
@@ -77,8 +74,14 @@ export type SignatureProps = Omit<ViewProps, "children" | "style"> & {
 	hasGuideline?: boolean;
 	/** A caption under the line — "Sign above the line". */
 	guidelineLabel?: string;
-	/** Shown while the pad is empty, gone at the first touch. Default "Sign here". */
+	/** Shown while the pad is empty, gone at the first touch. Default the `placeholder` label, "Sign here". */
 	placeholder?: string;
+	/**
+	 * The strings the signature speaks and shows — the pad's name and hints, the
+	 * toolbar's labels, the typed-name link and the announcements. Laid over
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<SignatureLabels>;
 	/** Blocks the gesture and the toolbar and fades the control. Inherited from an enclosing `Field`. */
 	isDisabled?: boolean;
 	/** Paints the pad's border destructive. Inherited from an enclosing `Field`. */
@@ -110,7 +113,8 @@ function SignatureRoot({
 	minDistance = SIGNATURE_MIN_DISTANCE,
 	hasGuideline = true,
 	guidelineLabel,
-	placeholder = SIGNATURE_PLACEHOLDER,
+	placeholder,
+	labels: labelsProp,
 	isDisabled,
 	isInvalid,
 	isReadOnly,
@@ -123,6 +127,7 @@ function SignatureRoot({
 	...props
 }: SignatureProps): ReactElement {
 	const field = useFieldContext();
+	const labels = useLabels("signature", labelsProp);
 	const axes = resolveSignatureAxes({ field, own: { isDisabled, isInvalid, isReadOnly, size, variant } });
 	const isInteractive = !axes.isDisabled && !axes.isReadOnly;
 
@@ -168,11 +173,11 @@ function SignatureRoot({
 			const previous = historyRef.current;
 			const next = apply({ type: "commit", stroke }, true);
 			if (next === previous) return;
-			if (isHistoryEmpty(previous)) AccessibilityInfo.announceForAccessibility(ANNOUNCE_CAPTURED);
+			if (isHistoryEmpty(previous)) AccessibilityInfo.announceForAccessibility(labels.captured);
 			const nextValue = historyToValue(next);
 			if (nextValue) onEnd?.(nextValue);
 		},
-		[apply, onEnd]
+		[apply, labels.captured, onEnd]
 	);
 
 	const beginStroke = useCallback(() => onBegin?.(), [onBegin]);
@@ -197,17 +202,18 @@ function SignatureRoot({
 		if (apply({ type: "clear" }, true) === previous) return;
 		setClearCount((count) => count + 1);
 		if (haptic !== false) playHaptic("selection");
-		AccessibilityInfo.announceForAccessibility(ANNOUNCE_CLEARED);
-	}, [apply, haptic]);
+		AccessibilityInfo.announceForAccessibility(labels.cleared);
+	}, [apply, haptic, labels.cleared]);
 
 	const runAction = useCallback(
-		(action: SignatureAction) => {
+		(action: SignaturePadAction) => {
 			if (!isInteractive) return;
 			if (action === "undo") undo();
 			else if (action === "redo") redo();
-			else clear();
+			else if (action === "clear") clear();
+			else onRequestAlternative?.();
 		},
-		[clear, isInteractive, redo, undo]
+		[clear, isInteractive, onRequestAlternative, redo, undo]
 	);
 
 	useImperativeHandle(
@@ -266,9 +272,10 @@ function SignatureRoot({
 			minDistance,
 			hasGuideline,
 			guidelineLabel,
-			placeholder,
+			placeholder: placeholder ?? labels.placeholder,
 			haptic,
 			clearCount,
+			labels,
 			onRequestAlternative,
 			commitStroke,
 			beginStroke,
@@ -290,6 +297,7 @@ function SignatureRoot({
 			hasGuideline,
 			history,
 			isInteractive,
+			labels,
 			minDistance,
 			onRequestAlternative,
 			placeholder,

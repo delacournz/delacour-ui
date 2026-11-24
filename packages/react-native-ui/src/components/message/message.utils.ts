@@ -327,3 +327,18 @@ export function extractMessageText(node: ReactNode): string {
 	if (isValidElement<{ children?: ReactNode }>(node)) return extractMessageText(node.props.children);
 	return "";
 }
+
+/**
+ * The props that hide a drawn control from assistive technology while the message
+ * is one merged element — its action is mirrored on the root as an
+ * `accessibilityActions` entry, so the drawn copy would be a duplicate or an
+ * unreachable stop. A compound message leaves it reachable.
+ */
+export function resolveMessageHiddenProps(isCompound: boolean): {
+	accessibilityElementsHidden: boolean;
+	importantForAccessibility: "auto" | "no-hide-descendants";
+} {
+	return isCompound
+		? { accessibilityElementsHidden: false, importantForAccessibility: "auto" }
+		: { accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants" };
+}

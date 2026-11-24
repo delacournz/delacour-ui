@@ -13,16 +13,26 @@ icon: Signature
 ## Usage
 
 ```tsx title="app/index.tsx"
+import { Input } from "@/components/ui/input";
 import { Signature, type SignatureValue } from "@/components/ui/signature";
 import { useState } from "react";
 import { View } from "react-native";
 
 export default function Example() {
   const [signature, setSignature] = useState<SignatureValue | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   return (
     <View className="flex-1 justify-center p-4">
-      <Signature guidelineLabel="Sign above the line" onValueChange={setSignature} />
+      {isTyping ? (
+        <Input autoComplete="name" placeholder="Type your full name" />
+      ) : (
+        <Signature
+          guidelineLabel="Sign above the line"
+          onRequestAlternative={() => setIsTyping(true)}
+          onValueChange={setSignature}
+        />
+      )}
     </View>
   );
 }

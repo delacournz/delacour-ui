@@ -22,8 +22,8 @@
 	--color-fd-secondary-foreground: oklch(0.269 0 0);
 	--color-fd-accent: oklch(0.955 0 0);
 	--color-fd-accent-foreground: oklch(0.269 0 0);
-	--color-fd-ring: oklch(0.708 0 0);
-	--color-fd-error: oklch(0.637 0.237 25.331);
+	--color-fd-ring: oklch(0.556 0 0);
+	--color-fd-error: oklch(0.577 0.245 27.325);
 
 	--color-capture: oklch(1 0 0);
 

@@ -235,7 +235,8 @@ describe("a shadcn v4 file, which names less than this package paints with", () 
 
 	test("fills in --destructive-foreground, which shadcn v4 dropped", () => {
 		expect(light["--destructive-foreground"]).toBe("oklch(0.985 0 0)");
-		expect(dark["--destructive-foreground"]).toBe("oklch(0.985 0 0)");
+		// Dark ink in dark: shadcn's dark red is light, and white on it is 2.8:1.
+		expect(dark["--destructive-foreground"]).toBe("oklch(0.205 0 0)");
 		expect(result.css).toContain("--color-destructive-foreground: var(--destructive-foreground);");
 		expect(result.derived).toContain("--destructive-foreground");
 	});

@@ -96,6 +96,11 @@ because the target is the content. Compound root plus `ContextMenu.Trigger`,
   Precedence is defaults <- `DelacourProvider` `labels` <- the root's prop. The resolved set
   rides the context-menu context to the trigger, and `resolveContextMenuActions` takes it as a
   trailing argument to stay pure. `Menu`'s own scrim string is Menu's, not this component's.
+- **The held content is one stop.** A `Pressable`, link or switch composed into the trigger is
+  swallowed: a screen reader reads it as part of the label and never focuses it. Put the press on
+  the trigger's `onPress`, not an inner pressable. In development the trigger warns once per
+  control (`warnInteractiveChildInAccessible`, `lib/interactive-child`) when it finds one; it reads
+  props, so a control a composite child renders internally is not seen.
 - Disabled: announced, and neither the gesture nor either action does anything.
 - The panel is Menu's: `menu` / `menuitem` roles, modal containment, the escape scrub, focus onto the first row on open and back to the trigger on close. The
   preview is hidden from the accessibility tree.

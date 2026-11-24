@@ -307,7 +307,7 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 
 	test("markdownEditor is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.markdownEditor;
-		const { applied, removed, write, preview, previewPane, empty, bulletItem, linkText, ...actions } = labels;
+		const { applied, removed, write, preview, previewPane, empty, bulletItem, openLink, linkText, ...actions } = labels;
 		expect(actions).toEqual({
 			bold: "Bold",
 			bulletList: "Bulleted list",
@@ -325,6 +325,7 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect([labels.write, labels.preview, labels.previewPane]).toEqual(["Write", "Preview", "Preview"]);
 		expect(labels.empty).toBe("Nothing to preview");
 		expect(labels.bulletItem("Milk")).toBe("bullet Milk");
+		expect(labels.openLink("docs")).toBe("Open link docs");
 		expect(labels.linkText).toBe("link");
 	});
 

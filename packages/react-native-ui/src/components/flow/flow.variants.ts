@@ -259,7 +259,9 @@ export function resolveGroupAccessibility({
 	labels?: FlowLabels;
 }): { isAccessible: boolean; label: string | undefined; actions: { name: string; label: string }[] } {
 	const canMove = isDraggable && !isLocked;
-	const actions = canMove ? FLOW_ACCESSIBILITY_MOVES.map((move) => ({ label: labels[move.name], name: move.name })) : [];
+	const actions = canMove
+		? FLOW_ACCESSIBILITY_MOVES.map((move) => ({ label: labels[move.name], name: move.name }))
+		: [];
 	return { actions, isAccessible: canMove || label !== undefined, label: label ?? (canMove ? id : undefined) };
 }
 

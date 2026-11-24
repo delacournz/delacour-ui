@@ -117,12 +117,12 @@
 			],
 			"registryDependencies": [
 				"badge",
-				"calm-motion",
 				"icon",
 				"icons",
+				"looping-motion",
 				"spinner",
 				"text",
-				"use-calm-motion"
+				"use-looping-motion"
 			],
 			"dependencies": [],
 			"expoDependencies": [
@@ -651,7 +651,8 @@
 				"tv",
 				"use-calm-motion",
 				"use-controllable-state",
-				"use-labels"
+				"use-labels",
+				"use-looping-motion"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -874,7 +875,7 @@
 			],
 			"registryDependencies": [
 				"text",
-				"use-calm-motion"
+				"use-looping-motion"
 			],
 			"dependencies": [],
 			"expoDependencies": [
@@ -897,6 +898,7 @@
 				"@types/bun"
 			],
 			"renderTestRegistryDependencies": [
+				"provider",
 				"test-kit"
 			],
 			"renderTestDependencies": [
@@ -937,6 +939,7 @@
 				"pressable",
 				"text",
 				"tv",
+				"use-calm-motion",
 				"use-controllable-state"
 			],
 			"dependencies": [
@@ -1204,7 +1207,8 @@
 			"registryDependencies": [
 				"menu",
 				"pressable",
-				"tv"
+				"tv",
+				"use-calm-motion"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1834,10 +1838,11 @@
 				"button",
 				"icon",
 				"icons",
+				"looping-motion",
 				"surface",
 				"text",
 				"tv",
-				"use-calm-motion",
+				"use-looping-motion",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -2615,7 +2620,8 @@
 			"registryDependencies": [
 				"cn",
 				"tv",
-				"use-calm-motion",
+				"use-controllable-state",
+				"use-looping-motion",
 				"use-theme-color"
 			],
 			"dependencies": [],
@@ -5594,7 +5600,8 @@
 				"cn",
 				"text",
 				"tv",
-				"use-calm-motion"
+				"use-calm-motion",
+				"use-looping-motion"
 			],
 			"dependencies": [],
 			"expoDependencies": [

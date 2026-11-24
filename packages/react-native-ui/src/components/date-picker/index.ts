@@ -1,3 +1,4 @@
+export type { DatePickerLabels } from "../../lib/labels";
 export { DatePicker } from "./date-picker";
 export {
 	type DatePickerContextValue,

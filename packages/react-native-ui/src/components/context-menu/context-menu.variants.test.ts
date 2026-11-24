@@ -9,6 +9,7 @@ import {
 	contextMenuVariants,
 	resolveContextAnchor,
 	resolveContextMenuAccessibility,
+	resolveContextMenuActions,
 	resolveHoldConfig,
 } from "./context-menu.variants";
 
@@ -128,6 +129,14 @@ describe("resolveContextMenuAccessibility", () => {
 			{ name: "activate" },
 			{ label: "Show menu", name: "longpress" },
 		]);
+	});
+
+	test("resolveContextMenuActions names the long-press from labels", () => {
+		expect(resolveContextMenuActions({ show: "Menü anzeigen" })).toEqual([
+			{ name: "activate" },
+			{ label: "Menü anzeigen", name: "longpress" },
+		]);
+		expect(resolveContextMenuActions()).toEqual(CONTEXT_MENU_ACCESSIBILITY_ACTIONS);
 	});
 
 	test("announces disabled and expanded", () => {

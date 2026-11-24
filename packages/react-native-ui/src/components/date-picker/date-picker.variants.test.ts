@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import type { DatePickerLabels } from "../../lib/labels";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import type { CalendarDate, CalendarSelectionState } from "../calendar/calendar.date";
 import { INPUT_SIZES, INPUT_VARIANTS, inputVariants } from "../input/input.variants";
@@ -156,7 +157,7 @@ describe("resolveDefaultPlaceholder", () => {
 		expect(resolveDefaultPlaceholder("single")).toBe("Select date");
 		expect(resolveDefaultPlaceholder("range")).toBe("Start – End");
 		expect(resolveDefaultPlaceholder("multiple")).toBe("Select dates");
-		expect(new Set(DATE_PICKER_MODES.map(resolveDefaultPlaceholder)).size).toBe(3);
+		expect(new Set(DATE_PICKER_MODES.map((mode) => resolveDefaultPlaceholder(mode))).size).toBe(3);
 	});
 });
 
@@ -322,5 +323,60 @@ describe("date picker colour tokens", () => {
 				expect(slots[slot]()).not.toMatch(/\btext-(?!input-)[a-z]/);
 			}
 		}
+	});
+});
+
+describe("date picker labels", () => {
+	const german: DatePickerLabels = {
+		title: "Datum wählen",
+		done: "Fertig",
+		clear: "Leeren",
+		trigger: "Datum",
+		triggerHint: "Öffnet den Kalender",
+		placeholder: "Datum wählen",
+		rangePlaceholder: "Beginn – Ende",
+		multiplePlaceholder: "Daten wählen",
+		rangeEnd: "Ende",
+		dateCount: (count) => `${count} Daten`,
+		dateList: (dates) => dates.join(" und "),
+		notSet: "nicht gesetzt",
+		rangeStarted: (start) => `Ab ${start}, ohne Ende`,
+		range: (start, end) => `${start} bis ${end}`,
+		selected: (value) => `Gewählt: ${value}`,
+	};
+	const many: CalendarSelectionState = { mode: "multiple", value: [d(2026, 10, 1), d(2026, 10, 2), d(2026, 10, 3)] };
+	const two: CalendarSelectionState = { mode: "multiple", value: [d(2026, 10, 1), d(2026, 10, 2)] };
+	const range: CalendarSelectionState = { mode: "range", value: { start: d(2026, 10, 1), end: d(2026, 10, 9) } };
+	const started: CalendarSelectionState = { mode: "range", value: { start: d(2026, 10, 1), end: null } };
+
+	test("resolveDefaultPlaceholder reads the labels", () => {
+		expect(resolveDefaultPlaceholder("single", german)).toBe("Datum wählen");
+		expect(resolveDefaultPlaceholder("range", german)).toBe("Beginn – Ende");
+		expect(resolveDefaultPlaceholder("multiple", german)).toBe("Daten wählen");
+	});
+
+	test("formatSelection counts and lists through the labels", () => {
+		expect(formatSelection(many, { labels: german, locale: "en-NZ" })).toBe("3 Daten");
+		expect(formatSelection(two, { labels: german, locale: "en-NZ" })).toContain(" und ");
+	});
+
+	test("formatSelection joins a half-picked range through the calendar labels", () => {
+		const text = formatSelection(started, {
+			calendarLabels: { openRange: (start) => `ab ${start}`, range: (a, b) => `${a} bis ${b}` },
+			locale: "en-NZ",
+		});
+		expect(text?.startsWith("ab ")).toBe(true);
+	});
+
+	test("resolveSelectionAccessibilityValue speaks through the labels", () => {
+		expect(resolveSelectionAccessibilityValue({ mode: "single", value: null }, "en-NZ", german)).toBe("nicht gesetzt");
+		expect(resolveSelectionAccessibilityValue(started, "en-NZ", german).startsWith("Ab ")).toBe(true);
+		expect(resolveSelectionAccessibilityValue(range, "en-NZ", german)).toContain(" bis ");
+		expect(resolveSelectionAccessibilityValue(many, "en-NZ", german)).toBe("3 Daten");
+		expect(resolveSelectionAccessibilityValue(two, "en-NZ", german)).toContain(" und ");
+	});
+
+	test("resolveAnnouncement wraps the spoken value in the labels", () => {
+		expect(resolveAnnouncement(range, "en-NZ", german).startsWith("Gewählt: ")).toBe(true);
 	});
 });

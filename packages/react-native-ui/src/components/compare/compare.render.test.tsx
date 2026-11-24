@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Field } from "../field";
 import { Compare } from "./compare";
@@ -82,6 +83,54 @@ describe("Compare", () => {
 		expect(screen.getByRole("adjustable")).toHaveAccessibilityValue({ text: "50 percent Original" });
 		expect(screen.queryByText("Original")).not.toBeOnTheScreen();
 		expect(screen.getByText("Original", { includeHiddenElements: true })).toBeOnTheScreen();
+	});
+
+	describe("labels", () => {
+		const german = {
+			before: "vorher",
+			after: "nachher",
+			showingOnly: (side: string) => `Nur ${side}`,
+			share: (percent: number, before: string) => `${percent} Prozent ${before}`,
+		};
+
+		test("the labels prop changes the value text", async () => {
+			await renderWithProviders(<Comparison labels={german} />);
+			expect(screen.getByRole("adjustable")).toHaveAccessibilityValue({ text: "50 Prozent vorher" });
+		});
+
+		test("a LabelsProvider changes it too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ compare: german }}>
+					<Comparison defaultPosition={0} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("adjustable")).toHaveAccessibilityValue({ text: "Nur nachher" });
+		});
+
+		test("the prop wins over the provider, key by key", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ compare: german }}>
+					<Comparison labels={{ before: "alt" }} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("adjustable")).toHaveAccessibilityValue({ text: "50 Prozent alt" });
+		});
+
+		test("a Compare.Label still wins over the labels' side names", async () => {
+			await renderWithProviders(
+				<Compare accessibilityLabel="Retouch" className="h-40" labels={german}>
+					<Compare.Before>
+						<Text>b</Text>
+					</Compare.Before>
+					<Compare.After>
+						<Text>a</Text>
+					</Compare.After>
+					<Compare.Label side="before">Original</Compare.Label>
+					<Compare.Handle />
+				</Compare>
+			);
+			expect(screen.getByRole("adjustable")).toHaveAccessibilityValue({ text: "50 Prozent Original" });
+		});
 	});
 
 	describe("assistive stepping", () => {

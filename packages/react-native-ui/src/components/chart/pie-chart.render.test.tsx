@@ -1,5 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { Platform } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { PieChart } from "./pie-chart";
 
@@ -115,5 +116,62 @@ describe("PieChart accessibility", () => {
 		);
 		await fireEvent(screen.getByTestId("pie"), "layout", FRAME);
 		for (const item of screen.getAllByRole("button")) expect(item.props.pointerEvents).toBe("none");
+	});
+});
+
+describe("PieChart labels", () => {
+	const german = {
+		pieSummary: (slices: readonly string[]) => `Kreisdiagramm. ${slices.join("; ")}.`,
+		pieSlice: (slice: string, value: string, percent: string) => `${slice}: ${value} (${percent})`,
+		piePercent: (percent: number) => `${percent} Prozent`,
+	};
+
+	test("the labels prop changes the summary and the slice names", async () => {
+		await renderWithProviders(
+			<PieChart data={DATA} labels={german} nameKey="plan" testID="pie" valueKey="seats">
+				<PieChart.Slice />
+				<PieChart.Tooltip formatValue={(value) => `${value} seats`} />
+			</PieChart>
+		);
+		await fireEvent(screen.getByTestId("pie"), "layout", FRAME);
+		expect(
+			screen.getByLabelText("Kreisdiagramm. Free 57 Prozent; Team 28 Prozent; Business 16 Prozent.")
+		).toBeOnTheScreen();
+		expect(screen.getByLabelText("Free: 640 seats (57 Prozent)")).toBeOnTheScreen();
+	});
+
+	test("a LabelsProvider changes them, the prop wins key by key, and formatPercent wins over both", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ chart: german }}>
+				<PieChart
+					data={DATA}
+					labels={{ piePercent: (percent) => `${percent} pct` }}
+					nameKey="plan"
+					testID="pie"
+					valueKey="seats"
+				>
+					<PieChart.Slice />
+				</PieChart>
+			</LabelsProvider>
+		);
+		expect(screen.getByTestId("pie").props.accessibilityLabel).toBe(
+			"Kreisdiagramm. Free 57 pct; Team 28 pct; Business 16 pct."
+		);
+	});
+
+	test("an accessibilityLabel still wins over the labels", async () => {
+		await renderWithProviders(
+			<PieChart
+				accessibilityLabel="Seats by plan"
+				data={DATA}
+				labels={german}
+				nameKey="plan"
+				testID="pie"
+				valueKey="seats"
+			>
+				<PieChart.Slice />
+			</PieChart>
+		);
+		expect(screen.getByTestId("pie").props.accessibilityLabel).toBe("Seats by plan");
 	});
 });

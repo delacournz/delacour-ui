@@ -1,3 +1,4 @@
+export type { ContextMenuLabels } from "../../lib/labels";
 export { ContextMenu, type ContextMenuProps } from "./context-menu";
 export {
 	CONTEXT_MENU_ANCHORS,

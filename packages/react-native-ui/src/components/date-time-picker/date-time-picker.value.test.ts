@@ -367,3 +367,10 @@ describe("resolveCalendarBounds", () => {
 		});
 	});
 });
+
+describe("formatDateTimeLong labels", () => {
+	test("joins the date and time through labels.dateTime", () => {
+		const labels = { dateTime: (date: string, time: string) => `${date} um ${time}` };
+		expect(formatDateTimeLong(dt(OCT_5, t(15, 30)), { locale: "en-GB", hourCycle: 24 }, labels)).toMatch(/ um 15:30$/);
+	});
+});

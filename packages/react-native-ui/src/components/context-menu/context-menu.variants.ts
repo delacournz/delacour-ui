@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type ContextMenuLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { MenuAlign, MenuAnchorRect, MenuPlacement } from "../menu/menu.variants";
 
@@ -39,12 +40,16 @@ export const CONTEXT_MENU_PREVIEW_SCALE = 1.03;
 export const CONTEXT_MENU_PREVIEW_MS = 160;
 
 /** The label a screen reader reads for the long-press action. */
-export const CONTEXT_MENU_SHOW_LABEL = "Show menu";
+export const CONTEXT_MENU_SHOW_LABEL = DELACOUR_DEFAULT_LABELS.contextMenu.show;
 
-export const CONTEXT_MENU_ACCESSIBILITY_ACTIONS: ReadonlyArray<{ name: string; label?: string }> = [
-	{ name: "activate" },
-	{ label: CONTEXT_MENU_SHOW_LABEL, name: "longpress" },
-];
+/** The trigger's screen-reader actions: `activate`, and `longpress` named by `labels.show`. */
+export function resolveContextMenuActions(
+	labels: ContextMenuLabels = DELACOUR_DEFAULT_LABELS.contextMenu
+): ReadonlyArray<{ name: string; label?: string }> {
+	return [{ name: "activate" }, { label: labels.show, name: "longpress" }];
+}
+
+export const CONTEXT_MENU_ACCESSIBILITY_ACTIONS = resolveContextMenuActions();
 
 export type ContextAnchorInput = {
 	mode: ContextMenuAnchor;

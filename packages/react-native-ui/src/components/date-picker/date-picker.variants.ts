@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { cn } from "../../lib/cn";
+import { type CalendarLabels, type DatePickerLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import {
 	type CalendarDate,
@@ -216,14 +217,20 @@ export function resolveIsClearable(mode: DatePickerMode, isClearable: boolean | 
 }
 
 /** The placeholder a mode shows when the caller names none. */
-export function resolveDefaultPlaceholder(mode: DatePickerMode): string {
+export function resolveDefaultPlaceholder(
+	mode: DatePickerMode,
+	labels: Pick<
+		DatePickerLabels,
+		"placeholder" | "rangePlaceholder" | "multiplePlaceholder"
+	> = DELACOUR_DEFAULT_LABELS.datePicker
+): string {
 	switch (mode) {
 		case "single":
-			return "Select date";
+			return labels.placeholder;
 		case "range":
-			return "Start – End";
+			return labels.rangePlaceholder;
 		case "multiple":
-			return "Select dates";
+			return labels.multiplePlaceholder;
 	}
 }
 
@@ -231,17 +238,21 @@ export type FormatSelectionOptions = {
 	locale?: string;
 	format?: DatePickerFormat;
 	formatRange?: DatePickerFormatRange;
+	/** The count and the list of a `multiple` selection. Omitted, English. */
+	labels?: Pick<DatePickerLabels, "dateCount" | "dateList">;
+	/** The join of the default range format. Omitted, English. */
+	calendarLabels?: Pick<CalendarLabels, "openRange" | "range">;
 };
 
 /** The range branch of {@link formatSelection}: a custom range format, then a day format, then `formatDateRange`. */
 function formatRangeSelection(
 	range: CalendarDateRange,
-	{ day, format, formatRange, locale }: FormatSelectionOptions & { day: (date: CalendarDate) => string }
+	{ day, format, formatRange, locale, calendarLabels }: FormatSelectionOptions & { day: (date: CalendarDate) => string }
 ): string | undefined {
 	if (!range.start) return undefined;
 	if (formatRange) return formatRange(range, { locale });
 	if (format) return range.end ? `${day(range.start)} – ${day(range.end)}` : `${day(range.start)} –`;
-	return formatDateRange(range, { locale, style: "medium" });
+	return formatDateRange(range, { locale, style: "medium" }, calendarLabels);
 }
 
 /**
@@ -254,7 +265,13 @@ function formatRangeSelection(
  */
 export function formatSelection(
 	selection: CalendarSelectionState,
-	{ locale, format, formatRange }: FormatSelectionOptions = {}
+	{
+		locale,
+		format,
+		formatRange,
+		labels = DELACOUR_DEFAULT_LABELS.datePicker,
+		calendarLabels,
+	}: FormatSelectionOptions = {}
 ): string | undefined {
 	const context: DatePickerFormatContext = { locale };
 	const day = (date: CalendarDate): string => format?.(date, context) ?? formatDate(date, { locale, style: "medium" });
@@ -263,12 +280,12 @@ export function formatSelection(
 		case "single":
 			return selection.value ? day(selection.value) : undefined;
 		case "range":
-			return formatRangeSelection(selection.value, { day, format, formatRange, locale });
+			return formatRangeSelection(selection.value, { calendarLabels, day, format, formatRange, locale });
 		case "multiple": {
 			const dates = selection.value;
 			if (dates.length === 0) return undefined;
-			if (dates.length > DATE_PICKER_LISTED_DATES) return `${dates.length} dates`;
-			return dates.map(day).join(", ");
+			if (dates.length > DATE_PICKER_LISTED_DATES) return labels.dateCount(dates.length);
+			return labels.dateList(dates.map(day));
 		}
 	}
 }
@@ -277,28 +294,42 @@ export function formatSelection(
  * What a screen reader hears as the trigger's value: full month names, "to" rather than a dash
  * (which VoiceOver reads as "minus" or skips), and "not set" rather than silence.
  */
-export function resolveSelectionAccessibilityValue(selection: CalendarSelectionState, locale?: string): string {
+export function resolveSelectionAccessibilityValue(
+	selection: CalendarSelectionState,
+	locale?: string,
+	labels: Pick<
+		DatePickerLabels,
+		"notSet" | "rangeStarted" | "range" | "dateCount" | "dateList"
+	> = DELACOUR_DEFAULT_LABELS.datePicker
+): string {
 	const long = (date: CalendarDate): string => formatDate(date, { locale, style: "long" });
 
 	switch (selection.mode) {
 		case "single":
-			return selection.value ? long(selection.value) : "not set";
+			return selection.value ? long(selection.value) : labels.notSet;
 		case "range": {
 			const { start, end } = selection.value;
-			if (!start) return "not set";
-			if (!end) return `From ${long(start)}, no end chosen`;
-			return `${long(start)} to ${long(end)}`;
+			if (!start) return labels.notSet;
+			if (!end) return labels.rangeStarted(long(start));
+			return labels.range(long(start), long(end));
 		}
 		case "multiple": {
 			const dates = selection.value;
-			if (dates.length === 0) return "not set";
-			if (dates.length > DATE_PICKER_LISTED_DATES) return `${dates.length} dates`;
-			return dates.map(long).join(", ");
+			if (dates.length === 0) return labels.notSet;
+			if (dates.length > DATE_PICKER_LISTED_DATES) return labels.dateCount(dates.length);
+			return labels.dateList(dates.map(long));
 		}
 	}
 }
 
 /** What is announced when the sheet closes on a finished pick. */
-export function resolveAnnouncement(selection: CalendarSelectionState, locale?: string): string {
-	return `Selected ${resolveSelectionAccessibilityValue(selection, locale)}`;
+export function resolveAnnouncement(
+	selection: CalendarSelectionState,
+	locale?: string,
+	labels: Pick<
+		DatePickerLabels,
+		"selected" | "notSet" | "rangeStarted" | "range" | "dateCount" | "dateList"
+	> = DELACOUR_DEFAULT_LABELS.datePicker
+): string {
+	return labels.selected(resolveSelectionAccessibilityValue(selection, locale, labels));
 }

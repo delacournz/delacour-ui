@@ -340,6 +340,19 @@ describe("resolveCompareValueText", () => {
 		expect(resolveCompareValueText(0.5, { before: "Original" })).toBe("50 percent Original");
 		expect(resolveCompareValueText(0, { before: "Original", after: "Edited" })).toBe("Showing only Edited");
 	});
+
+	test("speaks through custom labels", () => {
+		const german = {
+			before: "vorher",
+			after: "nachher",
+			showingOnly: (side: string) => `Nur ${side}`,
+			share: (percent: number, before: string) => `${percent} Prozent ${before}`,
+		};
+		expect(resolveCompareValueText(0.5, undefined, german)).toBe("50 Prozent vorher");
+		expect(resolveCompareValueText(0, undefined, german)).toBe("Nur nachher");
+		expect(resolveCompareValueText(1, undefined, german)).toBe("Nur vorher");
+		expect(resolveCompareValueText(0.5, { before: "Original" }, german)).toBe("50 Prozent Original");
+	});
 });
 
 describe("resolveCoveredLayer", () => {

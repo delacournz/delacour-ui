@@ -66,6 +66,12 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   unmerged plain badge's ✕ stays its own labelled button. `resolveBadgeCloseExposure` is that
   decision. In development an `accessible` badge that wraps its own pressable child warns,
   because that control is unreachable by a screen reader.
+- **The spoken strings are the `labels` prop, not literals**: the one key, `remove`
+  (the ✕'s name and the `remove` action's label), comes from `lib/labels` through
+  `useLabels("badge", labels)`. Precedence is `closeAccessibilityLabel` (or a part's
+  own `accessibilityLabel`) ← the root's `labels` ← `DelacourProvider` `labels` ←
+  English. The resolved set rides the badge context, so a hand-placed
+  `Badge.CloseButton` reads it too. No resolver takes labels.
 - **A size is padding, never a height.** `Text` respects OS font scaling, so a
   fixed height clips the label at a large accessibility step instead of growing
   with it — and unlike `h-button-*` or `h-navbar-row`, a badge lines up against

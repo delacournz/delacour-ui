@@ -1,3 +1,5 @@
+import { type CalendarLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
+
 /**
  * Calendar dates without time zones, and everything a month grid needs to do with them.
  *
@@ -544,10 +546,14 @@ type RangeFormatter = Intl.DateTimeFormat & { formatRange?: (start: Date, end: D
  * `formatRange` collapses the parts two ends share ("5–9 Oct 2026") where the engine has it; an
  * en dash between two full dates stands in where it does not.
  */
-export function formatDateRange(range: CalendarDateRange, options: CalendarDateFormatOptions): string {
+export function formatDateRange(
+	range: CalendarDateRange,
+	options: CalendarDateFormatOptions,
+	labels: Pick<CalendarLabels, "openRange" | "range"> = DELACOUR_DEFAULT_LABELS.calendar
+): string {
 	if (!range.start) return "";
 	const start = formatDate(range.start, options);
-	if (!range.end) return `${start} –`;
+	if (!range.end) return labels.openRange(start);
 	if (isSameDay(range.start, range.end)) return start;
 
 	const built = formatter(options.locale, FORMAT_OPTIONS[options.style]) as RangeFormatter;
@@ -558,7 +564,7 @@ export function formatDateRange(range: CalendarDateRange, options: CalendarDateF
 			// Fall through to the plain form below.
 		}
 	}
-	return `${start} – ${formatDate(range.end, options)}`;
+	return labels.range(start, formatDate(range.end, options));
 }
 
 /** A known Sunday — 1 January 2023 — that the weekday labels are counted from. */

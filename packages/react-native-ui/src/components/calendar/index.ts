@@ -1,3 +1,4 @@
+export type { CalendarLabels } from "../../lib/labels";
 export { Calendar } from "./calendar";
 export {
 	type CalendarContextValue,

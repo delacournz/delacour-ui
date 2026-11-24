@@ -11,9 +11,11 @@
 		"icon",
 		"icons",
 		"interactive-child",
+		"labels",
 		"pressable",
 		"text",
 		"tv",
+		"use-labels",
 		"use-minimum-hit-target"
 	],
 	"dependencies": [
@@ -80,7 +82,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/badge/badge.context.tsx",
 			"target": "badge/badge.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/badge/badge.tsx",
@@ -88,8 +96,16 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../lib/interactive-child",
 					"to": "@registry/lib/interactive-child"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../icon",
@@ -128,7 +144,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/badge/index.ts",
 			"target": "badge/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -164,6 +186,10 @@
 			"target": "badge/badge.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

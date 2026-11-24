@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { AttachmentLabels } from "../../lib/labels";
 import type { AttachmentMediaFields } from "./attachment.types";
 import type { AttachmentLayout, AttachmentSize, AttachmentStatus } from "./attachment.variants";
 
@@ -12,6 +13,8 @@ export type AttachmentContextValue = AttachmentMediaFields & {
 	/** Whether the attachment responds to a press right now — a handler, and not disabled. */
 	isInteractive: boolean;
 	isDisabled: boolean;
+	/** The attachment's resolved spoken strings: the `labels` prop over `DelacourProvider`'s, over English. */
+	labels: AttachmentLabels;
 	/** What the remove control is called — `Remove report.pdf`, or `Cancel upload`. */
 	removeLabel: string;
 	onRemove?: () => void;
@@ -73,6 +76,8 @@ export type AttachmentGroupContextValue = {
 	layout?: AttachmentLayout;
 	/** Size for every attachment in the group. A child's own `size` still wins. */
 	size?: AttachmentSize;
+	/** The group's `labels` prop, for an attachment that has none of its own. */
+	labels?: Partial<AttachmentLabels>;
 };
 
 const AttachmentGroupContext = createContext<AttachmentGroupContextValue | null>(null);

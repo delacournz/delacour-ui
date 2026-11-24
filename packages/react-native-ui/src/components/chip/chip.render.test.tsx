@@ -1,4 +1,5 @@
 import { describe, expect, jest, test } from "@jest/globals";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { DirectionProvider, directionContextValue } from "../direction/direction.context";
 import { Chip } from "./chip";
@@ -291,6 +292,59 @@ describe("Chip", () => {
 			} finally {
 				console.error = original;
 			}
+		});
+	});
+
+	describe("labels", () => {
+		test("the labels prop names the remove control", async () => {
+			await renderWithProviders(
+				<Chip labels={{ remove: "Entfernen" }} onClose={() => {}}>
+					Design
+				</Chip>
+			);
+			expect(screen.getByRole("button", { name: "Entfernen" })).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider names it too, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ chip: { remove: "Entfernen" } }}>
+					<Chip onClose={() => {}}>Design</Chip>
+					<Chip labels={{ remove: "Weg" }} onClose={() => {}}>
+						Code
+					</Chip>
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("button", { name: "Entfernen" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Weg" })).toBeOnTheScreen();
+		});
+
+		test("closeAccessibilityLabel still wins over labels", async () => {
+			await renderWithProviders(
+				<Chip closeAccessibilityLabel="Tag entfernen" labels={{ remove: "Entfernen" }} onClose={() => {}}>
+					Design
+				</Chip>
+			);
+			expect(screen.getByRole("button", { name: "Tag entfernen" })).toBeOnTheScreen();
+		});
+
+		test("the folded remove action uses the labels", async () => {
+			await renderWithProviders(
+				<Chip labels={{ remove: "Entfernen" }} onClose={() => {}} onPress={() => {}}>
+					Design
+				</Chip>
+			);
+			const actions = screen.getByRole("button", { name: /^Design/ }).props.accessibilityActions;
+			expect(actions).toContainEqual({ label: "Entfernen", name: "remove" });
+		});
+
+		test("a hand-placed CloseButton reads the chip's labels", async () => {
+			await renderWithProviders(
+				<Chip labels={{ remove: "Entfernen" }}>
+					<Chip.Label>Design</Chip.Label>
+					<Chip.CloseButton onPress={() => {}} />
+				</Chip>
+			);
+			expect(screen.getByRole("button", { name: "Entfernen" })).toBeOnTheScreen();
 		});
 	});
 });

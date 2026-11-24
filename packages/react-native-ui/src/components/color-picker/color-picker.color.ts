@@ -1,3 +1,4 @@
+import type { ColorPickerHueName } from "../../lib/labels";
 import type { ColorFormat, Hsla, Hsva, HsvaChannel, Rgba } from "./color-picker.types";
 
 /**
@@ -368,7 +369,7 @@ export function contrastForeground(rgba: Rgba): "black" | "white" {
 	return relativeLuminance(rgba) > 0.179 ? "black" : "white";
 }
 
-const HUE_NAMES: readonly { below: number; name: string }[] = [
+const HUE_NAMES: readonly { below: number; name: ColorPickerHueName }[] = [
 	{ below: 15, name: "red" },
 	{ below: 45, name: "orange" },
 	{ below: 75, name: "yellow" },
@@ -381,8 +382,8 @@ const HUE_NAMES: readonly { below: number; name: string }[] = [
 	{ below: 361, name: "red" },
 ];
 
-/** A plain name for a hue, for a screen reader — "Hue 210 degrees, blue". */
-export function describeHue(hue: number): string {
+/** The key of the range a hue falls in. A screen reader's word for it is `labels.hueName(key)`. */
+export function describeHue(hue: number): ColorPickerHueName {
 	const wrapped = wrapHue(hue);
 	return HUE_NAMES.find((entry) => wrapped < entry.below)?.name ?? "red";
 }

@@ -106,6 +106,15 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
 - **The overflow tile draws at most `99+` and reads the real number.** Three
   digits do not fit a small circle; a screen reader has room for `1234 more`.
   `onOverflowPress` turns the tile into a button — to open the full list.
+- **The spoken strings are the `labels` prop, not literals**: `button` (a pressable
+  avatar's name with no label, name or fallback), `overflow(count)` (the tile's
+  spoken name) and `overflowText(count, max)` (its drawn `+37` / `99+`) come from
+  `lib/labels` through `useLabels("avatar", labels)`. `Avatar` and `Avatar.Group`
+  each take `labels`; an `Avatar` in a group lays its own over the group's, key by key.
+  Precedence: `accessibilityLabel` / `name` / `fallback` ← `labels` prop ←
+  `DelacourProvider` `labels` ← English. `resolveAvatarAccessibilityLabel` and
+  `resolveAvatarOverflowLabel` take the labels as a trailing argument;
+  `AVATAR_BUTTON_FALLBACK_LABEL` is an alias of the English default.
 - **The overlap defaults to a third of the edge and is clamped.**
   `resolveAvatarOverlap` never slides a face further than a whole face nor
   backwards, and `overlap={0}` closes the stack into a plain row. A child's own

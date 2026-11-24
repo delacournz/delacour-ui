@@ -1,3 +1,4 @@
+export type { AvatarLabels } from "../../lib/labels";
 export { Avatar, type AvatarProps } from "./avatar";
 export {
 	type AvatarContextValue,

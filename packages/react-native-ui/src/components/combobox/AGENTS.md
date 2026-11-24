@@ -146,6 +146,19 @@ typed text can become a value.
 - **The chevron carries `${testID}-chevron`.** A tap on the trigger's centre
   can land in a chip's remove hit slop; tests and capture flows open a
   multiple-mode trigger from the chevron instead.
+- **The spoken strings are the `labels` prop, not literals**: `create`,
+  `createAccessibility`, `empty`, `search`, `searchInField`, `clearSearch`, `clear`,
+  `triggerHint`, `results`, `selected`, `limitReached`, `done`, `removeChip`,
+  `moreChips` and `moreChipsShort` come from `lib/labels` through
+  `useLabels("combobox", labels)`. Precedence is the per-string prop (`createLabel`,
+  `emptyText`, `searchPlaceholder`, `formatResultsCount`, `limitReachedText`,
+  `doneText`) ← the root's `labels` ← `DelacourProvider` `labels` ← English. The
+  resolved set rides the combobox context; the chip row and create row take it as a
+  prop. `formatResultsCount` stays exported and returns the English default;
+  `resolveResultsAnnouncement` is unchanged (the root passes `format` and
+  `emptyText` from the resolved set), and `resolveComboboxTriggerText` gets
+  `formatSelectedCount: labels.selected`. The sheet's close button, the option rows
+  and the multiple-mode count inside them are Select's and BottomSheet's strings.
 - **Chips enter, leave and close gaps in 150ms; calm motion drops it all.**
 - **The result count is announced, not just shown.** Android reads the
   `accessibilityLiveRegion="polite"` line under the field; iOS has no live

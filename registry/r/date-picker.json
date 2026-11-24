@@ -16,11 +16,13 @@
 		"icon",
 		"icons",
 		"input",
+		"labels",
 		"pressable",
 		"text",
 		"tv",
 		"use-calm-motion",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-labels"
 	],
 	"dependencies": [
 		"@delacour/react-native-bottom-sheet",
@@ -155,6 +157,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../calendar/calendar.date",
 					"to": "@registry/ui/calendar/calendar.date"
 				},
@@ -186,6 +192,10 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../bottom-sheet",
 					"to": "@registry/ui/bottom-sheet"
 				},
@@ -208,6 +218,10 @@
 			"target": "date-picker/date-picker.types.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../calendar/calendar.date",
 					"to": "@registry/ui/calendar/calendar.date"
@@ -236,6 +250,10 @@
 					"to": "@registry/lib/cn"
 				},
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
 				},
@@ -252,7 +270,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/date-picker/index.ts",
 			"target": "date-picker/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -261,6 +285,10 @@
 			"target": "date-picker/date-picker.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -288,6 +316,14 @@
 			"target": "date-picker/date-picker.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

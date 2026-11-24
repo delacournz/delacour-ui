@@ -94,9 +94,19 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   so a screen reader does not read a read-only value as dimmed. A trigger that cannot open drops the
   "Opens calendar" hint, its press handler and its press feedback. Read-only also drops the button
   role and reads as text, so VoiceOver does not offer a double-tap that does nothing.
+- **The spoken and visible strings are the `labels` prop, not literals**: `title`, `done`,
+  `clear`, `trigger`, `triggerHint`, the three placeholders, `rangeEnd`, `dateCount`, `dateList`,
+  `notSet`, `rangeStarted`, `range` and `selected` come from `lib/labels` through
+  `useLabels("datePicker", labels)`. Precedence is defaults <- `DelacourProvider` `labels` <- the
+  root's prop, and an explicit `title`, `doneLabel`, `clearLabel`, `placeholder`, `accessibilityLabel`
+  or `accessibilityHint` still wins for its string. The resolved set rides the context
+  (`picker.labels`). `resolveDefaultPlaceholder`, `formatSelection` (options `labels` and
+  `calendarLabels`), `resolveSelectionAccessibilityValue` and `resolveAnnouncement` take them as a
+  trailing, English-defaulted argument. The default range text reads `useLabels("calendar")` so a
+  translated calendar range join reaches the trigger; there is no calendar labels prop here.
 - **`Field` cascade, nearest wins.** `isInvalid ?? field.isInvalid`, `isDisabled ??
   field.isDisabled` — `??`, so `isInvalid={false}` opts out. The accessible name is
-  `accessibilityLabel ?? field.label ?? "Date"`, and the root registers `open` with the field's
+  `accessibilityLabel ?? field.label ?? labels.trigger` ("Date"), and the root registers `open` with the field's
   `registerPress`, so tapping the label opens the sheet. Inline registers nothing.
 - **The value a screen reader hears is not the text on screen.** `accessibilityValue` is the long
   form with "to" between range ends — VoiceOver reads an en dash as nothing or as "minus" — and

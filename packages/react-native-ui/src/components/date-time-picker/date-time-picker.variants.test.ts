@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import { TIME_PICKER_DEFAULT_VISIBLE_ROWS, TIME_PICKER_ROW_HEIGHTS } from "../time-picker/time-picker.variants";
 import type { DateTimeValue } from "./date-time-picker.value";
@@ -16,6 +17,7 @@ import {
 	resolveExpandDuration,
 	resolveShouldAutoAdvance,
 	resolveTimeReadout,
+	resolveTimeRowLabel,
 } from "./date-time-picker.variants";
 
 const VALUE: DateTimeValue = { date: { year: 2026, month: 10, day: 5 }, time: { hour: 15, minute: 30 } };
@@ -183,5 +185,39 @@ describe("date-time picker colour tokens", () => {
 	test("disabled fades the whole content", () => {
 		expect(dateTimePickerVariants({ isDisabled: true }).content()).toContain("opacity-50");
 		expect(dateTimePickerVariants({ isDisabled: false }).content()).not.toContain("opacity-50");
+	});
+});
+
+describe("labels", () => {
+	const german = {
+		...DELACOUR_DEFAULT_LABELS.dateTimePicker,
+		emptyTime: "?",
+		notSet: "nicht gesetzt",
+		dateTime: (date: string, time: string) => `${date} um ${time}`,
+		selected: (value: string) => `Gewählt: ${value}`,
+		noneSelected: "Nichts gewählt",
+		timeRow: (label: string, value: string) => `${label}: ${value}`,
+	};
+	const ctx = { locale: "en-GB", hourCycle: 24 } as const;
+
+	test("the time readout's empty mark", () => {
+		expect(resolveTimeReadout(null, ctx, german)).toBe("?");
+		expect(resolveTimeReadout(VALUE, ctx, german)).toBe("15:30");
+	});
+
+	test("the accessibility value", () => {
+		expect(resolveDateTimeAccessibilityValue(null, ctx, german)).toBe("nicht gesetzt");
+		expect(resolveDateTimeAccessibilityValue(VALUE, ctx, german)).toMatch(/ um 15:30$/);
+	});
+
+	test("the announcement", () => {
+		expect(resolveDateTimeAnnouncement(null, ctx, german)).toBe("Nichts gewählt");
+		expect(resolveDateTimeAnnouncement(VALUE, ctx, german)).toMatch(/^Gewählt: .* um 15:30$/);
+	});
+
+	test("the time row's name", () => {
+		expect(resolveTimeRowLabel("Time", VALUE, "15:30")).toBe("Time, 15:30");
+		expect(resolveTimeRowLabel("Time", null, "–")).toBe("Time, not set");
+		expect(resolveTimeRowLabel("Zeit", null, "?", german)).toBe("Zeit: nicht gesetzt");
 	});
 });

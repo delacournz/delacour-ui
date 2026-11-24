@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { IconCrossSmall } from "../../icons/central";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
+import { useBottomSheetLabels } from "./bottom-sheet.context";
 import { BOTTOM_SHEET_CLOSE_HIT_SLOP, bottomSheetVariants } from "./bottom-sheet.variants";
 
 export type BottomSheetCloseProps = Omit<PressableProps, "asChild" | "busy" | "children" | "disabled">;
@@ -29,15 +30,16 @@ export type BottomSheetCloseProps = Omit<PressableProps, "asChild" | "busy" | "c
  * </BottomSheet.Content>
  */
 export function BottomSheetClose({
-	accessibilityLabel = "Close",
+	accessibilityLabel,
 	className,
 	feedback = "fade",
 	hitSlop = BOTTOM_SHEET_CLOSE_HIT_SLOP,
 	onPress,
 	...props
 }: BottomSheetCloseProps): ReactElement {
+	const labels = useBottomSheetLabels();
 	return (
-		<Headless.Close accessibilityLabel={accessibilityLabel} asChild onPress={onPress}>
+		<Headless.Close accessibilityLabel={accessibilityLabel ?? labels.close} asChild onPress={onPress}>
 			<Pressable
 				accessibilityRole="button"
 				className={bottomSheetVariants().close({ className })}

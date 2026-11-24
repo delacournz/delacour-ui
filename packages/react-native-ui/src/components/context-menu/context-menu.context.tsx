@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use, useCallback, useMemo, useState } from "react";
+import type { ContextMenuLabels } from "../../lib/labels";
 import { useMenuPart } from "../menu/menu.context";
 import type { MenuAnchorRect } from "../menu/menu.variants";
 import {
@@ -28,6 +29,8 @@ export type ContextMenuContextValue = {
 	/** The trigger's children, which a bare `ContextMenu.Preview` lifts. */
 	content: ReactNode;
 	registerContent: (content: ReactNode) => void;
+	/** The resolved spoken strings, for the trigger. */
+	labels: ContextMenuLabels;
 };
 
 const ContextMenuContext = createContext<ContextMenuContextValue | null>(null);
@@ -51,14 +54,14 @@ export function useContextMenuPart(part: string): ContextMenuContextValue {
 }
 
 /** The root's state: the last invocation and the trigger's registered children. */
-export function useContextMenuRootValue(): ContextMenuContextValue {
+export function useContextMenuRootValue(labels: ContextMenuLabels): ContextMenuContextValue {
 	const [invocation, setInvocation] = useState<ContextMenuInvocation | null>(null);
 	const [content, setContent] = useState<ReactNode>(null);
 	const invoke = useCallback((next: ContextMenuInvocation) => setInvocation(next), []);
 	const registerContent = useCallback((next: ReactNode) => setContent(next), []);
 	return useMemo(
-		() => ({ content, invocation, invoke, registerContent }),
-		[content, invocation, invoke, registerContent]
+		() => ({ content, invocation, invoke, labels, registerContent }),
+		[content, invocation, invoke, labels, registerContent]
 	);
 }
 

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { Text } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
 import { getByGestureTestId } from "react-native-gesture-handler/jest-utils";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Calendar } from "./calendar";
@@ -475,5 +476,60 @@ describe("resolveYearListGesture", () => {
 		expect(native?.config.blocksHandlers).toBeUndefined();
 		expect(blocker?.handlerName).toBe("PanGestureHandler");
 		expect(blocker?.config.blocksHandlers).toEqual([external]);
+	});
+	describe("labels", () => {
+		const german = {
+			previousMonth: "Voriger Monat",
+			nextMonth: "Nächster Monat",
+			openMonths: "Öffnet die Monatsauswahl",
+			today: "Heute",
+		};
+
+		test("the labels prop changes the arrows, the hint and a day's state word", async () => {
+			await renderWithProviders(
+				<Calendar defaultMonth={OCT} labels={german} locale="en" testID="cal" today={day(2026, 10, 14)} />
+			);
+			expect(screen.getByRole("button", { name: "Voriger Monat" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Nächster Monat" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "October 2026" }).props.accessibilityHint).toBe(
+				"Öffnet die Monatsauswahl"
+			);
+			expect(screen.getByTestId("cal-day-2026-10-14").props.accessibilityLabel).toContain("Heute");
+		});
+
+		test("a LabelsProvider changes them too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ calendar: german }}>
+					<Calendar defaultMonth={OCT} locale="en" />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("button", { name: "Voriger Monat" })).toBeOnTheScreen();
+		});
+
+		test("the prop wins over the provider, key by key", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ calendar: german }}>
+					<Calendar defaultMonth={OCT} labels={{ nextMonth: "Weiter" }} locale="en" />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("button", { name: "Weiter" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Voriger Monat" })).toBeOnTheScreen();
+		});
+
+		test("a Nav label still wins over the labels", async () => {
+			await renderWithProviders(
+				<Calendar defaultMonth={OCT} labels={german} locale="en">
+					<Calendar.Nav direction="prev" label="Zurück" />
+				</Calendar>
+			);
+			expect(screen.getByRole("button", { name: "Zurück" })).toBeOnTheScreen();
+		});
+
+		test("the months view names its arrows by year", async () => {
+			await renderWithProviders(
+				<Calendar defaultMonth={OCT} initialView="months" labels={{ nextYear: "Nächstes Jahr" }} locale="en" />
+			);
+			expect(screen.getByRole("button", { name: "Nächstes Jahr" })).toBeOnTheScreen();
+		});
 	});
 });

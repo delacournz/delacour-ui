@@ -26,14 +26,14 @@ export type ColorPickerTriggerProps = Omit<PressableProps, "onPress" | "children
  * fading both would leave the swatch at a quarter.
  */
 export function ColorPickerTrigger({ className, accessibilityLabel, ...props }: ColorPickerTriggerProps): ReactElement {
-	const { hex, size, variant, isDisabled, isInvalid, isReadOnly, isOpen, setOpen } =
+	const { hex, size, variant, isDisabled, isInvalid, isReadOnly, isOpen, setOpen, labels } =
 		useColorPickerPart("ColorPicker.Trigger");
 	const field = useFieldContext();
 	const slots = colorPickerVariants({ size });
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel ?? resolveTriggerAccessibilityLabel({ hex, label: field?.label })}
+			accessibilityLabel={accessibilityLabel ?? resolveTriggerAccessibilityLabel({ hex, label: field?.label }, labels)}
 			accessibilityRole="button"
 			accessibilityState={{ disabled: isDisabled, expanded: isOpen }}
 			className={resolveInputGroupClass({ className, isDisabled, isInvalid, size, variant })}

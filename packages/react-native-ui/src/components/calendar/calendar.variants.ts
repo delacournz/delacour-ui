@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type CalendarLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import {
 	type CalendarCell,
@@ -331,8 +332,12 @@ export function resolveDayState({
  * calendar's one accessible heading: the grid view is not `accessible`, and `role="grid"` maps to
  * no iOS trait, so a label on the grid is never read.
  */
-export function resolveCaptionLabel(fieldLabel: string | null, text: string): string {
-	return fieldLabel ? `${fieldLabel}, ${text}` : text;
+export function resolveCaptionLabel(
+	fieldLabel: string | null,
+	text: string,
+	labels: Pick<CalendarLabels, "caption"> = DELACOUR_DEFAULT_LABELS.calendar
+): string {
+	return fieldLabel ? labels.caption(fieldLabel, text) : text;
 }
 
 /**
@@ -342,13 +347,14 @@ export function resolveCaptionLabel(fieldLabel: string | null, text: string): st
  */
 export function resolveDayAccessibilityLabel(
 	dateLabel: string,
-	{ isToday, rangeRole }: Pick<CalendarDayState, "isToday" | "rangeRole">
+	{ isToday, rangeRole }: Pick<CalendarDayState, "isToday" | "rangeRole">,
+	labels: Pick<CalendarLabels, "day" | "today" | "rangeStart" | "rangeEnd"> = DELACOUR_DEFAULT_LABELS.calendar
 ): string {
-	const parts = [dateLabel];
-	if (isToday) parts.push("Today");
-	if (rangeRole === "start") parts.push("Range start");
-	if (rangeRole === "end") parts.push("Range end");
-	return parts.join(", ");
+	const states: string[] = [];
+	if (isToday) states.push(labels.today);
+	if (rangeRole === "start") states.push(labels.rangeStart);
+	if (rangeRole === "end") states.push(labels.rangeEnd);
+	return labels.day(dateLabel, states);
 }
 
 /**

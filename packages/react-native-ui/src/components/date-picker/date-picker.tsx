@@ -2,6 +2,7 @@ import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } 
 import { AccessibilityInfo, View } from "react-native";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { BottomSheet } from "../bottom-sheet";
 import type { CalendarDateRange, CalendarSelectionState } from "../calendar/calendar.date";
 import { useFieldContext } from "../field/field.context";
@@ -103,10 +104,11 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		variant,
 		size,
 		calendarSize = "md",
-		title = "Select date",
+		title,
 		description,
-		doneLabel = "Done",
-		clearLabel = "Clear",
+		doneLabel,
+		clearLabel,
+		labels: labelsProp,
 		isClearable,
 		accessibilityLabel,
 		className,
@@ -124,6 +126,8 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	const field = useFieldContext();
 	const axes = resolveDatePickerAxes({ field, own: { isDisabled, isInvalid, isReadOnly, size, variant } });
 	const isCalm = useCalmMotion();
+	const labels = useLabels("datePicker", labelsProp);
+	const calendarLabels = useLabels("calendar");
 
 	const handleValueChange = useCallback((next: CalendarSelectionState) => emitValue(props, next), [props]);
 	const [value, setValue] = useControllableState<CalendarSelectionState>({
@@ -194,7 +198,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 
 	const finish = useCallback(
 		(next: CalendarSelectionState) => {
-			AccessibilityInfo.announceForAccessibility(resolveAnnouncement(next, locale));
+			AccessibilityInfo.announceForAccessibility(resolveAnnouncement(next, locale, labels));
 			if (presentation === "inline") return;
 			cancelPendingClose();
 			const settle = () => {
@@ -206,7 +210,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			if (delay === 0) settle();
 			else closeTimer.current = setTimeout(settle, delay);
 		},
-		[cancelPendingClose, isCalm, locale, presentation, setOpen]
+		[cancelPendingClose, isCalm, labels, locale, presentation, setOpen]
 	);
 
 	// Every tap cancels the last selection's pending close. `finish()` schedules a new one only
@@ -249,14 +253,14 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	}, [open, presentation, registerPress]);
 
 	const display = useMemo(
-		() => formatSelection(shown, { format, formatRange, locale }),
-		[format, formatRange, locale, shown]
+		() => formatSelection(shown, { calendarLabels, format, formatRange, labels, locale }),
+		[calendarLabels, format, formatRange, labels, locale, shown]
 	);
 
 	const context = useMemo<DatePickerContextValue>(
 		() => ({
-			accessibilityLabel: accessibilityLabel ?? field?.label ?? "Date",
-			accessibilityValue: resolveSelectionAccessibilityValue(shown, locale),
+			accessibilityLabel: accessibilityLabel ?? field?.label ?? labels.trigger,
+			accessibilityValue: resolveSelectionAccessibilityValue(shown, locale, labels),
 			calendar: {
 				captionLayout,
 				defaultMonth,
@@ -273,28 +277,29 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			},
 			canOpen: trigger.canOpen,
 			clear,
-			clearLabel,
+			clearLabel: clearLabel ?? labels.clear,
 			close,
 			description,
 			display,
-			doneLabel,
+			doneLabel: doneLabel ?? labels.done,
 			hasValue: hasSelection(shown),
 			isClearable: resolveIsClearable(mode, isClearable),
 			isDisabled: axes.isDisabled,
 			isInvalid: axes.isInvalid,
 			isOpen,
 			isReadOnly: axes.isReadOnly,
+			labels,
 			locale,
 			mode,
 			open,
 			openCount,
-			placeholder: placeholder ?? resolveDefaultPlaceholder(mode),
+			placeholder: placeholder ?? resolveDefaultPlaceholder(mode, labels),
 			presentation,
 			select,
 			testID,
 			shown,
 			size: axes.size,
-			title,
+			title: title ?? labels.title,
 			value,
 			variant: axes.variant,
 		}),
@@ -320,6 +325,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			initialView,
 			isClearable,
 			isOpen,
+			labels,
 			locale,
 			maxDate,
 			minDate,

@@ -1,4 +1,5 @@
 export type { CurveType } from "@delacour/react-native-charts/core";
+export type { ChartLabels } from "../../lib/labels";
 export { Chart, type ChartProps } from "./chart";
 export {
 	ChartContext,

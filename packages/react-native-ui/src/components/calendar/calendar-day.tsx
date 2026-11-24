@@ -86,7 +86,8 @@ export function CalendarDay({ date, children, className }: CalendarDayProps): Re
 		<Pressable
 			accessibilityLabel={resolveDayAccessibilityLabel(
 				formatDate(date, { locale: calendar.locale, style: "full" }),
-				state
+				state,
+				calendar.labels
 			)}
 			accessibilityState={{ selected: state.isSelected }}
 			className={slots.cell({ className })}

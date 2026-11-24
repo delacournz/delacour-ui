@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type CompareLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { IconSize } from "../icon/icon.variants";
 
@@ -367,15 +368,20 @@ export function shouldTickCompareHaptic(
 /**
  * What a screen reader says for a position: the Before layer's share, since that
  * is the number the seam draws — "50 percent before" — or, at either end, the one
- * layer on show. `labels` substitutes the caller's names for the two sides.
+ * layer on show. `sides` substitutes the caller's names for the two sides; `labels`
+ * is the spoken wording, English by default.
  */
-export function resolveCompareValueText(position: number, labels?: { before?: string; after?: string }): string {
-	const before = labels?.before ?? "before";
-	const after = labels?.after ?? "after";
+export function resolveCompareValueText(
+	position: number,
+	sides?: { before?: string; after?: string },
+	labels: CompareLabels = DELACOUR_DEFAULT_LABELS.compare
+): string {
+	const before = sides?.before ?? labels.before;
+	const after = sides?.after ?? labels.after;
 	const percent = Math.round(position * 100);
-	if (percent <= 0) return `Showing only ${after}`;
-	if (percent >= 100) return `Showing only ${before}`;
-	return `${percent} percent ${before}`;
+	if (percent <= 0) return labels.showingOnly(after);
+	if (percent >= 100) return labels.showingOnly(before);
+	return labels.share(percent, before);
 }
 
 /**

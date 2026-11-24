@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import type { AttachmentLabels } from "../../lib/labels";
 import {
 	clampProgress,
 	formatDuration,
@@ -354,5 +355,85 @@ describe("resolveAttachmentSourceKey", () => {
 
 	test("a list of resolutions keys on every entry", () => {
 		expect(resolveAttachmentSourceKey([{ uri: "a" }, { uri: "b" }])).toBe("uri:a|uri:b");
+	});
+});
+
+describe("custom labels", () => {
+	const german: AttachmentLabels = {
+		cancelUpload: "Upload abbrechen",
+		fileSize: (formatted, unit) =>
+			`${formatted} ${{ byte: "Byte", kilobyte: "KB", megabyte: "MB", gigabyte: "GB", terabyte: "TB" }[unit]}`,
+		group: "Anhänge",
+		kind: (kind) => ({ audio: "Audio", file: "Datei", image: "Foto", video: "Video" })[kind],
+		meta: (parts) => parts.join(" | "),
+		notSent: "nicht gesendet",
+		position: (current, count) => `${current} von ${count}`,
+		remove: (name) => `${name} entfernen`,
+		retryUpload: "Upload wiederholen",
+		spokenDuration: ({ minutes, seconds }) => `${minutes} Min ${seconds} Sek`,
+		spokenFileSize: (_amount, formatted, unit) => `${formatted} ${unit}s`,
+		summary: (parts) => parts.join("; "),
+		uploadFailed: "Upload fehlgeschlagen",
+		uploadFailedAnnouncement: (name, message) => `${name}: ${message}`,
+		uploading: "lädt hoch",
+	};
+
+	test("formatFileSize and spokenFileSize use the unit names", () => {
+		expect(formatFileSize(2_516_582, "en-US", german)).toBe("2.4 MB");
+		expect(formatFileSize(5, "en-US", german)).toBe("5 Byte");
+		expect(spokenFileSize(2_516_582, "en-US", german)).toBe("2.4 megabytes");
+	});
+
+	test("spokenDuration hands the parts over", () => {
+		expect(spokenDuration(65_000, german)).toBe("1 Min 5 Sek");
+	});
+
+	test("resolveAttachmentMeta joins with the labels' separator", () => {
+		expect(
+			resolveAttachmentMeta({
+				durationMs: 65_000,
+				kind: "video",
+				labels: german,
+				sizeBytes: 1024,
+				status: { type: "done" },
+			})
+		).toBe("1:05 | 1 KB");
+	});
+
+	test("resolveAttachmentAccessibilityLabel speaks the labels", () => {
+		expect(
+			resolveAttachmentAccessibilityLabel({ kind: "file", labels: german, name: "a.pdf", status: { type: "idle" } })
+		).toBe("Datei; a.pdf; nicht gesendet");
+		expect(
+			resolveAttachmentAccessibilityLabel({
+				kind: "file",
+				labels: german,
+				name: "a.pdf",
+				status: { type: "uploading" },
+			})
+		).toBe("Datei; a.pdf; lädt hoch");
+		expect(
+			resolveAttachmentAccessibilityLabel({
+				kind: "file",
+				labels: german,
+				name: "a.pdf",
+				status: { message: "Offline", type: "error" },
+			})
+		).toBe("Datei; a.pdf; Upload fehlgeschlagen; Offline");
+	});
+
+	test("resolveRemoveLabel and resolveAttachmentActions use the labels", () => {
+		expect(resolveRemoveLabel({ labels: german, name: "a.pdf", status: { type: "done" } })).toBe("a.pdf entfernen");
+		expect(resolveRemoveLabel({ labels: german, name: "a.pdf", status: { type: "uploading" } })).toBe(
+			"Upload abbrechen"
+		);
+		expect(
+			resolveAttachmentActions({
+				hasRetry: true,
+				labels: german,
+				removeLabel: "x",
+				status: { message: "Offline", type: "error" },
+			})
+		).toEqual([{ label: "Upload wiederholen", name: "retry" }]);
 	});
 });

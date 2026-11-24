@@ -97,6 +97,13 @@ plus `Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`,
   interrupt the screen's own first read-out, so pass `announce={false}` there. The opt-out sets no
   live region either, on any platform. A burst of changes is coalesced by the announcer (first
   and last message heard), not spoken step by step.
+- **The spoken strings are the `labels` prop, not literals**: the dismiss control's name
+  (`dismiss`) and the one-sentence announcement (`announcement(title, description)`, called only
+  when both parts have text) come from `lib/labels` through `useLabels("alert", labels)`, and
+  ride the context so a hand-placed `Alert.CloseButton` reads them too. Precedence is defaults
+  <- `DelacourProvider` `labels` <- the root's prop; `closeAccessibilityLabel` (and the close
+  button's own `accessibilityLabel`) still beat `labels.dismiss`.
+  `resolveAlertAnnouncement(texts, labels?)` takes the labels as a trailing, defaulted argument.
 - **Dismissal is controllable.** `isDismissible` composes an
   `Alert.CloseButton` in at the end. Uncontrolled, the alert hides itself when
   dismissed (`defaultOpen`); pass `isOpen` with `onOpenChange` to own it.

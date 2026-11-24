@@ -8,6 +8,7 @@
  */
 
 import { Children, cloneElement, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
+import { type AvatarLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 
 /** The cache modes `Image` accepts for a URI request. */
 export type AvatarSourceCache = "default" | "reload" | "force-cache" | "only-if-cached";
@@ -183,15 +184,18 @@ export const AVATAR_OVERFLOW_DISPLAY_MAX = 99;
  * The drawn count stops at {@link AVATAR_OVERFLOW_DISPLAY_MAX}; the spoken one
  * never does, because a screen reader has room for the real number.
  */
-export function resolveAvatarOverflowLabel(overflow: number): { text: string; accessibilityLabel: string } {
+export function resolveAvatarOverflowLabel(
+	overflow: number,
+	labels: AvatarLabels = DELACOUR_DEFAULT_LABELS.avatar
+): { text: string; accessibilityLabel: string } {
 	return {
-		text: overflow > AVATAR_OVERFLOW_DISPLAY_MAX ? `${AVATAR_OVERFLOW_DISPLAY_MAX}+` : `+${overflow}`,
-		accessibilityLabel: `${overflow} more`,
+		text: labels.overflowText(overflow, AVATAR_OVERFLOW_DISPLAY_MAX),
+		accessibilityLabel: labels.overflow(overflow),
 	};
 }
 
 /** What a pressable avatar is called when it has no label, name or fallback. */
-export const AVATAR_BUTTON_FALLBACK_LABEL = "Avatar";
+export const AVATAR_BUTTON_FALLBACK_LABEL = DELACOUR_DEFAULT_LABELS.avatar.button;
 
 /**
  * The name a screen reader gives the avatar: an explicit label, else the
@@ -201,20 +205,23 @@ export const AVATAR_BUTTON_FALLBACK_LABEL = "Avatar";
  * A pressable avatar always has a name. With nothing else to read it is
  * {@link AVATAR_BUTTON_FALLBACK_LABEL}, so it is never announced as only "button".
  */
-export function resolveAvatarAccessibilityLabel({
-	accessibilityLabel,
-	name,
-	fallback,
-	isInteractive = false,
-}: {
-	accessibilityLabel?: string;
-	name?: string;
-	fallback?: string;
-	isInteractive?: boolean;
-}): string | undefined {
+export function resolveAvatarAccessibilityLabel(
+	{
+		accessibilityLabel,
+		name,
+		fallback,
+		isInteractive = false,
+	}: {
+		accessibilityLabel?: string;
+		name?: string;
+		fallback?: string;
+		isInteractive?: boolean;
+	},
+	labels: AvatarLabels = DELACOUR_DEFAULT_LABELS.avatar
+): string | undefined {
 	for (const candidate of [accessibilityLabel, name, fallback]) {
 		const trimmed = candidate?.trim();
 		if (trimmed) return trimmed;
 	}
-	return isInteractive ? AVATAR_BUTTON_FALLBACK_LABEL : undefined;
+	return isInteractive ? labels.button : undefined;
 }

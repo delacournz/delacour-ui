@@ -104,6 +104,7 @@ export function ComboboxTrigger({
 		isLoading,
 		isOpen,
 		isReadOnly,
+		labels,
 		maxVisibleChips,
 		open,
 		placeholder,
@@ -117,7 +118,7 @@ export function ComboboxTrigger({
 	} = combobox;
 
 	const accessibility = {
-		accessibilityHint: isReadOnly ? undefined : "Opens a searchable list of options",
+		accessibilityHint: isReadOnly ? undefined : labels.triggerHint,
 		accessibilityLabel: accessibilityLabel ?? placeholder,
 		accessibilityRole: "button" as const,
 		accessibilityState: { expanded: isOpen },
@@ -147,6 +148,7 @@ export function ComboboxTrigger({
 		(hasChips ? (
 			<ComboboxChipRow
 				chipVariant={chipVariant}
+				labels={labels}
 				maxVisible={maxVisibleChips}
 				onChipPress={isEditable ? open : undefined}
 				onRemove={isEditable ? remove : undefined}
@@ -163,7 +165,7 @@ export function ComboboxTrigger({
 	const clearButton =
 		isClearable && hasValue && isEditable ? (
 			<Pressable
-				accessibilityLabel="Clear"
+				accessibilityLabel={labels.clear}
 				accessibilityRole="button"
 				className={slots.clear()}
 				feedback="fade"

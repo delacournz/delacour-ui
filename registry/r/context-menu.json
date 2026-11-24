@@ -8,10 +8,12 @@
 		"controls"
 	],
 	"registryDependencies": [
+		"labels",
 		"menu",
 		"pressable",
 		"tv",
-		"use-calm-motion"
+		"use-calm-motion",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -92,6 +94,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../menu/menu.context",
 					"to": "@registry/ui/menu/menu.context"
 				},
@@ -106,6 +112,14 @@
 			"target": "context-menu/context-menu.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../menu/menu",
 					"to": "@registry/ui/menu/menu"
@@ -158,6 +172,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
 				},
@@ -170,7 +188,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/context-menu/index.ts",
 			"target": "context-menu/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -207,6 +231,10 @@
 					"to": "@registry/hooks/use-calm-motion"
 				},
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"
 				}
@@ -217,6 +245,10 @@
 			"target": "context-menu/context-menu.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

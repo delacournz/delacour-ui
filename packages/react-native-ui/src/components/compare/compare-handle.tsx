@@ -55,7 +55,8 @@ export function CompareHandle({ className, children, testID }: CompareHandleProp
 		isCalm,
 		current,
 		accessibilityLabel,
-		labels,
+		labels: sideNames,
+		spokenLabels,
 		stepBy,
 	} = useComparePart("Compare.Handle");
 	const isVertical = orientation === "vertical";
@@ -100,7 +101,7 @@ export function CompareHandle({ className, children, testID }: CompareHandleProp
 				max: 100,
 				min: 0,
 				now: Math.round(current * 100),
-				text: resolveCompareValueText(current, labels),
+				text: resolveCompareValueText(current, sideNames, spokenLabels),
 			}}
 			accessible
 			className={classes.handle}

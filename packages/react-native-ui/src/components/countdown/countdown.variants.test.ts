@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import {
 	COUNTDOWN_DEFAULT_LABELS,
 	COUNTDOWN_DIGIT_TEXT_VARIANT,
@@ -311,5 +312,40 @@ describe("resolveCountdownAnnouncement", () => {
 
 	test("names units with the caller's labels", () => {
 		expect(resolveCountdownAnnouncement(30, ALL, { seconds: "secs" })).toMatch(/secs/);
+	});
+});
+
+describe("custom labels", () => {
+	const german = {
+		...DELACOUR_DEFAULT_LABELS.countdown,
+		dayCount: (n: number) => `${n} Tage`,
+		hourCount: (n: number) => `${n} Std.`,
+		secondCount: (n: number) => `${n} Sek.`,
+		timeUp: "Zeit abgelaufen",
+		remaining: (amounts: readonly string[]) => `noch ${amounts.join(" und ")}`,
+		inlineDays: (n: number) => `${n}T`,
+	};
+
+	test("the spoken label speaks through the catalog", () => {
+		expect(resolveCountdownAccessibilityLabel(2 * DAY + HOUR, ALL, {}, german)).toBe("noch 2 Tage und 1 Std.");
+		expect(resolveCountdownAccessibilityLabel(0, ALL, {}, german)).toBe("Zeit abgelaufen");
+		expect(resolveCountdownAccessibilityLabel(30, ALL, {}, german)).toBe("noch 30 Sek.");
+	});
+
+	test("an own caption wins over the count unless its count is set too", () => {
+		expect(resolveCountdownAccessibilityLabel(2 * DAY, ALL, { days: "Tage" }, german)).toBe("noch 2 Tage");
+		expect(resolveCountdownAccessibilityLabel(2 * DAY, ALL, { days: "X", dayCount: german.dayCount }, german)).toBe(
+			"noch 2 Tage"
+		);
+	});
+
+	test("the announcement uses them", () => {
+		expect(resolveCountdownAnnouncement(0, ALL, {}, german)).toBe("Zeit abgelaufen");
+		expect(resolveCountdownAnnouncement(30, ALL, {}, german)).toBe("noch 30 Sek.");
+	});
+
+	test("the inline run uses inlineDays", () => {
+		const parts = { days: 2, hours: 14, minutes: 3, seconds: 22 };
+		expect(formatCountdownInline(parts, ALL, german)).toBe("2T 14:03:22");
 	});
 });

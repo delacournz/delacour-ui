@@ -30,18 +30,18 @@ export type BadgeCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "c
  * as a jitter rather than as a press.
  */
 export function BadgeCloseButton({
-	accessibilityLabel = "Remove",
+	accessibilityLabel,
 	className,
 	feedback = "fade",
 	hitSlop,
 	...props
 }: BadgeCloseButtonProps): ReactElement {
-	const { size, isDisabled, material } = useBadgePart("Badge.CloseButton");
+	const { size, isDisabled, material, labels } = useBadgePart("Badge.CloseButton");
 	const slop = useMinimumHitSlop(BADGE_CLOSE_SIZES[size], { cap: BADGE_CLOSE_HIT_SLOP_CAP[size] });
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel}
+			accessibilityLabel={accessibilityLabel ?? labels.remove}
 			accessibilityRole="button"
 			className={badgeVariants({ material, size }).closeButton({ className })}
 			disabled={isDisabled}

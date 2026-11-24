@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Avatar, type AvatarProps } from "./avatar";
 import { useAvatar } from "./avatar.context";
@@ -384,6 +385,68 @@ describe("Avatar", () => {
 			await expect(renderWithProviders(<ContextProbe />)).rejects.toThrow(
 				"useAvatar must be called inside an <Avatar>."
 			);
+		});
+	});
+
+	describe("labels", () => {
+		const german = {
+			button: "Avatar-Schaltfläche",
+			overflow: (count: number) => `${count} weitere`,
+			overflowText: (count: number, max: number) => (count > max ? `${max}+` : `${count} +`),
+		};
+		const press = () => undefined;
+
+		test("the labels prop names a nameless button", async () => {
+			await renderWithProviders(<Avatar labels={german} onPress={press} />);
+			expect(screen.getByRole("button", { name: "Avatar-Schaltfläche" })).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider changes it, and the prop wins", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ avatar: german }}>
+					<Avatar onPress={press} testID="a" />
+					<Avatar labels={{ button: "Profil" }} onPress={press} testID="b" />
+				</LabelsProvider>
+			);
+			expect(screen.getByTestId("a")).toHaveAccessibleName("Avatar-Schaltfläche");
+			expect(screen.getByTestId("b")).toHaveAccessibleName("Profil");
+		});
+
+		test("an explicit accessibilityLabel still wins", async () => {
+			await renderWithProviders(<Avatar accessibilityLabel="Me" labels={german} onPress={press} />);
+			expect(screen.getByRole("button", { name: "Me" })).toBeOnTheScreen();
+		});
+
+		test("the group's labels reach the overflow tile and its avatars", async () => {
+			await renderWithProviders(
+				<Avatar.Group labels={german} max={1} total={3}>
+					<Avatar onPress={press} testID="face" />
+				</Avatar.Group>
+			);
+			expect(screen.getByText("2 +")).toBeOnTheScreen();
+			expect(screen.getByLabelText("2 weitere")).toBeOnTheScreen();
+			expect(screen.getByTestId("face")).toHaveAccessibleName("Avatar-Schaltfläche");
+		});
+
+		test("an avatar's own labels lay over the group's key by key", async () => {
+			await renderWithProviders(
+				<Avatar.Group labels={german}>
+					<Avatar labels={{ overflow: (count) => `noch ${count}` }} onPress={press} testID="face" />
+				</Avatar.Group>
+			);
+			expect(screen.getByTestId("face")).toHaveAccessibleName("Avatar-Schaltfläche");
+		});
+
+		test("a LabelsProvider reaches the overflow tile, the group prop winning key by key", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ avatar: german }}>
+					<Avatar.Group labels={{ overflow: (count) => `noch ${count}` }} max={1} total={3}>
+						<Avatar name="Aria" />
+					</Avatar.Group>
+				</LabelsProvider>
+			);
+			expect(screen.getByText("2 +")).toBeOnTheScreen();
+			expect(screen.getByLabelText("noch 2")).toBeOnTheScreen();
 		});
 	});
 });

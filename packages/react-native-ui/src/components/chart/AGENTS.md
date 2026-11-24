@@ -199,8 +199,8 @@ knows nothing about tokens.
   drawn readout cannot drift. The index lives in `ChartFrame`, a leaf, so a
   drag re-renders the frame and not the root. `accessibilityLabel` replaces
   the summary verbatim; `accessible={false}` hides the chart for a parent that
-  names it, which is what `Kpi.Sparkline` does. The summary is English: there
-  is no labels provider yet, and the override is the way out.
+  names it, which is what `Kpi.Sparkline` does. The summary's words are the
+  `labels` prop, not literals: see the bullet below.
 
 - **The scrub stays up after a step.** Nothing clears it: there is no
   accessibility blur to clear it on, and the next touch's end does. A
@@ -247,6 +247,19 @@ knows nothing about tokens.
   and the tooltip lives outside it. A tap selects only when something would
   show it — a `PieChart.Tooltip`, an `onSelect`, or a controlled
   `selectedIndex` — so a pie with none of those takes no gesture at all.
+
+- **The spoken strings are the `labels` prop, not literals.** `Chart` and `PieChart`
+  take `labels?: Partial<ChartLabels>` (catalog key `chart`; the pie's keys are
+  prefixed `pie`): `noData`, `range`, `summary`, `seriesNoData`, `seriesSummary`,
+  `readoutRow`, `noValue`, `readout`, `open`/`high`/`low`/`close` (the candlestick
+  tooltip rows), `pieNoData`, `pieSummary`, `pieSummarySlice`, `pieSlice` and
+  `piePercent` (also the default slice label and tooltip percentage). Precedence is
+  defaults <- `DelacourProvider` `labels` <- the root's prop; an explicit
+  `accessibilityLabel`, `format`, `formatValue` or `formatPercent` still wins. The
+  resolved set rides `ChartContext` / `PieChartContext`. `resolveChartSummary`,
+  `pieSliceAccessibilityLabel` and `resolveChartReadout` take an optional `labels`
+  field on their input; `resolveTooltipRows` and `pieLabelText` take it as a
+  trailing argument — all default to English. Canvas text is unchanged.
 
 - **A pie nothing selects is one `image`; a selectable pie is a summary and a
   button per slice.** The canvas is one opaque view, so without either a

@@ -5,6 +5,8 @@ import { useAnimatedReaction, useSharedValue, withSpring } from "react-native-re
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { CompareLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
 import { type CompareContextValue, CompareProvider } from "./compare.context";
@@ -75,6 +77,11 @@ export type CompareProps = Omit<ViewProps, "children"> & {
 	haptic?: false | HapticFeedback;
 	/** Names the handle's adjustable. Defaults to an enclosing `Field.Label`'s text. */
 	accessibilityLabel?: string;
+	/**
+	 * Some of the spoken strings: the two sides' default names and the handle's value text.
+	 * Laid over `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<CompareLabels>;
 	/** The frame. Give it a size — `aspect-*` or `h-*`; it has none of its own. */
 	className?: string;
 	/** `Compare.Before`, `Compare.After`, `Compare.Handle` and any `Compare.Label`s. */
@@ -98,6 +105,7 @@ function CompareRoot({
 	isDisabled: isDisabledProp,
 	haptic = "selection",
 	accessibilityLabel: accessibilityLabelProp,
+	labels: labelsProp,
 	className,
 	children,
 	onLayout,
@@ -107,6 +115,7 @@ function CompareRoot({
 	const isDisabled = isDisabledProp ?? field?.isDisabled ?? false;
 	const accessibilityLabel = accessibilityLabelProp ?? field?.label ?? undefined;
 	const isCalm = useCalmMotion();
+	const spokenLabels = useLabels("compare", labelsProp);
 	const isRtl = I18nManager.isRTL;
 	const isVertical = orientation === "vertical";
 	const points = snapPoints ?? EMPTY_POINTS;
@@ -145,9 +154,9 @@ function CompareRoot({
 		position.value = isCalm ? target : withSpring(target, COMPARE_HANDLE_SPRING);
 	}, [current, isCalm, maxPosition, minPosition, position, settledDrags]);
 
-	const [labels, setLabels] = useState<{ before?: string; after?: string }>({});
+	const [sideNames, setSideNames] = useState<{ before?: string; after?: string }>({});
 	const registerLabel = useCallback((side: CompareSide, text: string | null) => {
-		setLabels((previous) => {
+		setSideNames((previous) => {
 			if ((previous[side] ?? null) === text) return previous;
 			const next = { ...previous };
 			if (text === null) delete next[side];
@@ -357,13 +366,14 @@ function CompareRoot({
 			isCalm,
 			isDisabled,
 			isRtl,
-			labels,
+			labels: sideNames,
 			maxPosition,
 			minPosition,
 			orientation,
 			position,
 			registerLabel,
 			size,
+			spokenLabels,
 			step,
 			stepBy,
 		}),
@@ -376,13 +386,14 @@ function CompareRoot({
 			haptic,
 			isCalm,
 			isDisabled,
-			labels,
 			maxPosition,
 			minPosition,
 			orientation,
 			position,
 			registerLabel,
+			sideNames,
 			size,
+			spokenLabels,
 			step,
 			stepBy,
 		]

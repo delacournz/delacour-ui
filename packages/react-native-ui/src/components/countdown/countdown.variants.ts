@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { type CountdownLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /** The units a countdown can show, largest first. The order is load-bearing — see {@link resolveCountdownUnits}. */
@@ -28,18 +29,10 @@ const UNIT_SECONDS: Record<CountdownUnit, number> = {
 
 /** The caption under each segmented box when the caller names none. */
 export const COUNTDOWN_DEFAULT_LABELS: Record<CountdownUnit, string> = {
-	days: "Days",
-	hours: "Hours",
-	minutes: "Minutes",
-	seconds: "Seconds",
-};
-
-/** The unit's spoken noun, singular and plural, when the caller names none. */
-const SPOKEN_UNITS: Record<CountdownUnit, readonly [string, string]> = {
-	days: ["day", "days"],
-	hours: ["hour", "hours"],
-	minutes: ["minute", "minutes"],
-	seconds: ["second", "seconds"],
+	days: DELACOUR_DEFAULT_LABELS.countdown.days,
+	hours: DELACOUR_DEFAULT_LABELS.countdown.hours,
+	minutes: DELACOUR_DEFAULT_LABELS.countdown.minutes,
+	seconds: DELACOUR_DEFAULT_LABELS.countdown.seconds,
 };
 
 /**
@@ -184,12 +177,16 @@ function pad(value: number): string {
  * The inline run: `2d 14:03:22`, `14:03:22`, `3:22`. Days lead with a `d` suffix; the rest are
  * colon-joined, and every unit after the first is padded to two digits.
  */
-export function formatCountdownInline(parts: CountdownParts, visible: readonly CountdownUnit[]): string {
+export function formatCountdownInline(
+	parts: CountdownParts,
+	visible: readonly CountdownUnit[],
+	labels: CountdownLabels = DELACOUR_DEFAULT_LABELS.countdown
+): string {
 	const [first, ...rest] = visible;
 	if (first === undefined) return "";
 	if (first === "days") {
 		const clock = rest.map((unit) => pad(parts[unit])).join(":");
-		return clock.length > 0 ? `${parts.days}d ${clock}` : `${parts.days}d`;
+		return clock.length > 0 ? `${labels.inlineDays(parts.days)} ${clock}` : labels.inlineDays(parts.days);
 	}
 	return [String(parts[first]), ...rest.map((unit) => pad(parts[unit]))].join(":");
 }
@@ -202,11 +199,26 @@ export function countdownDigits(value: number): readonly string[] {
 	return pad(value).split("");
 }
 
-function spokenUnit(unit: CountdownUnit, value: number, labels: Partial<Record<CountdownUnit, string>>): string {
-	const label = labels[unit];
-	if (label !== undefined) return `${value} ${label}`;
-	const [one, many] = SPOKEN_UNITS[unit];
-	return `${value} ${value === 1 ? one : many}`;
+const COUNT_KEY = {
+	days: "dayCount",
+	hours: "hourCount",
+	minutes: "minuteCount",
+	seconds: "secondCount",
+} as const satisfies Record<CountdownUnit, keyof CountdownLabels>;
+
+/**
+ * A unit's spoken amount. A caption on the component's own `labels` with no matching `<unit>Count`
+ * beside it names the unit aloud as `${value} ${caption}`; otherwise the resolved count string.
+ */
+function spokenUnit(
+	unit: CountdownUnit,
+	value: number,
+	own: Partial<CountdownLabels>,
+	labels: CountdownLabels
+): string {
+	const caption = own[unit];
+	if (caption !== undefined && own[COUNT_KEY[unit]] === undefined) return `${value} ${caption}`;
+	return labels[COUNT_KEY[unit]](value);
 }
 
 /**
@@ -214,22 +226,24 @@ function spokenUnit(unit: CountdownUnit, value: number, labels: Partial<Record<C
  *
  * Above one minute it names days, hours and minutes and leaves seconds out, so it changes at most
  * once a minute; within the final minute it counts seconds. It follows absorption, leaves zero
- * units out, and names a unit with the caller's label when there is one. Without seconds
+ * units out, and names a unit with the caller's own caption when there is one. `own` is the
+ * component's own `labels` prop; `labels` is the resolved set the other strings come from. Without seconds
  * selected, the final minute reads as one minute — rounding up, as the digits do.
  */
 export function resolveCountdownAccessibilityLabel(
 	seconds: number,
 	units: readonly CountdownUnit[],
-	labels: Partial<Record<CountdownUnit, string>> = {}
+	own: Partial<CountdownLabels> = {},
+	labels: CountdownLabels = DELACOUR_DEFAULT_LABELS.countdown
 ): string {
-	if (seconds <= 0) return "Time is up";
+	if (seconds <= 0) return labels.timeUp;
 	const selected = resolveCountdownUnits(units);
 	const coarse = seconds < 60 && selected.includes("seconds") ? selected : selected.filter((u) => u !== "seconds");
 	const spoken = coarse.length > 0 ? coarse : selected;
 	const floored = spoken.includes("seconds") ? seconds : Math.max(60, Math.floor(seconds / 60) * 60);
 	const parts = splitCountdown(floored, spoken);
-	const words = spoken.filter((unit) => parts[unit] > 0).map((unit) => spokenUnit(unit, parts[unit], labels));
-	return `${words.join(", ")} left`;
+	const words = spoken.filter((unit) => parts[unit] > 0).map((unit) => spokenUnit(unit, parts[unit], own, labels));
+	return labels.remaining(words);
 }
 
 /** Seconds left at which a countdown speaks: an hour, ten and five minutes, one minute, 30 s and 10 s. */
@@ -247,12 +261,13 @@ export const COUNTDOWN_ANNOUNCE_MILESTONES: readonly number[] = [3600, 600, 300,
 export function resolveCountdownAnnouncement(
 	seconds: number,
 	units: readonly CountdownUnit[],
-	labels: Partial<Record<CountdownUnit, string>> = {}
+	own: Partial<CountdownLabels> = {},
+	labels: CountdownLabels = DELACOUR_DEFAULT_LABELS.countdown
 ): string | null {
-	if (seconds <= 0) return resolveCountdownAccessibilityLabel(0, units, labels);
+	if (seconds <= 0) return resolveCountdownAccessibilityLabel(0, units, own, labels);
 	if (!COUNTDOWN_ANNOUNCE_MILESTONES.includes(seconds)) return null;
 	if (seconds < 60 && !resolveCountdownUnits(units).includes("seconds")) return null;
-	return resolveCountdownAccessibilityLabel(seconds, units, labels);
+	return resolveCountdownAccessibilityLabel(seconds, units, own, labels);
 }
 
 /**

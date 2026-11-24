@@ -104,6 +104,13 @@ in two themes, a redesign against the original. Compound root plus `Compare.Befo
 - **`Compare.Label` is hidden from assistive tech.** A plain-string child registers with the root
   and substitutes into the value text ("50 percent Original"), so the name is heard once, attached
   to the number.
+- **The spoken strings are the `labels` prop, not literals**: the sides' default names
+  ("before" / "after") and the handle's value text ("50 percent before", "Showing only after")
+  come from `lib/labels` through `useLabels("compare", labels)`. Precedence is defaults <-
+  `DelacourProvider` `labels` <- the root's prop; a `Compare.Label`'s string still names its side
+  over the catalog. The resolved set rides the context as `spokenLabels` — `labels` there
+  stays the registered side names, so `useCompare()` keeps its shape — and `resolveCompareValueText`
+  takes it as a trailing argument.
 - **A fully covered layer leaves the tree** (`importantForAccessibility="no-hide-descendants"`,
   `accessibilityElementsHidden`) via `resolveCoveredLayer` — otherwise it is focusable while drawn
   in no pixel. Layers are otherwise content; the author labels their images.

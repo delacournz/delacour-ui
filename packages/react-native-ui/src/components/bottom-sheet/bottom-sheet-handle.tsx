@@ -1,10 +1,12 @@
 import {
 	BottomSheet as Headless,
 	type BottomSheetHandleProps as HeadlessProps,
+	useBottomSheet,
 } from "@delacour/react-native-bottom-sheet";
 import type { ReactElement } from "react";
 import { type StyleProp, View, type ViewStyle } from "react-native";
 import { withUniwind } from "uniwind";
+import { useBottomSheetLabels } from "./bottom-sheet.context";
 import { bottomSheetVariants } from "./bottom-sheet.variants";
 
 type StyledHandleComponent = (props: HeadlessProps & { className?: string }) => ReactElement | null;
@@ -35,6 +37,8 @@ export type BottomSheetHandleProps = HeadlessProps & {
  * <BottomSheet.Handle indicatorClassName="bg-primary" />
  */
 export function BottomSheetHandle({
+	accessibilityLabel,
+	accessibilityValue,
 	children,
 	className,
 	indicatorClassName,
@@ -42,9 +46,19 @@ export function BottomSheetHandle({
 	...props
 }: BottomSheetHandleProps): ReactElement {
 	const slots = bottomSheetVariants();
+	const labels = useBottomSheetLabels();
+	const { index, snapPointCount } = useBottomSheet();
+	const value = accessibilityValue ?? {
+		text: index < 0 ? labels.closed : labels.snapPoint(index + 1, snapPointCount),
+	};
 
 	return (
-		<StyledHandle className={slots.handle({ className })} {...props}>
+		<StyledHandle
+			accessibilityLabel={accessibilityLabel ?? labels.handle}
+			accessibilityValue={value}
+			className={slots.handle({ className })}
+			{...props}
+		>
 			{children ?? <View className={slots.handleIndicator({ className: indicatorClassName })} style={indicatorStyle} />}
 		</StyledHandle>
 	);

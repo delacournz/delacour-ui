@@ -1,0 +1,5 @@
+---
+"@delacour/react-native-ui": minor
+---
+
+Sixteen more components read their spoken and visible strings from the `DelacourProvider` `labels` catalog and take a `labels` prop of their own: Alert, Attachment, Avatar, Badge, BottomSheet, Calendar, Chart and PieChart, Chip, ColorPicker, Combobox, Compare, ContextMenu, Countdown, DatePicker, DateTimePicker and Dialog. Every default is today's English, so nothing changes until an app passes labels. The per-string props these components already had (`closeAccessibilityLabel`, `title`, `doneLabel`, `emptyText`, `createLabel`, `accessibilityLabel` and the rest) still win over `labels`. Countdown's `labels` widens from unit captions to `CountdownLabels`; a caption set on it alone still names its unit aloud, as before. The pure resolvers take the labels as a defaulted trailing argument, so existing calls keep their English. `BottomSheet`'s skin now names the engine's scrim and grabber and computes the grabber's snap-point value itself, so they translate too.

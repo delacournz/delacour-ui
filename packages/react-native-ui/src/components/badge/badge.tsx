@@ -1,6 +1,8 @@
 import { Children, type ReactElement, type ReactNode, useMemo } from "react";
 import { type AccessibilityActionEvent, View } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
 import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
+import type { BadgeLabels } from "../../lib/labels";
 import { IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { TextClassProvider } from "../text/text.context";
@@ -31,10 +33,15 @@ export type BadgeProps = Omit<PressableProps, "asChild" | "busy" | "children" | 
 	isDisabled?: boolean;
 	/** Composes a trailing dismiss control in. Its press never reaches `onPress`. */
 	onClose?: () => void;
-	/** Name a screen reader gives the dismiss control. Defaults to `Remove`. */
+	/** Name a screen reader gives the dismiss control. Defaults to `labels.remove`. */
 	closeAccessibilityLabel?: string;
 	/** `testID` for the dismiss control, so a test or automation can press it. */
 	closeTestID?: string;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `closeAccessibilityLabel` still wins over `remove`.
+	 */
+	labels?: Partial<BadgeLabels>;
 	children?: ReactNode;
 };
 
@@ -47,6 +54,7 @@ function BadgeRoot({
 	onClose,
 	closeAccessibilityLabel,
 	closeTestID,
+	labels: labelsProp,
 	accessibilityActions,
 	onAccessibilityAction,
 	onPress,
@@ -59,9 +67,10 @@ function BadgeRoot({
 	children,
 	...props
 }: BadgeProps): ReactElement {
+	const labels = useLabels("badge", labelsProp);
 	const context = useMemo<BadgeContextValue>(
-		() => ({ variant, color, size, isDisabled, material }),
-		[variant, color, size, isDisabled, material]
+		() => ({ variant, color, size, isDisabled, material, labels }),
+		[variant, color, size, isDisabled, material, labels]
 	);
 
 	const slots = badgeVariants({ color, isDisabled, material, size, variant });
@@ -108,7 +117,7 @@ function BadgeRoot({
 	);
 
 	const actions = closeHidden
-		? [...(accessibilityActions ?? []), { label: closeAccessibilityLabel ?? "Remove", name: "remove" }]
+		? [...(accessibilityActions ?? []), { label: closeAccessibilityLabel ?? labels.remove, name: "remove" }]
 		: accessibilityActions;
 
 	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {

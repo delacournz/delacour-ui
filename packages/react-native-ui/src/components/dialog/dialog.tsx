@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useId, useMemo, useRef } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { DialogLabels } from "../../lib/labels";
 import { type DialogFocusTarget, type DialogInternalValue, DialogProvider } from "./dialog.context";
 import { DialogBody } from "./dialog-body";
 import { DialogClose } from "./dialog-close";
@@ -22,6 +24,11 @@ export type DialogProps = {
 	 * `false` makes an alert dialog: only its own actions close it. Default true.
 	 */
 	isDismissible?: boolean;
+	/**
+	 * The spoken strings — the corner ✕'s name. Laid over `DelacourProvider`'s
+	 * `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<DialogLabels>;
 	children: ReactNode;
 };
 
@@ -30,8 +37,10 @@ function DialogRoot({
 	defaultOpen = false,
 	onOpenChange,
 	isDismissible = true,
+	labels: labelsProp,
 	children,
 }: DialogProps): ReactElement {
+	const labels = useLabels("dialog", labelsProp);
 	const [open, setControllableOpen] = useControllableState({
 		defaultValue: defaultOpen,
 		onChange: onOpenChange,
@@ -54,8 +63,8 @@ function DialogRoot({
 	const titleRef = useRef<DialogFocusTarget | null>(null);
 
 	const value = useMemo<DialogInternalValue>(
-		() => ({ close, descriptionId, isDismissible, isOpen: open, setOpen, titleId, titleRef, triggerRef }),
-		[close, descriptionId, isDismissible, open, setOpen, titleId]
+		() => ({ close, descriptionId, isDismissible, isOpen: open, labels, setOpen, titleId, titleRef, triggerRef }),
+		[close, descriptionId, isDismissible, labels, open, setOpen, titleId]
 	);
 
 	return <DialogProvider value={value}>{children}</DialogProvider>;

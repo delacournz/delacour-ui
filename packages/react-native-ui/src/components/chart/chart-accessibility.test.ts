@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { type ChartLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import type { ChartTooltipRow } from "./chart.types";
 import {
 	chartTooltipValueText,
@@ -175,5 +176,72 @@ describe("stepChartIndex", () => {
 	test("no data has no index", () => {
 		expect(stepChartIndex(-1, 1, 0)).toBe(-1);
 		expect(stepChartIndex(3, -1, 0)).toBe(-1);
+	});
+});
+
+const german: ChartLabels = {
+	...DELACOUR_DEFAULT_LABELS.chart,
+	noData: "Diagramm, keine Daten.",
+	range: (from, to) => `${from} bis ${to}`,
+	summary: (range, series) => [`Diagramm, ${range}.`, ...series].join(" "),
+	seriesNoData: (series) => `${series}: keine Daten.`,
+	seriesSummary: (series, lowest, highest, latest) =>
+		`${series}: niedrigster ${lowest}, höchster ${highest}, letzter ${latest}.`,
+	readoutRow: (series, value) => `${series} ${value}`,
+	noValue: "kein Wert",
+	readout: (heading, rows) => (heading === "" ? rows.join("; ") : `${heading}: ${rows.join("; ")}`),
+	open: "Eröffnung",
+	high: "Hoch",
+	low: "Tief",
+	close: "Schluss",
+	pieNoData: "Kreisdiagramm, keine Daten.",
+	pieSummary: (slices) => `Kreisdiagramm. ${slices.join("; ")}.`,
+	pieSummarySlice: (slice, percent) => `${slice} ${percent}`,
+	pieSlice: (slice, value, percent) => `${slice}: ${value} (${percent})`,
+	piePercent: (percent) => `${percent} Prozent`,
+};
+
+describe("chart accessibility with custom labels", () => {
+	test("a cartesian summary reads through the labels", () => {
+		expect(resolveChartSummary({ kind: "cartesian", series, data: rows, formatX, labels: german })).toBe(
+			"Diagramm, Jan bis Apr. Desktop: niedrigster 73, höchster 305, letzter 73. Mobile: niedrigster 80, höchster 200, letzter 190."
+		);
+		expect(resolveChartSummary({ kind: "cartesian", series, data: [], formatX, labels: german })).toBe(
+			"Diagramm, keine Daten."
+		);
+		expect(
+			resolveChartSummary({ kind: "cartesian", series, data: [{ month: "Jan", desktop: 1 }], formatX, labels: german })
+		).toContain("Mobile: keine Daten.");
+	});
+
+	test("a pie summary reads through the labels, percent included", () => {
+		const pie = {
+			kind: "pie",
+			series: [{ label: "Free" }, { label: "Team" }],
+			values: [3, 1],
+			total: 4,
+			labels: german,
+		} as const;
+		expect(resolveChartSummary(pie)).toBe("Kreisdiagramm. Free 75 Prozent; Team 25 Prozent.");
+		expect(resolveChartSummary({ ...pie, total: 0 })).toBe("Kreisdiagramm, keine Daten.");
+	});
+
+	test("a slice label reads through the labels, and formatPercent still wins", () => {
+		const input = { label: "Free", value: 3, total: 4, labels: german };
+		expect(pieSliceAccessibilityLabel(input)).toBe("Free: 3 (75 Prozent)");
+		expect(pieSliceAccessibilityLabel({ ...input, formatPercent: (percent) => `${percent}pc` })).toBe("Free: 3 (75pc)");
+	});
+
+	test("a readout reads through the labels", () => {
+		const readoutRows: ChartTooltipRow[] = [
+			{ key: "a", label: "Desktop", color: "#000", value: 186 },
+			{ key: "b", label: "Mobile", color: "#000", value: null },
+		];
+		expect(resolveChartReadout({ heading: "Jan", rows: readoutRows, labels: german })).toBe(
+			"Jan: Desktop 186; Mobile kein Wert"
+		);
+		expect(resolveChartReadout({ heading: "", rows: readoutRows, labels: german })).toBe(
+			"Desktop 186; Mobile kein Wert"
+		);
 	});
 });

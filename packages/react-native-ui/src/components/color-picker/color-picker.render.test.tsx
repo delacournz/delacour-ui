@@ -1,6 +1,7 @@
 import { BottomSheetProvider } from "@delacour/react-native-bottom-sheet";
 import { describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { OverlayProvider } from "../overlay";
@@ -342,6 +343,67 @@ describe("ColorPicker", () => {
 		test("isOpen is ignored inline", async () => {
 			await renderWithProviders(<Picker isOpen={false} />);
 			expect(screen.getByRole("adjustable", { name: "Hue" })).toBeOnTheScreen();
+		});
+	});
+
+	describe("labels", () => {
+		const german = {
+			area: "Sättigung und Helligkeit",
+			hue: "Farbton",
+			hexInput: "Hex-Farbe",
+			areaValue: (s: number, v: number) => `Sättigung ${s} Prozent, Helligkeit ${v} Prozent`,
+			hueValue: (degrees: number, name: string) => `Farbton ${degrees} Grad, ${name}`,
+			hueName: (hue: string) => (hue === "red" ? "rot" : hue),
+		};
+
+		test("the labels prop changes names and values", async () => {
+			await renderWithProviders(<Picker labels={german} />);
+			expect(screen.getByRole("adjustable", { name: "Sättigung und Helligkeit" })).toHaveAccessibilityValue({
+				text: "Sättigung 100 Prozent, Helligkeit 100 Prozent",
+			});
+			expect(screen.getByRole("adjustable", { name: "Farbton" })).toHaveAccessibilityValue({
+				text: "Farbton 0 Grad, rot",
+			});
+			expect(screen.getByLabelText("Hex-Farbe")).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider changes them too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ colorPicker: german }}>
+					<Picker />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("adjustable", { name: "Farbton" })).toBeOnTheScreen();
+			expect(screen.getByLabelText("Hex-Farbe")).toBeOnTheScreen();
+		});
+
+		test("the prop wins over the provider, key by key", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ colorPicker: german }}>
+					<Picker labels={{ hue: "Ton" }} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("adjustable", { name: "Ton" })).toBeOnTheScreen();
+			expect(screen.getByLabelText("Hex-Farbe")).toBeOnTheScreen();
+		});
+
+		test("an explicit accessibilityLabel wins over labels", async () => {
+			await renderWithProviders(
+				<Picker labels={german}>
+					<ColorPicker.Hue accessibilityLabel="Tint" />
+				</Picker>
+			);
+			expect(screen.getByRole("adjustable", { name: "Tint" })).toBeOnTheScreen();
+		});
+
+		test("labels.partInField joins the Field label", async () => {
+			await renderWithProviders(
+				<Field>
+					<Field.Label>Accent</Field.Label>
+					<Picker labels={{ partInField: (field, part) => `${part} von ${field}` }} />
+				</Field>
+			);
+			expect(screen.getByRole("adjustable", { name: "Hue von Accent" })).toBeOnTheScreen();
 		});
 	});
 });

@@ -13,6 +13,7 @@
  * it was given.
  */
 
+import { type DateTimePickerLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import {
 	addDays,
 	type CalendarDate,
@@ -293,8 +294,15 @@ export function formatDateTime(value: DateTimeValue, { locale, hourCycle }: Date
 }
 
 /** What a screen reader hears: "Monday 5 October 2026 at 3:30 PM" — every word, no abbreviations. */
-export function formatDateTimeLong(value: DateTimeValue, context: DateTimeFormatContext): string {
-	return `${formatDate(value.date, { locale: context.locale, style: "full" })} at ${formatTime(value.time, context)}`;
+export function formatDateTimeLong(
+	value: DateTimeValue,
+	context: DateTimeFormatContext,
+	labels: Pick<DateTimePickerLabels, "dateTime"> = DELACOUR_DEFAULT_LABELS.dateTimePicker
+): string {
+	return labels.dateTime(
+		formatDate(value.date, { locale: context.locale, style: "full" }),
+		formatTime(value.time, context)
+	);
 }
 
 // ── ISO 8601 ────────────────────────────────────────────────────────────────

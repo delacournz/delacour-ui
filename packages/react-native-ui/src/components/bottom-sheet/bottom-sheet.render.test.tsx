@@ -2,6 +2,7 @@ import { useBottomSheetInternal } from "@delacour/react-native-bottom-sheet";
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Fragment, type ReactElement, type ReactNode, useState } from "react";
 import { BackHandler } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Overlay, OverlayProvider } from "../overlay";
@@ -481,5 +482,61 @@ describe("BottomSheet modal accessibility", () => {
 		);
 		expect(screen.getByTestId("top-panel")).toHaveProp("accessibilityViewIsModal", true);
 		expect(screen.getByTestId("panel")).toHaveProp("accessibilityViewIsModal", false);
+	});
+});
+
+describe("BottomSheet labels", () => {
+	const german = {
+		close: "Schließen",
+		overlay: "Blatt schließen",
+		handle: "Unterblatt",
+		closed: "Zu",
+		snapPoint: (position: number, count: number) => `Stufe ${position} von ${count}`,
+	};
+
+	function Sheet(props: Partial<BottomSheetProps> & { handleLabel?: string }): ReactElement {
+		const { handleLabel, ...root } = props;
+		return (
+			<BottomSheet defaultOpen {...root}>
+				<BottomSheet.Portal>
+					<BottomSheet.Overlay />
+					<BottomSheet.Container>
+						<BottomSheet.Handle accessibilityLabel={handleLabel} />
+						<BottomSheet.Content>
+							<BottomSheet.Close />
+						</BottomSheet.Content>
+					</BottomSheet.Container>
+				</BottomSheet.Portal>
+			</BottomSheet>
+		);
+	}
+
+	test("English by default", async () => {
+		await renderWithProviders(<Sheet />, { wrapper: Providers });
+		expect(screen.getByRole("button", { name: "Close" })).toBeOnTheScreen();
+		expect(screen.getByRole("adjustable", { name: "Bottom sheet" })).toBeOnTheScreen();
+	});
+
+	test("the labels prop names Close and the handle and speaks its value", async () => {
+		await renderWithProviders(<Sheet labels={german} />, { wrapper: Providers });
+		expect(screen.getByRole("button", { name: "Schließen" })).toBeOnTheScreen();
+		const handle = screen.getByRole("adjustable", { name: "Unterblatt" });
+		expect(handle.props.accessibilityValue.text).toMatch(/^(Zu|Stufe 1 von 1)$/);
+	});
+
+	test("a LabelsProvider changes them, and the prop wins key by key", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ bottomSheet: german }}>
+				<Sheet labels={{ close: "Zumachen" }} />
+			</LabelsProvider>,
+			{ wrapper: Providers }
+		);
+		expect(screen.getByRole("button", { name: "Zumachen" })).toBeOnTheScreen();
+		expect(screen.getByRole("adjustable", { name: "Unterblatt" })).toBeOnTheScreen();
+	});
+
+	test("a part's own accessibilityLabel still wins", async () => {
+		await renderWithProviders(<Sheet handleLabel="Griff" labels={german} />, { wrapper: Providers });
+		expect(screen.getByRole("adjustable", { name: "Griff" })).toBeOnTheScreen();
 	});
 });

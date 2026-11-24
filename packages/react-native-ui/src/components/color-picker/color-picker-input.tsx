@@ -54,6 +54,7 @@ export function ColorPickerInput({
 		presentation,
 		setHsva,
 		inputRef,
+		labels,
 	} = useColorPickerPart("ColorPicker.Input");
 	const field = useFieldContext();
 	const slots = colorPickerVariants({ size });
@@ -111,11 +112,10 @@ export function ColorPickerInput({
 
 	return (
 		<Field
-			accessibilityLabel={resolveColorPickerLabel({
-				label: field?.label,
-				override: accessibilityLabel,
-				part: "Hex colour",
-			})}
+			accessibilityLabel={resolveColorPickerLabel(
+				{ label: field?.label, override: accessibilityLabel, part: labels.hexInput },
+				labels
+			)}
 			autoCapitalize="none"
 			autoComplete="off"
 			autoCorrect={false}

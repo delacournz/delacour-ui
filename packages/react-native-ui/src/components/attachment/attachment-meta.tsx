@@ -17,8 +17,8 @@ export type AttachmentMetaProps = Omit<TextProps, "children"> & {
  * centred rather than above an empty line.
  */
 export function AttachmentMeta({ className, children, ...props }: AttachmentMetaProps): ReactElement | null {
-	const { durationMs, extension, kind, layout, size, sizeBytes, status } = useAttachmentPart("Attachment.Meta");
-	const text = children ?? resolveAttachmentMeta({ durationMs, extension, kind, sizeBytes, status });
+	const { durationMs, extension, kind, labels, layout, size, sizeBytes, status } = useAttachmentPart("Attachment.Meta");
+	const text = children ?? resolveAttachmentMeta({ durationMs, extension, kind, labels, sizeBytes, status });
 	if (!text) return null;
 
 	return (

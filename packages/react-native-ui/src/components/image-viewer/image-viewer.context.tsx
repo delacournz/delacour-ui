@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { ImageViewerLabels } from "../../lib/labels";
 import type { ImageViewerImage, ImageViewerRenderImage } from "./image-viewer.types";
 import type { ViewerRect } from "./image-viewer.variants";
 
@@ -37,6 +38,8 @@ export type ImageViewerInternalValue = {
 	isDataMode: boolean;
 	images: readonly ImageViewerImage[];
 	renderImage?: ImageViewerRenderImage;
+	/** The resolved spoken and visible strings, shared with every part. */
+	labels: ImageViewerLabels;
 	/** Composed mode: add or update this Trigger's image. `token` is the Trigger's own, so duplicates of one id coexist. */
 	register: (token: string, image: ImageViewerImage) => void;
 	unregister: (token: string) => void;

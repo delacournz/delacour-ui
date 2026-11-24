@@ -1,3 +1,4 @@
+export type { ImageViewerLabels } from "../../lib/labels";
 export { ImageViewer, type ImageViewerProps } from "./image-viewer";
 export {
 	type ImageViewerContextValue,

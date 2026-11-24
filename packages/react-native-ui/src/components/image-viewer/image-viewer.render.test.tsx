@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import type { ReactElement } from "react";
+import { type ReactElement, useEffect } from "react";
 import { AccessibilityInfo, View } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
+import type { ImageViewerLabels } from "../../lib/labels";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
 import { ImageViewer, type ImageViewerProps } from "./image-viewer";
@@ -38,6 +40,26 @@ function Controls(): ReactElement {
 			<Button accessibilityLabel="open last" onPress={() => open(2)} />
 		</>
 	);
+}
+
+const FRENCH: ImageViewerLabels = {
+	close: "Fermer la visionneuse",
+	counter: (current, count) => `${current} sur ${count}`,
+	loadFailed: "Image introuvable",
+	nextImage: "Image suivante",
+	open: "Ouvre la visionneuse plein écran",
+	position: (current, count) => `${current} sur ${count}`,
+	previousImage: "Image précédente",
+	resetZoom: "Réinitialiser le zoom",
+	zoomIn: "Zoomer",
+	zoomOut: "Dézoomer",
+};
+
+function Failing({ onError }: { onError: () => void }): ReactElement {
+	useEffect(() => {
+		onError();
+	}, [onError]);
+	return <View />;
 }
 
 type MeasureInWindow = (callback: (x: number, y: number, width: number, height: number) => void) => void;
@@ -263,5 +285,80 @@ describe("ImageViewer", () => {
 		await expect(renderWithProviders(<Probe />)).rejects.toThrow(
 			"useImageViewer must be called inside an <ImageViewer>."
 		);
+	});
+});
+
+describe("ImageViewer labels", () => {
+	let measureSpy: ReturnType<typeof jest.spyOn> | undefined;
+
+	beforeEach(() => {
+		const proto = View.prototype as unknown as { measureInWindow: MeasureInWindow };
+		measureSpy = jest.spyOn(proto, "measureInWindow").mockImplementation((callback) => callback(10, 20, 100, 100));
+	});
+
+	afterEach(() => {
+		measureSpy?.mockRestore();
+	});
+
+	test("the labels prop changes the hint, the actions, the value, the counter and Close", async () => {
+		await renderWithProviders(<Gallery defaultIndex={1} defaultOpen labels={FRENCH} />);
+		const viewer = await pager();
+		expect(viewer).toHaveAccessibilityValue({ text: "2 sur 3" });
+		expect(viewer.props.accessibilityActions).toEqual([
+			{ label: "Image suivante", name: "increment" },
+			{ label: "Image précédente", name: "decrement" },
+			{ label: "Zoomer", name: "zoomIn" },
+			{ label: "Dézoomer", name: "zoomOut" },
+			{ label: "Réinitialiser le zoom", name: "resetZoom" },
+		]);
+		expect(screen.getByTestId("image-viewer-counter")).toHaveTextContent("2 sur 3");
+		expect(screen.getByLabelText("Fermer la visionneuse")).toBeOnTheScreen();
+		expect(screen.getAllByRole("imagebutton")[0]?.props.accessibilityHint).toBe("Ouvre la visionneuse plein écran");
+	});
+
+	test("the provider's labels change them", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ imageViewer: { close: "Fermer", zoomIn: "Zoomer" } }}>
+				<Gallery defaultOpen />
+			</LabelsProvider>
+		);
+		const viewer = await pager();
+		expect(screen.getByLabelText("Fermer")).toBeOnTheScreen();
+		expect(viewer.props.accessibilityActions).toEqual(
+			expect.arrayContaining([
+				{ label: "Zoomer", name: "zoomIn" },
+				{ label: "Next image", name: "increment" },
+			])
+		);
+	});
+
+	test("the prop wins over the provider", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ imageViewer: { close: "Fermer" } }}>
+				<Gallery defaultOpen labels={{ close: "Schließen" }} />
+			</LabelsProvider>
+		);
+		await pager();
+		expect(screen.getByLabelText("Schließen")).toBeOnTheScreen();
+		expect(screen.queryByLabelText("Fermer")).not.toBeOnTheScreen();
+	});
+
+	test("accessibilityHint and accessibilityLabel props still win", async () => {
+		await renderWithProviders(
+			<ImageViewer defaultOpen labels={FRENCH}>
+				<ImageViewer.Trigger {...PHOTOS[0]} accessibilityHint="Custom hint" />
+				<ImageViewer.Close accessibilityLabel="Custom close" testID="second-close" />
+			</ImageViewer>
+		);
+		await pager();
+		expect(screen.getByRole("imagebutton").props.accessibilityHint).toBe("Custom hint");
+		expect(screen.getByTestId("second-close").props.accessibilityLabel).toBe("Custom close");
+	});
+
+	test("the load failure message follows labels", async () => {
+		await renderWithProviders(
+			<Gallery defaultOpen labels={FRENCH} renderImage={(props) => <Failing onError={props.onError} />} />
+		);
+		expect(await screen.findAllByText("Image introuvable", { includeHiddenElements: true })).not.toHaveLength(0);
 	});
 });

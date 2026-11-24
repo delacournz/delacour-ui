@@ -133,6 +133,10 @@ derived — `media` is `foreground` in light and `background` in dark, and
 
 ## Accessibility
 
+- Spoken strings are `labels`: the Trigger's hint, Close's name, the five pager actions, the pager's
+  "2 of 5", the chrome's "2 / 5" and the load-failure text. The root resolves
+  `useLabels("imageViewer", labels)` once and shares it on the internal context; `accessibilityHint`
+  and `accessibilityLabel` props still win. The action labels are built per render (`useMemo`), never a module constant.
 - Trigger: `imagebutton`, labelled by `alt`, hinted "Opens full screen image
   viewer", `accessibilityState.disabled` while the root is disabled.
 - The pager is one `adjustable` element labelled `alt` (plus caption), valued

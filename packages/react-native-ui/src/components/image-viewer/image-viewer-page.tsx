@@ -46,6 +46,8 @@ export type ImageViewerPageProps = {
 	isCalm: boolean;
 	motion: ImageViewerPageMotion;
 	renderImage?: ImageViewerRenderImage;
+	/** Shown where the image failed and nothing sits beneath it. */
+	failedText: string;
 	/** Reports the image's intrinsic aspect once it decodes. */
 	onAspect: (id: string, aspect: number) => void;
 	/** The thumbnail has drawn, or failed: the opening flight may start. */
@@ -80,6 +82,7 @@ export function ImageViewerPage({
 	isCalm,
 	motion,
 	renderImage,
+	failedText,
 	onAspect,
 	onBaseLoad,
 }: ImageViewerPageProps): ReactElement {
@@ -178,7 +181,7 @@ export function ImageViewerPage({
 			{hasBaseError && (!image.fullSource || hasFullError) ? (
 				<View className={slots.error()}>
 					<Icon color="media-foreground" icon={IconImages1} size="lg" />
-					<Text className={slots.errorText()}>This image could not be loaded</Text>
+					<Text className={slots.errorText()}>{failedText}</Text>
 				</View>
 			) : null}
 		</Animated.View>

@@ -18,6 +18,7 @@
 		"text",
 		"tv",
 		"use-keyboard-state-sync",
+		"use-minimum-hit-target",
 		"use-scroll-source",
 		"use-theme-color"
 	],
@@ -145,6 +146,10 @@
 			"target": "screen/screen-navbar-back-button.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
@@ -295,7 +300,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/screen/screen.variants.test.ts",
 			"target": "screen/screen.variants.test.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
+				}
+			]
 		}
 	],
 	"testDependencies": [

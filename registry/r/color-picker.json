@@ -19,6 +19,7 @@
 		"tv",
 		"use-calm-motion",
 		"use-controllable-state",
+		"use-minimum-hit-target",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -136,6 +137,10 @@
 				{
 					"from": "../../hooks/use-calm-motion",
 					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
 				},
 				{
 					"from": "../pressable",
@@ -278,6 +283,10 @@
 				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}

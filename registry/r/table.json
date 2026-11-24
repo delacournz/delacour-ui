@@ -17,6 +17,7 @@
 		"surface",
 		"text",
 		"tv",
+		"use-minimum-hit-target",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -108,6 +109,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
+				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
 				},
@@ -188,6 +193,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				},
 				{
 					"from": "../surface/surface.variants",

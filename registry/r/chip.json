@@ -14,7 +14,8 @@
 		"pressable",
 		"text",
 		"tv",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -38,6 +39,10 @@
 			"target": "chip/chip-close-button.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
@@ -118,6 +123,10 @@
 				{
 					"from": "../badge/badge.variants",
 					"to": "@registry/ui/badge/badge.variants"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		},
@@ -144,6 +153,10 @@
 				{
 					"from": "../badge/badge.variants",
 					"to": "@registry/ui/badge/badge.variants"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}

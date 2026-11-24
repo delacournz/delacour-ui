@@ -13,7 +13,8 @@
 		"pressable",
 		"text",
 		"tv",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -59,6 +60,10 @@
 			"target": "tree/tree-indicator.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"

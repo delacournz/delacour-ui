@@ -1100,6 +1100,7 @@
 				"icon",
 				"icons",
 				"input",
+				"interactive-child",
 				"labels",
 				"pressable",
 				"select",
@@ -1229,6 +1230,7 @@
 				"controls"
 			],
 			"registryDependencies": [
+				"interactive-child",
 				"labels",
 				"menu",
 				"pressable",

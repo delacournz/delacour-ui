@@ -239,7 +239,8 @@ describe("selectionModeVariants", () => {
 		const off = selectionModeVariants({ isSelected: false }).indicator();
 		const on = selectionModeVariants({ isSelected: true }).indicator();
 		expect(off).toContain("rounded-full");
-		expect(off).toContain("border-border");
+		// `input`, not the `border` hairline: an unpicked mark is a control's only edge (WCAG 1.4.11, 3:1).
+		expect(off).toContain("border-input");
 		expect(on).toContain("bg-primary");
 		expect(on).toContain("border-primary");
 	});

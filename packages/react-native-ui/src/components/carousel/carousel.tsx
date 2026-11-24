@@ -12,6 +12,8 @@ import { View } from "react-native";
 import { useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { CarouselLabels } from "../../lib/labels";
 import { resolveIndexFromPosition, resolveNearestPosition } from "../../lib/paging";
 import {
 	type CarouselContextValue,
@@ -73,6 +75,11 @@ type CarouselCommonProps = {
 	testID?: string;
 	/** The carousel's name, e.g. "Featured". Read with the "2 of 5" value. */
 	accessibilityLabel?: string;
+	/**
+	 * Some of the spoken strings: the arrows' names and the "2 of 5" value. Laid over
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults. Pass a stable object.
+	 */
+	labels?: Partial<CarouselLabels>;
 };
 
 type CarouselStateProps =
@@ -109,11 +116,13 @@ function CarouselRoot({
 	className,
 	testID,
 	accessibilityLabel,
+	labels: labelsProp,
 	index: indexProp,
 	defaultIndex,
 	onIndexChange,
 }: CarouselProps): ReactElement {
 	const isCalm = useCalmMotion();
+	const labels = useLabels("carousel", labelsProp);
 	const [count, setCount] = useState(0);
 
 	const [selected, setSelected] = useControllableState<number>({
@@ -273,13 +282,26 @@ function CarouselRoot({
 			isDisabled,
 			isScrollEnabled,
 			itemSize,
+			labels,
 			loop,
 			orientation,
 			setCount,
 			variant,
 			windowSize,
 		}),
-		[accessibilityLabel, gap, isCalm, isDisabled, isScrollEnabled, itemSize, loop, orientation, variant, windowSize]
+		[
+			accessibilityLabel,
+			gap,
+			isCalm,
+			isDisabled,
+			isScrollEnabled,
+			itemSize,
+			labels,
+			loop,
+			orientation,
+			variant,
+			windowSize,
+		]
 	);
 
 	const motion = useMemo<CarouselMotionValue>(

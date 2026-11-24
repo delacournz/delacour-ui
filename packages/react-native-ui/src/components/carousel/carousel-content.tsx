@@ -77,6 +77,7 @@ export function CarouselContent({
 		isScrollEnabled,
 		itemSize,
 		isCalm,
+		labels,
 		loop,
 		orientation,
 		setCount,
@@ -225,7 +226,7 @@ export function CarouselContent({
 				accessibilityLabel={accessibilityLabel}
 				accessibilityRole="adjustable"
 				accessibilityState={{ disabled: isDisabled }}
-				accessibilityValue={{ text: resolveCarouselA11yValue(index, count) }}
+				accessibilityValue={{ text: resolveCarouselA11yValue(index, count, labels) }}
 				accessible
 				className={cn(slots.viewport(), className)}
 				onAccessibilityAction={handleAccessibilityAction}

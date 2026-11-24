@@ -10,19 +10,19 @@ import type { CarouselArrowProps } from "./carousel.types";
  * whenever the carousel is. Pressing it stops autoplay, as any touch does.
  *
  * Its chevron follows the axis — left when horizontal, up when vertical. Pass
- * children to draw your own; the label "Previous slide" stays unless you give one.
+ * children to draw your own; its spoken name comes from `labels` (English: "Previous slide") unless you give one.
  */
 export function CarouselPrevious({
 	children,
 	isDisabled,
-	accessibilityLabel = "Previous slide",
+	accessibilityLabel,
 	...props
 }: CarouselArrowProps): ReactElement {
 	const { canGoPrevious, previous } = useCarouselPart("Carousel.Previous");
-	const { isDisabled: isCarouselDisabled, orientation } = useCarouselOptionsPart("Carousel.Previous");
+	const { isDisabled: isCarouselDisabled, labels, orientation } = useCarouselOptionsPart("Carousel.Previous");
 
 	const buttonProps: ButtonProps = {
-		accessibilityLabel,
+		accessibilityLabel: accessibilityLabel ?? labels.previous,
 		haptic: "selection",
 		isDisabled: isDisabled || isCarouselDisabled || !canGoPrevious,
 		size: "icon-sm",

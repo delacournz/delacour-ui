@@ -422,6 +422,24 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.summary(12, "October")).toBe("12 entries in October");
 		expect(labels.more(3)).toBe("+3 more");
 	});
+
+	test("signature is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.signature;
+		expect(labels.name).toBe("Signature");
+		expect(labels.empty("Signature")).toBe("Signature pad, empty");
+		expect(labels.drawn("Witness", 1)).toBe("Witness, drawn, 1 stroke");
+		expect(labels.drawn("Witness", 3)).toBe("Witness, drawn, 3 strokes");
+		expect(labels.placeholder).toBe("Sign here");
+		expect(labels.drawHint).toBe("Double tap and hold, then drag to draw.");
+		expect(labels.typeHint).toBe("Double tap to type your name instead.");
+		expect(labels.undo).toBe("Undo");
+		expect(labels.redo).toBe("Redo");
+		expect(labels.clear).toBe("Clear signature");
+		expect(labels.type).toBe("Type your name instead");
+		expect(labels.alternative).toBe("Can't sign? Type your name");
+		expect(labels.captured).toBe("Signature captured");
+		expect(labels.cleared).toBe("Signature cleared");
+	});
 });
 
 describe("resolveLabels", () => {

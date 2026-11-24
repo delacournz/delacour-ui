@@ -80,6 +80,7 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 		guidelineLabel,
 		placeholder,
 		haptic,
+		onRequestAlternative,
 		clearCount,
 		commitStroke,
 		beginStroke,
@@ -171,8 +172,15 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 	);
 
 	const accessibilityActions = useMemo(
-		() => resolveSignatureAccessibilityActions({ canRedo, canUndo, isEmpty, isInteractive }),
-		[canRedo, canUndo, isEmpty, isInteractive]
+		() =>
+			resolveSignatureAccessibilityActions({
+				canRedo,
+				canUndo,
+				hasAlternative: onRequestAlternative !== undefined,
+				isEmpty,
+				isInteractive,
+			}),
+		[canRedo, canUndo, isEmpty, isInteractive, onRequestAlternative]
 	);
 
 	const handleAccessibilityAction = useCallback(

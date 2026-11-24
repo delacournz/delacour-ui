@@ -20,6 +20,7 @@ import {
 	resolveColumnAccessibilityValue,
 	resolveWheelPadding,
 	resolveWheelRowAppearance,
+	TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER,
 	type TimeWheelColumnKind,
 	type TimeWheelRow,
 	timePickerVariants,
@@ -245,7 +246,11 @@ function TimeWheelRowView({
 
 	return (
 		<Animated.View className={slots.row()} style={[{ height: rowHeight }, animatedStyle]}>
-			<Text className={slots.rowText()} numberOfLines={1}>
+			<Text
+				className={slots.rowText()}
+				maxFontSizeMultiplier={TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER}
+				numberOfLines={1}
+			>
 				{row.label}
 			</Text>
 		</Animated.View>

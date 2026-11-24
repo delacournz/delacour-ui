@@ -40,6 +40,17 @@ export const TIME_PICKER_DEFAULT_VISIBLE_ROWS: TimePickerVisibleRows = 5;
 export const TIME_PICKER_ROW_HEIGHTS: Record<InputSize, number> = { sm: 32, md: 40, lg: 48 };
 
 /**
+ * The font-scaling cap for wheel row text and the `:` separators — below the
+ * library's 2×.
+ *
+ * Row heights are fixed points (snap and index maths), so rows cannot grow with
+ * their text. 1.5× keeps a 1.4 line-height line inside the shortest row for
+ * every size (14 x 1.5 x 1.4 = 29.4 <= 32). The trigger and its value are not
+ * capped here: they grow.
+ */
+export const TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER = 1.5;
+
+/**
  * Styling for every part of a time picker.
  *
  * The trigger has no box of its own: {@link resolveTimePickerTriggerClass}

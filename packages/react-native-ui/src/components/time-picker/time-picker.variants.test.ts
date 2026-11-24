@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { DELACOUR_DEFAULT_LABELS, type TimePickerLabels } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { INPUT_SIZES, INPUT_VARIANTS, inputVariants } from "../input/input.variants";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import {
 	indexToOffset,
 	nearestEnabledIndex,
@@ -15,6 +16,7 @@ import {
 	resolveWheelRowAppearance,
 	TIME_PICKER_DEFAULT_VISIBLE_ROWS,
 	TIME_PICKER_ROW_HEIGHTS,
+	TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER,
 	TIME_PICKER_VISIBLE_ROWS,
 	TIME_WHEEL_COLUMN_LABELS,
 	type TimeWheelColumnKind,
@@ -120,9 +122,9 @@ describe("the trigger is Input's box", () => {
 		}
 	});
 
-	test("the height token is h-input-*", () => {
+	test("the height token is a min-h-input-* floor", () => {
 		for (const size of INPUT_SIZES) {
-			expect(resolveTimePickerTriggerClass({ size })).toContain(`h-input-${size}`);
+			expect(resolveTimePickerTriggerClass({ size })).toContain(`min-h-input-${size}`);
 		}
 	});
 
@@ -133,8 +135,22 @@ describe("the trigger is Input's box", () => {
 	});
 
 	test("a caller's class wins", () => {
-		expect(resolveTimePickerTriggerClass({ className: "h-20" })).toContain("h-20");
-		expect(resolveTimePickerTriggerClass({ className: "h-20" })).not.toContain("h-input-md");
+		expect(resolveTimePickerTriggerClass({ className: "min-h-20" })).toContain("min-h-20");
+		expect(resolveTimePickerTriggerClass({ className: "min-h-20" })).not.toContain("min-h-input-md");
+	});
+});
+
+describe("wheel text scaling", () => {
+	test("the row cap fits a 1.4 line-height row in every size", () => {
+		const fontSize = { sm: 14, md: 16, lg: 18 } as const;
+		for (const size of INPUT_SIZES) {
+			expect(fontSize[size] * TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER * 1.4).toBeLessThanOrEqual(
+				TIME_PICKER_ROW_HEIGHTS[size]
+			);
+		}
+	});
+	test("the cap is below the library's", () => {
+		expect(TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER).toBeLessThan(TEXT_MAX_FONT_SIZE_MULTIPLIER);
 	});
 });
 

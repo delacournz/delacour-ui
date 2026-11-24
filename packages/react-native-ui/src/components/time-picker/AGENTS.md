@@ -153,6 +153,13 @@ returns the root's state for a custom trigger or footer.
 - **Row heights are numbers, not classes** — 32/40/48 for `sm`/`md`/`lg` —
   because `snapToInterval` and the index maths take points. Visible rows are 3,
   5 or 7, odd so one sits on the centre line.
+- **Text scaling: the trigger grows, the wheel rows cap.** The trigger wears
+  `Input`'s `min-h-input-*` floor, so the value (default 2× cap) grows the box;
+  a caller's `min-h-*` displaces the floor, a bare `h-*` no longer does. Wheel
+  rows are fixed points because the snap maths need them, so `rowText` and the
+  `:` separators carry `TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER` (1.5, below
+  the library's 2×) — the largest scale at which a 1.4 line-height line still
+  fits the shortest (32pt) row. Raising it clips the rows.
 - **`snapMinute` rounds to the nearest step.** 53 on a 15-minute step is 60,
   which `snapTime` carries into the next hour; at 23:59 it clamps to the last
   step of the day rather than wrapping to midnight.

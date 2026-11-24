@@ -21,6 +21,7 @@ import {
 	resolveWheelPadding,
 	TIME_PICKER_DEFAULT_VISIBLE_ROWS,
 	TIME_PICKER_ROW_HEIGHTS,
+	TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER,
 	type TimeWheelColumnKind,
 	timePickerVariants,
 } from "./time-picker.variants";
@@ -136,7 +137,12 @@ export function TimePickerWheel({
 							visibleRows={visibleRows}
 						/>
 						{hasSeparator ? (
-							<Text accessibilityElementsHidden className={slots.separator()} importantForAccessibility="no">
+							<Text
+								accessibilityElementsHidden
+								className={slots.separator()}
+								importantForAccessibility="no"
+								maxFontSizeMultiplier={TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER}
+							>
 								:
 							</Text>
 						) : null}

@@ -53,11 +53,12 @@ const nonText = (foreground: string, background: string): ContrastPair => ({
  * Every pair the library actually draws.
  *
  * Text pairs are each surface with its own `-foreground`, plus `muted-foreground`
- * on the three surfaces captions and placeholders sit on, plus `destructive` as
+ * on the four surfaces captions and placeholders sit on, plus `destructive` as
  * the error text `Field` writes on the page and on a card.
  *
- * Non-text pairs are `input` — the boundary of every Input, Checkbox, Radio and
- * the Switch's off track — and `ring`, the focus indicator. `border` is absent on
+ * Non-text pairs are `input` — the edge of every Input, OTP cell, Checkbox,
+ * Radio ring, SelectionMode mark and Slider thumb, and the Switch's off track —
+ * and `ring`, the focus indicator. `border` is absent on
  * purpose: it is a decorative divider between surfaces, which SC 1.4.11 exempts,
  * and holding a card's hairline to 3:1 would draw every list as a grid.
  */
@@ -69,6 +70,7 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
 	text("secondary-foreground", "secondary"),
 	text("accent-foreground", "accent"),
 	text("muted-foreground", "muted"),
+	text("muted-foreground", "secondary"),
 	text("muted-foreground", "background"),
 	text("muted-foreground", "card"),
 	text("elevated-foreground", "elevated"),

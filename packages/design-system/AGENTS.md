@@ -217,7 +217,7 @@ descending lightness; `contrast.ts` is the pure oklch → sRGB → WCAG helper i
 ## The default is held to AA; everything else is audited
 
 `contrast-audit.ts` names every pair the library draws — each surface with its
-`-foreground`, `muted-foreground` on the three surfaces captions sit on,
+`-foreground`, `muted-foreground` on the four surfaces captions sit on,
 `destructive` as error text, and the non-text `input` (a control's edge) and
 `ring` (focus) — and `auditContrast` reports each one's ratio in both modes.
 Text is held to 4.5:1, non-text to 3:1. `border` is deliberately not a pair: a

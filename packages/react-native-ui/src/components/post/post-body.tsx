@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useState } from "react";
 import { type AccessibilityActionEvent, type TextLayoutEvent, View } from "react-native";
+import { Pressable } from "../pressable";
 import { Text, type TextProps } from "../text";
 import { usePostPart } from "./post.context";
 import {
@@ -50,7 +51,8 @@ function handlerFor(
  * `expandable` with `numberOfLines` measures the body unclamped in an
  * invisible twin laid over it, because a clamped `Text` reports only the lines
  * it drew. The "more" / "less" toggle is labelled "Show more" / "Show less" and carries
- * `expanded`. This is also the one carrier of a pressable card's own `onPress` /
+ * `expanded`, as one `Pressable` stop around a plain `Text` — a `Text` with `onPress` is a second
+ * VoiceOver element on iOS. This is also the one carrier of a pressable card's own `onPress` /
  * `onLongPress`, as `activate` / `longpress` accessibility actions — see AGENTS.md. "More" appears only when the twin has more lines than the clamp —
  * a short post offers nothing to tap into.
  */
@@ -132,17 +134,16 @@ export function PostBody({
 				</Text>
 			) : null}
 			{toggle ? (
-				<Text
+				<Pressable
 					accessibilityLabel={toggleA11y.label}
 					accessibilityRole="button"
 					accessibilityState={{ expanded: toggleA11y.expanded }}
-					className={slots.bodyToggle()}
+					feedback="none"
 					onPress={() => setIsExpanded((open) => !open)}
-					suppressHighlighting
 					testID={testID ? `${testID}-more` : "post-body-more"}
 				>
-					{clamp.showMore ? "more" : "less"}
-				</Text>
+					<Text className={slots.bodyToggle()}>{clamp.showMore ? "more" : "less"}</Text>
+				</Pressable>
 			) : null}
 		</View>
 	);

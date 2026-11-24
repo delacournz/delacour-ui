@@ -54,7 +54,8 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
   card offers none; without `onPress` the root is a plain `View`. Passing `accessible` to `Post`
   yourself merges the card and swallows its controls — a development warning says so.
 - **The "more" / "less" toggle is labelled "Show more" / "Show less"** (the visible word is in the
-  name) and carries `accessibilityState.expanded`.
+  name) and carries `accessibilityState.expanded`. It is one `Pressable` stop
+  (`feedback="none"`) around a plain `Text`: a `Text` with `onPress` is a second VoiceOver stop on iOS.
 - **`Post.Author` and `Post.Community` are one stop each.** Their labels are built by
   `resolveAuthorA11yLabel` — "Aria Whitlock, @aria, verified, 3 minutes ago" — so the time is read as
   words, never "3m", and four elements are not four swipes.

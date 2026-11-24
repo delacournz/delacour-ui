@@ -332,10 +332,16 @@ describe("Post", () => {
 			await fireEvent(twin, "textLayout", lines(4));
 			expect(screen.getByRole("button", { name: "Show more" })).toBeOnTheScreen();
 
-			expect(screen.getByRole("button", { name: "Show more" }).props.accessibilityState).toEqual({ expanded: false });
-			await fireEvent.press(screen.getByRole("button", { name: "Show more" }));
+			expect(screen.getByRole("button", { name: "Show more" }).props.accessibilityState).toMatchObject({
+				expanded: false,
+			});
+			expect(screen.getAllByRole("button")).toHaveLength(1);
+			expect(screen.getByText("more").props.onPress).toBeUndefined();
+			await fireEvent.press(screen.getByTestId("body-more"));
 			expect(screen.getByRole("button", { name: "Show less" })).toBeOnTheScreen();
-			expect(screen.getByRole("button", { name: "Show less" }).props.accessibilityState).toEqual({ expanded: true });
+			expect(screen.getByRole("button", { name: "Show less" }).props.accessibilityState).toMatchObject({
+				expanded: true,
+			});
 
 			await fireEvent.press(screen.getByRole("button", { name: "Show less" }));
 			expect(screen.getByRole("button", { name: "Show more" })).toBeOnTheScreen();

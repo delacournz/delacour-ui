@@ -233,6 +233,27 @@ export function advanceRotation(rotation: number, dtMs: number, velocity: number
 }
 
 /**
+ * Whether the frame loop runs, and whether its velocity is eased to zero.
+ *
+ * Only a `loop` runs, and only when nothing rests it: calm motion or a screen reader sends the
+ * angle back to 0 and registers nothing. A pause — the user's or the app's `pause` — keeps the loop
+ * registered at zero velocity, so the angle freezes where it is and resuming carries on from it.
+ * `controlled` and `none` never run a clock of their own.
+ */
+export function resolveSpinRun({
+	kind,
+	isAtRest,
+	isPaused,
+}: {
+	kind: "none" | "loop" | "controlled";
+	isAtRest: boolean;
+	isPaused: boolean;
+}): { isLooping: boolean; isHeld: boolean } {
+	const isLooping = kind === "loop" && !isAtRest;
+	return { isLooping, isHeld: isLooping && isPaused };
+}
+
+/**
  * Each glyph's starting angle, given its measured advance — the fallback layout should
  * `TextPath` ever prove unreliable. Unused while it is not.
  */

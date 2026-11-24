@@ -19,6 +19,7 @@ import {
 	resolveRingLength,
 	resolveRingText,
 	resolveSpan,
+	resolveSpinRun,
 	resolveSpinVelocity,
 } from "./circular-text.variants";
 
@@ -343,5 +344,35 @@ describe("resolveCopies", () => {
 	test("estimates a fill from the text without its own trailing separator", () => {
 		expect(resolveCopies("fill", "DELACOUR UI • ", " • ", 400, 10)).toBe(resolveRepeatCount(400, 11, 10, 3));
 		expect(resolveCopies("fill", "DELACOUR UI", " • ", 400, 10)).toBe(resolveRepeatCount(400, 11, 10, 3));
+	});
+});
+
+describe("resolveSpinRun", () => {
+	test("a loop runs when nothing holds it", () => {
+		expect(resolveSpinRun({ kind: "loop", isAtRest: false, isPaused: false })).toEqual({
+			isLooping: true,
+			isHeld: false,
+		});
+	});
+
+	test("a rest state stops the loop outright, paused or not", () => {
+		expect(resolveSpinRun({ kind: "loop", isAtRest: true, isPaused: false })).toEqual({
+			isLooping: false,
+			isHeld: false,
+		});
+		expect(resolveSpinRun({ kind: "loop", isAtRest: true, isPaused: true }).isLooping).toBe(false);
+	});
+
+	test("a pause keeps the loop registered but held, so the angle freezes", () => {
+		expect(resolveSpinRun({ kind: "loop", isAtRest: false, isPaused: true })).toEqual({
+			isLooping: true,
+			isHeld: true,
+		});
+	});
+
+	test("none and controlled never run a clock", () => {
+		for (const kind of ["none", "controlled"] as const) {
+			expect(resolveSpinRun({ kind, isAtRest: false, isPaused: false })).toEqual({ isLooping: false, isHeld: false });
+		}
 	});
 });

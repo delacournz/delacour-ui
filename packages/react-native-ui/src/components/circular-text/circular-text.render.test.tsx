@@ -1,7 +1,20 @@
-import { afterEach, describe, expect, jest, test } from "@jest/globals";
-import { Pressable, Text } from "react-native";
-import { renderWithProviders, screen } from "../../test/render";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { AccessibilityInfo, Pressable, Text } from "react-native";
+import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
+import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
+import { DelacourProvider } from "../provider";
 import { CircularText } from "./circular-text";
+
+let isReaderOn = false;
+
+beforeEach(() => {
+	resetScreenReaderStore();
+	isReaderOn = false;
+	jest.spyOn(AccessibilityInfo, "isScreenReaderEnabled").mockImplementation(() => Promise.resolve(isReaderOn));
+	jest
+		.spyOn(AccessibilityInfo, "addEventListener")
+		.mockImplementation((() => ({ remove: jest.fn() })) as unknown as typeof AccessibilityInfo.addEventListener);
+});
 
 afterEach(() => {
 	jest.restoreAllMocks();
@@ -150,5 +163,91 @@ describe("CircularText", () => {
 		);
 		expect(screen.queryByTestId("empty")).not.toBeOnTheScreen();
 		expect(warn).toHaveBeenCalled();
+	});
+
+	describe("looping motion", () => {
+		const ring = () => screen.getByRole("text", { name: "Spin" });
+
+		test("a spinning ring offers pause, then resume after the user pauses", async () => {
+			await renderWithProviders(
+				<CircularText radius={60} spin={{ kind: "loop" }}>
+					Spin
+				</CircularText>
+			);
+			expect(ring().props.accessibilityActions).toEqual([{ name: "pause", label: "Pause animation" }]);
+			await act(() => {
+				fireEvent(ring(), "accessibilityAction", { nativeEvent: { actionName: "pause" } });
+			});
+			expect(ring().props.accessibilityActions).toEqual([{ name: "resume", label: "Resume animation" }]);
+			await act(() => {
+				fireEvent(ring(), "accessibilityAction", { nativeEvent: { actionName: "resume" } });
+			});
+			expect(ring().props.accessibilityActions).toEqual([{ name: "pause", label: "Pause animation" }]);
+		});
+
+		test("a ring that does not spin offers no actions", async () => {
+			await renderWithProviders(<CircularText radius={60}>Spin</CircularText>);
+			expect(ring().props.accessibilityActions).toBeUndefined();
+		});
+
+		test("a controlled angle offers no actions: the caller owns that motion", async () => {
+			const { useSharedValue } =
+				jest.requireActual<typeof import("react-native-reanimated")>("react-native-reanimated");
+			function Controlled() {
+				const rotation = useSharedValue(0);
+				return (
+					<CircularText radius={60} spin={{ kind: "controlled", rotation }}>
+						Spin
+					</CircularText>
+				);
+			}
+			await renderWithProviders(<Controlled />);
+			expect(ring().props.accessibilityActions).toBeUndefined();
+		});
+
+		test("a screen reader holds the ring at rest and leaves it nothing to resume", async () => {
+			isReaderOn = true;
+			await renderWithProviders(
+				<CircularText radius={60} spin={{ kind: "loop" }}>
+					Spin
+				</CircularText>
+			);
+			await act(async () => {});
+			expect(ring().props.accessibilityActions).toEqual([]);
+		});
+
+		test("calm motion holds the ring at rest", async () => {
+			await renderWithProviders(
+				<DelacourProvider isMotionCalm>
+					<CircularText radius={60} spin={{ kind: "loop" }}>
+						Spin
+					</CircularText>
+				</DelacourProvider>
+			);
+			expect(ring().props.accessibilityActions).toEqual([]);
+		});
+
+		test("isPaused freezes the ring and the pause action reports through onPausedChange", async () => {
+			const onPausedChange = jest.fn();
+			await renderWithProviders(
+				<CircularText isPaused onPausedChange={onPausedChange} radius={60} spin={{ kind: "loop" }}>
+					Spin
+				</CircularText>
+			);
+			expect(ring().props.accessibilityActions).toEqual([{ name: "resume", label: "Resume animation" }]);
+			await act(() => {
+				fireEvent(ring(), "accessibilityAction", { nativeEvent: { actionName: "resume" } });
+			});
+			expect(onPausedChange).toHaveBeenCalledWith(false);
+		});
+
+		test("defaultPaused starts the ring frozen", async () => {
+			await renderWithProviders(
+				<CircularText defaultPaused radius={60} spin={{ kind: "loop" }}>
+					Spin
+				</CircularText>
+			);
+			expect(ring().props.accessibilityActions).toEqual([{ name: "resume", label: "Resume animation" }]);
+		});
 	});
 });

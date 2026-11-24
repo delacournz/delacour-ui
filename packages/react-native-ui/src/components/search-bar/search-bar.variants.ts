@@ -3,6 +3,12 @@ import { tv } from "../../lib/tv";
 import type { ButtonLabelSize } from "../button/button.variants";
 import type { ChipSize } from "../chip/chip.variants";
 import { INPUT_SIZES, INPUT_VARIANTS, type InputSize } from "../input/input.variants";
+import {
+	type HitSlopInsets,
+	MIN_HIT_TARGET,
+	normalizeHitSlop,
+	resolveMinimumHitSlop,
+} from "../pressable/pressable.variants";
 
 /** Sizes are `Input`'s own tuple — the search bar is an `Input.Group`, so it has no scale of its own. */
 export const SEARCH_BAR_SIZES = INPUT_SIZES;
@@ -40,8 +46,31 @@ export const SEARCH_BAR_CANCEL_BUTTON_SIZE: Record<SearchBarSize, ButtonLabelSiz
 	lg: "lg",
 };
 
-/** How far a press outside the clear glyph still reaches it, in points. */
-export const SEARCH_BAR_CLEAR_HIT_SLOP = 8;
+/** The clear glyph's drawn edge per field size: `size-icon-sm|md|lg` in `tokens.css`. */
+export const SEARCH_BAR_CLEAR_SIZE: Record<InputSize, number> = { sm: 16, md: 18, lg: 20 };
+
+/** The gap between the field and the clear glyph: `gap-1.5|2|2.5`. Dead space, so slop inside it covers nothing. */
+export const SEARCH_BAR_CLEAR_GAP: Record<InputSize, number> = { sm: 6, md: 8, lg: 10 };
+
+/**
+ * The clear glyph's `hitSlop` at `size`, grown toward `min` (the app's minimum touch target).
+ *
+ * Vertical slop is uncapped: nothing sits above or below the glyph but the box's own padding.
+ * Horizontal slop is capped at the gap beside it, so it never reaches the text field. That leaves
+ * it short of `min` wide on purpose: a press past the gap belongs to the field, which focuses.
+ */
+export function resolveSearchBarClearHitSlop(size: InputSize, min: number = MIN_HIT_TARGET): HitSlopInsets | undefined {
+	const edge = SEARCH_BAR_CLEAR_SIZE[size];
+	const vertical = normalizeHitSlop(resolveMinimumHitSlop(edge, min));
+	const horizontal = normalizeHitSlop(resolveMinimumHitSlop(edge, min, { cap: SEARCH_BAR_CLEAR_GAP[size] }));
+	if (!(vertical || horizontal)) return undefined;
+	return {
+		bottom: vertical?.bottom ?? 0,
+		left: horizontal?.left ?? 0,
+		right: horizontal?.right ?? 0,
+		top: vertical?.top ?? 0,
+	};
+}
 
 /** The Cancel action's slide, in ms. */
 export const SEARCH_BAR_CANCEL_DURATION = 200;

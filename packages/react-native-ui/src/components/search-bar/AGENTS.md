@@ -108,3 +108,7 @@ optional Cancel action and debounced change reporting, over `Input.Group`. Root 
 - **There is no results panel.** An anchored suggestions surface needs a popover, and the
   library has none yet. The caller renders results in their own list, swapped in on
   `onFocusChange`.
+- **Clear reaches the minimum touch target vertically, and only as far sideways as its gap.** The
+  glyph is 16–20pt, so its `hitSlop` grows to the app's 44 up and down, where only the box's
+  padding sits. Sideways it stops at the row gap beside it: slop past that would swallow taps meant
+  to place the caret at the end of the text.

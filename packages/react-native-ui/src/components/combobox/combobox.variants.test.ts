@@ -184,6 +184,16 @@ describe("resolveComboboxTriggerText", () => {
 	const apple = { label: "Apple", value: "apple" };
 	const fig = { label: "Fig", value: "fig" };
 
+	test("multiple takes a localised count formatter", () => {
+		expect(
+			resolveComboboxTriggerText({
+				formatSelectedCount: (count) => `${count} gewählt`,
+				mode: "multiple",
+				selected: [apple, fig],
+			})
+		).toBe("2 gewählt");
+	});
+
 	test("nothing chosen is undefined, so the placeholder shows", () => {
 		expect(resolveComboboxTriggerText({ mode: "single", selected: [] })).toBeUndefined();
 		expect(resolveComboboxTriggerText({ mode: "multiple", selected: [] })).toBeUndefined();

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen, within } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
 import { Field } from "../field";
@@ -444,6 +445,105 @@ describe("Combobox multiple", () => {
 		await multiple({ defaultValue: ["au", "fj"], isClearable: true, onValueChange });
 		await press(screen.getByRole("button", { name: "Clear" }));
 		expect(onValueChange).toHaveBeenLastCalledWith([]);
+	});
+});
+
+describe("Combobox labels", () => {
+	const german = {
+		clear: "Leeren",
+		clearSearch: "Suche leeren",
+		done: "Fertig",
+		empty: "Keine Treffer",
+		moreChips: (count: number) => `${count} weitere`,
+		moreChipsShort: (count: number) => `${count} mehr`,
+		removeChip: (label: string) => `${label} entfernen`,
+		search: "Suchen",
+		searchInField: (field: string, search: string) => `${search} in ${field}`,
+		selected: (count: number) => `${count} gewählt`,
+		triggerHint: "Öffnet eine durchsuchbare Liste",
+	};
+
+	test("the labels prop changes the trigger, the search field and the empty text", async () => {
+		await render({ defaultValue: "fj", isClearable: true, labels: german });
+		expect(screen.getByRole("button", { name: "Country" }).props.accessibilityHint).toBe(
+			"Öffnet eine durchsuchbare Liste"
+		);
+		expect(screen.getByRole("button", { name: "Leeren" })).toBeOnTheScreen();
+		await open();
+		await fireEvent.changeText(screen.getByLabelText("Suchen"), "zzz");
+		expect(screen.getByText("Keine Treffer")).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Suche leeren" })).toBeOnTheScreen();
+	});
+
+	test("the multiple trigger's chips, count and Done read the labels", async () => {
+		await render({
+			defaultValue: ["au", "ca", "fj", "nz"],
+			labels: german,
+			maxVisibleChips: 2,
+			selectionMode: "multiple",
+		});
+		expect(screen.getByText("3 mehr")).toBeOnTheScreen();
+		expect(trigger()).toHaveAccessibilityValue({ text: "4 gewählt" });
+		await open();
+		expect(screen.getByText("Fertig")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Australia entfernen")).toBeOnTheScreen();
+	});
+
+	test("the field label joins the search name through searchInField", async () => {
+		await renderWithProviders(
+			<Field>
+				<Field.Label>Country</Field.Label>
+				<Combobox labels={german} options={OPTIONS} />
+			</Field>,
+			{ wrapper: Sheets }
+		);
+		await press(screen.getByRole("button", { name: "Country" }));
+		expect(screen.getByLabelText("Suchen in Country")).toBeOnTheScreen();
+	});
+
+	test("the create row reads labels.create and labels.createAccessibility", async () => {
+		await render({
+			allowCustomValue: true,
+			labels: {
+				create: (query: string) => `${query} anlegen`,
+				createAccessibility: (query: string) => `${query} hinzufügen`,
+			},
+		});
+		await open();
+		await fireEvent.changeText(search(), "Atlantis");
+		expect(screen.getByRole("button", { name: "Atlantis hinzufügen" })).toBeOnTheScreen();
+		expect(screen.getByText("Atlantis anlegen")).toBeOnTheScreen();
+	});
+
+	test("a LabelsProvider changes them too", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ combobox: german }}>
+				<Combobox options={OPTIONS} testID="cb" title="Country" />
+			</LabelsProvider>,
+			{ wrapper: Sheets }
+		);
+		await open();
+		expect(screen.getByLabelText("Suchen")).toBeOnTheScreen();
+	});
+
+	test("the prop wins over the provider, key by key", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ combobox: german }}>
+				<Combobox labels={{ search: "Finden" }} options={OPTIONS} testID="cb" title="Country" />
+			</LabelsProvider>,
+			{ wrapper: Sheets }
+		);
+		await open();
+		expect(screen.getByLabelText("Finden")).toBeOnTheScreen();
+		await fireEvent.changeText(screen.getByLabelText("Finden"), "zzz");
+		expect(screen.getByText("Keine Treffer")).toBeOnTheScreen();
+	});
+
+	test("an explicit per-string prop still wins over labels", async () => {
+		await render({ emptyText: "Nothing", labels: german, searchPlaceholder: "Look up" });
+		await open();
+		await fireEvent.changeText(screen.getByLabelText("Look up"), "zzz");
+		expect(screen.getByText("Nothing")).toBeOnTheScreen();
 	});
 });
 

@@ -9,7 +9,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { IconCrossSmall, IconMagnifyingGlass } from "../../icons/central";
+import type { ComboboxLabels } from "../../lib/labels";
 import { BottomSheet, type BottomSheetProps } from "../bottom-sheet";
 import { Button } from "../button";
 import type { ChipVariant } from "../chip/chip.variants";
@@ -92,14 +94,21 @@ type ComboboxBaseProps = {
 	openOnFocus?: boolean;
 	/** Offer the typed text as a value of its own when no option's label is exactly it. */
 	allowCustomValue?: boolean;
-	/** What the create row reads. @default (query) => `Use “${query}”` */
+	/** What the create row reads. Wins over `labels.create`. @default (query) => `Use “${query}”` */
 	createLabel?: (query: string) => string;
-	/** What an empty list says, and what a screen reader hears. Replace the whole thing with `Combobox.Empty`. @default "No results" */
+	/** What an empty list says, and what a screen reader hears. Replace the whole thing with `Combobox.Empty`. Wins over `labels.empty`. @default "No results" */
 	emptyText?: string;
-	/** The search field's placeholder; with the field label, its accessible name. @default "Search" */
+	/** The search field's placeholder; with the field label, its accessible name. Wins over `labels.search`. @default "Search" */
 	searchPlaceholder?: string;
-	/** What a screen reader hears after a filter, past zero. @default (n) => "1 result" / `${n} results` */
+	/** What a screen reader hears after a filter, past zero. Wins over `labels.results`. @default (n) => "1 result" / `${n} results` */
 	formatResultsCount?: (count: number) => string;
+	/**
+	 * Some of the spoken and visible strings: the create row, empty text, search field, clear
+	 * buttons, result and selected counts and the chips. Laid over `DelacourProvider`'s `labels`,
+	 * which sit over the English defaults. The per-string props (`emptyText`, `createLabel`,
+	 * `searchPlaceholder`, `formatResultsCount`, `limitReachedText`, `doneText`) still win.
+	 */
+	labels?: Partial<ComboboxLabels>;
 	/** Where the options open. Only `sheet` today. */
 	presentation?: ComboboxPresentation;
 	/** Forwarded to the sheet. Leave it off and the sheet opens at its cap and holds that height while you type. */
@@ -128,13 +137,13 @@ export type ComboboxMultipleProps = ComboboxBaseProps & {
 	onValueChange?: (value: string[]) => void;
 	/** Once this many are chosen, the remaining rows are disabled. */
 	maxSelected?: number;
-	/** What a row disabled by `maxSelected` says when it has no description. @default "Limit reached" */
+	/** What a row disabled by `maxSelected` says when it has no description. Wins over `labels.limitReached`. @default "Limit reached" */
 	limitReachedText?: string;
 	/** How the chips are painted. @default "soft" */
 	chipVariant?: ChipVariant;
 	/** How many chips the trigger draws before folding the rest into `+N`. @default 3 */
 	maxVisibleChips?: number;
-	/** The footer button that closes the sheet. Multiple never closes on a pick. @default "Done" */
+	/** The footer button that closes the sheet. Multiple never closes on a pick. Wins over `labels.done`. @default "Done" */
 	doneText?: string;
 };
 
@@ -159,8 +168,6 @@ const STICKY_HEADER = [0];
  */
 const claimTouch = (): boolean => true;
 
-const defaultCreateLabel = (query: string): string => `Use “${query}”`;
-
 function ComboboxRoot(props: ComboboxProps): ReactElement {
 	const {
 		options,
@@ -179,10 +186,11 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		isClearable = false,
 		openOnFocus = true,
 		allowCustomValue = false,
-		createLabel = defaultCreateLabel,
-		emptyText = "No results",
-		searchPlaceholder = "Search",
+		createLabel,
+		emptyText,
+		searchPlaceholder,
 		formatResultsCount,
+		labels: labelsProp,
 		snapPoints,
 		highlight = true,
 		className,
@@ -192,6 +200,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 	const mode = props.selectionMode ?? "single";
 	const multiple = props.selectionMode === "multiple" ? props : null;
 
+	const labels = useLabels("combobox", labelsProp);
 	const field = useFieldContext();
 	const { height: windowHeight } = useWindowDimensions();
 	const { top: topInset } = useSafeAreaInsets();
@@ -325,8 +334,8 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 	const rows = useMemo(() => buildComboboxRows(filtered, createQuery), [filtered, createQuery]);
 	const announcement = resolveResultsAnnouncement({
 		count: filtered.length,
-		emptyText,
-		format: formatResultsCount,
+		emptyText: emptyText ?? labels.empty,
+		format: formatResultsCount ?? labels.results,
 		query,
 	});
 
@@ -338,7 +347,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 
 	const sheetTitle = title ?? field?.label ?? undefined;
 	const chipVariant = multiple?.chipVariant ?? "soft";
-	const limitReachedText = multiple?.limitReachedText ?? "Limit reached";
+	const limitReachedText = multiple?.limitReachedText ?? labels.limitReached;
 
 	const context: ComboboxContextValue = {
 		accessibilityLabel: field?.label ?? title,
@@ -352,6 +361,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		isLoading,
 		isOpen,
 		isReadOnly,
+		labels,
 		maxVisibleChips: multiple?.maxVisibleChips,
 		open,
 		placeholder,
@@ -362,7 +372,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		size,
 		testID,
 		toggle,
-		triggerText: resolveComboboxTriggerText({ mode, selected: selectedOptions }),
+		triggerText: resolveComboboxTriggerText({ formatSelectedCount: labels.selected, mode, selected: selectedOptions }),
 		variant,
 	};
 
@@ -392,6 +402,8 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		if (target) remove(target.value);
 	};
 
+	const formatCreate = createLabel ?? labels.create;
+
 	const renderRowContent = (item: ComboboxListRow): ReactElement => {
 		if (item.kind === "heading") {
 			return (
@@ -404,7 +416,8 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 			return (
 				<ComboboxCreateRow
 					isDisabled={maxSelected !== undefined && selected.length >= maxSelected}
-					label={createLabel(item.query)}
+					labels={labels}
+					label={formatCreate(item.query)}
 					onPress={create}
 					query={item.query}
 					size={size}
@@ -450,7 +463,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 	) : query !== "" ? (
 		<View onStartShouldSetResponder={claimTouch}>
 			<Pressable
-				accessibilityLabel="Clear search"
+				accessibilityLabel={labels.clearSearch}
 				accessibilityRole="button"
 				className={slots.clear()}
 				feedback="fade"
@@ -463,7 +476,8 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		</View>
 	) : null;
 
-	const searchLabel = field?.label ? `${field.label}, ${searchPlaceholder}` : searchPlaceholder;
+	const searchText = searchPlaceholder ?? labels.search;
+	const searchLabel = field?.label ? labels.searchInField(field.label, searchText) : searchText;
 
 	// The title, chips and search field ride at the head of the list, and the
 	// list pins them (`stickyHeaderIndices`) so the search field stays in reach
@@ -476,6 +490,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 				<View onStartShouldSetResponder={claimTouch}>
 					<ComboboxChipRow
 						chipVariant={chipVariant}
+						labels={labels}
 						onRemove={remove}
 						options={selectedOptions}
 						pendingIndex={pending.kind === "pending" ? pending.index : null}
@@ -495,7 +510,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 					onBlur={() => setPending(IDLE)}
 					onChangeText={handleChangeText}
 					onKeyPress={handleKeyPress}
-					placeholder={searchPlaceholder}
+					placeholder={searchText}
 					ref={inputRef}
 					returnKeyType="search"
 					testID={testID ? `${testID}-search` : undefined}
@@ -517,7 +532,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 				<Spinner color="muted-foreground" />
 			) : (
 				<Text accessibilityLiveRegion="polite" color="muted">
-					{emptyText}
+					{emptyText ?? labels.empty}
 				</Text>
 			)}
 		</View>
@@ -554,7 +569,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 						{multiple ? (
 							<BottomSheet.Footer sticky>
 								<Button onPress={close} testID={testID ? `${testID}-done` : undefined}>
-									{multiple.doneText ?? "Done"}
+									{multiple.doneText ?? labels.done}
 								</Button>
 							</BottomSheet.Footer>
 						) : null}

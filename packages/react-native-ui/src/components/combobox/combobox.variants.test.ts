@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { declaredTokens } from "../../styles/theme-tokens.test";
+import { declaredTokens, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { bottomSheetVariants } from "../bottom-sheet/bottom-sheet.variants";
 import { INPUT_SIZES, INPUT_VARIANTS, inputVariants, resolveInputGroupClass } from "../input/input.variants";
 import {
@@ -8,11 +8,14 @@ import {
 	SELECT_SHEET_TOP_GAP,
 } from "../select/select.variants";
 import {
+	COMBOBOX_CLEAR_GAP,
+	COMBOBOX_CLEAR_SIZE,
 	COMBOBOX_DEFAULT_MAX_CHIPS,
 	COMBOBOX_KEYBOARD_ESTIMATE_FRACTION,
 	comboboxVariants,
 	resolveComboboxChipColor,
 	resolveComboboxChipSize,
+	resolveComboboxClearHitSlop,
 	resolveComboboxSheetHeight,
 	resolveComboboxSheetMaxHeight,
 	resolveComboboxTriggerClass,
@@ -281,5 +284,42 @@ describe("tokens", () => {
 
 	test("no slot uses a dark: prefix", () => {
 		expect(everySlotClass().filter((cls) => cls.includes("dark:"))).toEqual([]);
+	});
+});
+
+describe("resolveComboboxClearHitSlop", () => {
+	test("the glyph and gap match the icon and row-gap tokens", () => {
+		const icon = { sm: "sm", md: "md", lg: "lg" } as const;
+		for (const size of INPUT_SIZES) {
+			const px = TOKENS_CSS.match(new RegExp(`--spacing-icon-${icon[size]}:\\s*(\\d+)px`))?.[1];
+			expect(Number(px)).toBe(COMBOBOX_CLEAR_SIZE[size]);
+		}
+		expect(COMBOBOX_CLEAR_GAP).toEqual({ lg: 10, md: 8, sm: 6 });
+	});
+
+	test("vertical reach is 44 at every size", () => {
+		for (const size of INPUT_SIZES) {
+			const slop = resolveComboboxClearHitSlop(size);
+			expect(slop).toBeDefined();
+			expect(COMBOBOX_CLEAR_SIZE[size] + 2 * (slop?.top ?? 0)).toBeGreaterThanOrEqual(44);
+			expect(slop?.top).toBe(slop?.bottom);
+		}
+	});
+
+	test("horizontal slop never leaves the gap beside the glyph", () => {
+		for (const size of INPUT_SIZES) {
+			const slop = resolveComboboxClearHitSlop(size);
+			expect(slop?.left).toBeLessThanOrEqual(COMBOBOX_CLEAR_GAP[size]);
+			expect(slop?.right).toBeLessThanOrEqual(COMBOBOX_CLEAR_GAP[size]);
+		}
+	});
+
+	test("Material's 48 asks for more vertically, the same horizontally", () => {
+		expect(resolveComboboxClearHitSlop("md", 48)?.top).toBe(15);
+		expect(resolveComboboxClearHitSlop("md", 48)?.left).toBe(8);
+	});
+
+	test("a minimum the glyph already meets needs no slop", () => {
+		expect(resolveComboboxClearHitSlop("md", 18)).toBeUndefined();
 	});
 });

@@ -135,7 +135,8 @@ parts.
   active before the press. List items carry their marker in their accessible
   text, so a screen reader says "bullet" or "2." before the item. A row is one
   stop, so a link inside it cannot be focused: `resolveMarkdownLinkActions`
-  mirrors each as an `Open link <text>` accessibility action on the row, which
+  mirrors each as an `Open link <text>` accessibility action on the row (a repeated
+  text gets an ordinal, `Open link here (2)`, since VoiceOver dispatches by label), which
   calls `onLinkPress` with the same allow-listed url. A row with no link has no
   actions. Links in paragraphs, headings and quotes are not merged and stay
   `Text.Link` stops.

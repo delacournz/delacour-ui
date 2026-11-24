@@ -222,6 +222,15 @@ describe("tokens", () => {
 });
 
 describe("resolveMarkdownLinkActions", () => {
+	test("links sharing their text get distinct labels, since VoiceOver dispatches a custom action by label", () => {
+		const link = (url: string): MarkdownInline => ({ children: [{ type: "text", value: "here" }], type: "link", url });
+		const inline: MarkdownInline[] = [link("https://a.test"), { type: "text", value: " or " }, link("https://b.test")];
+		expect(resolveMarkdownLinkActions(inline).map(({ label, url }) => ({ label, url }))).toEqual([
+			{ label: "Open link here", url: "https://a.test" },
+			{ label: "Open link here (2)", url: "https://b.test" },
+		]);
+	});
+
 	test("a row with no link has no actions", () => {
 		expect(resolveMarkdownLinkActions([{ type: "text", value: "plain" }])).toEqual([]);
 	});

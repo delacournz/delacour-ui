@@ -1,3 +1,4 @@
+export type { AttachmentLabelKind, AttachmentLabels, AttachmentSizeUnit } from "../../lib/labels";
 export { Attachment, type AttachmentProps } from "./attachment";
 export {
 	type AttachmentContextValue,

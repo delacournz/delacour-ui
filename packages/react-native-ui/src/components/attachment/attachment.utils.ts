@@ -5,6 +5,7 @@
  * Free of React Native imports so every one of them is unit-testable. See
  * AGENTS.md.
  */
+import { type AttachmentLabels, type AttachmentSizeUnit, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import type { AttachmentKind, AttachmentStatus } from "./attachment.variants";
 
 /** One entry of an image source, restated structurally so this file imports nothing from React Native. */
@@ -33,14 +34,7 @@ export function resolveAttachmentSourceKey(source: AttachmentSource | undefined)
 }
 
 const BINARY_STEP = 1024;
-const SIZE_UNITS = ["B", "KB", "MB", "GB", "TB"] as const;
-const SPOKEN_SIZE_UNITS = [
-	["byte", "bytes"],
-	["kilobyte", "kilobytes"],
-	["megabyte", "megabytes"],
-	["gigabyte", "gigabytes"],
-	["terabyte", "terabytes"],
-] as const;
+const SIZE_UNITS: readonly AttachmentSizeUnit[] = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"];
 
 /** The step a byte count is shown in, and its value there, rounded to one decimal. */
 function scaleBytes(bytes: number): { value: number; unit: number } {
@@ -70,21 +64,28 @@ function isByteCount(bytes: number): boolean {
  * when they picked the file. One decimal at most, none for bytes. A negative or
  * non-finite count is an empty string — there is nothing true to say.
  */
-export function formatFileSize(bytes: number, locale?: string): string {
+export function formatFileSize(
+	bytes: number,
+	locale?: string,
+	labels: AttachmentLabels = DELACOUR_DEFAULT_LABELS.attachment
+): string {
 	if (!isByteCount(bytes)) return "";
 	const { value, unit } = scaleBytes(bytes);
 	const number = new Intl.NumberFormat(locale, { maximumFractionDigits: unit === 0 ? 0 : 1 }).format(value);
-	return `${number} ${SIZE_UNITS[unit]}`;
+	return labels.fileSize(number, SIZE_UNITS[unit] ?? "byte");
 }
 
 /** {@link formatFileSize}, with the unit spelled out for a screen reader: `2.4 megabytes`, `1 kilobyte`. */
-export function spokenFileSize(bytes: number, locale?: string): string {
+export function spokenFileSize(
+	bytes: number,
+	locale?: string,
+	labels: AttachmentLabels = DELACOUR_DEFAULT_LABELS.attachment
+): string {
 	if (!isByteCount(bytes)) return "";
 	const { value, unit } = scaleBytes(bytes);
 	const rounded = unit === 0 ? Math.round(value) : Math.round(value * 10) / 10;
 	const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(rounded);
-	const [one, many] = SPOKEN_SIZE_UNITS[unit] ?? SPOKEN_SIZE_UNITS[0];
-	return `${number} ${rounded === 1 ? one : many}`;
+	return labels.spokenFileSize(rounded, number, SIZE_UNITS[unit] ?? "byte");
 }
 
 function durationParts(ms: number): { hours: number; minutes: number; seconds: number } {
@@ -100,22 +101,13 @@ export function formatDuration(ms: number): string {
 	return `${minutes}:${ss}`;
 }
 
-function unitPhrase(count: number, unit: string): string {
-	return `${count} ${unit}${count === 1 ? "" : "s"}`;
-}
-
 /**
  * {@link formatDuration} as words: `1 minute 5 seconds`.
  *
  * `1:05` is read aloud as "one oh five", which is a time of day, not a length.
  */
-export function spokenDuration(ms: number): string {
-	const { hours, minutes, seconds } = durationParts(ms);
-	const parts: string[] = [];
-	if (hours > 0) parts.push(unitPhrase(hours, "hour"));
-	if (minutes > 0) parts.push(unitPhrase(minutes, "minute"));
-	if (seconds > 0 || parts.length === 0) parts.push(unitPhrase(seconds, "second"));
-	return parts.join(" ");
+export function spokenDuration(ms: number, labels: AttachmentLabels = DELACOUR_DEFAULT_LABELS.attachment): string {
+	return labels.spokenDuration(durationParts(ms));
 }
 
 /**
@@ -229,6 +221,7 @@ export function resolveAttachmentMeta({
 	durationMs,
 	extension,
 	locale,
+	labels = DELACOUR_DEFAULT_LABELS.attachment,
 }: {
 	kind: AttachmentKind;
 	status: AttachmentStatus;
@@ -236,21 +229,15 @@ export function resolveAttachmentMeta({
 	durationMs?: number;
 	extension?: string;
 	locale?: string;
+	labels?: AttachmentLabels;
 }): string {
 	if (status.type === "error") return status.message;
 	const parts: string[] = [];
 	if ((kind === "video" || kind === "audio") && durationMs !== undefined) parts.push(formatDuration(durationMs));
-	if (sizeBytes !== undefined) parts.push(formatFileSize(sizeBytes, locale));
+	if (sizeBytes !== undefined) parts.push(formatFileSize(sizeBytes, locale, labels));
 	if (kind === "file" && extension) parts.push(extension.toUpperCase());
-	return parts.filter(Boolean).join(" · ");
+	return labels.meta(parts.filter(Boolean));
 }
-
-const KIND_WORD: Record<AttachmentKind, string> = {
-	image: "Photo",
-	video: "Video",
-	audio: "Audio",
-	file: "File",
-};
 
 /**
  * Everything an attachment says as one accessibility element:
@@ -268,6 +255,7 @@ export function resolveAttachmentAccessibilityLabel({
 	sizeBytes,
 	durationMs,
 	locale,
+	labels = DELACOUR_DEFAULT_LABELS.attachment,
 }: {
 	kind: AttachmentKind;
 	name: string;
@@ -275,24 +263,26 @@ export function resolveAttachmentAccessibilityLabel({
 	sizeBytes?: number;
 	durationMs?: number;
 	locale?: string;
+	labels?: AttachmentLabels;
 }): string {
-	const parts: string[] = [KIND_WORD[kind], name];
-	if ((kind === "video" || kind === "audio") && durationMs !== undefined) parts.push(spokenDuration(durationMs));
-	if (sizeBytes !== undefined) parts.push(spokenFileSize(sizeBytes, locale));
+	const parts: string[] = [labels.kind(kind), name];
+	if ((kind === "video" || kind === "audio") && durationMs !== undefined)
+		parts.push(spokenDuration(durationMs, labels));
+	if (sizeBytes !== undefined) parts.push(spokenFileSize(sizeBytes, locale, labels));
 	switch (status.type) {
 		case "idle":
-			parts.push("not sent");
+			parts.push(labels.notSent);
 			break;
 		case "uploading":
-			parts.push("uploading");
+			parts.push(labels.uploading);
 			break;
 		case "error":
-			parts.push("upload failed", status.message);
+			parts.push(labels.uploadFailed, status.message);
 			break;
 		case "done":
 			break;
 	}
-	return parts.filter(Boolean).join(", ");
+	return labels.summary(parts.filter(Boolean));
 }
 
 /** The root's `accessibilityValue` — the upload's ten-percent step, or none. */
@@ -345,13 +335,15 @@ export function resolveRemoveLabel({
 	name,
 	status,
 	label,
+	labels = DELACOUR_DEFAULT_LABELS.attachment,
 }: {
 	name: string;
 	status: AttachmentStatus;
 	label?: string;
+	labels?: AttachmentLabels;
 }): string {
 	if (label) return label;
-	return status.type === "uploading" ? "Cancel upload" : `Remove ${name}`;
+	return status.type === "uploading" ? labels.cancelUpload : labels.remove(name);
 }
 
 /** One entry of the root's `accessibilityActions`. */
@@ -376,6 +368,7 @@ export function resolveAttachmentActions({
 	hasRemove,
 	hasRetry,
 	removeLabel,
+	labels = DELACOUR_DEFAULT_LABELS.attachment,
 }: {
 	status: AttachmentStatus;
 	hasPress?: boolean;
@@ -383,11 +376,12 @@ export function resolveAttachmentActions({
 	hasRemove?: boolean;
 	hasRetry?: boolean;
 	removeLabel: string;
+	labels?: AttachmentLabels;
 }): AttachmentAccessibilityAction[] {
 	const actions: AttachmentAccessibilityAction[] = [];
 	if (hasPress) actions.push({ name: "activate" });
 	if (hasLongPress) actions.push({ name: "longpress" });
-	if (hasRetry && status.type === "error") actions.push({ label: "Retry upload", name: "retry" });
+	if (hasRetry && status.type === "error") actions.push({ label: labels.retryUpload, name: "retry" });
 	if (hasRemove) actions.push({ label: removeLabel, name: "remove" });
 	return actions;
 }

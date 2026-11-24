@@ -28,12 +28,12 @@ export function AttachmentRetry({
 	hitSlop = ATTACHMENT_ACTION_HIT_SLOP,
 	...props
 }: AttachmentRetryProps): ReactElement {
-	const { isDisabled, layout, onRetry, size } = useAttachmentPart("Attachment.Retry");
+	const { isDisabled, labels, layout, onRetry, size } = useAttachmentPart("Attachment.Retry");
 
 	return (
 		<Pressable
 			accessibilityElementsHidden
-			accessibilityLabel="Retry upload"
+			accessibilityLabel={labels.retryUpload}
 			accessible={false}
 			className={attachmentVariants({ layout, size }).action({ className })}
 			disabled={isDisabled}

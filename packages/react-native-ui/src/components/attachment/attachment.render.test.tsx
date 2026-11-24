@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AccessibilityInfo, Platform, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Attachment } from "./attachment";
 import { useAttachment } from "./attachment.context";
@@ -417,6 +418,102 @@ describe("Attachment", () => {
 			);
 			await activate(screen.getByLabelText("File, a.pdf"), "remove");
 			expect(onRemove).toHaveBeenCalledTimes(1);
+		});
+	});
+	describe("labels", () => {
+		const german = {
+			cancelUpload: "Upload abbrechen",
+			group: "Anhänge",
+			kind: (kind: string) => (kind === "file" ? "Datei" : "Foto"),
+			position: (current: number, count: number) => `${current} von ${count}`,
+			remove: (name: string) => `${name} entfernen`,
+			retryUpload: "Upload wiederholen",
+			uploadFailedAnnouncement: (name: string, message: string) => `Fehler ${name}: ${message}`,
+		};
+
+		test("the labels prop changes the name, the remove action and the controls", async () => {
+			await renderWithProviders(<Attachment kind="file" labels={german} name="a.pdf" onRemove={jest.fn()} />);
+			expect(screen.getByLabelText("Datei, a.pdf")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Datei, a.pdf").props.accessibilityActions).toEqual([
+				{ label: "a.pdf entfernen", name: "remove" },
+			]);
+		});
+
+		test("the retry control is named by retryUpload", async () => {
+			await renderWithProviders(
+				<Attachment
+					kind="file"
+					labels={german}
+					name="a.pdf"
+					onRetry={jest.fn()}
+					status={{ message: "Offline", type: "error" }}
+				/>
+			);
+			expect(screen.getByLabelText("Upload wiederholen", { includeHiddenElements: true })).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider changes them too, and the prop wins key by key", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ attachment: german }}>
+					<Attachment kind="file" labels={{ kind: () => "Dokument" }} name="a.pdf" onRemove={jest.fn()} />
+				</LabelsProvider>
+			);
+			const root = screen.getByLabelText("Dokument, a.pdf");
+			expect(root.props.accessibilityActions).toEqual([{ label: "a.pdf entfernen", name: "remove" }]);
+		});
+
+		test("an explicit per-string prop still wins", async () => {
+			await renderWithProviders(
+				<Attachment
+					accessibilityLabel="Vertrag"
+					kind="file"
+					labels={german}
+					name="a.pdf"
+					onRemove={jest.fn()}
+					removeAccessibilityLabel="Weg damit"
+				/>
+			);
+			expect(screen.getByLabelText("Vertrag").props.accessibilityActions).toEqual([
+				{ label: "Weg damit", name: "remove" },
+			]);
+		});
+
+		test("the group takes its name and each hint from the labels", async () => {
+			await renderWithProviders(
+				<Attachment.Group labels={german}>
+					<Attachment key="a" kind="file" name="a.pdf" />
+					<Attachment key="b" kind="file" name="b.pdf" />
+				</Attachment.Group>
+			);
+			expect(screen.getByLabelText("Anhänge").props.accessibilityRole).toBe("list");
+			expect(screen.getByLabelText("Datei, b.pdf").props.accessibilityHint).toBe("2 von 2");
+		});
+
+		test("the group's accessibilityLabel wins over labels.group", async () => {
+			await renderWithProviders(
+				<Attachment.Group accessibilityLabel="Dateien" labels={german}>
+					<Attachment kind="file" name="a.pdf" />
+				</Attachment.Group>
+			);
+			expect(screen.getByLabelText("Dateien")).toBeOnTheScreen();
+		});
+
+		test("the failure announcement is the labels'", async () => {
+			const platform = Platform.OS;
+			Platform.OS = "ios";
+			const announce = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => undefined);
+			try {
+				const view = await renderWithProviders(
+					<Attachment kind="file" labels={german} name="a.pdf" status={{ type: "uploading" }} />
+				);
+				await view.rerender(
+					<Attachment kind="file" labels={german} name="a.pdf" status={{ message: "Offline", type: "error" }} />
+				);
+				expect(announce).toHaveBeenCalledWith("Fehler a.pdf: Offline");
+			} finally {
+				Platform.OS = platform;
+				announce.mockRestore();
+			}
 		});
 	});
 });

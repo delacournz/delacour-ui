@@ -162,3 +162,18 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
   QuickLook goes, `onLongPress` where a context menu goes; an error is shown inline rather than
   as a toast. Picking is the app's own picker call — this component only renders the result.
   Audio shows its glyph and duration; a waveform is out of scope.
+
+- **The spoken strings are the `labels` prop, not literals**: the kind word, size units, durations,
+  status words, the remove/cancel/retry names, the iOS failure announcement, the "2 of 5" hint and
+  the group's name come from `lib/labels` (`AttachmentLabels`: `kind`, `fileSize`, `spokenFileSize`,
+  `spokenDuration`, `meta`, `notSent`, `uploading`, `uploadFailed`, `summary`, `remove`,
+  `cancelUpload`, `retryUpload`, `uploadFailedAnnouncement`, `position`, `group`) through
+  `useLabels("attachment", labels)`. Precedence is defaults <- `DelacourProvider` `labels` <- the
+  root's prop <- an explicit per-string prop (`accessibilityLabel`, `accessibilityHint`,
+  `removeAccessibilityLabel`; on the group `accessibilityLabel`). `Attachment.Group` takes `labels`
+  too: it reads `group` and hands the prop to an attachment with none of its own (whole-prop
+  fallback, not merged). The resolved labels ride the context, so `Meta` and `Retry` read them.
+  `formatFileSize`, `spokenFileSize` (3rd arg), `spokenDuration` (2nd arg) and the options of
+  `resolveAttachmentMeta`, `resolveAttachmentAccessibilityLabel`, `resolveRemoveLabel` and
+  `resolveAttachmentActions` (`labels`) take them, defaulting to English. The `meta` and `summary`
+  joiners receive only the non-empty parts.

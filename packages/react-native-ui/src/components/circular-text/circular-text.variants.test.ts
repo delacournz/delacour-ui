@@ -17,6 +17,7 @@ import {
 	resolveRingBox,
 	resolveRingLabel,
 	resolveRingLength,
+	resolveRingPaused,
 	resolveRingText,
 	resolveSpan,
 	resolveSpinRun,
@@ -381,5 +382,18 @@ describe("resolveSpinRun", () => {
 		for (const kind of ["none", "controlled"] as const) {
 			expect(resolveSpinRun({ kind, isAtRest: false, isPaused: false })).toEqual({ isLooping: false, isHeld: false });
 		}
+	});
+});
+
+describe("resolveRingPaused", () => {
+	test("the user's pause holds the ring, whatever the app's pause kind", () => {
+		expect(resolveRingPaused(true, { kind: "press" })).toBe(true);
+		expect(resolveRingPaused(true, { kind: "none" })).toBe(true);
+	});
+
+	test("the app's controlled pause holds it on its own", () => {
+		expect(resolveRingPaused(false, { kind: "controlled", isPaused: true })).toBe(true);
+		expect(resolveRingPaused(false, { kind: "controlled", isPaused: false })).toBe(false);
+		expect(resolveRingPaused(false, { kind: "press" })).toBe(false);
 	});
 });

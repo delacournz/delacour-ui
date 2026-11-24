@@ -25,6 +25,7 @@ import {
 	resolveRingBox,
 	resolveRingLabel,
 	resolveRingLength,
+	resolveRingPaused,
 	resolveRingText,
 	resolveSpan,
 } from "./circular-text.variants";
@@ -101,11 +102,6 @@ function createPressGesture(isPressed: SharedValue<boolean>, isEnabled: boolean)
 		});
 }
 
-/** The user's pause or the app's controlled one — either freezes the angle. */
-function isHeldByPause(hold: LoopingMotion["hold"], pause: CircularTextPause): boolean {
-	return hold === "paused" || (pause.kind === "controlled" && pause.isPaused);
-}
-
 /**
  * Pause and resume as accessibility actions, only on a ring that spins on its own and that the
  * app's controlled `pause` is not already holding — there a user pause would change nothing.
@@ -147,7 +143,7 @@ function CircularTextRoot({
 	const rotation = useCircularSpin({
 		direction,
 		isAtRest: motion.isAtRest,
-		isPaused: isHeldByPause(motion.hold, pause),
+		isPaused: resolveRingPaused(motion.isPaused, pause),
 		isPressed,
 		spin,
 	});

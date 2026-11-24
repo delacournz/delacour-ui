@@ -233,6 +233,17 @@ export function advanceRotation(rotation: number, dtMs: number, velocity: number
 }
 
 /**
+ * Whether a pause holds the ring: the user's own (`isPaused`, read whether or not calm motion or a
+ * screen reader also rests the ring, so it holds through the rest) or the app's controlled `pause`.
+ */
+export function resolveRingPaused(
+	isUserPaused: boolean,
+	pause: { kind: "none" } | { kind: "press" } | { kind: "controlled"; isPaused: boolean }
+): boolean {
+	return isUserPaused || (pause.kind === "controlled" && pause.isPaused);
+}
+
+/**
  * Whether the frame loop runs, and whether its velocity is eased to zero.
  *
  * Only a `loop` runs, and only when nothing rests it: calm motion or a screen reader sends the

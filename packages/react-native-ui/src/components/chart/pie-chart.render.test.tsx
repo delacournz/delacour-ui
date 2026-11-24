@@ -34,14 +34,18 @@ describe("PieChart accessibility", () => {
 		expect(screen.getByTestId("pie").props.accessibilityLabel).toBe("Seats by plan");
 	});
 
-	test("accessible={false} removes the frame from the accessibility tree", async () => {
+	test("accessible={false} hides the whole frame, its centre and tooltip included", async () => {
 		await renderWithProviders(
-			<PieChart accessible={false} data={DATA} nameKey="plan" testID="pie" valueKey="seats">
+			<PieChart accessible={false} data={DATA} nameKey="plan" selectedIndex={0} testID="pie" valueKey="seats">
 				<PieChart.Slice />
+				<PieChart.Center label="Seats" value="1,125" />
+				<PieChart.Tooltip />
 			</PieChart>
 		);
-		expect(screen.getByTestId("pie").props.accessible).toBe(false);
 		expect(screen.queryByRole("image")).toBeNull();
+		expect(screen.queryByRole("button")).toBeNull();
+		expect(screen.queryByText("Seats")).toBeNull();
+		expect(screen.getByText("Seats", { includeHiddenElements: true })).toBeOnTheScreen();
 	});
 
 	test("a selectable pie leaves its frame plain and exposes the summary and a button per drawn slice", async () => {

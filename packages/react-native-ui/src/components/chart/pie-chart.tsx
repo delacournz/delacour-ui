@@ -175,11 +175,12 @@ function PieChartRoot({
 	// descendants of an accessible parent, so its frame stays plain and
 	// `PieChartSliceTargets` exposes the summary and a button per slice instead.
 	const interactive = onSlicePress !== undefined;
-	const frameAccessibility =
-		accessible && !interactive
-			? ({ accessible: true, accessibilityRole: "image", accessibilityLabel: summary } as const)
-			: ({ accessible: false } as const);
 	const hideCanvas = { accessibilityElementsHidden: true, importantForAccessibility: "no-hide-descendants" } as const;
+	const interactiveFrame = { accessible: false } as const;
+	const imageFrame = { accessible: true, accessibilityRole: "image", accessibilityLabel: summary } as const;
+	// `accessible={false}` hides the whole frame — the centre and the tooltip
+	// included — the way `Chart` does, not just the frame view itself.
+	const frameAccessibility = !accessible ? hideCanvas : interactive ? interactiveFrame : imageFrame;
 
 	return (
 		<PieChartProvider value={value}>

@@ -25,7 +25,7 @@ A form field's layout, and the one place its state is written down. Root plus
 | `field.types.ts` | Prop types shared by two or more parts |
 | `field.variants.ts` | Pure `tv()` slots + resolvers, no RN imports |
 | `field.variants.test.ts` | |
-| `field.render.test.tsx` | Mounted under Jest — label press reaching Checkbox/Switch (and refused when disabled), state cascade, Slider thumb naming, validity reaching a control through the hook, label hidden once claimed, Error live region, Legend header, parts outside a Field |
+| `field.render.test.tsx` | Mounted under Jest — label press reaching Checkbox/Switch (and refused when disabled), state cascade, Slider thumb naming, validity reaching a control through the hook, label hidden once claimed, Error alert and announcement, Legend header, parts outside a Field |
 
 ## Design
 
@@ -99,11 +99,10 @@ A form field's layout, and the one place its state is written down. Root plus
   so it stays readable. A claim is a count, so a remounting control never
   unhides the label for a frame. A required field's label draws `Label`'s
   asterisk and reads "Email, required" while it is visible to a screen reader.
-- **`Field.Error` announces through one mechanism**: an Android polite live
-  region. `role="alert"` was dropped — on Android it only adds a spoken "alert"
-  to every visit, on iOS it maps to no trait. VoiceOver hears the error as part
-  of the control's hint. An iOS on-appearance announcement is the shared
-  announce helper's job, not this part's.
+- **`Field.Error` is also read through the control's hint.** Its text is registered
+  with the field, so a screen reader hears it wherever focus is, on top of the
+  once-per-platform announcement described below. It has `role="alert"` and no live
+  region beside the announcement.
 - **`Field.Legend` is a header**, so the headings rotor jumps between sections.
 - **A data-attribute class would also hide the decision from unit tests.** Even for a part styling
   itself, `data-invalid:text-destructive` moves the decision from `field.variants.ts`

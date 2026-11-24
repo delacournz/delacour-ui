@@ -11,9 +11,11 @@
 		"field",
 		"icon",
 		"icons",
+		"labels",
 		"pressable",
 		"toggle-button",
-		"tv"
+		"tv",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -37,7 +39,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/theme-selector/index.ts",
 			"target": "theme-selector/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector-option.tsx",
@@ -61,18 +69,38 @@
 		{
 			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.context.tsx",
 			"target": "theme-selector/theme-selector.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.logic.ts",
 			"target": "theme-selector/theme-selector.logic.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.tsx",
 			"target": "theme-selector/theme-selector.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
@@ -134,6 +162,10 @@
 			"target": "theme-selector/theme-selector.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

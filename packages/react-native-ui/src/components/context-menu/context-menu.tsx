@@ -1,4 +1,6 @@
 import type { ReactElement } from "react";
+import { useLabels } from "../../hooks/use-labels";
+import type { ContextMenuLabels } from "../../lib/labels";
 import type { MenuProps } from "../menu/menu";
 import { MenuRootProvider, useMenuRootValue } from "../menu/menu.context";
 import { MenuBackground } from "../menu/menu-background";
@@ -17,11 +19,24 @@ import { ContextMenuPreview } from "./context-menu-preview";
 import { ContextMenuTrigger } from "./context-menu-trigger";
 
 /** Menu's own root props: the open state, and the haptic played when a row is chosen. */
-export type ContextMenuProps = MenuProps;
+export type ContextMenuProps = MenuProps & {
+	/**
+	 * The trigger's spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 */
+	labels?: Partial<ContextMenuLabels>;
+};
 
-function ContextMenuRoot({ children, isOpen, defaultOpen, onOpenChange, haptic }: ContextMenuProps): ReactElement {
+function ContextMenuRoot({
+	children,
+	isOpen,
+	defaultOpen,
+	onOpenChange,
+	haptic,
+	labels: labelsProp,
+}: ContextMenuProps): ReactElement {
 	const menu = useMenuRootValue({ defaultOpen, haptic, isOpen, onOpenChange });
-	const context = useContextMenuRootValue();
+	const labels = useLabels("contextMenu", labelsProp);
+	const context = useContextMenuRootValue(labels);
 	return (
 		<MenuRootProvider value={menu}>
 			<ContextMenuProvider value={context}>{children}</ContextMenuProvider>

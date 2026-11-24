@@ -88,8 +88,14 @@ because the target is the content. Compound root plus `ContextMenu.Trigger`,
 - The trigger is **one** element (`accessible`): `accessibilityRole="button"` with
   `onPress`, `"none"` without, `accessibilityState={{ disabled, expanded }}`.
 - `accessibilityActions`: `activate` and `longpress` labelled "Show menu".
+  The label is `labels.show` (see below).
   `activate` runs `onPress`, or opens when there is none; `longpress` opens
   against the target rect. `resolveContextMenuAccessibility` holds the matrix.
+- **The spoken string is the `labels` prop, not a literal**: the long-press action's label
+  (`show`) comes from `lib/labels` through `useLabels("contextMenu", labels)` on the root.
+  Precedence is defaults <- `DelacourProvider` `labels` <- the root's prop. The resolved set
+  rides the context-menu context to the trigger, and `resolveContextMenuActions` takes it as a
+  trailing argument to stay pure. `Menu`'s own scrim string is Menu's, not this component's.
 - Disabled: announced, and neither the gesture nor either action does anything.
 - The panel is Menu's: `menu` / `menuitem` roles, modal containment, the escape scrub, focus onto the first row on open and back to the trigger on close. The
   preview is hidden from the accessibility tree.

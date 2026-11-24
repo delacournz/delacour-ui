@@ -6,13 +6,13 @@ import { type MenuMeasurable, useMenuPart } from "../menu/menu.context";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
 import { useContextMenuPart } from "./context-menu.context";
 import {
-	CONTEXT_MENU_ACCESSIBILITY_ACTIONS,
 	type ContextMenuAnchor,
 	type ContextMenuInvoker,
 	type ContextMenuPoint,
 	contextMenuVariants,
 	resolveContextAnchor,
 	resolveContextMenuAccessibility,
+	resolveContextMenuActions,
 	resolveHoldConfig,
 } from "./context-menu.variants";
 
@@ -51,7 +51,7 @@ export type ContextMenuTriggerProps = Omit<ViewProps, "children"> & {
  * the press point or against that rect.
  *
  * For a screen reader it is one element with two actions: `activate` runs
- * `onPress` (or opens, without one) and `longpress`, "Show menu", opens against
+ * `onPress` (or opens, without one) and `longpress`, named by `labels.show` ("Show menu"), opens against
  * the trigger — there is no pointer coordinate to open at.
  */
 export function ContextMenuTrigger({
@@ -66,9 +66,10 @@ export function ContextMenuTrigger({
 	...props
 }: ContextMenuTriggerProps): ReactElement {
 	const { isOpen, open, triggerRef } = useMenuPart("ContextMenu.Trigger");
-	const { invoke, registerContent } = useContextMenuPart("ContextMenu.Trigger");
+	const { invoke, labels, registerContent } = useContextMenuPart("ContextMenu.Trigger");
 	const hold = resolveHoldConfig({ delay, slop });
 	const hasPress = onPress !== undefined;
+	const actions = useMemo(() => resolveContextMenuActions(labels), [labels]);
 	const a11y = resolveContextMenuAccessibility({ hasPress, isDisabled, isOpen });
 
 	useEffect(() => {
@@ -142,7 +143,7 @@ export function ContextMenuTrigger({
 	return (
 		<GestureDetector gesture={gesture}>
 			<View
-				accessibilityActions={CONTEXT_MENU_ACCESSIBILITY_ACTIONS}
+				accessibilityActions={actions}
 				accessibilityRole={a11y.role}
 				accessibilityState={a11y.state}
 				accessible

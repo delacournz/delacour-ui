@@ -131,15 +131,16 @@ export const BUTTON_FOREGROUND_TOKEN: Record<ButtonVariant, string> = {
  * right for the variants that draw a visible border, which the group cannot know
  * because a member may name its own.
  *
- * `overflow-hidden` on the root is load-bearing rather than tidiness — a pressed
- * button fades to the edge of its own box, and the fade is clipped to the same
- * corner the button draws.
+ * The root does not clip. A press fades the root's own opacity, which needs no
+ * clip, and Gesture Handler's Android orchestrator never descends into a
+ * clipping view for a touch outside its bounds — a clipped root would drop its
+ * own `hitSlop` there.
  *
  * Free of React Native imports so it stays pure and unit-testable. See AGENTS.md.
  */
 export const buttonVariants = tv({
 	slots: {
-		root: "flex-row items-center justify-center gap-2 overflow-hidden border border-transparent",
+		root: "flex-row items-center justify-center gap-2 border border-transparent",
 		label: "text-center font-semibold",
 		startContent: "items-center justify-center",
 		endContent: "items-center justify-center",

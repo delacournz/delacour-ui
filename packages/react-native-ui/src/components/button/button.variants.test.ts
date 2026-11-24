@@ -96,8 +96,13 @@ describe("buttonVariants root slot", () => {
 		expect(cls).toContain("h-button-md");
 	});
 
-	test("clips, so a pressed row fades to the edge of its own box", () => {
-		expect(buttonVariants().root()).toContain("overflow-hidden");
+	// Gesture Handler's Android orchestrator never descends into a clipping view
+	// for a touch outside its bounds, so a clipped root drops its own hitSlop
+	// there. The press fades the root's own opacity, which needs no clip.
+	test("does not clip, so Android reaches its hitSlop", () => {
+		for (const cls of buttonVariants().root().split(/\s+/)) {
+			expect(cls).not.toMatch(/^overflow-(hidden|clip)$/);
+		}
 	});
 
 	test("gives every variant a distinct root treatment", () => {

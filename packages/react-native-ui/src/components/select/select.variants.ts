@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SelectLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { type InputBoxState, type InputSize, resolveInputGroupClass } from "../input/input.variants";
 import type {
@@ -434,9 +435,25 @@ export function filterGroups(entries: readonly SelectEntry[], query: string): Se
 	return entries.filter((entry) => matchesQuery(entry.option.label, query));
 }
 
-/** The trigger's count text past the label limit. English by default; pass your own to localise. */
-export function formatSelectedCount(count: number): string {
-	return `${count} selected`;
+/**
+ * The trigger's count text past the label limit, in English.
+ *
+ * @deprecated Read `labels.selectedCount` — from `DelacourProvider`'s `labels`, or `Select`'s `labels`
+ * prop — which this now mirrors. Kept so existing imports keep working.
+ */
+export const formatSelectedCount: (count: number) => string = DELACOUR_DEFAULT_LABELS.select.selectedCount;
+
+/**
+ * A row's accessible name: its label, then its description when it has one.
+ *
+ * `labels` is `Select`'s resolved strings; English when left off.
+ */
+export function formatSelectOptionLabel(
+	label: string,
+	description: string | undefined,
+	labels: SelectLabels = DELACOUR_DEFAULT_LABELS.select
+): string {
+	return labels.option(label, description);
 }
 
 /**
@@ -451,18 +468,22 @@ export function resolveSelectTriggerText({
 	selected,
 	mode,
 	maxLabels = SELECT_DEFAULT_MAX_LABELS,
-	formatSelectedCount: format = formatSelectedCount,
+	formatSelectedCount: format,
+	labels = DELACOUR_DEFAULT_LABELS.select,
 }: {
 	entries: readonly SelectEntry[];
 	selected: readonly string[];
 	mode: SelectSelectionMode;
 	maxLabels?: number;
+	/** Wins over `labels.selectedCount`. */
 	formatSelectedCount?: (count: number) => string;
+	/** The count's wording, when `formatSelectedCount` is not given. English when left off. */
+	labels?: SelectLabels;
 }): string | undefined {
-	const labels = resolveSelectedOptions(entries, selected).map((option) => option.label);
-	if (labels.length === 0) return undefined;
-	if (mode === "single") return labels[0];
-	return labels.length > maxLabels ? format(labels.length) : labels.join(", ");
+	const names = resolveSelectedOptions(entries, selected).map((option) => option.label);
+	if (names.length === 0) return undefined;
+	if (mode === "single") return names[0];
+	return names.length > maxLabels ? (format ?? labels.selectedCount)(names.length) : names.join(", ");
 }
 
 /** The options behind the selected values, in the order they were chosen. Unknown values are skipped. */

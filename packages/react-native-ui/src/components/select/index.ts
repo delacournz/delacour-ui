@@ -1,3 +1,4 @@
+export type { SelectLabels } from "../../lib/labels";
 export { Select, type SelectMultipleProps, type SelectProps, type SelectSingleProps } from "./select";
 export { type SelectContextValue, useSelect } from "./select.context";
 export type {
@@ -15,6 +16,7 @@ export {
 	buildSelectRows,
 	filterGroups,
 	formatSelectedCount,
+	formatSelectOptionLabel,
 	isSelectOptionGroup,
 	matchesQuery,
 	normalizeOptions,

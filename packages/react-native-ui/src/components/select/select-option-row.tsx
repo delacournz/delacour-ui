@@ -8,13 +8,16 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLabels } from "../../hooks/use-labels";
 import { IconCheckmark1Small } from "../../icons/central";
+import type { SelectLabels } from "../../lib/labels";
 import { Icon } from "../icon";
 import type { InputSize } from "../input/input.variants";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
 import type { SelectHighlightRange, SelectRowOption, SelectSelectionMode } from "./select.types";
 import {
+	formatSelectOptionLabel,
 	SELECT_CHECK_TOKEN,
 	SELECT_CHECKBOX_TICK_TOKEN,
 	SELECT_INDICATOR_DURATION_MS,
@@ -36,6 +39,8 @@ export type SelectOptionRowProps = {
 	highlight?: readonly SelectHighlightRange[];
 	/** Replaces the option's own description — "Limit reached", say. */
 	description?: string;
+	/** The row's accessible name. Defaults to the enclosing provider's `select` labels, then English. */
+	labels?: SelectLabels;
 	testID?: string;
 };
 
@@ -111,12 +116,15 @@ export function SelectOptionRow({
 	size = "md",
 	highlight,
 	description,
+	labels: labelsProp,
 	testID,
 }: SelectOptionRowProps): ReactElement {
+	const ownLabels = useLabels("select");
+	const labels = labelsProp ?? ownLabels;
 	const slots = selectVariants({ isDisabled, isSelected, size });
 	const shownDescription = description ?? option.description;
 	const segments = splitHighlight(option.label, highlight);
-	const accessibilityLabel = shownDescription ? `${option.label}, ${shownDescription}` : option.label;
+	const accessibilityLabel = formatSelectOptionLabel(option.label, shownDescription, labels);
 
 	const label = option.content ?? (
 		<Text className={slots.rowLabel()} numberOfLines={2}>

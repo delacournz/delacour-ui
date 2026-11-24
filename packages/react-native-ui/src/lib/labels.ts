@@ -641,6 +641,14 @@ export type NumberInputLabels = {
 	limit: (text: string, bound: "max" | "min") => string;
 };
 
+/** PageHeader's spoken strings. */
+export type PageHeaderLabels = {
+	/** A verified, named avatar's label: "Aria, verified". `name` is trimmed and non-empty. */
+	verifiedAvatar: (name: string) => string;
+	/** A verified avatar with no name. */
+	verified: string;
+};
+
 /** Pagination's visible and spoken strings. */
 export type PaginationLabels = {
 	/** The control's accessible name. */
@@ -698,6 +706,7 @@ export type DelacourLabels = {
 	messageScroller: MessageScrollerLabels;
 	motion: MotionLabels;
 	numberInput: NumberInputLabels;
+	pageHeader: PageHeaderLabels;
 	pagination: PaginationLabels;
 };
 
@@ -1045,6 +1054,10 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		decrease: "Decrease",
 		increase: "Increase",
 		limit: (text, bound) => `${text}, ${bound === "max" ? "maximum" : "minimum"}`,
+	},
+	pageHeader: {
+		verifiedAvatar: (name) => `${name}, verified`,
+		verified: "Verified",
 	},
 	pagination: {
 		list: "Pagination",

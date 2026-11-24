@@ -378,6 +378,12 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.limit("1", "min")).toBe("1, minimum");
 	});
 
+	test("pageHeader is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.pageHeader;
+		expect(labels.verifiedAvatar("Aria")).toBe("Aria, verified");
+		expect(labels.verified).toBe("Verified");
+	});
+
 	test("pagination is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.pagination;
 		expect(labels.list).toBe("Pagination");

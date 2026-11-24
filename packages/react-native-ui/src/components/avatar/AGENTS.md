@@ -110,7 +110,7 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   avatar's name with no label, name or fallback), `overflow(count)` (the tile's
   spoken name) and `overflowText(count, max)` (its drawn `+37` / `99+`) come from
   `lib/labels` through `useLabels("avatar", labels)`. `Avatar` and `Avatar.Group`
-  each take `labels`; an `Avatar` in a group with none uses the group's raw prop.
+  each take `labels`; an `Avatar` in a group lays its own over the group's, key by key.
   Precedence: `accessibilityLabel` / `name` / `fallback` ← `labels` prop ←
   `DelacourProvider` `labels` ← English. `resolveAvatarAccessibilityLabel` and
   `resolveAvatarOverflowLabel` take the labels as a trailing argument;

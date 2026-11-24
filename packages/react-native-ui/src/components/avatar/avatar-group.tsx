@@ -21,7 +21,7 @@ export type AvatarGroupProps = ViewProps & {
 	onOverflowPress?: () => void;
 	/**
 	 * Spoken and drawn strings, laid over `DelacourProvider`'s `labels`, which sit over the English
-	 * defaults. An `Avatar` inside the group with no `labels` of its own uses these.
+	 * defaults. An `Avatar` inside lays its own `labels` over these, key by key.
 	 */
 	labels?: Partial<AvatarLabels>;
 	className?: string;

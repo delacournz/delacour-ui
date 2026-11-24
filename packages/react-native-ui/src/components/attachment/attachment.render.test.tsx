@@ -489,6 +489,18 @@ describe("Attachment", () => {
 			expect(screen.getByLabelText("Datei, b.pdf").props.accessibilityHint).toBe("2 von 2");
 		});
 
+		test("an attachment's own labels lay over the group's key by key", async () => {
+			await renderWithProviders(
+				<Attachment.Group labels={german}>
+					<Attachment key="a" kind="file" name="a.pdf" />
+					<Attachment key="b" kind="file" labels={{ kind: () => "Dokument" }} name="b.pdf" onRemove={jest.fn()} />
+				</Attachment.Group>
+			);
+			const item = screen.getByLabelText("Dokument, b.pdf");
+			expect(item.props.accessibilityHint).toBe("2 von 2");
+			expect(item.props.accessibilityActions).toEqual([{ label: "b.pdf entfernen", name: "remove" }]);
+		});
+
 		test("the group's accessibilityLabel wins over labels.group", async () => {
 			await renderWithProviders(
 				<Attachment.Group accessibilityLabel="Dateien" labels={german}>

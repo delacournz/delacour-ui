@@ -4,7 +4,7 @@ import { useLabels } from "../../hooks/use-labels";
 import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconPeople } from "../../icons/central";
 import { cn } from "../../lib/cn";
-import type { AvatarLabels } from "../../lib/labels";
+import { type AvatarLabels, mergeLabelOverrides } from "../../lib/labels";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Text } from "../text";
@@ -51,7 +51,7 @@ export type AvatarProps = Omit<PressableProps, "asChild" | "busy" | "children" |
 	imageProps?: Omit<ImageProps, "source" | "src" | "srcSet">;
 	/**
 	 * Spoken strings, laid over `DelacourProvider`'s `labels`, which sit over the English defaults. An
-	 * enclosing `Avatar.Group`'s `labels` stand in when this has none. `accessibilityLabel` wins.
+	 * enclosing `Avatar.Group`'s `labels` sit beneath these, key by key. `accessibilityLabel` wins.
 	 */
 	labels?: Partial<AvatarLabels>;
 	/** Overlays — an `Avatar.Badge`. */
@@ -81,7 +81,12 @@ function AvatarRoot({
 	...props
 }: AvatarProps): ReactElement {
 	const group = useAvatarGroupContext();
-	const labels = useLabels("avatar", labelsProp ?? group?.labels);
+	const groupLabels = group?.labels;
+	const ownLabels = useMemo(
+		() => mergeLabelOverrides({ avatar: groupLabels }, { avatar: labelsProp }).avatar,
+		[groupLabels, labelsProp]
+	);
+	const labels = useLabels("avatar", ownLabels);
 	const size = resolveAvatarSize({ size: sizeProp, groupSize: group?.size });
 	const hitTarget = resolveAvatarHitTarget({ size, inGroup: group !== null });
 	const slop = useMinimumHitSlop(hitTarget.edge, { cap: hitTarget.cap });

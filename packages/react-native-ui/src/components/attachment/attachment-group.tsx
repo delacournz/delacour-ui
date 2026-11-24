@@ -29,7 +29,7 @@ export type AttachmentGroupProps = Omit<ScrollViewProps, "horizontal" | "childre
 	accessibilityLabel?: string;
 	/**
 	 * Spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. The group reads
-	 * `group`; an attachment inside with no `labels` of its own reads the rest (`position`, `kind`…).
+	 * `group`; an attachment inside lays its own `labels` over the rest (`position`, `kind`…), key by key.
 	 */
 	labels?: Partial<AttachmentLabels>;
 	className?: string;

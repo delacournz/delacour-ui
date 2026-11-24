@@ -10,7 +10,7 @@ import {
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useLabels } from "../../hooks/use-labels";
-import type { AttachmentLabels } from "../../lib/labels";
+import { type AttachmentLabels, mergeLabelOverrides } from "../../lib/labels";
 import { Pressable } from "../pressable";
 import {
 	type AttachmentContextValue,
@@ -74,7 +74,7 @@ type AttachmentOwnProps = {
 	removeAccessibilityLabel?: string;
 	/**
 	 * Spoken strings, laid over `DelacourProvider`'s `labels`, which sit over the English defaults. An
-	 * enclosing `Attachment.Group`'s `labels` stand in when this has none. `removeAccessibilityLabel`
+	 * enclosing `Attachment.Group`'s `labels` sit beneath these, key by key. `removeAccessibilityLabel`
 	 * and `accessibilityLabel` still win.
 	 */
 	labels?: Partial<AttachmentLabels>;
@@ -330,7 +330,12 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 
 	const group = useAttachmentGroupContext();
 	const groupItem = useAttachmentGroupItem();
-	const labels = useLabels("attachment", labelsProp ?? group?.labels);
+	const groupLabels = group?.labels;
+	const ownLabels = useMemo(
+		() => mergeLabelOverrides({ attachment: groupLabels }, { attachment: labelsProp }).attachment,
+		[groupLabels, labelsProp]
+	);
+	const labels = useLabels("attachment", ownLabels);
 	const layout = layoutProp ?? group?.layout ?? "chip";
 	const size = sizeProp ?? group?.size ?? "md";
 	const extension = kind === "file" ? (extensionProp ?? resolveFileExtension(name)) : undefined;

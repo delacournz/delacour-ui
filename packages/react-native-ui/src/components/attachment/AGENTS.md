@@ -171,8 +171,8 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
   `useLabels("attachment", labels)`. Precedence is defaults <- `DelacourProvider` `labels` <- the
   root's prop <- an explicit per-string prop (`accessibilityLabel`, `accessibilityHint`,
   `removeAccessibilityLabel`; on the group `accessibilityLabel`). `Attachment.Group` takes `labels`
-  too: it reads `group` and hands the prop to an attachment with none of its own (whole-prop
-  fallback, not merged). The resolved labels ride the context, so `Meta` and `Retry` read them.
+  too: it reads `group` and lays it under each attachment's own `labels`, key by
+  key. The resolved labels ride the context, so `Meta` and `Retry` read them.
   `formatFileSize`, `spokenFileSize` (3rd arg), `spokenDuration` (2nd arg) and the options of
   `resolveAttachmentMeta`, `resolveAttachmentAccessibilityLabel`, `resolveRemoveLabel` and
   `resolveAttachmentActions` (`labels`) take them, defaulting to English. The `meta` and `summary`

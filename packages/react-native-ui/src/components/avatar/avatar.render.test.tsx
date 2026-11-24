@@ -428,6 +428,15 @@ describe("Avatar", () => {
 			expect(screen.getByTestId("face")).toHaveAccessibleName("Avatar-Schaltfläche");
 		});
 
+		test("an avatar's own labels lay over the group's key by key", async () => {
+			await renderWithProviders(
+				<Avatar.Group labels={german}>
+					<Avatar labels={{ overflow: (count) => `noch ${count}` }} onPress={press} testID="face" />
+				</Avatar.Group>
+			);
+			expect(screen.getByTestId("face")).toHaveAccessibleName("Avatar-Schaltfläche");
+		});
+
 		test("a LabelsProvider reaches the overflow tile, the group prop winning key by key", async () => {
 			await renderWithProviders(
 				<LabelsProvider labels={{ avatar: german }}>

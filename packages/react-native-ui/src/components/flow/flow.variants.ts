@@ -238,6 +238,27 @@ export function resolveNodeDrag({
 	return { canDrag: isDraggable && !isPinned && !isLocked, ridesGroup: isDraggable };
 }
 
+/**
+ * How a group presents to a screen reader. A group a finger can drag offers the same four moves a
+ * node does, so it is a stop even without a label (named by its id); a labelled one that cannot
+ * move stays a labelled stop with no actions; an unlabelled, immovable one is just a box.
+ */
+export function resolveGroupAccessibility({
+	id,
+	label,
+	isDraggable,
+	isLocked,
+}: {
+	id: string;
+	label: string | undefined;
+	isDraggable: boolean;
+	isLocked: boolean;
+}): { isAccessible: boolean; label: string | undefined; actions: { name: string; label: string }[] } {
+	const canMove = isDraggable && !isLocked;
+	const actions = canMove ? FLOW_ACCESSIBILITY_MOVES.map((move) => ({ label: move.label, name: move.name })) : [];
+	return { actions, isAccessible: canMove || label !== undefined, label: label ?? (canMove ? id : undefined) };
+}
+
 export type FlowAccessibilityHandle = { id: string; type: FlowHandleType; label?: string };
 export type FlowAccessibilityNode = { id: string; label: string; handles: readonly FlowAccessibilityHandle[] };
 export type FlowAccessibilityAction = { name: string; label: string };

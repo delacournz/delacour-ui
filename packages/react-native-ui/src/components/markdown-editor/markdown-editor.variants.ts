@@ -258,3 +258,48 @@ export function markdownInlineToText(inline: readonly MarkdownInline[]): string 
 	}
 	return out;
 }
+
+/** One link inside a merged block, offered to a screen reader as a named action. */
+export type MarkdownLinkAction = { name: string; label: string; url: string };
+
+/**
+ * The links in an inline run, in reading order, as accessibility actions. A list row is one
+ * screen-reader stop, so its links cannot be focused; each is mirrored as "Open link <text>". A
+ * repeated text gets an ordinal ("Open link here (2)"): VoiceOver dispatches a custom action by its
+ * label, so two equal labels would both open the first url.
+ */
+export function resolveMarkdownLinkActions(inline: readonly MarkdownInline[]): MarkdownLinkAction[] {
+	const out: MarkdownLinkAction[] = [];
+	const counts = new Map<string, number>();
+	const walk = (nodes: readonly MarkdownInline[]): void => {
+		for (const node of nodes) {
+			switch (node.type) {
+				case "text":
+				case "code":
+					break;
+				case "link": {
+					const base = `Open link ${markdownInlineToText(node.children)}`;
+					const seen = (counts.get(base) ?? 0) + 1;
+					counts.set(base, seen);
+					out.push({
+						label: seen === 1 ? base : `${base} (${seen})`,
+						name: `markdown-link-${out.length}`,
+						url: node.url,
+					});
+					break;
+				}
+				case "bold":
+				case "italic":
+				case "strikethrough":
+					walk(node.children);
+					break;
+				default: {
+					const exhaustive: never = node;
+					throw new Error(`Unknown inline node: ${JSON.stringify(exhaustive)}`);
+				}
+			}
+		}
+	};
+	walk(inline);
+	return out;
+}

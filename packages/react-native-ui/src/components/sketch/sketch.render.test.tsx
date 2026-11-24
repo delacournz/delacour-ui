@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { createRef } from "react";
-import { AccessibilityInfo } from "react-native";
+import { AccessibilityInfo, Pressable } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Sketch } from "./sketch";
@@ -319,6 +319,26 @@ describe("Sketch", () => {
 			await fireEvent(screen.getByRole("image"), "accessibilityAction", { nativeEvent: { actionName: "clear" } });
 			expect(onChange).toHaveBeenLastCalledWith([]);
 			expect(screen.getByRole("image", { name: "Drawing, empty" })).toBeOnTheScreen();
+		});
+
+		test("an empty or disabled canvas offers no actions", async () => {
+			const view = await renderWithProviders(<Sketch colors={COLORS} />);
+			expect(screen.getByRole("image").props.accessibilityActions).toEqual([]);
+			await view.rerender(<Sketch colors={COLORS} defaultItems={[MARK]} isDisabled />);
+			expect(screen.getByRole("image").props.accessibilityActions).toEqual([]);
+		});
+
+		test("a pressable composed into the canvas warns that it is unreachable", async () => {
+			const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+			await renderWithProviders(
+				<Sketch colors={COLORS}>
+					<Sketch.Canvas>
+						<Pressable onPress={() => undefined} />
+					</Sketch.Canvas>
+				</Sketch>
+			);
+			expect(warn).toHaveBeenCalledWith(expect.stringContaining("[Sketch.Canvas]"));
+			warn.mockRestore();
 		});
 
 		test("the ref handle undoes, clears and reports emptiness", async () => {

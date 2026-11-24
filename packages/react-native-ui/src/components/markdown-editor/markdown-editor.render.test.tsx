@@ -275,6 +275,22 @@ describe("MarkdownEditor", () => {
 			expect(onLinkPress).toHaveBeenCalledWith("https://example.com/a");
 		});
 
+		test("a link inside a list row is an accessibility action on the row", async () => {
+			const onLinkPress = jest.fn();
+			await renderWithProviders(
+				<MarkdownEditor
+					defaultMode="preview"
+					defaultValue={"- read the [docs](https://example.com/a)\n- plain"}
+					onLinkPress={onLinkPress}
+				/>
+			);
+			const row = screen.getByLabelText("bullet read the docs");
+			expect(row.props.accessibilityActions).toEqual([{ label: "Open link docs", name: "markdown-link-0" }]);
+			await fireEvent(row, "accessibilityAction", { nativeEvent: { actionName: "markdown-link-0" } });
+			expect(onLinkPress).toHaveBeenCalledWith("https://example.com/a");
+			expect(screen.getByLabelText("bullet plain").props.accessibilityActions).toBeUndefined();
+		});
+
 		test("the default link handler opens a safe url with Linking", async () => {
 			const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
 			await renderWithProviders(<MarkdownEditor defaultMode="preview" defaultValue="[mail](mailto:a@b.co)" />);

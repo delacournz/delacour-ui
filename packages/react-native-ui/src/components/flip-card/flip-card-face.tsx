@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { type AccessibilityActionEvent, Platform, View } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { dispatchPressableAccessibilityAction, resolvePressableActivation } from "../pressable/pressable.variants";
 import { Surface } from "../surface";
 import { useFlipCardPart } from "./flip-card.context";
@@ -57,6 +58,12 @@ export function FlipCardFaceBody({
 	const mode = resolveFaceMode({ hidden: isHidden, trigger });
 	const isElement = mode === "grouped";
 	const rest = faceRotation(side);
+
+	warnInteractiveChildInAccessible({
+		accessible: isElement,
+		children,
+		component: side === "front" ? "FlipCard.Front" : "FlipCard.Back",
+	});
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		opacity: resolveFaceOpacity(side, rotation.value, isCalm),

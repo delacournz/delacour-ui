@@ -1,11 +1,18 @@
 import { type ReactElement, type ReactNode, useCallback, useLayoutEffect, useMemo } from "react";
+import type { AccessibilityActionEvent } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { Surface } from "../surface";
 import { Text } from "../text";
 import { FlowGroupProvider, useFlowPart } from "./flow.context";
-import { FLOW_DEFAULTS, FLOW_LAYER_EXTENT, flowVariants } from "./flow.variants";
+import {
+	FLOW_DEFAULTS,
+	FLOW_LAYER_EXTENT,
+	flowVariants,
+	resolveAccessibilityMove,
+	resolveGroupAccessibility,
+} from "./flow.variants";
 import type { FlowPoint, FlowSize } from "./flow-geometry";
 
 export type FlowGroupProps = {
@@ -19,6 +26,8 @@ export type FlowGroupProps = {
 	label?: string;
 	/** Dragging the group's box carries every node in it. */
 	isDraggable?: boolean;
+	/** How far one assistive move shifts the group and its riders, in graph units. */
+	accessibilityMoveStep?: number;
 	className?: string;
 	testID?: string;
 	children?: ReactNode;
@@ -34,6 +43,11 @@ export type FlowGroupProps = {
  * **One drag moves the box and its riders on the UI thread.** The pan offsets the group's shared
  * position and every rider's in the same worklet, then `onNodeDragEnd` fires once for the group
  * and once per rider. A node with `isDraggable={false}` does not ride; a pinned one does.
+ *
+ * **One accessibility stop for the box, not its children.** The children render as siblings of the
+ * box, so the box never swallows them. A group a finger could drag offers the same four moves a
+ * node does (it and its riders shift together and report like the drag); it is named by its label,
+ * or its id when it has none.
  */
 export function FlowGroup({
 	id,
@@ -41,6 +55,7 @@ export function FlowGroup({
 	size,
 	label,
 	isDraggable = true,
+	accessibilityMoveStep = FLOW_DEFAULTS.accessibilityMoveStep,
 	className,
 	testID,
 	children,
@@ -133,6 +148,29 @@ export function FlowGroup({
 		[canvasGestures, isDraggable, isLocked, positionValue, report, riderPositions, riderStarts, start, viewport]
 	);
 
+	const accessibility = useMemo(
+		() => resolveGroupAccessibility({ id, isDraggable, isLocked, label }),
+		[id, isDraggable, isLocked, label]
+	);
+
+	const handleAccessibilityAction = useCallback(
+		(event: AccessibilityActionEvent) => {
+			if (accessibility.actions.length === 0) return;
+			const delta = resolveAccessibilityMove(event.nativeEvent.actionName, accessibilityMoveStep);
+			if (!delta) return;
+			const shift = (point: FlowPoint): FlowPoint => ({ x: point.x + delta.x, y: point.y + delta.y });
+			const groupAt = shift(positionValue.value);
+			const riderAt = riderPositions.map((rider) => shift(rider.value));
+			positionValue.value = groupAt;
+			riderPositions.forEach((rider, index) => {
+				const at = riderAt[index];
+				if (at) rider.value = at;
+			});
+			report(groupAt, riderAt);
+		},
+		[accessibility.actions.length, accessibilityMoveStep, positionValue, report, riderPositions]
+	);
+
 	const boxStyle = useAnimatedStyle(() => ({
 		height: sizeValue.value.height,
 		transform: [{ translateX: positionValue.value.x }, { translateY: positionValue.value.y }],
@@ -145,9 +183,11 @@ export function FlowGroup({
 		<FlowGroupProvider value={context}>
 			<GestureDetector gesture={gesture}>
 				<Animated.View
-					accessibilityLabel={label}
-					accessible={label !== undefined}
+					accessibilityActions={accessibility.actions}
+					accessibilityLabel={accessibility.label}
+					accessible={accessibility.isAccessible}
 					className={slots.group({ className })}
+					onAccessibilityAction={handleAccessibilityAction}
 					style={[LAYER_ORIGIN, boxStyle]}
 					testID={testID}
 				>

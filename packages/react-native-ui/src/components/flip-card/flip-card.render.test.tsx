@@ -190,6 +190,27 @@ describe("FlipCard", () => {
 		expectBack();
 	});
 
+	test("swipe: warns in development when a face wraps a control its merged stop swallows", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+		try {
+			await renderWithProviders(
+				<FlipCard accessibilityLabel="Flashcard" trigger="swipe">
+					<FlipCard.Front>
+						<Pressable accessibilityRole="button" onPress={() => undefined}>
+							<Text>Hear it</Text>
+						</Pressable>
+					</FlipCard.Front>
+					<FlipCard.Back>
+						<Text>Hello</Text>
+					</FlipCard.Back>
+				</FlipCard>
+			);
+			expect(warn).toHaveBeenCalledWith(expect.stringContaining("[FlipCard.Front] is one accessibility element"));
+		} finally {
+			warn.mockRestore();
+		}
+	});
+
 	test("swipe: a disabled card's face lists no action and ignores activate", async () => {
 		const onFaceChange = jest.fn();
 		await renderWithProviders(<Card isDisabled trigger="swipe" onFaceChange={onFaceChange} />);

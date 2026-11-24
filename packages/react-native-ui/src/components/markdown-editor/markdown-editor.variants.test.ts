@@ -20,6 +20,7 @@ import {
 	resolveMarkdownActionCommand,
 	resolveMarkdownActionIsActive,
 	resolveMarkdownAnnouncement,
+	resolveMarkdownLinkActions,
 	resolveMarkdownListMarker,
 	resolveMarkdownPaneClass,
 	resolveMarkdownToolbarActions,
@@ -217,5 +218,34 @@ describe("tokens", () => {
 			expect(light.has(name)).toBe(true);
 			expect(dark.has(name)).toBe(true);
 		}
+	});
+});
+
+describe("resolveMarkdownLinkActions", () => {
+	test("links sharing their text get distinct labels, since VoiceOver dispatches a custom action by label", () => {
+		const link = (url: string): MarkdownInline => ({ children: [{ type: "text", value: "here" }], type: "link", url });
+		const inline: MarkdownInline[] = [link("https://a.test"), { type: "text", value: " or " }, link("https://b.test")];
+		expect(resolveMarkdownLinkActions(inline).map(({ label, url }) => ({ label, url }))).toEqual([
+			{ label: "Open link here", url: "https://a.test" },
+			{ label: "Open link here (2)", url: "https://b.test" },
+		]);
+	});
+
+	test("a row with no link has no actions", () => {
+		expect(resolveMarkdownLinkActions([{ type: "text", value: "plain" }])).toEqual([]);
+	});
+
+	test("each link becomes a named action in reading order, through nested formats", () => {
+		const inline: MarkdownInline[] = [
+			{ children: [{ type: "text", value: "docs" }], type: "link", url: "https://a.test" },
+			{
+				children: [{ children: [{ type: "text", value: "api" }], type: "link", url: "https://b.test" }],
+				type: "bold",
+			},
+		];
+		expect(resolveMarkdownLinkActions(inline)).toEqual([
+			{ label: "Open link docs", name: "markdown-link-0", url: "https://a.test" },
+			{ label: "Open link api", name: "markdown-link-1", url: "https://b.test" },
+		]);
 	});
 });

@@ -90,7 +90,7 @@ the back, a profile with details behind it. A compound root plus `FlipCard.Front
   - **`"swipe"`** — has no tap, and iOS only runs an action on an accessibility element, so the
     **visible face** becomes one element holding `activate` ("Flip card") and the card's
     `accessibilityLabel`; its content still reads as its label. Controls on a swipe face are
-    grouped into it, so use a `FlipCard.Trigger` beside the card to reach one separately. A
+    grouped into it, so use a `FlipCard.Trigger` beside the card to reach one separately — or use `trigger="press"` / `"manual"`, where the face is a container. In development `warnInteractiveChildInAccessible` warns (once per control) when a swipe face is handed a `Pressable`, link or other control, because a merged stop swallows it. A
     disabled card's face is announced disabled, lists no action and ignores `activate`.
   - **`"manual"`** — leaves the path to the author's `FlipCard.Trigger`.
 

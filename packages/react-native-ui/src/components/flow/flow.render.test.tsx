@@ -212,6 +212,40 @@ describe("Flow", () => {
 		expect(screen.getByLabelText("Inside")).toBeOnTheScreen();
 	});
 
+	test("a group offers the four moves; one assistive move shifts the group and its riders and reports each", async () => {
+		const onNodeDragEnd = jest.fn();
+		await renderWithProviders(
+			<Flow onNodeDragEnd={onNodeDragEnd}>
+				<Flow.Group id="g" label="Stage one" position={{ x: 100, y: 100 }} size={{ height: 200, width: 300 }}>
+					<Flow.Node accessibilityLabel="Rider" id="a" position={{ x: 110, y: 130 }} />
+					<Flow.Node accessibilityLabel="Fixed" id="b" isDraggable={false} position={{ x: 200, y: 130 }} />
+				</Flow.Group>
+			</Flow>
+		);
+		const group = screen.getByLabelText("Stage one");
+		expect(actionNames(group)).toEqual(["moveUp", "moveDown", "moveLeft", "moveRight"]);
+		await fireEvent(group, "accessibilityAction", action("moveRight"));
+		const step = FLOW_DEFAULTS.accessibilityMoveStep;
+		expect(onNodeDragEnd).toHaveBeenCalledWith("g", { x: 100 + step, y: 100 });
+		expect(onNodeDragEnd).toHaveBeenCalledWith("a", { x: 110 + step, y: 130 });
+		expect(onNodeDragEnd).not.toHaveBeenCalledWith("b", expect.anything());
+	});
+
+	test("an unlabelled group is a stop named by its id; a locked one offers no moves", async () => {
+		await renderWithProviders(
+			<Flow>
+				<Flow.Group id="loose" position={{ x: 0, y: 0 }} size={{ height: 100, width: 100 }} />
+				<Flow.Group id="still" isDraggable={false} position={{ x: 200, y: 0 }} size={{ height: 100, width: 100 }} />
+				<Flow.Group id="named" label="Named" position={{ x: 400, y: 0 }} size={{ height: 100, width: 100 }} />
+				<Flow.Controls />
+			</Flow>
+		);
+		expect(actionNames(screen.getByLabelText("loose"))).toContain("moveUp");
+		expect(screen.queryByLabelText("still")).not.toBeOnTheScreen();
+		await fireEvent(screen.getByRole("button", { name: "Lock canvas" }), "accessibilityTap");
+		expect(actionNames(screen.getByLabelText("Named"))).toEqual([]);
+	});
+
 	test("Controls: labelled buttons, each part switchable off", async () => {
 		const view = await renderWithProviders(
 			<Flow>

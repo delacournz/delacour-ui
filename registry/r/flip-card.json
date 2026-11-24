@@ -11,6 +11,7 @@
 		"cn",
 		"icon",
 		"icons",
+		"interactive-child",
 		"pressable",
 		"surface",
 		"tv",
@@ -48,6 +49,10 @@
 			"target": "flip-card/flip-card-face.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				},
 				{
 					"from": "../pressable/pressable.variants",
 					"to": "@registry/ui/pressable/pressable.variants"

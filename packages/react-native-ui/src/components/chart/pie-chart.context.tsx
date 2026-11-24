@@ -1,5 +1,6 @@
 import type { PieSliceData } from "@delacour/react-native-charts/core";
 import { createContext, type ReactNode, useContext } from "react";
+import type { ChartLabels } from "../../lib/labels";
 import type { ChartSlots } from "./chart.context";
 import type { ChartResolvedSeries } from "./chart.types";
 import type { ChartSize } from "./chart.variants";
@@ -32,6 +33,8 @@ export type PieChartContextValue = {
 	readonly selectedIndex: number | null;
 	/** Selects a slice by index, or clears the selection with `null`. */
 	readonly select: (index: number | null) => void;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	readonly labels: ChartLabels;
 };
 
 /**

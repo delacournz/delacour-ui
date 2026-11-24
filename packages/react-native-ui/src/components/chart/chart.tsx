@@ -4,7 +4,9 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo, u
 import type { LayoutChangeEvent } from "react-native";
 import { View } from "react-native";
 import { useCSSVariable } from "uniwind";
+import { useLabels } from "../../hooks/use-labels";
 import { useThemeColor } from "../../hooks/use-theme-color";
+import type { ChartLabels } from "../../lib/labels";
 import { type ChartContextValue, ChartProvider } from "./chart.context";
 import type {
 	ChartAreaSpec,
@@ -93,6 +95,11 @@ export type ChartProps = {
 	 * `false` hides the chart entirely, for a parent that describes it itself.
 	 */
 	accessible?: boolean;
+	/**
+	 * Some of the spoken strings: the summary, the readout and the candlestick field names. Laid over
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults.
+	 */
+	labels?: Partial<ChartLabels>;
 	children?: ReactNode;
 };
 
@@ -129,8 +136,10 @@ function ChartRoot({
 	testID,
 	accessibilityLabel,
 	accessible = true,
+	labels: labelsProp,
 	children,
 }: ChartProps): ReactElement {
+	const labels = useLabels("chart", labelsProp);
 	const slots = chartVariants({ size });
 	const [frame, setFrame] = useState({ width: 0, height: 0 });
 
@@ -208,6 +217,7 @@ function ChartRoot({
 			candleColors,
 			pointKeys,
 			orientation,
+			labels,
 		}),
 		[
 			series,
@@ -227,6 +237,7 @@ function ChartRoot({
 			candleColors,
 			pointKeys,
 			orientation,
+			labels,
 		]
 	);
 

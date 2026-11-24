@@ -44,7 +44,7 @@ const TARGET_RADIUS_FRACTION = 0.7;
  * near the slice it names, and the order is the drawn order.
  */
 export function PieChartSliceTargets({ summary, formatValue, formatPercent }: PieChartSliceTargetsProps): ReactElement {
-	const { series, values, total, slices, selectedIndex, select } = usePieChart();
+	const { series, values, total, slices, selectedIndex, select, labels } = usePieChart();
 
 	return (
 		<>
@@ -70,6 +70,7 @@ export function PieChartSliceTargets({ summary, formatValue, formatPercent }: Pi
 							total,
 							formatValue,
 							formatPercent,
+							labels,
 						})}
 						accessibilityRole="button"
 						accessibilityState={{ selected: selectedIndex === index }}

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Chart } from "./chart";
 
@@ -105,5 +106,46 @@ describe("Chart accessibility", () => {
 		expect(screen.getByRole("adjustable").props.accessibilityValue).toEqual({
 			text: "Month Jan: Desktop $186, Mobile $80",
 		});
+	});
+});
+
+describe("Chart labels", () => {
+	const german = {
+		range: (from: string, to: string) => `${from} bis ${to}`,
+		noValue: "kein Wert",
+		readout: (heading: string, rows: readonly string[]) => `${heading} -> ${rows.join(" | ")}`,
+	};
+
+	test("the labels prop changes the summary and the readout", async () => {
+		await renderWithProviders(
+			<Chart config={CONFIG} data={DATA} labels={german} testID="chart" xKey="month">
+				<Chart.Line yKey="desktop" />
+				<Chart.Tooltip />
+			</Chart>
+		);
+		const frame = screen.getByRole("adjustable");
+		expect(frame.props.accessibilityLabel).toContain("Jan bis Mar");
+		await fireEvent(frame, "accessibilityAction", { nativeEvent: { actionName: "increment" } });
+		expect(screen.getByRole("adjustable").props.accessibilityValue).toEqual({ text: "Jan -> Desktop 186 | Mobile 80" });
+	});
+
+	test("a LabelsProvider changes them too, and the prop wins key by key", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ chart: german }}>
+				<Chart config={CONFIG} data={DATA} labels={{ range: (from, to) => `${from} – ${to}` }} xKey="month">
+					<Chart.Line yKey="desktop" />
+				</Chart>
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("image").props.accessibilityLabel).toContain("Jan – Mar");
+	});
+
+	test("an accessibilityLabel still wins over the labels", async () => {
+		await renderWithProviders(
+			<Chart accessibilityLabel="Revenue trend" config={CONFIG} data={DATA} labels={german} xKey="month">
+				<Chart.Line yKey="desktop" />
+			</Chart>
+		);
+		expect(screen.getByRole("image", { name: "Revenue trend" })).toBeOnTheScreen();
 	});
 });

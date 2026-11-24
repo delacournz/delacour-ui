@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { formatDateTick } from "@delacour/react-native-charts/core";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declaredTokens, radiusMultiplier } from "../../styles/theme-tokens.test";
 import type { ChartBarSpec, ChartConfig, ChartResolvedSeries } from "./chart.types";
 import {
@@ -895,5 +896,36 @@ describe("resolveDomainDefaults", () => {
 
 	test("bars beside candles still pull zero in — the bars need it", () => {
 		expect(resolveDomainDefaults({ bars: single, candlestick: keys, scatter: false }).includeZero).toBe(true);
+	});
+});
+
+describe("chart variants with custom labels", () => {
+	const labels = {
+		...DELACOUR_DEFAULT_LABELS.chart,
+		open: "Eröffnung",
+		high: "Hoch",
+		low: "Tief",
+		close: "Schluss",
+		piePercent: (percent: number) => `${percent} Prozent`,
+	};
+
+	test("resolveTooltipRows names the candle fields from the labels", () => {
+		const rows = resolveTooltipRows(
+			[],
+			{
+				keys: { open: "o", high: "h", low: "l", close: "c" },
+				colors: { positive: "up", negative: "down", neutral: "flat" },
+			},
+			{ o: 1, h: 3, l: 0, c: 2 },
+			labels
+		);
+		expect(rows.map((row) => row.label)).toEqual(["Eröffnung", "Hoch", "Tief", "Schluss"]);
+	});
+
+	test("pieLabelText prints the default percentage through the labels, and a format still wins", () => {
+		const slice = { label: "Chrome", value: 275.5, fraction: 0.4162 };
+		expect(pieLabelText(undefined, slice, labels)).toBe("42 Prozent");
+		expect(pieLabelText("value", slice, labels)).toBe("275.5");
+		expect(pieLabelText(() => "x", slice, labels)).toBe("x");
 	});
 });

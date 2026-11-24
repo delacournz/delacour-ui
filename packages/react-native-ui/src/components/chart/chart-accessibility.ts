@@ -1,4 +1,5 @@
 import { asNumber } from "@delacour/react-native-charts/core";
+import { type ChartLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import type { ChartDatum, ChartTooltipRow } from "./chart.types";
 import { formatPieValue, pieSlicePercent } from "./chart.variants";
 
@@ -20,6 +21,8 @@ export type ChartSummaryInput =
 			/** The tooltip's value formatter, when it has one. */
 			readonly formatValue?: (value: unknown, key: string) => string;
 			readonly override?: string;
+			/** The spoken strings; English when absent. */
+			readonly labels?: ChartLabels;
 	  }
 	| {
 			readonly kind: "pie";
@@ -27,6 +30,8 @@ export type ChartSummaryInput =
 			readonly values: readonly number[];
 			readonly total: number;
 			readonly override?: string;
+			/** The spoken strings; English when absent. */
+			readonly labels?: ChartLabels;
 	  };
 
 /**
@@ -38,8 +43,8 @@ export type ChartSummaryInput =
  * from a glance at a line. A pie names each slice with its whole-number share.
  * An `override` replaces all of it, verbatim.
  *
- * The words are English. There is no labels provider to translate them yet,
- * which is the reason the override exists.
+ * The words come from `input.labels` (English by default), so a language can
+ * reorder them; `override` replaces the whole sentence.
  */
 export function resolveChartSummary(input: ChartSummaryInput): string {
 	if (input.override !== undefined && input.override !== "") return input.override;
@@ -47,14 +52,14 @@ export function resolveChartSummary(input: ChartSummaryInput): string {
 }
 
 function cartesianSummary(input: Extract<ChartSummaryInput, { kind: "cartesian" }>): string {
-	const { series, data, formatX, formatValue } = input;
+	const { series, data, formatX, formatValue, labels = DELACOUR_DEFAULT_LABELS.chart } = input;
 	const first = data[0];
 	const last = data[data.length - 1];
-	if (first === undefined || last === undefined) return "Chart, no data.";
+	if (first === undefined || last === undefined) return labels.noData;
 
 	const from = formatX(first);
 	const to = formatX(last);
-	const range = data.length === 1 || from === to ? from : `${from} to ${to}`;
+	const range = data.length === 1 || from === to ? from : labels.range(from, to);
 	const print = (value: number, key: string): string => formatValue?.(value, key) ?? formatPieValue(value);
 
 	const parts = series.map((entry) => {
@@ -68,20 +73,20 @@ function cartesianSummary(input: Extract<ChartSummaryInput, { kind: "cartesian" 
 			if (value > high) high = value;
 			latest = value;
 		}
-		if (!Number.isFinite(latest)) return `${entry.label}: no data.`;
-		return `${entry.label}: lowest ${print(low, entry.key)}, highest ${print(high, entry.key)}, latest ${print(latest, entry.key)}.`;
+		if (!Number.isFinite(latest)) return labels.seriesNoData(entry.label);
+		return labels.seriesSummary(entry.label, print(low, entry.key), print(high, entry.key), print(latest, entry.key));
 	});
 
-	return [`Chart, ${range}.`, ...parts].join(" ");
+	return labels.summary(range, parts);
 }
 
 function pieSummary(input: Extract<ChartSummaryInput, { kind: "pie" }>): string {
-	const { series, values, total } = input;
-	if (series.length === 0 || !(total > 0)) return "Pie chart, no data.";
-	const slices = series.map(
-		(entry, index) => `${entry.label} ${Math.round(pieSlicePercent(values[index] ?? 0, total))}%`
+	const { series, values, total, labels = DELACOUR_DEFAULT_LABELS.chart } = input;
+	if (series.length === 0 || !(total > 0)) return labels.pieNoData;
+	const slices = series.map((entry, index) =>
+		labels.pieSummarySlice(entry.label, labels.piePercent(Math.round(pieSlicePercent(values[index] ?? 0, total))))
 	);
-	return `Pie chart. ${slices.join(", ")}.`;
+	return labels.pieSummary(slices);
 }
 
 /**
@@ -96,12 +101,13 @@ export function pieSliceAccessibilityLabel(input: {
 	readonly total: number;
 	readonly formatValue?: (value: number, name: string) => string;
 	readonly formatPercent?: (percent: number) => string;
+	readonly labels?: ChartLabels;
 }): string {
-	const { label, value, total, formatValue, formatPercent } = input;
+	const { label, value, total, formatValue, formatPercent, labels = DELACOUR_DEFAULT_LABELS.chart } = input;
 	const percent = pieSlicePercent(value, total);
 	const printedValue = formatValue?.(value, label) ?? formatPieValue(value);
-	const printedPercent = formatPercent?.(percent) ?? `${Math.round(percent)}%`;
-	return `${label}, ${printedValue}, ${printedPercent}`;
+	const printedPercent = formatPercent?.(percent) ?? labels.piePercent(Math.round(percent));
+	return labels.pieSlice(label, printedValue, printedPercent);
 }
 
 /**
@@ -128,15 +134,14 @@ export function resolveChartReadout(input: {
 	readonly heading: string;
 	readonly rows: readonly ChartTooltipRow[];
 	readonly formatValue?: (value: unknown, key: string) => string;
+	readonly labels?: ChartLabels;
 }): string {
-	const { heading, rows, formatValue } = input;
-	const body = rows
-		.map((row) => {
-			const text = chartTooltipValueText(row, formatValue);
-			return `${row.label} ${text === "" ? "no value" : text}`;
-		})
-		.join(", ");
-	return heading === "" ? body : `${heading}: ${body}`;
+	const { heading, rows, formatValue, labels = DELACOUR_DEFAULT_LABELS.chart } = input;
+	const parts = rows.map((row) => {
+		const text = chartTooltipValueText(row, formatValue);
+		return labels.readoutRow(row.label, text === "" ? labels.noValue : text);
+	});
+	return labels.readout(heading, parts);
 }
 
 /**

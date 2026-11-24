@@ -55,7 +55,7 @@ export function TableHead({
 	children,
 	...props
 }: TableHeadProps): ReactElement {
-	const { columns, size } = useTablePart("Table.Head");
+	const { columns, labels, size } = useTablePart("Table.Head");
 	const cell = useTableCell();
 	const minimumHitTarget = useMinimumHitTarget();
 	const layout = resolveCellLayout(columns, cell?.index ?? 0, column);
@@ -71,7 +71,7 @@ export function TableHead({
 			<Text.Label className={slots.headText({ className: labelClassName })}>{text}</Text.Label>
 		);
 
-	const a11y = resolveTableSortAccessibility(sort);
+	const a11y = resolveTableSortAccessibility(sort, labels);
 	const content =
 		sort && a11y.isSortable && glyph !== "none" ? (
 			<Pressable

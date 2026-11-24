@@ -28,7 +28,7 @@ export function TableCell({
 	children,
 	...props
 }: TableCellProps): ReactElement {
-	const { columns, size, headerLabels } = useTablePart("Table.Cell");
+	const { columns, labels, size, headerLabels } = useTablePart("Table.Cell");
 	const cell = useTableCell();
 	const index = cell?.index ?? 0;
 	const layout = resolveCellLayout(columns, index, column);
@@ -41,7 +41,7 @@ export function TableCell({
 	});
 
 	const text = readNodeText(children);
-	const label = accessibilityLabel ?? resolveCellAccessibilityLabel(headerLabels[index], text);
+	const label = accessibilityLabel ?? resolveCellAccessibilityLabel(headerLabels[index], text, labels);
 
 	return (
 		<View

@@ -1,5 +1,6 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type TableLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { type HitSlopInsets, MIN_HIT_TARGET } from "../pressable/pressable.variants";
 import type { SurfacePlane } from "../surface/surface.variants";
@@ -91,9 +92,7 @@ export type TableHeadSort =
 /** What a head's trailing glyph draws. `none` is a head that cannot sort. */
 export type TableSortGlyph = "none" | "unsorted" | TableSortDirection;
 
-export type TableSortAccessibility =
-	| { isSortable: false }
-	| { isSortable: true; valueText: "not sorted" | "sorted ascending" | "sorted descending" };
+export type TableSortAccessibility = { isSortable: false } | { isSortable: true; valueText: string };
 
 /** How far, in points, the content scrolls before an edge fade is fully in. */
 export const TABLE_EDGE_FADE_RAMP = 24;
@@ -192,11 +191,14 @@ export function resolveTableSortGlyph(sort: TableHeadSort | undefined): TableSor
 }
 
 /** Whether a head is announced as a button, and the sort state it reads as its value. */
-export function resolveTableSortAccessibility(sort: TableHeadSort | undefined): TableSortAccessibility {
+export function resolveTableSortAccessibility(
+	sort: TableHeadSort | undefined,
+	labels: TableLabels = DELACOUR_DEFAULT_LABELS.table
+): TableSortAccessibility {
 	if (!sort) return { isSortable: false };
-	if (sort.direction === "asc") return { isSortable: true, valueText: "sorted ascending" };
-	if (sort.direction === "desc") return { isSortable: true, valueText: "sorted descending" };
-	return { isSortable: true, valueText: "not sorted" };
+	if (sort.direction === "asc") return { isSortable: true, valueText: labels.sortedAscending };
+	if (sort.direction === "desc") return { isSortable: true, valueText: labels.sortedDescending };
+	return { isSortable: true, valueText: labels.notSorted };
 }
 
 /**
@@ -208,16 +210,20 @@ export function resolveTableSortAccessibility(sort: TableHeadSort | undefined): 
  */
 export function resolveCellAccessibilityLabel(
 	header: string | undefined,
-	value: string | number | undefined
+	value: string | number | undefined,
+	labels: TableLabels = DELACOUR_DEFAULT_LABELS.table
 ): string | undefined {
 	if (value === undefined) return undefined;
 	const name = header?.trim();
-	return name ? `${name}, ${value}` : String(value);
+	return name ? labels.cell(name, value) : String(value);
 }
 
 /** A pressable row's accessible name: every cell's label, in order. */
-export function resolveTableRowAccessibilityLabel(labels: readonly (string | undefined)[]): string | undefined {
-	const joined = labels.filter((label): label is string => Boolean(label)).join(", ");
+export function resolveTableRowAccessibilityLabel(
+	cellLabels: readonly (string | undefined)[],
+	labels: TableLabels = DELACOUR_DEFAULT_LABELS.table
+): string | undefined {
+	const joined = labels.row(cellLabels.filter((label): label is string => Boolean(label)));
 	return joined || undefined;
 }
 

@@ -58,6 +58,11 @@ One number, what it is doing, and the shape it made getting there — a
   the badge adds an arrow, and the trend is one accessible string — "Up 7.8
   percent, vs last month" — rather than a number, an arrow and a caption read
   as three stops.
+- **The sparkline's `Chart` is `accessible={false}`.** The sparkline's own
+  view is the one `image`, named by `kpiSparklineAccessibilityLabel`; a
+  `Chart` is otherwise an accessible element of its own, and TalkBack would
+  stop on both — the card's description once and the chart's generic summary
+  again.
 - **The badge is `Badge`, soft.** `KPI_TONE_BADGE_COLOR` maps the tone onto
   `success`, `destructive` and `default`, so a trend badge is the same object as
   any other status badge on the screen.

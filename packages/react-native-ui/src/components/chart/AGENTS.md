@@ -13,6 +13,10 @@ knows nothing about tokens.
 | `index.ts` | → `@delacour/react-native-ui/chart` |
 | `chart.tsx` | The root, the child partition, and the single `Object.assign` |
 | `chart.context.tsx` | The context, mounted twice — see below |
+| `chart-frame.tsx` | The frame the canvas fills, as the chart's one accessibility element — an image, or an adjustable stepping the scrub |
+| `chart-accessibility.ts` | The pure text alternative: the summary, the readout, the index step, a slice's spoken label |
+| `chart-accessibility.test.ts` | Every sentence those produce |
+| `chart-accessibility.render.test.tsx` | The frame's role, name, override and steps, mounted |
 | `chart.types.ts` | `ChartConfig`, `ChartSeriesConfig`, `ChartResolvedSeries` |
 | `chart.variants.ts` | The slotted `tv()`, the ramp, and every pure resolver |
 | `chart.variants.test.ts` | Including the assertion that the ramp tokens exist |
@@ -30,6 +34,8 @@ knows nothing about tokens.
 | `pie-chart.context.tsx` | The pie's context, mounted twice the same way; `useChartSeries` in `chart.context.tsx` reads either |
 | `pie-chart-slice.tsx`, `pie-chart-label.tsx` | Skia marks — the wedges with a hairline between them, and a label per wedge |
 | `pie-chart-center.tsx`, `pie-chart-tooltip.tsx` | React Native, over the canvas — the donut hole's content and the tap readout |
+| `pie-chart-slice-targets.tsx` | A selectable pie's accessibility tree — the summary and one `button` per slice, never touch-reactive |
+| `pie-chart.render.test.tsx` | The pie's text alternative and its slice items, activated the way VoiceOver and TalkBack do |
 
 ## Design
 
@@ -124,6 +130,16 @@ knows nothing about tokens.
   the crosshair, the dot and the number all read the same row. `glide` opts
   into the continuous curve position, and the doc says what it costs.
 
+- **A series can be told apart by more than its colour.** `dash` on a config
+  entry — or `Chart.Line dash`, with `false` forcing it solid — draws that
+  line dashed, and `Chart.Legend` draws the same series' swatch as a dashed
+  sample. Colour alone fails anyone who cannot separate the two hues, a
+  greyscale print, and a low-contrast pair (WCAG 1.4.1); a cue the legend did
+  not repeat would distinguish two lines without saying which is which. The
+  lengths are what shows: the engine moves the round cap's reach out of each
+  dash, so a short gap does not close up into a solid line. The swatches are
+  hidden from assistive technology — the label beside each names the series.
+
 - **A dot rings itself in the chart's background.** A dot in the series colour
   sitting on a line of that same colour is a slight thickening and nothing
   more; the ring is what makes it a knob. That is why `surfaceColor` is
@@ -169,6 +185,27 @@ knows nothing about tokens.
   series that is only a bar, because a bar has no curve to sit on and the band
   already picks out its column.
 
+- **The frame is the chart's one accessibility element.** A Skia canvas is one
+  opaque view, so a chart with no text alternative is announced as nothing,
+  and its scrub is a long press only a sighted finger can make. The frame
+  carries `resolveChartSummary` — the x range, then each series' lowest,
+  highest and latest — as an `image`; with a `Chart.Tooltip` placed it is an
+  `adjustable` instead, whose increment and decrement step one datum through
+  `stepChartIndex` and write the engine's `scrub.focus`, so the tooltip, the
+  cursor and the dot follow exactly as they would a touch. Its value text is
+  `resolveChartReadout` through the tooltip's own `formatHeading` and
+  `formatValue`, read off the placed tooltip at partition time, and the
+  tooltip prints through the same `chartTooltipValueText` — the spoken and the
+  drawn readout cannot drift. The index lives in `ChartFrame`, a leaf, so a
+  drag re-renders the frame and not the root. `accessibilityLabel` replaces
+  the summary verbatim; `accessible={false}` hides the chart for a parent that
+  names it, which is what `Kpi.Sparkline` does. The summary is English: there
+  is no labels provider yet, and the override is the way out.
+
+- **The scrub stays up after a step.** Nothing clears it: there is no
+  accessibility blur to clear it on, and the next touch's end does. A
+  sighted helper beside a screen-reader user sees the datum being read.
+
 - **Parts must be direct children of `<Chart>`.** The root partitions them by
   component identity to decide what goes inside the canvas, what floats over
   it and what sits under it — the technique `Spinner` uses on its own children.
@@ -210,6 +247,22 @@ knows nothing about tokens.
   and the tooltip lives outside it. A tap selects only when something would
   show it — a `PieChart.Tooltip`, an `onSelect`, or a controlled
   `selectedIndex` — so a pie with none of those takes no gesture at all.
+
+- **A pie nothing selects is one `image`; a selectable pie is a summary and a
+  button per slice.** The canvas is one opaque view, so without either a
+  screen reader announces nothing. A picture pie's frame carries the
+  generated summary (`Pie chart. Free 57%, …`) — `accessibilityLabel`
+  replaces it, `accessible={false}` removes the pie. A selectable pie's frame
+  cannot be the element, because iOS ignores accessible descendants of an
+  accessible parent, so the canvas is hidden and `PieChartSliceTargets` stands
+  in: the summary, then each drawn slice in order as a 44-point box at its
+  label position, named with its value and share through the tooltip's own
+  formatters. The boxes are `pointerEvents="none"` and activate through
+  `accessibilityTap` on iOS and the `activate` action on Android, the split
+  `Pressable` makes — wired inline, because importing it would make `delacour
+  add chart` copy `Pressable` and install a haptics module — and a touch
+  handler there would steal a sighted tap from the engine's hit test. Activating a slice selects it; it never toggles
+  it off.
 
 - **`@delacour/react-native-charts` is an optional peer, not a dependency.** A dependency
   may be nested, and two copies of the engine mean two chart contexts — so a

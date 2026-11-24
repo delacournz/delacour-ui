@@ -6,6 +6,7 @@ import { cn } from "../../lib/cn";
 import { Text } from "../text";
 import { useChart } from "./chart.context";
 import { chartTooltipOffset, resolveTooltipRows } from "./chart.variants";
+import { chartTooltipValueText } from "./chart-accessibility";
 import { ChartTooltipDot } from "./chart-tooltip-dot";
 import { ChartTooltipX } from "./chart-tooltip-x";
 import { ChartTooltipY } from "./chart-tooltip-y";
@@ -96,7 +97,7 @@ function ChartTooltipRoot({ className, formatHeading, formatValue, size }: Chart
 					<View className={slots.tooltipSwatch()} style={{ backgroundColor: entry.color }} />
 					<Text className={slots.tooltipName()}>{entry.label}</Text>
 					<Text className={slots.tooltipValue()}>
-						{row === undefined ? "" : (formatValue?.(entry.value, entry.key) ?? String(entry.value ?? ""))}
+						{row === undefined ? "" : chartTooltipValueText(entry, formatValue)}
 					</Text>
 				</View>
 			))}

@@ -66,6 +66,17 @@ export type ChartScrubState = {
 	readonly xValue: SharedValue<number>;
 	/** Nearest datum index. `-1` before the first touch. */
 	readonly index: SharedValue<number>;
+	/**
+	 * A datum to move the scrub to without a touch. `-1` asks for nothing.
+	 *
+	 * Written by something that is not a finger — a screen reader's increment,
+	 * a keyboard, the app — and answered by the chart: it activates the scrub
+	 * and writes every field above as if a touch had landed exactly on that
+	 * datum, so a tooltip, a cursor and a readout follow it unchanged. A touch
+	 * resets it to `-1`, so asking for the same datum again after a drag still
+	 * moves the scrub back. The scrub stays active until the next touch ends.
+	 */
+	readonly focus: SharedValue<number>;
 	readonly series: Readonly<Record<string, ChartScrubSeriesState>>;
 };
 

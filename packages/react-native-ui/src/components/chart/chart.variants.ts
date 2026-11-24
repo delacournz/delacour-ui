@@ -113,6 +113,7 @@ export function resolveChartSeries(config: ChartConfig, yKeys?: readonly string[
 				// rendering fault rather than as the missing label it is.
 				label: entry?.label === undefined || entry.label === "" ? key : entry.label,
 				color: entry?.color ?? chartSeriesToken(index),
+				...(entry?.dash === undefined ? {} : { dash: entry.dash }),
 			};
 		});
 }

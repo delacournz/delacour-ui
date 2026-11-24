@@ -19,6 +19,7 @@ export type {
 	ChartCandleColors,
 	ChartCandlestickKeys,
 	ChartConfig,
+	ChartDash,
 	ChartDatum,
 	ChartResolvedSeries,
 	ChartSeriesConfig,
@@ -74,6 +75,14 @@ export {
 	resolveTooltipRows,
 	resolveXValueFormat,
 } from "./chart.variants";
+export {
+	type ChartSummaryInput,
+	chartTooltipValueText,
+	pieSliceAccessibilityLabel,
+	resolveChartReadout,
+	resolveChartSummary,
+	stepChartIndex,
+} from "./chart-accessibility";
 export type { ChartAreaProps } from "./chart-area";
 export type { ChartBarProps } from "./chart-bar";
 export type { ChartCandlestickProps } from "./chart-candlestick";

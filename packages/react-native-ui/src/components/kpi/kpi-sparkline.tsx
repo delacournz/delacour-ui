@@ -126,6 +126,7 @@ export function KpiSparkline(props: KpiSparklineProps): ReactElement {
 			className={slots.sparkline({ className })}
 		>
 			<Chart
+				accessible={false}
 				config={config}
 				curve={curve}
 				data={series.rows}

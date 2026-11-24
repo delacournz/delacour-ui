@@ -38,6 +38,7 @@ export function useChartScrub(keys: readonly string[]): ChartScrubState {
 			snappedY: makeMutable(Number.NaN),
 			xValue: makeMutable(Number.NaN),
 			index: makeMutable(-1),
+			focus: makeMutable(-1),
 			series,
 		};
 	}, [signature]);

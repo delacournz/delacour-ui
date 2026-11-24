@@ -9,4 +9,4 @@ export {
 } from "./gesture.types";
 export { ChartGestureOverlay } from "./gesture-overlay";
 export { useChartScrub } from "./use-chart-scrub";
-export { type UseScrubGestureOptions, useScrubGesture } from "./use-scrub-gesture";
+export { type UseScrubGestureOptions, useScrubFocus, useScrubGesture } from "./use-scrub-gesture";

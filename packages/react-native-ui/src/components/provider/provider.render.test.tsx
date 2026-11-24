@@ -177,6 +177,22 @@ describe("DelacourProvider", () => {
 			expect(screen.getByText("Précédent|Weiter|Page 3")).toBeOnTheScreen();
 		});
 
+		test("an inline labels literal with the same values keeps the resolved labels stable", async () => {
+			const seen: unknown[] = [];
+			function IdentityProbe({ next }: { next: string }): ReactElement {
+				const labels = useLabels("pagination", { next });
+				seen.push(labels);
+				return <Text>{labels.next}</Text>;
+			}
+			const view = await render(<IdentityProbe next="Weiter" />);
+			await view.rerender(<IdentityProbe next="Weiter" />);
+			expect(seen.length).toBeGreaterThanOrEqual(2);
+			expect(seen[seen.length - 1]).toBe(seen[0]);
+			await view.rerender(<IdentityProbe next="Suivant" />);
+			expect(screen.getByText("Suivant")).toBeOnTheScreen();
+			expect(seen[seen.length - 1]).not.toBe(seen[0]);
+		});
+
 		test("labels follow a rerender", async () => {
 			const view = await render(
 				<DelacourProvider labels={{ pagination: { next: "Suivant" } }}>

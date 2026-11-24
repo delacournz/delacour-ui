@@ -1,5 +1,6 @@
-import { createContext, type ReactElement, type ReactNode, useContext, useMemo } from "react";
+import { createContext, type ReactElement, type ReactNode, useContext, useMemo, useState } from "react";
 import {
+	areLabelsShallowEqual,
 	type DelacourLabelOverrides,
 	type DelacourLabels,
 	type DelacourLabelsComponent,
@@ -38,12 +39,26 @@ LabelsProvider.displayName = "DelacourUI.LabelsProvider";
  * One component's labels: English, then the nearest `LabelsProvider`'s, then `own` — the
  * component's `labels` prop. An `undefined` at any layer leaves the one beneath it.
  *
- * Memoised on `own`'s identity, so pass a stable object (a prop, or a module constant).
+ * `own` is compared shallowly, so an inline `labels={{ next: t("next") }}` costs nothing while its
+ * values hold still. A function label compares by identity: an inline arrow re-resolves each render.
  */
 export function useLabels<K extends DelacourLabelsComponent>(
 	component: K,
 	own?: Partial<DelacourLabels[K]>
 ): DelacourLabels[K] {
 	const provider = useContext(LabelsContext);
-	return useMemo(() => resolveLabels(component, provider, own), [component, provider, own]);
+	const stableOwn = useShallowStable(own);
+	return useMemo(() => resolveLabels(component, provider, stableOwn), [component, provider, stableOwn]);
+}
+
+/**
+ * The last `value` that differed shallowly from the one before it, so a fresh literal with the same
+ * keys and values keeps the previous identity. Stored with React's "adjust state while rendering"
+ * pattern rather than a ref, which a concurrent render could leave pointing at a discarded value.
+ */
+function useShallowStable<T extends object>(value: T | undefined): T | undefined {
+	const [stable, setStable] = useState(value);
+	if (areLabelsShallowEqual(stable, value)) return stable;
+	setStable(value);
+	return value;
 }

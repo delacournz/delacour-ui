@@ -77,7 +77,7 @@ type CarouselCommonProps = {
 	accessibilityLabel?: string;
 	/**
 	 * Some of the spoken strings: the arrows' names and the "2 of 5" value. Laid over
-	 * `DelacourProvider`'s `labels`, which sit over the English defaults. Pass a stable object.
+	 * `DelacourProvider`'s `labels`, which sit over the English defaults.
 	 */
 	labels?: Partial<CarouselLabels>;
 };

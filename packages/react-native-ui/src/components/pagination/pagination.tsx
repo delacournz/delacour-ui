@@ -65,8 +65,7 @@ export type PaginationProps = Omit<ViewProps, "children"> & {
 	accessibilityLabel?: string;
 	/**
 	 * Some of the strings it speaks or shows — the arrows' names, "Page 3", "Jump forward 5 pages".
-	 * Laid over `DelacourProvider`'s `labels`, which sit over the English defaults. Pass a stable
-	 * object.
+	 * Laid over `DelacourProvider`'s `labels`, which sit over the English defaults.
 	 */
 	labels?: Partial<PaginationLabels>;
 	/**

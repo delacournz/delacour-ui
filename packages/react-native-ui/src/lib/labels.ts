@@ -153,6 +153,20 @@ export function resolveLabels<K extends DelacourLabelsComponent>(
 	return overlay(overlay(DELACOUR_DEFAULT_LABELS[component], fromProvider), own);
 }
 
+/**
+ * Whether two label overrides hold the same keys with the same values, compared with `Object.is`.
+ * A function label compares by identity, so an inline arrow is a new value every time.
+ */
+export function areLabelsShallowEqual(a: object | undefined, b: object | undefined): boolean {
+	if (a === b) return true;
+	if (a === undefined || b === undefined) return false;
+	const aKeys = Object.keys(a);
+	if (aKeys.length !== Object.keys(b).length) return false;
+	const aRecord = a as Record<string, unknown>;
+	const bRecord = b as Record<string, unknown>;
+	return aKeys.every((key) => Object.hasOwn(b, key) && Object.is(aRecord[key], bRecord[key]));
+}
+
 /** A nested provider's overrides over its parent's, merged per component and per key. */
 export function mergeLabelOverrides(
 	outer: DelacourLabelOverrides,

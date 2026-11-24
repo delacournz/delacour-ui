@@ -1,5 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { DELACOUR_DEFAULT_LABELS, type DelacourLabelOverrides, mergeLabelOverrides, resolveLabels } from "./labels";
+import {
+	areLabelsShallowEqual,
+	DELACOUR_DEFAULT_LABELS,
+	type DelacourLabelOverrides,
+	mergeLabelOverrides,
+	resolveLabels,
+} from "./labels";
 
 describe("DELACOUR_DEFAULT_LABELS", () => {
 	test("breadcrumb is today's English", () => {
@@ -109,5 +115,32 @@ describe("mergeLabelOverrides", () => {
 	test("an absent inner map returns the outer one unchanged", () => {
 		const outer: DelacourLabelOverrides = { kpi: { up: "Hausse" } };
 		expect(mergeLabelOverrides(outer, undefined)).toBe(outer);
+	});
+});
+
+describe("areLabelsShallowEqual", () => {
+	const page = (n: number): string => `Seite ${n}`;
+
+	test("two literals with the same keys and values are equal", () => {
+		expect(areLabelsShallowEqual({ next: "Weiter", page }, { next: "Weiter", page })).toBe(true);
+	});
+
+	test("a changed value is not equal", () => {
+		expect(areLabelsShallowEqual({ next: "Weiter" }, { next: "Suivant" })).toBe(false);
+	});
+
+	test("a new function is not equal, even with the same body", () => {
+		expect(areLabelsShallowEqual({ page }, { page: (n: number) => `Seite ${n}` })).toBe(false);
+	});
+
+	test("an added or removed key is not equal", () => {
+		expect(areLabelsShallowEqual({ next: "Weiter" }, { next: "Weiter", previous: "Zurück" })).toBe(false);
+		expect(areLabelsShallowEqual({ next: "Weiter", previous: "Zurück" }, { next: "Weiter" })).toBe(false);
+	});
+
+	test("undefined against undefined is equal; against an object it is not", () => {
+		expect(areLabelsShallowEqual(undefined, undefined)).toBe(true);
+		expect(areLabelsShallowEqual(undefined, {})).toBe(false);
+		expect(areLabelsShallowEqual({}, undefined)).toBe(false);
 	});
 });

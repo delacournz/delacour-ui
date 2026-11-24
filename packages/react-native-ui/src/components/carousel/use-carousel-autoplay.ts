@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AccessibilityInfo, AppState } from "react-native";
+import { AppState } from "react-native";
+import { useScreenReaderEnabled } from "../../hooks/use-looping-motion";
 import { resolveAutoplayEnabled } from "./carousel.variants";
 
 type UseCarouselAutoplayOptions = {
@@ -7,6 +8,8 @@ type UseCarouselAutoplayOptions = {
 	interval: number;
 	isCalm: boolean;
 	isDisabled: boolean;
+	/** The user's persistent pause: holds the timer, and resuming starts it again. */
+	isPaused: boolean;
 	count: number;
 	/** Advances one slide. Returns `true` when there is nowhere further to go, which stops autoplay. */
 	onTick: () => boolean;
@@ -21,6 +24,8 @@ type UseCarouselAutoplayOptions = {
  * - **Never starts** under reduce motion or while a screen reader is on (WCAG
  *   2.2.2): moving content the user did not ask for. The screen reader is
  *   subscribed, not sampled, so turning VoiceOver on mid-run stops it.
+ * - **Holds** while the user has paused it (`isPaused`) — unlike a touch, that is
+ *   undone by resuming.
  * - **Pauses** while the app is in the background and resumes when it returns.
  *
  * A carousel scrolled off-screen keeps ticking: knowing that cheaply is not
@@ -34,32 +39,24 @@ export function useCarouselAutoplay({
 	interval,
 	isCalm,
 	isDisabled,
+	isPaused,
 	count,
 	onTick,
-}: UseCarouselAutoplayOptions): { stop: () => void } {
+}: UseCarouselAutoplayOptions): { stop: () => void; isStopped: boolean } {
 	const [isStopped, setIsStopped] = useState(false);
-	const [isScreenReader, setIsScreenReader] = useState(false);
+	const isScreenReader = useScreenReaderEnabled();
 	const [isActive, setIsActive] = useState(AppState.currentState !== "background");
 
 	useEffect(() => {
-		let isMounted = true;
-		AccessibilityInfo.isScreenReaderEnabled().then((enabled) => {
-			if (isMounted) setIsScreenReader(enabled);
-		});
-		const reader = AccessibilityInfo.addEventListener("screenReaderChanged", setIsScreenReader);
 		const app = AppState.addEventListener("change", (status) => setIsActive(status === "active"));
-		return () => {
-			isMounted = false;
-			reader.remove();
-			app.remove();
-		};
+		return () => app.remove();
 	}, []);
 
 	const tick = useRef(onTick);
 	tick.current = onTick;
 
 	const isRunning =
-		!isStopped && isActive && resolveAutoplayEnabled({ autoplay, count, isCalm, isDisabled, isScreenReader });
+		!isStopped && isActive && resolveAutoplayEnabled({ autoplay, count, isCalm, isDisabled, isPaused, isScreenReader });
 
 	useEffect(() => {
 		if (!isRunning) return;
@@ -70,5 +67,5 @@ export function useCarouselAutoplay({
 	}, [interval, isRunning]);
 
 	const stop = useCallback(() => setIsStopped(true), []);
-	return { stop };
+	return { stop, isStopped };
 }

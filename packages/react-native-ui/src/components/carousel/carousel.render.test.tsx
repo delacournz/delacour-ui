@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
+import { AccessibilityInfo } from "react-native";
 import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { LabelsProvider } from "../../hooks/use-labels";
+import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Text } from "../text";
 import { Carousel, type CarouselProps } from "./index";
@@ -279,9 +281,14 @@ describe("Carousel", () => {
 	describe("autoplay", () => {
 		beforeEach(() => {
 			jest.useFakeTimers();
+			resetScreenReaderStore();
+			jest.spyOn(AccessibilityInfo, "isScreenReaderEnabled").mockResolvedValue(false);
+			jest.spyOn(AccessibilityInfo, "addEventListener").mockReturnValue({ remove: jest.fn() });
 		});
 		afterEach(() => {
 			jest.useRealTimers();
+			jest.restoreAllMocks();
+			resetScreenReaderStore();
 		});
 
 		test("advances on its interval", async () => {
@@ -302,6 +309,63 @@ describe("Carousel", () => {
 				jest.advanceTimersByTime(5000);
 			});
 			expect(onIndexChange).toHaveBeenCalledTimes(1);
+		});
+
+		test("holds while isPaused and resumes when it clears", async () => {
+			const onIndexChange = jest.fn();
+			const view = await renderWithProviders(
+				<TestCarousel autoplay autoplayInterval={1000} isPaused onIndexChange={onIndexChange} />
+			);
+			await act(async () => {
+				jest.advanceTimersByTime(5000);
+			});
+			expect(onIndexChange).not.toHaveBeenCalled();
+			await view.rerender(
+				<TestCarousel autoplay autoplayInterval={1000} isPaused={false} onIndexChange={onIndexChange} />
+			);
+			await act(async () => {
+				jest.advanceTimersByTime(1000);
+			});
+			expect(onIndexChange).toHaveBeenLastCalledWith(1);
+		});
+
+		test("does not run while a screen reader is on", async () => {
+			resetScreenReaderStore();
+			jest.spyOn(AccessibilityInfo, "isScreenReaderEnabled").mockResolvedValue(true);
+			const onIndexChange = jest.fn();
+			const view = await renderWithProviders(
+				<TestCarousel autoplay autoplayInterval={1000} onIndexChange={onIndexChange} />
+			);
+			await act(async () => {
+				jest.advanceTimersByTime(5000);
+			});
+			expect(onIndexChange).not.toHaveBeenCalled();
+			await view.unmount();
+		});
+
+		test("pause and resume actions sit beside increment and decrement", async () => {
+			const onPausedChange = jest.fn();
+			await renderWithProviders(<TestCarousel autoplay onPausedChange={onPausedChange} />);
+			const adjustable = screen.getByRole("adjustable");
+			const names = (adjustable.props.accessibilityActions as { name: string }[]).map((a) => a.name);
+			expect(names).toEqual(expect.arrayContaining(["increment", "decrement"]));
+			expect(names).toHaveLength(3);
+			await act(async () => {
+				fireEvent(adjustable, "accessibilityAction", { nativeEvent: { actionName: names[2] } });
+			});
+			expect(onPausedChange).toHaveBeenCalledWith(true);
+		});
+
+		test("drops the pause action once a manual move stops autoplay for good", async () => {
+			await renderWithProviders(<TestCarousel autoplay autoplayInterval={1000} />);
+			expect(screen.getByRole("adjustable").props.accessibilityActions).toHaveLength(3);
+			await press("Next slide");
+			expect(screen.getByRole("adjustable").props.accessibilityActions).toHaveLength(2);
+		});
+
+		test("offers no pause action without autoplay", async () => {
+			await renderWithProviders(<TestCarousel />);
+			expect(screen.getByRole("adjustable").props.accessibilityActions).toHaveLength(2);
 		});
 
 		test("does not run while disabled", async () => {

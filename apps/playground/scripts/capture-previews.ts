@@ -9,7 +9,7 @@
  * orchestrator around it:
  *
  *   1. plans — which demos' media is stale, by source hash
- *   2. runs `warden e2e previews --flows <components> --count N`, which leases
+ *   2. runs `warden e2e previews --specs <components> --count N`, which leases
  *      N simulators, installs the dev build, starts one Metro and runs each
  *      component's spec on one of them
  *   3. assembles `apps/web/src/previews/manifest.ts` from the fragments the
@@ -227,13 +227,13 @@ async function writePlan(stale: readonly PlannedDemo[]): Promise<void> {
 	await Bun.write(PLAN_PATH, `${JSON.stringify(plan, null, "\t")}\n`);
 }
 
-/** `warden e2e previews --flows <components> --count N`, from the playground, where `warden.config.ts` is. */
+/** `warden e2e previews --specs <components> --count N`, from the playground, where `warden.config.ts` is. */
 function wardenArgv(components: readonly string[], options: Options): string[] {
 	return [
 		"warden",
 		"e2e",
 		"previews",
-		"--flows",
+		"--specs",
 		components.join(","),
 		"--count",
 		String(options.count),

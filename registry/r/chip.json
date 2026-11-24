@@ -12,10 +12,12 @@
 		"direction",
 		"icon",
 		"icons",
+		"labels",
 		"pressable",
 		"text",
 		"tv",
 		"use-controllable-state",
+		"use-labels",
 		"use-minimum-hit-target"
 	],
 	"dependencies": [
@@ -86,7 +88,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/chip/chip.context.tsx",
 			"target": "chip/chip.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/chip/chip.tsx",
@@ -96,6 +104,14 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../icon",
@@ -138,7 +154,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/chip/index.ts",
 			"target": "chip/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -174,6 +196,10 @@
 			"target": "chip/chip.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

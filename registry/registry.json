@@ -65,12 +65,14 @@
 			"registryDependencies": [
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"surface",
 				"text",
 				"tv",
 				"use-announce",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -182,11 +184,13 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"progress",
 				"text",
 				"tv",
-				"use-calm-motion"
+				"use-calm-motion",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -237,9 +241,11 @@
 				"cn",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [
@@ -282,9 +288,11 @@
 				"icon",
 				"icons",
 				"interactive-child",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [
@@ -351,12 +359,14 @@
 				"icon",
 				"icons",
 				"input",
+				"labels",
 				"overlay",
 				"pressable",
 				"slot",
 				"text",
 				"tv",
-				"use-keyboard-state-sync"
+				"use-keyboard-state-sync",
+				"use-labels"
 			],
 			"dependencies": [
 				"@delacour/react-native-bottom-sheet",
@@ -395,6 +405,7 @@
 				"ui/bottom-sheet/bottom-sheet-text-input.tsx",
 				"ui/bottom-sheet/bottom-sheet-title.tsx",
 				"ui/bottom-sheet/bottom-sheet-trigger.tsx",
+				"ui/bottom-sheet/bottom-sheet.context.tsx",
 				"ui/bottom-sheet/bottom-sheet.tsx",
 				"ui/bottom-sheet/bottom-sheet.variants.ts",
 				"ui/bottom-sheet/index.ts",
@@ -529,12 +540,14 @@
 				"field",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"surface",
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -704,9 +717,11 @@
 			"registryDependencies": [
 				"cn",
 				"color",
+				"labels",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-labels",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -830,10 +845,12 @@
 				"direction",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [
@@ -1008,11 +1025,13 @@
 				"icon",
 				"icons",
 				"input",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
 				"use-calm-motion",
 				"use-controllable-state",
+				"use-labels",
 				"use-minimum-hit-target",
 				"use-theme-color"
 			],
@@ -1081,6 +1100,7 @@
 				"icon",
 				"icons",
 				"input",
+				"labels",
 				"pressable",
 				"select",
 				"slot",
@@ -1089,6 +1109,7 @@
 				"tv",
 				"use-calm-motion",
 				"use-controllable-state",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [
@@ -1141,11 +1162,13 @@
 				"field",
 				"icon",
 				"icons",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1206,10 +1229,12 @@
 				"controls"
 			],
 			"registryDependencies": [
+				"labels",
 				"menu",
 				"pressable",
 				"tv",
-				"use-calm-motion"
+				"use-calm-motion",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1254,10 +1279,12 @@
 			],
 			"registryDependencies": [
 				"cn",
+				"labels",
 				"text",
 				"tv",
 				"use-announce",
-				"use-calm-motion"
+				"use-calm-motion",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1302,11 +1329,13 @@
 				"icon",
 				"icons",
 				"input",
+				"labels",
 				"pressable",
 				"text",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"@delacour/react-native-bottom-sheet",
@@ -1362,6 +1391,7 @@
 				"icon",
 				"icons",
 				"input",
+				"labels",
 				"pressable",
 				"separator",
 				"tabs",
@@ -1369,7 +1399,8 @@
 				"time-picker",
 				"tv",
 				"use-calm-motion",
-				"use-controllable-state"
+				"use-controllable-state",
+				"use-labels"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1422,6 +1453,7 @@
 				"compose-refs",
 				"icon",
 				"icons",
+				"labels",
 				"modal-accessibility",
 				"overlay",
 				"pressable",
@@ -1429,6 +1461,7 @@
 				"text",
 				"tv",
 				"use-controllable-state",
+				"use-labels",
 				"use-minimum-hit-target"
 			],
 			"dependencies": [

@@ -12,6 +12,7 @@
 		"compose-refs",
 		"icon",
 		"icons",
+		"labels",
 		"modal-accessibility",
 		"overlay",
 		"pressable",
@@ -19,6 +20,7 @@
 		"text",
 		"tv",
 		"use-controllable-state",
+		"use-labels",
 		"use-minimum-hit-target"
 	],
 	"dependencies": [
@@ -147,6 +149,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/modal-accessibility",
 					"to": "@registry/lib/modal-accessibility"
 				}
@@ -160,6 +166,14 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				}
 			]
 		},
@@ -181,7 +195,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/dialog/index.ts",
 			"target": "dialog/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -209,6 +229,10 @@
 			"target": "dialog/dialog.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

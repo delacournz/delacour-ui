@@ -17,6 +17,7 @@
 		"icon",
 		"icons",
 		"input",
+		"labels",
 		"pressable",
 		"separator",
 		"tabs",
@@ -24,7 +25,8 @@
 		"time-picker",
 		"tv",
 		"use-calm-motion",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -211,6 +213,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../calendar/calendar.date",
 					"to": "@registry/ui/calendar/calendar.date"
 				},
@@ -236,6 +242,10 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
 				},
 				{
 					"from": "../bottom-sheet",
@@ -269,6 +279,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../calendar/calendar.date",
 					"to": "@registry/ui/calendar/calendar.date"
 				},
@@ -292,6 +306,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../calendar/calendar.date",
 					"to": "@registry/ui/calendar/calendar.date"
 				},
@@ -306,6 +324,10 @@
 			"target": "date-time-picker/date-time-picker.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -323,7 +345,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/date-time-picker/index.ts",
 			"target": "date-time-picker/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -348,6 +376,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
 				},
@@ -370,6 +402,10 @@
 			"target": "date-time-picker/date-time-picker.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

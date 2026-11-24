@@ -16,6 +16,7 @@
 		"icon",
 		"icons",
 		"input",
+		"labels",
 		"pressable",
 		"select",
 		"slot",
@@ -24,6 +25,7 @@
 		"tv",
 		"use-calm-motion",
 		"use-controllable-state",
+		"use-labels",
 		"use-minimum-hit-target"
 	],
 	"dependencies": [
@@ -56,6 +58,10 @@
 					"to": "@registry/hooks/use-calm-motion"
 				},
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../chip",
 					"to": "@registry/ui/chip"
 				},
@@ -81,6 +87,10 @@
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../icon",
@@ -193,6 +203,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../chip/chip.variants",
 					"to": "@registry/ui/chip/chip.variants"
 				},
@@ -211,6 +225,10 @@
 			"target": "combobox/combobox.filter.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../select/select.types",
 					"to": "@registry/ui/select/select.types"
@@ -231,8 +249,16 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../bottom-sheet",
@@ -341,7 +367,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/combobox/index.ts",
 			"target": "combobox/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		}
 	],
 	"tests": [
@@ -391,6 +423,10 @@
 			"target": "combobox/combobox.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

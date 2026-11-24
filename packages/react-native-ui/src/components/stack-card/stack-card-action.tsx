@@ -37,7 +37,7 @@ export function StackCardAction({
 	className,
 	testID,
 }: StackCardActionProps): ReactElement {
-	const { swipe, undo, canUndo, index, count, isDisabled, labelFor, stampColors } =
+	const { swipe, undo, canUndo, index, count, isDisabled, labelFor, labels, stampColors } =
 		useStackCardPart("StackCard.Action");
 	const isUndo = action === "undo";
 	const isActionDisabled = isDisabled || (isUndo ? !canUndo : index >= count);
@@ -51,7 +51,7 @@ export function StackCardAction({
 
 	return (
 		<Button
-			accessibilityLabel={label ?? (action === "undo" ? "Undo" : labelFor(action))}
+			accessibilityLabel={label ?? (action === "undo" ? labels.undo : labelFor(action))}
 			className={className}
 			isDisabled={isActionDisabled}
 			onPress={handlePress}

@@ -187,7 +187,7 @@ library; `haptic={false}` silences both.
 ## Accessibility
 
 The top card is one accessible element with a custom action for each allowed direction, named by
-`directionLabels` ("Swipe left" and so on by default), plus "Undo" while there is a card to bring
+`directionLabels`, else the `swipeLeft` family of `labels` ("Swipe left" and so on by default), plus "Undo" while there is a card to bring
 back. Every card behind it is hidden from assistive technology. Because the top card is one element,
 a control inside it is not separately reachable — put the deck's controls in `StackCard.Actions`,
 whose buttons carry the same labels. Stamps are hidden; the actions say the same thing in words.
@@ -221,6 +221,11 @@ Extends `ViewProps`, except `children`.
     directionLabels: {
       type: "Partial<Record<StackCardDirection, string>>",
       description: "What a screen reader and an action button call each direction.",
+    },
+    labels: {
+      type: "Partial<StackCardLabels>",
+      description:
+        "The spoken strings (direction and undo names, the empty and position wording, the announcements), laid over `DelacourProvider`'s `labels`. `directionLabels` still wins over the `swipe*` labels.",
     },
     ref: { type: "Ref<StackCardHandle>", description: "`{ swipe(direction), undo() }`." },
     className: { type: "string", description: "Give it a height." },
@@ -266,7 +271,7 @@ A round button that answers for the top card. A direction's glyph takes its stam
   type={{
     action: { type: 'StackCardDirection | "undo"' },
     icon: { type: "IconComponent" },
-    label: { type: "string", description: "Defaults to the deck's `directionLabels`, or \"Undo\"." },
+    label: { type: "string", description: "Defaults to the deck's `directionLabels`, or `labels.undo`." },
     onPress: { type: "() => void", description: "Called before the deck acts." },
     className: { type: "string" },
   }}

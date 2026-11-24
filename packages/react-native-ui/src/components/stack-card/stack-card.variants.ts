@@ -1,5 +1,6 @@
 import { Children, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type StackCardLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /** The four ways a card can leave the pile. */
@@ -24,10 +25,10 @@ export const STACK_CARD_DEFAULT_DIRECTIONS: readonly StackCardDirection[] = ["le
 
 /** What a screen reader calls each direction when the caller names none. */
 export const STACK_CARD_DEFAULT_DIRECTION_LABELS: Record<StackCardDirection, string> = {
-	down: "Swipe down",
-	left: "Swipe left",
-	right: "Swipe right",
-	up: "Swipe up",
+	down: DELACOUR_DEFAULT_LABELS.stackCard.swipeDown,
+	left: DELACOUR_DEFAULT_LABELS.stackCard.swipeLeft,
+	right: DELACOUR_DEFAULT_LABELS.stackCard.swipeRight,
+	up: DELACOUR_DEFAULT_LABELS.stackCard.swipeUp,
 };
 
 /** The fraction of the card's size a drag must cover to throw it. */
@@ -360,17 +361,27 @@ export function resolveStackDepth(depth?: number): number {
 }
 
 /** Spoken when a throw empties a deck that has no `Empty` text to read. */
-export const STACK_CARD_ANNOUNCE_EMPTY = "No more cards";
+export const STACK_CARD_ANNOUNCE_EMPTY = DELACOUR_DEFAULT_LABELS.stackCard.empty;
 
-/** Spoken ahead of the restored card after an undo. */
+/**
+ * Spoken ahead of the restored card after an undo.
+ * @deprecated The announcement now comes from `labels.undoAnnouncement`.
+ */
 export const STACK_CARD_ANNOUNCE_UNDO = "Undone";
 
-/** Spoken ahead of the card that is now on top after a throw. */
+/**
+ * Spoken ahead of the card that is now on top after a throw.
+ * @deprecated The announcement now comes from `labels.throwAnnouncement`.
+ */
 export const STACK_CARD_ANNOUNCE_NEXT = "Next";
 
 /** What a card with no `accessibilityLabel` is called: its place in the deck. */
-export function resolveStackCardPosition(index: number, count: number): string {
-	return `Card ${index + 1} of ${count}`;
+export function resolveStackCardPosition(
+	index: number,
+	count: number,
+	labels: StackCardLabels = DELACOUR_DEFAULT_LABELS.stackCard
+): string {
+	return labels.position(index + 1, count);
 }
 
 /**
@@ -380,10 +391,12 @@ export function resolveStackCardPosition(index: number, count: number): string {
 export function resolveStackCardAnnouncement(
 	input:
 		| { kind: "throw"; directionLabel: string; index: number; count: number; cardLabel?: string; emptyLabel?: string }
-		| { kind: "undo"; index: number; count: number; cardLabel?: string }
+		| { kind: "undo"; index: number; count: number; cardLabel?: string },
+	labels: StackCardLabels = DELACOUR_DEFAULT_LABELS.stackCard
 ): string {
-	const card = input.cardLabel ?? resolveStackCardPosition(input.index, input.count);
-	if (input.kind === "undo") return `${STACK_CARD_ANNOUNCE_UNDO}. ${card}`;
-	if (input.index >= input.count) return `${input.directionLabel}. ${input.emptyLabel ?? STACK_CARD_ANNOUNCE_EMPTY}`;
-	return `${input.directionLabel}. ${STACK_CARD_ANNOUNCE_NEXT}: ${card}`;
+	const card = input.cardLabel ?? resolveStackCardPosition(input.index, input.count, labels);
+	if (input.kind === "undo") return labels.undoAnnouncement(card);
+	if (input.index >= input.count)
+		return labels.emptyAnnouncement(input.directionLabel, input.emptyLabel ?? labels.empty);
+	return labels.throwAnnouncement(input.directionLabel, card);
 }

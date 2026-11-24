@@ -13,6 +13,8 @@ import { AccessibilityInfo, type LayoutChangeEvent, View, type ViewProps } from 
 import { cancelAnimation, useReducedMotion, useSharedValue, withSpring } from "react-native-reanimated";
 import { scheduleOnUI } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { SplitViewLabels } from "../../lib/labels";
 import { type HapticFeedback, playHaptic } from "../pressable";
 import { clamp } from "../splitter/splitter.math";
 import { type SplitViewPartContextValue, SplitViewProvider } from "./split-view.context";
@@ -59,6 +61,8 @@ export type SplitViewProps = Omit<ViewProps, "children" | "style"> &
 		isDisabled?: boolean;
 		/** Played when the settle target changes. `false` is silent. Default `"selection"`. */
 		haptic?: false | HapticFeedback;
+		/** The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `accessibilityLabel` on `SplitView.DragArea` still wins over `dragArea`. */
+		labels?: Partial<SplitViewLabels>;
 		/** Exactly `SplitView.Top`, `SplitView.DragArea`, `SplitView.Bottom`, in that order. */
 		children: ReactNode;
 	};
@@ -78,11 +82,13 @@ function SplitViewRoot({
 	variant = SPLIT_VIEW_DEFAULT_VARIANT,
 	isDisabled = false,
 	haptic = "selection",
+	labels: labelsProp,
 	className,
 	onLayout,
 	children,
 	...props
 }: SplitViewProps): ReactElement {
+	const labels = useLabels("splitView", labelsProp);
 	// A literal array arrives fresh every render; keyed on its content so the
 	// heights, and the drag row's gesture, are rebuilt only when a stop changes.
 	const pointsKey = snapPointsProp.join(",");
@@ -183,10 +189,10 @@ function SplitViewRoot({
 			setCurrent(next);
 			if (!announce) return;
 			AccessibilityInfo.isScreenReaderEnabled().then((enabled) => {
-				if (enabled) AccessibilityInfo.announceForAccessibility(formatSnapPosition(next, snapCount));
+				if (enabled) AccessibilityInfo.announceForAccessibility(formatSnapPosition(next, snapCount, labels));
 			});
 		},
-		[haptic, setCurrent, snapCount, snapIndex]
+		[haptic, labels, setCurrent, snapCount, snapIndex]
 	);
 
 	const handleLayout = useCallback(
@@ -231,6 +237,7 @@ function SplitViewRoot({
 			interrupt,
 			isActive,
 			isDisabled,
+			labels,
 			setActive,
 			settle,
 			snapCount,
@@ -248,6 +255,7 @@ function SplitViewRoot({
 			interrupt,
 			isActive,
 			isDisabled,
+			labels,
 			settle,
 			snapCount,
 			snapIndex,

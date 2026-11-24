@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { SplitViewLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import type { SplitViewVariant } from "./split-view.variants";
 
@@ -26,6 +27,8 @@ export type SplitViewPartContextValue = SplitViewContextValue & {
 	/** Every stop as a top-pane height, ascending. Zeros until measured. */
 	heights: readonly number[];
 	haptic: false | HapticFeedback;
+	/** The resolved spoken strings: the drag row's name, position and activate action. */
+	labels: SplitViewLabels;
 	/** Whether a finger is on the drag row — the grip darkens while it is. */
 	isActive: boolean;
 	setActive: (isActive: boolean) => void;

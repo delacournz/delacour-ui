@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SplitterLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { clamp, snapToStep } from "./splitter.math";
 
@@ -579,14 +580,20 @@ export type SplitterAnnouncement = "reset" | "collapse" | "expand";
  * decrement are not here: the platform reads the new `accessibilityValue` itself,
  * but a custom action re-reads nothing.
  */
-export function resolveSplitterAnnouncement(kind: SplitterAnnouncement): string {
-	if (kind === "reset") return "Sizes reset";
-	return kind === "collapse" ? "Pane collapsed" : "Pane expanded";
+export function resolveSplitterAnnouncement(
+	kind: SplitterAnnouncement,
+	labels: SplitterLabels = DELACOUR_DEFAULT_LABELS.splitter
+): string {
+	if (kind === "reset") return labels.reset;
+	return kind === "collapse" ? labels.collapsed : labels.expanded;
 }
 
 /** What a screen reader reads as a handle's value: the leading pane, in whole percent. */
-export function formatSplitterValue(percent: number): string {
-	return `${Math.round(percent)} percent`;
+export function formatSplitterValue(
+	percent: number,
+	labels: SplitterLabels = DELACOUR_DEFAULT_LABELS.splitter
+): string {
+	return labels.value(percent);
 }
 
 /** What one child of a `<Splitter>` is. */

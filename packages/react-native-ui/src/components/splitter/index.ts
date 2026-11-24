@@ -1,3 +1,4 @@
+export type { SplitterLabels } from "../../lib/labels";
 export { Splitter, type SplitterProps } from "./splitter";
 export { type SplitterContextValue, useSplitter, useSplitterContext } from "./splitter.context";
 export {

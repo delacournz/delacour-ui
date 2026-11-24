@@ -24,9 +24,6 @@ import {
 } from "./splitter.variants";
 import { SplitterGrip } from "./splitter-grip";
 
-/** What a handle is called when the caller names nothing more specific. */
-const DEFAULT_LABEL = "Resize";
-
 export type SplitterHandleProps = Omit<ViewProps, "children" | "style" | "hitSlop"> &
 	SplitterSlotProps & {
 		/** Freezes this seam alone. The root's `isDisabled` freezes every one. */
@@ -98,6 +95,7 @@ export function SplitterHandle({
 		orientation,
 		variant,
 		isDisabled: rootDisabled,
+		labels,
 		layout,
 		constraints,
 		sizes,
@@ -118,8 +116,8 @@ export function SplitterHandle({
 	const speak = useAnnounce();
 	const resetAndAnnounce = useCallback(() => {
 		reset();
-		speak(resolveSplitterAnnouncement("reset"), { enabled: announce });
-	}, [announce, reset, speak]);
+		speak(resolveSplitterAnnouncement("reset", labels), { enabled: announce });
+	}, [announce, labels, reset, speak]);
 
 	const start = useSharedValue<number[]>([]);
 	const delta = useSharedValue(0);
@@ -225,15 +223,22 @@ export function SplitterHandle({
 	const isCollapsed = collapsibleIndex >= 0 && isPaneCollapsed(layout, collapsibleIndex, constraints);
 	const value = layout[index] ?? 0;
 
+	const baseActions = useMemo<readonly { name: string; label?: string }[]>(
+		() => [{ name: "increment" }, { name: "decrement" }, { label: labels.resetAction, name: "reset" }],
+		[labels.resetAction]
+	);
+
 	const actions = useMemo(
 		() =>
 			collapsibleIndex < 0
-				? BASE_ACTIONS
+				? baseActions
 				: [
-						...BASE_ACTIONS,
-						isCollapsed ? { label: "Expand", name: "expand" } : { label: "Collapse", name: "collapse" },
+						...baseActions,
+						isCollapsed
+							? { label: labels.expandAction, name: "expand" }
+							: { label: labels.collapseAction, name: "collapse" },
 					],
-		[collapsibleIndex, isCollapsed]
+		[baseActions, collapsibleIndex, isCollapsed, labels]
 	);
 
 	const handleAccessibilityAction = useCallback(
@@ -253,11 +258,11 @@ export function SplitterHandle({
 				togglePane(action.index);
 				if (moved) {
 					const kind = event.nativeEvent.actionName === "collapse" ? "collapse" : "expand";
-					speak(resolveSplitterAnnouncement(kind), { enabled: announce });
+					speak(resolveSplitterAnnouncement(kind, labels), { enabled: announce });
 				}
 			}
 		},
-		[announce, apply, constraints, index, isDisabled, layout, resetAndAnnounce, speak, step, togglePane]
+		[announce, apply, constraints, index, isDisabled, labels, layout, resetAndAnnounce, speak, step, togglePane]
 	);
 
 	const slots = splitterVariants({ isActive, isDisabled, orientation, variant });
@@ -266,13 +271,13 @@ export function SplitterHandle({
 		<GestureDetector gesture={gesture}>
 			<Animated.View
 				accessibilityActions={actions}
-				accessibilityLabel={accessibilityLabel ?? DEFAULT_LABEL}
+				accessibilityLabel={accessibilityLabel ?? labels.handle}
 				accessibilityRole="adjustable"
 				accessibilityState={{
 					disabled: isDisabled,
 					expanded: collapsibleIndex >= 0 ? !isCollapsed : undefined,
 				}}
-				accessibilityValue={{ max: 100, min: 0, now: Math.round(value), text: formatSplitterValue(value) }}
+				accessibilityValue={{ max: 100, min: 0, now: Math.round(value), text: formatSplitterValue(value, labels) }}
 				accessible
 				className={slots.handle({ className })}
 				onAccessibilityAction={handleAccessibilityAction}
@@ -286,14 +291,3 @@ export function SplitterHandle({
 	);
 }
 SplitterHandle.displayName = "DelacourUI.Splitter.Handle";
-
-/**
- * The actions every handle offers. Module scope on purpose: a fresh array each
- * render is a new prop every commit, and React Native sends the whole
- * accessibility config across on any change.
- */
-const BASE_ACTIONS: readonly { name: string; label?: string }[] = [
-	{ name: "increment" },
-	{ name: "decrement" },
-	{ label: "Reset sizes", name: "reset" },
-];

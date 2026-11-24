@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { SplitterLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import type {
 	SplitterLayout,
@@ -28,6 +29,8 @@ export type SplitterContextValue = {
  * from `index.ts`, so the live shared values stay out of the public surface.
  */
 export type SplitterPartContextValue = SplitterContextValue & {
+	/** The resolved spoken strings, read by `Splitter.Handle`. */
+	labels: SplitterLabels;
 	/**
 	 * Every pane's live size, on the **UI thread**.
 	 *

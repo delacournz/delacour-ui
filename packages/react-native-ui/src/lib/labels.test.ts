@@ -8,6 +8,62 @@ import {
 } from "./labels";
 
 describe("DELACOUR_DEFAULT_LABELS", () => {
+	test("alert is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.alert;
+		expect(labels.dismiss).toBe("Dismiss");
+		expect(labels.announcement("Saved", "All good")).toBe("Saved. All good");
+		expect(labels.announcement("Saved!", "All good")).toBe("Saved! All good");
+		expect(labels.announcement("Note:", "read")).toBe("Note: read");
+	});
+
+	test("attachment is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.attachment;
+		expect(labels.kind("image")).toBe("Photo");
+		expect(labels.kind("file")).toBe("File");
+		expect(labels.fileSize("2.4", "megabyte")).toBe("2.4 MB");
+		expect(labels.fileSize("1,023", "byte")).toBe("1,023 B");
+		expect(labels.spokenFileSize(1, "1", "kilobyte")).toBe("1 kilobyte");
+		expect(labels.spokenFileSize(2.4, "2.4", "megabyte")).toBe("2.4 megabytes");
+		expect(labels.spokenDuration({ hours: 0, minutes: 1, seconds: 5 })).toBe("1 minute 5 seconds");
+		expect(labels.spokenDuration({ hours: 1, minutes: 0, seconds: 0 })).toBe("1 hour");
+		expect(labels.spokenDuration({ hours: 0, minutes: 0, seconds: 0 })).toBe("0 seconds");
+		expect(labels.meta(["1:05", "1 KB", "MP3"])).toBe("1:05 · 1 KB · MP3");
+		expect(labels.summary(["Photo", "beach.jpg", "uploading"])).toBe("Photo, beach.jpg, uploading");
+		expect(labels.notSent).toBe("not sent");
+		expect(labels.uploading).toBe("uploading");
+		expect(labels.uploadFailed).toBe("upload failed");
+		expect(labels.remove("report.pdf")).toBe("Remove report.pdf");
+		expect(labels.cancelUpload).toBe("Cancel upload");
+		expect(labels.retryUpload).toBe("Retry upload");
+		expect(labels.uploadFailedAnnouncement("a.pdf", "Network lost")).toBe("Upload failed, a.pdf, Network lost");
+		expect(labels.position(2, 5)).toBe("2 of 5");
+		expect(labels.group).toBe("Attachments");
+	});
+
+	test("avatar is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.avatar;
+		expect(labels.button).toBe("Avatar");
+		expect(labels.overflow(37)).toBe("37 more");
+		expect(labels.overflowText(37, 99)).toBe("+37");
+		expect(labels.overflowText(120, 99)).toBe("99+");
+	});
+
+	test("badge, chip, contextMenu and dialog are today's English", () => {
+		expect(DELACOUR_DEFAULT_LABELS.badge.remove).toBe("Remove");
+		expect(DELACOUR_DEFAULT_LABELS.chip.remove).toBe("Remove");
+		expect(DELACOUR_DEFAULT_LABELS.contextMenu.show).toBe("Show menu");
+		expect(DELACOUR_DEFAULT_LABELS.dialog.close).toBe("Close");
+	});
+
+	test("bottomSheet is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.bottomSheet;
+		expect(labels.close).toBe("Close");
+		expect(labels.overlay).toBe("Close");
+		expect(labels.handle).toBe("Bottom sheet");
+		expect(labels.closed).toBe("Closed");
+		expect(labels.snapPoint(2, 3)).toBe("Snap point 2 of 3");
+	});
+
 	test("breadcrumb is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.breadcrumb;
 		expect(labels.list).toBe("Breadcrumb");
@@ -20,11 +76,140 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 		expect(labels.ellipsis(4, false)).toBe("4 hidden levels");
 	});
 
+	test("calendar is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.calendar;
+		expect(labels.previousMonth).toBe("Previous month");
+		expect(labels.nextYear).toBe("Next year");
+		expect(labels.previous).toBe("Previous");
+		expect(labels.next).toBe("Next");
+		expect(labels.openMonths).toBe("Opens the month and year picker");
+		expect(labels.openYears).toBe("Opens the year list");
+		expect(labels.returnToMonth).toBe("Returns to the month");
+		expect(labels.yearSpan("2020", "2031")).toBe("2020 – 2031");
+		expect(labels.caption("Date of birth", "October 2026")).toBe("Date of birth, October 2026");
+		expect(labels.day("Monday 5 October 2026", [labels.today, labels.rangeStart])).toBe(
+			"Monday 5 October 2026, Today, Range start"
+		);
+		expect(labels.day("Monday 5 October 2026", [])).toBe("Monday 5 October 2026");
+		expect(labels.rangeEnd).toBe("Range end");
+		expect(labels.openRange("5 Oct 2026")).toBe("5 Oct 2026 –");
+		expect(labels.range("5 Oct 2026", "9 Oct 2026")).toBe("5 Oct 2026 – 9 Oct 2026");
+	});
+
 	test("carousel is today's English", () => {
 		const labels = DELACOUR_DEFAULT_LABELS.carousel;
 		expect(labels.previous).toBe("Previous slide");
 		expect(labels.next).toBe("Next slide");
 		expect(labels.position(2, 5)).toBe("2 of 5");
+	});
+
+	test("chart is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.chart;
+		expect(labels.noData).toBe("Chart, no data.");
+		expect(labels.range("Jan", "Jun")).toBe("Jan to Jun");
+		expect(labels.summary("Jan to Jun", ["A: no data.", "B: no data."])).toBe(
+			"Chart, Jan to Jun. A: no data. B: no data."
+		);
+		expect(labels.seriesNoData("Desktop")).toBe("Desktop: no data.");
+		expect(labels.seriesSummary("Desktop", "1", "9", "4")).toBe("Desktop: lowest 1, highest 9, latest 4.");
+		expect(
+			labels.readout("Jan", [labels.readoutRow("Desktop", "186"), labels.readoutRow("Mobile", labels.noValue)])
+		).toBe("Jan: Desktop 186, Mobile no value");
+		expect(labels.readout("", ["Desktop 186"])).toBe("Desktop 186");
+		expect([labels.open, labels.high, labels.low, labels.close]).toEqual(["Open", "High", "Low", "Close"]);
+		expect(labels.pieNoData).toBe("Pie chart, no data.");
+		expect(labels.pieSummary([labels.pieSummarySlice("Direct", labels.piePercent(42)), "Search 58%"])).toBe(
+			"Pie chart. Direct 42%, Search 58%."
+		);
+		expect(labels.pieSlice("Direct", "1,200", "42%")).toBe("Direct, 1,200, 42%");
+	});
+
+	test("colorPicker is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.colorPicker;
+		expect(labels.area).toBe("Saturation and brightness");
+		expect(labels.hexInput).toBe("Hex colour");
+		expect(labels.partInField("Accent", labels.hue)).toBe("Accent, hue");
+		expect(labels.partInField("Accent", labels.area)).toBe("Accent, saturation and brightness");
+		expect([labels.brighter, labels.darker]).toEqual(["Brighter", "Darker"]);
+		expect(labels.areaValue(60, 80)).toBe("Saturation 60 percent, brightness 80 percent");
+		expect(labels.hueValue(210, labels.hueName("blue"))).toBe("Hue 210 degrees, blue");
+		expect(labels.opacityValue(50)).toBe("Opacity 50 percent");
+		expect(labels.trigger(labels.colour, "#f59e0b")).toBe("Colour, #f59e0b, opens picker");
+	});
+
+	test("combobox is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.combobox;
+		expect(labels.create("Atlantis")).toBe("Use “Atlantis”");
+		expect(labels.createAccessibility("Atlantis")).toBe("Add Atlantis");
+		expect(labels.empty).toBe("No results");
+		expect(labels.search).toBe("Search");
+		expect(labels.searchInField("Country", "Search")).toBe("Country, Search");
+		expect(labels.clearSearch).toBe("Clear search");
+		expect(labels.clear).toBe("Clear");
+		expect(labels.triggerHint).toBe("Opens a searchable list of options");
+		expect(labels.results(1)).toBe("1 result");
+		expect(labels.results(0)).toBe("0 results");
+		expect(labels.selected(3)).toBe("3 selected");
+		expect(labels.limitReached).toBe("Limit reached");
+		expect(labels.done).toBe("Done");
+		expect(labels.removeChip("Fiji")).toBe("Remove Fiji");
+		expect(labels.moreChips(2)).toBe("2 more");
+		expect(labels.moreChipsShort(2)).toBe("+2");
+	});
+
+	test("compare is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.compare;
+		expect(labels.showingOnly(labels.after)).toBe("Showing only after");
+		expect(labels.share(50, labels.before)).toBe("50 percent before");
+	});
+
+	test("countdown is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.countdown;
+		expect([labels.days, labels.hours, labels.minutes, labels.seconds]).toEqual([
+			"Days",
+			"Hours",
+			"Minutes",
+			"Seconds",
+		]);
+		expect(labels.dayCount(1)).toBe("1 day");
+		expect(labels.hourCount(2)).toBe("2 hours");
+		expect(labels.minuteCount(1)).toBe("1 minute");
+		expect(labels.secondCount(30)).toBe("30 seconds");
+		expect(labels.timeUp).toBe("Time is up");
+		expect(labels.remaining(["2 days", "3 hours"])).toBe("2 days, 3 hours left");
+		expect(labels.inlineDays(2)).toBe("2d");
+	});
+
+	test("datePicker is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.datePicker;
+		expect(labels.title).toBe("Select date");
+		expect([labels.done, labels.clear, labels.trigger]).toEqual(["Done", "Clear", "Date"]);
+		expect(labels.triggerHint).toBe("Opens calendar");
+		expect(labels.rangePlaceholder).toBe("Start – End");
+		expect(labels.multiplePlaceholder).toBe("Select dates");
+		expect(labels.rangeEnd).toBe("End");
+		expect(labels.dateCount(5)).toBe("5 dates");
+		expect(labels.dateList(["5 Oct", "6 Oct"])).toBe("5 Oct, 6 Oct");
+		expect(labels.notSet).toBe("not set");
+		expect(labels.rangeStarted("5 October")).toBe("From 5 October, no end chosen");
+		expect(labels.range("5 October", "9 October")).toBe("5 October to 9 October");
+		expect(labels.selected("5 October")).toBe("Selected 5 October");
+	});
+
+	test("dateTimePicker is today's English", () => {
+		const labels = DELACOUR_DEFAULT_LABELS.dateTimePicker;
+		expect(labels.title).toBe("Select date and time");
+		expect([labels.done, labels.clear, labels.date, labels.time]).toEqual(["Done", "Clear", "Date", "Time"]);
+		expect(labels.trigger).toBe("Date and time");
+		expect(labels.triggerHint).toBe("Opens date and time picker");
+		expect(labels.placeholder).toBe("Select date and time");
+		expect(labels.emptyTime).toBe("–");
+		expect(labels.timeRow("Time", labels.notSet)).toBe("Time, not set");
+		expect(labels.timeWheelHint(true)).toBe("Hides the time wheel");
+		expect(labels.timeWheelHint(false)).toBe("Shows the time wheel");
+		expect(labels.dateTime("Monday 5 October 2026", "3:30 PM")).toBe("Monday 5 October 2026 at 3:30 PM");
+		expect(labels.selected("x")).toBe("Selected x");
+		expect(labels.noneSelected).toBe("No date and time selected");
 	});
 
 	test("kpi is today's English", () => {

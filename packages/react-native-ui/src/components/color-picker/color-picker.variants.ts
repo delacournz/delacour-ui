@@ -31,6 +31,15 @@ export const COLOR_PICKER_AREA_HEIGHT_PT: Record<ColorPickerSize, number> = { sm
 /** A swatch's and the preview's edge in points, per size. Pinned to the `size-*` class by a test. */
 export const COLOR_PICKER_SWATCH_EDGE_PT: Record<ColorPickerSize, number> = { sm: 24, md: 32, lg: 40 };
 
+/** The swatches row's gap in points. Pinned to the `gap-*` class by a test. */
+export const COLOR_PICKER_SWATCH_GAP_PT = 8;
+
+/**
+ * The most hit slop a swatch takes on a side: half the gap, so two neighbours' slop meets
+ * without overlapping. `lg` reaches 44; `sm` and `md` stop at 32 and 40.
+ */
+export const COLOR_PICKER_SWATCH_SLOP_CAP = COLOR_PICKER_SWATCH_GAP_PT / 2;
+
 /**
  * The two tokens the transparency checkerboard alternates between.
  *

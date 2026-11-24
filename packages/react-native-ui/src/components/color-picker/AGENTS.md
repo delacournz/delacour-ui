@@ -77,6 +77,7 @@ track, a hex field and preset swatches. Compound root plus nine parts. Presents 
 - **Swatch selection is compared as hex**, so `rgb(245 158 11)` and `#f59e0b` select the same
   swatch. The ring is its own layer over a same-width transparent border, so it fades without the
   swatch moving, and snaps under `useCalmMotion()`.
+- **Swatch hit slop is capped at half the row's gap** (`COLOR_PICKER_SWATCH_SLOP_CAP`), so neighbouring slop never overlaps and hands a tap to the later swatch. `lg` (40pt) reaches 44; `md` reaches 40 and `sm` 32 — the gap, not the minimum, sets the limit.
 - **Haptics**: `haptic` (default `selection`) at grab and a `light` tick on release; nothing per
   frame. `haptic={false}` silences both.
 

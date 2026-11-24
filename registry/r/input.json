@@ -155,6 +155,10 @@
 				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		},

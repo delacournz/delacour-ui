@@ -1,12 +1,19 @@
 import { type ReactElement, useEffect, useId } from "react";
 import { View, type ViewProps } from "react-native";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconCompassRound, IconLocation, IconMinusSmall, IconPlusSmall, IconTarget } from "../../icons/central";
 import { Button } from "../button";
 import { Icon } from "../icon";
 import { Surface } from "../surface";
 import { useMapPart } from "./map.context";
 import type { LngLat } from "./map.types";
-import { MAP_ZOOM_STEP, type MapControlsCorner, mapVariants } from "./map.variants";
+import {
+	MAP_CONTROL_SIZE,
+	MAP_ZOOM_STEP,
+	type MapControlsCorner,
+	mapVariants,
+	resolveMapZoomHitSlop,
+} from "./map.variants";
 
 export type MapControlsProps = Omit<ViewProps, "children"> & {
 	/** Defaults to `bottom-right`, under the thumb. */
@@ -55,6 +62,7 @@ export function MapControls({
 	useEffect(() => (showLocate ? requestUserLocation() : undefined), [showLocate, requestUserLocation]);
 
 	const slots = mapVariants({ corner });
+	const controlSlop = useMinimumHitSlop(MAP_CONTROL_SIZE);
 
 	const node: ReactElement = (
 		<View className={slots.controls({ className })} pointerEvents="box-none" {...props}>
@@ -62,6 +70,7 @@ export function MapControls({
 				<Surface padding="none" variant="default">
 					<Button
 						accessibilityLabel="Zoom in"
+						hitSlop={resolveMapZoomHitSlop(controlSlop, "in")}
 						onPress={() => map.zoomBy(MAP_ZOOM_STEP)}
 						size="icon-sm"
 						testID="map-controls-zoom-in"
@@ -71,6 +80,7 @@ export function MapControls({
 					</Button>
 					<Button
 						accessibilityLabel="Zoom out"
+						hitSlop={resolveMapZoomHitSlop(controlSlop, "out")}
 						onPress={() => map.zoomBy(-MAP_ZOOM_STEP)}
 						size="icon-sm"
 						testID="map-controls-zoom-out"

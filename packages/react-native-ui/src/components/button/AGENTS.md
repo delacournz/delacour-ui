@@ -111,7 +111,10 @@ The reference implementation for the patterns in the package
   and `useMinimumHitSlop` grows it to the app's minimum: 4pt a side, or 6 on
   Android under `DelacourProvider isMaterialHitTarget`. `md` and `lg` get
   nothing. Inside a `Button.Group` the axis the run lies along gets none, so a
-  member's slop never lands on its neighbour. A caller's `hitSlop` wins
+  member's slop never lands on its neighbour. Two `sm` / `icon-sm` buttons
+  that abut outside a `Button.Group` need their own `hitSlop` with nothing on
+  the shared edge: the later one is hit-tested first and its slop takes presses
+  on the drawn neighbour (Map's zoom pair does this). A caller's `hitSlop` wins
   outright. The heights are `BUTTON_HEIGHTS`, pinned to `--spacing-button-*`;
   an app that retunes density at runtime moves the drawn height and not the
   slop, which is the trade for not measuring every button on layout.

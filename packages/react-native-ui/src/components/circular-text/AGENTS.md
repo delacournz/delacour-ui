@@ -106,7 +106,9 @@ no context.
   `resolveSpinRun` is the pure half. A `controlled` spin still follows its caller, who owns that
   motion — it is not a loop the component runs, so it takes no hold and offers no actions.
 - **`isPaused` is not `pause`.** `pause` is the transient hold (a press, or the app easing the
-  ring to a halt); `isPaused` is the user's persistent pause. Either freezes the angle.
+  ring to a halt); `isPaused` is the user's persistent pause — wire a visible Pause button to it.
+  Either freezes the angle, and while a controlled `pause` holds it the ring offers no pause or
+  resume action, since neither would change anything visible.
 - **Pause and resume are accessibility actions on the ring's element** — the one already `accessible`
   text element — and only while `spin` is `loop`. Nothing is added to a still or controlled ring.
 - **Press-to-pause is a `LongPress` with `minDuration(0)` on the ring.** It sets the pressed flag in

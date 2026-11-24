@@ -185,6 +185,15 @@ describe("CircularText", () => {
 			expect(ring().props.accessibilityActions).toEqual([{ name: "pause", label: "Pause animation" }]);
 		});
 
+		test("a ring the app holds through a controlled pause offers no actions", async () => {
+			await renderWithProviders(
+				<CircularText pause={{ kind: "controlled", isPaused: true }} radius={60} spin={{ kind: "loop" }}>
+					Spin
+				</CircularText>
+			);
+			expect(ring().props.accessibilityActions).toBeUndefined();
+		});
+
 		test("a ring that does not spin offers no actions", async () => {
 			await renderWithProviders(<CircularText radius={60}>Spin</CircularText>);
 			expect(ring().props.accessibilityActions).toBeUndefined();

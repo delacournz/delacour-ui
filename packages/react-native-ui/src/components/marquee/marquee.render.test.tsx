@@ -200,6 +200,15 @@ describe("Marquee", () => {
 		expect(screen.getAllByText("Alpha", { includeHiddenElements: true }).length).toBeGreaterThan(1);
 	});
 
+	test("a labelled strip held by the app's controlled pause offers no actions", async () => {
+		await renderWithProviders(
+			<Marquee accessibilityLabel="Our partners" pause={{ kind: "controlled", isPaused: true }} testID="strip">
+				<Words />
+			</Marquee>
+		);
+		expect(screen.getByTestId("strip").props.accessibilityActions).toBeUndefined();
+	});
+
 	test("a labelled strip offers pause, and its action reports the change", async () => {
 		const onPausedChange = jest.fn();
 		await renderWithProviders(

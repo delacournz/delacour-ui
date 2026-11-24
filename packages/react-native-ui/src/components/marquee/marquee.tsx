@@ -5,6 +5,7 @@ import { useLoopingMotion } from "../../hooks/use-looping-motion";
 import { cn } from "../../lib/cn";
 import { useMarqueeGroup } from "./marquee.context";
 import {
+	isMarqueeHeldByApp,
 	MARQUEE_DEFAULT_EASE_MS,
 	type MarqueeDirection,
 	type MarqueeFade as MarqueeFadeSpec,
@@ -90,10 +91,13 @@ function MarqueeRoot({
 	// hand-scrollable strip, live if either flips; a user pause keeps the track
 	// and freezes it. A label makes the root one accessible element that speaks
 	// for content it hides, and only then does it carry the pause actions —
-	// otherwise the root would swallow its children's own accessibility.
-	const actions = isContentHidden
-		? { accessibilityActions: motion.accessibilityActions, onAccessibilityAction: motion.onAccessibilityAction }
-		: undefined;
+	// otherwise the root would swallow its children's own accessibility. While the
+	// app's controlled `pause` holds it, a user pause would change nothing, so none is offered.
+	const resolvedPause = resolveMarqueePause(pause, group?.pause);
+	const actions =
+		isContentHidden && !isMarqueeHeldByApp(resolvedPause)
+			? { accessibilityActions: motion.accessibilityActions, onAccessibilityAction: motion.onAccessibilityAction }
+			: undefined;
 
 	return (
 		<View
@@ -118,7 +122,7 @@ function MarqueeRoot({
 					isContentHidden={isContentHidden}
 					isFrozen={motion.hold === "paused"}
 					isPressed={group?.isPressed ?? ownPressed}
-					pause={resolveMarqueePause(pause, group?.pause)}
+					pause={resolvedPause}
 					speed={resolveMarqueeSpeed(speed, group?.speed)}
 					trackClassName={slots.track()}
 				>

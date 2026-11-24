@@ -13,7 +13,7 @@ import Animated, { type SharedValue, useAnimatedStyle, useSharedValue } from "re
 import { useResolveClassNames } from "uniwind";
 import { type LoopingMotion, useLoopingMotion } from "../../hooks/use-looping-motion";
 import { resolveTextClass } from "../text/text.variants";
-import type { CircularTextPause, CircularTextProps } from "./circular-text.types";
+import type { CircularTextPause, CircularTextProps, CircularTextSpin } from "./circular-text.types";
 import {
 	CIRCULAR_TEXT_DEFAULT_SEPARATOR,
 	countGlyphs,
@@ -106,12 +106,16 @@ function isHeldByPause(hold: LoopingMotion["hold"], pause: CircularTextPause): b
 	return hold === "paused" || (pause.kind === "controlled" && pause.isPaused);
 }
 
-/** Pause and resume as accessibility actions, only on a ring that actually spins on its own. */
+/**
+ * Pause and resume as accessibility actions, only on a ring that spins on its own and that the
+ * app's controlled `pause` is not already holding — there a user pause would change nothing.
+ */
 function resolvePauseActions(
-	isLoop: boolean,
+	kind: CircularTextSpin["kind"],
+	pause: CircularTextPause,
 	motion: Pick<LoopingMotion, "accessibilityActions" | "onAccessibilityAction">
 ): Pick<ViewProps, "accessibilityActions" | "onAccessibilityAction"> {
-	if (!isLoop) return {};
+	if (kind !== "loop" || (pause.kind === "controlled" && pause.isPaused)) return {};
 	return { accessibilityActions: motion.accessibilityActions, onAccessibilityAction: motion.onAccessibilityAction };
 }
 
@@ -153,7 +157,7 @@ function CircularTextRoot({
 		transform: [{ rotate: `${controlled ? controlled.value : rotation.value}deg` }],
 	}));
 
-	const pauseActions = resolvePauseActions(spin.kind === "loop", motion);
+	const pauseActions = resolvePauseActions(spin.kind, pause, motion);
 	const press = createPressGesture(isPressed, pause.kind === "press" && spin.kind === "loop");
 	const type = toRingTypography(typography);
 	const box = resolveRingBox(radius, type.fontSize, side);

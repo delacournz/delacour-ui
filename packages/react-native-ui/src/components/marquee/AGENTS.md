@@ -39,6 +39,11 @@ Display names: `DelacourUI.Marquee`, `.Group`, `.Group.Provider`, `.Track`, `.Sc
   no second clock, and resume continues from the same offset. The pause actions ride on the root
   only when `accessibilityLabel` is set, because only then is the root one accessible element;
   otherwise spreading them would make a container `accessible` and swallow its children.
+- **`isPaused` is not `pause: { kind: "controlled" }`.** `pause` is the app's transient hold — a
+  strip stilled while something else on screen has the reader's attention. `isPaused` is the user's
+  persistent pause, the one to wire a visible Pause button to. Both freeze the track; while the
+  controlled `pause` holds it, the strip offers no pause or resume action, because neither would
+  change anything visible.
 - **It is not a carousel.** No snapping, no index, no paging. Anything a reader must reach by
   swiping belongs to `Tabs`' pager.
 - **`direction` is axis and sign in one value.** A separate `orientation` plus `reverse` pair has an

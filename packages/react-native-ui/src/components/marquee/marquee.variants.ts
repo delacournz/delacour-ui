@@ -162,6 +162,14 @@ export function resolveMarqueePause(own: MarqueePause | undefined, group: Marque
 }
 
 /**
+ * Whether the app's `pause: { kind: "controlled" }` is holding the strip. While it does, the strip
+ * offers no pause or resume action: a user pause or resume would change nothing visible.
+ */
+export function isMarqueeHeldByApp(pause: MarqueePause): boolean {
+	return pause.kind === "controlled" && pause.isPaused;
+}
+
+/**
  * Whether the strip holds, given its pause, whether a finger is down on it (or its group) and
  * whether the user has paused it. The user's pause holds under any `pause`, `none` included.
  */

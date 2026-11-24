@@ -116,6 +116,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		value: _value,
 		defaultValue: _defaultValue,
 		onValueChange: _onValueChange,
+		onConfirm,
 		...viewProps
 	} = props;
 
@@ -212,10 +213,12 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	// when this selection is complete, so a new range start keeps the sheet open.
 	// A single day tapped again is a confirmation, not a clear: the calendar reports it as `null`,
 	// but the picker keeps the day and closes. Clearing a single day is Clear's job.
+	// `onConfirm` fires for both, after `onValueChange`, so a caller can tell a pick from a dismiss.
 	const select = useCallback(
 		(next: CalendarSelectionState) => {
 			cancelPendingClose();
 			if (next.mode === "single" && next.value === null && value.mode === "single" && value.value !== null) {
+				onConfirm?.(value.value);
 				finish(value);
 				return;
 			}
@@ -225,9 +228,10 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			}
 			setRangeDraft(null);
 			setValue(next);
+			if (next.mode === "single" && next.value !== null) onConfirm?.(next.value);
 			if (resolveShouldClose(next)) finish(next);
 		},
-		[cancelPendingClose, finish, setValue, value]
+		[cancelPendingClose, finish, onConfirm, setValue, value]
 	);
 
 	const clear = useCallback(() => {

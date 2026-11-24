@@ -72,7 +72,7 @@ engine. An app that imports no picker still never resolves it.
   disables a chosen row for `maxSelected`, or the selection could not be undone.
   A row disabled by the limit with no description of its own says "Limit
   reached" (`limitReachedText`).
-- **`onClose` is the sheet's, not the state's.** It is passed straight to `BottomSheet` and runs once the sheet has finished sliding down, later than `onValueChange` or the open state turning false. Move focus from here, never from the pick.
+- **`onClose` is the sheet's, not the state's.** It is passed straight to `BottomSheet` and runs once the sheet has finished sliding down, later than `onValueChange` or the open state turning false. Move focus from here, never from the pick. `onConfirm` (single only) says a close came from a pick — a press on the chosen row of a non-clearable select included — and not from a clear or a dismiss. It fires after `onValueChange`, and never for a clearable deselect, which empties the selection.
 - **Multiple never closes on a pick.** A sticky `Done` footer closes it; every
   close path — a pick, Done, a swipe, the overlay, the close button, or a
   controlled `isOpen` set to false — clears the query, because the clear reads

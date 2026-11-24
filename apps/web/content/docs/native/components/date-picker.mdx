@@ -220,6 +220,7 @@ small field never shrinks the day targets.
     value: { type: "CalendarDate | null | CalendarDateRange | readonly CalendarDate[]", description: "Controlled value, in the mode's shape." },
     defaultValue: { type: "CalendarDate | null | CalendarDateRange | readonly CalendarDate[]", description: "Starting value while uncontrolled." },
     onValueChange: { type: "(value) => void", description: "A day on pick, a range once complete, a list on every toggle; the empty shape on Clear." },
+    onConfirm: { type: "(value: CalendarDate) => void", description: "Single only. Every pick, after `onValueChange` — a re-tap of the shown day included, which changes nothing. Never on Clear or a dismiss." },
     placeholder: { type: "string", default: '"Select date" / "Start – End" / "Select dates"' },
     format: { type: "(value: CalendarDate, ctx: { locale }) => string", description: "Formats each day on the trigger." },
     formatRange: { type: "(range: CalendarDateRange, ctx: { locale }) => string", description: "Formats a whole range on the trigger." },

@@ -216,6 +216,34 @@ describe("Select single", () => {
 		await waitFor(() => expect(screen.queryByRole("radio", { name: "Engineer" })).not.toBeOnTheScreen());
 	});
 
+	test("onConfirm fires alone for the chosen row pressed again, and after onValueChange for a new pick", async () => {
+		const calls: string[] = [];
+		const onValueChange = jest.fn((_value: unknown) => void calls.push("change"));
+		const onConfirm = jest.fn((_value: unknown) => void calls.push("confirm"));
+		await renderSelect({ defaultValue: "designer", onConfirm, onValueChange });
+		await openSheet();
+		await tap(screen.getByRole("radio", { name: "Designer" }));
+		expect(onConfirm).toHaveBeenLastCalledWith("designer");
+		expect(onValueChange).not.toHaveBeenCalled();
+		await waitFor(() => expect(screen.queryByRole("radio", { name: "Engineer" })).not.toBeOnTheScreen());
+
+		await openSheet();
+		await tap(screen.getByRole("radio", { name: "Engineer" }));
+		expect(onConfirm).toHaveBeenLastCalledWith("engineer");
+		expect(onConfirm).toHaveBeenCalledTimes(2);
+		expect(calls).toEqual(["confirm", "change", "confirm"]);
+	});
+
+	test("isClearable: clearing the chosen row does not confirm", async () => {
+		const onConfirm = jest.fn();
+		const onValueChange = jest.fn();
+		await renderSelect({ defaultValue: "designer", isClearable: true, onConfirm, onValueChange });
+		await openSheet();
+		await tap(screen.getByRole("radio", { name: "Designer" }));
+		expect(onValueChange).toHaveBeenCalledWith(null);
+		expect(onConfirm).not.toHaveBeenCalled();
+	});
+
 	test("isClearable: pressing the chosen row clears it and reports null", async () => {
 		const onValueChange = jest.fn();
 		await renderSelect({ defaultValue: "designer", isClearable: true, onValueChange });

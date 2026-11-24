@@ -1,3 +1,4 @@
+export type { RatingLabels } from "../../lib/labels";
 export { Rating, type RatingProps } from "./rating";
 export {
 	type RatingContextValue,

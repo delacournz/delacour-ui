@@ -166,6 +166,12 @@ export type PressableActivation<A extends PressableAccessibilityAction> = {
  * way, by `SelectionMode.Item` and `Attachment`. A caller's own
  * `onAccessibilityTap` wins too. With no handler there is nothing to reach.
  *
+ * A pressable that is not an accessibility element (`isAccessible: false`) —
+ * a field's row, an input group's box, a scrim — wires nothing on either
+ * platform. Its press is a touch convenience; listing `activate` would make the
+ * node clickable to TalkBack, which then stops on an unnamed button in front of
+ * the control it wraps. A caller's own actions are left as they are.
+ *
  * The `disabled` / `busy` guard is not decided here: activation stays wired on
  * a gated control and the handler goes through `invokePressableHandler`, so a
  * gated control's double-tap is consumed and does nothing rather than falling
@@ -176,17 +182,20 @@ export function resolvePressableActivation<A extends PressableAccessibilityActio
 	hasAccessibilityTap,
 	hasLongPress = false,
 	hasPress,
+	isAccessible = true,
 	platform,
 }: {
 	accessibilityActions?: ReadonlyArray<A>;
 	hasAccessibilityTap: boolean;
 	hasLongPress?: boolean;
 	hasPress: boolean;
+	/** `false` when the pressable is not an accessibility element. Default `true`. */
+	isAccessible?: boolean;
 	platform: string;
 }): PressableActivation<A> {
 	const owns = (name: string) => accessibilityActions?.some((action) => action.name === name) === true;
-	const wiresPress = hasPress && !owns("activate");
-	const wiresLongPress = hasLongPress && !owns("longpress");
+	const wiresPress = isAccessible && hasPress && !owns("activate");
+	const wiresLongPress = isAccessible && hasLongPress && !owns("longpress");
 
 	if (platform === "android" && (wiresPress || wiresLongPress)) {
 		return {

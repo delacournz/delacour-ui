@@ -72,6 +72,16 @@ and only `onPress` and `onLongPress` cross back to JS.
   `ProgressButton` — owns it on both platforms and the pressable wires nothing;
   a caller's own `onAccessibilityTap` wins the same way. A caller's other
   actions and its `onAccessibilityAction` are merged in, never replaced.
+- **`accessible={false}` makes it layout that takes a touch, not a control.**
+  It drops the `button` role, the `accessibilityState`, the appended
+  `activate` / `longpress` and the iOS `onAccessibilityTap`, and defaults
+  `importantForAccessibility` to `"no"` (a caller's value, such as a scrim's
+  `"no-hide-descendants"`, still wins). Before, `accessible={false}` changed
+  only the iOS merge: Android still saw a clickable `button` node, and TalkBack
+  stopped on it, unnamed, in front of whatever it wrapped — a
+  [`Field`](../field/AGENTS.md)'s row, an [`Input.Group`](../input/AGENTS.md)'s box.
+  A caller's own `accessibilityActions` are left alone; they are the caller's
+  to remove.
 - **TalkBack's long press is wired to `onLongPress` the same way.**
   Double-tap-and-hold performs `ACTION_LONG_CLICK`, which React Native routes
   only to a listed `longpress` action and otherwise drops into an empty

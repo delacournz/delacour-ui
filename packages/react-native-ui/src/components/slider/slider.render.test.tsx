@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Slider } from "./slider";
@@ -12,6 +13,17 @@ const decrement = { nativeEvent: { actionName: "decrement" } };
  * thumb's increment and decrement actions, which run the same snap and clamp.
  * The drag, `onChange` during a drag and haptics are verified in the playground.
  */
+function Unnamed(props: Partial<React.ComponentProps<typeof Slider>>) {
+	return (
+		<Slider defaultValue={[20, 60]} {...props}>
+			<Slider.Track>
+				<Slider.Thumb index={0} />
+				<Slider.Thumb index={1} />
+			</Slider.Track>
+		</Slider>
+	);
+}
+
 function Single(props: Partial<React.ComponentProps<typeof Slider>>) {
 	return (
 		<Slider {...props}>
@@ -311,5 +323,36 @@ describe("Slider", () => {
 			expect(thumb).toHaveProp("accessibilityLabel", "Volume");
 			expect(thumb.props.accessibilityHint).toBeUndefined();
 		});
+	});
+});
+
+describe("Slider labels", () => {
+	test("the labels prop names an unnamed range's thumbs", async () => {
+		await renderWithProviders(<Unnamed labels={{ minimum: "Minimal", maximum: "Maximal" }} />);
+		expect(screen.getByLabelText("Minimal")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Maximal")).toBeOnTheScreen();
+	});
+
+	test("a LabelsProvider names them too, and the prop wins over it", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ slider: { minimum: "Minimal", maximum: "Maximal" } }}>
+				<Unnamed labels={{ maximum: "Oben" }} />
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Minimal")).toBeOnTheScreen();
+		expect(screen.getByLabelText("Oben")).toBeOnTheScreen();
+	});
+
+	test("a thumb's accessibilityLabel still wins over labels", async () => {
+		await renderWithProviders(
+			<Slider defaultValue={[20, 60]} labels={{ minimum: "Minimal" }}>
+				<Slider.Track>
+					<Slider.Thumb accessibilityLabel="Lowest" index={0} />
+					<Slider.Thumb index={1} />
+				</Slider.Track>
+			</Slider>
+		);
+		expect(screen.getByLabelText("Lowest")).toBeOnTheScreen();
+		expect(screen.queryByLabelText("Minimal")).toBeNull();
 	});
 });

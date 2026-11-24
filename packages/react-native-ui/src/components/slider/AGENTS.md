@@ -246,6 +246,13 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   The increment steps by `step`, or by a tenth of the range when the slider is
   continuous. `updateValue` is the one way into the value that has no gesture
   behind it, and it runs the same snap and the same clamp the pan does.
+- **The spoken strings are the `labels` prop, not literals**: six keys (`minimum`,
+  `maximum`, `minimumOf`, `maximumOf`, `positionOf`, `position`), the names of a thumb
+  nothing names, come from `lib/labels` through `useLabels("slider", labels)`. Precedence
+  is a thumb's `accessibilityLabel` ← the root's `labels` ← `DelacourProvider` `labels` ←
+  English. The resolved set rides the slider context and `Slider.Thumb` reads it;
+  `resolveThumbAccessibilityLabel` takes it as a defaulted `labels` field. The required
+  word stays the `requiredLabel` field. `SLIDER_THUMB_NAMES` is kept, aliasing the defaults.
 - **Field validity is spoken, on every thumb.** Each thumb is its own focus stop, so
   each calls `useFieldControlAccessibility` and carries the name and hint: the name is
   `resolveThumbAccessibilityLabel` ("Price, minimum, required" — required goes after

@@ -115,7 +115,7 @@ Each thumb is an `adjustable` with a value, and its **name** comes from the `Fie
 away. A lone thumb reads the label — "Volume, 40". A range's two thumbs read the label plus the end
 each holds — "Price range, minimum" and "Price range, maximum" — and with no label at all they
 still read "Minimum" and "Maximum", because two thumbs announcing the same bare number are
-indistinguishable.
+indistinguishable. Those words are English by default; set the root's `labels` (or `DelacourProvider`'s) to change them.
 
 ```tsx
 <Field>
@@ -205,6 +205,7 @@ prop at your call site, not something the component can set.
     },
     onChange: { type: "(value: number | number[]) => void", description: "Fires on every change during the drag." },
     onChangeEnd: { type: "(value: number | number[]) => void", description: "Fires once, when the drag is released. Where a network write belongs." },
+    labels: { type: "Partial<SliderLabels>", description: "The names a thumb nothing names speaks (minimum, maximum, \"2 of 3\"), over `DelacourProvider`'s `labels`. A thumb's `accessibilityLabel` wins." },
     children: { type: "ReactNode" },
   }}
 />

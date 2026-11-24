@@ -17,6 +17,30 @@ describe("resolveRegistrySource", () => {
 		expect(resolveRegistrySource({ cwd: CWD, ref: "develop" }).base).toContain("/develop/registry");
 	});
 
+	test("reads DELACOUR_REGISTRY when nothing names a registry, which is how cli:link reads this tree's", () => {
+		expect(resolveRegistrySource({ cwd: CWD, env: { DELACOUR_REGISTRY: "/tree/registry" } })).toEqual({
+			kind: "local",
+			base: "/tree/registry",
+			root: "/tree",
+		});
+	});
+
+	test("a --registry flag or a config url wins over DELACOUR_REGISTRY", () => {
+		const source = resolveRegistrySource({
+			cwd: CWD,
+			url: "github:acme/ui",
+			env: { DELACOUR_REGISTRY: "/tree/registry" },
+		});
+
+		expect(source.kind).toBe("remote");
+	});
+
+	test("an empty DELACOUR_REGISTRY falls back to the published registry", () => {
+		expect(resolveRegistrySource({ cwd: CWD, ref: "v1", env: { DELACOUR_REGISTRY: "" } }).base).toBe(
+			`${DEFAULT_REGISTRY_URL}/v1/registry`
+		);
+	});
+
 	test("expands the github: shorthand", () => {
 		expect(resolveRegistrySource({ cwd: CWD, url: "github:acme/ui", ref: "v2" })).toEqual({
 			kind: "remote",

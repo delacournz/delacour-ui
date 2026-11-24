@@ -1,5 +1,88 @@
 # delacour
 
+## 0.10.0
+
+No changes in this release.
+
+## 0.9.0
+
+No changes in this release.
+
+## 0.8.0
+
+### Minor Changes
+
+- [#335](https://github.com/delacournz/delacour-ui/pull/335) [`93b378d`](https://github.com/delacournz/delacour-ui/commit/93b378d35c47b9d5758a4f3f6dc70db1c5e073d1) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The CLI now sends anonymous usage telemetry, on by default: the command, the names (never the values) of the flags typed, the components asked for from the official registry, the outcome and duration, the package manager and Expo SDK, and the OS, runtime and CI or coding-agent context, to `telemetry.delacour.co.nz`. It never sends source code, file names or paths, remote URLs, error messages or an IP address. A notice prints on first use. Turn it off with `delacour telemetry disable`, `DO_NOT_TRACK=1`, `DELACOUR_TELEMETRY_DISABLED=1` or `DELACOUR_CLI_TELEMETRY_DISABLED=1`; `DELACOUR_TELEMETRY_DEBUG=1` prints what would be sent instead. New `delacour telemetry [status|enable|disable]` command, documented at `/docs/native/cli#telemetry`.
+
+## 0.7.0
+
+### Minor Changes
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `native-components.json` records a `version`. `init` writes the current one, and `update` brings an older config up to it first: at a terminal it asks once about each option the file predates (`tests.enabled`, and `prefix` while nothing is copied yet), then records the answers and the version. `--yes` keeps the defaults; `--json`, a pipe, CI and the MCP server leave the file alone and name what is still to choose. `doctor` warns on a config that is behind, or written by a newer CLI. The docs gain an Updating guide.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `init` asks what components should call the library in place of `DelacourUI` (`--prefix <name>` on
+  `init` or the first `add` answers it), and `update` asks a project that has no `prefix` even after
+  components are copied: answering renames it through every copy, merging into edited files, and lists
+  the project's own files that still import `DelacourProvider`. A `prefix` set by hand in
+  `native-components.json` is renamed through on the next `update` the same way.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - When `add` or `update` copies tests, it adds `test:ui` (every copied suite), `test:ui:unit` (the
+  logic suites) and, on Jest, `test:ui:render` (the render tests) to `package.json`, scoped to the
+  component directories so the project's own `test` script is untouched. A script already under one
+  of those names is kept as it is.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `update` lists each component it would change — every file it updates, adds or merges, with a line
+  count — and asks which to take; an unticked component is left for the next run. `add` and `update`
+  now ask which missing packages to install, one checkbox each, instead of all or nothing.
+
+  `update` no longer adds a component the project does not hold unless the registry introduced it
+  since the copy: a dependency the project removed (an icon set swapped for another) is reported and
+  offered unticked, and a test that renders a component the project lacks is left out instead of
+  copying that component in.
+
+### Patch Changes
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `update` no longer reports a merge as clean when the project and the registry each added the same line
+  in different places. The merge used to keep both — a duplicate parameter in a file that then failed to
+  parse — and now writes the region as a conflict to resolve.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add` and `update` install a package again at the library's range when `package.json` has it below
+  that range — a project on `tailwind-variants` 3 now gets 4, which the copied `lib/tv.ts` imports from.
+  The report names each one and the version it found. `update` also reads an old ref out of git when the
+  registry is a local directory, so a linked CLI merges an edited file instead of skipping it and
+  copying newer tests beside the old source.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DELACOUR_REGISTRY` names the registry to read when neither `--registry` nor `registry.url` in `native-components.json` does — a path, a URL or `github:owner/repo`. Empty means the published registry.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The test kit no longer mocks native modules the project may not have. Skia, Pulsar, MapLibre,
+  `expo-linear-gradient` and `expo-blur` each have a mock of their own under `test/mocks/`, copied only
+  with a component that installs the module and added to Jest's `setupFiles` — so a project without
+  `chart` no longer fails every suite with "Cannot find module 'react-native-skia'".
+
+- [#326](https://github.com/delacournz/delacour-ui/pull/326) [`478268f`](https://github.com/delacournz/delacour-ui/commit/478268f678f5972410b45001bb83e4c7c675d0d8) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `update` no longer crashes with `EPIPE` when the project's formatter exits before reading its input; the file is compared unformatted and the failure reported once.
+
+## 0.6.0
+
+### Minor Changes
+
+- [#289](https://github.com/delacournz/delacour-ui/pull/289) [`53c7d47`](https://github.com/delacournz/delacour-ui/commit/53c7d47e0be61b43158085524687b1f885806dd9) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `prefix` to `native-components.json`: `add` and `update` rename every `DelacourUI` display name and thrown-message tag to it, and `DelacourProvider` to `<prefix>Provider` — `"prefix": "UI"` gives `UI.Flow.Provider` and `UIProvider`. `init` and `doctor` name the provider the same way.
+
+  `add` now installs the plain npm packages the components use (tailwind-variants, tailwind-merge, cn, tailwindcss, the icon set) at the ranges `@delacour/react-native-ui` declares, instead of npm's latest. tailwind-variants 4.0.0 broke every copied `*.variants.ts`.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add component render tests with `@testing-library/react-native` under Jest. `delacour add --tests` now copies a component's render suite, the Jest setup that stubs its native modules and a `renderWithProviders` helper into a Jest project, adds the setup to the project's Jest config, and remembers the choice in `native-components.json`. Fix a disabled `Switch` flipping on a screen reader's activation or its `Field` label press.
+
+- [#291](https://github.com/delacournz/delacour-ui/pull/291) [`703b1cd`](https://github.com/delacournz/delacour-ui/commit/703b1cd3e9d252cef78753bf6cbd4b38c1c44536) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Upgrade `tailwind-variants` to v4. `lib/tv` now builds `tv` with `createTV` from `tailwind-variants/config`, the only v4 entry that accepts `twMergeConfig` — the default entry throws on it, so a `tv.ts` copied by an earlier CLI breaks as soon as v4 is installed. `tailwind-merge` is no longer a dependency: v4 ships its own compiled merge tables. `delacour add` stops installing it.
+
+  v4's types drop numeric variant keys, so `KpiVariantProps["colorIndex"]`, `PlannerVariantProps["colorIndex"]` and `LeaderboardVariantProps["place"]` are now string unions (`"1" | "2" | …`). The component props — `KpiColorIndex`, `PlannerColorIndex`, `LeaderboardPlace` — stay numeric.
+
+### Patch Changes
+
+- [#316](https://github.com/delacournz/delacour-ui/pull/316) [`e4ff8e2`](https://github.com/delacournz/delacour-ui/commit/e4ff8e24d073457ab9b1c7cda1422550fa5672b8) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Copied tests now typecheck on TypeScript 6. `add --tests` prepends a `/// <reference types>` for the runner's ambient types (`bun`, or `node` under Jest and Vitest), since TypeScript 6 — what Expo SDK 58 ships — defaults `types` to `[]` and every copied suite failed `tsc` in a fresh app.
+
+- [#312](https://github.com/delacournz/delacour-ui/pull/312) [`59ef8d6`](https://github.com/delacournz/delacour-ui/commit/59ef8d627aca12f4bbe011820895ee5ebd3a9003) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `doctor` warns when a Jest project using `chart` has no transform for `.mjs`. d3-shape 3.2.1 ships only `.mjs`, which `jest-expo`'s transform does not compile, so every suite reaching `chart` failed with "Must use import to load ES Module" — add `transform: { "^.+\\.mjs$": "babel-jest" }` to the Jest config.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add --tests` on Jest now adds `transform: { "^.+\\.mjs$": "babel-jest" }` to the Jest config, and `doctor` warns when it is missing. d3-shape 3.2.1 ships only `.mjs`, which `jest-expo`'s transform does not compile, so every suite reaching `chart` failed with "Must use import to load ES Module".
+
 ## 0.5.1
 
 ### Patch Changes

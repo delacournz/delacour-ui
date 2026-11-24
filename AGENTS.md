@@ -32,7 +32,7 @@ Run from the repo root; turbo fans each out across every workspace.
 ```bash
 bun install                # postinstall wires the prek hooks
 bun run dev                # turbo dev — the playground via `warden dev ios`, in practice
-bun run typecheck          # tsc --noEmit everywhere
+bun run typecheck          # bun check (TypeScript 7, built into Bun) everywhere
 bun run check              # Biome lint + format
 bun run lint               # lint only
 bun run fmt                # format only
@@ -41,9 +41,10 @@ bun run previews           # recapture component preview media from a simulator
 bun run previews:verify    # recapture a selection, pixel-diff it against origin/develop, write a report
 bun run previews:affected  # which components' preview media this branch made stale, and the command to recapture them
 bun run previews:pr-table  # the before/after table of this branch's recaptured media, for the pull request body
-bun run signoff            # run the merge gate's checks locally and sign off the open pull request
-bun run cli:link           # build the CLI and link it, so `delacour` on PATH is this tree
+bun run signoff            # optional: run the merge gate's checks locally and sign off the open pull request (CI does it on every push)
+bun run cli:link           # `delacour` on PATH runs this tree's source and reads this tree's registry
 bun run cli:unlink         # put back whatever `delacour` was before cli:link
+bun run cli:status         # which `delacour` is on PATH, and whether it is this tree
 bun run nuke               # delete every node_modules and reinstall from scratch
 ```
 
@@ -60,8 +61,22 @@ Xcode and `warden` on the PATH, and it is deliberately **not** part of `build`. 
 `apps/web/src/previews/manifest.ts` — is committed, which is what lets the docs site deploy on a
 machine with no simulator. See [apps/playground/AGENTS.md](apps/playground/AGENTS.md#capturing-preview-media).
 
-Turbo caching is **off** for every task but `build` (`cache: false` in
-`turbo.jsonc`), so a run always reflects the tree as it is now.
+`typecheck`, `check`, `test` and `@delacour/web#codegen` are **cached**; everything else is
+`cache: false` in `turbo.jsonc`. A hit replays a run over byte-identical inputs, so a cached task still
+reflects the tree as it is now — **provided its inputs are complete**. Turbo hashes a package's own
+files and, through the `transit` node, its workspace dependencies'. A task that reads anything else —
+`registry/`, another app's source, a sibling it does not depend on — must list it in that task's
+`pkg#task` entry as `$TURBO_ROOT$/…`, or a change there replays a stale green. The existing entries
+are that list: `delacour` reads the library, the engines, `registry/` and the docs content; `web` and
+`playground` read each other (which is why it cannot be a `package.json` dependency — that would be a
+cycle). Add the path in the same change as the read. `--force` (or `TURBO_FORCE=true`) reruns
+everything.
+
+Turbo's `--affected` is **not** used, deliberately: it decides by which package a changed file lives
+in and ignores `inputs`, so a `registry/` change affects nothing although three packages' tests read
+it. The cache key does include `inputs`, which makes the cache the correct form of "only what
+changed". `bun run signoff` points `TURBO_CACHE_DIR` at the git common dir, so every worktree shares
+one cache and a branch cut a minute ago starts warm.
 
 ## Branches
 
@@ -102,7 +117,7 @@ is off). With it on, every merge staled every other open pull request's signoff,
 pull requests became a serial train of rebase, re-sign-off, merge. The cost is that a squash lands a
 tree nobody signed off — the head plus whatever `develop` gained meanwhile. Git conflicts still block
 the merge; a semantic conflict between two independently green pull requests does not. When two
-pull requests touch the same code, rebase the second and sign it off again before merging it.
+pull requests touch the same code, rebase the second and let CI sign it off again before merging it.
 
 GitHub does not apply the rulesets from those files; the files are the reproducible copy of what was
 applied. To change protection, edit the JSON, apply it, and commit both in the same change:
@@ -126,11 +141,17 @@ Check `gh api "repos/$REPO/rulesets"` after applying.
 
 ## Signoff
 
-Pull requests into `develop` are gated on **local** CI. The checks run on the machine that authored
-the change and [`basecamp/gh-signoff`](https://github.com/basecamp/gh-signoff) writes commit
-statuses for them, which `develop-protected` requires. Every one of these checks had already run
-there once — through prek, `bun test`, or the agent that wrote the change — and running them again
-on billed runners for every push was the bulk of the Actions spend.
+Pull requests into `develop` are gated on the `signoff` commit statuses `develop-protected` requires.
+**CI writes them on its own**: every push to a non-draft pull request from a branch in this
+repository — and marking a draft ready for review — runs `ci.yml`, whose `signoff` job writes the
+statuses when every check passed (see [CI](#ci)). The repository is public, so GitHub-hosted runners
+cost nothing. Open a pull request as a draft to push work in progress without running it.
+
+**Running signoff locally is no longer needed or required.** Push, and CI signs off the head. A
+local run is optional: it writes the same statuses from the machine that authored the change,
+through [`basecamp/gh-signoff`](https://github.com/basecamp/gh-signoff), which is faster than waiting
+on CI when the checks have just run locally anyway, and `--dry-run` shows which path-gated checks a
+diff touches:
 
 ```bash
 gh extension install basecamp/gh-signoff   # once per machine (the wrapper does it if missing)
@@ -152,16 +173,19 @@ The checks are defined once, in `scripts/signoff-checks.ts`:
 | --- | --- | --- | --- |
 | `signoff/typecheck` | yes | always | `turbo typecheck` |
 | `signoff/check` | yes | always | `turbo check` |
-| `signoff/test` | yes | always | `turbo test test:release test:scripts` |
+| `signoff/test` | yes | always | `turbo test test:render test:release test:scripts` |
 | `signoff/build` | yes | always | `turbo build --filter=@delacour/web` |
 | `signoff/registry` | no | the library, CLI, skills, registry or a manifest changed | `turbo registry:build gen-install gen-skill`, `git diff --exit-code`, `turbo verify:expo -- --no-install` (both layouts) |
-| `signoff/tests` | no | anything but markdown changed | `verify:expo --tests <runner> --dir .verify/tests-<runner>` for `bun`, `jest` and `vitest`, at once — every component's suites copied into an installed app and run by that runner |
+| `signoff/tests` | no | the library, an engine, the CLI, design system, skills, types, registry or a manifest changed | `verify:expo --tests <runner> --dir .verify/tests-<runner> --keep --max-workers 25%` for `bun`, `jest` and `vitest`, at once — every component's suites copied into an installed app and run by that runner |
 | `signoff` | yes | — | the umbrella, written only when every applicable check passed |
 
-`registry`'s two runs share `packages/cli/.verify/app` and hold its pool lock. `tests` runs its three
+`registry`'s two runs share `packages/cli/.verify/app` and hold its pool lock. `typecheck` and `build` hold a lock of their own on `apps/web/.output`: `build`'s `vite build` writes there, and so does `typecheck`'s `@delacour/web#codegen` on a cache miss, and two at once failed with `ENOTEMPTY`. `tests` runs its three
 runners at the same time, each in its own `--dir` with its own CLI build and packed engines beside
-it, so it shares nothing with `registry` or with itself and needs no lock. `tests` installs from npm and takes minutes; it is path-gated on everything but
-markdown rather than `always`, which keeps the ruleset's required list unchanged — it gates through
+it, so it shares nothing with `registry` or with itself and needs no lock. Each runner takes a quarter of the cores (`--max-workers 25%`) and `react-native-ui`'s own Jest run half (`maxWorkers: "50%"`): at their defaults each takes nearly every core, and a 100 ms render starved that way blew Jest's 5 s test timeout. `tests` installs from npm. It used to take 8–16 minutes,
+nearly all of it the scaffolded app's `tsc` under TypeScript 5.9, which spends four minutes on
+`input.variants.ts`'s compound variants alone; the scaffold now pins the TypeScript Expo's template
+ships (6.0), which checks the whole app in seconds. `--keep` leaves each app's `node_modules` for the
+next signoff. It is path-gated on what a copied app is built from rather than `always`, which keeps the ruleset's required list unchanged — it gates through
 the umbrella like `registry` does, and `ci.yml`'s `copied-tests` job runs it for the release pull
 request and a dispatched signoff.
 
@@ -171,56 +195,78 @@ instead, because the umbrella is withheld when a check the diff needed did not p
 `scripts/signoff.test.ts` pins `REQUIRED_CONTEXTS` against `.github/rulesets/develop.json`, so the
 two cannot drift.
 
-**A status binds to a SHA.** Push again — or press **Update branch** — and the signoff drops; run
-it again. Never write a status for a check that did not
+**A status binds to a SHA.** Push again — or press **Update branch** — and the signoff drops; CI
+signs off the new head on its own. Never write a status for a check that did not
 run, and never weaken a check to get one: bare `gh signoff` writes green without running anything,
 and is break-glass only, by a maintainer, said so in the pull request.
 
-When a check genuinely cannot run on a laptop, dispatch the workflow instead — it runs the real
-checks and, given a SHA, writes the same statuses from CI:
+To re-run CI's signoff without pushing — a flaky run, or a fork's pull request after reading its
+diff — dispatch the workflow. It runs the real
+checks and, with `mode: signoff`, writes the same statuses from CI. In the Actions tab, **Run
+workflow** shows a `mode` dropdown (`report` / `signoff`) and two optional fields: `pr` tests that
+pull request's head, `signoff-sha` tests that commit, both pins the pull request to that exact head
+(the run fails if it has moved), and neither tests the tip of the ref the workflow was dispatched
+from. Every job checks out the commit `resolve` picked, so the statuses land on the tree that ran.
+A fork's pull request is refused — the run carries secrets.
 
 ```bash
-gh workflow run ci.yml --ref "$(git branch --show-current)" -f signoff-sha="$(git rev-parse HEAD)"
+gh workflow run ci.yml --ref develop -f mode=signoff -f pr=123
+gh workflow run ci.yml --ref develop -f mode=signoff -f signoff-sha="$(git rev-parse HEAD)"
+gh workflow run ci.yml --ref "$(git branch --show-current)" -f mode=signoff
 ```
-
-The version pull request is the one pull request signed off in CI, automatically — see below.
 
 ## CI
 
-`.github/workflows/ci.yml` is no longer the gate for an ordinary pull request. It runs the same
-checks — `typecheck`, `check (lint + format)`, `test`, `build`, `registry` and `verify-expo` — in
-three cases only:
+`.github/workflows/ci.yml` is the gate for every pull request. It runs the signoff checks —
+`typecheck`, `check (lint + format)`, `test`, `build`, `registry` and `copied tests` (bun, jest,
+vitest), plus `verify-expo` where noted — and its final `signoff` job writes `signoff/<check>` for
+each and the `signoff` umbrella last, on the head SHA it tested:
 
 | Trigger | Why |
 | --- | --- |
-| `pull_request` from `changeset-release/develop` | No person authors the version pull request, so nobody is at a laptop to sign it off. Its final `signoff` job writes the five required statuses for the head SHA it tested. Every job is gated by `if:` to that head branch, so an ordinary pull request starts the workflow and bills nothing |
-| `workflow_dispatch` | The escape hatch above. With `signoff-sha`, a green run writes the statuses; blank is a report |
+| `pull_request` — `opened`, `synchronize`, `reopened`, `ready_for_review` | Every push to a pull request. `resolve` skips a draft and a fork's pull request, and every other job needs it, so neither runs anything; `ready_for_review` starts the run a draft skipped. A fork's token can neither install `@delacournz/*` nor write a status, so a maintainer dispatches it after reading the diff. The version pull request (`changeset-release/develop`) also runs `verify-expo` |
+| `workflow_dispatch` | The escape hatch above. `mode: signoff` makes a green run write the statuses for the optional `pr`'s head or `signoff-sha` (else the dispatched ref's tip); `mode: report` writes nothing |
 | push to `release/playground/*` | Advisory — see [apps/playground/AGENTS.md](apps/playground/AGENTS.md#eas) |
 
 It does not run on push to `develop` or `main`. A commit on `develop` is the squash of a pull request
 signed off at its head; the merged tree can differ from that head when `develop` moved in between
 (see [Branches](#branches)), and the next pull request's signoff covers it. `main` only
 fast-forwards to a release commit, whose pull request `ci.yml` signs off on its own head. Railway does not wait on check suites, so no deploy depends on
-one either. `scripts/signoff.test.ts` fails if `ci.yml` regains a push to `develop` or an ungated
-pull request job.
+one either. `scripts/signoff.test.ts` fails if `ci.yml` regains a push to `develop`, drops one of the
+four pull request types, or stops skipping drafts and forks.
 
-`verify-expo` — the CLI against a real, npm-installed Expo app — is not part of local signoff: it
-installs from the registry and takes minutes. It runs on the version pull request, before anything
-reaches npm, and on dispatch.
+Unlike a local signoff, CI ignores the path gates: `registry` and `copied tests` run on every pull
+request, and their statuses are written beside the required ones. `verify-expo` — the CLI against a
+real, npm-installed Expo app — is not part of signoff at all: it installs from the registry and takes
+minutes. It runs on the version pull request, before anything reaches npm, on dispatch and on a
+`release/playground/*` push; on an ordinary pull request it is skipped, and `signoff` accepts that skip
+there only.
 
-Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
-`namespace-profile-linux-small` for Linux work — `namespace-profile-linux-medium` for `typecheck`,
-whose tsc runs were OOM-killed on the small profile — `namespace-profile-mac-small` for any job that
-needs macOS (Xcode, a simulator), and `namespace-profile-windows-small` for any job that needs
-Windows. Nothing needs macOS or Windows today, so those two profiles are unused.
-The `ubuntu-latest` / `macos-*` / `windows-*` labels are not to be reintroduced — with one exception, below.
+Every job runs on a GitHub-hosted `ubuntu-latest` runner — free, because the repository is public.
+Namespace profiles are not to be reintroduced; `.github/workflows.test.ts` fails on a
+`namespace-profile-*` label or any `namespacelabs/` / `namespace-actions/` action, and on any job not
+on `ubuntu-latest`. Nothing needs macOS or Windows today (`previews` is deliberately kept out of CI).
+`release.yml`'s `publish` and `alpha.yml` could not move off GitHub-hosted runners anyway: npm's
+trusted publishing verifies a sigstore provenance attestation against the runner, and sigstore only
+attests GitHub-hosted ones (`E422 … Unsupported GitHub Actions runner environment: "self-hosted"`).
 
-The exceptions are `release.yml`'s `publish` job and `alpha.yml`, which stay on `ubuntu-latest`. npm's trusted
-publishing generates a sigstore provenance attestation and verifies it against the runner, and
-sigstore only attests GitHub-hosted runners: on a Namespace runner every `npm publish` fails
-with `E422 … Unsupported GitHub Actions runner environment: "self-hosted"`. Moving it back to
-Namespace means either `--provenance=false` (OIDC without the attestation) or an npm token, and
-neither is worth one short job per release.
+Checkout and caches are GitHub's own actions:
+
+| Cache | Key | For |
+| --- | --- | --- |
+| `~/.bun/install/cache` | `bun-<os>-<arch>-<hash of bun.lock>`, restoring the newest `bun-<os>-<arch>-` | Every job that installs, in `ci.yml` and `version.yml` |
+| `.turbo/cache` | `turbo-<job>-<os>-<arch>-<sha>`, restoring the newest `turbo-<job>-<os>-<arch>-` | `ci.yml`'s `typecheck`, `check`, `test` and `build`: a second push to a pull request replays every task whose inputs did not change. A hit is as trustworthy as a local one — the cache key's `inputs` are the contract (see [Commands](#commands)) |
+
+GitHub scopes a pull request's caches to that pull request, so one pull request never restores
+another's. `release.yml` restores no cache at all: a tag run cannot share one, and a release never
+replays a turbo green or installs from a cache a pull request wrote.
+
+Every `bun install` in a workflow reads `@delacournz/*` from GitHub Packages with the job's own
+`GITHUB_TOKEN`: the job grants `packages: read` and the install step alone sets
+`NPM_TOKEN: ${{ github.token }}`, so no later step — an `npm publish` least of all — sees it. Each
+package grants this repository read access under **Manage Actions access** on its settings page; a new
+`@delacournz/*` dependency 401s in CI until it does. `.github/workflows.test.ts` fails on a
+`secrets.NPM_TOKEN`, a workflow- or job-wide `NPM_TOKEN`, or an install without `packages: read`.
 
 The required contexts carry no `integration_id` in the ruleset, on purpose: a local signoff is
 written through the GitHub CLI's OAuth app and the version pull request's through GitHub Actions,
@@ -237,8 +283,9 @@ Shared native and React versions are pinned once, in the root `package.json`
 ```
 @legendapp/list  react 19.3.0  react-native 0.88.0
 react-native-gesture-handler ~3.3.0  react-native-keyboard-controller 1.22.7  react-native-reanimated 4.7.1
-react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.7.3
+react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-skia 3.9.0
 react-native-svg 15.16.0  react-native-worklets 0.13.0
+typescript ^7.0.2  typescript-6 npm:typescript@~6.0.3
 ```
 
 Every version here is the one Expo SDK 58 bundles. That is the rule, not a coincidence: `expo
@@ -269,6 +316,51 @@ copies were always installed and only bun's hoisting order decided which one lan
 Rename a package and that order changes — `packages/react-native-ui` then compiled against a different
 `@types/react` from the app, every `ComponentRef<typeof Animated.View>` collapsed to `never`, and
 `tsc` blamed `pressable.tsx`.
+
+`typescript` is catalogued for `@types/react`'s reason — eleven workspaces each pinned it — and is
+the second exception to the SDK rule. It is the native **TypeScript 7** compiler — what an editor
+and a bare `tsc` load. Expo SDK 58 expects `~6.0.3`, so
+`apps/playground` lists `typescript` under `expo.install.exclude` — without it `expo install --check`
+flags it and `--fix` would put 6 back.
+
+**`typecheck` is `bun check`, not `tsc`.** Every workspace's `typecheck` script is
+`bun check --no-script` ([docs](https://bun.com/docs/runtime/check)): TypeScript 7 compiled into Bun,
+reading the same `tsconfig.json` and reporting the same errors as `tsc` 7. A forced
+`turbo typecheck` spends about 6s type checking across the workspaces, where `tsc` 7 spent about 16s
+and `tsc` 6 about 40s — the playground alone went 12.4s → 3.8s → 1.5s. The turbo wall time barely
+moves, because `@delacour/web#codegen`'s `vite build` is its critical path.
+
+- **`--no-script` is not optional.** `bun check` runs a `check` script when the package has one, and
+  every workspace's `check` is Biome. Without the flag, `typecheck` would lint.
+- **Bun ≥ 1.4.4.** 1.4.3 and earlier have no working builtin, pass `--no-script` through to Biome,
+  and fail with `` `--no-script` is not expected in this context `` — run `bun upgrade`. That is
+  also why one Bun version is pinned everywhere: `packageManager`, every workflow's `bun-version`,
+  `apps/web/Dockerfile`, `apps/playground/eas.json` and the EAS workflows.
+- **The checker's TypeScript is Bun's** (`bun -p process.versions.typescript`), not the catalog's.
+  Bump Bun and `typescript` together, or the editor and the gate disagree.
+  `scripts/toolchain.test.ts` fails on any of the three drifting: a Bun pin that differs from
+  `packageManager`, a `typecheck` script that is not `bun check --no-script`, or Bun's TypeScript
+  outside the catalog range.
+- `bun check` loads no language service plugins and never writes a file.
+
+TypeScript 7's npm package no longer exports the classic compiler API: `exports["."]` is only
+`lib/version.cjs`, and `typescript/unstable/*` has no in-process parser — a `SourceFile` comes from a
+`Program` on the Go server, over IPC. Three build-time scripts need `preProcessFile` and
+`createSourceFile`, so they import **`typescript-6`**, an npm alias of `typescript@~6.0.3`, declared
+only where they live:
+
+| File | Uses |
+| --- | --- |
+| `packages/cli/src/registry/scan-imports.ts` | `preProcessFile` — type-only imports and `export type … from`, which `Bun.Transpiler` drops (cli rule 2) |
+| `apps/playground/scripts/previews/demo-source.ts` | `createSourceFile` and the node guards, to read a demo's `meta` and imports |
+| `apps/playground/scripts/previews/spec-source.ts` | the same, to read a spec's `capture` calls |
+
+Write `from "typescript-6"` for the compiler API; `from "typescript"` type-checks as nothing but a
+version string. Drop the alias when `typescript/unstable/ast` grows a synchronous parser.
+
+The one TypeScript that does **not** follow the catalog is the `verify:expo` scaffold's
+(`packages/cli/scripts/verify/harness.ts`): it models a consumer's freshly created Expo app, so it
+pins whatever Expo's template ships.
 
 **Bump a version in the catalog, never in a package.** Two versions of a native
 module register twice and break at runtime — which is also why `react-native-ui`
@@ -598,9 +690,11 @@ shapes; `@delacour/types`' `Result` is the house example.
 
 **Tests.** Write them first. Colocate as `{name}.test.ts` beside the source. Run
 `bun test <path>` after each change and the related suites before committing.
-`react-native-ui` can only test pure logic — React Native ships Flow-typed source Bun's
-transpiler cannot parse — so behaviour that needs a renderer is verified in the
-playground on a simulator instead.
+`react-native-ui` has two kinds: `*.test.ts` pure-logic suites under `bun test`, and a
+`{name}.render.test.tsx` per component under Jest (`bun run test:render`) — React Native ships
+Flow-typed source Bun's transpiler cannot parse, so mounting a component needs jest-expo. See
+`packages/react-native-ui/src/test/AGENTS.md`. Layout, animation and real gestures are still
+verified in the playground on a simulator.
 
 **Files.** Kebab-case, enforced by Biome. The exception is `apps/playground/src/app`,
 where Expo Router derives route names from filenames.

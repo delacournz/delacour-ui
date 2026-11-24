@@ -1,4 +1,4 @@
-import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode, type Ref } from "react";
+import { Children, cloneElement, Fragment, isValidElement, type ReactElement, type ReactNode, type Ref } from "react";
 import { composeRefs } from "./compose-refs";
 import { mergeProps } from "./merge-props";
 
@@ -32,7 +32,9 @@ export function Slot({ children, ...slotProps }: SlotProps): ReactElement {
 
 	const child = Children.only(children);
 
-	if (!isValidElement(child)) {
+	// A fragment passes `isValidElement` but drops every prop it is given, so the
+	// donated handlers would never reach the element inside it.
+	if (!isValidElement(child) || child.type === Fragment) {
 		throw new Error("Slot expects a single React element child; text and fragments cannot receive props.");
 	}
 

@@ -21,6 +21,7 @@ root plus `Swipe.Start`, `Swipe.End`, `Swipe.Action` and `Swipe.Group`, with `us
 | `swipe.types.ts` | `SwipePanelProps`, shared by the two markers |
 | `swipe.variants.ts` | Pure `tv()` slots + the partition, release and tile-layout resolvers, no RN imports |
 | `swipe.variants.test.ts` | |
+| `swipe.render.test.tsx` | Mounted under Jest — accessibility actions, imperative handle, tile press and `isKeptOpen`, drag release (open, shut, full swipe, `isFullSwipe`, `isDisabled`) through `fireGestureHandler`, the open-row tap shield, `Swipe.Group` and the out-of-root errors |
 
 ## Design
 
@@ -97,6 +98,8 @@ root plus `Swipe.Start`, `Swipe.End`, `Swipe.Action` and `Swipe.Group`, with `us
   `resolveTileLayout` are restated inside the gesture and the animated styles rather than called,
   and the tests pin the pure versions. A module-scope worklet calling a sibling is the crash
   [Slider](../slider/AGENTS.md) documents.
+
+- **The pan and the shield tap carry `testID: "swipe-pan"` and `testID: "swipe-shield"`**, so a render test can drive a drag with `fireGestureHandler`. No pixel change.
 
 ## Group
 

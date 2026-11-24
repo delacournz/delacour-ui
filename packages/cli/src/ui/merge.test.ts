@@ -56,6 +56,27 @@ describe("merge3", () => {
 		);
 	});
 
+	test("does not add one line twice when both sides added it in different places", () => {
+		const base = ["function f({", "\ta,", "\tb,", "\tc,", "\td,", "}) {}", ""].join("\n");
+		const local = edit(base, "\ta,\n", "\ta,\n\tlabel,\n");
+		const next = edit(base, "\tc,\n", "\tc,\n\tlabel,\n");
+
+		const merged = merge3({ local, base, next, nextLabel: "registry@abc" });
+
+		expect(merged.conflicts).toBe(1);
+		expect(merged.content.match(/^\tlabel,$/gm)?.length).toBe(2);
+		expect(merged.content).toContain("<<<<<<< local");
+		expect(hasConflictMarkers(merged.content)).toBe(true);
+	});
+
+	test("still merges cleanly when both sides add a closing brace or a blank line", () => {
+		const base = ["a", "b", "c", "d", ""].join("\n");
+		const local = edit(base, "a\n", "a\n}\n\n");
+		const next = edit(base, "c\n", "c\n}\n\n");
+
+		expect(merge3({ local, base, next, nextLabel: "registry@abc" }).conflicts).toBe(0);
+	});
+
 	test("keeps the trailing newline", () => {
 		const result = merge3({ local: BASE, base: BASE, next: edit(BASE, "five", "5"), nextLabel: "registry" });
 

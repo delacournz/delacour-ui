@@ -28,6 +28,7 @@ disabled. The caller owns fetching and slicing.
 | `pagination.types.ts` | `PaginationTargetProps`, shared by every pressable part |
 | `pagination.variants.ts` | Pure `tv()` slots + every resolver and formatter, no RN imports |
 | `pagination.variants.test.ts` | |
+| `pagination.render.test.tsx` | Mounted under Jest — toolbar/item/arrow names and selected/disabled state, uncontrolled and controlled paging, clamp report, ellipsis jumps, simple/compact variants (adjustable value and actions), custom runs, Status, and the outside-root errors |
 
 ## Design
 

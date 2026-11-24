@@ -29,6 +29,7 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
 | `use-drawer-pan.ts` | `useDrawerPan` — the swipe-to-dismiss pan, its threshold haptic and its release |
 | `drawer.variants.ts` | The slotted `tv()`, the size table, the release constants and the pure geometry — no RN imports |
 | `drawer.variants.test.ts` | Edges both directions, extents, frame extents, offsets, drag, release, exit duration, insets, slots per edge, tokens in both themes |
+| `drawer.render.test.tsx` | Mounted under Jest — open/close paths and `onOpenChange`, controlled and uncontrolled, `Close`/`Trigger` `asChild`, escape gesture and `isDismissible`, `useDrawer`, parts outside a root throwing. The panel (`role="dialog"`, deliberately not `accessible`) is found by `testID`; swipe, scrim tap and slide are simulator-only |
 
 ## Design
 

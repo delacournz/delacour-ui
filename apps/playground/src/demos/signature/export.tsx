@@ -46,7 +46,7 @@ export function Demo(): ReactElement {
 				</Button>
 				<Button
 					className="flex-1"
-					onPress={() => setPng(pad.current?.toPNG({ background: "#ffffff", viewBox: "tight" }) || null)}
+					onPress={async () => setPng((await pad.current?.toPNG({ background: "#ffffff", viewBox: "tight" })) || null)}
 					testID="signature-export-png-button"
 					variant="secondary"
 				>

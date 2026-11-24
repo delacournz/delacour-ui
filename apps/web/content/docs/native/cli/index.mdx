@@ -100,6 +100,79 @@ replace; see [Theming](/docs/native/getting-started/theming).
 </Step>
 </Steps>
 
+## Telemetry
+
+`delacour` sends anonymous usage data so we can see which commands and components get used, on which
+Expo SDKs and package managers, and which commands fail. It is **on by default** and takes one
+command to turn off. The first time it would send anything, it prints a notice to stderr saying so;
+under `--silent` the notice waits for a run that is not.
+
+```bash
+delacour telemetry            # is it on, and why
+delacour telemetry disable    # turn it off, for every project on this machine
+delacour telemetry enable
+```
+
+### What is sent
+
+One `command` event per run, in one request made as the command ends:
+
+| | |
+| --- | --- |
+| The run | The command (`add`), the **names** of the flags you typed (`--yes`, `--no-install`), how it ended (success, error or cancelled), how long it took, the exit code if it returned one, and the **class name** of an error, such as `RegistryFetchError` |
+| Components | The names you asked for (`button`, `dialog`), only for `add`, `update`, `view`, `diff` and `init`, only when the registry is ours, and only names shaped like a registry item |
+| The registry | Whether it was `official`, `custom` or `local` — never its address |
+| Your project | The package manager (`bun`, `pnpm`, `yarn`, `npm`) and the Expo SDK's major version |
+| This machine | The operating system family and kernel release, the CPU architecture, and the Node or Bun version |
+| How it ran | The CLI's version and channel (`latest` or `alpha`), whether stdin and stdout are terminals, and whether it was started by `npx`, `bunx`, `pnpm dlx`, `yarn dlx` or an installed `delacour` |
+| Identity | A random machine ID, made the first time and kept in `~/.config/delacour/telemetry.json`; a random ID for this run; and a project ID |
+
+The project ID is a SHA-256 hash of your repository's `origin` remote with the scheme, credentials
+and `.git` removed, so the same project has the same ID on a laptop and in CI. A folder with no
+remote is hashed with a random salt that stays in that same file. It cannot be reversed into a
+URL or a path, and it is how we count projects instead of runs.
+
+Events go to `telemetry.delacour.co.nz`, our own server. It works out a country from the request,
+discards the IP address, and forwards the event to PostHog for dashboards.
+
+### CI and coding agents
+
+The CLI notes whether it is running in CI, and in which one, from the variables that CI sets
+(`GITHUB_ACTIONS`, `EAS_BUILD`, …) — only whether they are set, never their values. It does the same
+for a coding agent, from the variable the agent documents (`CLAUDECODE`, `CURSOR_AGENT`,
+`GEMINI_CLI`, `CODEX_SANDBOX`, `OPENCODE`) or an `AI_AGENT` you set yourself. That is what lets us
+tell a person at a terminal from a pipeline or an assistant running `delacour mcp`.
+
+### What is never sent
+
+Source code, file contents, file names and paths, the URL of your git remote, environment variable
+values, flag values, search queries, usernames, hostnames, error messages, and your IP address.
+`delacour telemetry` itself is never counted.
+
+### Turning it off
+
+Any one of these does it. The environment variables win over the stored choice, and over
+`delacour telemetry enable`.
+
+| | |
+| --- | --- |
+| `delacour telemetry disable` | Stored in `~/.config/delacour/telemetry.json` and kept until you run `enable` |
+| `DO_NOT_TRACK=1` | The [Console Do Not Track](https://consoledonottrack.com) convention, honoured by every Delacour tool |
+| `DELACOUR_TELEMETRY_DISABLED=1` | Every Delacour command-line tool |
+| `DELACOUR_CLI_TELEMETRY_DISABLED=1` | This CLI only |
+
+It is also off when `NODE_ENV=test` and in a development build of the CLI. `DELACOUR_CONFIG_DIR` and
+`XDG_CONFIG_HOME` move the config file.
+
+### See exactly what would be sent
+
+```bash
+DELACOUR_TELEMETRY_DEBUG=1 delacour list
+```
+
+prints the request body to stderr and sends nothing. Anything else about how this is handled is on
+the [privacy policy](/privacy#the-cli).
+
 ## Next
 
 <Cards>

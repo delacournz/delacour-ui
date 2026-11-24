@@ -21,6 +21,7 @@ section to read first — what follows is only where a switch differs.
 | `switch.types.ts` | Prop types shared by two or more parts |
 | `switch.variants.ts` | Pure `tv()` slots + the release worklet, no RN imports |
 | `switch.variants.test.ts` | |
+| `switch.render.test.tsx` | Mounted under Jest — role, checked and disabled state, controlled and uncontrolled, assistive activation and no iOS custom action, the `Field.Label` name, a caller's `accessibilityState`, `Switch.Thumb` `onLayout`, the thumb hidden until both widths are measured, and a thumb found inside a fragment. The pan is driven with `fireGestureHandler` — tap, drag out and back on either axis, cancel, disabled |
 
 ## Design
 
@@ -49,6 +50,16 @@ section to read first — what follows is only where a switch differs.
   the control a tap and toggle it. Reading both means such a swipe is movement
   with no travel, which settles back to the state it started in — the switch is
   left alone.
+- **`distance` is the peak over the whole gesture, not the translation at
+  release.** The root tracks the furthest the finger got on either axis, resets
+  it in `onBegin`, and passes it at release. A slow drag out and back to near its
+  start is still a drag, and it settles by position instead of toggling.
+- **A swipe that never moved along the track keeps the state.** The root also
+  tracks the peak horizontal displacement and passes it as `horizontalDistance`.
+  Past the tap slop but under it horizontally, the release returns the state it
+  started in, without reading the position. A swipe caught while the thumb is
+  still springing towards a new state would otherwise settle by a position that
+  has not caught up, and flip the switch back.
 - **The value is settled in `onFinalize`, and only there.** Unlike a slider there
   is nothing to write on `onBegin`: a switch has no position to move a handle to,
   only a state to end up in. `onFinalize` is still the callback because it is the
@@ -61,6 +72,24 @@ section to read first — what follows is only where a switch differs.
   zeroes it. A stationary tap never reaches `onUpdate`, which is why the reset is
   on the grab rather than the release: without it a tap would settle with the
   previous drag's numbers.
+- **A cancelled pan commits nothing.** `onFinalize` also runs when the system,
+  a parent, or a disable under the finger cancels the pan. Then, or when the
+  switch is disabled, it springs the thumb back to the current state, releases
+  the press scale and clears the drag flag, with no haptic and no change.
+  Gesture Handler 3 reports `FAILED` and `CANCELLED` alike as `event.canceled`,
+  and on iOS a stationary press never activates the pan and finalizes as
+  `FAILED` — that press is the tap. So a pan counts as cancelled only when it
+  was `canceled` after activating (`wasActivated`, set in `onActivate`), or
+  `canceled` before its last finger lifted (`wasLifted`, set in `onTouchesUp`).
+  **Verify on an iOS device** that a stationary tap still toggles: it relies on
+  the touch-up reaching the worklet before the FAILED state change.
+- **The pan carries ``testID: `${testID}-pan` ``** when the root has a
+  `testID`, so a render test can drive it with `fireGestureHandler`. No visual
+  effect.
+- **`isDisabled` is checked in `toggle`, not only on the pan.** `enabled` gates
+  the gesture, but a screen reader's activation and an enclosing `Field`'s label
+  press both arrive through `toggle`, so a guard on the pan alone let a disabled
+  switch flip under VoiceOver and TalkBack. The first render test caught it.
 - **`minDistance: 0` and `shouldCancelWhenOutside: false`**, for the reasons
   [Slider](../slider/AGENTS.md) sets out. The cost is the same one: a drag that
   starts on the switch is the switch's, so you cannot scroll a list by putting
@@ -95,10 +124,9 @@ section to read first — what follows is only where a switch differs.
 - **The knob draws no border and no shadow.** A border is a second line where
   there is already a boundary, and against a saturated track it reads as a dark
   ring rather than as definition; `Slider`'s handle dropped its own for the same
-  reason. Contrast at rest comes from the track instead, which is why
-  `SWITCH_TRACK_REST_TOKEN` is `input` — the chrome a field's own box wears, a
-  step darker than the page in light and a step lighter in dark, so a knob
-  painted the page's own colour reads against it at either end of the theme.
+  reason. Contrast at rest comes from the knob's own colour instead (see
+  Colour). `SWITCH_TRACK_REST_TOKEN` is `input`, the chrome a field's own box
+  wears, a step away from the page, so the off pill still has a shape.
 - **The track and its touch padding ride in the same size cell**, summing to 44pt
   at every size, and the test asserts the sum rather than the parts — `Slider`'s
   rule, and the trap it names: split them across two variants and a shorter track
@@ -110,7 +138,7 @@ section to read first — what follows is only where a switch differs.
   none of it.** The track, the thumb and both content layers fade between two
   token *values* off the one `progress`, and a colour being interpolated cannot
   be a class — `Checkbox`'s border, four times over. The slot set keeps
-  `bg-secondary` and `bg-background` as the resting appearance those styles start
+  `bg-input` and `bg-muted-foreground` as the resting appearance those styles start
   from and names no colour anywhere else; the maps are the single source. There
   is deliberately **no `color` axis in the `tv()`** — a `bg-*` per colour there
   would be a second source for one surface, which is how a class and a style end
@@ -120,6 +148,17 @@ section to read first — what follows is only where a switch differs.
   theme forces: there is no `--foreground-foreground`, and `background` is
   what content drawn on the page's ink actually is. A test pins the whole map
   against the track's.
+- **The resting knob is `muted-foreground`, for contrast.** With no On/Off text
+  beside it, the knob is the only sign of the state, so it must reach 3:1
+  against the resting track and the surface behind it (WCAG 1.4.11). A knob in
+  the page's own colour reached 1.21:1 on the light `input` track and 1.47:1 on
+  the dark one; the grey knob reaches 3.76:1 and 4.39:1 at the least. A test
+  computes the ratios from `theme.css`, and another holds the slot class to the
+  token. One known gap: a glyph *inside* the knob takes the track's on colour (a
+  prop, so it cannot fade with the knob). That colour reads on the on knob but
+  not on the grey off knob — about 2.5:1 for `default` in dark, and near 1:1 for
+  the semantic colours — so keep knob glyphs decorative. Content in
+  `Switch.StartContent` and `.EndContent` sits on the track and is unaffected.
 - **`Switch.StartContent` and `.EndContent` crossfade themselves.** Start sits at
   the leading edge, which the knob vacates as the switch turns **on**, so it fades
   in with `progress`; end is the mirror. That is the whole reason both can be
@@ -183,15 +222,25 @@ section to read first — what follows is only where a switch differs.
   `onAccessibilityTap` and an `activate` entry in `accessibilityActions` are what
   actually flip it, on iOS and Android respectively. Without them the switch would
   announce its state and offer no way to change it — the same gap
-  `Slider.Thumb`'s `adjustable` actions close.
+  `Slider.Thumb`'s `adjustable` actions close. The `activate` entry is listed on
+  Android only (`resolveSwitchActivation`): Fabric shows every listed
+  action in the iOS rotor, so on iOS it would add a literal "activate" entry
+  next to the double-tap that `onAccessibilityTap` already handles —
+  `Pressable`'s `resolvePressableActivation` makes the same split. A caller's
+  own `accessibilityActions` and `onAccessibilityAction` are merged in, not
+  spread over the built-ins: `activate` is appended after the caller's actions
+  and routed to the toggle, and every other action reaches the caller's handler.
+  A caller that lists `activate` itself owns it. This is `Pressable`'s rule too.
 - **The root is marked `accessible`, and that one word is load-bearing.** Without
   it the view is not an accessibility element on iOS at all, so the role and the
   checked state written beside it never reach VoiceOver. It also merges the track
   and its layers into the single element a control should be.
 - **There is no `Switch.Label` and no `Switch.Group`.** The track is a fixed pill
   and a label cannot sit inside it, so the name is a `Field.Label` or a
-  `ListGroup.ItemTitle` a row away — and unlike `Slider`, the switch **does**
-  register `field.registerPress`, because a row-wide press means exactly what a
+  `ListGroup.ItemTitle` a row away. Inside a `Field`, the switch takes the
+  `Field.Label` text as its `accessibilityLabel` unless one is passed, because a
+  sibling label is outside the switch's accessibility element. Unlike `Slider`,
+  the switch **does** register `field.registerPress`, because a row-wide press means exactly what a
   tap on the pill means. A switch is a binary preference, not one of a set, so
   there is nothing for a group to own; the axis ladder is two rungs, the switch's
   own props then an enclosing `Field`.
@@ -207,7 +256,10 @@ section to read first — what follows is only where a switch differs.
   same size and colour the only symptom is that **anything inside the caller's
   knob disappears**. `displayName` survives all of it — rule 12 requires one, present and unique — so that is
   what `isSwitchThumbElement` asks for, with reference equality kept only as the
-  fast path.
+  fast path. Fragments are opened first (`flattenFragments`), because
+  `Children.toArray` stops at one: a thumb written inside `<>…</>` would
+  otherwise go undetected and get the same second knob on top of it. A child
+  lifted out of a fragment is re-keyed with the fragment's key in front.
 
   **[`Radio`](../radio/AGENTS.md) and `ListGroup` still ask the unsafe question**
   (`radio.tsx`'s indicator detection, and the divider and icon-swap walks

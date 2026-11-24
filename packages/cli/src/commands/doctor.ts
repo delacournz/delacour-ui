@@ -5,11 +5,12 @@ import * as clack from "@clack/prompts";
 import { detectThemeShape } from "@delacour/design-system/convert";
 import { x } from "tinyexec";
 import { loadConfig, type ResolvedConfig } from "../config/resolve";
-import { CONFIG_FILENAME } from "../config/schema";
+import { CONFIG_FILENAME, CONFIG_VERSION } from "../config/schema";
 import { lockPath } from "../lock/lock";
 import { LOCK_FILENAME } from "../lock/schema";
 import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
+import { compilesMjs, MJS_TRANSFORM_PATTERN, MJS_TRANSFORMER } from "../project/jest-config";
 import { expoCommand } from "../project/package-manager";
 import { findRootLayout } from "../project/root-layout";
 import { checkTestRunner, readTestSetup, type TestSetup } from "../project/test-setup";
@@ -82,6 +83,7 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
 		await checkDuplicateNativeModules(project),
 		...testChecks(await readTestSetup(config, project)),
 		checkLock(existsSync(lockPath(config.root)), await hasEntries(config.directories.ui)),
+		checkConfigVersion(config.version),
 	];
 }
 
@@ -129,13 +131,52 @@ export function checkJestTransform(setup: JestSetup): Check {
 	const needed = [...new Set(engines.flatMap((engine) => ENGINE_TRANSFORMS[engine] ?? []))];
 	const missing = needed.filter((pattern) => !patterns.includes(pattern.replace(".*", "")));
 
-	if (missing.length === 0) return { name, status: "pass", detail: `${engines.join(", ")} transformed` };
+	const needsMjs = needed.some((pattern) => pattern.startsWith("d3-")) && !compilesMjs(setup.jestConfig ?? "");
+
+	if (missing.length === 0 && !needsMjs) return { name, status: "pass", detail: `${engines.join(", ")} transformed` };
+
+	if (missing.length === 0) {
+		return {
+			name,
+			status: "warn",
+			detail: "d3-shape ships only .mjs, and no transform compiles .mjs — jest-expo's matches .js and .ts alone",
+			fix: `Add \`transform: { ${JSON.stringify(MJS_TRANSFORM_PATTERN)}: "${MJS_TRANSFORMER}" }\` to the Jest config.`,
+		};
+	}
 
 	return {
 		name,
 		status: "warn",
 		detail: `${engines.join(", ")} ship${engines.length === 1 ? "s" : ""} untranspiled, and transformIgnorePatterns does not let ${missing.join(", ")} through`,
 		fix: `Add ${missing.map((pattern) => `\`${pattern}\``).join(", ")} to the packages transformIgnorePatterns lets through, beside jest-expo's own.`,
+	};
+}
+
+/**
+ * Whether `native-components.json` predates options this CLI has.
+ *
+ * A warning: an older config works, its new fields simply read as defaults
+ * nobody chose. `update` asks about them once and records the version.
+ */
+export function checkConfigVersion(version: number | undefined): Check {
+	const at = version ?? 1;
+	const name = "Config version";
+
+	if (at === CONFIG_VERSION) return { name, status: "pass", detail: `${CONFIG_FILENAME} is version ${at}` };
+	if (at > CONFIG_VERSION) {
+		return {
+			name,
+			status: "warn",
+			detail: `${CONFIG_FILENAME} is version ${at}, written by a newer CLI than this one (${CONFIG_VERSION})`,
+			fix: "Run `delacour@latest doctor`.",
+		};
+	}
+
+	return {
+		name,
+		status: "warn",
+		detail: `${CONFIG_FILENAME} is version ${at}; this CLI writes ${CONFIG_VERSION} and has options it was never asked about`,
+		fix: "Run `delacour@latest update` at a terminal — it asks about each new option once and records the version.",
 	};
 }
 

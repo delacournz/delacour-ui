@@ -11,6 +11,7 @@ export type { OverlayPortalProps } from "./overlay-portal";
 export { isPresent, type PresenceEvent, type PresencePhase, presenceTarget, reducePresence } from "./overlay-presence";
 export {
 	INITIAL_OVERLAY_REGISTRY,
+	isBelowTopModal,
 	isTopOverlay,
 	OVERLAY_LAYER_BASE,
 	OVERLAY_LAYERS,
@@ -19,6 +20,7 @@ export {
 	type OverlayRegistryEntry,
 	type OverlayRegistryState,
 	reduceOverlayRegistry,
+	topModalOverlay,
 	topOverlay,
 	zIndexOfOverlay,
 } from "./overlay-registry";

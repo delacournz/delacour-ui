@@ -5,7 +5,7 @@
  * to the API Bun, Jest and Vitest share — `describe` / `test` / `it` / `expect`
  * and the four hooks, a `node:*` read beside itself through
  * `import.meta.dirname`, and nothing else. So a suite moves between runners by
- * two substitutions and no parsing: the module the API is imported from, and,
+ * a types reference and two substitutions, and no parsing: the module the API is imported from, and,
  * for Jest, which cannot evaluate `import.meta` in CommonJS, `__dirname`.
  */
 
@@ -35,11 +35,23 @@ export const BUN_TEST_TYPES = "@types/bun";
 
 const BUN_TEST_IMPORT = /(from\s*)(["'])bun:test\2/g;
 
+/**
+ * The ambient types each runner's suites need: `bun:test` is declared only in Bun's, and `node:*`,
+ * `__dirname` and `import.meta.dirname` only in Node's (Bun's carry Node's with them).
+ *
+ * Named in the file rather than in the project's `tsconfig`: TypeScript 6 defaults `types` to `[]`,
+ * Expo's base config names none, and the CLI never writes a project's `tsconfig`. Without this every
+ * copied suite fails `tsc` in a fresh SDK 58 app.
+ */
+const RUNNER_TYPES: Record<TestRunner, string> = { bun: "bun", jest: "node", vitest: "node" };
+
 /** A copied test's text as `runner` runs it. */
 export function adaptTest(content: string, runner: TestRunner): string {
-	if (runner === "bun") return content;
+	const reference = `/// <reference types="${RUNNER_TYPES[runner]}" />\n`;
+	const referenced = content.startsWith(reference) ? content : `${reference}${content}`;
+	if (runner === "bun") return referenced;
 
-	const imported = content.replace(BUN_TEST_IMPORT, (_match, from: string, quote: string) => {
+	const imported = referenced.replace(BUN_TEST_IMPORT, (_match, from: string, quote: string) => {
 		return `${from}${quote}${RUNNER_MODULE[runner]}${quote}`;
 	});
 

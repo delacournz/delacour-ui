@@ -255,3 +255,9 @@ describe("resolveAvatarInteractive", () => {
 		expect(resolveAvatarInteractive({ onLongPress: () => {} })).toBe(true);
 	});
 });
+
+describe("avatarVariants image", () => {
+	test("sizes the image to the face, so a bundled asset is scaled rather than drawn at its own size", () => {
+		expect(avatarVariants().image().split(" ")).toEqual(expect.arrayContaining(["absolute", "inset-0", "size-full"]));
+	});
+});

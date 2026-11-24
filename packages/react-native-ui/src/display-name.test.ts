@@ -19,14 +19,20 @@ const SRC = import.meta.dirname;
  * two cannot share a file.
  */
 
-/** Every `.tsx` under `src/`, as a path → source map. */
+/**
+ * Every component `.tsx` under `src/`, as a path → source map. Render tests and
+ * the `test/` kit they share are not the library: their fixtures never reach a
+ * DevTools tree a consumer reads.
+ */
 function sources(): Map<string, string> {
 	const found = new Map<string, string>();
 	const walk = (dir: string): void => {
 		for (const entry of readdirSync(dir, { withFileTypes: true })) {
 			const path = join(dir, entry.name);
-			if (entry.isDirectory()) walk(path);
-			else if (entry.name.endsWith(".tsx")) found.set(path, readFileSync(path, "utf-8"));
+			if (entry.isDirectory()) {
+				if (path !== join(SRC, "test")) walk(path);
+			} else if (entry.name.endsWith(".tsx") && !entry.name.endsWith(".test.tsx"))
+				found.set(path, readFileSync(path, "utf-8"));
 		}
 	};
 	walk(SRC);

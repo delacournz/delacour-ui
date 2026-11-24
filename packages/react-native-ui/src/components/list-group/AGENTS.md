@@ -22,6 +22,7 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
 | `list-group.types.ts` | Prop types shared by two or more parts |
 | `list-group.variants.ts` | Pure `tv()` slots, no RN imports |
 | `list-group.variants.test.ts` | |
+| `list-group.render.test.tsx` | Mounted under Jest — row role/state/busy, press and long-press, dividers, compound parts, outside-root errors |
 
 ## Design
 

@@ -110,6 +110,7 @@ export function SplitterHandle({
 	const paneCount = constraints.length;
 
 	const pan = usePanGesture({
+		testID: `splitter-handle-${index}-pan`,
 		enabled: !isDisabled,
 		minDistance: 0,
 		shouldCancelWhenOutside: false,
@@ -162,6 +163,7 @@ export function SplitterHandle({
 	});
 
 	const doubleTap = useTapGesture({
+		testID: `splitter-handle-${index}-reset`,
 		enabled: !isDisabled,
 		numberOfTaps: 2,
 		onDeactivate: (event) => {

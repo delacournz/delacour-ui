@@ -20,6 +20,7 @@ the back, a profile with details behind it. A compound root plus `FlipCard.Front
 | `flip-card.types.ts` | `FlipCardFaceProps`, shared by the two faces |
 | `flip-card.variants.ts` | Slotted `tv()`, motion presets, every pure resolver; no RN imports |
 | `flip-card.variants.test.ts` | |
+| `flip-card.render.test.tsx` | Mounted under Jest — face state (controlled, uncontrolled, ref), the activate action per trigger, the hidden face leaving the accessibility tree, `FlipCard.Trigger`, `useFlipCard`, parts outside a root throwing. The drag itself is not reachable |
 
 ## Design
 

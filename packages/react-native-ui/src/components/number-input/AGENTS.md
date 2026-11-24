@@ -21,6 +21,7 @@ Root plus `NumberInput.Field`, `.Decrement` and `.Increment`, and
 | `number-input.types.ts` | Prop types shared by two or more modules |
 | `number-input.format.ts` | Pure parse, format, step and repeat-schedule maths, no RN imports |
 | `number-input.format.test.ts` | |
+| `number-input.render.test.tsx` | Mounted under Jest — adjustable role and value, step/min/max clamping through the actions and stepper buttons, typing drafts, controlled and uncontrolled, disabled and read-only refusing every path, Field label press, parts outside the root |
 | `number-input.variants.ts` | Pure `tv()` slots for the steppers + resolvers, no RN imports |
 | `number-input.variants.test.ts` | |
 | `use-step-repeat.ts` | The hold-to-repeat timer. Imports React only; its schedule is in `.format.ts` |
@@ -118,6 +119,7 @@ Root plus `NumberInput.Field`, `.Decrement` and `.Increment`, and
   is what makes them decorators the group knows about — and they are *not*
   decorative: each is a reachable button with `Decrease` / `Increase` labels
   and `accessibilityState.disabled` at its limit.
+- **The `increment` / `decrement` actions refuse when `isDisabled` or `isReadOnly`.** The platform may still deliver an action to a disabled element, so the handler checks rather than trusting the host.
 - **The field is `adjustable`.** `accessibilityValue` carries `now`, the
   formatted `text`, and `min`/`max` when finite; `increment` and `decrement`
   actions step it. That is a VoiceOver or TalkBack swipe up or down, without

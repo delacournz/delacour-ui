@@ -24,7 +24,8 @@ engine. An app that imports no picker still never resolves it.
 | `select.collect.ts` | `collectOptions` / `findChildOfType` — reads the markers into the `options` shape |
 | `select.context.tsx` | `SelectProvider`, `useSelect()`, `useSelectContext()`, `useSelectPart()` |
 | `select.types.ts` | `SelectOption`, `SelectOptionGroup`, `SelectRowOption`, `SelectEntry`, `SelectListRow`, `SelectHighlightRange` |
-| `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports — the sheet cap and the searchable list's floor among them |
+| `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports — the sheet cap, the searchable list's floor and the list's virtualisation window among them |
+| `select.render.test.tsx` | Mounted under Jest inside `BottomSheetProvider` — trigger role, expanded and value, the pinned header, single and multiple picks, controlled and uncontrolled, limit, search, long-list virtualisation, `Field` inheritance, parts outside a root |
 | `select.variants.test.ts` | |
 | `select.collect.test.ts` | |
 
@@ -71,13 +72,27 @@ engine. An app that imports no picker still never resolves it.
   disables a chosen row for `maxSelected`, or the selection could not be undone.
   A row disabled by the limit with no description of its own says "Limit
   reached" (`limitReachedText`).
+- **`onClose` is the sheet's, not the state's.** It is passed straight to `BottomSheet` and runs once the sheet has finished sliding down, later than `onValueChange` or the open state turning false. Move focus from here, never from the pick.
 - **Multiple never closes on a pick.** A sticky `Done` footer closes it; every
-  close path — a pick, Done, a swipe, the overlay, the close button — runs
-  through one `handleOpenChange`, which is where the query is cleared.
+  close path — a pick, Done, a swipe, the overlay, the close button, or a
+  controlled `isOpen` set to false — clears the query, because the clear reads
+  the resolved open state, not the sheet's callback.
 - **The title and search ride at the head of the list.** As
   `ListHeaderComponent` they count towards the content height the sheet sizes
   itself to, and the search field is a `BottomSheet.TextInput`, so the keyboard
-  it raises is the sheet's to lift for.
+  it raises is the sheet's to lift for. The close sits in a row of its own with
+  the title (`headerBar`), not in the sheet's absolute corner, so with no title
+  it still never covers the search field or the first row.
+- **The header is pinned while the rows scroll.** The list passes
+  `stickyHeaderIndices={[0]}` — FlatList puts `ListHeaderComponent` at child 0
+  and offsets the rows past it, and always mounts it whatever the window — so
+  the title, the close and the search stay at the top of a long list instead of
+  scrolling off with it. The `header` slot is `bg-popover`, the sheet's own
+  colour, so the rows pass under it unseen. It carries the list's `pt-2` (`sheetBody` sets `pt-0`), so it
+  rests at the list's top edge and pins where it rests; with the padding on the
+  content container it rode up 8pt before it stuck. It stays in the list rather than
+  above it, or dynamic sizing would stop counting it. Group headings are not
+  sticky.
 - **A sheet sized to its rows is capped.** `resolveSelectSheetMaxHeight` hands
   the sheet `maxDynamicContentSize` — the lower of 85% of the window and the room
   below the top inset less a 24pt gap — and the list scrolls inside it. Without
@@ -104,6 +119,15 @@ engine. An app that imports no picker still never resolves it.
   short searchable list sits at the top of a full-height sheet, as `Combobox`'s
   does. Without search the rows cannot change while it is open, so it keeps
   sizing to them.
+- **A long list mounts the rows near its viewport, not all of them.**
+  `resolveSelectListWindow` sizes `BottomSheet.FlatList`'s virtualisation from
+  the sheet's cap: the first paint and every later batch are one sheet of rows
+  at the row floor (`SELECT_ROW_MIN_HEIGHT`, pinned to the `row` slot's
+  `min-h-*` by the test), and `windowSize` is `SELECT_LIST_WINDOW_SIZE` (5)
+  viewports. On React Native's defaults — 10 rows first, 10 more every 50ms, a
+  window of 21 — a searchable Select with ~250 options mounted 120-odd rows,
+  each with an animated indicator, while the sheet was still opening, and the
+  open stuttered. On a simulator it now mounts 32.
 - **Scrolling a searchable list keeps the keyboard up**, as in `Combobox`. The
   engine puts the keyboard away the moment any pan starts on the sheet
   (`enableBlurKeyboardOnGesture`), and its lists dismiss interactively, so
@@ -137,6 +161,9 @@ engine. An app that imports no picker still never resolves it.
 - **Read-only looks normal and never opens.** The trigger stays enabled for a
   screen reader — it is not disabled, it is fixed — with no press feedback, and
   `open` refuses.
+- **An open sheet locks with the select.** Turn the select disabled or read-only
+  while its sheet is open and every row is announced disabled, and a press that
+  still lands changes nothing — the value and `onValueChange` stay put.
 - **The trigger is a button.** React Native has no combobox role that works on
   both platforms, so it is `button` with the choice as its `accessibilityValue`,
   `expanded` in its state, and a hint. Rows are `radio` or `checkbox` with
@@ -146,3 +173,16 @@ engine. An app that imports no picker still never resolves it.
 - **`presentation` is a union of one.** `"sheet"` today; an anchored member is
   added once the library has a popover. There is no platform-native picker mode
   — it would need a new native peer.
+
+## Test IDs
+
+`testID` goes on the trigger, and the sheet's parts derive from it:
+
+| Part | testID |
+| --- | --- |
+| A row | `${testID}-option-${value}` |
+| The pinned header (title, close, search) | `${testID}-header` |
+| The list | `${testID}-list` |
+| The search field | `${testID}-search` |
+| The close | `${testID}-close` |
+| Done, in multiple mode | `${testID}-done` |

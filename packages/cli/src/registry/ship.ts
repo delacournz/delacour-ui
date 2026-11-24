@@ -106,11 +106,11 @@ export type UnshippableReference = {
  *
  * Longest alternative first, so `bun:test` and `bun add` are reported whole
  * rather than as a bare `bun`. A word boundary on both sides keeps `bundle`
- * and `IconBun` out of it. A glob like `*.test.ts` is not a file name and is
- * not matched.
+ * and `IconBun` out of it. A glob like `*.test.ts` or `*.render.test.tsx` is not
+ * a file name and is not matched.
  */
 const UNSHIPPABLE =
-	/\bbun:test\b|\bbun (?:test|add|run|install|create|x|pm|link)\b|\bbunx\b|\b[Bb]un\b|[\w./-]+\.(?:test|test-helpers|fixtures|e2e)\.tsx?\b/g;
+	/\bbun:test\b|\bbun (?:test|add|run|install|create|x|pm|link)\b|\bbunx\b|\b[Bb]un\b|(?<![\w./*-])[\w./-]+\.(?:test|test-helpers|fixtures|e2e)\.tsx?\b/g;
 
 /** Every reference in `content` a consumer's copy cannot honour. */
 export function findUnshippableReferences(content: string): UnshippableReference[] {

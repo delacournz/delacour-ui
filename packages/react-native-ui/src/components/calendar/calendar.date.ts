@@ -238,6 +238,9 @@ export function monthGrid(month: CalendarDate, weekStartsOn: Weekday): CalendarC
  *
  * A century rather than a decade because the commonest unbounded use is a birth date, and a
  * person born sixty years ago should not have to page to find their year.
+ *
+ * An open side reaches from whichever is further out, the visible year or the opposite bound, so
+ * the span is never empty: an end month in 1900 seen from 2026 lists 1800–1900, not 1926–1900.
  */
 export function resolveYearSpan({
 	visible,
@@ -249,8 +252,8 @@ export function resolveYearSpan({
 	endMonth?: CalendarDate | null;
 }): { from: number; to: number } {
 	return {
-		from: startMonth?.year ?? visible.year - CALENDAR_YEAR_REACH,
-		to: endMonth?.year ?? visible.year + CALENDAR_YEAR_REACH,
+		from: startMonth?.year ?? Math.min(visible.year, endMonth?.year ?? visible.year) - CALENDAR_YEAR_REACH,
+		to: endMonth?.year ?? Math.max(visible.year, startMonth?.year ?? visible.year) + CALENDAR_YEAR_REACH,
 	};
 }
 
@@ -430,6 +433,15 @@ type LocaleWithWeekInfo = Intl.Locale & {
 	weekInfo?: { firstDay: number };
 };
 
+/** The device's locale as `Intl.DateTimeFormat` resolves it, or `undefined` when it cannot. */
+function deviceLocale(): string | undefined {
+	try {
+		return new Intl.DateTimeFormat().resolvedOptions().locale;
+	} catch {
+		return undefined;
+	}
+}
+
 /**
  * The first day of the week in a locale.
  *
@@ -439,14 +451,19 @@ type LocaleWithWeekInfo = Intl.Locale & {
  * A tag nothing can read is Monday.
  */
 export function resolveWeekStart(locale: string | undefined): Weekday {
+	// The tag is resolved once, before `Intl.Locale` is touched, so the fallback below reads the
+	// device locale too. Without that, an en-US phone on an engine with no `Intl.Locale` started
+	// the week on Monday.
+	const raw = locale ?? deviceLocale();
+	if (!raw) return DEFAULT_WEEK_START;
 	try {
-		const tag = new Intl.Locale(locale ?? new Intl.DateTimeFormat().resolvedOptions().locale) as LocaleWithWeekInfo;
+		const tag = new Intl.Locale(raw) as LocaleWithWeekInfo;
 		const info = typeof tag.getWeekInfo === "function" ? tag.getWeekInfo() : tag.weekInfo;
 		if (info && Number.isInteger(info.firstDay)) return (info.firstDay % 7) as Weekday;
 		const region = tag.region ?? (typeof tag.maximize === "function" ? tag.maximize().region : undefined);
 		return weekStartFromRegion(region ?? LIKELY_REGION[tag.language]);
 	} catch {
-		const match = locale?.match(/^([a-z]{2,3})(?:[-_][A-Za-z]{4})?(?:[-_]([A-Za-z]{2}))?(?:[-_]|$)/);
+		const match = raw.match(/^([a-z]{2,3})(?:[-_][A-Za-z]{4})?(?:[-_]([A-Za-z]{2}))?(?:[-_]|$)/);
 		if (!match) return DEFAULT_WEEK_START;
 		return weekStartFromRegion(match[2] ?? LIKELY_REGION[match[1] ?? ""]);
 	}
@@ -477,6 +494,9 @@ const formatterCache = new Map<string, Intl.DateTimeFormat>();
  *
  * The date is handed over as a UTC instant and formatted in UTC, so no offset can move it across
  * midnight. A locale `Intl` rejects falls back to `en` rather than throwing.
+ *
+ * The calendar is always Gregorian, the one the grid is. A locale such as `fa-IR` changes the
+ * language and digits, never the calendar: 5 October 2026 is never labelled 13 Mehr 1405.
  */
 function formatter(locale: string | undefined, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
 	const key = `${locale ?? ""}|${JSON.stringify(options)}`;
@@ -485,9 +505,9 @@ function formatter(locale: string | undefined, options: Intl.DateTimeFormatOptio
 
 	let built: Intl.DateTimeFormat;
 	try {
-		built = new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC" });
+		built = new Intl.DateTimeFormat(locale, { ...options, calendar: "gregory", timeZone: "UTC" });
 	} catch {
-		built = new Intl.DateTimeFormat(FALLBACK_LOCALE, { ...options, timeZone: "UTC" });
+		built = new Intl.DateTimeFormat(FALLBACK_LOCALE, { ...options, calendar: "gregory", timeZone: "UTC" });
 	}
 	formatterCache.set(key, built);
 	return built;

@@ -9,4 +9,8 @@ describe("robots.txt", () => {
 	test("keeps the generated preset space closed to everyone", () => {
 		expect(BODY).toContain("Disallow: /theme?");
 	});
+
+	test("names the sitemap, absolute", () => {
+		expect(BODY).toContain("Sitemap: https://ui.delacour.co.nz/sitemap.xml");
+	});
 });

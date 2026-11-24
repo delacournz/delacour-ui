@@ -21,6 +21,7 @@ root plus `Marquee.Group`, which keeps the strips inside it in step.
 | `marquee.types.ts` | `MarqueeStripProps`, shared by the track and the scroller |
 | `marquee.variants.ts` | Slotted `tv()` + every pure resolver and worklet, no RN imports |
 | `marquee.variants.test.ts` | |
+| `marquee.render.test.tsx` | Mounted under Jest — copies mount only after layout, duplicates hidden from assistive tech, `accessibilityLabel` collapses the strip, calm motion swaps in one still copy, `Marquee.Group` renders |
 
 Display names: `DelacourUI.Marquee`, `.Group`, `.Group.Provider`, `.Track`, `.Scroller`, `.Fade`.
 

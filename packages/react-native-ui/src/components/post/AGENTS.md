@@ -29,6 +29,7 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
 | `post.utils.ts` | `formatCompactCount`, `formatRelativeTime`, `tokenizePostBody` and the a11y label builders |
 | `post.variants.test.ts` | |
 | `post.utils.test.ts` | |
+| `post.render.test.tsx` | Mounted under Jest — parts, a11y labels and state, stat/vote/body/media callbacks, a part outside its root throwing |
 
 ## Design
 
@@ -120,6 +121,9 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
 | `Post.Media` | `image` with `alt`; `alt=""` is skipped |
 | `Post.Stat` | `button`, "Like, 216", `selected` when lit |
 | `Post.Votes` | "Upvote" / "Downvote" buttons, `selected` when cast; "Score 1,240" live region |
+
+- **Author and Community hide their avatar from assistive tech.** The parent's label already names the
+  person or community; a labelled `Avatar` inside it was a second, identical announcement on Android.
 
 ## Previews (follow-up)
 

@@ -17,12 +17,14 @@ export type ToastActionProps = Omit<PressableProps, "asChild" | "busy" | "childr
  *
  * The toast is one accessible element, so this control is not reachable on its
  * own with a screen reader. It registers itself with the root instead, which
- * exposes it as the group's `activate` action under this label.
+ * exposes it as the group's `activate` action under this label — unless it is
+ * `disabled`, when it is not offered and cannot run.
  */
 export function ToastAction({
 	accessibilityLabel,
 	children,
 	className,
+	disabled = false,
 	feedback = "fade",
 	onPress,
 	...props
@@ -31,14 +33,18 @@ export function ToastAction({
 	const label = accessibilityLabel ?? (typeof children === "string" ? children : "Action");
 
 	const run = useCallback(() => {
+		if (disabled) return;
 		onPress?.();
 		hide();
-	}, [onPress, hide]);
+	}, [disabled, onPress, hide]);
 
+	// A disabled action is not offered to a screen reader at all: the card's
+	// `activate` would otherwise run it past the Pressable's own disabled guard.
 	useEffect(() => {
+		if (disabled) return;
 		registerAction({ label, run });
 		return () => registerAction(null);
-	}, [registerAction, label, run]);
+	}, [disabled, registerAction, label, run]);
 
 	const slots = toastVariants();
 
@@ -47,6 +53,7 @@ export function ToastAction({
 			accessibilityLabel={label}
 			accessibilityRole="button"
 			className={slots.action({ className })}
+			disabled={disabled}
 			feedback={feedback}
 			hitSlop={6}
 			onPress={run}

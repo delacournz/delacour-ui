@@ -13,6 +13,7 @@ whole-screen states.
 | --- | --- |
 | `index.ts` | → `@registry/ui/screen` |
 | `screen.tsx` | The `Object.assign` compound surface |
+| `screen.render.test.tsx` | Mounted under Jest — navbar, back button (veto, disabled), Loading/Error and retry, scroll bodies, parts outside a Screen throw |
 | `screen-root.tsx` | The root box and its provider — see below for why it is split out |
 | `screen-scroll-source.tsx` | The bridge publishing the screen's scroll values as a `ScrollSource` — internal |
 | `screen-navbar.tsx` | `Screen.Navbar`, plus its own nested surface |
@@ -121,6 +122,28 @@ whole-screen states.
   open keyboard and excludes the band the sticky shift parks behind it.
   Conflating them is a real bug — the derivation is in the block comment above
   them, and the tests pin both.
+- **`keyboardOffset` stacks a sticky footer on a bar riding the keyboard.** A
+  form's previous / next / done toolbar sits on top of the keyboard, and a
+  sticky footer that only knew the keyboard's height parked its submit button
+  behind that bar. The footer's `offset.opened` becomes `bottom - keyboardOffset`,
+  and the footer publishes the value on the screen context
+  (`footer.keyboardOffset`) — reset to 0 on unmount — so
+  `useScreenFooterKeyboardClearance` adds the same distance and a keyboard-aware
+  scroll area keeps the focused field clear of the lifted footer. The value is
+  the distance from the keyboard's top edge to the bar's top edge — the bar's
+  height plus any gap it floats at (keyboard-controller's `KeyboardToolbar`
+  floats 11pt above a keyboard with rounded corners) — built from the bar's own
+  constants, never a literal: a literal drifts the day the bar is restyled, and
+  the footer then overlaps it or floats a gap above it. A footer that is not
+  sticky publishes 0, because it does not lift.
+- **Two scrollables do not read `keyboardOffset` yet.** `resolveScrollBottomInset`
+  does not add it, so with the keyboard open and a list scrolled to its very end
+  the last `keyboardOffset` points of content sit under the footer. And
+  `Screen.ChatList` lifts its content by the keyboard minus its own `offset`
+  (the safe-area inset by default) and never reads the footer's, so a sticky
+  composer given a `keyboardOffset` covers the newest messages by that much —
+  pass the chat list `offset={bottom - keyboardOffset}` until it reads the
+  context.
 
 ## Lists
 
@@ -260,6 +283,14 @@ draw rather than reaching for the keyword after all.
 **Opacity ramps over a quarter of `size`, not all of it.** A fade that takes its
 own height to arrive reads as lagging the finger; a quarter puts it there while
 the first row is still leaving.
+
+## Accessibility
+
+- **A page's title is a heading.** `Screen.Navbar.Title` (a string child) and `Screen.Error`'s title
+  render with `accessibilityRole="header"`, so a screen reader can land on the page title and
+  rotor through headings. `Screen.Loading` takes its title through `Navbar.Title`, so it gets the
+  same role. A non-string `Navbar.Title` child is passed through untouched — give it the role
+  yourself. `Navbar.Subtitle` is not a heading.
 
 ## API
 

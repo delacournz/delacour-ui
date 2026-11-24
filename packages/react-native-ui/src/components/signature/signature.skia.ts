@@ -69,10 +69,13 @@ function drawSignatureStrokes(canvas: SkCanvas, strokes: readonly SignatureStrok
  * uses, so the PNG is the SVG rasterised: the same box, the same literal ink,
  * the same background or none. Off screen rather than a snapshot of the pad, so
  * the guideline, the placeholder and the pad's own fill never reach the file.
- * The strokes are the cached paths the pad draws. Returns `""` when the frame
+ * The strokes are the cached paths the pad draws. Resolves to `""` when the frame
  * has no pixels — an unmeasured pad.
  */
-export function renderSignaturePng(value: SignatureValue, options: SignaturePngOptions & { scale: number }): string {
+export async function renderSignaturePng(
+	value: SignatureValue,
+	options: SignaturePngOptions & { scale: number }
+): Promise<string> {
 	const { background, box, strokeColor, strokeWidth } = resolveSignatureExport(value, options);
 	const size = signaturePngSize(box, options.scale);
 	if (size === null) return "";

@@ -28,7 +28,7 @@ concurrency:
 jobs:
   promote:
     if: github.repository_owner == 'delacournz'
-    runs-on: namespace-profile-linux-small
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
       contents: read

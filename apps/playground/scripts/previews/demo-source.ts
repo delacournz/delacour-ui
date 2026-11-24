@@ -5,7 +5,8 @@
  * The source is no longer published — the documentation writes its own snippets
  * at the call site a reader would type, rather than printing a demo's harness.
  * It is still what `sourceHash` is computed over, so it is what decides whether
- * a capture is skipped and what the media's `?v=` cache-buster is.
+ * a capture is skipped. The media's `?v=` cache-buster is the media's own bytes
+ * (`mediaVersion`), not this.
  *
  * Nothing here imports a demo. It cannot — a demo imports `react-native`, whose
  * Flow-typed source Bun's transpiler will not parse, which is the same reason
@@ -14,7 +15,7 @@
  * `meta` may only hold literals.
  */
 
-import ts from "typescript";
+import ts from "typescript-6";
 
 /**
  * What a demo may reach for. Anything else and it has stopped being

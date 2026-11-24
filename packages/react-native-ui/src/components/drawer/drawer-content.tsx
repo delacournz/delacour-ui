@@ -98,7 +98,7 @@ export function DrawerContent({
 
 	const handleEntered = useCallback(() => focus(titleRef.current), [titleRef]);
 	const handleExited = useCallback(() => focus(triggerRef.current), [triggerRef]);
-	const { isPresent, isReduced, progress } = useOverlayPresence({
+	const { isPresent, isReduced, phase, progress } = useOverlayPresence({
 		isOpen,
 		onEntered: handleEntered,
 		onExited: handleExited,
@@ -156,7 +156,7 @@ export function DrawerContent({
 	};
 
 	return (
-		<Overlay.Portal id={id} layer="modal">
+		<Overlay.Portal id={id} isExiting={phase === "exiting"} layer="modal">
 			<Overlay.Scrim
 				className={slots.scrim({ className: scrimClassName })}
 				onDismiss={onEscape}

@@ -1,5 +1,246 @@
 # @delacour/react-native-ui
 
+## 0.10.0
+
+### Minor Changes
+
+- [#355](https://github.com/delacournz/delacour-ui/pull/355) [`b9265f3`](https://github.com/delacournz/delacour-ui/commit/b9265f317ea48c528f5b06d81064316d8655d8e1) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `initialView` to `Calendar` and `DatePicker`, so a date of birth can open on the year list and be picked as a year, a month and a day. `Calendar` reads it on mount and ignores it under a `label` caption. `DatePicker` applies it only while empty; with a value it opens on that value's month. `DatePicker`'s `defaultMonth` now also applies only while empty, so reopening a picked date shows its month rather than `defaultMonth`. Each opening of the sheet now remounts the calendar, so it never resumes from where the last opening was paged to.
+
+- [#354](https://github.com/delacournz/delacour-ui/pull/354) [`314ca8d`](https://github.com/delacournz/delacour-ui/commit/314ca8d48484160c33ce14a92e90dd41ae8ae27a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Screen.Footer` takes `keyboardOffset`: while the keyboard is open, a sticky footer lifts that many extra points, so it sits on top of a bar riding the keyboard (a form's previous / next / done toolbar) instead of behind it. The footer publishes the value on the screen context, and a `keyboardAware` `Screen.ScrollArea` adds it to the focused field's clearance.
+
+### Patch Changes
+
+- [#352](https://github.com/delacournz/delacour-ui/pull/352) [`a1647cc`](https://github.com/delacournz/delacour-ui/commit/a1647cca5dd439614a3f81bb7b5c95cc50771835) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Select: a long list mounts only the rows near the sheet's viewport. The sheet's list ran on React Native's virtualisation defaults (10 rows first, 10 more every 50ms, a window of 21 viewports), so a searchable Select with ~250 options mounted nearly every row while the sheet was still opening, and the open stuttered. The first paint and each later batch are now one sheet of rows at the sheet's cap, and the window is 5 viewports. Nothing changes visually.
+
+- [#356](https://github.com/delacournz/delacour-ui/pull/356) [`2370ee1`](https://github.com/delacournz/delacour-ui/commit/2370ee1335fa64f0bbdc5d968745bf5c42ab6034) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Switch` fixes. `Switch.Thumb` runs a caller's `onLayout` as well as measuring itself, so passing one no longer pushes an on-state thumb out past the track. A caller's `accessibilityState` is merged with `checked` and `disabled` instead of replacing them. Inside a `Field`, the switch takes the `Field.Label` text as its accessible name unless an `accessibilityLabel` is passed. A drag out and back to near its start settles by position instead of toggling, on either axis. A cancelled pan, or one that ends after the switch was disabled, commits nothing and plays no haptic.
+- Updated dependencies []:
+  - @delacour/react-native-bottom-sheet@0.10.0
+  - @delacour/react-native-charts@0.10.0
+
+## 0.9.0
+
+### Minor Changes
+
+- [#344](https://github.com/delacournz/delacour-ui/pull/344) [`2cdcafc`](https://github.com/delacournz/delacour-ui/commit/2cdcafcc6af96d13780909bc32aa05675ae73b34) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Toast: `useToastOffset` follows a shared value. The hook now registers shared values of its own and follows a caller's shared value into them on the UI thread, so a tab bar can keep its measured height in a shared value, write it with `.set()` in `onLayout`, and lift the toasts with no re-render — while `null` on focus loss still slides them down and back up.
+
+  Fixes:
+
+  - A toast shown again with its `id` while leaving is no longer removed by the old exit, and `onHide` fires only for the exit that ran (`remove` takes an optional `revision`).
+  - A disabled `Toast.Action` is no longer offered to a screen reader and cannot run.
+  - The auto-hide clock waits out the entrance stagger, so a toast late in a batch — or updated while it waits — is shown for its full duration.
+  - A toast hidden while still queued leaves the store at once and calls its `onHide`.
+  - A VoiceOver double-tap on the card runs its action.
+  - A toast revived after a swipe comes back on screen instead of staying where the swipe left it.
+  - A pan the system cancels (the notification shade, an alert) puts the toast back instead of dismissing it.
+  - VoiceOver's escape gesture hides the toast.
+  - `hideAll` over four or more toasts no longer mounts — and announces — the one that was queued.
+  - On iOS a success, info or default toast's announcement waits for VoiceOver to finish speaking instead of cutting it off; a warning or failure still cuts in.
+  - `hideAll` fades each card out at the depth it held, instead of sliding every card to the front, and a card hidden while it moves up keeps moving up.
+
+- [#343](https://github.com/delacournz/delacour-ui/pull/343) [`e23f207`](https://github.com/delacournz/delacour-ui/commit/e23f2074bdc6634d59a0be11b11f3300a0c0ef04) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Toast: `useToastOffset` (and `setToastOffset` outside React) lifts each toast stack clear of app chrome — a tab bar, a bottom toolbar, a custom header — and follows it live on the UI thread. Pass a number to animate to or a Reanimated shared value you drive; the newest registration wins per edge, `null` slides back to 0, and the keyboard and chrome never add up. `ToastViewport` takes an `offsetStore` prop.
+
+### Patch Changes
+
+- [#342](https://github.com/delacournz/delacour-ui/pull/342) [`289aeef`](https://github.com/delacournz/delacour-ui/commit/289aeef80316ddae8b74f75f082145c9baca8135) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Checkbox: a caller's `accessibilityState` no longer drops the checked or mixed state, a bare box inside a `Field` takes the field's label as its accessible name, and a labelled row is padded to the 44pt touch minimum (`Checkbox.Group` drops its gap so rows do not overlap).
+
+  Checkbox.Group: two toggles in one handler keep both values, a change a controlled parent rejects is not proposed again on the next tap, and a grouped checkbox now calls its own `onCheckedChange`.
+
+- [#340](https://github.com/delacournz/delacour-ui/pull/340) [`9ecf637`](https://github.com/delacournz/delacour-ui/commit/9ecf637cfe13fbed0eb5335272e6e7091971ed42) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Input.Group: a block keeps its state and focus when another block is added after it, instead of remounting when it stops being the outermost one.
+
+- [#339](https://github.com/delacournz/delacour-ui/pull/339) [`7d68f8c`](https://github.com/delacournz/delacour-ui/commit/7d68f8c441230f1c6123db9e7247616394c52cba) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Select: an open sheet's options lock when the select turns disabled or read-only, so a press no longer changes the value or calls `onValueChange`.
+
+- [#341](https://github.com/delacournz/delacour-ui/pull/341) [`a80073c`](https://github.com/delacournz/delacour-ui/commit/a80073cda369176b0efef009e22d7724990f01cf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Separator` can no longer be unhidden from assistive technology:
+
+  - `SeparatorProps` omits `accessible`, `accessibilityElementsHidden` and `importantForAccessibility`.
+  - Caller props are spread before the hidden props, so a cast cannot override them.
+
+- Updated dependencies [[`4f7eee0`](https://github.com/delacournz/delacour-ui/commit/4f7eee09f97e453e7026172b0d79c45d43ad1181)]:
+  - @delacour/react-native-bottom-sheet@0.9.0
+  - @delacour/react-native-charts@0.9.0
+
+## 0.8.0
+
+### Patch Changes
+
+- [#331](https://github.com/delacournz/delacour-ui/pull/331) [`7479d30`](https://github.com/delacournz/delacour-ui/commit/7479d30852107ccaa5056f0658a07b0614a09685) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Input.Group` now bleeds only its outermost blocks through the box padding: the first `start` block and the last `end` block. Before, every block in a section took the negative margin, so a second block was pulled over its separator.
+
+- [#331](https://github.com/delacournz/delacour-ui/pull/331) [`7479d30`](https://github.com/delacournz/delacour-ui/commit/7479d30852107ccaa5056f0658a07b0614a09685) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - An inline modal, or one in a custom host, no longer makes `OverlayProvider` hide the app content from VoiceOver and TalkBack. The content `View` can hold that modal, so hiding it hid the modal too. Stacking and the back button are unchanged.
+
+- [#331](https://github.com/delacournz/delacour-ui/pull/331) [`7479d30`](https://github.com/delacournz/delacour-ui/commit/7479d30852107ccaa5056f0658a07b0614a09685) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Drop the `unique symbol` annotation on the overlay teleport flag. A `const` initialised with `Symbol.for` already has a unique symbol type, and the annotation broke source scanners that parse the file with a plain JavaScript grammar.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Select.Trigger asChild` now passes its `className` to the child. Before, the classes were dropped.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Select.Trigger asChild` no longer passes `disabled={false}` to its child when the select is enabled, so a child that is disabled on its own (`<Button isDisabled>`) stays disabled and never opens the sheet.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Select` draws the sheet close button in its own row with the optional title. Before, with no title, the absolutely positioned close sat over the search field or the first option.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A controlled `Select` now clears its search query when the owner sets `isOpen` to false. Before, only a close from inside the sheet cleared it, so the next open showed the old filtered results.
+
+- [#333](https://github.com/delacournz/delacour-ui/pull/333) [`9e35ce0`](https://github.com/delacournz/delacour-ui/commit/9e35ce026635743f1d4fa4bcdaeaf453d250bcdd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The `Select` search field no longer takes `isDisabled` or `isInvalid` from an enclosing `Field`. An enabled select inside a disabled field can now be searched, and an invalid value no longer marks the query invalid.
+
+- [#331](https://github.com/delacournz/delacour-ui/pull/331) [`7479d30`](https://github.com/delacournz/delacour-ui/commit/7479d30852107ccaa5056f0658a07b0614a09685) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Slot` now throws for a fragment child. A fragment passes `isValidElement` but drops the props it is given, so an `asChild` trigger around a fragment did nothing.
+- Updated dependencies []:
+  - @delacour/react-native-bottom-sheet@0.8.0
+  - @delacour/react-native-charts@0.8.0
+
+## 0.7.0
+
+### Minor Changes
+
+- [#320](https://github.com/delacournz/delacour-ui/pull/320) [`5608867`](https://github.com/delacournz/delacour-ui/commit/56088670cf9c7614fcfa6432588b025c52342218) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker` takes `defaultMonth`, `startMonth` and `endMonth` and passes them to its calendar, so the default anatomy can open near a likely date and bound paging and the year list. Its docs add a date of birth example with `minDate` and `maxDate`.
+
+### Patch Changes
+
+- [#319](https://github.com/delacournz/delacour-ui/pull/319) [`f9beba7`](https://github.com/delacournz/delacour-ui/commit/f9beba7936ca536f8fa667523f5a2329f43f65bf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar` falls back to the accessible name "Avatar" when it is pressable and has no `name`, `fallback` or `accessibilityLabel`, so it is never read as only "button". Initials keep their accent when the name arrives in NFD form.
+
+- [#319](https://github.com/delacournz/delacour-ui/pull/319) [`f9beba7`](https://github.com/delacournz/delacour-ui/commit/f9beba7936ca536f8fa667523f5a2329f43f65bf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar.Badge` draws the presence dot when its children are `0` or `""`, such as `{unread && <Badge />}` with no unread items, instead of throwing on a raw string in a `View`.
+
+- [#319](https://github.com/delacournz/delacour-ui/pull/319) [`f9beba7`](https://github.com/delacournz/delacour-ui/commit/f9beba7936ca536f8fa667523f5a2329f43f65bf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar` remounts its image when the source changes, so a late error from an expired URL no longer marks the refreshed one as failed.
+
+- [#319](https://github.com/delacournz/delacour-ui/pull/319) [`f9beba7`](https://github.com/delacournz/delacour-ui/commit/f9beba7936ca536f8fa667523f5a2329f43f65bf) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar` retries its image when the entries of a multi-resolution list change their `width`, `height` or `scale`, and, for a list, when the avatar changes size. `imageProps` no longer accepts `src` or `srcSet`, which would override `source` and bypass the retry key.
+
+- [#323](https://github.com/delacournz/delacour-ui/pull/323) [`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Android back closes an overlay open over a `BottomSheet`, not the sheet. Under an `OverlayProvider`, the sheet turns `closeOnBack` off while a modal or anchored overlay is open.
+
+- [#323](https://github.com/delacournz/delacour-ui/pull/323) [`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `BottomSheet.Container` finds a `Handle` or `Background` written inside a fragment. `<>{showHandle && <BottomSheet.Handle />}</>` no longer gets a second handle and background added, which gave screen readers two adjustable elements.
+
+- [#323](https://github.com/delacournz/delacour-ui/pull/323) [`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A `BottomSheet` with an `Overlay` hides the app behind it from VoiceOver and TalkBack while it is presented in the root host. `BottomSheetProvider` hides its children, as `OverlayProvider` does for a dialog. Inline sheets, sheets in another `BottomSheet.Host` and `enableTouchThrough` leave the app reachable.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`f3cc562`](https://github.com/delacournz/delacour-ui/commit/f3cc5623f588c1866ffcc5e248fd18c17b5c23e4) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - `Calendar.Caption` now reads an enclosing `Field.Label` before the month ("Date of birth, October 2026"). The label used to sit only on the grid, which is not `accessible` and gets no iOS trait from `role="grid"`, so VoiceOver never read it. `resolveCaptionLabel` is exported from the variants.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`f3cc562`](https://github.com/delacournz/delacour-ui/commit/f3cc5623f588c1866ffcc5e248fd18c17b5c23e4) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - `Calendar.Day` now puts "Today", "Range start" and "Range end" in its accessibility label ("Monday 5 October 2026, Today, Range start") instead of the hint, so they are read with VoiceOver hints off. `resolveDayAccessibilityLabel` is exported from the variants.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`f3cc562`](https://github.com/delacournz/delacour-ui/commit/f3cc5623f588c1866ffcc5e248fd18c17b5c23e4) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - A read-only `Calendar` no longer announces every day as disabled ("dimmed"). A read-only day keeps an enabled accessibility state, its tap is still ignored, and it skips the press fade and haptic. `CalendarDayState` gains `isUnavailable` for the days that are announced disabled.
+
+- [#327](https://github.com/delacournz/delacour-ui/pull/327) [`ab529e3`](https://github.com/delacournz/delacour-ui/commit/ab529e36760a0dd2b24a83ac8f38ca4b81cfb15a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The test kit no longer mocks native modules the project may not have. Skia, Pulsar, MapLibre,
+  `expo-linear-gradient` and `expo-blur` each have a mock of their own under `test/mocks/`, copied only
+  with a component that installs the module and added to Jest's `setupFiles` — so a project without
+  `chart` no longer fails every suite with "Cannot find module 'react-native-skia'".
+
+- [#320](https://github.com/delacournz/delacour-ui/pull/320) [`5608867`](https://github.com/delacournz/delacour-ui/commit/56088670cf9c7614fcfa6432588b025c52342218) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker` stays controlled whenever `value` is passed, even as `undefined`, which now reads as empty. A form field that starts `undefined` or resets to it no longer flips the picker to its own state and leaves a stale day on the trigger.
+
+- [#320](https://github.com/delacournz/delacour-ui/pull/320) [`5608867`](https://github.com/delacournz/delacour-ui/commit/56088670cf9c7614fcfa6432588b025c52342218) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A read-only `DatePicker.Trigger` reads as text instead of a button. It has no press handler, so VoiceOver no longer offers a double-tap that does nothing. A disabled trigger keeps the button role.
+
+- [#320](https://github.com/delacournz/delacour-ui/pull/320) [`5608867`](https://github.com/delacournz/delacour-ui/commit/56088670cf9c7614fcfa6432588b025c52342218) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - A re-tap on a single `DatePicker`'s shown day now confirms it and closes the sheet instead of clearing it. A user who opens a date of birth to check it no longer empties it by tapping it. `DatePicker.Clear` (`isClearable`) stays the way to empty a single day.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`df5d76b`](https://github.com/delacournz/delacour-ui/commit/df5d76b9c5fe0c960719c90d9e1da75da8666313) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - A modal overlay that is animating closed no longer hides the app content from screen readers, so a Dialog or Drawer that moves focus back to its trigger in `onExited` lands on it. `Overlay.Portal` takes `isExiting`; pass `useOverlayPresence().phase === "exiting"`.
+
+- [#324](https://github.com/delacournz/delacour-ui/pull/324) [`df5d76b`](https://github.com/delacournz/delacour-ui/commit/df5d76b9c5fe0c960719c90d9e1da75da8666313) Thanks [@delacour-release](https://github.com/apps/delacour-release)! - Screen readers stay inside the top modal overlay. The top open modal's portal frame is modal for VoiceOver, and every overlay drawn under it is hidden from VoiceOver and TalkBack, so a dialog opened over another dialog no longer leaves the lower one reachable. `topModalOverlay` and `isBelowTopModal` are exported from `overlay`.
+
+- [#325](https://github.com/delacournz/delacour-ui/pull/325) [`96cfac8`](https://github.com/delacournz/delacour-ui/commit/96cfac847eb7eee7cb50e6954e199c9bfab2cb17) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `TextAnimation` fixes for first-frame painting, negative numbers and font scaling:
+
+  - `Rolling` picks its roll direction from the magnitude, so a negative number such as −19 → −20 rolls the short way.
+  - New reveal text holds its start until the clock has rewound, so it never paints a frame fully shown before it reveals.
+  - A `Rotating` swap holds its start until progress has rewound, so the arriving phrase never flashes in fully shown.
+  - `Rolling` and `Rotating` cap font scaling at `TEXT_MAX_FONT_SIZE_MULTIPLIER` by default, like the other parts.
+
+- Updated dependencies [[`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0)]:
+  - @delacour/react-native-bottom-sheet@0.7.0
+  - @delacour/react-native-charts@0.7.0
+
+## 0.6.0
+
+### Minor Changes
+
+- [#312](https://github.com/delacournz/delacour-ui/pull/312) [`59ef8d6`](https://github.com/delacournz/delacour-ui/commit/59ef8d627aca12f4bbe011820895ee5ebd3a9003) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Signature` and `Sketch`'s `toPNG()` now return `Promise<string>`. react-native-skia 3.9 made `Image.encodeToBase64` asynchronous, and the peer range moves to `>=3.9.0` — `await` the call.
+
+- [#318](https://github.com/delacournz/delacour-ui/pull/318) [`600bdbd`](https://github.com/delacournz/delacour-ui/commit/600bdbd7ecaaee83625caf89fd8fc5eba9aa158e) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker` takes a `description`, shown under the sheet's title as a `BottomSheet.Description` (`{testID}-description`), so a picker can say why some days cannot be picked.
+
+- [#293](https://github.com/delacournz/delacour-ui/pull/293) [`52221cd`](https://github.com/delacournz/delacour-ui/commit/52221cd1ca01b1ed06ab3ab57b6b112fc0e3a526) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker` takes `onClose`, called once its sheet has slid all the way down. `onOpenChange(false)` still fires as the close starts, so a form can move focus to the next field in `onClose` without the keyboard rising under a sheet that is still leaving.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add component render tests with `@testing-library/react-native` under Jest. `delacour add --tests` now copies a component's render suite, the Jest setup that stubs its native modules and a `renderWithProviders` helper into a Jest project, adds the setup to the project's Jest config, and remembers the choice in `native-components.json`. Fix a disabled `Switch` flipping on a screen reader's activation or its `Field` label press.
+
+- [#306](https://github.com/delacournz/delacour-ui/pull/306) [`fe94641`](https://github.com/delacournz/delacour-ui/commit/fe946414c7aa5a04299c07a6ffe5bf6aaa5e77ad) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Select` takes `isOpen`, `defaultOpen` and `onOpenChange` to control its sheet, as `DatePicker` does, and `onClose`, called once the sheet has slid fully closed after a pick or a dismissal. A form can now open the select when focus moves to it, and move on only after the sheet has left.
+
+- [#291](https://github.com/delacournz/delacour-ui/pull/291) [`703b1cd`](https://github.com/delacournz/delacour-ui/commit/703b1cd3e9d252cef78753bf6cbd4b38c1c44536) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Upgrade `tailwind-variants` to v4. `lib/tv` now builds `tv` with `createTV` from `tailwind-variants/config`, the only v4 entry that accepts `twMergeConfig` — the default entry throws on it, so a `tv.ts` copied by an earlier CLI breaks as soon as v4 is installed. `tailwind-merge` is no longer a dependency: v4 ships its own compiled merge tables. `delacour add` stops installing it.
+
+  v4's types drop numeric variant keys, so `KpiVariantProps["colorIndex"]`, `PlannerVariantProps["colorIndex"]` and `LeaderboardVariantProps["place"]` are now string unions (`"1" | "2" | …`). The component props — `KpiColorIndex`, `PlannerColorIndex`, `LeaderboardPlace` — stay numeric.
+
+- [#290](https://github.com/delacournz/delacour-ui/pull/290) [`a57aec9`](https://github.com/delacournz/delacour-ui/commit/a57aec927951052e4696152edb560d7195368883) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `TextAnimation.Counting` and `TextAnimation.Rolling` take `prefix` and `suffix` props, which win over `format`'s. `Rolling` keeps each affix as one static cell, so a digit inside one (`/100`, `Q3 `) no longer rolls as a wheel.
+
+### Patch Changes
+
+- [#310](https://github.com/delacournz/delacour-ui/pull/310) [`d985e82`](https://github.com/delacournz/delacour-ui/commit/d985e823ba48f1f4c6b420aec7afa66fac207b34) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar.Group` counts each avatar inside a fragment as its own face, so `max` and the `+N` tile work when the faces come from a fragment or a mapped list wrapped in one. The new `flattenAvatarChildren` helper opens fragments at any depth and keys each face as a `[fragmentKey, faceKey]` JSON pair, so keys stay unique however the fragments are keyed.
+
+- [#310](https://github.com/delacournz/delacour-ui/pull/310) [`d985e82`](https://github.com/delacournz/delacour-ui/commit/d985e823ba48f1f4c6b420aec7afa66fac207b34) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar` scales a bundled image (`source={require(...)}`) to fill the face. The image slot adds `size-full`, because `inset-0` does not override the width and height a bundled asset brings, so a large asset was clipped.
+
+- [#310](https://github.com/delacournz/delacour-ui/pull/310) [`d985e82`](https://github.com/delacournz/delacour-ui/commit/d985e823ba48f1f4c6b420aec7afa66fac207b34) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Avatar` retries its image when any request field changes, the cache mode included. The retry key is now a JSON array of the URI, bundle, method, sorted headers, body and cache mode, so a header value with `&` or `=` no longer shares a key with a different request.
+
+- [#298](https://github.com/delacournz/delacour-ui/pull/298) [`664fb88`](https://github.com/delacournz/delacour-ui/commit/664fb88eab85d6825ac04a4e0b2666629edfa9e2) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `BottomSheet.Close` reaches the 44pt minimum touch target. `BOTTOM_SHEET_CLOSE_HIT_SLOP` is now 12 instead of 8: the 20pt default icon plus 12pt on each side is 44pt, where 8pt left a 36pt target.
+
+- [#298](https://github.com/delacournz/delacour-ui/pull/298) [`664fb88`](https://github.com/delacournz/delacour-ui/commit/664fb88eab85d6825ac04a4e0b2666629edfa9e2) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `BottomSheet` honours `onSnapPointHaptic={undefined}` and `onCloseHaptic={undefined}` as the documented way to turn a haptic off. A destructuring default had put the Pulsar preset back in place of the explicit `undefined`.
+
+- [#297](https://github.com/delacournz/delacour-ui/pull/297) [`5ea4795`](https://github.com/delacournz/delacour-ui/commit/5ea4795aec793fb4556735599f08069a1d92daa7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The screen-reader increment and decrement actions on `Calendar.Caption` no longer page a disabled calendar or the years view, and no longer fire `onMonthChange` there. They now have the same limits as the arrows.
+
+- [#307](https://github.com/delacournz/delacour-ui/pull/307) [`d874abf`](https://github.com/delacournz/delacour-ui/commit/d874abf8d04437142eb6ca74d18edcf384a86319) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - When a parent changes `Calendar`'s controlled `month`, the new month appears without a slide. Before this fix, the last paging direction stayed set. For example, after the user tapped next, a date picker that reopened on an earlier month slid it in from the right.
+
+- [#297](https://github.com/delacournz/delacour-ui/pull/297) [`5ea4795`](https://github.com/delacournz/delacour-ui/commit/5ea4795aec793fb4556735599f08069a1d92daa7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Calendar` and its date helpers always format in the Gregorian calendar that the grid uses. A locale such as `fa-IR` changes the language and digits, not the calendar. Before this fix, 5 October 2026 was labelled 13 Mehr 1405, and the month picker's names did not match the months they selected.
+
+- [#297](https://github.com/delacournz/delacour-ui/pull/297) [`5ea4795`](https://github.com/delacournz/delacour-ui/commit/5ea4795aec793fb4556735599f08069a1d92daa7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Selecting an outside day with `selectOutsideDays` no longer pages `Calendar` past `startMonth`/`endMonth` (or `minDate`/`maxDate`). The day is still selected, but the grid stays inside the bounds that the arrows and the swipe keep.
+
+- [#297](https://github.com/delacournz/delacour-ui/pull/297) [`5ea4795`](https://github.com/delacournz/delacour-ui/commit/5ea4795aec793fb4556735599f08069a1d92daa7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Calendar`'s years view scrolls to the visible year each time it opens. Before this fix, if you picked a year and then reopened the years view from the months view, the list started at the earliest year.
+
+- [#297](https://github.com/delacournz/delacour-ui/pull/297) [`5ea4795`](https://github.com/delacournz/delacour-ui/commit/5ea4795aec793fb4556735599f08069a1d92daa7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Calendar` moves the visible month to the nearest bound when `minDate`/`maxDate` or `startMonth`/`endMonth` change and leave it outside, and reports the move through `onMonthChange`. Before this fix, moving `minDate` past the visible month disabled both arrows and the swipe, and the calendar could not reach a day that can be picked.
+
+- [#297](https://github.com/delacournz/delacour-ui/pull/297) [`5ea4795`](https://github.com/delacournz/delacour-ui/commit/5ea4795aec793fb4556735599f08069a1d92daa7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Calendar.Grid` slides the current month back into view when a swipe's month change is not committed. This happens when a parent holds the controlled `month` still or passes no `onMonthChange`. Before this fix, the grid stayed off-screen and the calendar looked empty.
+
+- [#307](https://github.com/delacournz/delacour-ui/pull/307) [`d874abf`](https://github.com/delacournz/delacour-ui/commit/d874abf8d04437142eb6ca74d18edcf384a86319) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `resolveWeekStart` reads the device locale on engines without `Intl.Locale`, such as some Hermes builds. Before this fix, a `Calendar` with no `locale` on such an engine started the week on Monday, even on an en-US or ja-JP phone.
+
+- [#297](https://github.com/delacournz/delacour-ui/pull/297) [`5ea4795`](https://github.com/delacournz/delacour-ui/commit/5ea4795aec793fb4556735599f08069a1d92daa7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Calendar`'s years view lists the year the calendar shows. The open side of the year span now reaches from the visible month, not from today, and never past the opposite bound. A calendar with only `maxDate` in 1900 lists 1800–1900, where the list was empty before.
+
+- [#295](https://github.com/delacournz/delacour-ui/pull/295) [`a40e7a6`](https://github.com/delacournz/delacour-ui/commit/a40e7a6c3839d8641baa7be2621d9e5d95fd61de) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker` cancels the pending auto-close on every selection. Starting a new range, or deselecting the day, within 120 ms of a finished selection no longer closes the sheet on an unfinished or empty selection.
+
+- [#295](https://github.com/delacournz/delacour-ui/pull/295) [`a40e7a6`](https://github.com/delacournz/delacour-ui/commit/a40e7a6c3839d8641baa7be2621d9e5d95fd61de) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker` drops a half-picked range and cancels any pending auto-close when a controlled caller closes the sheet with `isOpen={false}`. The trigger no longer shows the half range after the sheet closes, and the range does not resume when the sheet opens again. Inline pickers are unaffected.
+
+- [#308](https://github.com/delacournz/delacour-ui/pull/308) [`ec6c53a`](https://github.com/delacournz/delacour-ui/commit/ec6c53ac1ed1b67bdb84681c81d6c4219656d9ea) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `DatePicker.Trigger` reads a read-only picker as enabled. Only `isDisabled` sets `accessibilityState.disabled` now, so VoiceOver no longer reads a read-only value as dimmed. A trigger that cannot open drops the "Opens calendar" hint, its press handler and its press feedback.
+
+- [#309](https://github.com/delacournz/delacour-ui/pull/309) [`427f6be`](https://github.com/delacournz/delacour-ui/commit/427f6be19ea0860a2895476e7b06f5fbc80c9e3a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - While a modal overlay is open, the app content behind it is hidden from screen readers (`accessibilityElementsHidden` on iOS, `importantForAccessibility="no-hide-descendants"` on Android), so VoiceOver and TalkBack focus stays inside the overlay.
+
+- [#296](https://github.com/delacournz/delacour-ui/pull/296) [`aabc4d8`](https://github.com/delacournz/delacour-ui/commit/aabc4d84b520ffc8031e9d8e640cdd56972e4154) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Overlays no longer get stuck when `isOpen` flips while an enter or exit animation's finish is still queued: a stale finish is dropped before it moves the phase or calls `onEntered`/`onExited`. Under reduce motion the scrim and content now fade instead of snapping.
+
+- [#309](https://github.com/delacournz/delacour-ui/pull/309) [`427f6be`](https://github.com/delacournz/delacour-ui/commit/427f6be19ea0860a2895476e7b06f5fbc80c9e3a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Overlay presence timing no longer restarts when the owner re-renders with new inline `onEntered`/`onExited` callbacks: they are read through refs, so only `isOpen` drives the enter and exit animations.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Spinner` is now one accessible `progressbar` element, so a screen reader announces it once with its label instead of reaching its inner views separately.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Pressable asChild` given a text child now throws its documented error ("text and fragments cannot take props") instead of React's generic `Children.only` message.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Fix form controls reacting while disabled, found by their new render tests:
+
+  - `Checkbox` no longer flips when its `Field` row is pressed while the checkbox is disabled.
+  - `OtpInput` no longer takes focus from a `Field` row press while it is disabled.
+  - `NumberInput.Field` and `Slider.Thumb` ignore screen-reader increment and decrement actions while disabled.
+  - `Slider` no longer calls `onChange` on mount, and calls it once per screen-reader step instead of twice.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Fix screen-reader gaps found by the overlay render tests:
+
+  - `Menu` and `ContextMenu` rows can be chosen with VoiceOver and TalkBack. A row now answers `onAccessibilityTap` on iOS and the `activate` action on Android, and a disabled row still ignores both.
+  - `Screen`'s navbar title and `Screen.Error`'s title are announced as headings.
+  - The render-test setup marks `AppState` as active. React Native's Jest mock otherwise reads as backgrounded, which kept a toast from ever dismissing itself.
+  - A composed `ImageViewer` (Triggers as children, no `images`) opened with `defaultOpen` or a controlled `open` no longer shuts itself on mount before its Triggers register.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Tabs: a bar with no `Tabs.Content` and no `defaultValue` now opens on its first tab, as documented. It used to start with nothing selected, because its order was still empty when the initial value was seeded.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Sortable.Item` ignores a Move up / Move down accessibility action on a row that cannot be dragged — a disabled, list-disabled or pinned row. Those rows advertise no actions, but one sent anyway used to reorder them.
+
+- [#311](https://github.com/delacournz/delacour-ui/pull/311) [`68758cf`](https://github.com/delacournz/delacour-ui/commit/68758cf7d70bef600272d2f5d26e7c5f46e8fafe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Post.Author` and `Post.Community` hide their `Avatar` from assistive technology. The parent's one-stop label already names the person or community, so the labelled avatar inside it was announced a second time on Android.
+
+- [#298](https://github.com/delacournz/delacour-ui/pull/298) [`664fb88`](https://github.com/delacournz/delacour-ui/commit/664fb88eab85d6825ac04a4e0b2666629edfa9e2) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `asChild` keeps the handler it donates when the child forwards an unset one. `<BottomSheet.Trigger asChild><Button onPress={maybe} /></BottomSheet.Trigger>` with `maybe` undefined now opens the sheet; before, the child's `undefined` replaced the trigger's `onPress`.
+
+- [#315](https://github.com/delacournz/delacour-ui/pull/315) [`4e6af39`](https://github.com/delacournz/delacour-ui/commit/4e6af390a70f0f286bd3974bb914da29870b216f) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `TextAnimation` fixes for font scaling, retargeting and calm motion:
+
+  - `Typing`, `Counting` and the reveal give every text they draw the same font scale cap: cells, the block caret, whitespace and the copies that measure.
+  - `Counting` reserves its width from the number on screen. `Rolling` retargets each wheel from where it is now and rounds toward the roll's direction, so an interrupted roll keeps the new direction.
+  - When calm motion turns on, `Rolling` settles its wheels and `Rotating` returns to its first phrase.
+  - `Typing` calls `onPhraseTyped` for every phrase, even with no hold and no erase or when one frame finishes several, and stops counting the height of a removed phrase.
+  - A `line` reveal waits for its lines to be measured before it starts. `onFinished` fires once per play, also when calm motion is turned on or off, and setting `isActive` back to `true` plays the reveal again.
+  - `Rolling` retargets a wheel whose direction flips on the same digit. `Rotating` aligns its phrases inside the reserved slot and starts over when its phrase list changes.
+  - The clock stops its frame callback once a run finishes.
+  - Rows follow the resolved text alignment, so `className` and an inherited alignment count. `capitalize` capitalizes each word, not each letter, in `Typing` and a `character` reveal. Empty lines from hard breaks keep their height.
+  - The block caret's fill is generated in every colour.
+
+- Updated dependencies [[`664fb88`](https://github.com/delacournz/delacour-ui/commit/664fb88eab85d6825ac04a4e0b2666629edfa9e2)]:
+  - @delacour/react-native-bottom-sheet@0.6.0
+  - @delacour/react-native-charts@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

@@ -38,6 +38,7 @@ Compound root plus twelve parts: `Header`, `Title`, `Today`, `Nav`, `Action`,
 | `planner-dates.test.ts` | |
 | `planner.variants.ts` | The slotted `tv()` and every pure resolver — grouping, overflow, colour, counts, labels, swipe. No RN imports |
 | `planner.variants.test.ts` | |
+| `planner.render.test.tsx` | Mounted under Jest — day labels and selected state, `onDayPress`/`onSelectedChange`, controlled and uncontrolled month and selection, Nav/Today/announcements, Legend and Summary counts, variants and `renderDay`, `Details` sheet, parts outside a `Planner` throwing |
 
 ## Anatomy
 

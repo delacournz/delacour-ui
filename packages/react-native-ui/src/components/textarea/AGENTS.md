@@ -13,6 +13,7 @@ A multiline text field, sized in rows. One component, no parts: it renders an
 | `textarea.tsx` | `Textarea` |
 | `textarea.variants.ts` | Pure `tv()` slots, the line metrics and the height and count resolvers, no RN imports |
 | `textarea.variants.test.ts` | |
+| `textarea.render.test.tsx` | Mounted under Jest — multiline field, controlled and uncontrolled value, disabled and read-only, the character count and its spoken label, Field and Input.Group integration |
 
 ## Design
 

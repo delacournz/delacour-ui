@@ -1,6 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
-import { type InputBoxState, resolveInputGroupClass } from "../input/input.variants";
+import { type InputBoxState, type InputSize, resolveInputGroupClass } from "../input/input.variants";
 import type {
 	SelectEntry,
 	SelectHighlightRange,
@@ -89,6 +89,33 @@ export function resolveSelectListMinHeight({
 	return isSearchable && snapPoints === undefined ? maxHeight : undefined;
 }
 
+/** A row's floor in points at each size — the `row` slot's `min-h-12/14/16`. The test pins the pair. */
+export const SELECT_ROW_MIN_HEIGHT: Record<InputSize, number> = { sm: 48, md: 56, lg: 64 };
+
+/** How many viewports of rows the list keeps mounted: the visible one and two either side. */
+export const SELECT_LIST_WINDOW_SIZE = 5;
+
+/**
+ * How the sheet's list virtualises.
+ *
+ * On React Native's defaults — 10 rows first, 10 more every 50ms, a window of
+ * 21 viewports — a list of about 250 options mounted nearly every row, batch by
+ * batch, while the sheet was still opening, and every row carries an animated
+ * indicator of its own. The JS thread stayed busy for the whole open and the
+ * sheet stuttered. The first paint fills the sheet at its cap, each later batch
+ * is one more sheet, and the window keeps the rows a quick fling reaches
+ * without mounting the rest. A row's floor is the smallest it can measure, so
+ * the count never comes up short of the viewport.
+ */
+export function resolveSelectListWindow({ maxHeight, size }: { maxHeight: number; size: InputSize }): {
+	initialNumToRender: number;
+	maxToRenderPerBatch: number;
+	windowSize: number;
+} {
+	const rows = Math.max(1, Math.ceil(maxHeight / SELECT_ROW_MIN_HEIGHT[size]));
+	return { initialNumToRender: rows, maxToRenderPerBatch: rows, windowSize: SELECT_LIST_WINDOW_SIZE };
+}
+
 /**
  * Styling for every part of a select.
  *
@@ -137,11 +164,27 @@ export const selectVariants = tv({
 		rowCheckbox: "items-center justify-center overflow-hidden border border-input bg-card",
 		/** Layout only — the heading is a `Text.Overline`, which owns its type. */
 		groupHeading: "pb-1.5 pt-4",
-		/** The sheet's title and search field, above the rows. */
-		header: "gap-3 pb-3",
+		/**
+		 * The sheet's title and search field, pinned above the rows. Opaque, so
+		 * rows scroll under it unseen. It carries the list's top padding (`pt-2`,
+		 * taken off `sheetBody`), so it rests at the list's top edge and pins
+		 * exactly where it rests rather than riding up the padding first.
+		 */
+		header: "gap-3 bg-popover pb-3 pt-2",
+		/**
+		 * The close and the optional title, in one row above the search.
+		 *
+		 * The row is always drawn, so the close has room of its own with or
+		 * without a title, and never sits over the search field or a row.
+		 */
+		headerBar: "min-h-10 flex-row items-center gap-3",
+		/** The sheet's close, taken out of its absolute corner and into the bar. */
+		headerClose: "relative top-0 right-0 ml-auto",
+		/** The bar already clears the close, so the title needs no gutter. */
+		headerTitle: "flex-1 pr-0",
 		empty: "items-center justify-center py-8",
-		/** Overrides the sheet's list gutter gap: rows touch, the way a list's do. */
-		sheetBody: "gap-0",
+		/** Overrides the sheet's list gutter gap — rows touch, the way a list's do — and hands its top padding to `header`. */
+		sheetBody: "gap-0 pt-0",
 	},
 	variants: {
 		variant: {

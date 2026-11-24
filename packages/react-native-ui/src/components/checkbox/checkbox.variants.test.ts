@@ -17,6 +17,7 @@ import {
 	CHECKBOX_SIZES,
 	CHECKBOX_SURFACE_TOKEN,
 	checkboxVariants,
+	resolveCheckboxAccessibilityLabel,
 	resolveCheckboxAxes,
 	resolveCheckboxBorderTokens,
 	resolveCheckboxFilled,
@@ -308,6 +309,30 @@ describe("checkboxVariants root slot", () => {
 		expect(checkboxVariants({ isDisabled: true }).root()).toContain("opacity-50");
 		expect(checkboxVariants({ isDisabled: false }).root()).not.toContain("opacity-50");
 	});
+
+	test("pads a labelled one-line row up to the 44pt touch minimum", () => {
+		// The label's line box at each size: 20/24/28.
+		const lineHeight = { sm: 20, md: 24, lg: 28 } as const;
+		for (const size of CHECKBOX_SIZES) {
+			const root = checkboxVariants({ hasLabel: true, size }).root();
+			const py = Number(root.match(/\bpy-([\d.]+)\b/)?.[1] ?? 0) * 4;
+			expect(lineHeight[size] + py * 2).toBe(44);
+		}
+	});
+
+	test("adds no padding to a bare box, which takes hit slop instead", () => {
+		for (const size of CHECKBOX_SIZES) {
+			expect(checkboxVariants({ hasLabel: false, size }).root()).not.toMatch(/\bpy-/);
+		}
+	});
+});
+
+describe("checkboxVariants group slot", () => {
+	test("leaves the spacing between rows to their own padding", () => {
+		// A gap would sit between two rows' touch targets as a dead strip, and
+		// slop across it would overlap. Padded rows meet edge to edge instead.
+		expect(checkboxVariants().group()).not.toMatch(/\bgap-/);
+	});
 });
 
 describe("checkboxVariants label slot", () => {
@@ -558,6 +583,26 @@ describe("resolveCheckboxHitSlop", () => {
 			// two checkboxes ambiguous.
 			expect(resolveCheckboxHitSlop({ hasLabel: true, size })).toBeUndefined();
 		}
+	});
+});
+
+describe("resolveCheckboxAccessibilityLabel", () => {
+	test("an explicit label wins", () => {
+		expect(resolveCheckboxAccessibilityLabel({ fieldLabel: "Terms", hasContent: false, own: "Consent" })).toBe(
+			"Consent"
+		);
+	});
+
+	test("a bare box takes the field's label", () => {
+		expect(resolveCheckboxAccessibilityLabel({ fieldLabel: "Terms", hasContent: false })).toBe("Terms");
+	});
+
+	test("inline content names the box itself, so the field's label is not used", () => {
+		expect(resolveCheckboxAccessibilityLabel({ fieldLabel: "Terms", hasContent: true })).toBeUndefined();
+	});
+
+	test("is undefined with nothing to go on", () => {
+		expect(resolveCheckboxAccessibilityLabel({ fieldLabel: null, hasContent: false })).toBeUndefined();
 	});
 });
 

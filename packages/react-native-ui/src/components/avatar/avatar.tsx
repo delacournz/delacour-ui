@@ -14,6 +14,7 @@ import {
 } from "./avatar.utils";
 import {
 	AVATAR_FOREGROUND_TOKEN,
+	AVATAR_SIZE_POINTS,
 	type AvatarColor,
 	type AvatarSize,
 	type AvatarVariant,
@@ -38,8 +39,12 @@ export type AvatarProps = Omit<PressableProps, "asChild" | "busy" | "children" |
 	/** Default `md`, or the enclosing group's size. */
 	size?: AvatarSize;
 	isDisabled?: boolean;
-	/** Passed to the `Image`. `onError` still fires, after the fallback has taken over. */
-	imageProps?: Omit<ImageProps, "source">;
+	/**
+	 * Passed to the `Image`. `onError` still fires, after the fallback has taken
+	 * over. `src` and `srcSet` are left out: `Image` prefers them to `source`, and
+	 * `source` is what the retry key is built from.
+	 */
+	imageProps?: Omit<ImageProps, "source" | "src" | "srcSet">;
 	/** Overlays — an `Avatar.Badge`. */
 	children?: ReactNode;
 };
@@ -72,14 +77,16 @@ function AvatarRoot({
 	);
 
 	// Remembered by key, not by object: an inline `source={{ uri }}` is a new
-	// object every render, and a new URI has to retry on its own.
-	const sourceKey = resolveAvatarSourceKey(source);
+	// object every render, and a new URI has to retry on its own. The edge is in
+	// the key because a list of resolutions picks its entry by the face's size.
+	const sourceKey = resolveAvatarSourceKey(source, { edge: AVATAR_SIZE_POINTS[size] });
 	const [failedKey, setFailedKey] = useState<string | null>(null);
 	const showsImage = resolveAvatarShowsImage({ sourceKey, failedKey });
 	const slots = avatarVariants({ size, variant, color, isDisabled, hasImage: showsImage });
 
 	const initials = fallback?.trim() || resolveAvatarInitials(name);
-	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback });
+	const isInteractive = resolveAvatarInteractive({ onPress, onLongPress });
+	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback, isInteractive });
 
 	const onImageError = (event: ImageErrorEvent) => {
 		setFailedKey(sourceKey);
@@ -87,7 +94,9 @@ function AvatarRoot({
 	};
 
 	// The fallback is always painted and the image goes over it, so the circle is
-	// never empty while a picture loads or after it fails.
+	// never empty while a picture loads or after it fails. The image is keyed by
+	// its source, so a new source mounts a new image: a late error from the old
+	// request cannot mark the new one as failed.
 	const face = (
 		<View className={slots.face()}>
 			{initials ? (
@@ -99,6 +108,7 @@ function AvatarRoot({
 			)}
 			{showsImage && source !== undefined ? (
 				<Image
+					key={sourceKey}
 					accessibilityIgnoresInvertColors
 					{...imageProps}
 					className={cn(slots.image(), imageProps?.className)}
@@ -109,7 +119,7 @@ function AvatarRoot({
 		</View>
 	);
 
-	if (!resolveAvatarInteractive({ onPress, onLongPress })) {
+	if (!isInteractive) {
 		return (
 			<AvatarProvider value={context}>
 				<View

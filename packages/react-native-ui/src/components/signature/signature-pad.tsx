@@ -24,6 +24,9 @@ import { SignatureInk } from "./signature-ink";
 /** How long the placeholder takes to fade on first touch, in ms. */
 const PLACEHOLDER_FADE_MS = 150;
 
+/** The pan's test id, so a render test can drive it with Gesture Handler's `fireGestureHandler`. */
+export const SIGNATURE_PAD_GESTURE_ID = "signature-pad";
+
 /** The guideline layer's offset from the top, as a style percentage. */
 const GUIDELINE_STYLE = { top: `${SIGNATURE_GUIDELINE_Y * 100}%` } as const;
 
@@ -115,6 +118,7 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 	}, [isDrawing, live, liveStroke, strokes]);
 
 	const gesture = usePanGesture({
+		testID: SIGNATURE_PAD_GESTURE_ID,
 		enabled: isInteractive,
 		minDistance: 0,
 		shouldCancelWhenOutside: false,

@@ -30,6 +30,7 @@ rows run actions, they never become the trigger's value. Compound root plus
 | `menu.context.tsx` | The menu, submenu and radio-group contexts; `useMenu`, `useMenuRootValue`, `MenuRootProvider` |
 | `menu.types.ts` | `MenuItemProps`, shared by every row |
 | `menu.variants.ts` | The slotted `tv()`, the constants and the pure resolvers — no RN imports |
+| `menu.render.test.tsx` | Mounted under Jest — open/close, items, disabled rows, checkbox and radio state, submenus, outside-part errors, Android `activate` |
 | `menu.variants.test.ts` | Placement (flip, cap, clamp, RTL, the zero-size anchor), width, close rules, accessibility, tokens |
 
 ## The panel
@@ -141,6 +142,7 @@ rows run actions, they never become the trigger's value. Compound root plus
 
 ## Accessibility
 
+- Rows are activated by a screen reader too: `MenuRow` wires `onAccessibilityTap` (iOS) and an `activate` action (Android) to the same select as the tap gesture, behind the disabled guard, via `resolvePressableActivation`.
 - Content: `accessibilityRole="menu"`, `accessibilityViewIsModal`.
 - Rows: `accessibilityRole="menuitem"`; checkbox → `checked`, radio →
   `selected`, sub-trigger → `expanded`, all → `disabled`. One source:

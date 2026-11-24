@@ -24,6 +24,7 @@ plus `Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`,
 | `alert.types.ts` | `AlertSlotProps`, shared by `Content` and `Action` |
 | `alert.variants.ts` | The slotted `tv()`, `ALERT_FOREGROUND_TOKEN`, `ALERT_SURFACE_PADDING` and three pure resolvers — no RN imports |
 | `alert.variants.test.ts` | |
+| `alert.render.test.tsx` | Mounted under Jest — alert role and live region, hidden indicator, dismiss button, controlled and uncontrolled open, `useAlert().dismiss`, parts outside a root throw |
 
 ## Design
 

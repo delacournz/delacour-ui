@@ -33,23 +33,22 @@ concurrency:
 # Build and publish are split so dependency code never runs next to publish
 # credentials: `build` installs/compiles with a read-only token and no registry secret;
 # `publish` holds the OIDC + release write permissions but never installs or
-# executes repo dependencies. `build` runs on Namespace like CI; `publish` stays
-# on a GitHub-hosted runner — npm trusted publishing + provenance refuse
-# self-hosted ones (`E422 Unsupported GitHub Actions runner environment: "self-hosted"`),
-# which is what a Namespace profile is to GitHub.
+# executes repo dependencies. Both run on GitHub-hosted runners (free on a public
+# repo). `publish` has to: npm trusted publishing + provenance refuse self-hosted
+# ones (`E422 Unsupported GitHub Actions runner environment: "self-hosted"`).
 jobs:
   build:
     if: github.repository_owner == 'delacournz'
     # Medium, not small: typecheck across every workspace was OOM-killed on the small profile.
-    runs-on: namespace-profile-linux-medium
+    runs-on: ubuntu-latest
     timeout-minutes: 30
+    # `packages: read` for the install's `@delacournz/*` (GitHub Packages, job token). Never
+    # reaches the publish job, which has its own permissions and installs nothing.
     permissions:
       contents: read
+      packages: read
     env:
       TURBO_TELEMETRY_DISABLED: 1
-      # `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
-      # with only `read:packages`. Never reaches the publish job.
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       # The CLI serves components straight out of `registry/` at this ref. The commit, not the tag:
       # a SHA is immutable, and raw.githubusercontent.com serves it.
       DELACOUR_REGISTRY_REF: ${{ github.sha }}
@@ -81,14 +80,22 @@ jobs:
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: 1.3.14
+          bun-version: 1.4.4
 
       # tsdown's bin runs under Node and needs one with native TypeScript to load its config.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
+          package-manager-cache: false
 
-      - run: bun install --frozen-lockfile
+      # No caches: a tag run cannot restore another tag's, and a release never replays a turbo green
+      # or installs from a cache a pull request or dispatched ci.yml run wrote.
+      - name: Install
+        # `@delacournz/*` comes from GitHub Packages (see `bunfig.toml`) with this job's own token,
+        # read-only under `packages: read`. Step level: nothing after the install sees it.
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
 
       - run: bun run typecheck
       - run: bun run check

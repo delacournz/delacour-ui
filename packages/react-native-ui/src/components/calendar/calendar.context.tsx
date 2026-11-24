@@ -52,7 +52,7 @@ export type CalendarContextValue = {
 	captionLayout: CalendarCaptionLayout;
 	/** The calendar's own `testID`, which its parts derive theirs from — see `resolvePartTestID`. */
 	testID: string | undefined;
-	/** The enclosing `Field.Label`'s text, for the grid's accessible name. */
+	/** The enclosing `Field.Label`'s text, which the caption reads before the month. */
 	label: string | null;
 };
 

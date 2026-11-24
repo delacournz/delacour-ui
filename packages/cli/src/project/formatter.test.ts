@@ -115,6 +115,18 @@ describe("createFormat", () => {
 		expect(await format("three", join(root, "c.ts"))).toBe("THREE");
 	});
 
+	// More than a pipe buffer holds, so the write is still pending when the formatter exits without reading it.
+	test("survives a formatter that exits before reading its input", async () => {
+		const root = await temp();
+		const bin = await fakeBin(root, "prettier");
+		const failures: unknown[] = [];
+		const format = createFormat({ kind: "prettier", bin, cwd: root }, (error) => failures.push(error));
+		const large = "a".repeat(1024 * 1024);
+
+		expect(await format(large, join(root, "boom.ts"))).toBe(large);
+		expect(failures).toHaveLength(1);
+	});
+
 	// A component's AGENTS.md is copied with it, and Biome has no Markdown formatter.
 	test("does not hand a formatter a file it cannot format", async () => {
 		const root = await temp();

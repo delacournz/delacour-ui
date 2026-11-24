@@ -17,6 +17,9 @@ import {
 } from "./rating.variants";
 import { RatingStar } from "./rating-star";
 
+/** The pan's Gesture Handler test id, for `fireGestureHandler` in a render test. */
+export const RATING_GESTURE_TEST_ID = "delacour-rating-pan";
+
 export type RatingStarsProps = Omit<ViewProps, "children" | "style"> & {
 	className?: string;
 };
@@ -113,6 +116,7 @@ export function RatingStars({ className, onLayout, ...props }: RatingStarsProps)
 	};
 
 	const gesture = usePanGesture({
+		testID: RATING_GESTURE_TEST_ID,
 		enabled: isInteractive,
 		minDistance: 0,
 		shouldCancelWhenOutside: false,

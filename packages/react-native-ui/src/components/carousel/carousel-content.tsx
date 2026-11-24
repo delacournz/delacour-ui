@@ -134,6 +134,7 @@ export function CarouselContent({
 	const fail: [number, number] = [-CAROUSEL_PAN.fail, CAROUSEL_PAN.fail];
 
 	const panGesture = usePanGesture({
+		testID: "carousel-pan",
 		enabled: !isDisabled && isScrollEnabled && count > 1,
 		activeOffsetX: isHorizontal ? activate : undefined,
 		failOffsetY: isHorizontal ? fail : undefined,

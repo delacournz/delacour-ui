@@ -252,6 +252,7 @@ import * as demo_countdown_urgent from "./countdown/urgent";
 import * as demo_date_picker_bounds_and_disabled_weekends from "./date-picker/bounds-and-disabled-weekends";
 import * as demo_date_picker_controlled_open from "./date-picker/controlled-open";
 import * as demo_date_picker_custom_format_locale from "./date-picker/custom-format-locale";
+import * as demo_date_picker_date_of_birth from "./date-picker/date-of-birth";
 import * as demo_date_picker_in_field_invalid from "./date-picker/in-field-invalid";
 import * as demo_date_picker_multiple from "./date-picker/multiple";
 import * as demo_date_picker_range_booking from "./date-picker/range-booking";
@@ -830,7 +831,9 @@ import * as demo_timeline_numbered from "./timeline/numbered";
 import * as demo_timeline_order_history from "./timeline/order-history";
 import * as demo_timeline_tones from "./timeline/tones";
 import * as demo_timeline_with_aside from "./timeline/with-aside";
+import * as demo_toast_chrome_offset from "./toast/chrome-offset";
 import * as demo_toast_custom from "./toast/custom";
+import * as demo_toast_measured_bar from "./toast/measured-bar";
 import * as demo_toast_persistent from "./toast/persistent";
 import * as demo_toast_placement from "./toast/placement";
 import * as demo_toast_promise from "./toast/promise";
@@ -1118,6 +1121,7 @@ export const DEMOS = {
 	"date-picker/bounds-and-disabled-weekends": demo_date_picker_bounds_and_disabled_weekends,
 	"date-picker/controlled-open": demo_date_picker_controlled_open,
 	"date-picker/custom-format-locale": demo_date_picker_custom_format_locale,
+	"date-picker/date-of-birth": demo_date_picker_date_of_birth,
 	"date-picker/in-field-invalid": demo_date_picker_in_field_invalid,
 	"date-picker/multiple": demo_date_picker_multiple,
 	"date-picker/range-booking": demo_date_picker_range_booking,
@@ -1696,7 +1700,9 @@ export const DEMOS = {
 	"timeline/order-history": demo_timeline_order_history,
 	"timeline/tones": demo_timeline_tones,
 	"timeline/with-aside": demo_timeline_with_aside,
+	"toast/chrome-offset": demo_toast_chrome_offset,
 	"toast/custom": demo_toast_custom,
+	"toast/measured-bar": demo_toast_measured_bar,
 	"toast/persistent": demo_toast_persistent,
 	"toast/placement": demo_toast_placement,
 	"toast/promise": demo_toast_promise,

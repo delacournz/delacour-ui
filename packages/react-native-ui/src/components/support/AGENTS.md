@@ -31,6 +31,7 @@ above the composer and the closing question. Compound root plus seventeen option
 | `support.types.ts` | `SupportAvailability`, `SupportTicketStatus`, their tuples, `SupportSectionProps` |
 | `support.variants.ts` | The slotted `tv()`, the badge/chip/icon-token constants, `resolveReplyColor` |
 | `support.utils.ts` | Labels, spoken labels, the dot and the topic resolvers — no RN imports |
+| `support.render.test.tsx` | Mounted under Jest — availability, channel/conversation/article/ticket presses, topics radiogroup (controlled, uncontrolled, disabled, outside-root error), agent typing and handoff announcements, replies, resolution |
 | `support.variants.test.ts` | |
 | `support.utils.test.ts` | |
 

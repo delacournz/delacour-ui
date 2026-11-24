@@ -92,6 +92,24 @@ counts: "3 dates".
 `disabledDates` takes the calendar's matchers — a date, a span, weekdays or a predicate. A range
 that would cross a disabled day starts again from the tapped day rather than completing.
 
+## Date of birth
+
+`initialView="years"` opens an empty picker on the year list, so a date decades back is a year, a
+month and a day rather than dozens of swipes. Once a day is picked, the sheet reopens on that
+day's month; while it is empty, every opening starts on the years again. `defaultMonth` sets
+the year the list opens scrolled to, and applies only while the picker is empty.
+
+```tsx
+<DatePicker
+  defaultMonth={{ year: today().year - 30, month: 1, day: 1 }}
+  initialView="years"
+  maxDate={addYears(today(), -18)}
+  minDate={{ year: today().year - 120, month: 1, day: 1 }}
+  onValueChange={setDob}
+  value={dob}
+/>
+```
+
 ## Custom format and locale
 
 ```tsx
@@ -208,6 +226,7 @@ small field never shrinks the day targets.
     locale: { type: "string", description: "A BCP 47 tag. Omitted, the device's." },
     weekStartsOn: { type: '0 | 1 | 2 | 3 | 4 | 5 | 6 | "auto"', default: '"auto"' },
     captionLayout: { type: '"label" | "picker"', default: '"picker"' },
+    initialView: { type: '"days" | "months" | "years"', default: '"days"', description: "The view an empty picker opens on. With a value, it opens on the value's month." },
     minDate: { type: "CalendarDate" },
     maxDate: { type: "CalendarDate" },
     disabledDates: { type: "readonly DateMatcher[]" },
@@ -216,6 +235,7 @@ small field never shrinks the day targets.
     isOpen: { type: "boolean", description: "Controlled open state." },
     defaultOpen: { type: "boolean", default: "false" },
     onOpenChange: { type: "(isOpen: boolean) => void" },
+    onClose: { type: "() => void", description: "The sheet finished closing, by any path. Fires after onOpenChange(false), once the slide lands. Move focus on here. Never called inline." },
     isDisabled: { type: "boolean", description: "Inert and faded. Inherited from an enclosing Field." },
     isInvalid: { type: "boolean", description: "Destructive border and glyph. Inherited from an enclosing Field." },
     isReadOnly: { type: "boolean", description: "Shows the value; never opens." },

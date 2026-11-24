@@ -43,7 +43,7 @@ const DEMOS: readonly FolderIndexItem[] = [
 		title: "Lists",
 	},
 	{
-		description: "Focused field clears the keyboard and the footer",
+		description: "Focused field clears the keyboard, a toolbar and the footer",
 		href: "/screen/form",
 		icon: IconEditSmall1,
 		title: "Keyboard-aware form",

@@ -19,6 +19,7 @@ one job, a small closed API.
 | `animated-badge.types.ts` | `AnimatedBadgeFrame`, shared by the root, the roll, the content and the measurer |
 | `animated-badge.variants.ts` | Statuses, sizes, status → colour, constants, pure resolvers — no RN imports |
 | `animated-badge.variants.test.ts` | Written first |
+| `animated-badge.render.test.tsx` | Mounted under Jest — role, label, busy, live region, hidden measurer, custom icon, no announce on mount |
 
 ## Design
 

@@ -116,3 +116,26 @@ InputGroupPlacementProvider.displayName = "DelacourUI.Input.Group.PlacementProvi
 export function useInputGroupPlacement(): InputGroupPlacement | null {
 	return use(InputGroupPlacementContext);
 }
+
+const InputGroupOuterBlockContext = createContext(false);
+
+/**
+ * Tells an `Input.Group.Block` that it is the outermost one in its section —
+ * the first `start` block or the last `end` block — and so sits against the
+ * box's border. `Input.Group` sets it while it sorts its children.
+ */
+export function InputGroupOuterBlockProvider({
+	value,
+	children,
+}: {
+	value: boolean;
+	children: ReactNode;
+}): ReactElement {
+	return <InputGroupOuterBlockContext value={value}>{children}</InputGroupOuterBlockContext>;
+}
+InputGroupOuterBlockProvider.displayName = "DelacourUI.Input.Group.OuterBlockProvider";
+
+/** Whether this block is the outermost one in its section. False outside a group. */
+export function useIsOuterInputGroupBlock(): boolean {
+	return use(InputGroupOuterBlockContext);
+}

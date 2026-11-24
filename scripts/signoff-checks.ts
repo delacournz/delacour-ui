@@ -3,12 +3,10 @@ import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
 /**
  * What a pull request has to pass before it can merge, and which of it a given diff actually needs.
  *
- * Pull requests into `develop` are gated on commit statuses written from the authoring machine by
- * `scripts/signoff.ts`, not on GitHub Actions jobs. Every check here had already run locally — through
- * prek, through `bun test`, or through the agent that wrote the change — and then ran a second time
- * on billed runners. `ci.yml` is now `workflow_dispatch`-only for ordinary pull requests (it still
- * runs on the release pull request, which no person authors; see AGENTS.md § Signoff), so the gate
- * lives here instead, in the one file both halves read.
+ * Pull requests into `develop` are gated on the `signoff/*` commit statuses. `ci.yml` writes them for
+ * every non-draft same-repo pull request, running every check below regardless of path; a local
+ * `scripts/signoff.ts` run writes the same contexts from the authoring machine, path gates applied
+ * (see AGENTS.md § Signoff). This file is what the local half reads.
  *
  * Two kinds of check, and the difference is the whole design:
  *
@@ -25,15 +23,14 @@ import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
  * while a docs-site-only one is never asked for it.
  *
  * `verify-expo` (the CLI against a real, npm-installed Expo app) is absent on purpose. It installs
- * from the registry and takes minutes; it stays a `workflow_dispatch` job in `ci.yml`, and the
+ * from the registry and takes minutes; in `ci.yml` it runs on the version pull request and on dispatch, and the
  * structure-only half of it (`verify:expo --no-install`) runs inside `registry`.
  *
  * `tests` is the one installed verify that does run here: every component's suites copied into a real
  * app on Bun, on Jest and on Vitest, and run by each. A guard can only reject what someone already
  * knew only Bun runs; this is what finds the rest. The three run at once, each in its own
- * `verify:expo --dir`, so the check costs one runner's time rather than three. It is path-gated on
- * everything but markdown rather than `always`, so it gates through the umbrella and the ruleset's
- * required list stays as it is.
+ * `verify:expo --dir`, so the check costs one runner's time rather than three. It is path-gated on what a copied app is built from rather than `always`, so it
+ * gates through the umbrella and the ruleset's required list stays as it is.
  */
 
 /** One process to spawn. `cwd` is repo-root-relative; omitted means the repo root. */
@@ -63,8 +60,33 @@ export type SignoffCheck = {
 /** `packages/cli/.verify/app`, which every `verify:expo` run empties and rebuilds — two at once wreck each other. */
 const VERIFY_APP = "verify-app";
 
+/**
+ * `apps/web/.output`. `build` runs `vite build` into it, and so does `typecheck` through
+ * `@delacour/web#codegen` whenever that misses the cache; two at once fail with `ENOTEMPTY` as one
+ * empties the directory the other is writing.
+ */
+const WEB_OUTPUT = "web-output";
+
 /** The bare context the ruleset requires. Emitted last, and only when everything passed. */
 export const UMBRELLA_CONTEXT = "signoff";
+
+/**
+ * What a copied-test app is built from: the library and its engines, the CLI that copies them and the
+ * design system it bundles, the registry it reads, and the lockfile. A docs-site, playground or
+ * workflow change cannot move a copied suite, so it no longer pays for one.
+ */
+const COPIED_APP_SOURCES = [
+	"packages/react-native-ui/**",
+	"packages/react-native-charts/**",
+	"packages/react-native-bottom-sheet/**",
+	"packages/cli/**",
+	"packages/design-system/**",
+	"packages/skills/**",
+	"packages/types/**",
+	"registry/**",
+	"package.json",
+	"bun.lock",
+] as const;
 
 export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 	{
@@ -74,6 +96,7 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		paths: [],
 		workflow: "ci.yml",
 		run: [{ argv: ["bunx", "turbo", "typecheck"] }],
+		locks: [WEB_OUTPUT],
 	},
 	{
 		context: "check",
@@ -90,8 +113,8 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		paths: [],
 		workflow: "ci.yml",
 		// `test:release` and `test:scripts` are root-package tasks: `.github/*.test.ts` and
-		// `scripts/*.test.ts` belong to no workspace.
-		run: [{ argv: ["bunx", "turbo", "test", "test:release", "test:scripts"] }],
+		// `scripts/*.test.ts` belong to no workspace. `test:render` is react-native-ui's Jest run.
+		run: [{ argv: ["bunx", "turbo", "test", "test:render", "test:release", "test:scripts"] }],
 	},
 	{
 		context: "build",
@@ -102,6 +125,7 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		// Scoped to the docs site: it is the only thing Railway deploys, and an unfiltered build would
 		// drag in the Expo playground for nothing.
 		run: [{ argv: ["bunx", "turbo", "build", "--filter=@delacour/web"] }],
+		locks: [WEB_OUTPUT],
 	},
 	{
 		context: "registry",
@@ -158,11 +182,28 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		context: "tests",
 		label: "copied tests under Bun, Jest and Vitest",
 		always: false,
-		paths: ["**"],
+		paths: COPIED_APP_SOURCES,
 		workflow: "ci.yml",
 		// Each runner in its own `--dir`, which also keeps it off `registry`'s `.verify/app`.
+		//
+		// `--max-workers 25%` because the three run at once, beside `test`'s own Jest run: at their
+		// defaults each takes nearly every core, and a starved worker blows Jest's 5 s test timeout.
+		//
+		// `--keep` leaves each app's `node_modules` in place, so the next signoff re-scaffolds the
+		// project files over a warm install instead of starting from npm. `.verify/` is gitignored.
 		run: TEST_RUNNERS.map((runner) => ({
-			argv: ["bun", "run", "verify:expo", "--tests", runner, "--dir", `.verify/tests-${runner}`],
+			argv: [
+				"bun",
+				"run",
+				"verify:expo",
+				"--tests",
+				runner,
+				"--dir",
+				`.verify/tests-${runner}`,
+				"--keep",
+				"--max-workers",
+				"25%",
+			],
 			cwd: "packages/cli",
 		})),
 		parallel: true,

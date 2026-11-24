@@ -1,5 +1,31 @@
 # @delacour/react-native-bottom-sheet
 
+## 0.10.0
+
+No changes in this release.
+
+## 0.9.0
+
+### Patch Changes
+
+- [#346](https://github.com/delacournz/delacour-ui/pull/346) [`4f7eee0`](https://github.com/delacournz/delacour-ui/commit/4f7eee09f97e453e7026172b0d79c45d43ad1181) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - BottomSheet: a `Trigger` (or `ref.open()`) pressed while the sheet animates closed is no longer dropped. The sheet turns round and animates back open at once, instead of waiting for the close to settle. A swipe, an overlay press or `Close` left `isOpen` true until the settle, so the open was read as a no-op.
+
+## 0.8.0
+
+No changes in this release.
+
+## 0.7.0
+
+### Patch Changes
+
+- [#323](https://github.com/delacournz/delacour-ui/pull/323) [`afd4cbf`](https://github.com/delacournz/delacour-ui/commit/afd4cbfcd72bdad0e5a639995bac8f65240730a0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The sheet's Android back listener no longer re-subscribes when its methods change. An inline `onOpenChange` changed them on every parent render, and because `BackHandler` calls the newest listener first, the sheet's listener moved ahead of an overlay opened over it.
+
+## 0.6.0
+
+### Patch Changes
+
+- [#298](https://github.com/delacournz/delacour-ui/pull/298) [`664fb88`](https://github.com/delacournz/delacour-ui/commit/664fb88eab85d6825ac04a4e0b2666629edfa9e2) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `asChild` keeps the handler it donates when the child forwards an unset one. `<BottomSheet.Trigger asChild><Button onPress={maybe} /></BottomSheet.Trigger>` with `maybe` undefined now opens the sheet; before, the child's `undefined` replaced the trigger's `onPress`.
+
 ## 0.3.0
 
 ### Minor Changes

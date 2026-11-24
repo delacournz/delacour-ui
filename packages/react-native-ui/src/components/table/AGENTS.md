@@ -31,6 +31,7 @@ long table goes in a `FlatList` using the same row parts.
 | `table.types.ts` | `TableSlotProps`, `TableCellBaseProps` |
 | `table.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `table.variants.test.ts` | |
+| `table.render.test.tsx` | Mounted under Jest — column-prefixed cell names, sort button state and onPress, pressable row name/selected/disabled, Table.Empty, parts outside a Table throw |
 
 ## Design
 

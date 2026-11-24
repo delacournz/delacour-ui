@@ -47,7 +47,7 @@ at the moment a view needs it, by `geometry/position.ts`, and nowhere else.
 | `geometry/clamp-height.ts` | W `clampHeight` — `NaN` collapses to closed |
 | `geometry/detached-frame.ts` | `resolveDetached`, `DETACHED_DEFAULTS`, W `detachedFrame` — left, width, resting bottom |
 | `backdrop/backdrop-opacity.ts` | W `backdropOpacity`, W `backdropInteractive` |
-| `intent/resolve-intent.ts` | W `resolveIntent(state, intent)` — `wait` / `animate` / `jump` / `null`; open means `currentIndex ≥ 0` **or** `base` above the closed height, so a stale index never strands a visible sheet |
+| `intent/resolve-intent.ts` | W `resolveIntent(state, intent)` — `wait` / `animate` / `jump` / `null`; open means `currentIndex ≥ 0` **or** `base` above the closed height, so a stale index never strands a visible sheet; an `open` while `closing` animates back to the initial index |
 | `intent/layout-ready.ts` | W `isLayoutReady` |
 | `haptic/crossed-snap-point.ts` | W `crossedSnapPoint` (boolean), W `snapPointUnder` (index) |
 | `scroll/scroll-lock.ts` | W `shouldLockScroll`, W `contentPanDrivesSheet` |

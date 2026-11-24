@@ -115,7 +115,7 @@ export const CHECKS: Check[] = [
 					JSON.parse(await readFile(join(registryDir, "r", `${entry.name}.json`), "utf-8"))
 				);
 				// A test is named in `tests`, not `files` — still named, so not dropped.
-				for (const file of [...item.files, ...item.tests]) referenced.add(file.path);
+				for (const file of [...item.files, ...item.tests, ...item.renderTests]) referenced.add(file.path);
 			}
 
 			// The registry serves the library itself, so `files[].path` resolves
@@ -182,6 +182,8 @@ export const CHECKS: Check[] = [
 					problems.push(`${display}: still cites @delacour/react-native-ui`);
 				const test = path.endsWith(".test.ts") || path.endsWith(".test.tsx");
 				if (test && !context.tests) problems.push(`${display}: a test was copied`);
+				if (path.endsWith(".render.test.tsx") && context.tests !== "jest")
+					problems.push(`${display}: a render test was copied under ${context.tests ?? "no runner"}`);
 				if (test && context.tests !== "bun" && content.includes("bun:test"))
 					problems.push(`${display}: still imports bun:test under ${context.tests}`);
 			}
@@ -261,7 +263,7 @@ export const CHECKS: Check[] = [
 			const index = registryIndexSchema.parse(
 				JSON.parse(await readFile(join(context.registryDir, "registry.json"), "utf-8"))
 			);
-			const requested = context.only ? new Set(context.only) : null;
+			const requested = context.only ? new Set(context.only) : itemsAddedFor(index.items, context.tests);
 			const problems = new Set<string>();
 			let declared = 0;
 
@@ -363,7 +365,14 @@ export const CHECKS: Check[] = [
 		needsInstall: true,
 		async run({ appDir, reporter }) {
 			try {
-				await run("bun", ["x", "tsc", "--noEmit"], { cwd: appDir, reporter, label: "tsc" });
+				// With a render suite per component copied in, the program outgrows V8's default
+				// heap on an 8 GB CI runner ("Ineffective mark-compacts near heap limit").
+				await run("bun", ["x", "tsc", "--noEmit"], {
+					cwd: appDir,
+					reporter,
+					label: "tsc",
+					env: { NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ""} --max-old-space-size=6144`.trim() },
+				});
 				return { ok: true, summary: "tsc --noEmit clean across every copied component" };
 			} catch (error) {
 				const message = (error as Error).message;
@@ -382,6 +391,10 @@ export const CHECKS: Check[] = [
  * Items `--all` does not reach: everything that is not a component and that no
  * component depends on. Named explicitly so a verification run covers the whole
  * registry rather than most of it.
+ *
+ * An item a component's tests depend on (`test-kit`) counts as reached: `--tests`
+ * brings it with the suites, and naming it in a plain run would install Jest into
+ * an app that asked for no tests, which `doctor` then reads as a Jest project.
  */
 export async function standaloneItems(registryDir: string, _appDir: string): Promise<string[]> {
 	const index = registryIndexSchema.parse(JSON.parse(await readFile(join(registryDir, "registry.json"), "utf-8")));
@@ -391,7 +404,12 @@ export async function standaloneItems(registryDir: string, _appDir: string): Pro
 		if (reached.has(name)) return;
 		reached.add(name);
 		const item = index.items.find((entry) => entry.name === name);
-		for (const dependency of item?.registryDependencies ?? []) visit(dependency);
+		const edges = [
+			...(item?.registryDependencies ?? []),
+			...(item?.testRegistryDependencies ?? []),
+			...(item?.renderTestRegistryDependencies ?? []),
+		];
+		for (const dependency of edges) visit(dependency);
 	};
 
 	for (const item of index.items) {
@@ -450,6 +468,47 @@ async function copiedFiles(context: CheckContext): Promise<CopiedFile[]> {
 	return files;
 }
 
+type ItemEdges = {
+	name: string;
+	type: string;
+	registryDependencies?: readonly string[];
+	testRegistryDependencies?: readonly string[];
+	renderTestRegistryDependencies?: readonly string[];
+};
+
+/**
+ * The items an `add --all` run (plus the standalone items it names) copies.
+ *
+ * Every component and its closure, and every item nothing reaches. An item
+ * reached only through a component's tests comes with `--tests`, and one reached
+ * only through its render tests (`test-kit`) only with `--tests` on Jest — so a
+ * check asserting on "every item" must not expect them otherwise.
+ */
+export function itemsAddedFor(items: readonly ItemEdges[], tests: TestRunner | null): Set<string> {
+	const byName = new Map(items.map((item) => [item.name, item]));
+	const closure = (withTests: boolean, withRender: boolean): Set<string> => {
+		const seen = new Set<string>();
+		const visit = (name: string) => {
+			if (seen.has(name)) return;
+			seen.add(name);
+			const item = byName.get(name);
+			const edges = [
+				...(item?.registryDependencies ?? []),
+				...(withTests ? (item?.testRegistryDependencies ?? []) : []),
+				...(withRender ? (item?.renderTestRegistryDependencies ?? []) : []),
+			];
+			for (const dependency of edges) visit(dependency);
+		};
+		for (const item of items) if (item.type === "registry:ui") visit(item.name);
+		return seen;
+	};
+
+	const everything = closure(true, true);
+	const added = closure(tests !== null, tests === "jest");
+	for (const item of items) if (!everything.has(item.name)) added.add(item.name);
+	return added;
+}
+
 async function loadTarget(
 	context: CheckContext
 ): Promise<{ config: Awaited<ReturnType<typeof readConfig>>; items: RegistryItem[] }> {
@@ -467,7 +526,10 @@ async function loadTarget(
 
 	// With `--only`, the closure was copied but the rest was not, so assert on
 	// what was actually asked for plus whatever it pulled in.
-	if (!context.only) return { config, items };
+	if (!context.only) {
+		const added = itemsAddedFor(items, context.tests);
+		return { config, items: items.filter((item) => added.has(item.name)) };
+	}
 
 	const wanted = new Set<string>();
 	const visit = (name: string) => {

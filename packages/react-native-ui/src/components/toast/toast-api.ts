@@ -1,4 +1,11 @@
 import { useSyncExternalStore } from "react";
+import type { SharedValue } from "react-native-reanimated";
+import {
+	createToastOffsetStore,
+	type ToastOffsetRegistration,
+	type ToastOffsetSources,
+	type ToastOffsetStore,
+} from "./toast.offset";
 import { createToastApi, createToastStore, type ToastApi, type ToastState } from "./toast.store";
 
 /**
@@ -29,4 +36,29 @@ export const toast: ToastApi = createToastApi(toastStore);
 export function useToast(): { toast: ToastApi; toasts: ToastState } {
 	const toasts = useSyncExternalStore(toastStore.subscribe, toastStore.getSnapshot, toastStore.getSnapshot);
 	return { toast, toasts };
+}
+
+/**
+ * The edge offsets `ToastViewport` reads: shared values saying how much of each
+ * screen edge app chrome covers. Write to it with `useToastOffset`, or with
+ * `setToastOffset` outside React.
+ */
+export const toastOffsetStore: ToastOffsetStore<SharedValue<number>> = createToastOffsetStore();
+
+/**
+ * Lifts toasts clear of app chrome from outside React — a navigation listener,
+ * a layout service. Pass shared values and drive them yourself; the viewport
+ * reads them on the UI thread. Keep the registration and `release` it when the
+ * chrome goes. In a component, `useToastOffset` does all of this for you.
+ *
+ * @example
+ * const barHeight = makeMutable(84);
+ * const registration = setToastOffset({ bottom: barHeight });
+ * barHeight.value = withTiming(0); // the bar hides, the toasts follow
+ * registration.release();
+ */
+export function setToastOffset(
+	sources: ToastOffsetSources<SharedValue<number>>
+): ToastOffsetRegistration<SharedValue<number>> {
+	return toastOffsetStore.set(sources);
 }

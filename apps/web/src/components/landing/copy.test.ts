@@ -34,6 +34,7 @@ describe("the hero", () => {
 			lede: "Composable, accessible components with thoughtful defaults. Code you can customize, extend and make your own — for iOS and Android, painted from the same design tokens as your web app.",
 			primary: "Quick start",
 			secondary: "Browse components",
+			compare: "How it compares →",
 			github: "GitHub →",
 			install: "delacour@latest add button switch slider",
 			phone: {
@@ -143,7 +144,7 @@ describe("the sections", () => {
 			line: "Delacour UI — React Native only. iOS and Android, Expo or bare.",
 			charts: "Charts",
 			bottomSheet: "Bottom Sheet",
-			compare: "vs HeroUI",
+			compare: "Compare",
 			github: "GitHub",
 			llms: "llms.txt",
 			privacy: "Privacy",

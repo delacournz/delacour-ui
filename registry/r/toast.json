@@ -163,6 +163,11 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/react-native-ui/src/components/toast/toast.offset.ts",
+			"target": "toast/toast.offset.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/toast/toast.store.ts",
 			"target": "toast/toast.store.ts",
 			"namespace": "ui",
@@ -211,9 +216,19 @@
 					"to": "@registry/ui/pressable/pressable"
 				}
 			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/use-toast-offset.ts",
+			"target": "toast/use-toast-offset.ts",
+			"namespace": "ui"
 		}
 	],
 	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast.offset.test.ts",
+			"target": "toast/toast.offset.test.ts",
+			"namespace": "ui"
+		},
 		{
 			"path": "packages/react-native-ui/src/components/toast/toast.store.test.ts",
 			"target": "toast/toast.store.test.ts",
@@ -245,5 +260,28 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast.render.test.tsx",
+			"target": "toast/toast.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

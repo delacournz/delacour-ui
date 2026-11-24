@@ -356,6 +356,10 @@
 					"to": "@registry/styles/theme-tokens.test"
 				},
 				{
+					"from": "../bottom-sheet/bottom-sheet.variants",
+					"to": "@registry/ui/bottom-sheet/bottom-sheet.variants"
+				},
+				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
 				},
@@ -371,5 +375,36 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.render.test.tsx",
+			"target": "combobox/combobox.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

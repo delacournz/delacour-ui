@@ -17,6 +17,7 @@ instead of every call site repeating them.
 | `icon.context.tsx` | `IconDefaults`, `IconDefaultsProvider`, `useIconDefaults()` |
 | `icon.variants.ts` | Pure `tv()` + the size-class ladder, no RN imports |
 | `icon.variants.test.ts` | |
+| `icon.render.test.tsx` | Mounted under Jest — glyph rendering, numeric/literal passthrough, className not forwarded, provider defaults and precedence |
 
 ## Design
 

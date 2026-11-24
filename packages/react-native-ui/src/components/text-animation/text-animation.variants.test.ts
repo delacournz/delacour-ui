@@ -1,9 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import {
 	buildTypingTimeline,
+	capitalizeWords,
+	countTypedPhrases,
 	formatNumber,
 	formatNumberParts,
 	hashText,
+	isCapitalizedClass,
 	resolveCaretClass,
 	resolveCaretOpacity,
 	resolveEffectFrame,
@@ -13,9 +16,13 @@ import {
 	resolveRollDirection,
 	resolveRollTarget,
 	resolveRowJustify,
+	resolveRunProgress,
 	resolveStaggerDelay,
 	resolveStaggerDelays,
+	resolveSwapProgress,
 	resolveTotalDuration,
+	resolveTypedPhrase,
+	resolveTypedRange,
 	resolveTypingRest,
 	resolveUnitProgress,
 	resolveWheelOffset,
@@ -192,6 +199,17 @@ describe("resolveUnitProgress", () => {
 	});
 });
 
+describe("resolveRunProgress", () => {
+	test("holds a unit at its start until the clock has rewound for its run", () => {
+		expect(resolveRunProgress(1, 2, 5000, 0, 0, 300)).toBe(0);
+	});
+
+	test("follows the clock once the run is current", () => {
+		expect(resolveRunProgress(2, 2, 5000, 0, 0, 300)).toBe(1);
+		expect(resolveRunProgress(2, 2, 0, 0, 0, 300)).toBe(0);
+	});
+});
+
 describe("resolveEffectFrame", () => {
 	test("every effect rests at full opacity, no offset, full scale", () => {
 		const effects = [
@@ -348,6 +366,20 @@ describe("resolveNextPhrase", () => {
 	});
 });
 
+describe("resolveSwapProgress", () => {
+	test("shows a phrase whole when no swap is in flight", () => {
+		expect(resolveSwapProgress(false, 0, 3, 0.4)).toBe(1);
+	});
+
+	test("holds a new swap at its start until progress has rewound for it", () => {
+		expect(resolveSwapProgress(true, 2, 3, 1)).toBe(0);
+	});
+
+	test("follows progress once the swap is current", () => {
+		expect(resolveSwapProgress(true, 3, 3, 0.4)).toBe(0.4);
+	});
+});
+
 describe("resolveWidestPhrase", () => {
 	test("picks the most graphemes, the first on a tie", () => {
 		expect(resolveWidestPhrase(["fast", "reliable", "small", "accurate"])).toBe(1);
@@ -415,6 +447,13 @@ describe("formatNumber", () => {
 });
 
 describe("resolveRollTarget", () => {
+	test("keeps an interrupted roll moving in its direction", () => {
+		expect(resolveRollTarget(0.2, 0, "up")).toBe(10);
+		expect(resolveRollTarget(3.4, 8, "up")).toBe(8);
+		expect(resolveRollTarget(8.8, 9, "down")).toBe(-1);
+		expect(resolveRollTarget(3.4, 2, "down")).toBe(2);
+	});
+
 	test("rolls forward through the wrap on the way up", () => {
 		expect(resolveRollTarget(9, 0, "up")).toBe(10);
 		expect(resolveRollTarget(19, 3, "up")).toBe(23);
@@ -449,6 +488,12 @@ describe("resolveRollDirection", () => {
 		expect(resolveRollDirection(1, 2)).toBe("up");
 		expect(resolveRollDirection(2, 2)).toBe("up");
 		expect(resolveRollDirection(2, 1)).toBe("down");
+	});
+
+	test("follows the magnitude of a negative number, not its sign", () => {
+		expect(resolveRollDirection(-19, -20)).toBe("up");
+		expect(resolveRollDirection(-20, -19)).toBe("down");
+		expect(resolveRollDirection(-3, 3)).toBe("up");
 	});
 });
 
@@ -562,11 +607,35 @@ describe("resolveCaretClass", () => {
 });
 
 describe("resolveRowJustify", () => {
-	test("maps the text alignment onto the wrapping row", () => {
-		expect(resolveRowJustify(undefined)).toBe("justify-start");
-		expect(resolveRowJustify("left")).toBe("justify-start");
-		expect(resolveRowJustify("center")).toBe("justify-center");
-		expect(resolveRowJustify("right")).toBe("justify-end");
+	test("follows the alignment the resolved class ends on", () => {
+		expect(resolveRowJustify("text-base text-left text-center")).toBe("justify-center");
+		expect(resolveRowJustify("text-foreground text-right")).toBe("justify-end");
+		expect(resolveRowJustify("text-center text-left")).toBe("justify-start");
+	});
+
+	test("starts the row when the class sets no alignment", () => {
+		expect(resolveRowJustify("text-base text-foreground")).toBe("justify-start");
+	});
+});
+
+describe("capitalizeWords", () => {
+	test("raises the first letter of each word and leaves the rest", () => {
+		expect(capitalizeWords("hello world")).toBe("Hello World");
+		expect(capitalizeWords("  ship\nit iOS")).toBe("  Ship\nIt IOS");
+	});
+
+	test("keeps the grapheme count, so typed indices still line up", () => {
+		expect(capitalizeWords("élan vital")).toBe("Élan Vital");
+		expect(capitalizeWords("")).toBe("");
+	});
+});
+
+describe("isCapitalizedClass", () => {
+	test("is true only when the last transform in the class is capitalize", () => {
+		expect(isCapitalizedClass("text-base capitalize")).toBe(true);
+		expect(isCapitalizedClass("capitalize normal-case")).toBe(false);
+		expect(isCapitalizedClass("uppercase")).toBe(false);
+		expect(isCapitalizedClass("text-base")).toBe(false);
 	});
 });
 
@@ -599,5 +668,54 @@ describe("textAnimationVariants", () => {
 
 	test("units are exported in the documented order", () => {
 		expect([...TEXT_ANIMATION_UNITS]).toEqual(["character", "word", "line"]);
+	});
+});
+
+describe("countTypedPhrases", () => {
+	test("counts a phrase once its typing segment ends", () => {
+		const timeline = buildTypingTimeline(["ab", "cd"], { speed: 2, eraseSpeed: 0, holdMs: 0, loop: true });
+		expect(countTypedPhrases(timeline, 0)).toBe(0);
+		expect(countTypedPhrases(timeline, 999)).toBe(0);
+		expect(countTypedPhrases(timeline, 1000)).toBe(1);
+		expect(countTypedPhrases(timeline, 2000)).toBe(2);
+	});
+
+	test("keeps counting across loops when nothing separates the typing segments", () => {
+		const timeline = buildTypingTimeline(["ab", "cd"], { speed: 2, eraseSpeed: 0, holdMs: 0, loop: true });
+		expect(countTypedPhrases(timeline, 3000)).toBe(3);
+		expect(resolveTypedPhrase(timeline, 1)).toBe(0);
+		expect(resolveTypedPhrase(timeline, 2)).toBe(1);
+		expect(resolveTypedPhrase(timeline, 3)).toBe(0);
+	});
+
+	test("counts a single looping phrase every cycle", () => {
+		const timeline = buildTypingTimeline(["ab"], { speed: 2, eraseSpeed: 0, holdMs: 0, loop: true });
+		expect(countTypedPhrases(timeline, 1000)).toBe(1);
+		expect(countTypedPhrases(timeline, 2000)).toBe(2);
+		expect(resolveTypedPhrase(timeline, 1)).toBe(0);
+	});
+
+	test("stops at the last phrase of a timeline that does not loop", () => {
+		const timeline = buildTypingTimeline(["ab", "cd"], { speed: 2, eraseSpeed: 4, holdMs: 100, loop: false });
+		expect(countTypedPhrases(timeline, 1_000_000)).toBe(2);
+	});
+});
+
+describe("resolveTypedRange", () => {
+	test("delivers every completion since the last frame, however many", () => {
+		expect(resolveTypedRange(0, 3)).toEqual({ from: 1, to: 3 });
+		expect(resolveTypedRange(3, 40)).toEqual({ from: 4, to: 40 });
+	});
+
+	test("is null when nothing new finished, or under calm motion", () => {
+		expect(resolveTypedRange(2, 2)).toBeNull();
+		expect(resolveTypedRange(2, -1)).toBeNull();
+	});
+
+	test("counts from zero on the first frame and after a rewind", () => {
+		expect(resolveTypedRange(null, 2)).toEqual({ from: 1, to: 2 });
+		expect(resolveTypedRange(-1, 1)).toEqual({ from: 1, to: 1 });
+		expect(resolveTypedRange(9, 1)).toEqual({ from: 1, to: 1 });
+		expect(resolveTypedRange(9, 0)).toBeNull();
 	});
 });

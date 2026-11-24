@@ -39,6 +39,7 @@ actually landed on, after any flip.
 | `popover.position.test.ts` | The placement matrix — every placement and align, flip and no-flip, shift at each edge, `maxHeight`, the arrow, RTL, `alignOffset`, widths, motion geometry |
 | `popover.variants.ts` | The slotted `tv()` — `scrim`, `dismissLayer`, `content`, `arrow`, `title`, `description`, `close` — and the numeric constants |
 | `popover.variants.test.ts` | Slots, `isUnstyled`, tokens in both themes, the arrow inset against `--radius` |
+| `popover.render.test.tsx` | Mounted under Jest — open/close and `onOpenChange`, controlled and uncontrolled, trigger `expanded` state, dialog label, Close parts, Anchor, outside-root errors. Placement is not reachable: Jest has no layout, `measureInWindow` never reports |
 | `use-anchor-measure.ts` | **Leaf.** `useAnchorMeasure` — `measureInWindow` on enable and on window-size change |
 | `use-anchored-content.ts` | **Leaf.** `useAnchoredContent` — the off-screen measure frame, the resolve, presence, the animated style |
 | `popover-arrow.tsx` | **Leaf.** `AnchoredArrow` (placement passed in) and `Popover.Arrow` (placement read from the panel) |

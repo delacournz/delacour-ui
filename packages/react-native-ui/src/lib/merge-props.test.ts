@@ -54,6 +54,22 @@ describe("mergeProps", () => {
 		expect(hit).toBe(true);
 	});
 
+	test("keeps the slot's handler when the child forwards an undefined one", () => {
+		// `<Trigger asChild><Button onPress={maybe} /></Trigger>`: an optional
+		// handler the child passes on unset must not remove the one the slot donates.
+		let hit = false;
+		const merged = mergeProps<{ onPress?: () => void }>(
+			{
+				onPress: () => {
+					hit = true;
+				},
+			},
+			{ onPress: undefined }
+		);
+		merged.onPress?.();
+		expect(hit).toBe(true);
+	});
+
 	test("merges className through cn so the child wins conflicts", () => {
 		const merged = mergeProps({ className: "p-2 bg-primary" }, { className: "bg-secondary" });
 		expect(merged.className).toBe("p-2 bg-secondary");

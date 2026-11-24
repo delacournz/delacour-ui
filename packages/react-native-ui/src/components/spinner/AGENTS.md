@@ -16,6 +16,7 @@ that rotates.
 | `spinner.context.tsx` | `SpinnerContext`, `useSpinner()`, `useSpinnerContext()` |
 | `spinner.variants.ts` | Pure `tv()` slots + resolvers, no RN imports |
 | `spinner.variants.test.ts` | |
+| `spinner.render.test.tsx` | Mounted under Jest — busy progressbar semantics, `isLoading`, glyph wrapping, context, `useSpinner` outside root |
 
 ## Design
 
@@ -71,3 +72,5 @@ that rotates.
   `System` policy `withTiming` completes instantly while the OS reduce-motion
   setting is on, so `withRepeat(-1)` would spin a zero-length animation forever.
   A status indicator is not decorative motion.
+
+- **The root is `accessible`.** It is one `progressbar` element, busy, so a screen reader announces the spinner as a single unit rather than walking the SVG glyph; it is also what makes a role query find it. The glyph is decorative and never needs focus of its own.

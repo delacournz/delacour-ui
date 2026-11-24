@@ -24,6 +24,7 @@ a list of rows.
 | `accordion.context.tsx` | `AccordionContext` and `AccordionItemContext`, with their hooks |
 | `accordion.types.ts` | Prop types shared by two or more parts |
 | `accordion.variants.ts` | Pure `tv()` slots + the selection maths, no RN imports |
+| `accordion.render.test.tsx` | Mounted under Jest — expanded state, single vs multiple, `isCollapsible`, controlled and uncontrolled `value`, disabled items, panel mount-on-first-expand, part-outside-root errors |
 | `accordion.variants.test.ts` | `accordionTravelTarget`, and the sweep for a JS-thread `contentHeight.value` read (exports `jsThreadSource` and `CONTENT_HEIGHT_READ` for `Collapsible`'s) |
 
 ## Design

@@ -171,5 +171,39 @@
 	],
 	"testDependencies": [
 		"@types/bun"
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/components/field/field.render.test.tsx",
+			"target": "field/field.render.test.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../test/render",
+					"to": "@registry/lib/test/render"
+				},
+				{
+					"from": "../checkbox",
+					"to": "@registry/ui/checkbox"
+				},
+				{
+					"from": "../slider",
+					"to": "@registry/ui/slider"
+				},
+				{
+					"from": "../switch",
+					"to": "@registry/ui/switch"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"checkbox",
+		"slider",
+		"switch",
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

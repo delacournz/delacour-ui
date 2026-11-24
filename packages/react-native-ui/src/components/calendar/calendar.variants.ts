@@ -6,8 +6,10 @@ import {
 	type CalendarDateRange,
 	type CalendarSelectionState,
 	compareDates,
+	compareMonths,
 	isBetween,
 	isSameDay,
+	isSameMonth,
 	startOfMonth,
 } from "./calendar.date";
 
@@ -268,6 +270,11 @@ export type CalendarDayState = {
 	isHidden: boolean;
 	/** Takes a tap. */
 	isPressable: boolean;
+	/**
+	 * Announced as disabled: it takes no tap for a reason other than `isReadOnly`. A read-only
+	 * calendar shows an answer, so its days must not all read "dimmed".
+	 */
+	isUnavailable: boolean;
 };
 
 /**
@@ -303,6 +310,7 @@ export function resolveDayState({
 	const isSelected = showsSelection && isDateSelected(selection, date);
 	const rangeRole = showsSelection && selection.mode === "range" ? resolveRangeRole(selection.value, date) : null;
 	const dayDisabled = isDisabled(date);
+	const isUnavailable = isHidden || dayDisabled || isCalendarDisabled || (isOutside && !selectOutsideDays);
 
 	return {
 		isSelected,
@@ -312,8 +320,35 @@ export function resolveDayState({
 		isOutside,
 		isDisabled: dayDisabled,
 		isHidden,
-		isPressable: !isHidden && !dayDisabled && !isCalendarDisabled && !isReadOnly && (!isOutside || selectOutsideDays),
+		isPressable: !isUnavailable && !isReadOnly,
+		isUnavailable,
 	};
+}
+
+/**
+ * What a screen reader says for the caption: the enclosing `Field.Label`, then the caption text —
+ * "Date of birth, October 2026". The caption carries the field's name because it is the
+ * calendar's one accessible heading: the grid view is not `accessible`, and `role="grid"` maps to
+ * no iOS trait, so a label on the grid is never read.
+ */
+export function resolveCaptionLabel(fieldLabel: string | null, text: string): string {
+	return fieldLabel ? `${fieldLabel}, ${text}` : text;
+}
+
+/**
+ * What a screen reader says for a day: the full date, then "Today" and the range end it is —
+ * "Monday 5 October 2026, Today, Range start". The state words sit in the label, not the hint,
+ * because many VoiceOver users turn hints off and would hear only the date.
+ */
+export function resolveDayAccessibilityLabel(
+	dateLabel: string,
+	{ isToday, rangeRole }: Pick<CalendarDayState, "isToday" | "rangeRole">
+): string {
+	const parts = [dateLabel];
+	if (isToday) parts.push("Today");
+	if (rangeRole === "start") parts.push("Range start");
+	if (rangeRole === "end") parts.push("Range end");
+	return parts.join(", ");
 }
 
 /**
@@ -348,6 +383,76 @@ export function isMonthInBounds(
 	if (first && compareDates(start, first) < 0) return false;
 	if (last && compareDates(start, last) > 0) return false;
 	return true;
+}
+
+/**
+ * Where the visible month has to move when the bounds change under it: the nearest bound's month,
+ * or `null` when it is still inside them. Without this, moving `minDate` past the visible month
+ * would disable both arrows and the swipe, with no way back to a day that can be picked.
+ */
+export function reconcileVisibleMonth(
+	visibleMonth: CalendarDate,
+	bounds: { first: CalendarDate | null; last: CalendarDate | null }
+): CalendarDate | null {
+	if (isMonthInBounds(visibleMonth, bounds)) return null;
+	// Inverted bounds hold no month at all; moving to either one would only bounce to the other.
+	if (bounds.first && bounds.last && compareMonths(bounds.first, bounds.last) > 0) return null;
+	if (bounds.first && compareMonths(visibleMonth, bounds.first) < 0) return bounds.first;
+	return bounds.last;
+}
+
+/**
+ * Which way selecting `date` pages the grid: towards an outside day's month, or `0` to stay.
+ *
+ * It never pages past a bound — an outside day beyond `endMonth` is still selected, but the grid
+ * stays on the last month, the same limit the arrows and the swipe keep.
+ */
+export function resolveSelectionPage(
+	date: CalendarDate,
+	visibleMonth: CalendarDate,
+	bounds: { first: CalendarDate | null; last: CalendarDate | null }
+): -1 | 0 | 1 {
+	if (isSameMonth(date, visibleMonth) || !isMonthInBounds(date, bounds)) return 0;
+	return compareMonths(date, visibleMonth) > 0 ? 1 : -1;
+}
+
+/**
+ * Which way a screen reader's increment or decrement on the caption pages: `0` at a bound, on a
+ * disabled calendar, or in the years view. These are the same limits that the arrows have.
+ */
+export function resolveCaptionPage({
+	actionName,
+	canGoNext,
+	canGoPrev,
+	isDisabled,
+	view,
+}: {
+	actionName: string;
+	canGoNext: boolean;
+	canGoPrev: boolean;
+	isDisabled: boolean;
+	view: CalendarView;
+}): -1 | 0 | 1 {
+	if (isDisabled || view === "years") return 0;
+	if (actionName === "increment" && canGoNext) return 1;
+	if (actionName === "decrement" && canGoPrev) return -1;
+	return 0;
+}
+
+/** A page the calendar asked for: the month it moved to, and the side that month enters from. */
+export type CalendarPaging = { direction: -1 | 0 | 1; month: CalendarDate | null };
+
+/** No page in flight: the next month change, wherever it comes from, does not slide. */
+export const CALENDAR_NO_PAGING: CalendarPaging = { direction: 0, month: null };
+
+/**
+ * Which way the grid slides the visible month in. It uses the paging direction only while the
+ * calendar itself moved to that month. A month that the parent sets through a controlled `month`
+ * gets `0`. Without this check, reopening a picker on an earlier month after "next" would slide
+ * that month in from the right.
+ */
+export function resolveCommittedPageDirection(paging: CalendarPaging, visibleMonth: CalendarDate): -1 | 0 | 1 {
+	return paging.month && isSameMonth(paging.month, visibleMonth) ? paging.direction : 0;
 }
 
 /**

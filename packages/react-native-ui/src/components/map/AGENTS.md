@@ -29,6 +29,7 @@ no directions.
 | `map-geometry.test.ts` | |
 | `map.variants.ts` | The slotted `tv()`, the axes, the pin outline, anchors, the themed basemap style — type imports only |
 | `map.variants.test.ts` | |
+| `map.render.test.tsx` | Mounted under Jest — the root once measured, callbacks, markers, popups, controls, routes and the outside-a-`Map` errors. Location is driven by spying on the mocked `LocationManager` and delivering fixes to its captured listener |
 
 <!-- registry:omit -->The import-graph rule below is pinned by `src/no-maplibre.test.ts`, one level up.<!-- /registry:omit -->
 

@@ -354,6 +354,27 @@ describe("week start", () => {
 		expect(resolveWeekStart("not a locale!!")).toBe(1);
 	});
 
+	test("reads the device locale when the engine has no Intl.Locale and none is passed", () => {
+		// A plain stub, not a runner's spy: a copied suite runs under Bun, Jest and Vitest alike.
+		const intl: { Locale?: typeof Intl.Locale } = Intl;
+		const original = intl.Locale;
+		const proto = Intl.DateTimeFormat.prototype;
+		const resolvedOptions = proto.resolvedOptions;
+		const real = new Intl.DateTimeFormat().resolvedOptions();
+		let device = "en-US";
+		proto.resolvedOptions = () => ({ ...real, locale: device });
+		intl.Locale = undefined;
+		try {
+			expect(resolveWeekStart(undefined)).toBe(0);
+			device = "ar-EG";
+			expect(resolveWeekStart(undefined)).toBe(6);
+			expect(resolveWeekStart("en-NZ")).toBe(1);
+		} finally {
+			intl.Locale = original;
+			proto.resolvedOptions = resolvedOptions;
+		}
+	});
+
 	test("the region table stands in where Intl has no week info", () => {
 		expect(weekStartFromRegion("US")).toBe(0);
 		expect(weekStartFromRegion("NZ")).toBe(1);
@@ -373,6 +394,12 @@ describe("labels", () => {
 		expect(monday[6]).toBe("Sun");
 		expect(weekdayLabels("en-US", 1, "long")[0]).toBe("Monday");
 		expect(weekdayLabels("en-US", 1, "narrow")[0]).toBe("M");
+	});
+
+	test("keeps the Gregorian calendar whatever calendar the locale prefers", () => {
+		expect(formatMonthYear(d(2026, 10, 5), "en-US-u-ca-persian")).toBe("October 2026");
+		expect(monthNames("en-US-u-ca-islamic")[0]).toBe("January");
+		expect(formatDate(d(2026, 10, 5), { locale: "en-US-u-ca-buddhist", style: "long" })).toBe("October 5, 2026");
 	});
 
 	test("monthNames lists twelve months from January", () => {
@@ -452,5 +479,13 @@ describe("resolveYearSpan", () => {
 
 	test("reaches a century either side when unbounded", () => {
 		expect(resolveYearSpan({ visible: d(2026, 10, 1) })).toEqual({ from: 1926, to: 2126 });
+	});
+
+	test("reaches back from an end month earlier than the visible year, never leaving the span empty", () => {
+		expect(resolveYearSpan({ visible: d(2026, 10, 1), endMonth: d(1900, 1, 1) })).toEqual({ from: 1800, to: 1900 });
+	});
+
+	test("reaches forward from a start month later than the visible year", () => {
+		expect(resolveYearSpan({ visible: d(2026, 10, 1), startMonth: d(2200, 1, 1) })).toEqual({ from: 2200, to: 2300 });
 	});
 });

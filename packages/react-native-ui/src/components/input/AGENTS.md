@@ -23,6 +23,7 @@ Root plus `Input.Group` and its parts: `Prefix`, `Suffix`, `Button`,
 | `input.types.ts` | Prop types shared by two or more parts |
 | `input.variants.ts` | Pure `tv()` slots + resolvers, no RN imports |
 | `input.variants.test.ts` | |
+| `input.render.test.tsx` | Mounted under Jest — typing, controlled/uncontrolled value, focus/blur, disabled and read-only, Field label as accessible name, Input.Group parts and their outside-group errors |
 
 ## Design
 
@@ -131,7 +132,12 @@ or drops its focus.
   slack under a footer's counter. The block takes a `-mt-*` / `-mb-*` equal to
   the multiline `py-*` (the `blockPosition` compounds), the way a horizontal
   `Separator` bleeds through the horizontal inset, so its own padding is all
-  there is on either side.
+  there is on either side. Only the outermost block takes it — the first `start`
+  block and the last `end` block, picked by the pure `resolveOuterBlocks`. A
+  second block in a section would be pulled over its separator. Every block is
+  wrapped in `InputGroupOuterBlockProvider`, outermost or not, and only its
+  boolean changes: a block that stops being outermost when another is appended
+  keeps its subtree mounted, so its controls keep their state and focus.
 - **A `Block` draws no border.** Divide it from the row with a `Separator`, or
   leave it flush. Bare text and `Icon`s in it take the decorator treatment.
 - **`Separator` has no `orientation` prop.** `InputGroupPlacementProvider` tells

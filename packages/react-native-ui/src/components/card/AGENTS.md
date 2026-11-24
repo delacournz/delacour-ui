@@ -22,6 +22,7 @@ A content surface with a header, a body and a footer, built on
 | `card.types.ts` | Prop types shared by two or more parts |
 | `card.variants.ts` | The slotted `tv()`, `resolveCardFooterFill`, `splitCardHeaderChildren` — no RN imports |
 | `card.variants.test.ts` | |
+| `card.render.test.tsx` | Mounted under Jest — parts and header role, context fill/size/stepping, bare-text title, parts-outside-root errors |
 
 ## Design
 

@@ -29,6 +29,7 @@ One number, what it is doing, and the shape it made getting there — a
 | `kpi.types.ts` | Prop types shared by two or more parts |
 | `kpi.variants.ts` | The slotted `tv()`, the axes, and every pure resolver — no RN imports |
 | `kpi.variants.test.ts` | |
+| `kpi.render.test.tsx` | Mounted under Jest — trend and sparkline announcements, loading busy state, `Kpi.Action` hosting a pressable, scrub context, group, parts-outside-root errors |
 
 ## Design
 

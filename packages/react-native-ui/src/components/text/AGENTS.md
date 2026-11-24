@@ -16,6 +16,7 @@ own text inheritance through classNames. Compound root plus thirteen presets:
 | `text.context.tsx` | `TextClassProvider`, `useTextClass()` |
 | `text.variants.ts` | Pure `tv()` + `resolveTextClass`, no RN imports |
 | `text.variants.test.ts` | |
+| `text.render.test.tsx` | Mounted under Jest — heading/link roles per preset, `onPress`, font-scaling props, a11y passthrough, class-cascade context |
 
 ## Design
 

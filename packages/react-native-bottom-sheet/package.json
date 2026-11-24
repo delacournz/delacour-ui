@@ -1,6 +1,6 @@
 {
 	"name": "@delacour/react-native-bottom-sheet",
-	"version": "0.3.0",
+	"version": "0.10.0",
 	"description": "Headless bottom sheet engine for React Native — no tokens, no className",
 	"type": "module",
 	"license": "MIT",
@@ -8,6 +8,10 @@
 		"type": "git",
 		"url": "git+https://github.com/delacournz/delacour-ui.git",
 		"directory": "packages/react-native-bottom-sheet"
+	},
+	"homepage": "https://ui.delacour.co.nz/docs/bottom-sheet",
+	"bugs": {
+		"url": "https://github.com/delacournz/delacour-ui/issues"
 	},
 	"keywords": [
 		"react-native",
@@ -33,7 +37,7 @@
 		"fmt": "biome format --write ./src",
 		"lint": "biome lint --write ./src",
 		"check": "biome check ./src",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "bun check --no-script",
 		"test": "bun test"
 	},
 	"peerDependencies": {
@@ -52,6 +56,6 @@
 		"@types/bun": "^1.3.8",
 		"@types/react": "catalog:",
 		"react-native-teleport": "^1.2.2",
-		"typescript": "~6.0.3"
+		"typescript": "catalog:"
 	}
 }

@@ -28,6 +28,7 @@ parts, every one optional.
 | `page-header.variants.test.ts` | |
 | `page-header.utils.ts` | `formatStatCount`, `resolveStatLabel`, `resolvePageHeaderAvatarLabel`, `resolvePageHeaderCoverStops`, `isEmptyText` |
 | `page-header.utils.test.ts` | |
+| `page-header.render.test.tsx` | Mounted under Jest — title heading, avatar and verified label, cover alt text, stat announcements and presses, actions, parts outside the root throwing |
 
 ## Axes
 

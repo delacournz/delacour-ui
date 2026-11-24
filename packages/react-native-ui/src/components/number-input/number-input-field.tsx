@@ -42,6 +42,7 @@ export function NumberInputField({
 		displayText,
 		fieldRef,
 		inputProps,
+		isDisabled,
 		isEditable,
 		isReadOnly,
 		placeholder,
@@ -79,11 +80,11 @@ export function NumberInputField({
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
-			if (isReadOnly) return;
+			if (isReadOnly || isDisabled) return;
 			if (event.nativeEvent.actionName === "increment") stepBy(1);
 			if (event.nativeEvent.actionName === "decrement") stepBy(-1);
 		},
-		[isReadOnly, stepBy]
+		[isDisabled, isReadOnly, stepBy]
 	);
 
 	const accessibilityValue: AccessibilityValue = {

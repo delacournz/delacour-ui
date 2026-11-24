@@ -19,9 +19,8 @@ import { siteUrl } from "@/lib/shared";
  * is the agent Meta's IPv6 range (2a03:2880::/32) announced itself as on 2026-10-25,
  * a Chrome string with the crawler's name appended.
  *
- * No `Sitemap:` line. Prerendering is off, so nothing produces a page list at
- * build time, and a hand-written sitemap is a transcription that would go stale
- * the first time a page moved.
+ * **`Sitemap:` names `/sitemap.xml`**, which is built per request from the same
+ * Fumadocs source as `/llms.txt` — not a transcription, so it cannot go stale.
  */
 export const BODY = `User-agent: meta-externalagent
 User-agent: meta-externalfetcher
@@ -38,6 +37,8 @@ Disallow: /theme?
 #   ${siteUrl}/llms.txt         an index of every page
 #   ${siteUrl}/llms-full.txt    every page's full content
 #   <any docs URL>.md                         that one page
+
+Sitemap: ${siteUrl}/sitemap.xml
 `;
 
 export const Route = createFileRoute("/robots.txt")({

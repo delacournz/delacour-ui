@@ -1,0 +1,31 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "test-mock-skia",
+	"type": "registry:lib",
+	"title": "Skia mock",
+	"description": "Skia drawn as nothing, with a font that measures, for the render tests of components that install it.",
+	"categories": [
+		"testing"
+	],
+	"registryDependencies": [
+		"test-kit"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [
+		"@jest/globals"
+	],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/test/mocks/skia.ts",
+			"target": "test/mocks/skia.ts",
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../mock-stub",
+					"to": "@registry/lib/test/mock-stub"
+				}
+			]
+		}
+	]
+}

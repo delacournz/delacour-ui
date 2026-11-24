@@ -1,9 +1,17 @@
 {
 	"name": "@delacour/source",
+	"homepage": "https://ui.delacour.co.nz",
+	"bugs": {
+		"url": "https://github.com/delacournz/delacour-ui/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/delacournz/delacour-ui.git"
+	},
 	"version": "0.1.0",
 	"type": "module",
 	"private": true,
-	"packageManager": "bun@1.3.14",
+	"packageManager": "bun@1.4.4",
 	"scripts": {
 		"postinstall": "git rev-parse --git-dir > /dev/null 2>&1 && prek install || true",
 		"dev": "turbo dev --ui tui",
@@ -13,15 +21,16 @@
 		"check": "turbo check",
 		"lint": "turbo lint",
 		"fmt": "turbo fmt",
-		"test": "turbo test test:release test:scripts",
+		"test": "turbo test test:render test:release test:scripts",
 		"test:release": "bun test ./.github/*.test.ts",
 		"test:scripts": "bun test ./scripts/*.test.ts",
 		"signoff": "bun scripts/signoff.ts",
 		"changeset": "changeset",
 		"version": "changeset version && bun install --lockfile-only",
 		"verify:expo": "cd packages/cli && bun scripts/verify-expo.ts",
-		"cli:link": "cd packages/cli && bun run build && bun scripts/link.ts link",
-		"cli:unlink": "cd packages/cli && bun scripts/link.ts unlink",
+		"cli:link": "bun packages/cli/scripts/link.ts link",
+		"cli:unlink": "bun packages/cli/scripts/link.ts unlink",
+		"cli:status": "bun packages/cli/scripts/link.ts status",
 		"nuke": "rm -rf node_modules ./apps/**/node_modules ./packages/**/node_modules && bun install --no-cache -f",
 		"previews": "turbo previews --filter=@delacour/playground",
 		"previews:verify": "turbo previews:verify --filter=@delacour/playground",
@@ -44,9 +53,11 @@
 			"react-native-reanimated": "4.7.1",
 			"react-native-safe-area-context": "~5.10.1",
 			"react-native-screens": "~4.30.0",
-			"react-native-skia": "3.7.3",
+			"react-native-skia": "3.9.0",
 			"react-native-svg": "15.16.0",
-			"react-native-worklets": "0.13.0"
+			"react-native-worklets": "0.13.0",
+			"typescript": "^7.0.2",
+			"typescript-6": "npm:typescript@~6.0.3"
 		}
 	},
 	"devDependencies": {
@@ -58,7 +69,7 @@
 		"@types/bun": "^1.4.3",
 		"@types/node": "^22.20.5",
 		"turbo": "^2.11.9",
-		"typescript": "~6.0.3"
+		"typescript": "catalog:"
 	},
 	"overrides": {
 		"@babel/core": "^7.29.7",

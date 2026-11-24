@@ -52,7 +52,7 @@ is one line there.
 
 ```bash
 bun run check              # biome
-bun run typecheck          # tsc --noEmit
+bun run typecheck          # bun check --no-script
 ```
 
 There are no tests. `ok` and `err` are three lines each and the types are the

@@ -66,6 +66,9 @@ export function Hero(): ReactElement {
 					<PillLink params={{ _splat: "native/components" }} to="/docs/$" variant="ghost">
 						{HERO.secondary}
 					</PillLink>
+					<Link className={`${ARROW_LINK} px-2`} to="/compare">
+						{HERO.compare}
+					</Link>
 					<a className={`${ARROW_LINK} px-2`} href={GITHUB_URL} rel="noreferrer noopener" target="_blank">
 						{HERO.github}
 					</a>

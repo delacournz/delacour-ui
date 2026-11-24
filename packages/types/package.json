@@ -9,10 +9,10 @@
 		"fmt": "biome format --write ./src",
 		"lint": "biome lint --write ./src",
 		"check": "biome check ./src",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "bun check --no-script"
 	},
 	"devDependencies": {
 		"@delacour/tsconfig": "workspace:*",
-		"typescript": "~6.0.3"
+		"typescript": "catalog:"
 	}
 }

@@ -19,6 +19,7 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
 | `fab.types.ts` | `FabSharedProps` — the axes `Fab` and `Fab.Group` both take |
 | `fab.variants.ts` | The slotted `tv()` and the pure resolvers, no RN imports |
 | `fab.variants.test.ts` | |
+| `fab.render.test.tsx` | Mounted under Jest — role/name, disabled, onPress, extended label, group open/close (controlled and uncontrolled), actions, scrim, Android back, out-of-root errors |
 
 ## Design
 

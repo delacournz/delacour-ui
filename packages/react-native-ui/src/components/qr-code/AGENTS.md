@@ -30,6 +30,7 @@ renderer can use.
 | `qr-code.test-helpers.ts` | **Test-only** reverse reader: format word → unmask → zigzag → de-interleave → syndromes → Reed–Solomon correction → decode |
 | `qr-code.fixtures.ts` | **Test-only** golden matrices from an independent encoder |
 | `qr-code.*.test.ts` | One per module: `gf`, `tables`, `format`, `matrix`, `mask`, `encode`, `logo`, `path`, `variants` |
+| `qr-code.render.test.tsx` | Mounted under Jest — image role and label, decorative, encode errors, logo part, dev warnings |
 
 Every `qr-code.*.ts` imports nothing from React or React Native, so the whole
 encoder and the path builder are unit-testable. Only `qr-code.tsx`, `qr-code-logo.tsx`, `qr-code.context.tsx` and

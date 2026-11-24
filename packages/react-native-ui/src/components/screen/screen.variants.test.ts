@@ -87,6 +87,12 @@ describe("footerAboveKeyboard", () => {
 		expect(footerAboveKeyboard(58)).toBe(86);
 		expect(footerAboveKeyboard(0)).toBe(CHROME);
 	});
+
+	test("a keyboardOffset adds exactly that distance, for a bar riding the keyboard under the footer", () => {
+		for (const offset of [0, 42, 56]) {
+			expect(footerAboveKeyboard(58, offset) - footerAboveKeyboard(58)).toBe(offset);
+		}
+	});
 });
 
 describe("the layout constants", () => {

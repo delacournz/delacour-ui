@@ -34,6 +34,7 @@ timer or the trigger.
 | `tooltip.context.tsx` | **Leaf.** `TooltipContext`, `useTooltip`, and the content context the arrow and text read |
 | `tooltip.variants.ts` | The slotted `tv()` — `content`, `arrow`, `text`, `title`, `description` per variant — the defaults, and the pure `resolveTooltipDuration`, `shouldTooltipActivate`, `resolveTooltipAccessibility`, `readableTextOf` |
 | `tooltip.variants.test.ts` | Both variants and their tokens in both themes, the three resolvers, the defaults |
+| `tooltip.render.test.tsx` | Mounted under Jest — open on long press / press, controlled and default open, one-at-a-time, trigger label and hint, screen-reader gating, parts outside the root throw. Runs as Android: the `longpress` action is only wired there |
 | `tooltip-trigger.tsx` | `Tooltip.Trigger` — `Pressable`, or `asChild` to donate the long press or the press; the anchor; the label or hint |
 | `tooltip-content.tsx` | `Tooltip.Content` — the portal, the panel, the timer |
 | `tooltip-arrow.tsx` | `Tooltip.Arrow` — Popover's `AnchoredArrow` in the variant's paint |

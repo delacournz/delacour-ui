@@ -22,13 +22,14 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 | `date-picker-value.tsx` | `DatePicker.Value` — the formatted selection or the placeholder; a half range ends on a muted "End" |
 | `date-picker-icon.tsx` | `DatePicker.Icon` — `IconCalendar1`, muted or destructive |
 | `date-picker-content.tsx` | `DatePicker.Content` — the sheet (scrim, close, title, calendar, footer), or the calendar in place when inline |
-| `date-picker-calendar.tsx` | `DatePicker.Calendar` — `Calendar` bound to the picker, every tap routed through `select` |
+| `date-picker-calendar.tsx` | `DatePicker.Calendar` — `Calendar` bound to the picker, every tap routed through `select`; keyed by `openCount`, so each opening starts on `initialView` (empty) or the value's days |
 | `date-picker-done.tsx` | `DatePicker.Done` — closes |
 | `date-picker-clear.tsx` | `DatePicker.Clear` — empties, reports, stays open |
 | `date-picker.context.tsx` | `DatePickerProvider`, `useDatePicker()`, `useDatePickerContext()`, `useDatePickerPart()` |
 | `date-picker.types.ts` | `DatePickerSelectionProps` (the mode union) and `DatePickerProps` |
 | `date-picker.variants.ts` | Slotted `tv()`, the trigger class, and every pure rule: close, format, a11y value, placeholder, axes |
 | `date-picker.variants.test.ts` | |
+| `date-picker.render.test.tsx` | Mounted under Jest — trigger state, sheet open/close, `onOpenChange`/`onValueChange`, single/range/multiple finish rules, Clear/Done, inline, controlled and uncontrolled value and open, parts outside the root |
 
 ## Imports, never duplicates
 
@@ -45,22 +46,37 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   asserts the trigger's class is a superset. A picker beside an `Input` is the same box by
   construction, invalid outranking focus included.
 
+## Controlled or not
+
+- **Passing `value` controls the picker, even as `undefined`.** `controlledValue` checks
+  `"value" in props`, not `value === undefined`, and reads `undefined` as empty. A form field
+  starts `undefined` and resets to it; a value test would flip the picker to its own state and keep
+  showing a day the form no longer holds. Use `null` (or an empty range or list) for "none".
+
 ## The finish rule
 
 - **The sheet closes when the selection is finished, not when it changes.**
   `resolveShouldClose`: a single day → yes, `null` → no; a range → only with both ends; multiple →
   never, Done closes it. Closing waits `DATE_PICKER_CLOSE_DELAY` (120 ms) so the filled circle is
   seen; under calm motion it does not wait, because the pause is there for the eye and reads as
-  lag otherwise.
+  lag otherwise. Every tap cancels the last tap's pending close, so starting a new range inside
+  that pause keeps the sheet open.
+- **A re-tap on the shown single day confirms it.** The calendar's `applySingleTap` reports it as
+  `null`; the picker keeps the day, reports nothing and closes. A user who opens a date of birth to
+  check it and taps it must not clear it. Clear (`isClearable`) is the way to empty a single day.
 - **A half-picked range is never reported.** The first tap is held in `rangeDraft` inside the
   root; `onValueChange` fires once the range is complete, and on Clear. Dismissing the sheet —
-  swipe, scrim, close, Done — drops the draft, so the last complete range stands. A caller who
+  swipe, scrim, close, Done, or a controlled `isOpen={false}` — drops the draft and any pending
+  close, so the last complete range stands. A caller who
   reads the value on every change would otherwise have to handle `{ start, end: null }` everywhere
   they use it.
 - **While open, the trigger shows the draft.** "12 Oct 2026 –" with a muted "End" behind the
   sheet says what the next tap does.
 - **Clear empties and stays open.** `null`, `{ start: null, end: null }` or `[]`, reported. A
   clear that also closed would make "pick a different range" two openings.
+- **`onOpenChange(false)` is the start of a close, `onClose` the end.** The sheet's own `onClose`
+  fires once it has slid all the way down, by any path. Move focus to the next field there, not
+  in `onOpenChange`, or the keyboard rises under a sheet that is still leaving.
 - **Auto-close plays `impactLight`** through `pressable`'s `playHaptic` — the calendar already
   ticked on the tap — and announces "Selected …" with the long date.
 
@@ -69,7 +85,10 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 - **Open is focus.** `resolveTriggerState` maps `isOpen` onto the box's `isFocused`, so the ring
   shows while the sheet is up. A disabled trigger is never focused.
 - **Disabled and read-only never open**, from the trigger, a `Field.Label` tap or `open()`. Read-only
-  shows the value at full strength; disabled fades it.
+  shows the value at full strength; disabled fades it. Only disabled sets `accessibilityState.disabled`,
+  so a screen reader does not read a read-only value as dimmed. A trigger that cannot open drops the
+  "Opens calendar" hint, its press handler and its press feedback. Read-only also drops the button
+  role and reads as text, so VoiceOver does not offer a double-tap that does nothing.
 - **`Field` cascade, nearest wins.** `isInvalid ?? field.isInvalid`, `isDisabled ??
   field.isDisabled` — `??`, so `isInvalid={false}` opts out. The accessible name is
   `accessibilityLabel ?? field.label ?? "Date"`, and the root registers `open` with the field's
@@ -84,14 +103,14 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 
 - **Parts derive their `testID` from the root's**, through the calendar's `resolvePartTestID`:
   `testID="stay"` names the trigger `stay-trigger`, the calendar `stay-calendar` (so a day is
-  `stay-calendar-day-2026-10-12`), and the sheet's `stay-title`, `stay-close`, `stay-clear` and
+  `stay-calendar-day-2026-10-12`), and the sheet's `stay-title`, `stay-description`, `stay-close`, `stay-clear` and
   `stay-done`. The default anatomy renders every one of those parts without the caller writing
   them, and a recorded flow still has to reach a particular day. No root `testID`, no part ids.
 
 ## Sheet
 
 - **`DatePicker.Content` is a whole `BottomSheet`**: portal, overlay, container, close, title,
-  calendar bare on the sheet's surface, and a footer. Single gets a footer only when
+  the root's `description` under it when given, calendar bare on the sheet's surface, and a footer. Single gets a footer only when
   `isClearable`; range and multiple always do, because Done is how multiple ends and how a range is
   abandoned. `isClearable` defaults on for range and multiple, off for single.
 - **The calendar keeps its own size.** `calendarSize` (default `md`) is independent of the trigger's
@@ -100,6 +119,33 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   Overlays category ships one, without a breaking change. Today: `sheet` (default) and `inline`,
   which draws the calendar on a card in place and renders no trigger. There is no popover import
   here and must not be until that merges.
+
+## Month bounds
+
+- **`defaultMonth`, `startMonth` and `endMonth` pass through to the `Calendar`**, so the default
+  anatomy can open near a likely date and bound paging and the year list without a custom
+  `DatePicker.Calendar`. Omitted, the calendar derives `startMonth`/`endMonth` from
+  `minDate`/`maxDate`, and opens on the selection's month, else today's.
+- **`initialView` and `defaultMonth` apply only while the picker is empty.** With a value, the
+  calendar opens on that value's month of days, so an edit starts where the last pick ended rather
+  than at the year list or a month chosen for an empty field. The root counts openings
+  (`openCount`) and keys the calendar by it, so every opening starts fresh — including a sheet
+  reopened before its close settled, or one kept mounted — rather than where the last one was left.
+- **A date of birth sets `maxDate` and opens on the years.** Without `maxDate` the picker allows
+  future days and the year list runs a century ahead:
+
+  ```tsx
+  const now = today();
+  <DatePicker
+    defaultMonth={{ year: now.year - 30, month: 1, day: 1 }}
+    initialView="years"
+    maxDate={addYears(now, -18)}
+    minDate={{ year: now.year - 120, month: 1, day: 1 }}
+    onValueChange={field.onChange}
+    title="Date of birth"
+    value={field.value ?? null}
+  />
+  ```
 
 ## Open questions
 

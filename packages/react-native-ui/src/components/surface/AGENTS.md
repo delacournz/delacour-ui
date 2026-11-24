@@ -15,6 +15,7 @@ components built on it (`Card`, `Alert`) can read the plane they sit on.
 | `surface.context.tsx` | `SurfaceProvider`, `useSurface()`, `useSurfaceContext()` |
 | `surface.variants.ts` | The `tv()`, `SURFACE_FOREGROUND_TOKENS`, and the two pure resolvers — no RN imports |
 | `surface.variants.test.ts` | |
+| `surface.render.test.tsx` | Mounted under Jest — children and forwarded props, no default role, the context's variant/plane/material, nesting steps, tray reset, `useSurface` throwing outside a surface |
 
 ## Design
 

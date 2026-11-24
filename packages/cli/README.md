@@ -43,16 +43,34 @@ Unlike shadcn, the target is Expo, which changes real things:
 | `init [components...]` | Do that setup deliberately — choose the source directory, or a shared package |
 | `list` / `search <q>` | Browse the registry |
 | `view <name>` | One item: its files, what it pulls in, what it installs |
-| `update [components...]` | Bring copied components up to the registry, merged with your edits |
+| `update [components...]` | Bring copied components up to the registry, merged with your edits, and `native-components.json` up to this CLI's `version` |
 | `diff [name]` | What `update` would change, without changing it |
 | `doctor` | Check this app is wired up correctly |
 | `info` | The resolved config and what was detected |
 | `skills` | Install the agent skill into Claude Code, Cursor, OpenCode or Codex |
+| `telemetry [status\|enable\|disable]` | Show whether anonymous usage telemetry is on, or switch it |
 | `mcp` | Run as an MCP server, so an agent can browse and add components |
 
 Every registry-reading command takes `--registry <url>` (a URL,
 `github:owner/repo`, or a local path), `--ref <git-ref>`, `--offline`, and
 `--cwd <path>`.
+
+## Telemetry
+
+The CLI sends anonymous usage data — the command, the names of the flags you typed (never their
+values), the components you asked for from the official registry, the outcome and duration, your
+package manager and Expo SDK, and your OS, runtime and whether it ran in CI or from a coding agent.
+Never source code, file names or paths, remote URLs, error messages or your IP address. It prints a
+notice the first time.
+
+```bash
+delacour telemetry            # is it on, and why
+delacour telemetry disable    # off, for this machine
+```
+
+`DO_NOT_TRACK=1`, `DELACOUR_TELEMETRY_DISABLED=1` or `DELACOUR_CLI_TELEMETRY_DISABLED=1` also turn it
+off, and `DELACOUR_TELEMETRY_DEBUG=1` prints what would be sent instead of sending it. The full list
+is at <https://ui.delacour.co.nz/docs/native/cli#telemetry>.
 
 ## What a component needs installed
 
@@ -65,8 +83,10 @@ whether or not any are missing:
 │    already installed — clsx, react-native-reanimated, react-native-svg, tailwind-variants, …
 ```
 
-Then it asks. `--install` answers yes without asking, `--no-install` answers no, and a run with
-nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead:
+Then it asks which of them to install — a checkbox per package, all ticked, naming the command
+and the components that need it; the ones you untick are printed as commands. `--install` installs
+every one without asking, `--no-install` none, and a run with nobody to ask — a script, CI, an
+agent — installs nothing and prints the commands instead:
 
 ```bash
 npx delacour@latest add bottom-sheet --install

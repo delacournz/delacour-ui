@@ -43,13 +43,23 @@ export const comboboxVariants = tv({
 		clear: "items-center justify-center",
 		createRow: "",
 		createLabel: "",
-		/** The sheet's title, chips, search field and result count, above the rows. */
-		header: "gap-3 pb-3",
+		/**
+		 * The sheet's title, chips, search field and result count, pinned above
+		 * the rows. Opaque, so rows scroll under it unseen. It carries the list's
+		 * top padding (`pt-2`, taken off `sheetBody`), so it pins where it rests.
+		 */
+		header: "gap-3 bg-popover pb-3 pt-2",
+		/**
+		 * The sheet's close, still absolute in the header's corner. `top-6` is the
+		 * engine's `top-4` plus the `pt-2` the header now carries, so the close
+		 * sits where it did when that padding was the list's.
+		 */
+		headerClose: "top-6",
 		/** The result count under the search field. */
 		results: "text-muted-foreground",
 		empty: "items-center justify-center py-8",
-		/** Overrides the sheet's list gutter gap: rows touch, the way a list's do. */
-		sheetBody: "gap-0",
+		/** Overrides the sheet's list gutter gap — rows touch, the way a list's do — and hands its top padding to `header`. */
+		sheetBody: "gap-0 pt-0",
 	},
 	variants: {
 		variant: { primary: {}, secondary: {}, etched: {} },

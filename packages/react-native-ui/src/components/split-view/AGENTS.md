@@ -25,6 +25,7 @@ over its table.
 | `split-view.types.ts` | `SplitViewSlotProps`, `SplitViewPaneProps` |
 | `split-view.variants.ts` | The slotted `tv()` and every pure resolver, no RN imports |
 | `split-view.variants.test.ts` | |
+| `split-view.render.test.tsx` | Mounted under Jest — drag row role/name/value, increment/decrement/activate actions, controlled vs uncontrolled `snapIndex`, `onSnapIndexChange`, disabled, `useSplitView()`, parts outside a root, child-shape and range warnings, and real pan / tap through `fireGestureHandler` (the gestures carry `split-view-pan` / `split-view-tap` test IDs; no pixels move) |
 
 ## SplitView, Splitter or BottomSheet
 

@@ -2,7 +2,7 @@ import { type ReactElement, type ReactNode, useEffect, useId } from "react";
 import { StyleSheet, View } from "react-native";
 import { Portal } from "react-native-teleport";
 import { useOptionalOverlay } from "./overlay.context";
-import { type OverlayLayer, zIndexOfOverlay } from "./overlay-registry";
+import { isBelowTopModal, type OverlayLayer, topModalOverlay, zIndexOfOverlay } from "./overlay-registry";
 
 export type OverlayPortalProps = {
 	/** Which band of the z-order this overlay draws in. */
@@ -14,6 +14,13 @@ export type OverlayPortalProps = {
 	 * `useId()` of the portal's own.
 	 */
 	id?: string;
+	/**
+	 * The overlay is playing its exit animation — pass
+	 * `useOverlayPresence().phase === "exiting"`. An exiting modal stops hiding
+	 * the app from screen readers, so `onExited` can move focus back to the
+	 * trigger. Default false.
+	 */
+	isExiting?: boolean;
 	/** Render where it is written instead of teleporting. Default false. */
 	isInline?: boolean;
 	/** The teleport host. Default `"root"` — the one `OverlayProvider`'s teleport provider fills the app with. */
@@ -35,6 +42,11 @@ let hasWarnedMissingProvider = false;
  * an overlay with no scrim — a toast, a tooltip — leaves the app under it
  * interactive.
  *
+ * While a modal overlay is open above it, the frame is hidden from screen
+ * readers, so VoiceOver and TalkBack cannot leave the top dialog for one under
+ * it. A modal with `isInline` or a custom `hostName` still stacks this way, but
+ * does not make `OverlayProvider` hide the app content, which may hold it.
+ *
  * Without an `OverlayProvider` above, or with `isInline`, the children render
  * where they are written, in an absolute fill of the nearest positioned
  * ancestor — and the missing provider warns once in development.
@@ -43,6 +55,7 @@ export function OverlayPortal({
 	layer,
 	children,
 	id,
+	isExiting = false,
 	isInline = false,
 	hostName = "root",
 }: OverlayPortalProps): ReactElement {
@@ -50,13 +63,22 @@ export function OverlayPortal({
 	const overlayId = id ?? ownId;
 	const registry = useOptionalOverlay();
 
+	// Only the `"root"` host sits beside the provider's app content. Inline, or
+	// in another host, the overlay may be inside that content, so its modal must
+	// not hide it.
+	const isInApp = isInline || hostName !== "root";
 	const present = registry?.present;
 	const dismissed = registry?.dismissed;
 	useEffect(() => {
 		if (present === undefined || dismissed === undefined) return;
-		present(overlayId, layer);
+		present(overlayId, layer, isInApp);
 		return () => dismissed(overlayId);
-	}, [present, dismissed, overlayId, layer]);
+	}, [present, dismissed, overlayId, layer, isInApp]);
+
+	const exiting = registry?.exiting;
+	useEffect(() => {
+		exiting?.(overlayId, isExiting);
+	}, [exiting, overlayId, isExiting]);
 
 	useEffect(() => {
 		if (!__DEV__ || registry !== null || isInline || hasWarnedMissingProvider) return;
@@ -66,9 +88,20 @@ export function OverlayPortal({
 		);
 	}, [registry, isInline]);
 
+	// Screen readers stay inside the top modal. Its frame is modal for
+	// VoiceOver, and every frame drawn under it is hidden on both platforms:
+	// they share teleport's host, so hiding the app content does not cover them.
 	const zIndex = registry === null ? 0 : zIndexOfOverlay(registry.state, overlayId);
+	const isTopModal = registry !== null && topModalOverlay(registry.state) === overlayId;
+	const isHidden = registry !== null && isBelowTopModal(registry.state, overlayId);
 	const frame = (
-		<View pointerEvents="box-none" style={[StyleSheet.absoluteFill, { zIndex }]}>
+		<View
+			accessibilityElementsHidden={isHidden}
+			accessibilityViewIsModal={isTopModal}
+			importantForAccessibility={isHidden ? "no-hide-descendants" : "auto"}
+			pointerEvents="box-none"
+			style={[StyleSheet.absoluteFill, { zIndex }]}
+		>
 			{children}
 		</View>
 	);

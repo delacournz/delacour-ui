@@ -28,6 +28,7 @@ track, a hex field and preset swatches. Compound root plus nine parts. Presents 
 | `color-picker-trigger.tsx` | `ColorPicker.Trigger` — the sheet's row |
 | `color-picker-content.tsx` | `ColorPicker.Content` — a column inline, the sheet's panel otherwise |
 | `color-picker-sheet.tsx` | The one file that imports `BottomSheet` |
+| `color-picker.render.test.tsx` | Mounted under Jest — adjustable area/hue/opacity actions, hex field commit, swatches, controlled and uncontrolled, disabled/read-only, Field labels, sheet trigger and open state |
 
 ## Design
 

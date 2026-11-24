@@ -9,6 +9,7 @@ import {
 	parseTurboSummary,
 	renderReport,
 	signoffArgv,
+	turboEnv,
 	turboTaskName,
 	umbrellaEarned,
 } from "./signoff";
@@ -48,15 +49,38 @@ describe("planChecks", () => {
 		expect(applicable(["bun.lock"])).toContain("registry");
 	});
 
-	test("a docs-site or playground change runs the always-on checks and the copied tests, not the registry", () => {
-		expect(applicable(["apps/web/src/routes/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
-		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
+	test("a docs-site, playground or workflow change runs the always-on checks only", () => {
+		expect(applicable(["apps/web/src/routes/index.tsx"])).toEqual([...ALWAYS_CONTEXTS]);
+		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS]);
+		expect(applicable([".github/workflows/ci.yml"])).toEqual([...ALWAYS_CONTEXTS]);
+		expect(applicable(["scripts/signoff.ts"])).toEqual([...ALWAYS_CONTEXTS]);
 	});
 
-	test("every change but markdown runs the copied tests", () => {
+	test("anything a copied app is built from runs the copied tests", () => {
+		expect(applicable(["packages/react-native-ui/src/components/button/button.tsx"])).toContain("tests");
+		expect(applicable(["packages/react-native-charts/src/index.ts"])).toContain("tests");
+		expect(applicable(["packages/react-native-bottom-sheet/src/index.ts"])).toContain("tests");
 		expect(applicable(["packages/cli/src/registry/test-runner.ts"])).toContain("tests");
+		expect(applicable(["packages/design-system/src/convert.ts"])).toContain("tests");
+		expect(applicable(["registry/r/button.json"])).toContain("tests");
 		expect(applicable(["bun.lock"])).toContain("tests");
 		expect(applicable(["README.md"])).not.toContain("tests");
+	});
+
+	test("each runner keeps its app between signoffs, so a rerun skips the scaffold and the install", () => {
+		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
+		for (const step of tests?.run ?? []) expect(step.argv).toContain("--keep");
+	});
+
+	test("typecheck and build never run at once — both vite build apps/web into .output", () => {
+		const locksOf = (context: string) => SIGNOFF_CHECKS.find((check) => check.context === context)?.locks ?? [];
+		const shared = locksOf("typecheck").filter((lock) => locksOf("build").includes(lock));
+		expect(shared.length).toBeGreaterThan(0);
+	});
+
+	test("the runners that run side by side each take a share of the cores, not all of them", () => {
+		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
+		for (const step of tests?.run ?? []) expect(step.argv).toContain("--max-workers");
 	});
 
 	test("the copied tests run under every runner a consumer may use", () => {
@@ -468,17 +492,51 @@ describe("drift guard", () => {
 		expect(contexts.sort()).toEqual([...REQUIRED_CONTEXTS].sort());
 	});
 
-	test("ci.yml no longer runs on an ordinary pull request or a push to develop", async () => {
-		// The reason this file exists: those runs were billed twice for work already verified locally.
+	test("ci.yml signs off every non-draft same-repo pull request, and never runs on a push to develop", async () => {
+		// Every push to a pull request, and marking a draft ready, runs the checks; a draft or a fork's
+		// pull request runs nothing (a fork's token can neither install `@delacournz/*` nor write a status).
 		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
-			on: Record<string, { branches?: string[] } | null>;
-			jobs: Record<string, { if?: string }>;
+			on: { push?: { branches?: string[] }; pull_request?: { types?: string[] } };
+			jobs: Record<string, { if?: string; needs?: string | string[] }>;
 		};
 		expect(workflow.on.push?.branches ?? []).not.toContain("develop");
-		if ("pull_request" in workflow.on) {
-			for (const [name, job] of Object.entries(workflow.jobs)) {
-				expect({ name, gated: job.if?.includes("changeset-release/develop") ?? false }).toEqual({ name, gated: true });
-			}
+		expect([...(workflow.on.pull_request?.types ?? [])].sort()).toEqual(
+			["opened", "ready_for_review", "reopened", "synchronize"].sort()
+		);
+		const gate = workflow.jobs.resolve?.if ?? "";
+		expect(gate).toContain("github.event.pull_request.draft == false");
+		expect(gate).toContain("github.event.pull_request.head.repo.full_name == github.repository");
+		expect(gate).not.toContain("changeset-release/develop");
+		const signoff = workflow.jobs.signoff?.if ?? "";
+		expect(signoff).toContain("needs.resolve.result == 'success'");
+		expect(signoff).toContain("needs.resolve.outputs.sign == 'true'");
+	});
+
+	test("ci.yml's dispatch picks report or signoff from a dropdown, with an optional PR and SHA", async () => {
+		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
+			on: { workflow_dispatch: { inputs: Record<string, { type: string; required?: boolean; options?: string[] }> } };
+		};
+		const inputs = workflow.on.workflow_dispatch.inputs;
+		expect(inputs.mode?.type).toBe("choice");
+		expect(inputs.mode?.options).toEqual(["report", "signoff"]);
+		expect(inputs.pr).toMatchObject({ type: "string", required: false });
+		expect(inputs["signoff-sha"]).toMatchObject({ type: "string", required: false });
+	});
+
+	const RESOLVED_SHA = ["$", "{{ needs.resolve.outputs.sha }}"].join("");
+
+	test("every ci.yml job tests the commit resolve picked, so a signoff covers the tree it ran", async () => {
+		// A dispatch for a PR or SHA runs on the dispatched ref's workflow file. Without an explicit
+		// checkout of the resolved SHA, the jobs would test that ref and sign a commit they never saw.
+		const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/ci.yml").text()) as {
+			jobs: Record<string, { needs?: string | string[]; steps?: { uses?: string; with?: { ref?: string } }[] }>;
+		};
+		for (const [name, job] of Object.entries(workflow.jobs)) {
+			if (name === "resolve") continue;
+			const needs = [job.needs ?? []].flat();
+			expect({ name, needsResolve: needs.includes("resolve") }).toEqual({ name, needsResolve: true });
+			const checkout = job.steps?.find((step) => step.uses?.startsWith("actions/checkout@"));
+			if (checkout) expect({ name, ref: checkout.with?.ref }).toEqual({ name, ref: RESOLVED_SHA });
 		}
 	});
 
@@ -492,5 +550,24 @@ describe("drift guard", () => {
 	test("contexts are unique", () => {
 		const contexts = SIGNOFF_CHECKS.map((check) => check.context);
 		expect(new Set(contexts).size).toBe(contexts.length);
+	});
+});
+
+describe("turboEnv", () => {
+	test("points every worktree at one turbo cache, under the git common dir", () => {
+		const env = turboEnv({ PATH: "/bin" }, "/repo/.git", { force: false });
+		expect(env.TURBO_CACHE_DIR).toBe("/repo/.git/turbo-cache");
+		expect(env.PATH).toBe("/bin");
+		expect(env.TURBO_FORCE).toBeUndefined();
+	});
+
+	test("keeps a cache dir the caller already chose", () => {
+		expect(turboEnv({ TURBO_CACHE_DIR: "/elsewhere" }, "/repo/.git", { force: false }).TURBO_CACHE_DIR).toBe(
+			"/elsewhere"
+		);
+	});
+
+	test("--force reruns every task rather than replaying the cache", () => {
+		expect(turboEnv({}, "/repo/.git", { force: true }).TURBO_FORCE).toBe("true");
 	});
 });

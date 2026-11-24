@@ -250,6 +250,37 @@ const SHOTS: Shot[] = [
 	},
 	{ id: "67-cli-mcp-wiring-desktop-dark", path: "/docs/native/cli/mcp#wiring-it-up", frame: "desktop", theme: "dark" },
 	{ id: "68-cli-troubleshooting-mobile-dark", path: "/docs/native/cli/troubleshooting", frame: "phone", theme: "dark" },
+	{ id: "69-cli-updating-desktop-dark", path: "/docs/native/cli/updating", frame: "desktop", theme: "dark" },
+	{
+		id: "70-cli-updating-config-desktop-dark",
+		path: "/docs/native/cli/updating#updating-native-componentsjson",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{ id: "71-cli-updating-desktop-light", path: "/docs/native/cli/updating", frame: "desktop", theme: "light" },
+	{ id: "72-cli-updating-mobile-dark", path: "/docs/native/cli/updating", frame: "phone", theme: "dark" },
+	{
+		id: "73-cli-configuration-version-desktop-dark",
+		path: "/docs/native/cli/configuration#version",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{ id: "74-compare-hub-desktop-dark", path: "/compare", frame: "desktop", theme: "dark" },
+	{
+		id: "75-compare-rnr-full-desktop-dark",
+		path: "/compare/react-native-reusables",
+		frame: "desktop",
+		theme: "dark",
+		full: true,
+	},
+	{ id: "76-compare-bna-full-phone-dark", path: "/compare/bna-ui", frame: "phone", theme: "dark", full: true },
+	{ id: "77-home-faq-desktop-dark", path: "/#faq", frame: "desktop", theme: "dark" },
+	{
+		id: "78-docs-screen-keyboard-toolbars-desktop-dark",
+		path: "/docs/native/components/screen#keyboard-toolbars",
+		frame: "desktop",
+		theme: "dark",
+	},
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

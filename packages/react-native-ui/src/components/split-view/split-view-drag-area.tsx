@@ -85,6 +85,7 @@ export function SplitViewDragArea({
 	const projected = useSharedValue(-1);
 
 	const pan = usePanGesture({
+		testID: "split-view-pan",
 		enabled: !isDisabled,
 		minDistance: 0,
 		shouldCancelWhenOutside: false,
@@ -141,6 +142,7 @@ export function SplitViewDragArea({
 	});
 
 	const tap = useTapGesture({
+		testID: "split-view-tap",
 		enabled: !isDisabled,
 		maxDistance: SPLIT_VIEW_TAP_SLOP,
 		onDeactivate: (event) => {

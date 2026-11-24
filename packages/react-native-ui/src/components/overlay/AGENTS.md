@@ -16,14 +16,16 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/overlay` |
 | `overlay.tsx` | `Overlay` — the root is the provider: teleport's `PortalProvider` (skipped when one is already above), the registry and the touch-start fan-out; the `Object.assign` names `Portal` and `Scrim`. `OverlayProvider` is the same component, under the name a root layout reads best with |
-| `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
+| `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, reports `isExiting`, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `bg-overlay`, opacity follows presence, hidden from assistive technology |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext` and their hooks. `bottom-sheet/` imports it |
-| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `OVERLAY_LAYER_BASE` |
-| `overlay-presence.ts` | **Pure.** `reducePresence` — `closed → entering → open → exiting → closed` |
+| `overlay-registry.ts` | **Pure.** The z-order reducer, `zIndexOfOverlay`, `topOverlay`, `isTopOverlay`, `hasModalOverlay`, `hidesAppContent`, `topModalOverlay`, `isBelowTopModal`, `OVERLAY_LAYER_BASE` |
+| `overlay-presence.ts` | **Pure.** `reducePresence` — `closed → entering → open → exiting → closed`; `isCurrentFinish` |
+| `overlay-teleport.ts` | **Pure.** `TELEPORT_INLINE`, `isTeleportInline` — whether teleport draws an overlay in place, as its Jest mock does |
 | `overlay.variants.ts` | `overlayVariants` (`scrim`), `OVERLAY_MOTION`, `OVERLAY_SCRIM_TOKEN` |
 | `use-overlay-presence.ts` | `useOverlayPresence` — keeps an overlay mounted through its exit, drives `progress` 0 → 1 |
 | `use-overlay-back-handler.ts` | `useOverlayBackHandler` — Android back, only while the overlay is the top |
+| `overlay.render.test.tsx` | Mounted under Jest — provider and portal mounting, registry entry and z-order while mounted, scrim semantics and dismiss, app content hidden behind a modal only when teleport moves it out and reachable again while it exits, a dialog under another dialog hidden, presence unmount after exit and one timing per transition under owner re-renders, back handler (top-only, toast excluded), touch fan-out |
 | `*.test.ts` | The registry, the presence machine, the scrim token and the motion constants |
 
 ## Design
@@ -52,11 +54,15 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 - **Presence is a reducer so an interrupted animation is boring.** A re-open mid-exit goes back
   to `entering` from wherever `progress` is; a close mid-entrance goes to `exiting`. The finish
   callback reaches React only when the timing ran to the end, and a stale finish (`entered` while
-  `exiting`) is a no-op in the reducer, so the hook keeps no generation counter.
+  `exiting`) is a no-op in the reducer. A finish can also be queued for React just as the owner
+  flips `isOpen`, before the new phase renders, so each timing carries its transition generation
+  and `isCurrentFinish` checks it and the requested state before the hook sends the finish or calls
+  `onEntered`/`onExited`.
 - **Overlay motion is behaviour, not decoration.** `isMotionCalm` does not still it — an overlay
   that did not appear would change what the screen says — but every animation is finite, so an E2E
   runner's settle wait ends anyway. Under reduce motion the fade still runs (opacity is not
-  motion) and `isReduced` tells the component to drop its transforms. Exit (160 ms) is quicker
+  motion): both timings set `ReduceMotion.Never`, or Reanimated's default `System` policy would
+  snap the scrim, and `isReduced` tells the component to drop its transforms. Exit (160 ms) is quicker
   than entrance (220 ms): a dismissed overlay should get out of the way.
 - **The scrim is `bg-overlay` at opacity 1**, the token carrying its own alpha, for
   `BottomSheet.Overlay`'s reason. It is React Native's `Pressable`, not this library's: it wants
@@ -64,6 +70,27 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   It always takes the touch, even with no `onDismiss`, because the app under a non-dismissible
   dialog must not be pressable. It is hidden from assistive technology; a screen reader user
   dismisses through the panel's `onAccessibilityEscape` or the back button.
+- **A modal overlay hides the app from screen readers.** Teleport's `"root"` host is a sibling of
+  the provider's content `View`, so a panel's `accessibilityViewIsModal` hides only its siblings in
+  the host, and VoiceOver or TalkBack could still reach the app behind a dialog. While
+  `hidesAppContent` is true the provider sets `accessibilityElementsHidden` and
+  `importantForAccessibility="no-hide-descendants"` on that `View`. Overlays and sheets draw in the
+  host, outside it, and stay reachable. **An exiting modal does not count.** Pass
+  `isExiting={phase === "exiting"}` to `Overlay.Portal`, as Dialog and Drawer do: the registry keeps
+  the entry, and its place in the z-order, until the portal unmounts, but the app is reachable again
+  from the start of the exit, so `onExited` can move focus back to the trigger. **Not when teleport draws inline.** `react-native-teleport`'s
+  Jest mock renders a portal in place, inside that `View`, so hiding it would hide the dialog too
+  and every query for it would fail. The test kit sets the global `TELEPORT_INLINE` symbol to say
+  so, and the provider then leaves the app visible. It is a symbol on `globalThis`, not an import, so
+  the test kit installs without Overlay. **Not for a modal drawn in the app.** A portal with
+  `isInline` or a `hostName` other than `"root"` may be inside that `View`, so it registers with
+  `isInApp` and does not hide the app. It still stacks and takes the back button.
+- **Screen readers stay inside the top modal.** Hiding the app content does not hide a dialog under
+  another dialog: both draw in the `"root"` host. So each portal reads the registry: the top open modal's frame sets `accessibilityViewIsModal`, and every frame drawn
+  under it sets `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`.
+  A popover or toast above the top dialog is in a higher band and stays reachable. When the top
+  dialog starts to exit, the one under it is the top again. A bottom sheet is not in this registry,
+  so a sheet under a dialog is not hidden yet.
 - **The portal's wrapper is `box-none`.** An overlay with no scrim — a toast, a tooltip — leaves
   the app under it interactive.
 - **The provider hears every touch that starts beneath it, and claims none.** Its children sit in a
@@ -85,5 +112,9 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 ## Testing
 
 The registry, the presence machine, the scrim token and the motion constants are pure and unit-tested.
-The provider, the portal and the hooks are verified on a simulator through every overlay's
-gallery — the foundation has no gallery of its own, the way `DelacourProvider` has none.
+The render tests mount the provider and portals under Jest: registry entry
+and z-order, scrim, presence, back handler and touch fan-out, and what screen readers can reach while
+a modal is open, exiting, or under another modal. `useOverlayPresence` is also tested with an owner
+that re-renders every frame: one timing per transition and one on-time finish. The native teleport
+host is not in Jest, so the provider, the portal and the hooks are also checked on a simulator through
+every overlay's gallery — the foundation has no gallery of its own, the way `DelacourProvider` has none.

@@ -1,6 +1,15 @@
 {
 	"title": "Releases",
+	"description": "Release notes for every Delacour package, and how a release reaches npm",
 	"icon": "Rocket",
 	"root": true,
-	"pages": ["index"]
+	"pages": [
+		"index",
+		"channels",
+		"---Packages---",
+		"react-native-ui",
+		"cli",
+		"react-native-charts",
+		"react-native-bottom-sheet"
+	]
 }

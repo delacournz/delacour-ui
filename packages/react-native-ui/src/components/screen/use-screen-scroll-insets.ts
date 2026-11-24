@@ -50,6 +50,26 @@ function useFooterBaselineHeight(estimatedHeight = 0): number {
 }
 
 /**
+ * The sticky footer's `keyboardOffset`, as JS state — mirrored from the UI
+ * thread for the same reason as {@link useFooterBaselineHeight}. Unlike the
+ * baseline, 0 is a real value here: the footer resets it on unmount.
+ */
+function useFooterKeyboardOffset(): number {
+	const { footer } = useScreenPart("a Screen scrollable");
+	const [offset, setOffset] = useState(0);
+
+	useAnimatedReaction(
+		() => Math.round(footer.keyboardOffset.value),
+		(current, previous) => {
+			if (current === previous) return;
+			scheduleOnRN(setOffset, current);
+		}
+	);
+
+	return offset;
+}
+
+/**
  * The shared value a footer's own content drives when it expands VISUALLY above
  * its measured layout box.
  *
@@ -145,9 +165,14 @@ export function useChatComposerBaseSpacerHeight(estimatedFooterHeight = 0): Chat
  * not just the keyboard. Deliberately NOT the full occupancy: the sticky shift
  * parks the footer's safe-area band behind the keyboard, so counting it here
  * would scroll the input further than it needs to go.
+ *
+ * A footer with a `keyboardOffset` sits that much higher, on a bar riding the
+ * keyboard, so the input clears that distance too.
  */
 export function useScreenFooterKeyboardClearance(): number {
-	return footerAboveKeyboard(useFooterBaselineHeight()) + CHAT_COMPOSER_GAP;
+	const baseline = useFooterBaselineHeight();
+	const keyboardOffset = useFooterKeyboardOffset();
+	return footerAboveKeyboard(baseline, keyboardOffset) + CHAT_COMPOSER_GAP;
 }
 
 /**

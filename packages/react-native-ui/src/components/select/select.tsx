@@ -21,6 +21,7 @@ import {
 	normalizeOptions,
 	resolveSelectedOptions,
 	resolveSelectListMinHeight,
+	resolveSelectListWindow,
 	resolveSelectRowState,
 	resolveSelectSheetMaxHeight,
 	resolveSelectTriggerText,
@@ -61,6 +62,14 @@ type SelectBaseProps = {
 	emptyText?: string;
 	/** Where the options open. Only `sheet` today. */
 	presentation?: SelectPresentation;
+	/** Whether the sheet is open. Pair with `onOpenChange` to control it, for a form that opens the select when focus moves to it. */
+	isOpen?: boolean;
+	/** Whether the sheet starts open, while `isOpen` is left off. @default false */
+	defaultOpen?: boolean;
+	/** Called with the sheet's next open state, from a press on the trigger, a pick, or any dismissal. */
+	onOpenChange?: (isOpen: boolean) => void;
+	/** Runs once the sheet has slid fully closed, after any pick or dismissal. */
+	onClose?: () => void;
 	/** Forwarded to the sheet. Leave it off and the sheet sizes to its rows — or, searchable, opens at its cap and holds it while you type. */
 	snapPoints?: BottomSheetProps["snapPoints"];
 	/** Custom trigger content for a non-empty selection. */
@@ -71,7 +80,7 @@ type SelectBaseProps = {
 	formatSelectedCount?: (count: number) => string;
 	/** Classes for the trigger. */
 	className?: string;
-	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, close `-close`, Done `-done`. */
+	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, close `-close`, Done `-done`, header `-header`, list `-list`. */
 	testID?: string;
 	/** `Select.Item`, `Select.Group`, and optionally a `Select.Trigger` to replace the default one. */
 	children?: ReactNode;
@@ -102,6 +111,8 @@ export type SelectMultipleProps = SelectBaseProps & {
 export type SelectProps = SelectSingleProps | SelectMultipleProps;
 
 const NO_VALUES: readonly string[] = [];
+/** FlatList puts `ListHeaderComponent` at child 0, so this pins the header. Module scope keeps one reference across renders. */
+const STICKY_HEADER = [0];
 
 function SelectRoot(props: SelectProps): ReactElement {
 	const {
@@ -117,6 +128,10 @@ function SelectRoot(props: SelectProps): ReactElement {
 		isSearchable = false,
 		searchPlaceholder = "Search",
 		emptyText = "No results",
+		onClose,
+		isOpen: isOpenProp,
+		defaultOpen = false,
+		onOpenChange,
 		snapPoints,
 		renderValue,
 		maxLabels,
@@ -153,28 +168,35 @@ function SelectRoot(props: SelectProps): ReactElement {
 		value: controlled,
 	});
 
-	const [isOpen, setOpen] = useState(false);
+	const [isOpen, setOpen] = useControllableState<boolean>({
+		defaultValue: defaultOpen,
+		onChange: onOpenChange,
+		value: isOpenProp,
+	});
 	const [query, setQuery] = useState("");
 	const canOpen = !resolvedIsDisabled && !isReadOnly;
 
 	const open = useCallback(() => {
 		if (canOpen) setOpen(true);
-	}, [canOpen]);
+	}, [canOpen, setOpen]);
 
-	// One path for every close — a pick, Done, a swipe, the overlay, the close
-	// button — and each one clears the search, so the next open starts whole.
-	const handleOpenChange = useCallback((next: boolean) => {
-		setOpen(next);
-		if (!next) setQuery("");
-	}, []);
-	const close = useCallback(() => handleOpenChange(false), [handleOpenChange]);
+	// Every close clears the search, so the next open starts whole. This reads
+	// the resolved state, not the sheet's callback, so a controlled `isOpen`
+	// that its owner sets to false clears it too.
+	useEffect(() => {
+		if (!isOpen) setQuery("");
+	}, [isOpen]);
+	const close = useCallback(() => setOpen(false), [setOpen]);
 
 	const maxSelected = multiple?.maxSelected;
 	const isClearable = single?.isClearable ?? false;
 	const toggleOptions: SelectToggleOptions =
 		mode === "multiple" ? { max: maxSelected, mode: "multiple" } : { isClearable, mode: "single" };
 
+	// The sheet can stay open while the select turns disabled or read-only, so
+	// the rows lock with it and a press that slips through changes nothing.
 	const toggle = (value: string) => {
+		if (!canOpen) return;
 		const result = toggleSelection(selected, value, toggleOptions);
 		if (result.change === "blocked" || result.change === "limit-reached") playHaptic("warning");
 		if (result.change !== "unchanged" && result.change !== "blocked") setSelected(result.selected);
@@ -224,6 +246,8 @@ function SelectRoot(props: SelectProps): ReactElement {
 		[listMinHeight]
 	);
 
+	const listWindow = resolveSelectListWindow({ maxHeight: sheetMaxHeight, size });
+
 	const rows = buildSelectRows(isSearchable ? filterGroups(entries, query) : entries);
 	const slots = selectVariants({ size, variant });
 
@@ -250,7 +274,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 		return (
 			<SelectOptionRow
 				description={limitDescription}
-				isDisabled={state.isDisabled}
+				isDisabled={state.isDisabled || !canOpen}
 				isSelected={isSelected}
 				mode={mode}
 				onPress={toggle}
@@ -262,13 +286,20 @@ function SelectRoot(props: SelectProps): ReactElement {
 	};
 
 	// The title and the search field ride at the head of the list rather than
-	// above it, so they count towards the height the sheet sizes itself to.
+	// above it, so they count towards the height the sheet sizes itself to, and
+	// the list pins them (`stickyHeaderIndices`) so they stay put while the rows
+	// scroll under them. The close sits in the title's row, so it covers nothing
+	// when there is no title.
+	// The search group opts out of the enclosing Field's state: the sheet only
+	// opens when the select is enabled, and a query is never the invalid value.
 	const header = (
-		<View className={slots.header()}>
-			<BottomSheet.Close testID={testID ? `${testID}-close` : undefined} />
-			{sheetTitle ? <BottomSheet.Title>{sheetTitle}</BottomSheet.Title> : null}
+		<View className={slots.header()} testID={testID ? `${testID}-header` : undefined}>
+			<View className={slots.headerBar()}>
+				{sheetTitle ? <BottomSheet.Title className={slots.headerTitle()}>{sheetTitle}</BottomSheet.Title> : null}
+				<BottomSheet.Close className={slots.headerClose()} testID={testID ? `${testID}-close` : undefined} />
+			</View>
 			{isSearchable ? (
-				<Input.Group size={size}>
+				<Input.Group isDisabled={false} isInvalid={false} size={size}>
 					<Input.Group.Prefix>
 						<Icon icon={IconMagnifyingGlass} />
 					</Input.Group.Prefix>
@@ -308,7 +339,8 @@ function SelectRoot(props: SelectProps): ReactElement {
 				isOpen={isOpen}
 				keyboardLiftLimit="maxDynamicContentSize"
 				maxDynamicContentSize={sheetMaxHeight}
-				onOpenChange={handleOpenChange}
+				onClose={onClose}
+				onOpenChange={setOpen}
 				snapPoints={snapPoints}
 			>
 				<BottomSheet.Portal>
@@ -319,12 +351,17 @@ function SelectRoot(props: SelectProps): ReactElement {
 							contentContainerStyle={listContentStyle}
 							data={rows}
 							extraData={selected}
+							initialNumToRender={listWindow.initialNumToRender}
 							keyboardDismissMode={isSearchable ? "none" : undefined}
 							keyboardShouldPersistTaps="handled"
 							keyExtractor={(row) => row.key}
 							ListEmptyComponent={empty}
 							ListHeaderComponent={header}
+							maxToRenderPerBatch={listWindow.maxToRenderPerBatch}
 							renderItem={renderRow}
+							stickyHeaderIndices={STICKY_HEADER}
+							testID={testID ? `${testID}-list` : undefined}
+							windowSize={listWindow.windowSize}
 						/>
 						{multiple ? (
 							<BottomSheet.Footer sticky>

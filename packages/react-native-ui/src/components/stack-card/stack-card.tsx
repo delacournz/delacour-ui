@@ -328,6 +328,7 @@ function StackCardRoot({
 	// around it. A deck that throws both ways claims both axes, so it cannot
 	// sit inside a scroller.
 	const gesture = usePanGesture({
+		testID: "stack-card-pan",
 		enabled: isGestureEnabled,
 		activeOffsetX: isHorizontalOnly ? [-10, 10] : undefined,
 		failOffsetY: isHorizontalOnly ? [-10, 10] : undefined,

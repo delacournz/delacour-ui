@@ -26,8 +26,8 @@ bun android                # ensure-prebuild, then expo run:android --device --p
 bun run prebuild           # expo prebuild — regenerate ios/ and android/
 bun run icons              # rasterise the app icon from @delacour/brand
 bun run check              # Biome
-bun run typecheck          # tsc --noEmit — everything but the warden specs
-bun run typecheck:e2e      # tsc on the warden specs and warden.config.ts; needs warden linked
+bun run typecheck          # bun check --no-script — everything but the warden specs
+bun run typecheck:e2e      # bun check on the warden specs and warden.config.ts; needs warden linked
 bun run gen-demos          # regenerate src/demos/registry.ts
 ```
 
@@ -650,8 +650,14 @@ demo's pixels, not its hash: rerun with `--force` once, with the user's approval
 **A run is incremental.** Each demo's source, meta, capture block and the encode settings hash
 together, and an unchanged demo whose files are present is skipped. That is what keeps committed
 media from becoming permanent churn in a repository that cannot delta-compress it — a run after
-touching one component rewrites that component and nothing else. The same hash is the media's `?v=`
-cache-buster, because Vite copies `public/` with no content hashing of its own.
+touching one component rewrites that component and nothing else.
+
+**The media's `?v=` cache-buster is its own bytes, not that hash.** Vite copies `public/` with no
+content hashing of its own and `/previews/**` is cached for a day, so the query string is the only
+thing that tells a browser a file changed. It used to be the source hash, and a `--force` recapture
+after a library change — the demo untouched, the pictures new — kept every URL, so a returning reader
+was served the old picture. `mediaVersion` in `scripts/previews/config.ts` hashes every file a demo
+publishes, both themes, and the spec writes it into the fragment once the files are on disk.
 
 The script fails the run if the media directory passes its size budget, naming the largest files.
 Raise `BUDGET_BYTES` in `scripts/previews/config.ts` deliberately or not at all.

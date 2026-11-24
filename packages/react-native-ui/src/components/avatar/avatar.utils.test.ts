@@ -1,6 +1,10 @@
 import { describe, expect, test } from "bun:test";
+import { createElement, Fragment } from "react";
 import {
+	AVATAR_BUTTON_FALLBACK_LABEL,
+	flattenAvatarChildren,
 	resolveAvatarAccessibilityLabel,
+	resolveAvatarBadgeHasContent,
 	resolveAvatarGroup,
 	resolveAvatarInitials,
 	resolveAvatarOverflowLabel,
@@ -34,6 +38,10 @@ describe("resolveAvatarInitials", () => {
 		expect(resolveAvatarInitials("𝒜ria 𝒲hitlock")).toBe("𝒜𝒲");
 	});
 
+	test("keeps an accent from a decomposed (NFD) name", () => {
+		expect(resolveAvatarInitials("E\u0301mile Zola")).toBe("\u00C9Z");
+	});
+
 	test("keeps letters in scripts with no case", () => {
 		expect(resolveAvatarInitials("森山 健二")).toBe("森健");
 	});
@@ -55,7 +63,62 @@ describe("resolveAvatarSourceKey", () => {
 	});
 
 	test("names a bundled asset by its module id", () => {
-		expect(resolveAvatarSourceKey(12)).toBe("asset:12");
+		expect(resolveAvatarSourceKey(12)).toBe(JSON.stringify([["asset", 12]]));
+	});
+
+	test("tells a bundled asset from a uri of the same text", () => {
+		expect(resolveAvatarSourceKey(3)).not.toBe(resolveAvatarSourceKey({ uri: "3" }));
+	});
+
+	test("changes when the cache mode changes, so a cache miss can retry", () => {
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", cache: "only-if-cached" })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", cache: "reload" })
+		);
+	});
+
+	test("changes when the method or body changes", () => {
+		const get = resolveAvatarSourceKey({ uri: "https://a.test/1.png" });
+		const post = resolveAvatarSourceKey({ uri: "https://a.test/1.png", method: "POST" });
+		const body = resolveAvatarSourceKey({ uri: "https://a.test/1.png", method: "POST", body: "id=1" });
+		expect(new Set([get, post, body]).size).toBe(3);
+	});
+
+	test("does not let header values that look like separators collide", () => {
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", headers: { "X-A": "1&X-B=2" } })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", headers: { "X-A": "1", "X-B": "2" } })
+		);
+	});
+
+	test("does not let a uri that looks like a separator collide across a list", () => {
+		expect(resolveAvatarSourceKey([{ uri: "https://a.test/1.png|uri:https://a.test/2.png" }])).not.toBe(
+			resolveAvatarSourceKey([{ uri: "https://a.test/1.png" }, { uri: "https://a.test/2.png" }])
+		);
+	});
+
+	test("changes when entry dimensions change, so a list that picks another uri can retry", () => {
+		const before = resolveAvatarSourceKey([
+			{ uri: "https://a.test/1x.png", width: 40, height: 40 },
+			{ uri: "https://a.test/2x.png", width: 80, height: 80 },
+		]);
+		const swapped = resolveAvatarSourceKey([
+			{ uri: "https://a.test/1x.png", width: 80, height: 80 },
+			{ uri: "https://a.test/2x.png", width: 40, height: 40 },
+		]);
+		expect(before).not.toBe(swapped);
+		expect(resolveAvatarSourceKey({ uri: "https://a.test/1.png", scale: 1 })).not.toBe(
+			resolveAvatarSourceKey({ uri: "https://a.test/1.png", scale: 2 })
+		);
+	});
+
+	test("changes with the face's edge for a list, so a failure at one size does not block another resolution", () => {
+		const list = [{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/3x.png" }];
+		expect(resolveAvatarSourceKey(list, { edge: 32 })).not.toBe(resolveAvatarSourceKey(list, { edge: 96 }));
+	});
+
+	test("ignores the edge for a single source, which loads the same image at every size", () => {
+		const one = { uri: "https://a.test/1.png" };
+		expect(resolveAvatarSourceKey(one, { edge: 32 })).toBe(resolveAvatarSourceKey(one, { edge: 96 }));
+		expect(resolveAvatarSourceKey([one], { edge: 32 })).toBe(resolveAvatarSourceKey([one], { edge: 96 }));
 	});
 
 	test("changes when the uri changes", () => {
@@ -78,9 +141,9 @@ describe("resolveAvatarSourceKey", () => {
 	});
 
 	test("reads every entry of a multi-resolution list", () => {
-		expect(resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/2x.png" }])).toBe(
-			"uri:https://a.test/1x.png|uri:https://a.test/2x.png"
-		);
+		const both = resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }, { uri: "https://a.test/2x.png" }]);
+		expect(both).not.toBe(resolveAvatarSourceKey([{ uri: "https://a.test/1x.png" }]));
+		expect(both).not.toBe(resolveAvatarSourceKey([{ uri: "https://a.test/2x.png" }]));
 		expect(resolveAvatarSourceKey([])).toBeNull();
 	});
 });
@@ -155,6 +218,12 @@ describe("resolveAvatarOverflowLabel", () => {
 });
 
 describe("resolveAvatarAccessibilityLabel", () => {
+	test("a pressable avatar with nothing to read gets a generic name, never a bare button", () => {
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true })).toBe(AVATAR_BUTTON_FALLBACK_LABEL);
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true, name: " " })).toBe(AVATAR_BUTTON_FALLBACK_LABEL);
+		expect(resolveAvatarAccessibilityLabel({ isInteractive: true, name: "Aria Whitlock" })).toBe("Aria Whitlock");
+	});
+
 	test("prefers the name", () => {
 		expect(resolveAvatarAccessibilityLabel({ name: "Aria Whitlock", fallback: "AW" })).toBe("Aria Whitlock");
 	});
@@ -170,5 +239,71 @@ describe("resolveAvatarAccessibilityLabel", () => {
 
 	test("an explicit label wins over both", () => {
 		expect(resolveAvatarAccessibilityLabel({ accessibilityLabel: "You", name: "Aria Whitlock" })).toBe("You");
+	});
+});
+
+describe("resolveAvatarBadgeHasContent", () => {
+	test("is false for nothing to pin, including a 0 or an empty string from a conditional", () => {
+		for (const children of [undefined, null, false, true, 0, "", [0, ""]]) {
+			expect(resolveAvatarBadgeHasContent(children)).toBe(false);
+		}
+	});
+
+	test("is true when there is an element to pin", () => {
+		expect(resolveAvatarBadgeHasContent(createElement("Badge"))).toBe(true);
+		expect(resolveAvatarBadgeHasContent([0, createElement("Badge", { key: "badge" })])).toBe(true);
+	});
+});
+
+describe("flattenAvatarChildren", () => {
+	const face = (name: string, key?: string) => createElement("Face", { key, name });
+	const names = (children: Parameters<typeof flattenAvatarChildren>[0]) =>
+		flattenAvatarChildren(children).map((child) => (child.props as { name: string }).name);
+
+	test("keeps direct children in the order they were written", () => {
+		expect(names([face("Ana"), face("Ben")])).toEqual(["Ana", "Ben"]);
+	});
+
+	test("counts each avatar inside a fragment as its own face", () => {
+		expect(names(createElement(Fragment, null, face("Ana"), face("Ben")))).toEqual(["Ana", "Ben"]);
+	});
+
+	test("opens nested fragments and keeps the written order", () => {
+		const nested = [
+			face("Ana"),
+			createElement(Fragment, null, face("Ben"), createElement(Fragment, null, face("Cai"))),
+		];
+		expect(names(nested)).toEqual(["Ana", "Ben", "Cai"]);
+	});
+
+	test("drops text, null and booleans", () => {
+		expect(names([face("Ana"), "text", null, false, createElement(Fragment, null, true, face("Ben"))])).toEqual([
+			"Ana",
+			"Ben",
+		]);
+	});
+
+	test("gives every face a unique key when two fragments reuse the same keys", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, face("Ana", "x")),
+			createElement(Fragment, { key: "b" }, face("Ben", "x")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
+	});
+
+	test("does not let a fragment key and a face key run together into another pair", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, face("Ana", "b.$c")),
+			createElement(Fragment, { key: "a.$b" }, face("Ben", "c")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
+	});
+
+	test("keeps keys unique through nested fragments", () => {
+		const keys = flattenAvatarChildren([
+			createElement(Fragment, { key: "a" }, createElement(Fragment, { key: "b" }, face("Ana", "c"))),
+			createElement(Fragment, { key: "a.$b" }, face("Ben", "c")),
+		]).map((child) => child.key);
+		expect(new Set(keys).size).toBe(2);
 	});
 });

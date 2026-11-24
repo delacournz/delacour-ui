@@ -2,7 +2,14 @@ export const appName = "Delacour UI";
 
 /** One sentence, served as the meta description and as both social cards' body. */
 export const appDescription =
-	"Composable, accessible React Native components with thoughtful defaults. Code you can customize, extend and make your own — painted from the same design tokens as your shadcn web app.";
+	"shadcn/ui for React Native: accessible, composable components for Expo, copied into your app by a CLI and themed from your shadcn web app's tokens.";
+
+/**
+ * The landing page's `<title>` and every site-wide `og:title`. It names the query
+ * people search — "shadcn components for react native" — rather than only the
+ * brand, which nobody types yet.
+ */
+export const homeTitle = `${appName} — shadcn/ui components for React Native`;
 
 /**
  * The production origin, for the absolute URLs Open Graph and Twitter cards

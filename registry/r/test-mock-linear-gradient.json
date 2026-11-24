@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "test-mock-linear-gradient",
+	"type": "registry:lib",
+	"title": "Linear gradient mock",
+	"description": "`expo-linear-gradient` as a plain View, for the render tests of components that install it.",
+	"categories": [
+		"testing"
+	],
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [
+		"@jest/globals"
+	],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/test/mocks/linear-gradient.ts",
+			"target": "test/mocks/linear-gradient.ts",
+			"namespace": "lib"
+		}
+	]
+}

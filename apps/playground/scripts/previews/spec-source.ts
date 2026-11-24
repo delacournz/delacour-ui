@@ -9,7 +9,7 @@
  */
 
 import { join } from "node:path";
-import ts from "typescript";
+import ts from "typescript-6";
 import { SPECS_DIR } from "./config";
 
 export type CaptureBlock = {

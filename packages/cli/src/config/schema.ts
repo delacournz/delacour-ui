@@ -65,13 +65,35 @@ const packageSchema = z.object({
  * How copied tests are written. Without a `runner`, `add --tests` reads the one
  * the project's `package.json` tests with, and falls back to Bun's, which the
  * library's suites are written for.
+ *
+ * `enabled` is the project's standing answer to "also install component tests?":
+ * `add` and `update` copy tests when it is `true` without being told to, and
+ * `--tests` / `--no-tests` on either one both override it for the run and save
+ * the choice here. Unset reads as `false`.
  */
 const testsSchema = z.object({
 	runner: z.enum(TEST_RUNNERS).optional(),
+	enabled: z.boolean().optional(),
 });
+
+/**
+ * The shape version `init` writes, and `update` brings an older config up to.
+ *
+ * Bump it in the same change that adds a field a project should be asked about,
+ * and add that field's question to `upgrade.ts` with `since` set to the new
+ * number. Absent reads as `1`: every config written before versions existed.
+ */
+export const CONFIG_VERSION = 2;
 
 export const configSchema = z.object({
 	$schema: z.string().optional(),
+	/** Which shape of this file the project was last brought up to. Absent is `1`. */
+	version: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe("The config shape this project was last brought up to. Written by init and update."),
 	framework: z.enum(["expo", "react-native"]).default("expo"),
 	typescript: z.boolean().default(true),
 	registry: registrySchema.default({}),

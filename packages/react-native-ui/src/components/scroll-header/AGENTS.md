@@ -31,6 +31,7 @@ navbar would make a static concept animate. It does not publish into `Screen`'s 
 | `scroll-header.types.ts` | Leaf. Root props, the context value, the scroller `onScroll` union |
 | `scroll-header.variants.ts` | The slotted `tv()`, the constants and every pure resolver (all worklets) |
 | `scroll-header.variants.test.ts` | The collapse, inset, stretch, snap and crossfade maths |
+| `scroll-header.render.test.tsx` | Mounted under Jest — the bar title is a header announced once (hidden while open, revealed on collapse), `onCollapsedChange` once per crossing, the caller's `onScroll`, `FlatList`, parts outside the root throwing |
 | `scroll-header-bar.tsx` | `ScrollHeader.Bar` — safe-area band, measured row |
 | `scroll-header-bar-surface.tsx` | Internal, memoised. The bar's backing, blur engine and hairline |
 | `scroll-header-bar-title.tsx` | `ScrollHeader.BarTitle` |

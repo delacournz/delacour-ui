@@ -26,11 +26,11 @@ export type SketchHandle = {
 	/** Self-contained SVG: the viewBox is the canvas, an optional background rect, masks inlined. */
 	toSVG: (options?: SketchExportOptions) => string;
 	/**
-	 * The drawing as a base64-encoded PNG (no `data:` prefix), the canvas's size
+	 * Resolves to the drawing as a base64-encoded PNG (no `data:` prefix), the canvas's size
 	 * times `scale`. Holds the marks and the background only — never what
 	 * `Sketch.Canvas` children paint under them. `""` before the canvas is measured.
 	 */
-	toPNG: (options?: SketchPngOptions) => string;
+	toPNG: (options?: SketchPngOptions) => Promise<string>;
 };
 
 /**

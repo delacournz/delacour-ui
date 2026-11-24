@@ -8,7 +8,9 @@ function isEventHandlerKey(key: string): boolean {
  * Merges a slot's own props with those of the element it renders into.
  *
  * Child props win, with two exceptions: event handlers are chained
- * slot-first-then-child so neither side is silently dropped, and `style` is
+ * slot-first-then-child so neither side is silently dropped (a child's unset
+ * handler keeps the slot's: `<Button onPress={maybe}>` forwarding `undefined`
+ * is not a request to remove one), and `style` is
  * flattened into an array with the child last (React Native resolves style
  * arrays left to right).
  *
@@ -27,6 +29,10 @@ export function mergeProps<T extends UnknownProps>(slotProps: UnknownProps, chil
 				(slotValue as (...a: unknown[]) => unknown)(...args);
 				return (childValue as (...a: unknown[]) => unknown)(...args);
 			};
+			continue;
+		}
+
+		if (isEventHandlerKey(key) && typeof slotValue === "function" && childValue == null) {
 			continue;
 		}
 

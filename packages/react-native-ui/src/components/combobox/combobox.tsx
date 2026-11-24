@@ -108,7 +108,7 @@ type ComboboxBaseProps = {
 	highlight?: boolean;
 	/** Classes for the trigger. */
 	className?: string;
-	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, create `-create`, Done `-done`; the trigger's chevron `-chevron`, clear `-clear`, chips `-chip-${value}` and `-remove-${value}`. */
+	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, create `-create`, Done `-done`, header `-header`, list `-list`; the trigger's chevron `-chevron`, clear `-clear`, chips `-chip-${value}` and `-remove-${value}`. */
 	testID?: string;
 	/** `Combobox.Item`, `Combobox.Group`, and optionally `Combobox.Trigger` or `Combobox.Empty`. */
 	children?: ReactNode;
@@ -144,6 +144,8 @@ const NO_VALUES: readonly string[] = [];
 const DEFAULT_FILTER: ComboboxFilter = { kind: "default" };
 const IDLE: ComboboxPendingRemoveState = { kind: "idle" };
 const CLEAR_HIT_SLOP = 8;
+/** FlatList puts `ListHeaderComponent` at child 0, so this pins the header. Module scope keeps one reference across renders. */
+const STICKY_HEADER = [0];
 
 /**
  * Claims the JS responder for a touch inside the sheet.
@@ -463,11 +465,12 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 
 	const searchLabel = field?.label ? `${field.label}, ${searchPlaceholder}` : searchPlaceholder;
 
-	// The title, chips and search field ride at the head of the list, so they
-	// scroll with it.
+	// The title, chips and search field ride at the head of the list, and the
+	// list pins them (`stickyHeaderIndices`) so the search field stays in reach
+	// while the rows scroll under them.
 	const header = (
-		<View className={slots.header()}>
-			<BottomSheet.Close />
+		<View className={slots.header()} testID={testID ? `${testID}-header` : undefined}>
+			<BottomSheet.Close className={slots.headerClose()} />
 			{sheetTitle ? <BottomSheet.Title>{sheetTitle}</BottomSheet.Title> : null}
 			{multiple && selectedOptions.length > 0 ? (
 				<View onStartShouldSetResponder={claimTouch}>
@@ -545,6 +548,8 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 							ListEmptyComponent={empty}
 							ListHeaderComponent={header}
 							renderItem={renderRow}
+							stickyHeaderIndices={STICKY_HEADER}
+							testID={testID ? `${testID}-list` : undefined}
 						/>
 						{multiple ? (
 							<BottomSheet.Footer sticky>

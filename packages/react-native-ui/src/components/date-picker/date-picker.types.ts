@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { ViewProps } from "react-native";
 import type { CalendarDate, CalendarDateRange, DateMatcher, Weekday } from "../calendar/calendar.date";
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
-import type { CalendarSize } from "../calendar/calendar.variants";
+import type { CalendarSize, CalendarView } from "../calendar/calendar.variants";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { DatePickerFormat, DatePickerFormatRange, DatePickerPresentation } from "./date-picker.variants";
 
@@ -15,7 +15,10 @@ import type { DatePickerFormat, DatePickerFormatRange, DatePickerPresentation } 
 export type DatePickerSelectionProps =
 	| {
 			mode?: "single";
-			/** Controlled day. `null` is none. */
+			/**
+			 * Controlled day. `null` is none. Passing the prop at all controls the picker, so a form
+			 * value that starts or resets to `undefined` reads as none too.
+			 */
 			value?: CalendarDate | null;
 			/** Starting day while uncontrolled. */
 			defaultValue?: CalendarDate | null;
@@ -54,10 +57,27 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		weekStartsOn?: Weekday | "auto";
 		/** `picker` makes the calendar's caption open the month and year views. */
 		captionLayout?: CalendarCaptionLayout;
+		/**
+		 * The view the calendar opens on while nothing is picked. `years` starts a date of birth at
+		 * the year list: a year opens its months, a month its days. With a value, the calendar opens
+		 * on that value's days, so an edit starts where the last pick ended.
+		 *
+		 * @default "days"
+		 */
+		initialView?: CalendarView;
 		/** The earliest day that can be picked, inclusive. */
 		minDate?: CalendarDate;
 		/** The latest day that can be picked, inclusive. */
 		maxDate?: CalendarDate;
+		/**
+		 * The month an empty picker's calendar opens on. Omitted, today's. With a value, the calendar
+		 * opens on the value's month instead.
+		 */
+		defaultMonth?: CalendarDate;
+		/** The earliest month paging and the year list reach. Omitted, `minDate`'s month. */
+		startMonth?: CalendarDate;
+		/** The latest month paging and the year list reach. Omitted, `maxDate`'s month. */
+		endMonth?: CalendarDate;
 		/** Further days that cannot be picked. */
 		disabledDates?: readonly DateMatcher[];
 		/** Lets a neighbouring month's day be picked. */
@@ -71,6 +91,12 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		/** Starting open state while uncontrolled. */
 		defaultOpen?: boolean;
 		onOpenChange?: (isOpen: boolean) => void;
+		/**
+		 * The sheet has finished closing, by any path. `onOpenChange(false)` fires as the close
+		 * starts; this fires once the sheet is all the way down, so focus can move on without
+		 * racing the slide. Never called inline.
+		 */
+		onClose?: () => void;
 		/** Inert and faded; never opens. Inherited from an enclosing `Field`. */
 		isDisabled?: boolean;
 		/** Shows the value and never opens. */
@@ -85,6 +111,8 @@ export type DatePickerProps = Omit<ViewProps, "children"> &
 		calendarSize?: CalendarSize;
 		/** The sheet's title. */
 		title?: string;
+		/** Supporting copy under the sheet's title, such as why some days cannot be picked. */
+		description?: string;
 		/** Done's label. */
 		doneLabel?: string;
 		/** Clear's label. */

@@ -11,13 +11,19 @@ import {
 	type CalendarRangeRole,
 	calendarVariants,
 	isDateSelected,
+	reconcileVisibleMonth,
 	resolveCalendarAxes,
+	resolveCaptionLabel,
+	resolveCaptionPage,
+	resolveCommittedPageDirection,
+	resolveDayAccessibilityLabel,
 	resolveDayState,
 	resolveDayTone,
 	resolveMonthBounds,
 	resolvePageDirection,
 	resolvePartTestID,
 	resolveRangeRole,
+	resolveSelectionPage,
 } from "./calendar.variants";
 
 function d(year: number, month: number, day: number): CalendarDate {
@@ -314,6 +320,56 @@ describe("resolveDayState", () => {
 		});
 		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true }).isPressable).toBe(false);
 	});
+
+	test("only a day that cannot be picked is announced disabled; read-only alone is not", () => {
+		const cell = { date: d(2026, 10, 5), isOutside: false, weekIndex: 0, dayIndex: 0 };
+		expect(resolveDayState({ ...base, cell }).isUnavailable).toBe(false);
+		expect(resolveDayState({ ...base, cell, isReadOnly: true }).isUnavailable).toBe(false);
+		expect(resolveDayState({ ...base, cell, isDisabled: () => true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell, isCalendarDisabled: true, isReadOnly: true }).isUnavailable).toBe(true);
+		expect(resolveDayState({ ...base, cell: { ...cell, isOutside: true } }).isUnavailable).toBe(true);
+		expect(
+			resolveDayState({ ...base, cell: { ...cell, isOutside: true }, selectOutsideDays: true }).isUnavailable
+		).toBe(false);
+	});
+});
+
+describe("resolveCaptionLabel", () => {
+	test("the caption reads the field's name before the month, since the grid itself is never read", () => {
+		expect(resolveCaptionLabel("Date of birth", "October 2026")).toBe("Date of birth, October 2026");
+	});
+
+	test("with no field label it is just the month", () => {
+		expect(resolveCaptionLabel(null, "October 2026")).toBe("October 2026");
+		expect(resolveCaptionLabel("", "October 2026")).toBe("October 2026");
+	});
+});
+
+describe("resolveDayAccessibilityLabel", () => {
+	const plain = { isToday: false, rangeRole: null };
+
+	test("a plain day reads as just its date", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", plain)).toBe("Monday 5 October 2026");
+	});
+
+	test("today and the range ends are in the label, so they read with hints off", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { isToday: true, rangeRole: "start" })).toBe(
+			"Monday 5 October 2026, Today, Range start"
+		);
+		expect(resolveDayAccessibilityLabel("Friday 9 October 2026", { ...plain, rangeRole: "end" })).toBe(
+			"Friday 9 October 2026, Range end"
+		);
+	});
+
+	test("a lone or middle range day adds nothing", () => {
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { ...plain, rangeRole: "only" })).toBe(
+			"Monday 5 October 2026"
+		);
+		expect(resolveDayAccessibilityLabel("Monday 5 October 2026", { ...plain, rangeRole: "middle" })).toBe(
+			"Monday 5 October 2026"
+		);
+	});
 });
 
 describe("resolveMonthBounds", () => {
@@ -322,6 +378,41 @@ describe("resolveMonthBounds", () => {
 		expect(resolveMonthBounds({ minDate: d(2026, 5, 20) }).first).toEqual(d(2026, 5, 1));
 		expect(resolveMonthBounds({ maxDate: d(2026, 12, 20) }).last).toEqual(d(2026, 12, 1));
 		expect(resolveMonthBounds({})).toEqual({ first: null, last: null });
+	});
+});
+
+describe("reconcileVisibleMonth", () => {
+	test("leaves a month inside the bounds alone", () => {
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: d(2026, 1, 1), last: d(2026, 12, 1) })).toBeNull();
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: null, last: null })).toBeNull();
+	});
+
+	test("moves a month the bounds left behind to the nearest bound", () => {
+		expect(reconcileVisibleMonth(d(2026, 1, 1), { first: d(2026, 6, 1), last: null })).toEqual(d(2026, 6, 1));
+		expect(reconcileVisibleMonth(d(2026, 12, 1), { first: null, last: d(2026, 6, 1) })).toEqual(d(2026, 6, 1));
+	});
+
+	test("holds still under inverted bounds, which no month satisfies", () => {
+		expect(reconcileVisibleMonth(d(2026, 3, 1), { first: d(2026, 9, 1), last: d(2026, 6, 1) })).toBeNull();
+	});
+});
+
+describe("resolveSelectionPage", () => {
+	const visible = d(2026, 10, 1);
+	const bounds = { first: d(2026, 1, 1), last: d(2026, 10, 1) };
+
+	test("a day in the visible month stays put", () => {
+		expect(resolveSelectionPage(d(2026, 10, 31), visible, bounds)).toBe(0);
+	});
+
+	test("an outside day in bounds pages towards its month", () => {
+		expect(resolveSelectionPage(d(2026, 9, 28), visible, bounds)).toBe(-1);
+		expect(resolveSelectionPage(d(2026, 11, 2), visible, { first: null, last: null })).toBe(1);
+	});
+
+	test("an outside day past a bound never pages", () => {
+		expect(resolveSelectionPage(d(2026, 11, 2), visible, bounds)).toBe(0);
+		expect(resolveSelectionPage(d(2025, 12, 29), d(2026, 1, 1), bounds)).toBe(0);
 	});
 });
 
@@ -369,6 +460,42 @@ describe("resolvePageDirection", () => {
 
 	test("an unmeasured grid never pages", () => {
 		expect(resolvePageDirection({ ...base, width: 0, translationX: -200, velocityX: 0 })).toBe(0);
+	});
+});
+
+describe("resolveCommittedPageDirection", () => {
+	test("slides the month the calendar paged to in from the side it paged", () => {
+		expect(resolveCommittedPageDirection({ direction: 1, month: d(2026, 11, 1) }, d(2026, 11, 1))).toBe(1);
+		expect(resolveCommittedPageDirection({ direction: -1, month: d(2026, 9, 1) }, d(2026, 9, 1))).toBe(-1);
+	});
+
+	test("does not slide a month the parent set", () => {
+		expect(resolveCommittedPageDirection({ direction: 1, month: d(2026, 11, 1) }, d(2026, 3, 1))).toBe(0);
+		expect(resolveCommittedPageDirection({ direction: 0, month: null }, d(2026, 3, 1))).toBe(0);
+	});
+});
+
+describe("resolveCaptionPage", () => {
+	const open = { canGoNext: true, canGoPrev: true, isDisabled: false, view: "days" } as const;
+
+	test("increment pages forward and decrement back", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment" })).toBe(1);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement" })).toBe(-1);
+		expect(resolveCaptionPage({ ...open, actionName: "increment", view: "months" })).toBe(1);
+	});
+
+	test("stops at a bound", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment", canGoNext: false })).toBe(0);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement", canGoPrev: false })).toBe(0);
+	});
+
+	test("never pages a disabled calendar or the years view, as the arrows do not", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "increment", isDisabled: true })).toBe(0);
+		expect(resolveCaptionPage({ ...open, actionName: "decrement", view: "years" })).toBe(0);
+	});
+
+	test("ignores any other action", () => {
+		expect(resolveCaptionPage({ ...open, actionName: "activate" })).toBe(0);
 	});
 });
 

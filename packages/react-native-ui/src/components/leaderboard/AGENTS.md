@@ -28,6 +28,7 @@ everything, with internal parts `Podium`, `PodiumPlace`, `Row`, `Movement` and
 | `leaderboard.types.ts` | `LeaderboardEntry`, `RankedEntry` |
 | `leaderboard.variants.ts` | The slotted `tv()` and every pure resolver — no RN imports |
 | `leaderboard.variants.test.ts` | |
+| `leaderboard.render.test.tsx` | Mounted under Jest — ranking, ties, limit and pinning, podium styles, labels, `onPressEntry`, the part-outside-root error |
 
 ## Design
 

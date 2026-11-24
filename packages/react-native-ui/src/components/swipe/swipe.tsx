@@ -188,6 +188,7 @@ function SwipeRoot({
 	);
 
 	const pan = usePanGesture({
+		testID: "swipe-pan",
 		enabled: !isDisabled,
 		activeOffsetX: [-10, 10],
 		failOffsetY: [-8, 8],
@@ -252,6 +253,7 @@ function SwipeRoot({
 	});
 
 	const shieldTap = useTapGesture({
+		testID: "swipe-shield",
 		onDeactivate: (event) => {
 			"worklet";
 			if (!event.canceled) scheduleOnRN(close);

@@ -24,6 +24,7 @@ before the last navigates back to that level; the last is the current page and i
 | `breadcrumb.types.ts` | `BreadcrumbSlotProps`, shared by item, separator and ellipsis |
 | `breadcrumb.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `breadcrumb.variants.test.ts` | |
+| `breadcrumb.render.test.tsx` | Mounted under Jest — link/page semantics, hidden separators, collapse and ellipsis (static vs button), `onPress`/`onEllipsisPress`, part-outside-root errors |
 
 ## Design
 

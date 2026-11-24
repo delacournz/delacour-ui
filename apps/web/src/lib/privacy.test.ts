@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { plainText } from "@/components/landing/rich-text";
+import { PROPERTY_DISCLOSURE } from "../../../../packages/cli/src/telemetry/properties";
 import { type Disclosure, PRIVACY, PRIVACY_SECTIONS, type SourceApp } from "./privacy";
 
 /**
@@ -213,6 +214,57 @@ describe("the privacy policy's claims", () => {
 
 		expect(source).toContain("raw.githubusercontent.com");
 		expect(EVERYTHING).toContain("raw.githubusercontent.com");
+	});
+
+	/**
+	 * The CLI's telemetry is on by default, so the policy has to be true about it
+	 * and cannot lag the code: the host is read out of the CLI's own constant, the
+	 * switches out of the documentation that tells people to use them.
+	 */
+	test("names the host the CLI sends telemetry to, and says what happens to the IP address", () => {
+		const client = readFileSync(join(REPO, "packages", "cli", "src", "telemetry", "client.ts"), "utf-8");
+		const host = /TELEMETRY_HOST = "([^"]+)"/.exec(client)?.[1];
+		const row = DISCLOSURES.find((disclosure) => disclosure.to.includes(host ?? "\0"));
+
+		expect(host).toBe("telemetry.delacour.co.nz");
+		expect(row).toBeDefined();
+		expect(plainText((row as Disclosure).to)).toContain("discards your IP address");
+		expect(plainText((row as Disclosure).to)).toContain("PostHog");
+	});
+
+	test("describes every property a CLI command event carries", () => {
+		const row = DISCLOSURES.find((disclosure) => disclosure.to.includes("telemetry.delacour.co.nz"));
+		const what = plainText((row as Disclosure).what);
+
+		for (const phrase of Object.values(PROPERTY_DISCLOSURE)) expect(what).toContain(phrase);
+	});
+
+	test("no longer says the CLI collects no telemetry", () => {
+		expect(EVERYTHING).not.toMatch(/collects no telemetry/i);
+	});
+
+	test("names the config file the CLI keeps its identity and choice in", () => {
+		expect(EVERYTHING).toContain("~/.config/delacour/telemetry.json");
+	});
+
+	test("gives every switch the CLI documents, and the page that lists what is collected", () => {
+		const docs = readFileSync(join(REPO, "apps", "web", "content", "docs", "native", "cli", "index.mdx"), "utf-8");
+		const client = readFileSync(join(REPO, "packages", "cli", "src", "telemetry", "client.ts"), "utf-8");
+		const url = /TELEMETRY_DOCS_URL = "https:\/\/ui\.delacour\.co\.nz([^"]+)"/.exec(client)?.[1];
+		const switches = [
+			"delacour telemetry disable",
+			"DO_NOT_TRACK=1",
+			"DELACOUR_TELEMETRY_DISABLED=1",
+			"DELACOUR_CLI_TELEMETRY_DISABLED=1",
+		];
+
+		expect(url).toBe("/docs/native/cli#telemetry");
+		expect(docs).toContain("## Telemetry");
+		expect(JSON.stringify(PRIVACY_SECTIONS)).toContain(`](${url})`);
+		for (const text of switches) {
+			expect(docs).toContain(text);
+			expect(EVERYTHING).toContain(text);
+		}
 	});
 });
 

@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	formatNumber,
@@ -97,15 +98,26 @@ function TextAnimationWheel({
 	const initial = isLate && !isCalm ? 0 : digit;
 	const position = useSharedValue(initial);
 	const targetRef = useRef(initial);
+	const directionRef = useRef(direction);
 
 	useEffect(() => {
-		const target = resolveRollTarget(targetRef.current, digit, direction);
-		if (target === targetRef.current) return;
-		targetRef.current = target;
+		// Calm motion lands first: assigning the position also cancels a roll in
+		// flight, even one whose target is already stored.
 		if (isCalm) {
-			position.value = target;
+			const settled = resolveRollTarget(targetRef.current, digit, direction);
+			targetRef.current = settled;
+			position.value = settled;
 			return;
 		}
+		// The stored destination still holds when it shows this digit and the
+		// wheel is either resting there or already turning the asked way.
+		const isResting = position.value === targetRef.current;
+		if (resolveWheelOffset(targetRef.current) === digit && (isResting || directionRef.current === direction)) return;
+		// Retarget from where the wheel is now, not from the last destination, so
+		// an interrupted roll still turns the way the new value asks.
+		const target = resolveRollTarget(position.value, digit, direction);
+		targetRef.current = target;
+		directionRef.current = direction;
 		position.value = withDelay(
 			rank * stagger,
 			withTiming(target, { duration: durationMs, easing: Easing.out(Easing.cubic) })
@@ -166,6 +178,9 @@ export function TextAnimationRolling({
 	accessibilityHint,
 }: TextAnimationRollingProps): ReactElement {
 	const isCalm = useCalmMotion();
+	// One cap for the measuring digit, the wheels and the static cells, the
+	// same default the other parts use, so a balance never outgrows its card.
+	const fontCap = maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER;
 	const textClass = cn(
 		useTextAnimationClass({ variant, size, weight, color, align, transform, className }),
 		"tabular-nums"
@@ -231,7 +246,7 @@ export function TextAnimationRolling({
 					{...HIDDEN}
 					allowFontScaling={allowFontScaling}
 					className={cn(textClass, slots.layer(), "opacity-0")}
-					maxFontSizeMultiplier={maxFontSizeMultiplier}
+					maxFontSizeMultiplier={fontCap}
 					onLayout={onLayout}
 				>
 					0
@@ -248,7 +263,7 @@ export function TextAnimationRolling({
 							isLate={hasMounted}
 							key={key}
 							lineHeight={lineHeight}
-							maxFontSizeMultiplier={maxFontSizeMultiplier}
+							maxFontSizeMultiplier={fontCap}
 							rank={rank}
 							stagger={stagger}
 						/>
@@ -258,7 +273,7 @@ export function TextAnimationRolling({
 							allowFontScaling={allowFontScaling}
 							className={textClass}
 							key={key}
-							maxFontSizeMultiplier={maxFontSizeMultiplier}
+							maxFontSizeMultiplier={fontCap}
 						>
 							{cell.text}
 						</NativeText>

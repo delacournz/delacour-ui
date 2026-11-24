@@ -26,6 +26,8 @@ export type ResolvedConfig = Config & {
 	directories: Record<Namespace, string>;
 	/** What copied tests are written for: `tests.runner`, else the project's own, else Bun. */
 	testRunner: TestRunner;
+	/** `tests.enabled`: whether `add` and `update` copy tests when no flag says. */
+	testsEnabled: boolean;
 	app: Config["app"] & {
 		/** Absolute paths to the Expo app's own files. */
 		resolved: { root: string; css: string; metroConfig: string; uniwindTypes: string };
@@ -121,6 +123,7 @@ export function resolveConfig(
 		root,
 		configPath,
 		testRunner: config.tests?.runner ?? detectedRunner ?? "bun",
+		testsEnabled: config.tests?.enabled ?? false,
 		directories: {
 			ui: absolute(root, config.paths.ui),
 			lib: absolute(root, config.paths.lib),

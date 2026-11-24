@@ -110,4 +110,4 @@ A long table goes inside `<details><summary>Previews (n)</summary>` … `</detai
 **A later push that recaptures again regenerates the table and edits the body in the same push**
 (`gh pr edit --body-file`). The old SHAs still resolve, but they show a branch that no longer exists.
 
-Then sign off as usual (`bun run signoff`) — the media is part of the signed tree.
+CI then signs off the pushed head as usual — the media is part of the signed tree. A local `bun run signoff` is optional.

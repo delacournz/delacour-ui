@@ -17,5 +17,24 @@
 			"target": "slot.tsx",
 			"namespace": "lib"
 		}
+	],
+	"renderTests": [
+		{
+			"path": "packages/react-native-ui/src/lib/slot.render.test.tsx",
+			"target": "slot.render.test.tsx",
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../test/render",
+					"to": "@registry/lib/test/render"
+				}
+			]
+		}
+	],
+	"renderTestRegistryDependencies": [
+		"test-kit"
+	],
+	"renderTestDependencies": [
+		"@jest/globals"
 	]
 }

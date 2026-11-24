@@ -1,4 +1,4 @@
-import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import { Text as NativeText, TextInput, type TextInputProps, View } from "react-native";
 import Animated, {
 	Easing,
@@ -10,6 +10,7 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	formatNumber,
@@ -77,7 +78,7 @@ function longer(a: string, b: string): string {
  * `TextInput`, computed on the UI thread by the `formatNumber` worklet every
  * frame — no React render per frame. Hermes worklets have no `Intl`, which is
  * why grouping and decimals are hand-written. An invisible `Text` in flow
- * holds the width of the longer of the start and the target, since the input
+ * holds the width of the longer of the on-screen start and the target, since the input
  * does not re-measure as its native text changes.
  *
  * A new `value` mid-tween retargets from what is on screen, never from
@@ -110,6 +111,8 @@ export function TextAnimationCounting({
 		useTextAnimationClass({ variant, size, weight, color, align, transform, className }),
 		"tabular-nums"
 	);
+	// The reserving text and the input must scale alike or the input drifts off it.
+	const fontCap = maxFontSizeMultiplier ?? TEXT_MAX_FONT_SIZE_MULTIPLIER;
 	// biome-ignore lint/correctness/useExhaustiveDependencies: the format's fields are its identity
 	const stableFormat = useMemo<TextAnimationNumberFormat>(
 		() => resolveNumberFormat(format, prefix, suffix),
@@ -119,7 +122,6 @@ export function TextAnimationCounting({
 	const shown = useSharedValue(start);
 	const target = formatNumber(value, stableFormat);
 	const [reserve, setReserve] = useState(() => longer(formatNumber(start, stableFormat), target));
-	const lastRef = useRef(start);
 
 	const settle = useCallback((settled: string) => setReserve(settled), []);
 
@@ -127,12 +129,13 @@ export function TextAnimationCounting({
 		const formatted = formatNumber(value, stableFormat);
 		if (isCalm) {
 			shown.value = value;
-			lastRef.current = value;
 			setReserve(formatted);
 			return;
 		}
-		setReserve(longer(formatNumber(lastRef.current, stableFormat), formatted));
-		lastRef.current = value;
+		// The replacement tween starts from what is on screen, not the last
+		// target, so reserve against that: 900 → 0 retargeted to 9 at 450 must
+		// still fit three digits.
+		setReserve(longer(formatNumber(shown.value, stableFormat), formatted));
 		shown.value = withTiming(value, { duration: durationMs, easing: EASINGS[easing] }, (finished) => {
 			if (finished) scheduleOnRN(settle, formatted);
 		});
@@ -154,7 +157,12 @@ export function TextAnimationCounting({
 			testID={testID}
 		>
 			<View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-				<NativeText {...HIDDEN} allowFontScaling={allowFontScaling} className={cn(textClass, "opacity-0")}>
+				<NativeText
+					{...HIDDEN}
+					allowFontScaling={allowFontScaling}
+					className={cn(textClass, "opacity-0")}
+					maxFontSizeMultiplier={fontCap}
+				>
 					{reserve}
 				</NativeText>
 				<AnimatedTextInput
@@ -164,7 +172,7 @@ export function TextAnimationCounting({
 					className={cn(textClass, "absolute inset-0 m-0 p-0")}
 					defaultValue={formatNumber(start, stableFormat)}
 					editable={false}
-					maxFontSizeMultiplier={maxFontSizeMultiplier}
+					maxFontSizeMultiplier={fontCap}
 					pointerEvents="none"
 					scrollEnabled={false}
 					underlineColorAndroid="transparent"

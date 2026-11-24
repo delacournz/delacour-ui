@@ -23,6 +23,7 @@ section first. What follows is only where a standalone disclosure differs.
 | `collapsible.context.tsx` | `CollapsibleContext`, `useCollapsible` and the internal part hook |
 | `collapsible.types.ts` | `CollapsibleTextProps`, shared by the title, description and trigger |
 | `collapsible.variants.ts` | Pure `tv()` slots, the constants, the toggle and the accessibility resolver — no RN imports |
+| `collapsible.render.test.tsx` | Mounted under Jest — trigger role and expanded/disabled state, controlled and uncontrolled `isOpen`, `onOpenChange`, `toggle()` from outside, indicator render function, out-of-root errors |
 | `collapsible.variants.test.ts` | `collapsibleTravelTarget`, pinned equal to the accordion's, and the JS-thread `contentHeight.value` sweep |
 
 ## Design

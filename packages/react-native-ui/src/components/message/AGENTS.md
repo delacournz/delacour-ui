@@ -28,6 +28,7 @@ Compound root plus `Message.Avatar`, `.Header`, `.Author`, `.Bubble`, `.Text`,
 | `message.types.ts` | `MessageStatus` and the slot props |
 | `message.variants.ts` | The slotted `tv()`, the corner and spacing resolvers, the fill and receipt token maps |
 | `message.utils.ts` | Receipt label, time format, emoji check, spoken label and actions, label-part folding, child classification |
+| `message.render.test.tsx` | Mounted under Jest — the composed spoken label, role and selected state, accessibility actions and handlers, `isCompound`, avatar gutter by position, receipt words and Retry, failed-status announcement, Typing label, parts outside a `Message` throwing |
 | `*.test.ts` | |
 
 ## Design

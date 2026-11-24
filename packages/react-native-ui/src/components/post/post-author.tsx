@@ -68,7 +68,14 @@ export function PostAuthor({
 
 	const content = (
 		<>
-			<Avatar fallback={fallback} name={name} size={resolvePostAvatarSize(size, variant)} source={avatar} />
+			<Avatar
+				accessible={false}
+				importantForAccessibility="no-hide-descendants"
+				fallback={fallback}
+				name={name}
+				size={resolvePostAvatarSize(size, variant)}
+				source={avatar}
+			/>
 			<View className={slots.authorText()}>
 				<View className={slots.authorLine()}>
 					<Text className={slots.authorName()} numberOfLines={1}>

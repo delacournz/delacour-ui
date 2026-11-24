@@ -95,6 +95,7 @@ export function useSheetIntents(
 					closedHeight: geometry.closedHeight.value,
 					maxHeight: geometry.maxHeight.value,
 					initialIndex: state.config.value.initialIndex,
+					closing: state.animStatus.value === ANIM_STATUS.RUNNING && effectiveIndex < 0,
 				},
 				intent
 			);

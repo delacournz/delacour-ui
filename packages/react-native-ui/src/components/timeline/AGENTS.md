@@ -33,6 +33,7 @@ Read-only and content-heavy. Compound root plus `Timeline.Item`, `Indicator`, `C
 | `timeline.types.ts` | Prop types the root and `List` share |
 | `timeline.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `timeline.variants.test.ts` | |
+| `timeline.render.test.tsx` | Mounted under Jest — per-event accessibility value (position, status, tone), `value`/`isCompleted` rules, marker hidden, masthead header, horizontal tick, `Timeline.List` step/count, parts and hooks outside their roots throwing |
 
 ## Design
 

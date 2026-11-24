@@ -30,15 +30,22 @@ import { DatePickerIcon } from "./date-picker-icon";
 import { DatePickerTrigger } from "./date-picker-trigger";
 import { DatePickerValue } from "./date-picker-value";
 
-/** The controlled value, as selection state — `undefined` while the caller leaves it uncontrolled. */
+/**
+ * The controlled value, as selection state — `undefined` while the caller leaves it uncontrolled.
+ *
+ * Passing `value` at all makes the picker controlled, even as `undefined`, which reads as empty. A
+ * form field starts `undefined` and goes back to it on reset, so a `value === undefined` test would
+ * flip the picker to its own state and keep showing a day the form no longer holds.
+ */
 function controlledValue(props: DatePickerSelectionProps): CalendarSelectionState | undefined {
+	if (!("value" in props)) return undefined;
 	switch (props.mode) {
 		case "range":
-			return props.value === undefined ? undefined : { mode: "range", value: props.value };
+			return { mode: "range", value: props.value ?? { start: null, end: null } };
 		case "multiple":
-			return props.value === undefined ? undefined : { mode: "multiple", value: props.value };
+			return { mode: "multiple", value: props.value ?? [] };
 		default:
-			return props.value === undefined ? undefined : { mode: "single", value: props.value };
+			return { mode: "single", value: props.value ?? null };
 	}
 }
 
@@ -76,8 +83,12 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		locale,
 		weekStartsOn = "auto",
 		captionLayout = "picker",
+		initialView = "days",
 		minDate,
 		maxDate,
+		defaultMonth,
+		startMonth,
+		endMonth,
 		disabledDates,
 		selectOutsideDays = false,
 		today,
@@ -85,6 +96,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		isOpen: isOpenProp,
 		defaultOpen = false,
 		onOpenChange,
+		onClose,
 		isDisabled,
 		isReadOnly,
 		isInvalid,
@@ -92,6 +104,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		size,
 		calendarSize = "md",
 		title = "Select date",
+		description,
 		doneLabel = "Done",
 		clearLabel = "Clear",
 		isClearable,
@@ -137,6 +150,23 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	}, []);
 	useEffect(() => cancelPendingClose, [cancelPendingClose]);
 
+	// A caller that closes a controlled sheet with `isOpen={false}` skips `close()`, so the sheet
+	// drops its half-picked range and pending close here too. An inline picker never opens or closes.
+	useEffect(() => {
+		if (isOpen || presentation === "inline") return;
+		cancelPendingClose();
+		setRangeDraft(null);
+	}, [cancelPendingClose, isOpen, presentation]);
+
+	// Counted during render, the way React derives state from a prop: each opening, controlled or
+	// not, remounts the calendar on `initialView`.
+	const [openCount, setOpenCount] = useState(0);
+	const [wasOpen, setWasOpen] = useState(isOpen);
+	if (isOpen !== wasOpen) {
+		setWasOpen(isOpen);
+		if (isOpen) setOpenCount((count) => count + 1);
+	}
+
 	const trigger = resolveTriggerState({ ...axes, isOpen });
 
 	const open = useCallback(() => {
@@ -178,8 +208,17 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		[cancelPendingClose, isCalm, locale, presentation, setOpen]
 	);
 
+	// Every tap cancels the last selection's pending close. `finish()` schedules a new one only
+	// when this selection is complete, so a new range start keeps the sheet open.
+	// A single day tapped again is a confirmation, not a clear: the calendar reports it as `null`,
+	// but the picker keeps the day and closes. Clearing a single day is Clear's job.
 	const select = useCallback(
 		(next: CalendarSelectionState) => {
+			cancelPendingClose();
+			if (next.mode === "single" && next.value === null && value.mode === "single" && value.value !== null) {
+				finish(value);
+				return;
+			}
 			if (next.mode === "range" && !resolveShouldClose(next)) {
 				setRangeDraft(next.value);
 				return;
@@ -188,7 +227,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			setValue(next);
 			if (resolveShouldClose(next)) finish(next);
 		},
-		[finish, setValue]
+		[cancelPendingClose, finish, setValue, value]
 	);
 
 	const clear = useCallback(() => {
@@ -216,11 +255,15 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			accessibilityValue: resolveSelectionAccessibilityValue(shown, locale),
 			calendar: {
 				captionLayout,
+				defaultMonth,
 				disabled: disabledDates,
+				endMonth,
+				initialView,
 				maxDate,
 				minDate,
 				selectOutsideDays,
 				size: calendarSize,
+				startMonth,
 				today,
 				weekStartsOn,
 			},
@@ -228,6 +271,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			clear,
 			clearLabel,
 			close,
+			description,
 			display,
 			doneLabel,
 			hasValue: hasSelection(shown),
@@ -239,6 +283,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			locale,
 			mode,
 			open,
+			openCount,
 			placeholder: placeholder ?? resolveDefaultPlaceholder(mode),
 			presentation,
 			select,
@@ -261,10 +306,14 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			clear,
 			clearLabel,
 			close,
+			defaultMonth,
+			description,
 			disabledDates,
 			display,
 			doneLabel,
+			endMonth,
 			field?.label,
+			initialView,
 			isClearable,
 			isOpen,
 			locale,
@@ -272,11 +321,13 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			minDate,
 			mode,
 			open,
+			openCount,
 			placeholder,
 			presentation,
 			select,
 			selectOutsideDays,
 			shown,
+			startMonth,
 			testID,
 			title,
 			today,
@@ -300,7 +351,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 
 	return (
 		<DatePickerProvider value={context}>
-			<BottomSheet isOpen={isOpen} onOpenChange={handleSheetOpenChange}>
+			<BottomSheet isOpen={isOpen} onOpenChange={handleSheetOpenChange} onClose={onClose}>
 				<View className={className} testID={testID} {...viewProps}>
 					{children ?? (
 						<>
@@ -350,6 +401,17 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
  *
  * @example
  * <DatePicker disabledDates={[{ type: "weekday", days: [0, 6] }]} mode="multiple" />
+ *
+ * @example
+ * // A date of birth: no future days, opens on the year list near a likely year, bounded.
+ * <DatePicker
+ *   defaultMonth={{ year: today().year - 30, month: 1, day: 1 }}
+ *   initialView="years"
+ *   maxDate={addYears(today(), -18)}
+ *   minDate={{ year: today().year - 120, month: 1, day: 1 }}
+ *   onValueChange={setDob}
+ *   value={dob}
+ * />
  */
 export const DatePicker = Object.assign(DatePickerRoot, {
 	/** The `Input`-shaped control that opens the sheet. Holds the value and the icon unless given children. */

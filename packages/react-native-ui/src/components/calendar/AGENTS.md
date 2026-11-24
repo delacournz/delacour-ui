@@ -15,7 +15,7 @@ sheets.
 | `calendar.tsx` | Root: selection and month state, bounds, the context value, the `Object.assign` surface |
 | `calendar-header.tsx` | `Calendar.Header` — prev arrow, caption, next arrow by default |
 | `calendar-nav.tsx` | `Calendar.Nav` — a ghost `Button` that disables itself at a bound |
-| `calendar-caption.tsx` | `Calendar.Caption` — label, or the button that cycles days → months → years |
+| `calendar-caption.tsx` | `Calendar.Caption` — label, or the button that cycles days → months → years. `initialView` picks the view the calendar opens on (picker caption only) |
 | `calendar-weekdays.tsx` | `Calendar.Weekdays` — short names shown, full names spoken |
 | `calendar-grid.tsx` | `Calendar.Grid` — six weeks, the paging pan and slide, hosts the picker |
 | `calendar-day.tsx` | `Calendar.Day` — one cell: band, circle, number or custom content |
@@ -26,6 +26,7 @@ sheets.
 | `calendar.date.test.ts` | |
 | `calendar.variants.ts` | Slotted `tv()`, the day-state, range-role, bounds, axes and page-direction resolvers |
 | `calendar.variants.test.ts` | |
+| `calendar.render.test.tsx` | Mounted under Jest — single/multiple/range selection, disabled matchers and bounds, month paging (arrows, caption actions, controlled month), part errors outside a root; clock fixed with fake timers |
 
 ## The date leaf
 
@@ -59,6 +60,13 @@ sheets.
   closed night is not bookable, and silently accepting it is worse than making the user tap again.
 - **Disabled vs read-only.** `isDisabled` makes everything inert and fades the root. `isReadOnly`
   ignores day taps and leaves paging working — looking at another month changes nothing.
+
+## Opening view
+
+- **`initialView` seeds the view once, on mount**, like `defaultMonth`. `years` is for a date of
+  birth: a year opens its months, a month its days, so a date decades back is three taps rather
+  than dozens of swipes. A `label` caption ignores it and opens on the days, because a jump view
+  with no caption button has no way back to them.
 
 ## Layout
 
@@ -119,9 +127,14 @@ sheets.
 
 ## Accessibility
 
-- Each day is a button labelled with the full date (`formatDate(…, { style: "full" })`), hinted
-  "Today" / "Range start" / "Range end", with `selected` and `disabled` state.
-- The grid is `role="grid"`, named by an enclosing `Field.Label` or else the month.
+- Each day is a button labelled with the full date (`formatDate(…, { style: "full" })`) plus
+  "Today" / "Range start" / "Range end" (`resolveDayAccessibilityLabel`), with `selected` and
+  `disabled` state. The state words are in the label, not a hint, so they read with hints off.
+- **A read-only day is not `disabled`** (`isUnavailable`): `select` ignores its tap and it skips
+  the fade and haptic, but a review screen's days never all read "dimmed".
+- The grid is `role="grid"`, but it is not `accessible` and RN gives `grid` no iOS trait, so
+  VoiceOver never reads a label on it. **The enclosing `Field.Label` is read on the caption**
+  instead (`resolveCaptionLabel`): "Date of birth, October 2026".
 - **Paging for screen readers lives on the caption**, as increment/decrement actions. An
   adjustable grid would fold its child buttons into itself on both platforms and make the days
   unreachable.
@@ -138,7 +151,7 @@ sheets.
 ## Field
 
 `resolveCalendarAxes` is the nearest-wins chain: the calendar's own `isDisabled` / `isInvalid` /
-`isReadOnly` / `size` / `variant`, else the `Field`'s. The field's label names the grid. It does
+`isReadOnly` / `size` / `variant`, else the `Field`'s. The caption reads the field's label. It does
 not `registerPress` — there is no single focus target for a row tap to reach.
 
 ## Not here

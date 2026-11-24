@@ -27,6 +27,7 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
 | `attachment.variants.test.ts` | |
 | `attachment.utils.ts` | Sizes, durations, kind and extension inference, middle truncation, every accessibility string |
 | `attachment.utils.test.ts` | |
+| `attachment.render.test.tsx` | Mounted under Jest — name and role, busy and progress value, the root's `activate`/`longpress`/`remove`/`retry` accessibility actions, the error announcement, parts outside a root, and `Attachment.Group` list semantics |
 
 ## Design
 

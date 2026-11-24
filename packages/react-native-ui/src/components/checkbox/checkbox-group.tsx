@@ -1,4 +1,4 @@
-import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
+import { type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
 import { View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { type CheckboxGroupContextValue, CheckboxGroupProvider } from "./checkbox.context";
@@ -46,7 +46,29 @@ function CheckboxGroupRoot({
 		value: checked,
 	});
 
-	const toggle = useCallback((value: string) => setValues(toggleCheckedValue(values, value)), [setValues, values]);
+	// Two toggles in one handler must build on each other, or the second would
+	// start from the same render's list and drop the first. So toggles in the
+	// same task share a pending list, and a microtask clears it once the
+	// handler returns. The next interaction starts from `settled` again, so a
+	// controlled parent that rejects a change (and never re-renders) does not
+	// see the rejected value carried into the next proposal.
+	const settled = useRef(values);
+	settled.current = values;
+	const pending = useRef<string[] | null>(null);
+
+	const toggle = useCallback(
+		(value: string) => {
+			if (pending.current === null) {
+				queueMicrotask(() => {
+					pending.current = null;
+				});
+			}
+			const next = toggleCheckedValue(pending.current ?? settled.current, value);
+			pending.current = next;
+			setValues(next);
+		},
+		[setValues]
+	);
 
 	const context = useMemo<CheckboxGroupContextValue>(
 		() => ({ alignment, checked: values, color, isDisabled, isInvalid, size, toggle }),

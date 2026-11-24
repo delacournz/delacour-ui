@@ -22,13 +22,18 @@ import {
 } from "./calendar.date";
 import type { CalendarProps, CalendarSelection } from "./calendar.types";
 import {
+	CALENDAR_NO_PAGING,
+	type CalendarPaging,
 	type CalendarView,
 	calendarVariants,
 	isDateSelected,
 	isMonthInBounds,
+	reconcileVisibleMonth,
 	resolveCalendarAxes,
+	resolveCommittedPageDirection,
 	resolveMonthBounds,
 	resolveRangeRole,
+	resolveSelectionPage,
 } from "./calendar.variants";
 import { CalendarCaption } from "./calendar-caption";
 import { CalendarDay } from "./calendar-day";
@@ -122,6 +127,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		locale,
 		weekStartsOn = "auto",
 		captionLayout = "picker",
+		initialView = "days",
 		showOutsideDays = true,
 		selectOutsideDays = false,
 		isBordered = false,
@@ -163,14 +169,29 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 	});
 	const visibleMonth = useMemo(() => startOfMonth(visibleMonthRaw), [visibleMonthRaw]);
 
-	const [view, setView] = useState<CalendarView>("days");
-	const [pageDirection, setPageDirection] = useState<-1 | 0 | 1>(0);
+	// Read on mount only. A label caption cannot leave a jump view, so it always opens on the days.
+	const [view, setView] = useState<CalendarView>(captionLayout === "picker" ? initialView : "days");
+	// The direction counts only for the month the calendar paged to. When `month` changes from
+	// outside, the stale page is dropped during render, so the new month never slides in from the
+	// side of an earlier page.
+	const [paging, setPaging] = useState<CalendarPaging>(CALENDAR_NO_PAGING);
+	if (paging.month && !isSameMonth(paging.month, visibleMonth)) setPaging(CALENDAR_NO_PAGING);
+	const pageDirection = resolveCommittedPageDirection(paging, visibleMonth);
+
+	// New bounds can leave the visible month outside them. Move it to the nearest bound and report
+	// the change, so the arrows and the swipe always have somewhere to go.
+	useEffect(() => {
+		const held = reconcileVisibleMonth(visibleMonth, monthBounds);
+		if (!held) return;
+		setPaging(CALENDAR_NO_PAGING);
+		setVisibleMonth(held);
+	}, [monthBounds, setVisibleMonth, visibleMonth]);
 
 	const goToMonth = useCallback(
 		(date: CalendarDate) => {
 			const target = startOfMonth(clampDate(startOfMonth(date), monthBounds.first, monthBounds.last));
 			if (isSameMonth(target, visibleMonth)) return;
-			setPageDirection(0);
+			setPaging(CALENDAR_NO_PAGING);
 			setVisibleMonth(target);
 		},
 		[monthBounds.first, monthBounds.last, setVisibleMonth, visibleMonth]
@@ -193,7 +214,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			const target = addMonths(visibleMonth, direction * step);
 			const held = startOfMonth(clampDate(target, monthBounds.first, monthBounds.last));
 			if (compareMonths(held, visibleMonth) === 0) return;
-			setPageDirection(view === "days" ? direction : 0);
+			setPaging({ direction: view === "days" ? direction : 0, month: held });
 			setVisibleMonth(held);
 		},
 		[monthBounds.first, monthBounds.last, setVisibleMonth, step, view, visibleMonth]
@@ -210,12 +231,22 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		(date: CalendarDate) => {
 			if (axes.isDisabled || axes.isReadOnly || isDateDisabled(date)) return;
 			setSelection(nextSelection(selection, date, isDateDisabled));
-			if (!isSameMonth(date, visibleMonth)) {
-				setPageDirection(compareMonths(date, visibleMonth) > 0 ? 1 : -1);
-				setVisibleMonth(startOfMonth(date));
-			}
+			const direction = resolveSelectionPage(date, visibleMonth, monthBounds);
+			if (direction === 0) return;
+			const target = startOfMonth(date);
+			setPaging({ direction, month: target });
+			setVisibleMonth(target);
 		},
-		[axes.isDisabled, axes.isReadOnly, isDateDisabled, selection, setSelection, setVisibleMonth, visibleMonth]
+		[
+			axes.isDisabled,
+			axes.isReadOnly,
+			isDateDisabled,
+			monthBounds,
+			selection,
+			setSelection,
+			setVisibleMonth,
+			visibleMonth,
+		]
 	);
 
 	// The month is announced when it changes, never on mount — the caption already says it.
@@ -230,9 +261,17 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		() => (weekStartsOn === "auto" ? resolveWeekStart(locale) : weekStartsOn),
 		[locale, weekStartsOn]
 	);
+	// Anchored to the visible month, not today, so a calendar that opens far in the past or future
+	// still lists its own year.
+	const visibleYear = visibleMonth.year;
 	const yearSpan = useMemo(
-		() => resolveYearSpan({ endMonth: monthBounds.last, startMonth: monthBounds.first, visible: today }),
-		[monthBounds.first, monthBounds.last, today]
+		() =>
+			resolveYearSpan({
+				endMonth: monthBounds.last,
+				startMonth: monthBounds.first,
+				visible: { day: 1, month: 1, year: visibleYear },
+			}),
+		[monthBounds.first, monthBounds.last, visibleYear]
 	);
 
 	const context = useMemo<CalendarContextValue>(
@@ -346,7 +385,8 @@ function CalendarRoot(props: CalendarProps): ReactElement {
  * `minDate`/`maxDate` bound what can be picked and, unless `startMonth`/`endMonth` say otherwise,
  * how far paging goes. `disabled` takes further matchers: a date, a span, weekdays or a predicate.
  *
- * `isDisabled` and `isInvalid` cascade in from an enclosing `Field`, whose label names the grid.
+ * `isDisabled` and `isInvalid` cascade in from an enclosing `Field`, whose label the caption
+ * reads before the month.
  * The week starts where the locale says, and names come from `Intl`.
  *
  * @example

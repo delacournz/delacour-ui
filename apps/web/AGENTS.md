@@ -39,7 +39,7 @@ content/docs/native/
 ├── getting-started/       root folder → navbar tab
 ├── components/            root folder → navbar tab
 ├── cli/                   root folder → navbar tab
-└── releases/              root folder → navbar tab
+└── releases/              root folder → navbar tab; *.md generated — see "Release notes"
 content/docs/charts/       the /docs/charts namespace — one root folder, one navbar tab
 
 src/
@@ -52,11 +52,16 @@ src/
 ├── registry/install.ts    here, **generated** — see "The install block is derived"
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
-├── lib/seo.ts             PRODUCTS (ui, charts, bottom-sheet), isDocsProduct() and docsHead() — each docs page's head tags
+├── lib/seo.ts             PRODUCTS, docsHead() (title, canonical, .md alternate, TechArticle + BreadcrumbList JSON-LD), pageHead(), homeHead()
+├── lib/sitemap.ts         MARKETING_PATHS, sitemapXml()
+├── lib/structured-data.ts ORGANIZATION (root JSON-LD), PUBLISHER, componentsItemList(), LLMS_PREAMBLE
+├── lib/security-headers.ts  HSTS, nosniff, frame, referrer and permissions headers, added in start.ts
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/number-words.ts    numberToWords — 0–99 as English, for <ComponentCount />
 ├── lib/remark-component-count.ts  the remark plugin that spells <ComponentCount /> — wired in source.config.ts
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
+├── lib/compare/           the two-way comparisons and the /compare hub — see "/compare and the two-way pages"
+├── lib/faq.ts             the landing FAQ and its FAQPage JSON-LD
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
 ├── lib/analytics/         PostHog, Google Analytics and consent — see "Analytics"
 ├── lib/native-app.ts      the playground app, and the two association bodies
@@ -67,6 +72,8 @@ src/
 │   ├── __root.tsx         RootProvider + <html>
 │   ├── index.tsx          the landing page
 │   ├── compare/heroui.tsx /compare/heroui — renders lib/comparison.ts
+│   ├── compare/index.tsx  /compare — the hub
+│   ├── compare/$slug.tsx  /compare/<slug> — renders lib/compare/<slug>.ts
 │   ├── privacy.tsx        /privacy — renders lib/privacy.ts
 │   ├── docs/index.tsx     /docs → /docs/native/getting-started
 │   ├── docs/$.tsx         the docs catch-all
@@ -75,8 +82,9 @@ src/
 │   ├── playground/components/{$}.tsx  the deep link's web fallback
 │   ├── [.]well-known/     apple-app-site-association, assetlinks.json
 │   ├── api/search.ts
+│   ├── api/components.ts  every component as a schema.org ItemList, for AI systems
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
-│   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
+│   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts, sitemap[.]xml.ts
 ├── start.ts               crawler block + preset rate limit + br/gzip + csrf + Accept: text/markdown negotiation
 ├── server/otel.ts         Nitro middleware — one OpenTelemetry SERVER span per request
 ├── server/trace.ts        traceRequest(), adapts withServerSpan to the middleware — see "Tracing"
@@ -274,6 +282,36 @@ Five things about it are load-bearing:
   [One container, every page](#one-container-every-page) — including why the `w-full min-w-0` in
   it is load-bearing.
 
+## `/compare` and the two-way pages
+
+`/compare` (`routes/compare/index.tsx`) is the hub the footer's **Compare** link opens: one card per
+`HUB_ENTRIES` row in `src/lib/compare/index.ts`. `/compare/$slug` renders a two-column table, Delacour
+UI against one library, from `src/lib/compare/<slug>.ts` — `react-native-reusables` and `bna-ui` today.
+`/compare/heroui` keeps its own three-column page and wins over `$slug` as a static route. An unknown
+slug is a 404.
+
+The rules are `/compare/heroui`'s, held by `src/lib/compare/compare.test.ts`: every answer carries a
+note, Delacour loses at least two rows, no section is a sweep either way, the page prints at least two
+`https://` sources and the date they were read (`checked`), no prices, and every page is in the
+sitemap's `MARKETING_PATHS`. **A row says only what a source says.** React Native Reusables' site
+renders client-side, so its rows cite the MDX in its repository. A new comparison is a file in
+`src/lib/compare/`, an entry in `COMPARISONS`, and a path in `MARKETING_PATHS`.
+
+**How a reader arrives:** the hero's **How it compares →** arrow link beside GitHub, the FAQ's closing
+line, the footer's **Compare**, the Quick start's **Next** cards, and a sentence at the top of Design
+Principles. Deliberately not the navbar or the sidebar — the docs' own voice stays out of the argument.
+
+`TwoWayTable` and `Mark` (`src/components/compare/`) draw the same hairlines and marks the HeroUI page
+does, which is why `Mark` moved out of `heroui.tsx`.
+
+## The landing FAQ is its own JSON-LD
+
+`src/lib/faq.ts` holds `FAQ`, which `components/landing/faq.tsx` renders as `<details>` above the
+footer and `faqJsonLd()` marks up as `FAQPage` in `homeHead()`. One list, because Google only honours
+FAQ markup that matches the visible page. Answers are plain text — they are quoted verbatim by search
+results and AI systems — and `faq.test.ts` holds that and holds the questions to the queries the page
+is for (shadcn, Expo, NativeWind, agents). Change an answer when the fact under it changes.
+
 ## `/privacy` is held to the code
 
 `src/routes/privacy.tsx` renders `src/lib/privacy.ts` and writes down nothing itself — the same split
@@ -294,6 +332,12 @@ listings name, and the playground's home screen links to it.
   — every attribute key and every device or network reading, each mapped to the words the policy
   uses for it. A future version that sends one more field fails by that field's name before a
   binary carrying it reaches a store.
+- **The CLI's telemetry is held to the CLI.** The host is read out of `packages/cli/src/telemetry/client.ts`
+  (`TELEMETRY_HOST`) and the policy must name it beside "discards your IP address"; every property a
+  `command` event can carry comes from `PROPERTY_DISCLOSURE` in `telemetry/properties.ts`, a `Record`
+  over the event's keys, and each phrase must appear in the disclosure; each switch the CLI docs page
+  documents must be in the policy; the policy links `TELEMETRY_DOCS_URL`'s anchor. Add a property to
+  the CLI and this fails by phrase until the policy says so.
 - **Google Fonts and the CLI's `raw.githubusercontent.com` are named** because the files that load
   them still do.
 - **The analytics are named from the code that loads them.** GA is a script tag, not a package, so
@@ -707,9 +751,17 @@ MDX do that (see [A link to `/llms.txt` has to be a plain anchor](#a-link-to-llm
 with no component, `notFound()` came back as **`200`** carrying `{"isNotFound":true}` — a body no
 client reads as an error.
 
-`robots[.]txt.ts` exists for one reason: to name `/llms.txt` somewhere a crawler already looks. It
-carries no `Sitemap:` line, because prerendering is off and nothing produces a page list at build
-time — a hand-written sitemap is the transcription this site keeps deleting.
+**SEO and GEO follow TanStack Start's two guides** (`guide/seo`, `guide/geo`): `head()` title,
+description, `og:*`, canonical and JSON-LD on every route; an `Organization` on the root; a dynamic
+sitemap and robots; `/llms.txt` opening with the convention's H1 and `>` summary (`LLMS_PREAMBLE`)
+before Fumadocs' index; and `/api/components`. Two items there are deliberately not done:
+prerendering (see [Prerendering is off](#prerendering-is-off)). `FAQPage` is in — see [The landing FAQ](#the-landing-faq-is-its-own-json-ld).
+
+`robots[.]txt.ts` names `/llms.txt` somewhere a crawler already looks, and carries a `Sitemap:` line
+for `/sitemap.xml` (`routes/sitemap[.]xml.ts`). The sitemap is built per request from
+`source.getPages()` plus `MARKETING_PATHS` in `src/lib/sitemap.ts` — the same source `/llms.txt`
+reads, so it is not the hand-written transcription this site keeps deleting. `sitemapXml` throws on
+a path with a query: a `/theme?preset=` URL in it would invite the crawl below.
 
 Its one rule is `Disallow: /theme?` — see the builder below for why.
 
@@ -780,6 +832,30 @@ the web inherits), the display steps above `3xl`, the vertical rhythm (`py-secti
 
 The library default is untouched by any of this. `DEFAULT_CONFIG` and `theme.css` stay the neutral
 identity theme a fresh `delacour init` ships; the house is what *this site* wears.
+
+## `@delacournz/ui` and `@delacournz/apogee`: installed, not used
+
+`delacournz/delacour-monorepo` publishes its two React DOM design systems to GitHub Packages,
+through the same `@delacournz` scope and `NPM_TOKEN` as [Tracing](#tracing)'s otel family. Both are
+dependencies of this app and of nothing else — they are Base UI + Tailwind v4, so React Native, Expo
+and the CLI never take them.
+
+| Package | What it is | CSS entry |
+| --- | --- | --- |
+| `@delacournz/ui` | The "site" design system — Base UI + shadcn base-lyra. `/<component>`, `/lib/<name>`, `/hooks/<name>`, `/icons/<name>`, `/tokens` | `@import "@delacournz/ui/styles";` |
+| `@delacournz/apogee` | The "app" design system — coss on Base UI, Orbit palettes, Phosphor icons. `/<component>`, `/kit/<name>`, `/x/<name>`, `/themes/<name>`, `/theme-provider` | `@import "@delacournz/apogee/styles.css";` |
+
+- **Nothing imports them yet.** No component, no CSS. Moving the site onto either is a migration,
+  planned separately; until then the house theme above — `tokens.css`, the generated `house.css`
+  and `@delacour/design-system` — stays the source of truth, and nothing here is renamed or removed.
+- **Never load both in one document.** They define the same shadcn token names (`--primary`,
+  `.dark`, …) with different values; whichever stylesheet lands last wins every shared token.
+- **The CSS entry is the whole setup.** Each declares its own `@source` for its `dist/`, so one
+  `@import` in a Tailwind v4 stylesheet is enough — no `@source` line of our own.
+- **Peers are `react` / `react-dom` ^19.2 and `tailwindcss` ^4**, all already here.
+- **CI installs them only with the grant.** Each package must give this repository read access
+  under **Manage Actions access** on its GitHub Packages settings page, like the otel family does
+  (see [Tracing](#tracing)); without it every CI install fails with a 401.
 
 ## `/theme` builds a preset and renders it
 
@@ -899,10 +975,13 @@ reference; warden's docs site consumes it the same way.
 | The middleware | `src/server/otel.ts`, registered in `vite.config.ts`'s Nitro `handlers` |
 | The SERVER span + `http.server.*` metrics | `withServerSpan`, adapted in `src/server/trace.ts` |
 
-- **Installing it needs `NPM_TOKEN`.** The scope is on GitHub Packages, routed by `bunfig.toml`; the
-  token is a classic PAT with only `read:packages`, owned by a machine user. Railway has it on `ui-web`;
-  CI reads the `NPM_TOKEN` Actions secret; EAS has it as a secret env var, because the playground's
-  build installs the whole workspace from the same lockfile; locally, export it.
+- **Installing it needs `NPM_TOKEN`.** The scope is on GitHub Packages, routed by `bunfig.toml`.
+  In GitHub Actions it is the job's own token (`packages: read`, on the install step only), which
+  works because each `@delacournz/*` package grants this repository read access under **Manage
+  Actions access** — a new package needs that grant before CI can install it. Everywhere else it is a
+  classic PAT with only `read:packages`, owned by a machine user: Railway has it on `ui-web`; EAS has
+  it as a secret env var, because the playground's build installs the whole workspace from the same
+  lockfile; locally, export it.
 - **The root `overrides` pins `@delacournz/otel` to `0.1.0`.** The published
   `@delacournz/otel-start@0.1.0` depends on `@delacournz/otel@0.0.0`: the monorepo's `bun publish`
   rewrote `workspace:*` from a `bun.lock` that still listed the workspaces at `0.0.0`, and that
@@ -1108,7 +1187,27 @@ breaks hooks. Hydration warnings in the console are the first symptom.
   indexed from the package's own `AGENTS.md`. `packages/react-native-ui/src/docs.test.ts` fails the build
   on a component missing either, so that index is a reliable place to start when writing a page
   here — and it is where prose trimmed from a page belongs.
-- `releases/index.mdx` is hand-maintained from `git log --oneline -- packages/react-native-ui`.
+
+## Release notes are generated from Changesets
+
+`content/docs/native/releases/` holds one hand-written page, `channels.mdx`; the rest are
+**generated and gitignored**. `bun run release-notes` (`scripts/generate-release-notes.ts`, run
+first by `dev`, `build` and `codegen`) writes `index.md` — what is pending plus the latest release,
+across every package — and one page per published package (`react-native-ui.md`, `cli.md`,
+`react-native-charts.md`, `react-native-bottom-sheet.md`), which `meta.json` lists under
+`---Packages---`. Ported from warden's docs site.
+
+- **Released versions come from each package's `CHANGELOG.md`**, newest first: PR link kept, commit
+  hash and "Thanks" dropped, `Updated dependencies` items dropped. A version with nothing of its own
+  (it moved with the `fixed` group) says so rather than disappearing.
+- **Pending `.changeset/*.md` files show as Unreleased**, under the packages their frontmatter names,
+  with the version they will ship as. Staging builds from `develop`, so it previews the next release.
+- **GitHub release links** are `vX.Y.Z` from `0.6.0` (the first shared tag) and `<name>@<version>`
+  before it; prereleases are unlinked.
+- `src/lib/release-notes.ts` only transforms text; `release-notes.test.ts` covers it and parses the
+  real changelogs, so a Changesets format change fails a test instead of shipping a blank page.
+  `RELEASE_PACKAGES` must match the `fixed` group, and that test holds them together. The Docker build
+  has the changelogs and `.changeset/` in its context (`COPY . .`), so Railway generates the pages too.
 
 ## Scan to preview
 

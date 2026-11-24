@@ -18,6 +18,7 @@ thumb. The frame is the layout; only what is inside it moves. A single component
 | `use-frame-progress.ts` | Resolves the source, measures the frame, derives 0–1 progress on the UI thread |
 | `scroll-canvas.types.ts` | `ScrollCanvasProps` — the `source` / `sources` union, shared by the root and the test |
 | `scroll-canvas.variants.ts` | Pure `tv()` slots, constants and worklet resolvers, no RN imports |
+| `scroll-canvas.render.test.tsx` | Mounted under Jest — the image role and label (or hidden when decorative), every effect's picture count, sequence frames, `onLayout` forwarding, the missing-source error. Drives the effect with `progress`; animated values are not asserted |
 | `scroll-canvas.variants.test.ts` | The effect maths, the slots and the props union (`@ts-expect-error`) |
 
 ## Design

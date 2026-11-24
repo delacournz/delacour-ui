@@ -19,6 +19,7 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
 | `badge.types.ts` | Prop types shared by two or more parts |
 | `badge.variants.ts` | Pure `tv()` slots + `resolveBadgeInteractive`, no RN imports |
 | `badge.variants.test.ts` | |
+| `badge.render.test.tsx` | Mounted under Jest — string children, content-vs-button root, press/long-press/disabled, onClose isolation, compound parts and out-of-root errors |
 
 ## Design
 

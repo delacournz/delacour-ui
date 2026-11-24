@@ -1,7 +1,7 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { CalendarDate, CalendarSelectionState, DateMatcher, Weekday } from "../calendar/calendar.date";
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
-import type { CalendarSize } from "../calendar/calendar.variants";
+import type { CalendarSize, CalendarView } from "../calendar/calendar.variants";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { DatePickerMode, DatePickerPresentation } from "./date-picker.variants";
 
@@ -44,15 +44,27 @@ export type DatePickerContextValue = {
 	size: InputSize;
 	presentation: DatePickerPresentation;
 	title: string;
+	/** Supporting copy under the sheet's title, when the root gives one. */
+	description: string | undefined;
 	doneLabel: string;
 	clearLabel: string;
+	/**
+	 * Counts the sheet's openings. The calendar is keyed by it, so each opening starts on
+	 * `initialView` and the selection's month, never where the last opening was left.
+	 */
+	openCount: number;
 	calendar: {
 		size: CalendarSize;
 		minDate: CalendarDate | undefined;
 		maxDate: CalendarDate | undefined;
+		defaultMonth: CalendarDate | undefined;
+		startMonth: CalendarDate | undefined;
+		endMonth: CalendarDate | undefined;
 		disabled: readonly DateMatcher[] | undefined;
 		weekStartsOn: Weekday | "auto";
 		captionLayout: CalendarCaptionLayout;
+		/** The view an empty picker's calendar opens on. A picked value always opens on its days. */
+		initialView: CalendarView;
 		selectOutsideDays: boolean;
 		today: CalendarDate | undefined;
 	};

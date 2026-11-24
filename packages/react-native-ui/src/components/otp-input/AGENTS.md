@@ -17,6 +17,7 @@ A one-time code or a PIN: a row of cells that reads as N boxes and is driven by 
 | `otp-input.context.tsx` | `OtpInputProvider`, `useOtpInput()`, `useOtpInputContext()`, `useOtpInputPart()` |
 | `otp-input.logic.ts` | Pure: sanitising, the active cell, completion, the group layout, the mask, the keyboard and autofill hints, the accessibility strings, the `Field` axes |
 | `otp-input.logic.test.ts` | |
+| `otp-input.render.test.tsx` | Mounted under Jest — typing and sanitising, `onComplete` once per transition, controlled/uncontrolled, `clear()`, disabled/read-only, `Field` label/row press, parts outside the root throwing |
 | `otp-input.variants.ts` | Pure `tv()` slots on `Input`'s tokens, the caret's timing, the font-scale cap |
 | `otp-input.variants.test.ts` | |
 
@@ -120,3 +121,5 @@ keeps a type with one consumer in that consumer's file.
   are out of scope here — they would be a new peer dependency.
 - **Neither can be exercised on a simulator.** A paste can: the iOS Simulator's pasteboard follows
   the Mac's.
+
+**A disabled field ignores a press on its `Field` row.** The handler registered through `Field`'s `registerPress` is gated on the field's own resolved `isDisabled` (the `Field` row only knows `Field`'s prop, so `<OtpInput isDisabled>` inside an enabled `Field` would otherwise still be focused by a label press).

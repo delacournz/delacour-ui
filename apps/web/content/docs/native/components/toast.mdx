@@ -124,6 +124,20 @@ await toast.promise(uploadPhotos(), {
 ride up with the keyboard; top toasts sit under the status bar. `ToastViewport`'s `offset` adds
 space at either edge — to clear a tab bar, `<ToastViewport offset={{ bottom: 56 }} />`.
 
+Chrome that changes — a tab bar, a toolbar that hides — tells the viewport itself with
+`useToastOffset`, measured from the screen edge. Keep a bar's height in a shared value and the
+toasts follow it on the UI thread with no re-render; pass `null` while its screen is out of focus
+and they slide back down.
+
+```tsx
+function TabBar() {
+  const isFocused = useIsFocused();
+  const height = useSharedValue(0);
+  useToastOffset(isFocused ? { bottom: height } : null);
+  return <View onLayout={(event) => height.set(event.nativeEvent.layout.height)}>{tabs}</View>;
+}
+```
+
 <Preview id="toast/placement" />
 
 Each edge draws its three newest toasts, the newest in front and each older one a step further back.

@@ -1,8 +1,9 @@
 import { beforeAll, describe, expect, test } from "bun:test";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { type BuildResult, buildRegistry, escapingReads, runnerSpecificUses } from "./build";
+import { type BuildResult, buildRegistry, escapingReads, jestOnlyViolations, runnerSpecificUses } from "./build";
 import { isTest } from "./classify";
+import { RENDER_TEST_MOCKS } from "./config";
 import { PLACEHOLDER_PREFIX, parsePlaceholder } from "./namespaces";
 import { applyRewrites } from "./rewrite";
 import { scanImports } from "./scan-imports";
@@ -182,6 +183,67 @@ describe("buildRegistry", () => {
 		expect(offences).toEqual([]);
 	});
 
+	test("ships render tests in renderTests, not tests or files, with the test kit behind them", () => {
+		const withRender = registry.items.filter((item) => item.renderTests.length > 0);
+
+		expect(withRender.map((item) => item.name)).toContain("button");
+		for (const item of withRender) {
+			for (const file of item.renderTests) expect(file.target).toMatch(/\.render\.test\.tsx$/);
+			for (const file of [...item.files, ...item.tests]) expect(file.target).not.toMatch(/\.render\.test\.tsx$/);
+			expect(item.renderTestRegistryDependencies).toContain("test-kit");
+			expect(item.renderTestDependencies).toContain("@jest/globals");
+			expect(item.testDependencies).not.toContain("@jest/globals");
+		}
+	});
+
+	test("the test kit is a lib item of its own, with the renderer and the provider behind it", () => {
+		const kit = byName.get("test-kit");
+
+		expect(kit?.type).toBe("registry:lib");
+		expect(kit?.files.map((file) => `${file.namespace}/${file.target}`)).toEqual([
+			"lib/test/mock-stub.ts",
+			"lib/test/render.tsx",
+			"lib/test/setup.ts",
+		]);
+		expect(kit?.registryDependencies).toContain("provider");
+		expect(kit?.devDependencies).toEqual(
+			expect.arrayContaining(["@jest/globals", "@testing-library/react-native", "test-renderer"])
+		);
+		expect(kit?.tests).toEqual([]);
+	});
+
+	test("a native module only some components bring is mocked in its own item, never in the kit's setup", () => {
+		const setup = delivered.get("packages/react-native-ui/src/test/setup.ts") ?? "";
+
+		for (const [module, mock] of Object.entries(RENDER_TEST_MOCKS)) {
+			expect(`${module}: ${setup.includes(`jest.mock("${module}"`)}`).toBe(`${module}: false`);
+			const item = byName.get(mock);
+			expect(item?.files.map((file) => `${file.namespace}/${file.target}`)).toEqual([
+				`lib/test/mocks/${mock.replace("test-mock-", "")}.ts`,
+			]);
+			for (const dependency of item?.registryDependencies ?? []) expect(dependency).toBe("test-kit");
+		}
+	});
+
+	test("every mock file mocks the module it is registered for", () => {
+		const mocks = [...delivered].filter(([path]) => path.includes("/src/test/mocks/"));
+
+		expect(mocks.length).toBe(new Set(Object.values(RENDER_TEST_MOCKS)).size);
+		for (const [path, content] of mocks) {
+			const mocked = [...content.matchAll(/jest\.mock\("([^"]+)"/g)].map((match) => match[1] as string);
+			const item = `test-mock-${path.split("/").pop()?.replace(/\.ts$/, "")}`;
+			expect(mocked.length).toBeGreaterThan(0);
+			for (const module of mocked) expect(`${module} → ${RENDER_TEST_MOCKS[module]}`).toBe(`${module} → ${item}`);
+		}
+	});
+
+	test("an item that installs a mocked module takes its mock behind its render tests, and no other does", () => {
+		expect(byName.get("chart")?.renderTestRegistryDependencies).toContain("test-mock-skia");
+		expect(byName.get("map")?.renderTestRegistryDependencies).toContain("test-mock-maplibre");
+		expect(byName.get("button")?.renderTestRegistryDependencies).not.toContain("test-mock-skia");
+		expect(byName.get("badge")?.renderTestRegistryDependencies).not.toContain("test-mock-maplibre");
+	});
+
 	test("records what only the tests need apart from what the source needs", () => {
 		for (const item of registry.items) {
 			for (const dependency of item.testRegistryDependencies) {
@@ -305,6 +367,9 @@ function everyImport(): { where: string; specifier: string }[] {
 function itemOf(namespace: string | undefined, moduleId: string | undefined): string {
 	if (namespace === "ui") return (moduleId ?? "").split("/")[0] as string;
 	if (namespace === "styles" || namespace === "icons") return namespace;
+	if (namespace === "lib" && moduleId?.startsWith("test/")) {
+		return moduleId.startsWith("test/mocks/") ? `test-mock-${moduleId.slice("test/mocks/".length)}` : "test-kit";
+	}
 	// `cn.test` is a test of `cn`.
 	return (moduleId ?? "").split(".")[0] as string;
 }
@@ -385,5 +450,27 @@ describe("runnerSpecificUses", () => {
 			"test.if(",
 			"describe.skipIf(",
 		]);
+	});
+});
+
+describe("jestOnlyViolations", () => {
+	test("allows what Jest has and Bun does not: jest.fn, jest.mock and @jest/globals", () => {
+		const source = [
+			'import { describe, expect, jest, test } from "@jest/globals";',
+			'jest.mock("./thing");',
+			"const onPress = jest.fn();",
+			"expect(onPress).not.toHaveBeenCalled();",
+		].join("\n");
+
+		expect(jestOnlyViolations(source)).toEqual([]);
+	});
+
+	test("refuses an import from bun:test, which a Jest project cannot load", () => {
+		expect(jestOnlyViolations('import { expect, test } from "bun:test";')).toEqual(['imports from "bun:test"']);
+	});
+
+	test("refuses what Jest itself rejects", () => {
+		expect(jestOnlyViolations("expect(value, 'message').toBe(1);")).toEqual(["expect(…, message)"]);
+		expect(jestOnlyViolations("expect(list).toBeArray();")).toEqual([".toBeArray("]);
 	});
 });

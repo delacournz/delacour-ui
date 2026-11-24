@@ -37,8 +37,8 @@ export type SwitchThumbProps = Omit<ViewProps, "children" | "style"> & {
  *
  * **The colour is not a class.** It fades between two token *values* as the
  * switch travels, and a colour being interpolated cannot be a class — the rule
- * `Checkbox`'s border already follows. The `thumb` slot keeps `bg-background` as
- * the resting appearance this style starts from, and nothing else names a
+ * `Checkbox`'s border already follows. The `thumb` slot keeps
+ * `bg-muted-foreground` as the resting appearance this style starts from, and nothing else names a
  * background; two sources for one surface is how a class and a style end up
  * disagreeing for a frame on every toggle.
  *
@@ -52,14 +52,18 @@ export type SwitchThumbProps = Omit<ViewProps, "children" | "style"> & {
  * of the knob rather than an acknowledgement of the press. The outermost node is
  * the one thing nothing can crop, so that is where the press feedback lives.
  */
-export function SwitchThumb({ className, children, ...props }: SwitchThumbProps): ReactElement {
+export function SwitchThumb({ className, children, onLayout, ...props }: SwitchThumbProps): ReactElement {
 	const { color, size, isInvalid, isDisabled, progress, trackWidth, thumbWidth } = useSwitchPart("Switch.Thumb");
 
+	// The caller's handler runs as well as the measurement, never instead of it:
+	// with the width left at zero the travel is the whole track, and an on-state
+	// knob slides out past the clipped end.
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {
 			thumbWidth.value = event.nativeEvent.layout.width;
+			onLayout?.(event);
 		},
-		[thumbWidth]
+		[onLayout, thumbWidth]
 	);
 
 	const tokens = resolveSwitchThumbTokens({ color, isInvalid });
@@ -67,24 +71,27 @@ export function SwitchThumb({ className, children, ...props }: SwitchThumbProps)
 	const activeColor = useThemeColor(tokens.active) ?? "transparent";
 
 	const thumbStyle = useAnimatedStyle(() => {
-		const measured = trackWidth.value;
 		const travel = switchTravel({
 			inset: SWITCH_THUMB_INSET,
 			thumbWidth: thumbWidth.value,
-			trackWidth: measured,
+			trackWidth: trackWidth.value,
 		});
+		// Both widths, in either order: with only the track measured the travel is
+		// the whole track, and an on-state knob would paint past the clipped end.
+		const isMeasured = trackWidth.value > 0 && thumbWidth.value > 0;
 
 		return {
 			backgroundColor: interpolateColor(progress.value, [0, 1], [restColor, activeColor]),
-			opacity: measured > 0 ? 1 : 0,
+			opacity: isMeasured ? 1 : 0,
 			transform: [{ translateX: progress.value * travel }],
 		};
 	});
 
-	// A glyph on the knob takes the *track*'s colour, not the knob's own: it is
-	// drawn on the knob, so it has to contrast with it, and the one value that
-	// reads at both ends is the colour the track fades to. Static rather than
-	// interpolated because an `Icon`'s colour is a prop, not a style.
+	// A glyph on the knob takes the *track*'s on colour, not the knob's own: it is
+	// drawn on the knob, so it has to contrast with the on knob, which is that
+	// colour's foreground. Static rather than interpolated because an `Icon`'s
+	// colour is a prop, not a style — so it cannot follow the knob to its grey off
+	// state, where it falls well under 3:1. Keep knob glyphs decorative.
 	const slots = switchVariants({ isDisabled, size });
 	const glyphColor = useThemeColor(resolveSwitchTrackTokens({ color, isInvalid }).active);
 	const glyphClassName = slots.glyph();

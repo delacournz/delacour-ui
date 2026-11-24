@@ -88,10 +88,10 @@ const svg = sketch.current?.toSVG({ background: null }) ?? "";
 
 ## Exporting PNG
 
-`toPNG()` renders the marks off screen at the screen's pixel ratio and returns base64, with the same `background` option and a `scale` for the pixels per point.
+`toPNG()` renders the marks off screen at the screen's pixel ratio and resolves to base64, with the same `background` option and a `scale` for the pixels per point.
 
 ```tsx
-const png = sketch.current?.toPNG({ scale: 2 }) ?? "";
+const png = (await sketch.current?.toPNG({ scale: 2 })) ?? "";
 const uri = `data:image/png;base64,${png}`;
 ```
 
@@ -214,7 +214,7 @@ another way to provide it.
     clear: { type: "() => void", description: "Removes every mark." },
     isEmpty: { type: "() => boolean", description: "Whether there is anything drawn." },
     toSVG: { type: "(options?: { background?: string | null }) => string", description: "The drawing as a self-contained SVG string." },
-    toPNG: { type: "(options?: { background?: string | null; scale?: number }) => string", description: "The drawing as a base64 PNG, without the data: prefix." },
+    toPNG: { type: "(options?: { background?: string | null; scale?: number }) => Promise<string>", description: "Resolves to the drawing as a base64 PNG, without the data: prefix." },
   }}
 />
 

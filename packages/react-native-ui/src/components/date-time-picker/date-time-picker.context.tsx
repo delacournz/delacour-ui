@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { DateTimePickerLabels } from "../../lib/labels";
 import type { CalendarDate, DateMatcher, Weekday } from "../calendar/calendar.date";
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
 import type { InputSize, InputVariant } from "../input/input.variants";
@@ -11,6 +12,8 @@ import type {
 } from "./date-time-picker.variants";
 
 export type DateTimePickerContextValue = {
+	/** The resolved spoken strings: the root's `labels` over `DelacourProvider`'s over English. */
+	labels: DateTimePickerLabels;
 	/** The chosen date and time, or `null` while none is set. Never half a value. */
 	value: DateTimeValue | null;
 	/** Applies a calendar pick: completes an empty value from the clock, re-clamps the time to the new day. */

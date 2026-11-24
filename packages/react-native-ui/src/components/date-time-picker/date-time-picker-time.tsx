@@ -12,6 +12,7 @@ import {
 	DATE_TIME_PICKER_WHEEL_HEIGHT,
 	dateTimePickerVariants,
 	resolveExpandDuration,
+	resolveTimeRowLabel,
 } from "./date-time-picker.variants";
 
 export type DateTimePickerTimeProps = {
@@ -80,11 +81,11 @@ function DateTimePickerStackedTime({ className, testID }: DateTimePickerTimeProp
 		<View className={className}>
 			<Separator className={slots.divider()} />
 			<Pressable
-				accessibilityHint={isTimeExpanded ? "Hides the time wheel" : "Shows the time wheel"}
+				accessibilityHint={picker.labels.timeWheelHint(isTimeExpanded)}
 				accessibilityLabel={picker.timeLabel}
 				accessibilityRole="button"
 				accessibilityState={{ disabled: isInert, expanded: isTimeExpanded }}
-				accessibilityValue={{ text: picker.value ? picker.timeReadout : "not set" }}
+				accessibilityValue={{ text: picker.value ? picker.timeReadout : picker.labels.notSet }}
 				className={slots.timeRow()}
 				disabled={isInert}
 				feedback="fade"
@@ -129,7 +130,7 @@ export function DateTimePickerTime({ className, testID }: DateTimePickerTimeProp
 	return (
 		<View className={slots.panel({ className })}>
 			<View
-				accessibilityLabel={`${picker.timeLabel}, ${picker.value ? picker.timeReadout : "not set"}`}
+				accessibilityLabel={resolveTimeRowLabel(picker.timeLabel, picker.value, picker.timeReadout, picker.labels)}
 				accessible
 				className={slots.timeRow()}
 				testID={resolvePartTestID(picker.testID, "time-row")}

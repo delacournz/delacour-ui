@@ -1,3 +1,4 @@
+export type { DateTimePickerLabels } from "../../lib/labels";
 export { DateTimePicker } from "./date-time-picker";
 export {
 	type DateTimePickerContextValue,
@@ -50,6 +51,7 @@ export {
 	resolveExpandDuration,
 	resolveShouldAutoAdvance,
 	resolveTimeReadout,
+	resolveTimeRowLabel,
 } from "./date-time-picker.variants";
 export type { DateTimePickerCalendarProps } from "./date-time-picker-calendar";
 export type { DateTimePickerClearProps } from "./date-time-picker-clear";

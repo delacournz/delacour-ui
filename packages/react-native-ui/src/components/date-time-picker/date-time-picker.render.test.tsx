@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement, ReactNode } from "react";
 import { AccessibilityInfo } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
 import { OverlayProvider } from "../overlay";
@@ -351,6 +352,67 @@ describe("DateTimePicker", () => {
 				`${name} must be rendered inside a <DateTimePicker>.`
 			);
 			spy.mockRestore();
+		});
+	});
+	describe("labels", () => {
+		const german = {
+			trigger: "Datum und Uhrzeit",
+			triggerHint: "Öffnet die Auswahl",
+			notSet: "nicht gesetzt",
+			placeholder: "Wählen",
+			selected: (value: string) => `Gewählt: ${value}`,
+		};
+
+		test("the labels prop changes the trigger's name, hint, value and placeholder", async () => {
+			await renderWithProviders(<Picker labels={german} />, { wrapper: Hosts });
+			const button = screen.getByRole("button", { name: "Datum und Uhrzeit" });
+			expect(button).toHaveAccessibilityValue({ text: "nicht gesetzt" });
+			expect(button.props.accessibilityHint).toBe("Öffnet die Auswahl");
+			expect(screen.getByText("Wählen")).toBeOnTheScreen();
+		});
+
+		test("a LabelsProvider changes them too", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ dateTimePicker: german }}>
+					<Picker />
+				</LabelsProvider>,
+				{ wrapper: Hosts }
+			);
+			expect(screen.getByRole("button", { name: "Datum und Uhrzeit" })).toBeOnTheScreen();
+		});
+
+		test("the prop wins over the provider, key by key", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ dateTimePicker: german }}>
+					<Picker labels={{ trigger: "Start" }} />
+				</LabelsProvider>,
+				{ wrapper: Hosts }
+			);
+			const button = screen.getByRole("button", { name: "Start" });
+			expect(button.props.accessibilityHint).toBe("Öffnet die Auswahl");
+		});
+
+		test("an explicit per-string prop wins over labels", async () => {
+			await renderWithProviders(<Picker accessibilityLabel="Ende" labels={german} placeholder="Bitte" />, {
+				wrapper: Hosts,
+			});
+			expect(screen.getByRole("button", { name: "Ende" })).toBeOnTheScreen();
+			expect(screen.getByText("Bitte")).toBeOnTheScreen();
+		});
+
+		test("Done's announcement and the sheet's strings come from labels", async () => {
+			const spy = jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => undefined);
+			await renderWithProviders(
+				<Picker
+					defaultOpen
+					defaultValue={OCT_5}
+					labels={{ done: "Fertig", selected: german.selected, title: "Wann?" }}
+				/>,
+				{ wrapper: Hosts }
+			);
+			expect(screen.getByText("Wann?")).toBeOnTheScreen();
+			tapButton("Fertig");
+			expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^Gewählt: /));
 		});
 	});
 });

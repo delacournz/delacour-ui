@@ -1,6 +1,7 @@
 import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AccessibilityInfo, View } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { BottomSheet } from "../bottom-sheet";
 import { type CalendarDate, today } from "../calendar/calendar.date";
 import { resolveDatePickerAxes, resolveTriggerState } from "../date-picker/date-picker.variants";
@@ -19,7 +20,6 @@ import {
 	timeBoundsForDate,
 } from "./date-time-picker.value";
 import {
-	DATE_TIME_PICKER_DEFAULTS,
 	type DateTimePickerSection,
 	resolveDateTimeAccessibilityValue,
 	resolveDateTimeAnnouncement,
@@ -51,7 +51,7 @@ function DateTimePickerRoot({
 	captionLayout = "picker",
 	today: todayProp,
 	format,
-	placeholder = DATE_TIME_PICKER_DEFAULTS.placeholder,
+	placeholder: placeholderProp,
 	layout = "tabs",
 	presentation = "sheet",
 	isOpen: isOpenProp,
@@ -62,18 +62,26 @@ function DateTimePickerRoot({
 	isInvalid,
 	variant,
 	size,
-	title = DATE_TIME_PICKER_DEFAULTS.title,
-	doneLabel = DATE_TIME_PICKER_DEFAULTS.doneLabel,
-	clearLabel = DATE_TIME_PICKER_DEFAULTS.clearLabel,
-	dateLabel = DATE_TIME_PICKER_DEFAULTS.dateLabel,
-	timeLabel = DATE_TIME_PICKER_DEFAULTS.timeLabel,
+	title: titleProp,
+	doneLabel: doneLabelProp,
+	clearLabel: clearLabelProp,
+	dateLabel: dateLabelProp,
+	timeLabel: timeLabelProp,
 	isClearable = false,
 	accessibilityLabel,
+	labels: labelsProp,
 	className,
 	testID,
 	children,
 	...viewProps
 }: DateTimePickerProps): ReactElement {
+	const labels = useLabels("dateTimePicker", labelsProp);
+	const placeholder = placeholderProp ?? labels.placeholder;
+	const title = titleProp ?? labels.title;
+	const doneLabel = doneLabelProp ?? labels.done;
+	const clearLabel = clearLabelProp ?? labels.clear;
+	const dateLabel = dateLabelProp ?? labels.date;
+	const timeLabel = timeLabelProp ?? labels.time;
 	const field = useFieldContext();
 	const axes = resolveDatePickerAxes({ field, own: { isDisabled, isInvalid, isReadOnly, size, variant } });
 
@@ -153,10 +161,10 @@ function DateTimePickerRoot({
 	const formatContext = useMemo(() => ({ hourCycle: cycle, locale: resolvedLocale }), [cycle, resolvedLocale]);
 
 	const done = useCallback(() => {
-		AccessibilityInfo.announceForAccessibility(resolveDateTimeAnnouncement(value, formatContext));
+		AccessibilityInfo.announceForAccessibility(resolveDateTimeAnnouncement(value, formatContext, labels));
 		playHaptic("light");
 		close();
-	}, [close, formatContext, value]);
+	}, [close, formatContext, labels, value]);
 
 	const clear = useCallback(() => {
 		setValue(null);
@@ -195,8 +203,8 @@ function DateTimePickerRoot({
 
 	const context = useMemo<DateTimePickerContextValue>(
 		() => ({
-			accessibilityLabel: accessibilityLabel ?? field?.label ?? DATE_TIME_PICKER_DEFAULTS.accessibilityLabel,
-			accessibilityValue: resolveDateTimeAccessibilityValue(value, formatContext),
+			accessibilityLabel: accessibilityLabel ?? field?.label ?? labels.trigger,
+			accessibilityValue: resolveDateTimeAccessibilityValue(value, formatContext, labels),
 			activeSection,
 			calendar: {
 				captionLayout,
@@ -222,6 +230,7 @@ function DateTimePickerRoot({
 			isOpen,
 			isReadOnly: axes.isReadOnly,
 			isTimeExpanded,
+			labels,
 			layout,
 			locale: resolvedLocale,
 			open,
@@ -236,7 +245,7 @@ function DateTimePickerRoot({
 			testID,
 			timeBoundsForDate: wheelBounds,
 			timeLabel,
-			timeReadout: resolveTimeReadout(value, formatContext),
+			timeReadout: resolveTimeReadout(value, formatContext, labels),
 			title,
 			value,
 			variant: axes.variant,
@@ -267,6 +276,7 @@ function DateTimePickerRoot({
 			isClearable,
 			isOpen,
 			isTimeExpanded,
+			labels,
 			layout,
 			minuteStep,
 			open,

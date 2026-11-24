@@ -13,6 +13,10 @@ knows nothing about tokens.
 | `index.ts` | → `@delacour/react-native-ui/chart` |
 | `chart.tsx` | The root, the child partition, and the single `Object.assign` |
 | `chart.context.tsx` | The context, mounted twice — see below |
+| `chart-frame.tsx` | The frame the canvas fills, as the chart's one accessibility element — an image, or an adjustable stepping the scrub |
+| `chart-accessibility.ts` | The pure text alternative: the summary, the readout, the index step, a slice's spoken label |
+| `chart-accessibility.test.ts` | Every sentence those produce |
+| `chart-accessibility.render.test.tsx` | The frame's role, name, override and steps, mounted |
 | `chart.types.ts` | `ChartConfig`, `ChartSeriesConfig`, `ChartResolvedSeries` |
 | `chart.variants.ts` | The slotted `tv()`, the ramp, and every pure resolver |
 | `chart.variants.test.ts` | Including the assertion that the ramp tokens exist |
@@ -180,6 +184,27 @@ knows nothing about tokens.
   than the whole column lit. `band` flips it either way. A cursor dot skips a
   series that is only a bar, because a bar has no curve to sit on and the band
   already picks out its column.
+
+- **The frame is the chart's one accessibility element.** A Skia canvas is one
+  opaque view, so a chart with no text alternative is announced as nothing,
+  and its scrub is a long press only a sighted finger can make. The frame
+  carries `resolveChartSummary` — the x range, then each series' lowest,
+  highest and latest — as an `image`; with a `Chart.Tooltip` placed it is an
+  `adjustable` instead, whose increment and decrement step one datum through
+  `stepChartIndex` and write the engine's `scrub.focus`, so the tooltip, the
+  cursor and the dot follow exactly as they would a touch. Its value text is
+  `resolveChartReadout` through the tooltip's own `formatHeading` and
+  `formatValue`, read off the placed tooltip at partition time, and the
+  tooltip prints through the same `chartTooltipValueText` — the spoken and the
+  drawn readout cannot drift. The index lives in `ChartFrame`, a leaf, so a
+  drag re-renders the frame and not the root. `accessibilityLabel` replaces
+  the summary verbatim; `accessible={false}` hides the chart for a parent that
+  names it, which is what `Kpi.Sparkline` does. The summary is English: there
+  is no labels provider yet, and the override is the way out.
+
+- **The scrub stays up after a step.** Nothing clears it: there is no
+  accessibility blur to clear it on, and the next touch's end does. A
+  sighted helper beside a screen-reader user sees the datum being read.
 
 - **Parts must be direct children of `<Chart>`.** The root partitions them by
   component identity to decide what goes inside the canvas, what floats over

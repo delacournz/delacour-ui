@@ -38,6 +38,7 @@ function DashedSwatch({ color, dash, testID }: { color: string; dash: ChartDash;
 		</View>
 	);
 }
+DashedSwatch.displayName = "DelacourUI.Chart.Legend.DashedSwatch";
 
 export type ChartLegendProps = {
 	className?: string;

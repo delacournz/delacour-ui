@@ -1,7 +1,7 @@
 import { ChartLine as EngineLine } from "@delacour/react-native-charts";
 import type { CurveType } from "@delacour/react-native-charts/core";
 import type { ReactElement } from "react";
-import { useChartSeries } from "./chart.context";
+import { useChart } from "./chart.context";
 import type { ChartDash } from "./chart.types";
 
 export type ChartLineProps = {
@@ -39,7 +39,7 @@ export function ChartLine({
 	opacity,
 	dash,
 }: ChartLineProps): ReactElement | null {
-	const { series } = useChartSeries();
+	const { series } = useChart();
 	const entry = series.find((item) => item.key === yKey);
 	const paint = color ?? entry?.color;
 	if (paint === undefined) return null;

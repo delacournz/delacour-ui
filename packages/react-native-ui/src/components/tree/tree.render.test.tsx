@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Tree, type TreeProps } from "./tree";
 import { TreeGroup } from "./tree-group";
@@ -390,6 +391,35 @@ describe("Tree", () => {
 					</Tree>
 				)
 			).rejects.toThrow("Tree.Indicator must be rendered inside a <Tree.Item>.");
+		});
+	});
+
+	describe("labels", () => {
+		const labels = { level: (level: number) => `Ebene ${level}`, expand: "Aufklappen", collapse: "Zuklappen" };
+
+		test("the labels prop speaks the level and the expand action", async () => {
+			await renderWithProviders(<Demo labels={labels} />);
+			const src = screen.getByRole("button", { name: "src" });
+			expect(src).toHaveAccessibilityValue({ text: "Ebene 1" });
+			expect(src.props.accessibilityActions).toEqual([{ label: "Aufklappen", name: "expand" }]);
+		});
+
+		test("the collapse action is labelled on an open branch", async () => {
+			await renderWithProviders(<Demo defaultExpanded={["src"]} labels={labels} />);
+			expect(screen.getByRole("button", { name: "src" }).props.accessibilityActions).toEqual([
+				{ label: "Zuklappen", name: "collapse" },
+			]);
+		});
+
+		test("a LabelsProvider speaks too, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ tree: { level: (level) => `Niveau ${level}`, expand: "Ouvrir" } }}>
+					<Demo labels={{ expand: "Aufklappen" }} />
+				</LabelsProvider>
+			);
+			const src = screen.getByRole("button", { name: "src" });
+			expect(src).toHaveAccessibilityValue({ text: "Niveau 1" });
+			expect(src.props.accessibilityActions).toEqual([{ label: "Aufklappen", name: "expand" }]);
 		});
 	});
 });

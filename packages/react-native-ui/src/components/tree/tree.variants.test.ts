@@ -316,6 +316,27 @@ describe("resolveTreeDisabled", () => {
 	});
 });
 
+describe("resolveTreeAccessibility labels", () => {
+	const labels = { level: (level: number) => `Ebene ${level}`, expand: "Aufklappen", collapse: "Zuklappen" };
+	const base = {
+		isBranch: true,
+		isExpanded: false,
+		isSelected: false,
+		selectionMode: "none",
+		isDisabled: false,
+		level: 2,
+	} as const;
+
+	test("level, expand and collapse speak the given labels", () => {
+		const closed = resolveTreeAccessibility({ ...base, labels });
+		expect(closed.value).toEqual({ text: "Ebene 2" });
+		expect(closed.actions).toEqual([{ name: "expand", label: "Aufklappen" }]);
+		expect(resolveTreeAccessibility({ ...base, isExpanded: true, labels }).actions).toEqual([
+			{ name: "collapse", label: "Zuklappen" },
+		]);
+	});
+});
+
 describe("resolveTreeAccessibility", () => {
 	const base = {
 		isBranch: false,

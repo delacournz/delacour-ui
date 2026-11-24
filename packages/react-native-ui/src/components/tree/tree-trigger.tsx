@@ -79,6 +79,7 @@ export function TreeTrigger({
 		isDisabled,
 		isExpanded,
 		isSelected,
+		labels: tree.labels,
 		level,
 		selectionMode: tree.selectionMode,
 	});

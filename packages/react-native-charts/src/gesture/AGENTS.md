@@ -82,3 +82,14 @@ under the touch on either.
   one view however much is drawn on it, so there is nothing to hit-test
   against. An absolute-fill sibling keeps the hit area exactly the chart's
   bounds and keeps gesture composition ordinary.
+
+- **`focus` moves the scrub without a finger.** A screen reader cannot drag,
+  so `Chart`'s adjustable element writes a datum index to `focus` and
+  `useScrubFocus` (mounted by `CartesianChart`) answers it on the UI thread:
+  the scrub activates and every field is written as if a touch had landed on
+  that datum's category, through the same per-series writer the pan uses — so
+  a tooltip, a cursor and a readout follow it with no change of their own.
+  `-1` asks for nothing, and a touch resets it to `-1` so the same datum can be
+  asked for again after a drag. Nothing clears `isActive` after a focus move:
+  there is no accessibility blur event to clear it on, and the next touch's
+  `onFinalize` does.

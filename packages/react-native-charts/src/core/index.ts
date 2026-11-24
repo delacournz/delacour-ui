@@ -80,6 +80,7 @@ export {
 	type Sentiment,
 } from "./shape/build-candles";
 export { buildScatterPath, type ScatterPathOptions, type ScatterShape } from "./shape/build-scatter";
+export { dashIntervals } from "./shape/dash-intervals";
 export { type CornerRadii, KAPPA, rectPath } from "./shape/rect-path";
 export { type AxisGutterInput, resolveAxisGutters } from "./text/axis-gutters";
 export { type BarLabelAnchorOptions, type BarLabelPosition, barLabelAnchor } from "./text/bar-label";

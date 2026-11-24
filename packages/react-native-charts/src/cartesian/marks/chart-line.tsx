@@ -1,10 +1,11 @@
 import { type ReactElement, useMemo } from "react";
-import { Path } from "react-native-skia";
+import { DashPathEffect, Path } from "react-native-skia";
 import type { ChartAnimation } from "../../animation/animation.types";
 import { useAnimatedPath } from "../../animation/use-animated-path";
 import type { ChartPoint } from "../../core/chart.types";
 import { buildLinePath } from "../../core/curve/build-line";
 import type { CurveType } from "../../core/curve/curves";
+import { dashIntervals } from "../../core/shape/dash-intervals";
 import { toSkPath } from "../../skia/build-path";
 import { useChartContext } from "../cartesian-chart.context";
 
@@ -21,6 +22,13 @@ export type ChartLineProps = {
 	readonly animation?: ChartAnimation;
 	readonly strokeCap?: "butt" | "round" | "square";
 	readonly strokeJoin?: "bevel" | "miter" | "round";
+	/**
+	 * Dash on/off lengths, as they show — the cap's reach is taken out of each
+	 * dash, so a round cap does not close the gaps. A dashed series is a cue
+	 * that is not colour: two lines a reader cannot tell apart by hue still read
+	 * as two.
+	 */
+	readonly dash?: readonly [number, number];
 };
 
 /**
@@ -46,6 +54,7 @@ export function ChartLine({
 	animation,
 	strokeCap = "round",
 	strokeJoin = "round",
+	dash,
 }: ChartLineProps): ReactElement {
 	const chart = useChartContext();
 	const series = points ?? (yKey === undefined ? [] : (chart.points[yKey] ?? []));
@@ -66,7 +75,9 @@ export function ChartLine({
 			strokeJoin={strokeJoin}
 			strokeWidth={strokeWidth}
 			style="stroke"
-		/>
+		>
+			{dash === undefined ? null : <DashPathEffect intervals={dashIntervals(dash, strokeWidth, strokeCap)} />}
+		</Path>
 	);
 }
 

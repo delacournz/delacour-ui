@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Gesture, type GestureType } from "react-native-gesture-handler";
-import type { SharedValue } from "react-native-reanimated";
+import { type SharedValue, useAnimatedReaction } from "react-native-reanimated";
 import { closestIndex } from "../core/interaction/closest-index";
 import { getYForX } from "../core/interaction/y-for-x";
 import { invertValue } from "../core/scale/scale";
@@ -63,6 +63,9 @@ export function useScrubGesture(options: UseScrubGestureOptions): GestureType | 
 			.shouldCancelWhenOutside(false)
 			.onStart((event) => {
 				"worklet";
+				// A touch takes over from a focus request, and clearing it lets the
+				// same datum be asked for again once the finger lifts.
+				state.focus.value = -1;
 				state.isActive.value = true;
 				apply(event.x, event.y);
 			})
@@ -84,6 +87,57 @@ export function useScrubGesture(options: UseScrubGestureOptions): GestureType | 
 
 		return pan;
 	}, [state, apply, enabled, behaviour, holdDuration, activationDistance, blocks]);
+}
+
+/**
+ * Answers `state.focus`: moves the scrub to a datum by index, with no touch.
+ *
+ * This is how a screen reader's increment and decrement drive the same
+ * tooltip and cursor a finger does. The write is what a touch landing exactly
+ * on that datum's category would make — the category position, the domain
+ * value, the index, and every series through the same per-series writer the
+ * pan uses — so nothing downstream can tell the two apart. `-1`, an index
+ * past the data, or a collapsed plot asks for nothing.
+ */
+export function useScrubFocus(state: ChartScrubState | undefined, model: SharedValue<ScrubModel>): void {
+	const applySeries = useApplySeries(state);
+	const apply = useMemo(() => {
+		if (state === undefined || applySeries === null) return null;
+		// The datum's category position, or `NaN` when there is nothing to move to.
+		const categoryAt = (current: ScrubModel, index: number): number => {
+			"worklet";
+			if (Math.min(current.right - current.left, current.bottom - current.top) <= 0) return Number.NaN;
+			if (index < 0 || index >= current.positions.length) return Number.NaN;
+			return readAt(current.positions, index);
+		};
+
+		return (index: number): void => {
+			"worklet";
+			const current = model.value;
+			const category = categoryAt(current, index);
+			if (!Number.isFinite(category)) return;
+
+			const horizontal = current.axis === "y";
+			const touch = horizontal ? state.y : state.x;
+			touch.value = category;
+			state.xValue.value = invertValue(current.scale, category);
+			state.index.value = index;
+			state.snappedX.value = horizontal ? Number.NaN : category;
+			state.snappedY.value = horizontal ? category : Number.NaN;
+			state.isActive.value = true;
+
+			for (const series of current.series) applySeries(series, index, category, category, horizontal);
+		};
+	}, [state, model, applySeries]);
+
+	useAnimatedReaction(
+		() => (state === undefined ? -1 : state.focus.value),
+		(next, previous) => {
+			if (apply === null || next < 0 || next === previous) return;
+			apply(next);
+		},
+		[apply]
+	);
 }
 
 type ScrubApply = (touchX: number, touchY: number) => void;

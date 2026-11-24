@@ -29,15 +29,21 @@ const CROSSFADE_MS = 150;
  * `ScrollView` starts to scroll, so a slow drag on the years moved the sheet and the list stayed
  * put; only a fast flick scrolled. The native handler cannot hold the pan off by itself on iOS:
  * its recognizer only mirrors the scroll view's pan, so `blocksExternalGesture` on it never makes
- * the content pan wait, and `shouldActivateOnStart` stops the scroll too. A plain `Pan`, recognized
- * together with the native scroll, can block it. A drag on the years now scrolls them; the handle
- * and the header still move or close the sheet.
+ * the content pan wait, and `shouldActivateOnStart` stops the scroll too. Two pieces are needed
+ * together: a plain `Pan`, recognized beside the native scroll, that blocks the content pan, and a
+ * native handler declared simultaneous with that pan, as the engine's own scrollables declare
+ * theirs. Without the second the scroll view waits on the blocked pan and nothing moves; without
+ * the first the sheet moves with the list. A drag on the years now scrolls them; the handle and
+ * the header still move or close the sheet.
  *
  * `testID` names the blocking pan for Gesture Handler's Jest utilities.
  */
 export function resolveYearListGesture(external: GestureType, testID?: string): LegacySimultaneousGesture {
 	const blocker = Gesture.Pan().blocksExternalGesture(external);
-	return Gesture.Simultaneous(Gesture.Native(), testID ? blocker.withTestId(testID) : blocker);
+	return Gesture.Simultaneous(
+		Gesture.Native().simultaneousWithExternalGesture(external),
+		testID ? blocker.withTestId(testID) : blocker
+	);
 }
 
 /** Wraps the year list in `resolveYearListGesture` when the calendar was given a gesture to block. */

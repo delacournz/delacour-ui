@@ -471,6 +471,7 @@ describe("resolveYearListGesture", () => {
 		const external = Gesture.Pan();
 		const [native, blocker] = resolveYearListGesture(external).toGestureArray();
 		expect(native?.handlerName).toBe("NativeViewGestureHandler");
+		expect(native?.config.simultaneousWith).toEqual([external]);
 		expect(native?.config.blocksHandlers).toBeUndefined();
 		expect(blocker?.handlerName).toBe("PanGestureHandler");
 		expect(blocker?.config.blocksHandlers).toEqual([external]);

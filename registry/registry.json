@@ -1671,6 +1671,7 @@
 			"registryDependencies": [
 				"button",
 				"dialog",
+				"field",
 				"input",
 				"tv",
 				"use-announce",
@@ -1723,6 +1724,7 @@
 				"forms"
 			],
 			"registryDependencies": [
+				"label",
 				"pressable",
 				"separator",
 				"text",
@@ -1737,6 +1739,7 @@
 			"files": [
 				"ui/field/AGENTS.md",
 				"ui/field/field-content.tsx",
+				"ui/field/field-control.ts",
 				"ui/field/field-description.tsx",
 				"ui/field/field-error.tsx",
 				"ui/field/field-group.tsx",

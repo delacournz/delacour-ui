@@ -300,6 +300,31 @@ describe("OtpInput", () => {
 			expect(await screen.findByLabelText("Sign-in code")).toBeOnTheScreen();
 		});
 
+		test("reads the label, required state, error and description on the hidden field only", async () => {
+			await renderWithProviders(
+				<Field isInvalid isRequired>
+					<Field.Label>Sign-in code</Field.Label>
+					<OtpInput testID="otp" />
+					<Field.Description>Sent by SMS.</Field.Description>
+					<Field.Error>That code is incorrect</Field.Error>
+				</Field>
+			);
+			const control = screen.getByTestId("otp");
+			expect(control).toHaveProp("accessibilityLabel", "Sign-in code, required");
+			expect(control).toHaveProp(
+				"accessibilityHint",
+				"Invalid: That code is incorrect. Sent by SMS. Enter the 6 digit code"
+			);
+		});
+
+		test("an own isRequired names it required outside a Field, and the default name survives", async () => {
+			await renderWithProviders(<OtpInput isRequired testID="otp" />);
+			expect(screen.getByTestId("otp")).toHaveProp("accessibilityLabel", "Verification code, required");
+			await renderWithProviders(<OtpInput testID="plain" />);
+			expect(screen.getByTestId("plain")).toHaveProp("accessibilityLabel", "Verification code");
+			expect(screen.getByTestId("plain")).toHaveProp("accessibilityHint", "Enter the 6 digit code");
+		});
+
 		test("an own accessibilityLabel beats the Field.Label", async () => {
 			await renderWithProviders(
 				<Field>

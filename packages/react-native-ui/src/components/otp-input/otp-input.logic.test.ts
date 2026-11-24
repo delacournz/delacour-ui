@@ -10,7 +10,6 @@ import {
 	OTP_MAX_LENGTH,
 	OTP_MIN_LENGTH,
 	resolveAccessibilityHint,
-	resolveAccessibilityLabel,
 	resolveAccessibilityValue,
 	resolveActiveIndex,
 	resolveAutofill,
@@ -328,11 +327,8 @@ describe("resolveAccessibilityHint", () => {
 	});
 });
 
-describe("resolveAccessibilityLabel", () => {
-	test("own label, then the field's, then the default", () => {
-		expect(resolveAccessibilityLabel("PIN", "Code")).toBe("PIN");
-		expect(resolveAccessibilityLabel(undefined, "Code")).toBe("Code");
-		expect(resolveAccessibilityLabel(undefined, null)).toBe(OTP_DEFAULT_LABEL);
+describe("OTP_DEFAULT_LABEL", () => {
+	test("is the fallback name", () => {
 		expect(OTP_DEFAULT_LABEL).toBe("Verification code");
 	});
 });

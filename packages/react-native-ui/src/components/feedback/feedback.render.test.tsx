@@ -4,6 +4,7 @@ import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
 import { fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { Button } from "../button";
+import { Field } from "../field";
 import { OverlayProvider } from "../overlay";
 import { Feedback, type FeedbackProps } from "./feedback";
 import { useFeedback } from "./feedback.context";
@@ -132,6 +133,33 @@ describe("Feedback", () => {
 			{ wrapper: Overlays }
 		);
 		expect(screen.getByLabelText("Your message")).toBeOnTheScreen();
+	});
+
+	test("the field falls back to the title, then the placeholder, outside a Field", async () => {
+		await renderWithProviders(<Harness defaultOpen />, { wrapper: Overlays });
+		expect(field()).toHaveProp("accessibilityLabel", "What should we fix first?");
+		expect(field().props.accessibilityHint).toBeUndefined();
+	});
+
+	test("inside a Field it is named by the label and speaks required, error and description", async () => {
+		await renderWithProviders(
+			<Feedback defaultOpen>
+				<Feedback.Content>
+					<Feedback.Panel>
+						<Feedback.Title>Question</Feedback.Title>
+						<Field isInvalid isRequired>
+							<Field.Label>Message</Field.Label>
+							<Feedback.Field placeholder="Tell us" />
+							<Field.Description>Be specific.</Field.Description>
+							<Field.Error>Required</Field.Error>
+						</Field>
+					</Feedback.Panel>
+				</Feedback.Content>
+			</Feedback>,
+			{ wrapper: Overlays }
+		);
+		expect(field()).toHaveProp("accessibilityLabel", "Message, required");
+		expect(field()).toHaveProp("accessibilityHint", "Invalid: Required. Be specific.");
 	});
 
 	test("Submit is disabled for an empty or whitespace draft and does not fire", async () => {

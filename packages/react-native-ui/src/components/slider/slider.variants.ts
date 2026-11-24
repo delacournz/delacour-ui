@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { FIELD_ACCESSIBILITY_LABELS } from "../field/field.variants";
 import type { TextSize } from "../text/text.variants";
 
 /** What a filled track means. Badge's and Checkbox's set, reusing tokens the theme already has. */
@@ -633,7 +634,13 @@ export function resolveThumbAccessibilityLabel({
 	index,
 	count,
 	override,
+	isRequired = false,
+	requiredLabel = FIELD_ACCESSIBILITY_LABELS.required,
 }: {
+	/** Whether the enclosing `Field` is required; the name ends ", required". */
+	isRequired?: boolean;
+	/** The spoken word for required, for localisation. */
+	requiredLabel?: string;
 	/** The slider's own name — a `Field.Label`'s text, or nothing. */
 	label?: string | null;
 	/** Which thumb, in the order the values were given. */
@@ -647,15 +654,16 @@ export function resolveThumbAccessibilityLabel({
 	if (explicit) return explicit;
 
 	const name = label?.trim() || undefined;
-	if (count <= 1) return name;
+	const withRequired = (text: string): string => (isRequired ? `${text}, ${requiredLabel}` : text);
+	if (count <= 1) return name === undefined ? undefined : withRequired(name);
 
 	if (count === 2) {
 		const end = index === 0 ? SLIDER_THUMB_NAMES.minimum : SLIDER_THUMB_NAMES.maximum;
-		return name ? `${name}, ${end.toLowerCase()}` : end;
+		return withRequired(name ? `${name}, ${end.toLowerCase()}` : end);
 	}
 
 	const position = `${index + 1} of ${count}`;
-	return name ? `${name}, ${position}` : `${SLIDER_THUMB_NAMES.thumb} ${position}`;
+	return withRequired(name ? `${name}, ${position}` : `${SLIDER_THUMB_NAMES.thumb} ${position}`);
 }
 
 export type SliderVariantProps = VariantProps<typeof sliderVariants>;

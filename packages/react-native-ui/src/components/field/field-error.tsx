@@ -1,5 +1,6 @@
-import { Children, type ReactElement, type ReactNode } from "react";
+import { Children, type ReactElement, type ReactNode, useEffect } from "react";
 import { useAnnouncement } from "../../hooks/use-announce";
+import { labelText } from "../label/label.variants";
 import { Text } from "../text";
 import { useFieldContext } from "./field.context";
 import type { FieldTextProps } from "./field.types";
@@ -39,6 +40,10 @@ export type FieldErrorProps = Omit<FieldTextProps, "children"> & {
  *
  * Always destructive, in a valid field as much as an invalid one: an error message is
  * never the calm case.
+ *
+ * **One announcement route**: `useAnnouncement`, never a live region beside it. The message
+ * also joins the control's hint (it is registered with the field), so a screen reader hears it
+ * wherever focus is.
  */
 export function FieldError({
 	className,
@@ -50,14 +55,25 @@ export function FieldError({
 	const field = useFieldContext();
 	const isInvalid = field?.isInvalid ?? false;
 	const isDisabled = field?.isDisabled ?? false;
-	const hasMessage = hasContent(children);
-	const live = useAnnouncement(hasMessage ? resolveFieldErrorMessage(children) : null, {
+	const isVisible = hasContent(children);
+
+	// The control reads the error as part of its hint, so it is heard wherever
+	// focus is. Only text is lent — an element has no words to read before it renders.
+	const registerError = field?.registerError;
+	const errorText = isVisible ? (labelText(children) ?? null) : null;
+	useEffect(() => {
+		if (!registerError) return;
+		registerError(errorText);
+		return () => registerError(null);
+	}, [errorText, registerError]);
+
+	const live = useAnnouncement(isVisible ? resolveFieldErrorMessage(children) : null, {
 		channel: "announcement",
 		onMount: true,
 		enabled: announce,
 	});
 
-	if (!hasMessage) return null;
+	if (!isVisible) return null;
 
 	return (
 		<Text.Caption

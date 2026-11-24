@@ -26,8 +26,14 @@ export type SelectContextValue = {
 	/** What the trigger reads, or `undefined` while the placeholder shows. */
 	triggerText: string | undefined;
 	placeholder?: string;
-	/** The accessible name: the enclosing `Field.Label`'s text, else the sheet title. */
+	/** Whether the select is required — own prop, then the enclosing `Field`. */
+	isRequired: boolean;
+	/** The accessible name: the enclosing `Field.Label`'s text (", required" when required), else the sheet title or placeholder. */
 	accessibilityLabel?: string;
+	/** The enclosing `Field`'s invalid state, error and description, then the select's own hint. */
+	accessibilityHint?: string;
+	/** Android: the `Field.Label` element a name-less trigger is labelled by. */
+	accessibilityLabelledBy?: string;
 	/** Custom trigger content for the current selection. */
 	renderValue?: (selected: SelectOption[]) => ReactNode;
 	/** Opens the sheet. Does nothing while disabled or read-only. */

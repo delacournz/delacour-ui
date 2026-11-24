@@ -6,6 +6,7 @@ import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import { playHaptic } from "../pressable";
 import { Text } from "../text";
 import { useSignaturePart } from "./signature.context";
@@ -86,6 +87,11 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 		runAction,
 	} = useSignaturePart("Signature.Pad");
 	const field = useFieldContext();
+	const fieldA11y = useFieldControlAccessibility({
+		accessibilityHint: isInteractive ? SIGNATURE_ACCESSIBILITY_HINT : undefined,
+		fallbackLabel: "Signature",
+		isInvalid,
+	});
 	const slots = signatureVariants({ isDisabled, isInvalid, size, variant });
 	const ink = useThemeColor(strokeColor);
 	const isCalm = useCalmMotion();
@@ -181,8 +187,12 @@ export function SignaturePad({ className, onLayout, ...props }: SignaturePadProp
 		<GestureDetector gesture={gesture}>
 			<View
 				accessibilityActions={accessibilityActions}
-				accessibilityHint={isInteractive ? SIGNATURE_ACCESSIBILITY_HINT : undefined}
-				accessibilityLabel={describeSignature({ label: field?.label ?? null, strokeCount })}
+				accessibilityHint={fieldA11y.accessibilityHint}
+				accessibilityLabel={describeSignature({
+					isRequired: fieldA11y.isRequired,
+					label: field?.label ?? null,
+					strokeCount,
+				})}
 				accessibilityRole={isEmpty ? "none" : "image"}
 				accessibilityState={{ disabled: isDisabled }}
 				accessible

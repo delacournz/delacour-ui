@@ -194,10 +194,19 @@ export function resolveSignatureAxes({
  * it says so and how many strokes, because the drawing itself has no words.
  * `label` is the enclosing `Field.Label`'s text when there is one.
  */
-export function describeSignature({ label, strokeCount }: { label: string | null; strokeCount: number }): string {
+export function describeSignature({
+	label,
+	strokeCount,
+	isRequired = false,
+}: {
+	label: string | null;
+	strokeCount: number;
+	isRequired?: boolean;
+}): string {
 	const name = label ?? "Signature";
-	if (strokeCount === 0) return `${name} pad, empty`;
-	return `${name}, drawn, ${strokeCount} ${strokeCount === 1 ? "stroke" : "strokes"}`;
+	const required = isRequired ? ", required" : "";
+	if (strokeCount === 0) return `${name} pad, empty${required}`;
+	return `${name}, drawn, ${strokeCount} ${strokeCount === 1 ? "stroke" : "strokes"}${required}`;
 }
 
 /** One custom action, in the shape `accessibilityActions` takes. */

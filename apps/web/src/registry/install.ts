@@ -1789,7 +1789,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 38,
+		fileCount: 43,
 		groups: [
 			{
 				name: "field",
@@ -1798,6 +1798,7 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -1810,6 +1811,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -1834,26 +1858,6 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -1875,19 +1879,27 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -1917,7 +1929,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 78,
+		fileCount: 83,
 		groups: [
 			{
 				name: "input",
@@ -2018,12 +2030,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2134,7 +2158,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 82,
+		fileCount: 87,
 		groups: [
 			{
 				name: "textarea",
@@ -2226,12 +2250,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2362,7 +2398,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 83,
+		fileCount: 88,
 		groups: [
 			{
 				name: "theme-selector",
@@ -2378,6 +2414,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/theme-selector/theme-selector.types.ts", target: "src/components/ui/theme-selector/theme-selector.types.ts" },
 					{ source: "packages/react-native-ui/src/components/theme-selector/theme-selector.variants.ts", target: "src/components/ui/theme-selector/theme-selector.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/theme-selector/use-theme-selection.ts", target: "src/components/ui/theme-selector/use-theme-selection.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -2402,24 +2461,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2494,14 +2542,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -2523,19 +2563,27 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -2605,7 +2653,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 116,
+		fileCount: 121,
 		groups: [
 			{
 				name: "tag-input",
@@ -2705,6 +2753,17 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "separator",
 				title: "Separator",
 				kind: "component",
@@ -2721,6 +2780,7 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -2916,7 +2976,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 90,
+		fileCount: 95,
 		groups: [
 			{
 				name: "otp-input",
@@ -2932,6 +2992,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/otp-input/otp-input.logic.ts", target: "src/components/ui/otp-input/otp-input.logic.ts" },
 					{ source: "packages/react-native-ui/src/components/otp-input/otp-input.tsx", target: "src/components/ui/otp-input/otp-input.tsx" },
 					{ source: "packages/react-native-ui/src/components/otp-input/otp-input.variants.ts", target: "src/components/ui/otp-input/otp-input.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -2956,24 +3039,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -3054,14 +3126,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -3083,19 +3147,27 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -3173,7 +3245,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 92,
+		fileCount: 97,
 		groups: [
 			{
 				name: "number-input",
@@ -3192,6 +3264,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/number-input/number-input.types.ts", target: "src/components/ui/number-input/number-input.types.ts" },
 					{ source: "packages/react-native-ui/src/components/number-input/number-input.variants.ts", target: "src/components/ui/number-input/number-input.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/number-input/use-step-repeat.ts", target: "src/components/ui/number-input/use-step-repeat.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -3216,24 +3311,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -3343,19 +3427,19 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -3425,7 +3509,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 120,
+		fileCount: 125,
 		groups: [
 			{
 				name: "markdown-editor",
@@ -3526,12 +3610,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -3805,7 +3901,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 61,
 		groups: [
 			{
 				name: "checkbox",
@@ -3821,6 +3917,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/checkbox/checkbox.types.ts", target: "src/components/ui/checkbox/checkbox.types.ts" },
 					{ source: "packages/react-native-ui/src/components/checkbox/checkbox.variants.ts", target: "src/components/ui/checkbox/checkbox.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/checkbox/index.ts", target: "src/components/ui/checkbox/index.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -3845,24 +3964,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -3890,14 +3998,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -3919,19 +4019,27 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -4172,7 +4280,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 171,
+		fileCount: 176,
 		groups: [
 			{
 				name: "combobox",
@@ -4274,12 +4382,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -4580,7 +4700,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 47,
+		fileCount: 52,
 		groups: [
 			{
 				name: "radio",
@@ -4595,6 +4715,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/radio/radio.context.tsx", target: "src/components/ui/radio/radio.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/radio/radio.tsx", target: "src/components/ui/radio/radio.tsx" },
 					{ source: "packages/react-native-ui/src/components/radio/radio.variants.ts", target: "src/components/ui/radio/radio.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -4619,24 +4762,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -4649,14 +4781,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -4681,19 +4805,27 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -4731,7 +4863,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 56,
+		fileCount: 61,
 		groups: [
 			{
 				name: "switch",
@@ -4748,6 +4880,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/switch/switch.tsx", target: "src/components/ui/switch/switch.tsx" },
 					{ source: "packages/react-native-ui/src/components/switch/switch.types.ts", target: "src/components/ui/switch/switch.types.ts" },
 					{ source: "packages/react-native-ui/src/components/switch/switch.variants.ts", target: "src/components/ui/switch/switch.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -4772,24 +4927,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -4817,14 +4961,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -4846,19 +4982,27 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -5599,7 +5743,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 163,
+		fileCount: 168,
 		groups: [
 			{
 				name: "questionnaire",
@@ -5704,12 +5848,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -5992,7 +6148,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 142,
+		fileCount: 147,
 		groups: [
 			{
 				name: "color-picker",
@@ -6101,12 +6257,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -6501,7 +6669,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 157,
+		fileCount: 162,
 		groups: [
 			{
 				name: "planner",
@@ -6610,12 +6778,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -7032,7 +7212,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 88,
+		fileCount: 93,
 		groups: [
 			{
 				name: "calendar",
@@ -7134,12 +7314,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -7294,7 +7486,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 153,
+		fileCount: 158,
 		groups: [
 			{
 				name: "date-picker",
@@ -7395,12 +7587,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -7670,7 +7874,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 198,
+		fileCount: 203,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -7773,12 +7977,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -8112,7 +8328,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 49,
+		fileCount: 54,
 		groups: [
 			{
 				name: "rating",
@@ -8127,6 +8343,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/rating/rating.context.tsx", target: "src/components/ui/rating/rating.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/rating/rating.tsx", target: "src/components/ui/rating/rating.tsx" },
 					{ source: "packages/react-native-ui/src/components/rating/rating.variants.ts", target: "src/components/ui/rating/rating.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -8151,24 +8390,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -8181,14 +8409,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -8213,19 +8433,27 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -8279,7 +8507,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 84,
+		fileCount: 89,
 		groups: [
 			{
 				name: "signature",
@@ -8383,12 +8611,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -8523,7 +8763,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 132,
+		fileCount: 137,
 		groups: [
 			{
 				name: "select",
@@ -8622,12 +8862,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -8864,7 +9116,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 119,
+		fileCount: 124,
 		groups: [
 			{
 				name: "search-bar",
@@ -9010,12 +9262,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -9178,7 +9442,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 49,
+		fileCount: 54,
 		groups: [
 			{
 				name: "slider",
@@ -9195,6 +9459,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/slider/slider.tsx", target: "src/components/ui/slider/slider.tsx" },
 					{ source: "packages/react-native-ui/src/components/slider/slider.types.ts", target: "src/components/ui/slider/slider.types.ts" },
 					{ source: "packages/react-native-ui/src/components/slider/slider.variants.ts", target: "src/components/ui/slider/slider.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -9219,24 +9506,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -9249,14 +9525,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -9281,19 +9549,27 @@ export const install = {
 				],
 			},
 			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -9331,7 +9607,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 137,
+		fileCount: 142,
 		groups: [
 			{
 				name: "time-picker",
@@ -9435,12 +9711,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -13154,7 +13442,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 59,
+		fileCount: 64,
 		groups: [
 			{
 				name: "compare",
@@ -13171,6 +13459,29 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/compare/compare.types.ts", target: "src/components/ui/compare/compare.types.ts" },
 					{ source: "packages/react-native-ui/src/components/compare/compare.variants.ts", target: "src/components/ui/compare/compare.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/compare/index.ts", target: "src/components/ui/compare/index.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
 				],
 			},
 			{
@@ -13195,24 +13506,13 @@ export const install = {
 				],
 			},
 			{
-				name: "text",
-				title: "Text",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
-				],
-			},
-			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -13261,6 +13561,14 @@ export const install = {
 				],
 			},
 			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -13274,14 +13582,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
-				],
-			},
-			{
-				name: "tv",
-				title: "tv",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -14046,7 +14346,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 118,
+		fileCount: 123,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -14158,12 +14458,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -15982,7 +16294,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 121,
+		fileCount: 126,
 		groups: [
 			{
 				name: "feedback",
@@ -16124,12 +16436,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
@@ -17963,7 +18287,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 98,
+		fileCount: 103,
 		groups: [
 			{
 				name: "sketch",
@@ -18065,12 +18389,24 @@ export const install = {
 				],
 			},
 			{
+				name: "label",
+				title: "Label",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
 				name: "field",
 				title: "Field",
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-control.ts", target: "src/components/ui/field/field-control.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },

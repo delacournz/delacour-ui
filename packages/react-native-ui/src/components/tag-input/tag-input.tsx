@@ -20,6 +20,7 @@ import {
 import { useControllableState } from "../../hooks/use-controllable-state";
 import type { ChipVariant } from "../chip/chip.variants";
 import { useFieldContext } from "../field/field.context";
+import { useFieldControlAccessibility } from "../field/field-control";
 import type { InputProps } from "../input";
 import {
 	type InputSize,
@@ -243,6 +244,7 @@ function TagInputRoot({
 	placeholderColorClassName,
 	selectionColorClassName,
 	accessibilityLabel,
+	accessibilityHint,
 	editable,
 	onFocus,
 	onBlur,
@@ -281,6 +283,12 @@ function TagInputRoot({
 		isInvalid,
 		isReadOnly,
 		max,
+	});
+
+	const fieldA11y = useFieldControlAccessibility({
+		accessibilityHint,
+		accessibilityLabel,
+		isInvalid: resolvedIsInvalid,
 	});
 
 	const options: TagInputCommitOptions = {
@@ -447,7 +455,9 @@ function TagInputRoot({
 					))}
 					{isHidden ? null : (
 						<TextInput
-							accessibilityLabel={accessibilityLabel ?? field?.label ?? undefined}
+							accessibilityHint={fieldA11y.accessibilityHint}
+							accessibilityLabel={fieldA11y.accessibilityLabel}
+							accessibilityLabelledBy={fieldA11y.accessibilityLabelledBy}
 							accessibilityValue={{ text: resolveTagsAccessibilityLabel(tags.length) }}
 							autoCapitalize="none"
 							autoCorrect={false}

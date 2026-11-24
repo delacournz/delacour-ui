@@ -1789,7 +1789,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 44,
+		fileCount: 43,
 		groups: [
 			{
 				name: "field",
@@ -1810,7 +1810,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -1930,7 +1929,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 84,
+		fileCount: 83,
 		groups: [
 			{
 				name: "input",
@@ -2060,7 +2059,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -2160,7 +2158,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 88,
+		fileCount: 87,
 		groups: [
 			{
 				name: "textarea",
@@ -2281,7 +2279,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -2401,7 +2398,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 89,
+		fileCount: 88,
 		groups: [
 			{
 				name: "theme-selector",
@@ -2482,7 +2479,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -2657,7 +2653,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 122,
+		fileCount: 121,
 		groups: [
 			{
 				name: "tag-input",
@@ -2796,7 +2792,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -2981,7 +2976,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 96,
+		fileCount: 95,
 		groups: [
 			{
 				name: "otp-input",
@@ -3062,7 +3057,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -3251,7 +3245,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 98,
+		fileCount: 97,
 		groups: [
 			{
 				name: "number-input",
@@ -3335,7 +3329,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -3516,7 +3509,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 126,
+		fileCount: 125,
 		groups: [
 			{
 				name: "markdown-editor",
@@ -3646,7 +3639,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -3909,7 +3901,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 62,
+		fileCount: 61,
 		groups: [
 			{
 				name: "checkbox",
@@ -3990,7 +3982,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -4289,7 +4280,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 177,
+		fileCount: 176,
 		groups: [
 			{
 				name: "combobox",
@@ -4420,7 +4411,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -4710,7 +4700,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 53,
+		fileCount: 52,
 		groups: [
 			{
 				name: "radio",
@@ -4790,7 +4780,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -4874,7 +4863,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 62,
+		fileCount: 61,
 		groups: [
 			{
 				name: "switch",
@@ -4956,7 +4945,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -5755,7 +5743,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 169,
+		fileCount: 168,
 		groups: [
 			{
 				name: "questionnaire",
@@ -5889,7 +5877,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -6161,7 +6148,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 148,
+		fileCount: 147,
 		groups: [
 			{
 				name: "color-picker",
@@ -6299,7 +6286,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -6683,7 +6669,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 163,
+		fileCount: 162,
 		groups: [
 			{
 				name: "planner",
@@ -6821,7 +6807,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -7227,7 +7212,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 94,
+		fileCount: 93,
 		groups: [
 			{
 				name: "calendar",
@@ -7358,7 +7343,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -7502,7 +7486,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 159,
+		fileCount: 158,
 		groups: [
 			{
 				name: "date-picker",
@@ -7632,7 +7616,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -7891,7 +7874,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 204,
+		fileCount: 203,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -8023,7 +8006,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -8346,7 +8328,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 55,
+		fileCount: 54,
 		groups: [
 			{
 				name: "rating",
@@ -8426,7 +8408,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -8526,7 +8507,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 90,
+		fileCount: 89,
 		groups: [
 			{
 				name: "signature",
@@ -8659,7 +8640,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -8783,7 +8763,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 138,
+		fileCount: 137,
 		groups: [
 			{
 				name: "select",
@@ -8911,7 +8891,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -9137,7 +9116,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 125,
+		fileCount: 124,
 		groups: [
 			{
 				name: "search-bar",
@@ -9312,7 +9291,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -9464,7 +9442,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 55,
+		fileCount: 54,
 		groups: [
 			{
 				name: "slider",
@@ -9546,7 +9524,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -9630,7 +9607,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 143,
+		fileCount: 142,
 		groups: [
 			{
 				name: "time-picker",
@@ -9763,7 +9740,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -13466,7 +13442,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 65,
+		fileCount: 64,
 		groups: [
 			{
 				name: "compare",
@@ -13548,7 +13524,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -14371,7 +14346,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 124,
+		fileCount: 123,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -14512,7 +14487,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -16320,7 +16294,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 127,
+		fileCount: 126,
 		groups: [
 			{
 				name: "feedback",
@@ -16491,7 +16465,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
@@ -18314,7 +18287,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 104,
+		fileCount: 103,
 		groups: [
 			{
 				name: "sketch",
@@ -18445,7 +18418,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
 					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
 					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/react-native-ui/src/components/field/field.variants.ts-e", target: "src/components/ui/field/field.variants.ts-e" },
 					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},

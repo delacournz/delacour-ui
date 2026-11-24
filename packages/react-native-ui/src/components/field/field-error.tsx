@@ -81,8 +81,6 @@ export function FieldError({
 			color={color ?? resolveFieldTextColor("error", isInvalid)}
 			role="alert"
 			{...live}
-			role="alert"
-			{...live}
 			{...props}
 		>
 			{children}

@@ -174,11 +174,6 @@
 			]
 		},
 		{
-			"path": "packages/react-native-ui/src/components/field/field.variants.ts-e",
-			"target": "field/field.variants.ts-e",
-			"namespace": "ui"
-		},
-		{
 			"path": "packages/react-native-ui/src/components/field/index.ts",
 			"target": "field/index.ts",
 			"namespace": "ui"

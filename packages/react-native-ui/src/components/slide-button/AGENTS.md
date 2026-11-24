@@ -30,10 +30,19 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
   with a neutral handle draws the same picture as `secondary` in any theme whose
   primary sits close to its foreground — the default palette included. Two names
   for one look is a choice a caller cannot see the difference in.
-- **The rail is a button's box.** `h-button-*` and `rounded-button-*` at each
-  size, so a slide button stacks level with a `Button` or a progress button in
+- **The rail is a button's box.** `min-h-button-*` and `rounded-button-*` at
+  each size, so a slide button stacks level with a `Button` or a progress button in
   the same column. A test pins the classes; it names a TODO for the category
   lead to compare against `progressButtonVariants` directly once that lands.
+- **The rail grows with the label at 2× text.** `Text` scales to 2×, so the
+  rail is a `min-h`, not an `h`. Its absolute children (trail, handle, clip)
+  cannot size it, so the `labelFrame` slot is in flow (`justify-center py-2`)
+  and its text height sets the rail's height once it passes the token. At default
+  text `min-h-button-*` wins: zero pixel diff. Handle, trail and travel already
+  read the rail's *measured* height (`onLayout`), and the handle is
+  `top-1 bottom-1`, so a taller rail keeps it centred and widens it by the 1.6
+  ratio (the label gutter follows). Override contract: a caller's `min-h-*`
+  displaces the default; an `h-*` no longer does, it fixes the height above it.
 - **The handle is neutral in every variant** — `bg-background` with a
   `border-border` hairline, inset 4pt, about 1.6× as wide as it is tall. Only the
   rail, the trail and the label carry the variant. A coloured handle on a

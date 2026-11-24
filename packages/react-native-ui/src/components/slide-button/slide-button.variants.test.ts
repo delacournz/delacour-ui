@@ -213,9 +213,19 @@ describe("slideButtonVariants", () => {
 	test("TODO(category lead): compare against progressButtonVariants at merge — each size's rail is a button-height capsule", () => {
 		for (const size of SLIDE_BUTTON_SIZES) {
 			const root = slideButtonVariants({ size }).root().split(/\s+/);
-			expect(root).toContain(`h-button-${size}`);
+			expect(root).toContain(`min-h-button-${size}`);
+			expect(root).not.toContain(`h-button-${size}`);
 			expect(root).toContain(`rounded-button-${size}`);
 		}
+	});
+
+	test("a caller's min-h displaces the default; an h-* rides beside it as a fixed height", () => {
+		const minH = slideButtonVariants({ size: "md" }).root({ className: "min-h-20" }).split(/\s+/);
+		expect(minH).toContain("min-h-20");
+		expect(minH).not.toContain("min-h-button-md");
+		const h = slideButtonVariants({ size: "md" }).root({ className: "h-20" }).split(/\s+/);
+		expect(h).toContain("h-20");
+		expect(h).toContain("min-h-button-md");
 	});
 
 	test("the label takes the button's type step at each size", () => {
@@ -224,9 +234,10 @@ describe("slideButtonVariants", () => {
 		}
 	});
 
-	test("the label frame fills the rail and centres its text", () => {
+	test("the label frame is in flow, so the rail grows with its text, and centres it", () => {
 		const frame = slideButtonVariants().labelFrame().split(/\s+/);
-		expect(frame).toEqual(expect.arrayContaining(["absolute", "inset-0", "justify-center"]));
+		expect(frame).toEqual(expect.arrayContaining(["justify-center", "py-2"]));
+		expect(frame).not.toContain("absolute");
 		expect(slideButtonVariants().label()).toContain("text-center");
 		expect(slideButtonVariants().label()).not.toContain("absolute");
 	});

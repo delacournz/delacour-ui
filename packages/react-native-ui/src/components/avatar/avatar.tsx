@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useMemo, useState } from "react";
 import { Image, type ImageErrorEvent, type ImageProps, type ImageSourcePropType, View } from "react-native";
+import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
 import { IconPeople } from "../../icons/central";
 import { cn } from "../../lib/cn";
 import { Icon } from "../icon";
@@ -19,6 +20,7 @@ import {
 	type AvatarSize,
 	type AvatarVariant,
 	avatarVariants,
+	resolveAvatarHitTarget,
 	resolveAvatarInteractive,
 	resolveAvatarSize,
 } from "./avatar.variants";
@@ -61,6 +63,7 @@ function AvatarRoot({
 	accessibilityLabel,
 	onPress,
 	onLongPress,
+	hitSlop,
 	haptic,
 	feedback = "scale",
 	pressedScale,
@@ -71,6 +74,8 @@ function AvatarRoot({
 }: AvatarProps): ReactElement {
 	const group = useAvatarGroupContext();
 	const size = resolveAvatarSize({ size: sizeProp, groupSize: group?.size });
+	const hitTarget = resolveAvatarHitTarget({ size, inGroup: group !== null });
+	const slop = useMinimumHitSlop(hitTarget.edge, { cap: hitTarget.cap });
 	const context = useMemo<AvatarContextValue>(
 		() => ({ size, variant, color, isDisabled }),
 		[size, variant, color, isDisabled]
@@ -145,6 +150,7 @@ function AvatarRoot({
 				disabled={isDisabled}
 				feedback={feedback}
 				haptic={haptic}
+				hitSlop={hitSlop ?? slop}
 				onLongPress={onLongPress}
 				onPress={onPress}
 				pressedOpacity={pressedOpacity}

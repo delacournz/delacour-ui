@@ -277,4 +277,18 @@ export function resolveAvatarInteractive({
 	return onPress !== undefined || onLongPress !== undefined;
 }
 
+/**
+ * What a pressable avatar's touch area is measured from: its drawn edge.
+ *
+ * An avatar inside an `Avatar.Group` overlaps its neighbours, so the root takes no
+ * slop there (`cap` 0): slop would be hit-tested ahead of the face that is drawn
+ * under the finger.
+ */
+export function resolveAvatarHitTarget({ size, inGroup }: { size: AvatarSize; inGroup: boolean }): {
+	edge: number;
+	cap: number | undefined;
+} {
+	return { edge: AVATAR_SIZE_POINTS[size], cap: inGroup ? 0 : undefined };
+}
+
 export type AvatarVariantProps = VariantProps<typeof avatarVariants>;

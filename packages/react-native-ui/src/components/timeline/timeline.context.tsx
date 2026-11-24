@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { TimelineLabels } from "../../lib/labels";
 import type {
 	TimelineOrientation,
 	TimelineSize,
@@ -9,6 +10,8 @@ import type {
 } from "./timeline.variants";
 
 export type TimelineContextValue = {
+	/** The resolved spoken strings, so every item reads the same set as the root. */
+	labels: TimelineLabels;
 	/** The current event, zero-based. `-1` leaves every event upcoming. */
 	value: number;
 	/** How many events the root counted — direct `Timeline.Item` children, or a list's data. `0` when it could not count. */

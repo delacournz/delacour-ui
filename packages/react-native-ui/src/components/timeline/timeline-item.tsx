@@ -92,7 +92,7 @@ export function TimelineItem({
 }: TimelineItemProps): ReactElement {
 	const root = useTimelinePart("Timeline.Item");
 	const cell = useTimelineListItemContext();
-	const { value, count, orientation, size, variant } = root;
+	const { value, count, orientation, size, variant, labels } = root;
 
 	const step = stepProp ?? cell?.step ?? 0;
 	if (process.env.NODE_ENV !== "production" && stepProp === undefined && cell === null) {
@@ -117,7 +117,7 @@ export function TimelineItem({
 	const isAccessible = props.accessible ?? (orientation === "vertical" || hasContent);
 	warnInteractiveChildInAccessible({ accessible: isAccessible, children, component: "Timeline.Item" });
 
-	const accessibilityValue = { text: resolveTimelineAccessibilityValue({ count, status, step, tone }) };
+	const accessibilityValue = { text: resolveTimelineAccessibilityValue({ count, status, step, tone }, labels) };
 
 	if (orientation === "horizontal") {
 		const width = cell?.width ?? resolveTimelineColumnWidth(widthProp, hasContent);

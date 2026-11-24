@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { TimelineLabels } from "../../lib/labels";
 import type { TextPresetProps } from "../text";
 import type { TimelineSize, TimelineVariant } from "./timeline.variants";
 
@@ -8,6 +9,11 @@ export type TimelineAxesProps = {
 	value?: number;
 	variant?: TimelineVariant;
 	size?: TimelineSize;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. An
+	 * item's own `accessibilityValue` still wins over what they build.
+	 */
+	labels?: Partial<TimelineLabels>;
 };
 
 /**

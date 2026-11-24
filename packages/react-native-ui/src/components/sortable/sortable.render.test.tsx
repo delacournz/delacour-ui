@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
-import { Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Sortable } from "./sortable";
 import { useSortableItem } from "./sortable.context";
@@ -162,6 +162,97 @@ describe("Sortable (long-press mode)", () => {
 		await renderWithProviders(<List activation="long-press" onReorder={onReorder} rows={rows} />);
 		await act(rowOf("a"), "moveDown");
 		expect(onReorder).toHaveBeenCalledWith(["b", "a", "c"], { from: 0, id: "a", to: 1 });
+	});
+});
+
+describe("Sortable labels", () => {
+	test("a labelled row names its handle and actions", async () => {
+		await renderWithProviders(
+			<Sortable onReorder={jest.fn()} value={["a", "b"]}>
+				<Sortable.Item id="a" label="Milk">
+					<Sortable.Handle />
+				</Sortable.Item>
+				<Sortable.Item id="b" label="Eggs">
+					<Sortable.Handle />
+				</Sortable.Item>
+			</Sortable>
+		);
+		const handle = screen.getByRole("button", { name: "Reorder Eggs" });
+		expect(screen.getByRole("button", { name: "Reorder Milk" })).toBeOnTheScreen();
+		expect(handle.props.accessibilityActions).toEqual([{ label: "Move Eggs up", name: "moveUp" }]);
+	});
+
+	test("an explicit handle accessibilityLabel wins over the row label", async () => {
+		await renderWithProviders(
+			<Sortable onReorder={jest.fn()} value={["a"]}>
+				<Sortable.Item id="a" label="Milk">
+					<Sortable.Handle accessibilityLabel="Grip" />
+				</Sortable.Item>
+			</Sortable>
+		);
+		expect(screen.getByRole("button", { name: "Grip" })).toBeOnTheScreen();
+	});
+});
+
+describe("Sortable.Item caller actions (long-press)", () => {
+	test("caller actions merge with the moves and dispatch to the caller", async () => {
+		const onReorder = jest.fn();
+		const onAction = jest.fn();
+		await renderWithProviders(
+			<Sortable activation="long-press" onReorder={onReorder} value={["a", "b"]}>
+				<Sortable.Item
+					accessibilityActions={[{ label: "Delete Milk", name: "delete" }]}
+					id="a"
+					label="Milk"
+					onAccessibilityAction={onAction}
+				>
+					<Text>a</Text>
+				</Sortable.Item>
+				<Sortable.Item id="b">
+					<Text>b</Text>
+				</Sortable.Item>
+			</Sortable>
+		);
+		const row = rowOf("a");
+		expect(row.props.accessibilityActions).toEqual([
+			{ label: "Move Milk down", name: "moveDown" },
+			{ label: "Delete Milk", name: "delete" },
+		]);
+		await act(row, "delete");
+		expect(onAction).toHaveBeenCalledTimes(1);
+		expect(onReorder).not.toHaveBeenCalled();
+		await act(row, "moveDown");
+		expect(onReorder).toHaveBeenCalledWith(["b", "a"], { from: 0, id: "a", to: 1 });
+		expect(onAction).toHaveBeenCalledTimes(1);
+	});
+
+	test("an accessible row warns about a control inside it, once", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+		await renderWithProviders(
+			<Sortable activation="long-press" onReorder={jest.fn()} value={["a"]}>
+				<Sortable.Item id="a">
+					<Pressable accessibilityRole="button" onPress={jest.fn()}>
+						<Text>Delete</Text>
+					</Pressable>
+				</Sortable.Item>
+			</Sortable>
+		);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining("[Sortable.Item]"));
+	});
+
+	test("handle mode does not warn: the row is not accessible", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+		await renderWithProviders(
+			<Sortable onReorder={jest.fn()} value={["a"]}>
+				<Sortable.Item id="a">
+					<Pressable onPress={jest.fn()}>
+						<Text>Delete</Text>
+					</Pressable>
+					<Sortable.Handle />
+				</Sortable.Item>
+			</Sortable>
+		);
+		expect(warn).not.toHaveBeenCalled();
 	});
 });
 

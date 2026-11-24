@@ -4,11 +4,11 @@ import { GestureDetector } from "react-native-gesture-handler";
 import { IconDotGrid2x3 } from "../../icons/central";
 import { Icon } from "../icon";
 import { useSortableItemPart, useSortablePart } from "./sortable.context";
-import { SORTABLE_HANDLE_ICON_TOKEN, sortableVariants } from "./sortable.variants";
+import { resolveSortableHandleLabel, SORTABLE_HANDLE_ICON_TOKEN, sortableVariants } from "./sortable.variants";
 import { useSortableDragGesture } from "./use-sortable-drag-gesture";
 
 export type SortableHandleProps = ViewProps & {
-	/** What a screen reader calls the handle. Default "Drag to reorder". */
+	/** What a screen reader calls the handle. Default "Reorder {label}" from the row's `label`, else "Drag to reorder". */
 	accessibilityLabel?: string;
 	className?: string;
 };
@@ -26,7 +26,7 @@ export type SortableHandleProps = ViewProps & {
  * hint and is hidden from assistive technology rather than announced twice.
  */
 export function SortableHandle({
-	accessibilityLabel = "Drag to reorder",
+	accessibilityLabel,
 	className,
 	children,
 	...props
@@ -62,7 +62,7 @@ export function SortableHandle({
 		<GestureDetector gesture={gesture}>
 			<View
 				accessibilityActions={item.accessibilityActions}
-				accessibilityLabel={accessibilityLabel}
+				accessibilityLabel={accessibilityLabel ?? resolveSortableHandleLabel(item.label)}
 				accessibilityRole="button"
 				accessibilityState={{ disabled: !item.canDrag }}
 				accessibilityValue={{ text: item.positionText }}

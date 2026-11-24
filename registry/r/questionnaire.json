@@ -13,6 +13,7 @@
 		"cn",
 		"field",
 		"input",
+		"labels",
 		"pressable",
 		"progress",
 		"radio",
@@ -24,7 +25,8 @@
 		"textarea",
 		"toggle-button",
 		"tv",
-		"use-calm-motion"
+		"use-calm-motion",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -48,7 +50,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/questionnaire/index.ts",
 			"target": "questionnaire/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-back.tsx",
@@ -66,6 +74,10 @@
 			"target": "questionnaire/questionnaire-control.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../checkbox",
 					"to": "@registry/ui/checkbox"
@@ -204,6 +216,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
 				}
@@ -212,13 +228,27 @@
 		{
 			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.logic.ts",
 			"target": "questionnaire/questionnaire.logic.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.tsx",
 			"target": "questionnaire/questionnaire.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
@@ -234,6 +264,10 @@
 			"target": "questionnaire/questionnaire.types.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
@@ -296,7 +330,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.logic.test.ts",
 			"target": "questionnaire/questionnaire.logic.test.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.variants.test.ts",
@@ -358,6 +398,10 @@
 			"target": "questionnaire/questionnaire.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

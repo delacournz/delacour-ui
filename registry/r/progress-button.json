@@ -11,11 +11,13 @@
 		"cn",
 		"icon",
 		"icons",
+		"labels",
 		"pressable",
 		"text",
 		"tv",
 		"use-announce",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -41,7 +43,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/progress-button/index.ts",
 			"target": "progress-button/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/progress-button/progress-button-done.tsx",
@@ -92,6 +100,14 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../icon",
 					"to": "@registry/ui/icon"
 				},
@@ -106,6 +122,10 @@
 			"target": "progress-button/progress-button.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -146,6 +166,10 @@
 				{
 					"from": "../../hooks/use-announce",
 					"to": "@registry/hooks/use-announce"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
 				},
 				{
 					"from": "../../test/render",

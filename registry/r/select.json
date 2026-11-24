@@ -14,13 +14,15 @@
 		"icon",
 		"icons",
 		"input",
+		"labels",
 		"pressable",
 		"slot",
 		"spinner",
 		"text",
 		"tv",
 		"use-calm-motion",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -45,7 +47,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/select/index.ts",
 			"target": "select/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/select/select-group.tsx",
@@ -73,8 +81,16 @@
 					"to": "@registry/hooks/use-calm-motion"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../icon",
@@ -144,6 +160,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
 				}
@@ -159,8 +179,16 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../bottom-sheet",
@@ -221,6 +249,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
 				},
@@ -242,6 +274,10 @@
 			"target": "select/select.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -274,6 +310,10 @@
 			"target": "select/select.render.test.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
 				{
 					"from": "../../test/render",
 					"to": "@registry/lib/test/render"

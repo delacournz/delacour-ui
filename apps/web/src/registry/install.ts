@@ -1043,7 +1043,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 44,
+		fileCount: 46,
 		groups: [
 			{
 				name: "slide-button",
@@ -1162,6 +1162,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -1201,6 +1209,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
 		],
 	},
 	"selection-mode": {
@@ -1212,7 +1228,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 63,
+		fileCount: 65,
 		groups: [
 			{
 				name: "selection-mode",
@@ -1389,11 +1405,27 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 		],
@@ -1407,7 +1439,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 37,
+		fileCount: 39,
 		groups: [
 			{
 				name: "progress-button",
@@ -1512,6 +1544,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -1549,6 +1589,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 		],
@@ -6097,7 +6145,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 168,
+		fileCount: 170,
 		groups: [
 			{
 				name: "questionnaire",
@@ -6473,6 +6521,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 			{
@@ -8858,7 +8922,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 54,
+		fileCount: 56,
 		groups: [
 			{
 				name: "rating",
@@ -9003,11 +9067,27 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "use-controllable-state",
 				title: "useControllableState",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 			{
@@ -12440,7 +12520,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 80,
+		fileCount: 82,
 		groups: [
 			{
 				name: "scroll-text",
@@ -12604,6 +12684,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -12641,6 +12729,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 			{
@@ -12694,7 +12790,7 @@ export const install = {
 		expo: ["react-native-svg", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 28,
+		fileCount: 30,
 		groups: [
 			{
 				name: "qr-code",
@@ -12743,11 +12839,27 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 			{
@@ -13428,6 +13540,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
 				name: "calm-motion",
 				title: "calmMotion",
 				kind: "shared",
@@ -13441,14 +13561,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
-				],
-			},
-			{
-				name: "use-labels",
-				title: "useLabels",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 		],
@@ -14941,7 +15053,7 @@ export const install = {
 		expo: ["react-native-reanimated", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 36,
+		fileCount: 38,
 		groups: [
 			{
 				name: "meter",
@@ -14993,6 +15105,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -15021,6 +15141,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
 		],
 	},
 	"progress": {
@@ -15032,7 +15160,7 @@ export const install = {
 		expo: ["react-native-reanimated", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 24,
+		fileCount: 26,
 		groups: [
 			{
 				name: "progress",
@@ -15065,6 +15193,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -15091,6 +15227,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 		],
@@ -15739,7 +15883,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 34,
+		fileCount: 36,
 		groups: [
 			{
 				name: "section-rail",
@@ -15790,6 +15934,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "modal-accessibility",
 				title: "modalAccessibility",
 				kind: "shared",
@@ -15843,6 +15995,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
 				name: "use-modal-accessibility",
 				title: "useModalAccessibility",
 				kind: "shared",
@@ -15877,7 +16037,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 35,
+		fileCount: 37,
 		groups: [
 			{
 				name: "section-progress",
@@ -15927,6 +16087,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "modal-accessibility",
 				title: "modalAccessibility",
 				kind: "shared",
@@ -15977,6 +16145,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 			{
@@ -16951,7 +17127,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 60,
+		fileCount: 62,
 		groups: [
 			{
 				name: "popover",
@@ -17084,6 +17260,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "modal-accessibility",
 				title: "modalAccessibility",
 				kind: "shared",
@@ -17132,6 +17316,14 @@ export const install = {
 				],
 			},
 			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
 				name: "use-minimum-hit-target",
 				title: "useMinimumHitSlop",
 				kind: "shared",
@@ -17150,7 +17342,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 71,
+		fileCount: 73,
 		groups: [
 			{
 				name: "tooltip",
@@ -17317,6 +17509,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -17346,6 +17546,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 			{
@@ -18597,7 +18805,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 71,
+		fileCount: 73,
 		groups: [
 			{
 				name: "screen",
@@ -18747,6 +18955,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -18784,6 +19000,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 			{
@@ -19623,7 +19847,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 104,
+		fileCount: 106,
 		groups: [
 			{
 				name: "sketch",
@@ -19874,6 +20098,14 @@ export const install = {
 				],
 			},
 			{
+				name: "labels",
+				title: "labels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/labels.ts", target: "src/lib/labels.ts" },
+				],
+			},
+			{
 				name: "announce",
 				title: "announce",
 				kind: "shared",
@@ -19895,6 +20127,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "use-labels",
+				title: "useLabels",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
 				],
 			},
 		],

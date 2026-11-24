@@ -36,7 +36,7 @@ const PREVIEWS_SPEC = {
  * `e2e/previews/`, on the dev client against a Metro warden starts for the
  * run, N leased simulators sharing it (`--count N`).
  *
- * The suite selects by `--flows <components>`, never by the git diff: which
+ * The suite selects by `--specs <components>`, never by the git diff: which
  * demos need recapturing is a question of source hashes that
  * `scripts/capture-previews.ts` answers before it calls `warden e2e`.
  */
@@ -55,7 +55,7 @@ export default {
 	e2e: {
 		previews: {
 			project: "playground",
-			flowsDir: "e2e/previews",
+			specsDir: "e2e/previews",
 			platform: "ios",
 			profile: "iphone-17-pro",
 			app: true,
@@ -65,7 +65,7 @@ export default {
 			// Per flow; a component spec with six animated demos runs for several minutes.
 			jobTimeoutMs: 30 * 60_000,
 			spec: PREVIEWS_SPEC,
-			// Selection is always explicit (`--flows`), so nothing here maps changes to flows.
+			// Selection is always explicit (`--specs`), so nothing here maps changes to specs.
 			unmatched: "skip",
 			unmapped: "run",
 		},

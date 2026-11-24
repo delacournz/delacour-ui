@@ -538,11 +538,11 @@ first `--` gets the flags past `bun run` and the second gets them past turbo. Wi
 | Piece | What it owns |
 | --- | --- |
 | `scripts/capture-previews.ts` | The plan, the `warden e2e` call, and the manifest — never a finger on the screen |
-| `warden.config.ts` | The `previews` suite: the `playground` project warden builds and caches by native fingerprint, `flowsDir: e2e/previews`, the `iphone-17-pro` profile, Metro with the dev-menu-off launch args, one device per spec, idle devices shut down |
+| `warden.config.ts` | The `previews` suite: the `playground` project warden builds and caches by native fingerprint, `specsDir: e2e/previews`, the `iphone-17-pro` profile, Metro with the dev-menu-off launch args, one device per spec, idle devices shut down |
 | `e2e/previews/<component>.e2e.ts` | One spec per component. `capture("id")` is a still; `capture("id", async (f) => { … })` is a clip whose body runs while the screen records. `capture.ts` is the helper every spec shares; `geometry.ts` and `video.ts` are its pure arithmetic and the recorder |
 
 A run goes: the script hashes every captured demo and writes the stale ones to `.previews/plan.json`;
-`warden e2e previews --flows <components> --count N` claims the simulators, builds or reuses the app,
+`warden e2e previews --specs <components> --count N` claims the simulators, builds or reuses the app,
 starts Metro and runs the specs; each `capture()` reads the plan and `test.skipIf`s a demo not in it;
 per theme it opens the deep link, waits for the preview route's sentinel to attach, reads the
 measured bounds off its label, settles, then screenshots or records, pads, crops and encodes, and
@@ -586,7 +586,7 @@ switch on and stops jump-cuts at the seam. Keep it under about three seconds. `d
 demo's `capture.flow: true` and its block's body together, so a still cannot grow a body by accident
 and a clip cannot lose one.
 
-**Running a spec by hand.** `cd apps/playground && warden e2e previews --flows switch` runs one
+**Running a spec by hand.** `cd apps/playground && warden e2e previews --specs switch` runs one
 component's spec with no plan, which captures every demo in it; the fragments land in `.previews/`
 and `bun run previews` picks them up on its next run only if their hashes still match. Never start
 Metro or export `WARDEN_*` yourself — `warden e2e` is the only supported way in, and a bare

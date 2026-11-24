@@ -17,3 +17,16 @@ export type TextAnimationBase = Pick<TextProps, "variant" | "size" | "weight" | 
 	Pick<NativeTextProps, "allowFontScaling" | "maxFontSizeMultiplier" | "testID" | "nativeID" | "accessibilityHint"> & {
 		className?: string;
 	};
+
+/**
+ * The pause a looping part offers (WCAG 2.2.2). Wire `isPaused` to your own visible control, or
+ * leave it to the screen reader's pause/resume actions on the part itself.
+ */
+export type TextAnimationLoopingProps = {
+	/** Controlled pause: the loop freezes where it is and resumes from there. A screen reader or calm motion still holds it at rest. */
+	isPaused?: boolean;
+	/** The pause the loop starts with when uncontrolled. Default `false`. */
+	defaultPaused?: boolean;
+	/** Called when the user, or an accessibility action, pauses or resumes. */
+	onPausedChange?: (isPaused: boolean) => void;
+};

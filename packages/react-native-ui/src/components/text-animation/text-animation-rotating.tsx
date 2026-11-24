@@ -7,10 +7,10 @@ import Animated, {
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
-import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useLoopingMotion } from "../../hooks/use-looping-motion";
 import { cn } from "../../lib/cn";
 import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
-import type { TextAnimationBase } from "./text-animation.types";
+import type { TextAnimationBase, TextAnimationLoopingProps } from "./text-animation.types";
 import {
 	resolveNextPhrase,
 	resolveSwapProgress,
@@ -23,20 +23,21 @@ import {
 } from "./text-animation.variants";
 import { useTextAnimationClass } from "./text-animation-unit";
 
-export type TextAnimationRotatingProps = TextAnimationBase & {
-	/** The phrases to cycle through. At least one; a single phrase never moves. */
-	phrases: readonly string[];
-	/** How long each phrase holds, ms. Default 2200. */
-	intervalMs?: number;
-	/** How one phrase gives way to the next. `slide` is vertical. Default `{ kind: "fade" }`. */
-	transition?: TextAnimationTransition;
-	/** The swap itself, ms. Default 360. */
-	transitionMs?: number;
-	/** `widest` holds the widest phrase's width so a sentence does not reflow; `current` fits each phrase. Default `widest`. */
-	reserve?: "widest" | "current";
-	/** `false` holds the current phrase. Default `true`. */
-	isActive?: boolean;
-};
+export type TextAnimationRotatingProps = TextAnimationBase &
+	TextAnimationLoopingProps & {
+		/** The phrases to cycle through. At least one; a single phrase never moves. */
+		phrases: readonly string[];
+		/** How long each phrase holds, ms. Default 2200. */
+		intervalMs?: number;
+		/** How one phrase gives way to the next. `slide` is vertical. Default `{ kind: "fade" }`. */
+		transition?: TextAnimationTransition;
+		/** The swap itself, ms. Default 360. */
+		transitionMs?: number;
+		/** `widest` holds the widest phrase's width so a sentence does not reflow; `current` fits each phrase. Default `widest`. */
+		reserve?: "widest" | "current";
+		/** `false` holds the current phrase. Default `true`. */
+		isActive?: boolean;
+	};
 
 const DEFAULT_TRANSITION: TextAnimationTransition = { kind: "fade" };
 
@@ -110,6 +111,9 @@ export function TextAnimationRotating({
 	transitionMs = TEXT_ANIMATION_ROTATE_TRANSITION_MS,
 	reserve = "widest",
 	isActive = true,
+	isPaused,
+	defaultPaused,
+	onPausedChange,
 	variant,
 	size,
 	weight,
@@ -123,7 +127,8 @@ export function TextAnimationRotating({
 	nativeID,
 	accessibilityHint,
 }: TextAnimationRotatingProps): ReactElement {
-	const isCalm = useCalmMotion();
+	const motion = useLoopingMotion({ isPaused, defaultPaused, onPausedChange });
+	const { isAtRest } = motion;
 	const textClass = useTextAnimationClass({ variant, size, weight, color, align, transform, className });
 	const phrasesKey = phrases.join("\u0000");
 	// `swapId` counts every swap, so each one's layers know which rewind is theirs.
@@ -131,12 +136,13 @@ export function TextAnimationRotating({
 	// A new list starts over, committed during render, so switching away and
 	// back never restores the old list's index or its transition.
 	if (state.key !== phrasesKey) setState({ key: phrasesKey, index: 0, previous: -1, swapId: state.swapId });
-	// Calm motion holds the first phrase with no swap in flight.
+	// Calm motion or a screen reader holds the first phrase with no swap in flight. A user pause
+	// keeps the current phrase and stops the timer; resuming waits a full interval.
 	const { index, previous, swapId } =
-		state.key === phrasesKey && !isCalm ? state : { index: 0, previous: -1, swapId: state.swapId };
+		state.key === phrasesKey && !isAtRest ? state : { index: 0, previous: -1, swapId: state.swapId };
 	const progress = useSharedValue(1);
 	const swap = useSharedValue(0);
-	const isRotating = isActive && !isCalm && phrases.length > 1;
+	const isRotating = isActive && motion.isMoving && phrases.length > 1;
 
 	useEffect(() => {
 		if (!isRotating) return;
@@ -150,11 +156,11 @@ export function TextAnimationRotating({
 		return () => clearInterval(timer);
 	}, [isRotating, intervalMs, phrasesKey, phrases.length]);
 
-	// Turning calm motion on drops the rotated state, so resuming waits for the
+	// Turning a hold on drops the rotated state, so resuming waits for the
 	// next swap instead of replaying the transition that was cut short.
 	useEffect(() => {
-		if (isCalm) setState((current) => ({ key: phrasesKey, index: 0, previous: -1, swapId: current.swapId }));
-	}, [isCalm, phrasesKey]);
+		if (isAtRest) setState((current) => ({ key: phrasesKey, index: 0, previous: -1, swapId: current.swapId }));
+	}, [isAtRest, phrasesKey]);
 
 	// `swap` is written after the rewind, so a frame between the writes still
 	// holds the layers at their start.
@@ -201,12 +207,14 @@ export function TextAnimationRotating({
 	// really is widest once they have laid out; the layers draw over the slot.
 	return (
 		<View
+			accessibilityActions={phrases.length > 1 ? motion.accessibilityActions : undefined}
 			accessibilityHint={accessibilityHint}
 			accessibilityLabel={shown}
 			accessibilityRole="text"
 			accessible
 			className={slots.slot()}
 			nativeID={nativeID}
+			onAccessibilityAction={phrases.length > 1 ? motion.onAccessibilityAction : undefined}
 			testID={testID}
 		>
 			<View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">

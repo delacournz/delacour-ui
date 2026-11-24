@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { FeedbackLabels } from "../../lib/labels";
 import { Dialog } from "../dialog";
 import { type FeedbackInternalValue, FeedbackProvider } from "./feedback.context";
 import { FeedbackAction } from "./feedback-action";
@@ -28,6 +30,8 @@ export type FeedbackProps = {
 	onValueChange?: (value: string) => void;
 	/** Whether a scrim tap, Android back and the iOS escape gesture close it. Default true. */
 	isDismissible?: boolean;
+	/** Replaces the spoken and visible strings — Send, Cancel and the sent and failed announcements. Wins over `DelacourProvider`'s. */
+	labels?: Partial<FeedbackLabels>;
 	children: ReactNode;
 };
 
@@ -39,8 +43,10 @@ function FeedbackRoot({
 	defaultValue = "",
 	onValueChange,
 	isDismissible = true,
+	labels: labelsProp,
 	children,
 }: FeedbackProps): ReactElement {
+	const labels = useLabels("feedback", labelsProp);
 	const [open, setOpen] = useControllableState({ defaultValue: defaultOpen, onChange: onOpenChange, value: isOpen });
 	const [draft, setDraft] = useControllableState({ defaultValue, onChange: onValueChange, value });
 	const [isSending, setSending] = useState(false);
@@ -57,13 +63,14 @@ function FeedbackRoot({
 			close,
 			isOpen: open,
 			isSending,
+			labels,
 			setSending,
 			setTitleText,
 			setValue: setDraft,
 			titleText,
 			value: draft,
 		}),
-		[clear, close, draft, isSending, open, setDraft, titleText]
+		[clear, close, draft, isSending, labels, open, setDraft, titleText]
 	);
 
 	// The draft lives here, above `Dialog.Content`, which unmounts once the exit

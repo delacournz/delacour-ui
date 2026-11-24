@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type FeedbackLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 
 /** How many lines tall the field is before it grows, when `minRows` is not named. */
@@ -128,10 +129,10 @@ export function resolveFeedbackFieldHeightStyle({
 }
 
 /** What a screen reader hears when a promise `onSubmit` resolves. */
-export const FEEDBACK_SENT_MESSAGE = "Feedback sent";
+export const FEEDBACK_SENT_MESSAGE = DELACOUR_DEFAULT_LABELS.feedback.sent;
 
 /** What a screen reader hears when a promise `onSubmit` rejects. */
-export const FEEDBACK_FAILED_MESSAGE = "Couldn't send feedback";
+export const FEEDBACK_FAILED_MESSAGE = DELACOUR_DEFAULT_LABELS.feedback.failed;
 
 export type FeedbackResultAnnouncement = {
 	message: string;
@@ -141,14 +142,15 @@ export type FeedbackResultAnnouncement = {
 /**
  * What to speak when a send settles: success is polite, failure assertive
  * because the draft is still waiting on the user. A caller's string wins; an
- * empty one falls back to the default.
+ * empty one falls back to the `labels`.
  *
  * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveFeedbackResultAnnouncement(
 	result: "sent" | "failed",
-	{ sentMessage, failedMessage }: { sentMessage?: string; failedMessage?: string }
+	{ sentMessage, failedMessage }: { sentMessage?: string; failedMessage?: string },
+	labels: FeedbackLabels = DELACOUR_DEFAULT_LABELS.feedback
 ): FeedbackResultAnnouncement {
-	if (result === "sent") return { message: sentMessage || FEEDBACK_SENT_MESSAGE, politeness: "polite" };
-	return { message: failedMessage || FEEDBACK_FAILED_MESSAGE, politeness: "assertive" };
+	if (result === "sent") return { message: sentMessage || labels.sent, politeness: "polite" };
+	return { message: failedMessage || labels.failed, politeness: "assertive" };
 }

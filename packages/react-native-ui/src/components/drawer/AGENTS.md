@@ -95,6 +95,7 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   content short, or use a `BottomSheet`.
 - **It draws in the `modal` band**, over the navigator's header and over an open bottom sheet.
 - **Triggers and closes donate the press** with `asChild`, for `BottomSheet.Trigger`'s reason.
+- **The ✕ reaches 44pt through slop alone.** Its 20pt glyph has no padding, so `useMinimumHitSlop` adds 12pt a side (8pt left a 36pt target); no pixel moves.
 - **Accessibility.** The panel is `accessibilityViewIsModal`, `role="dialog"`, labelled by the title's
   `nativeID`; focus moves to the title once the entrance finishes and back to the trigger once the
   exit does. `onAccessibilityEscape` and the back button close it when dismissible. The scrim is not

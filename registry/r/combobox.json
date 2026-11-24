@@ -356,6 +356,10 @@
 					"to": "@registry/styles/theme-tokens.test"
 				},
 				{
+					"from": "../bottom-sheet/bottom-sheet.variants",
+					"to": "@registry/ui/bottom-sheet/bottom-sheet.variants"
+				},
+				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
 				},

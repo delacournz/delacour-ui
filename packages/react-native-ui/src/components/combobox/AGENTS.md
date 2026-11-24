@@ -131,6 +131,15 @@ typed text can become a value.
   `keyboardDismissMode="none"`. A drag that carries the sheet down still puts
   it away — the engine does that on any downward release — and every close
   blurs the field.
+- **The header is pinned while the rows scroll**, as in `Select`. The list
+  passes `stickyHeaderIndices={[0]}` — FlatList puts `ListHeaderComponent` at
+  child 0 and always mounts it — so the title, chips, search field and result
+  count stay at the top of a long result list. The search field is the
+  combobox's main control; scrolled off, the next query needed a scroll back
+  first. The `header` slot is `bg-popover`, the sheet's colour, so rows pass
+  under it unseen, and it carries the list's `pt-2` (`sheetBody` sets `pt-0`)
+  so it pins where it rests rather than riding up 8pt first. The header and
+  the list carry `${testID}-header` and `${testID}-list`.
 - **Closing blurs the search field first.** Done, the scrim, the close button
   and a single pick all `blur()` before the sheet leaves, so the keyboard goes
   down with it rather than lingering over the screen for a beat.

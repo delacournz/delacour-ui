@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
+import { bottomSheetVariants } from "../bottom-sheet/bottom-sheet.variants";
 import { INPUT_SIZES, INPUT_VARIANTS, inputVariants, resolveInputGroupClass } from "../input/input.variants";
 import {
 	resolveSelectSheetMaxHeight,
@@ -43,6 +44,7 @@ const SLOT_NAMES = [
 	"createRow",
 	"createLabel",
 	"header",
+	"headerClose",
 	"results",
 	"empty",
 	"sheetBody",
@@ -71,6 +73,34 @@ function everyCell() {
 		)
 	);
 }
+
+describe("comboboxVariants header", () => {
+	test("is opaque in the sheet's colour, so pinned it hides the rows scrolling under it", () => {
+		for (const variant of INPUT_VARIANTS) {
+			for (const size of INPUT_SIZES) {
+				expect(comboboxVariants({ size, variant }).header().split(" ")).toContain("bg-popover");
+			}
+		}
+	});
+
+	test("carries the list's top padding, so it pins where it rests instead of riding up 8pt", () => {
+		for (const size of INPUT_SIZES) {
+			const slots = comboboxVariants({ size });
+			expect(slots.header().split(" ")).toContain("pt-2");
+			expect(bottomSheetVariants().scrollContent({ className: slots.sheetBody() }).split(" ")).toContain("pt-0");
+		}
+	});
+
+	test("the close keeps its place when the header takes the list's top padding", () => {
+		for (const size of INPUT_SIZES) {
+			const close = bottomSheetVariants()
+				.close({ className: comboboxVariants({ size }).headerClose() })
+				.split(" ");
+			expect(close).toContain("top-6");
+			expect(close).not.toContain("top-4");
+		}
+	});
+});
 
 describe("resolveComboboxTriggerClass", () => {
 	test("is Select's trigger exactly, at every cell, while it shows text", () => {

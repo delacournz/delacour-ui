@@ -245,7 +245,12 @@ export type ColorPickerLabels = {
 export type ComboboxLabels = {
 	/** The create row's visible text: "Use “Atlantis”". */
 	create: (query: string) => string;
-	/** The create row's accessible name: "Add Atlantis". */
+	/**
+	 * Unused: the create row is named by its visible text (`create`), so the spoken name contains
+	 * what is shown (WCAG 2.5.3, label in name). Kept so an existing override still type-checks.
+	 *
+	 * @deprecated Override `create` instead.
+	 */
 	createAccessibility: (query: string) => string;
 	/** What an empty list says, and what a screen reader hears. */
 	empty: string;
@@ -253,6 +258,11 @@ export type ComboboxLabels = {
 	search: string;
 	/** The search field's name inside a `Field`: "Country, Search". */
 	searchInField: (fieldLabel: string, search: string) => string;
+	/**
+	 * The trigger's name inside a `Field` while it shows its placeholder: "Country, Choose a country".
+	 * The placeholder is the visible text, so the name has to contain it (WCAG 2.5.3).
+	 */
+	triggerInField: (fieldLabel: string, placeholder: string) => string;
 	/** The search field's clear button. */
 	clearSearch: string;
 	/** The trigger's clear button. */
@@ -1239,6 +1249,7 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 		empty: "No results",
 		search: "Search",
 		searchInField: (fieldLabel, search) => `${fieldLabel}, ${search}`,
+		triggerInField: (fieldLabel, placeholder) => `${fieldLabel}, ${placeholder}`,
 		clearSearch: "Clear search",
 		clear: "Clear",
 		triggerHint: "Opens a searchable list of options",

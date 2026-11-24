@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { Platform, Text } from "react-native";
+import { Platform, Pressable, Text } from "react-native";
 import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { ContextMenu, type ContextMenuProps } from "./context-menu";
@@ -138,6 +138,35 @@ describe("ContextMenu", () => {
 			{ name: "activate" },
 			{ label: "Show menu", name: "longpress" },
 		]);
+	});
+
+	test("warns when the held content composes a pressable, and not for plain content", async () => {
+		const warn = jest.spyOn(console, "warn").mockImplementation(() => undefined);
+		await renderWithProviders(
+			<ContextMenu>
+				<ContextMenu.Trigger accessibilityLabel="Plain">
+					<Text>Plain</Text>
+				</ContextMenu.Trigger>
+				<ContextMenu.Content>
+					<ContextMenu.Item>Share</ContextMenu.Item>
+				</ContextMenu.Content>
+			</ContextMenu>
+		);
+		expect(warn).not.toHaveBeenCalled();
+		await renderWithProviders(
+			<ContextMenu>
+				<ContextMenu.Trigger accessibilityLabel="Composed">
+					<Pressable accessibilityLabel="Inner" onPress={jest.fn()}>
+						<Text>Inner</Text>
+					</Pressable>
+				</ContextMenu.Trigger>
+				<ContextMenu.Content>
+					<ContextMenu.Item>Share</ContextMenu.Item>
+				</ContextMenu.Content>
+			</ContextMenu>
+		);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining("[ContextMenu.Trigger]"));
+		warn.mockRestore();
 	});
 
 	test("controlled: isOpen decides, so the menu waits for the prop", async () => {

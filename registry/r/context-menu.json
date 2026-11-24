@@ -8,6 +8,7 @@
 		"controls"
 	],
 	"registryDependencies": [
+		"interactive-child",
 		"labels",
 		"menu",
 		"pressable",
@@ -78,6 +79,10 @@
 			"target": "context-menu/context-menu-trigger.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/interactive-child",
+					"to": "@registry/lib/interactive-child"
+				},
 				{
 					"from": "../menu/menu.context",
 					"to": "@registry/ui/menu/menu.context"

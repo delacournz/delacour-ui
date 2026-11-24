@@ -2,6 +2,7 @@ import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, use
 import { type AccessibilityActionEvent, View, type ViewInstance, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { scheduleOnRN } from "react-native-worklets";
+import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { type MenuMeasurable, useMenuPart } from "../menu/menu.context";
 import { type HapticFeedback, playHaptic } from "../pressable/pressable";
 import { useContextMenuPart } from "./context-menu.context";
@@ -50,6 +51,9 @@ export type ContextMenuTriggerProps = Omit<ViewProps, "children"> & {
  * to JS, measures the wrapper with `measureInWindow`, and anchors the panel at
  * the press point or against that rect.
  *
+ * The held content is one stop: a screen reader never reaches a `Pressable` composed into it. In
+ * development the trigger warns when it finds one; put the press on `onPress` instead.
+ *
  * For a screen reader it is one element with two actions: `activate` runs
  * `onPress` (or opens, without one) and `longpress`, named by `labels.show` ("Show menu"), opens against
  * the trigger — there is no pointer coordinate to open at.
@@ -69,6 +73,11 @@ export function ContextMenuTrigger({
 	const { invoke, labels, registerContent } = useContextMenuPart("ContextMenu.Trigger");
 	const hold = resolveHoldConfig({ delay, slop });
 	const hasPress = onPress !== undefined;
+	warnInteractiveChildInAccessible({
+		accessible: props.accessible ?? true,
+		children,
+		component: "ContextMenu.Trigger",
+	});
 	const actions = useMemo(() => resolveContextMenuActions(labels), [labels]);
 	const a11y = resolveContextMenuAccessibility({ hasPress, isDisabled, isOpen });
 

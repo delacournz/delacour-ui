@@ -212,7 +212,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 65,
+		fileCount: 66,
 		groups: [
 			{
 				name: "context-menu",
@@ -298,6 +298,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/menu/menu.tsx", target: "src/components/ui/menu/menu.tsx" },
 					{ source: "packages/react-native-ui/src/components/menu/menu.types.ts", target: "src/components/ui/menu/menu.types.ts" },
 					{ source: "packages/react-native-ui/src/components/menu/menu.variants.ts", target: "src/components/ui/menu/menu.variants.ts" },
+				],
+			},
+			{
+				name: "interactive-child",
+				title: "interactiveChild",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/interactive-child.ts", target: "src/lib/interactive-child.ts" },
 				],
 			},
 			{

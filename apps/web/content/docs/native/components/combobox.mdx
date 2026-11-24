@@ -173,15 +173,17 @@ become a value. Both draw the same trigger box and the same rows, so they sit to
 
 ## Accessibility
 
-- The trigger is a button named by the enclosing `Field.Label`, valued with the label in single mode
-  or "N selected" in multiple, with its `expanded` state.
+- The trigger is one button named by the enclosing `Field.Label`, with the placeholder joined on
+  while it shows ("Country, Choose a country"). Its value is the label in single mode or
+  "N selected" in multiple, and it carries its `expanded` state, and `busy` while loading.
 - The search field is named by the field label and the search placeholder. After a query, the
   result count — or `emptyText` — is announced: a live region on Android, an announcement on iOS.
 - Rows are radios in single mode and checkboxes in multiple; group headings are headers. The bold
   match is visual only.
-- Each chip's remove control is labelled "Remove `{label}`". On the trigger the chips sit inside its
-  button; in the sheet each chip is its own element.
-- The create row is a button, "Add `{query}`".
+- The trigger's clear button and its chips' remove controls are drawn but hidden from a screen
+  reader. The trigger offers them as named actions instead: "Clear", and "Remove `{label}`" per
+  visible chip. In the sheet each chip is its own element.
+- The create row is a button named by its visible text, "Use “`{query}`”".
 
 ## API Reference
 

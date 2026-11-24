@@ -33,7 +33,11 @@ function render(props: Partial<ComboboxSingleProps> | Partial<ComboboxMultiplePr
 }
 
 const press = (el: ReturnType<typeof screen.getByRole>) => fireEvent(el, "accessibilityTap");
-const trigger = () => screen.getByRole("button", { name: "Country" });
+const act = (el: ReturnType<typeof screen.getByRole>, actionName: string) =>
+	fireEvent(el, "accessibilityAction", { nativeEvent: { actionName } });
+const actionNames = (el: ReturnType<typeof screen.getByRole>): string[] =>
+	(el.props.accessibilityActions ?? []).map((a: { name: string }) => a.name);
+const trigger = () => screen.getByRole("button", { name: /^Country/ });
 const search = () => screen.getByLabelText("Search");
 const open = async () => {
 	await press(trigger());
@@ -46,6 +50,19 @@ describe("Combobox", () => {
 		expect(trigger()).toBeCollapsed();
 		expect(screen.getByText("Choose a country")).toBeOnTheScreen();
 		expect(screen.queryByLabelText("Search")).not.toBeOnTheScreen();
+	});
+
+	test("the trigger's name carries the placeholder while it shows, and a value stays in the value", async () => {
+		await render();
+		expect(screen.getByRole("button", { name: "Country, Choose a country" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Country, Choose a country" }).props.accessibilityValue).toBeUndefined();
+		await render({ defaultValue: "fj" });
+		expect(screen.getByRole("button", { name: "Country" })).toBeOnTheScreen();
+	});
+
+	test("the trigger is busy while loading", async () => {
+		await render({ isLoading: true });
+		expect(trigger()).toBeBusy();
 	});
 
 	test("opening shows the search field and a radio per option", async () => {
@@ -130,7 +147,7 @@ describe("Combobox", () => {
 			</Combobox>,
 			{ wrapper: Sheets }
 		);
-		await press(screen.getByRole("button", { name: "Country" }));
+		await press(screen.getByRole("button", { name: /^Country/ }));
 		await fireEvent.changeText(screen.getByLabelText("Search"), "zzz");
 		expect(screen.getByText("Try another spelling")).toBeOnTheScreen();
 		expect(screen.queryByText("No results")).not.toBeOnTheScreen();
@@ -273,15 +290,17 @@ describe("Combobox", () => {
 	test("isClearable shows a Clear button that empties the value", async () => {
 		const onValueChange = jest.fn();
 		await render({ defaultValue: "fj", isClearable: true, onValueChange });
-		await press(screen.getByRole("button", { name: "Clear" }));
+		expect(actionNames(trigger())).toContain("clear");
+		await act(trigger(), "clear");
 		expect(onValueChange).toHaveBeenCalledWith(null);
-		expect(screen.queryByRole("button", { name: "Clear" })).not.toBeOnTheScreen();
+		expect(actionNames(trigger())).not.toContain("clear");
 		expect(screen.getByText("Choose a country")).toBeOnTheScreen();
 	});
 
 	test("no Clear button without isClearable or without a value", async () => {
 		await render({ defaultValue: "fj" });
-		expect(screen.queryByRole("button", { name: "Clear" })).not.toBeOnTheScreen();
+		expect(screen.queryByTestId("cb-clear", { hidden: true })).not.toBeOnTheScreen();
+		expect(actionNames(trigger())).not.toContain("clear");
 	});
 
 	test("allowCustomValue offers the typed text and commits it", async () => {
@@ -289,7 +308,7 @@ describe("Combobox", () => {
 		await render({ allowCustomValue: true, onValueChange });
 		await open();
 		await fireEvent.changeText(search(), "Atlantis");
-		await press(screen.getByRole("button", { name: "Add Atlantis" }));
+		await press(screen.getByRole("button", { name: "Use “Atlantis”" }));
 		expect(onValueChange).toHaveBeenCalledWith("Atlantis");
 		expect(trigger()).toHaveAccessibilityValue({ text: "Atlantis" });
 	});
@@ -298,7 +317,7 @@ describe("Combobox", () => {
 		await render();
 		await open();
 		await fireEvent.changeText(search(), "Atlantis");
-		expect(screen.queryByRole("button", { name: "Add Atlantis" })).not.toBeOnTheScreen();
+		expect(screen.queryByRole("button", { name: "Use “Atlantis”" })).not.toBeOnTheScreen();
 	});
 
 	test("createLabel words the create row", async () => {
@@ -325,7 +344,8 @@ describe("Combobox", () => {
 
 	test("read-only hides the clear button", async () => {
 		await render({ defaultValue: "fj", isClearable: true, isReadOnly: true });
-		expect(screen.queryByRole("button", { name: "Clear" })).not.toBeOnTheScreen();
+		expect(screen.queryByTestId("cb-clear", { hidden: true })).not.toBeOnTheScreen();
+		expect(actionNames(trigger())).toEqual([]);
 	});
 
 	test("a Field disables it, names it and tapping nothing else is needed", async () => {
@@ -336,7 +356,7 @@ describe("Combobox", () => {
 			</Field>,
 			{ wrapper: Sheets }
 		);
-		const field = screen.getByRole("button", { name: "Country" });
+		const field = screen.getByRole("button", { name: /^Country/ });
 		expect(field).toBeDisabled();
 		await press(field);
 		expect(screen.queryByLabelText("Country, Search")).not.toBeOnTheScreen();
@@ -350,7 +370,7 @@ describe("Combobox", () => {
 			</Field>,
 			{ wrapper: Sheets }
 		);
-		await press(screen.getByRole("button", { name: "Country" }));
+		await press(screen.getByRole("button", { name: /^Country/ }));
 		expect(screen.getByLabelText("Country, Search")).toBeOnTheScreen();
 	});
 
@@ -369,7 +389,7 @@ describe("Combobox", () => {
 			</Combobox>,
 			{ wrapper: Sheets }
 		);
-		await press(screen.getByRole("button", { name: "Country" }));
+		await press(screen.getByRole("button", { name: /^Country/ }));
 		expect(screen.getByLabelText("Search")).toBeOnTheScreen();
 	});
 });
@@ -436,14 +456,41 @@ describe("Combobox multiple", () => {
 
 	test("read-only shows the chips without remove controls", async () => {
 		await multiple({ defaultValue: ["au"], isReadOnly: true });
-		expect(screen.getByText("Australia")).toBeOnTheScreen();
-		expect(screen.queryByTestId("cb-remove-au")).not.toBeOnTheScreen();
+		expect(screen.getByText("Australia", { hidden: true })).toBeOnTheScreen();
+		expect(screen.queryByTestId("cb-remove-au", { hidden: true })).not.toBeOnTheScreen();
+		expect(actionNames(trigger())).toEqual([]);
+	});
+
+	test("the trigger is one stop: clear and each chip's remove are actions, the drawn controls hidden", async () => {
+		const onValueChange = jest.fn();
+		await multiple({ defaultValue: ["au", "fj"], isClearable: true, onValueChange });
+		expect(actionNames(trigger())).toEqual(expect.arrayContaining(["clear", "remove:au", "remove:fj"]));
+		expect(trigger().props.accessibilityActions).toContainEqual({ label: "Remove Fiji", name: "remove:fj" });
+		expect(screen.queryByTestId("cb-chip-au")).not.toBeOnTheScreen();
+		expect(screen.getByTestId("cb-clear", { hidden: true })).toBeOnTheScreen();
+		expect(screen.queryByTestId("cb-clear")).not.toBeOnTheScreen();
+		expect(screen.getByTestId("cb-chip-au", { hidden: true })).toBeOnTheScreen();
+		await act(trigger(), "remove:fj");
+		expect(onValueChange).toHaveBeenLastCalledWith(["au"]);
+		expect(actionNames(trigger())).not.toContain("remove:fj");
+	});
+
+	test("only drawn chips get a remove action; the +N overflow does not", async () => {
+		await multiple({ defaultValue: ["au", "ca", "fj", "nz"], maxVisibleChips: 2 });
+		expect(actionNames(trigger())).toEqual(["remove:au"]);
+	});
+
+	test("the sheet's chips stay reachable", async () => {
+		await multiple({ defaultValue: ["au", "fj"] });
+		await open();
+		expect(screen.getByLabelText("Remove Australia")).toBeOnTheScreen();
+		expect(screen.getByTestId("cb-sheet-chip-au")).toBeOnTheScreen();
 	});
 
 	test("clear empties the selection", async () => {
 		const onValueChange = jest.fn();
 		await multiple({ defaultValue: ["au", "fj"], isClearable: true, onValueChange });
-		await press(screen.getByRole("button", { name: "Clear" }));
+		await act(trigger(), "clear");
 		expect(onValueChange).toHaveBeenLastCalledWith([]);
 	});
 });
@@ -465,10 +512,10 @@ describe("Combobox labels", () => {
 
 	test("the labels prop changes the trigger, the search field and the empty text", async () => {
 		await render({ defaultValue: "fj", isClearable: true, labels: german });
-		expect(screen.getByRole("button", { name: "Country" }).props.accessibilityHint).toBe(
+		expect(screen.getByRole("button", { name: /^Country/ }).props.accessibilityHint).toBe(
 			"Öffnet eine durchsuchbare Liste"
 		);
-		expect(screen.getByRole("button", { name: "Leeren" })).toBeOnTheScreen();
+		expect(trigger().props.accessibilityActions).toContainEqual({ label: "Leeren", name: "clear" });
 		await open();
 		await fireEvent.changeText(screen.getByLabelText("Suchen"), "zzz");
 		expect(screen.getByText("Keine Treffer")).toBeOnTheScreen();
@@ -482,7 +529,7 @@ describe("Combobox labels", () => {
 			maxVisibleChips: 2,
 			selectionMode: "multiple",
 		});
-		expect(screen.getByText("3 mehr")).toBeOnTheScreen();
+		expect(screen.getByText("3 mehr", { hidden: true })).toBeOnTheScreen();
 		expect(trigger()).toHaveAccessibilityValue({ text: "4 gewählt" });
 		await open();
 		expect(screen.getByText("Fertig")).toBeOnTheScreen();
@@ -497,21 +544,20 @@ describe("Combobox labels", () => {
 			</Field>,
 			{ wrapper: Sheets }
 		);
-		await press(screen.getByRole("button", { name: "Country" }));
+		await press(screen.getByRole("button", { name: /^Country/ }));
 		expect(screen.getByLabelText("Suchen in Country")).toBeOnTheScreen();
 	});
 
-	test("the create row reads labels.create and labels.createAccessibility", async () => {
+	test("the create row is named by labels.create, so the name holds the visible text", async () => {
 		await render({
 			allowCustomValue: true,
 			labels: {
 				create: (query: string) => `${query} anlegen`,
-				createAccessibility: (query: string) => `${query} hinzufügen`,
 			},
 		});
 		await open();
 		await fireEvent.changeText(search(), "Atlantis");
-		expect(screen.getByRole("button", { name: "Atlantis hinzufügen" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Atlantis anlegen" })).toBeOnTheScreen();
 		expect(screen.getByText("Atlantis anlegen")).toBeOnTheScreen();
 	});
 

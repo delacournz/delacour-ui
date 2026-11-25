@@ -35,7 +35,7 @@ export type BadgeProps = Omit<PressableProps, "asChild" | "busy" | "children" | 
 	isDisabled?: boolean;
 	/** Composes a trailing dismiss control in. Its press never reaches `onPress`. */
 	onClose?: () => void;
-	/** Name a screen reader gives the dismiss control. Defaults to `labels.removeNamed(label)` when the badge has label text, else `labels.remove`. */
+	/** Name a screen reader gives the dismiss control. With label text it defaults to `labels.removeNamed(label)`, or `labels.remove` followed by the label when that is unset; with none, `labels.remove`. */
 	closeAccessibilityLabel?: string;
 	/** `testID` for the dismiss control, so a test or automation can press it. */
 	closeTestID?: string;

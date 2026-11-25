@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type PostLabels } from "../../lib/labels";
 import {
 	type BodyToken,
 	formatCompactCount,
@@ -309,5 +310,61 @@ describe("resolveBodyToggleA11y", () => {
 
 	test("less is Show less and expanded", () => {
 		expect(resolveBodyToggleA11y(true)).toEqual({ label: "Show less", expanded: true });
+	});
+});
+
+describe("post resolvers with custom labels", () => {
+	const labels: PostLabels = {
+		...DELACOUR_DEFAULT_LABELS.post,
+		timeShort: (ago) =>
+			ago.unit === "now" ? "jetzt" : ago.unit === "date" ? `${ago.day}.${ago.month + 1}.` : `${ago.count}x`,
+		timeSpoken: (ago) => (ago.unit === "now" ? "gerade eben" : ago.unit === "date" ? "am Datum" : `vor ${ago.count}`),
+		author: ({ name, isVerified, spokenTime }) => `${name}|${isVerified}|${spokenTime}`,
+		stat: (label, value) => `${label}: ${value}`,
+		score: (score) => `Punkte ${score}`,
+		showMore: "Mehr zeigen",
+		showLess: "Weniger zeigen",
+		moreOptions: "Weitere Optionen",
+	};
+	const now = new Date(2026, 9, 5, 12, 0, 0);
+
+	test("formatRelativeTime speaks and prints through the labels", () => {
+		expect(formatRelativeTime(new Date(now.getTime() - 5_000), now, labels)).toEqual({
+			short: "jetzt",
+			spoken: "gerade eben",
+		});
+		expect(formatRelativeTime(new Date(now.getTime() - 3 * 60_000), now, labels)).toEqual({
+			short: "3x",
+			spoken: "vor 3",
+		});
+		expect(formatRelativeTime(new Date(2026, 8, 20), now, labels)).toEqual({ short: "20.9.", spoken: "am Datum" });
+		expect(formatRelativeTime(new Date(Number.NaN), now, labels)).toEqual({ short: "", spoken: "" });
+	});
+
+	test("the year reaches the catalog only when it differs from now's", () => {
+		const seen: Array<number | undefined> = [];
+		const spy: PostLabels = {
+			...labels,
+			timeShort: (ago) => {
+				if (ago.unit === "date") seen.push(ago.year);
+				return "";
+			},
+		};
+		formatRelativeTime(new Date(2026, 8, 20), now, spy);
+		formatRelativeTime(new Date(2025, 9, 5), now, spy);
+		expect(seen).toEqual([undefined, 2025]);
+	});
+
+	test("the author, stat, score, toggle and card action resolvers use the labels", () => {
+		expect(resolveAuthorA11yLabel({ name: "Aria", verified: true, spokenTime: "x" }, labels)).toBe("Aria|true|x");
+		expect(resolvePostStatLabel("Like", 1234, false, labels)).toBe("Like: 1,234");
+		expect(resolvePostStatLabel("Like", undefined, false, labels)).toBe("Like");
+		expect(resolvePostStatLabel("Save", "Save", false, labels)).toBe("Save");
+		expect(resolveVotesLabel(1240, labels)).toBe("Punkte 1,240");
+		expect(resolveBodyToggleA11y(false, labels)).toEqual({ label: "Mehr zeigen", expanded: false });
+		expect(resolveBodyToggleA11y(true, labels)).toEqual({ label: "Weniger zeigen", expanded: true });
+		expect(resolvePostCardActions({ hasLongPress: true }, labels)).toEqual([
+			{ name: "longpress", label: "Weitere Optionen" },
+		]);
 	});
 });

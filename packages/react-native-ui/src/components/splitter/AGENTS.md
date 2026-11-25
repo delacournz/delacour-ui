@@ -133,6 +133,14 @@ imports this folder's maths leaf rather than copying it.
 - **`Splitter.Handle` is `adjustable`.** Its value is the pane before it —
   `{ min: 0, max: 100, now, text: "35 percent" }` — and its label defaults to
   "Resize". Say which panes: `accessibilityLabel="Resize sidebar"`.
+- **The spoken strings are the `labels` prop, not literals**: eight keys from `lib/labels`
+  through `useLabels("splitter", labels)` on the root — `handle` (the default name), `value`
+  (`(percent) => "35 percent"`), `resetAction`, `collapseAction`, `expandAction`, and the
+  announcements `reset`, `collapsed`, `expanded`. Precedence is a handle's own
+  `accessibilityLabel` ← the root's `labels` ← `DelacourProvider` `labels` ← English. The
+  resolved set rides the part context, so `Splitter.Handle` reads it. `formatSplitterValue` and
+  `resolveSplitterAnnouncement` take `labels` as a defaulted trailing argument. The handle's base
+  actions are memoised on `labels.resetAction`, keeping the array stable between commits.
 - **Actions**: `increment` / `decrement` move the seam by `step` and land on the
   step grid; `reset` ("Reset sizes"); and `collapse` / `expand` when a pane beside
   the handle is collapsible. `resolveSplitterAction` maps an action to what the

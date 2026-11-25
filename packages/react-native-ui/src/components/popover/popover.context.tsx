@@ -1,4 +1,5 @@
 import { createContext, type RefObject, useContext } from "react";
+import type { PopoverLabels } from "../../lib/labels";
 import type { AnchoredSize, AnchorRect, PopoverPlacement } from "./popover.position";
 import type { MeasurableNode } from "./use-anchor-measure";
 
@@ -8,6 +9,8 @@ export type PopoverContextValue = {
 	setOpen: (isOpen: boolean) => void;
 	close: () => void;
 	isDismissible: boolean;
+	/** The spoken strings, resolved once at the root. */
+	labels: PopoverLabels;
 	/** The side the panel ended up on, after any flip — the preferred side until it is placed. */
 	placement: PopoverPlacement;
 	/** `Popover.Content` reports where it was placed. */

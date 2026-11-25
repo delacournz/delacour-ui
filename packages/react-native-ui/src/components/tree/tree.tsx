@@ -1,6 +1,8 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { TreeLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
 import { type TreeContextValue, TreeProvider } from "./tree.context";
 import {
@@ -68,6 +70,11 @@ export type TreeProps = Omit<ViewProps, "children"> &
 		isDisabled?: boolean;
 		/** The haptic a row or indicator plays on press. Default `selection`; `false` for none. */
 		haptic?: false | HapticFeedback;
+		/**
+		 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+		 * Keys: `level`, `expand`, `collapse`.
+		 */
+		labels?: Partial<TreeLabels>;
 		className?: string;
 		children?: ReactNode;
 	};
@@ -89,6 +96,7 @@ function TreeRoot(props: TreeProps): ReactElement {
 		indent = TREE_DEFAULT_INDENT,
 		isDisabled,
 		haptic = "selection",
+		labels: labelsProp,
 		className,
 		children,
 		...viewProps
@@ -142,6 +150,8 @@ function TreeRoot(props: TreeProps): ReactElement {
 		[expanded, onExpandedChange, setExpanded]
 	);
 
+	const labels = useLabels("tree", labelsProp);
+
 	const isExpanded = useCallback((node: string) => expanded.includes(node), [expanded]);
 	const isSelected = useCallback((node: string) => isNodeSelected(selection, node), [selection]);
 
@@ -154,12 +164,26 @@ function TreeRoot(props: TreeProps): ReactElement {
 			isDisabled,
 			isExpanded,
 			isSelected,
+			labels,
 			select,
 			selectionMode,
 			size,
 			toggle,
 		}),
-		[expandOnPress, hasLines, haptic, indent, isDisabled, isExpanded, isSelected, select, selectionMode, size, toggle]
+		[
+			expandOnPress,
+			hasLines,
+			haptic,
+			indent,
+			isDisabled,
+			isExpanded,
+			isSelected,
+			labels,
+			select,
+			selectionMode,
+			size,
+			toggle,
+		]
 	);
 
 	return (

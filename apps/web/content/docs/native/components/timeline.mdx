@@ -183,7 +183,8 @@ counted. For anything long, use `Timeline.List`.
 
 - Each event is one VoiceOver stop: its marker, title, date and description merge, followed by a
   value such as "Event 2 of 6, completed, success". The default tone is not read, and `destructive`
-  is read as "error".
+  is read as "error". These are English by default; pass `labels` to the timeline, or set
+  `timeline` in `DelacourProvider`'s `labels`, to say them in another language.
 - The marker, the rail and an empty column's tick are hidden — they restate what the value reads.
 - The masthead is a header.
 - A horizontal strip keeps every column individually reachable rather than acting as one adjustable
@@ -225,6 +226,10 @@ Extends `ViewProps`.
     value: { type: "number", default: "-1", description: "The current event, zero-based. Events before it are completed." },
     variant: { type: '"dot" | "icon" | "numbered" | "card" | "compact"', default: '"dot"' },
     size: { type: '"sm" | "md"', default: '"md"' },
+    labels: {
+      type: "Partial<TimelineLabels>",
+      description: "The spoken strings — the event sentence, status words and tone words — over `DelacourProvider`'s `labels`.",
+    },
     orientation: { type: '"vertical" | "horizontal"', default: '"vertical"' },
     snap: { type: "boolean", description: "Horizontal only. Settle every fling with a column at the reading edge." },
     haptic: { type: "boolean", description: "Horizontal only. A selection tick as each new column reaches the edge." },

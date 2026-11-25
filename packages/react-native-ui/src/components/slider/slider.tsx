@@ -2,6 +2,8 @@ import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, use
 import { View, type ViewProps } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { SliderLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import type { HapticFeedback } from "../pressable";
 import { type SliderContextValue, SliderProvider } from "./slider.context";
@@ -51,6 +53,11 @@ export type SliderProps = Omit<ViewProps, "children"> & {
 	onChange?: (value: number | number[]) => void;
 	/** Fires once, when the drag is released. Where a network write belongs. */
 	onChangeEnd?: (value: number | number[]) => void;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. A
+	 * `Slider.Thumb`'s own `accessibilityLabel` still wins.
+	 */
+	labels?: Partial<SliderLabels>;
 	children?: ReactNode;
 };
 
@@ -69,10 +76,12 @@ function SliderRoot({
 	haptic = "selection",
 	onChange,
 	onChangeEnd,
+	labels: labelsProp,
 	className,
 	children,
 	...props
 }: SliderProps): ReactElement {
+	const labels = useLabels("slider", labelsProp);
 	const field = useFieldContext();
 	const axes = resolveSliderAxes({ field, own: { color, isDisabled, isInvalid, orientation, size } });
 
@@ -199,6 +208,7 @@ function SliderRoot({
 			haptic,
 			isDisabled: axes.isDisabled,
 			isInvalid: axes.isInvalid,
+			labels,
 			maxValue,
 			minValue,
 			orientation: axes.orientation,
@@ -223,6 +233,7 @@ function SliderRoot({
 			commitValues,
 			formatOptions,
 			haptic,
+			labels,
 			maxValue,
 			minValue,
 			positions,

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import type { TextareaLabels } from "../../lib/labels";
 import { TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { INPUT_SIZES, inputVariants, resolveInputFieldClass } from "../input/input.variants";
 import {
@@ -313,5 +314,27 @@ describe("resolveTextareaThresholdAnnouncement", () => {
 		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "limit", length: 270 })).toBeNull();
 		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "warning", length: 100 })).toBeNull();
 		expect(resolveTextareaThresholdAnnouncement({ ...base, previous: "none", length: 270 })).not.toBeNull();
+	});
+});
+
+describe("textarea labels", () => {
+	const german: TextareaLabels = {
+		count: (length, maxLength) => `${length} von ${maxLength} Zeichen`,
+		limitReached: "Zeichenlimit erreicht",
+		remaining: (remaining) => `Noch ${remaining} Zeichen`,
+	};
+
+	test("the count's spoken name comes from labels", () => {
+		expect(resolveTextareaCount({ length: 3, maxLength: 10 }, german).accessibilityLabel).toBe("3 von 10 Zeichen");
+		expect(resolveTextareaCount({ length: 3, maxLength: 10 }, german).label).toBe("3/10");
+	});
+
+	test("both threshold announcements come from labels", () => {
+		expect(
+			resolveTextareaThresholdAnnouncement({ length: 261, maxLength: 280, previous: "none" }, german)?.message
+		).toBe("Noch 19 Zeichen");
+		expect(
+			resolveTextareaThresholdAnnouncement({ length: 280, maxLength: 280, previous: "warning" }, german)?.message
+		).toBe("Zeichenlimit erreicht");
 	});
 });

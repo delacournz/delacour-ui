@@ -60,7 +60,7 @@ export function PostBody({
 	testID,
 	...props
 }: PostBodyProps): ReactElement {
-	const { variant, size } = usePostPart("Post.Body");
+	const { variant, size, labels } = usePostPart("Post.Body");
 	const slots = postVariants({ variant, size });
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [isTruncated, setIsTruncated] = useState(false);
@@ -92,7 +92,7 @@ export function PostBody({
 
 	const isMeasured = expandable && numberOfLines !== undefined;
 	const toggle = clamp.showMore || clamp.showLess;
-	const toggleA11y = resolveBodyToggleA11y(isExpanded);
+	const toggleA11y = resolveBodyToggleA11y(isExpanded, labels);
 
 	return (
 		<View className={slots.bodyFrame()}>
@@ -119,7 +119,7 @@ export function PostBody({
 					onPress={() => setIsExpanded((open) => !open)}
 					testID={testID ? `${testID}-more` : "post-body-more"}
 				>
-					<Text className={slots.bodyToggle()}>{clamp.showMore ? "more" : "less"}</Text>
+					<Text className={slots.bodyToggle()}>{clamp.showMore ? labels.more : labels.less}</Text>
 				</Pressable>
 			) : null}
 		</View>

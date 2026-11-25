@@ -1,6 +1,8 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
+import type { RatingLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import type { HapticFeedback } from "../pressable";
 import { type RatingContextValue, RatingProvider, type RatingRenderProps } from "./rating.context";
@@ -42,6 +44,12 @@ export type RatingProps = Omit<ViewProps, "children"> & {
 	onChange?: (value: number) => void;
 	/** Fires once, when the gesture ends. Where a network write belongs. */
 	onChangeEnd?: (value: number) => void;
+	/**
+	 * The spoken strings — the stars' name and their "3.5 out of 5" value. Laid over
+	 * `DelacourProvider`'s `labels`, which sit over English. An `accessibilityLabel` or
+	 * `accessibilityValue` on `Rating.Stars` still wins.
+	 */
+	labels?: Partial<RatingLabels>;
 	children?: ReactNode;
 };
 
@@ -59,11 +67,13 @@ function RatingRoot({
 	haptic = "selection",
 	onChange,
 	onChangeEnd,
+	labels: labelsProp,
 	className,
 	children,
 	...props
 }: RatingProps): ReactElement {
 	const field = useFieldContext();
+	const labels = useLabels("rating", labelsProp);
 	const axes = resolveRatingAxes({ field, own: { color, isDisabled, isInvalid, isReadOnly, size } });
 	const count = normalizeRatingCount(maxValue);
 	const settledStep = normalizeRatingStep(step);
@@ -92,11 +102,12 @@ function RatingRoot({
 			color: axes.color,
 			commitEnd,
 			haptic,
+			labels,
 			renderProps,
 			setValue: setCurrent,
 			size: axes.size,
 		}),
-		[allowClear, axes.color, axes.size, commitEnd, haptic, renderProps, setCurrent]
+		[allowClear, axes.color, axes.size, commitEnd, haptic, labels, renderProps, setCurrent]
 	);
 
 	return (

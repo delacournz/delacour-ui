@@ -5,7 +5,6 @@ import { Icon, type IconComponent } from "../icon";
 import { ToggleButton, type ToggleButtonProps } from "../toggle-button";
 import { useSketchPart } from "./sketch.context";
 import { buildSketchShapePath, SKETCH_SHAPES, type SketchShape } from "./sketch.paths";
-import { SKETCH_LABELS } from "./sketch.variants";
 
 export type SketchToolProps = Omit<
 	ToggleButtonProps,
@@ -84,7 +83,7 @@ export function SketchTool({
 	}, [context, onPress, shape, tool]);
 
 	const glyph = tool === "pen" ? IconPencil : tool === "eraser" ? IconEraser : SHAPE_GLYPHS[glyphShape];
-	const label = tool === "shape" ? SKETCH_LABELS[glyphShape] : SKETCH_LABELS[tool];
+	const label = tool === "shape" ? context.labels.tool(glyphShape) : context.labels.tool(tool);
 
 	return (
 		<ToggleButton

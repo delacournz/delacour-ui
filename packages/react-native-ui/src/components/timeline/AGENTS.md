@@ -132,6 +132,13 @@ Read-only and content-heavy. Compound root plus `Timeline.Item`, `Indicator`, `C
   `resolveTimelineAccessibilityValue` — "Event 2 of 6, completed, success". The default tone is not
   read, `destructive` is read as "error", and an uncounted timeline claims no total. Pass
   `accessibilityLabel` to name it by something shorter than its whole text.
+- **The spoken strings are the `labels` prop, not literals**: `itemValue` (the whole sentence),
+  the status words `completed` / `current` / `upcoming` and the tone words `toneInfo` /
+  `toneSuccess` / `toneWarning` / `toneDestructive` come from `lib/labels` through
+  `useLabels("timeline", labels)` on the root, `Timeline.List` included. Precedence is an item's own
+  `accessibilityValue` ← the root's `labels` ← `DelacourProvider` `labels` ← English. The resolved set
+  rides the root context and `Timeline.Item` is the only part that reads it.
+  `resolveTimelineAccessibilityValue` takes `labels` as a defaulted trailing argument.
 - **A control inside an item needs one of two escape hatches.** The merged item swallows a
   `Button` or link composed into its content, aside or trailing: drawn and tappable, never focused
   by a screen reader. `warnInteractiveChildInAccessible` (`lib/interactive-child.ts`) warns once in

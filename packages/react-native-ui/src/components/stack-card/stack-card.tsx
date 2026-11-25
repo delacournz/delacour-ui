@@ -17,7 +17,9 @@ import Animated, { useReducedMotion, useSharedValue, withSpring, withTiming } fr
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useAnnounce } from "../../hooks/use-announce";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { cn } from "../../lib/cn";
+import type { StackCardLabels } from "../../lib/labels";
 import { type HapticFeedback, playHaptic } from "../pressable";
 import { type StackCardContextValue, StackCardProvider } from "./stack-card.context";
 import type { StackCardHandle } from "./stack-card.types";
@@ -29,7 +31,6 @@ import {
 	resolveStackCardAnnouncement,
 	resolveStackDepth,
 	resolveStackRelease,
-	STACK_CARD_DEFAULT_DIRECTION_LABELS,
 	STACK_CARD_DEFAULT_DIRECTIONS,
 	STACK_CARD_DEFAULT_THRESHOLD,
 	type StackCardChildKind,
@@ -88,6 +89,11 @@ export type StackCardProps = Omit<ViewProps, "children"> & {
 	 * of 3"). `false` silences both. Defaults to `true`.
 	 */
 	announce?: boolean;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. A
+	 * `directionLabels` entry still wins over the matching `swipe*` label.
+	 */
+	labels?: Partial<StackCardLabels>;
 	ref?: Ref<StackCardHandle>;
 };
 
@@ -133,6 +139,7 @@ function StackCardRoot({
 	haptic = "selection",
 	directionLabels,
 	announce: shouldAnnounce = true,
+	labels: labelsProp,
 	ref,
 	...props
 }: StackCardProps): ReactElement {
@@ -140,6 +147,7 @@ function StackCardRoot({
 	const count = cards.length;
 	const depth = resolveStackDepth(depthProp);
 	const isReducedMotion = useReducedMotion();
+	const labels = useLabels("stackCard", labelsProp);
 
 	const [index, setIndex] = useControllableState<number>({
 		defaultValue: defaultIndex,
@@ -284,9 +292,13 @@ function StackCardRoot({
 	const emptyChildren = isValidElement<{ children?: ReactNode }>(empty) ? empty.props.children : undefined;
 	const emptyLabel = typeof emptyChildren === "string" ? emptyChildren : undefined;
 
+	const directionDefaults = useMemo<Record<StackCardDirection, string>>(
+		() => ({ down: labels.swipeDown, left: labels.swipeLeft, right: labels.swipeRight, up: labels.swipeUp }),
+		[labels]
+	);
 	const labelFor = useCallback(
-		(direction: StackCardDirection) => directionLabels?.[direction] ?? STACK_CARD_DEFAULT_DIRECTION_LABELS[direction],
-		[directionLabels]
+		(direction: StackCardDirection) => directionLabels?.[direction] ?? directionDefaults[direction],
+		[directionDefaults, directionLabels]
 	);
 
 	// Speaks what a landed throw or undo did, and — only when the card's own accessibility action
@@ -304,21 +316,24 @@ function StackCardRoot({
 			const cardLabel = nextProps?.accessibilityLabel;
 			if (landed.kind === "throw") {
 				speak(
-					resolveStackCardAnnouncement({
-						cardLabel,
-						count,
-						directionLabel: labelFor(landed.direction),
-						emptyLabel,
-						index,
-						kind: "throw",
-					})
+					resolveStackCardAnnouncement(
+						{
+							cardLabel,
+							count,
+							directionLabel: labelFor(landed.direction),
+							emptyLabel,
+							index,
+							kind: "throw",
+						},
+						labels
+					)
 				);
 			} else {
-				speak(resolveStackCardAnnouncement({ cardLabel, count, index, kind: "undo" }));
+				speak(resolveStackCardAnnouncement({ cardLabel, count, index, kind: "undo" }, labels));
 			}
 			if (landed.isFromCard) setFocusToken((token) => token + 1);
 		},
-		[cards, count, emptyLabel, index, labelFor, shouldAnnounce, speak]
+		[cards, count, emptyLabel, index, labelFor, labels, shouldAnnounce, speak]
 	);
 
 	// Settles a throw or an undo once React has the index the caller chose. A
@@ -487,6 +502,7 @@ function StackCardRoot({
 			isDisabled,
 			isReducedMotion,
 			labelFor,
+			labels,
 			layout,
 			stampColors,
 			swipe,
@@ -511,6 +527,7 @@ function StackCardRoot({
 			isDisabled,
 			isReducedMotion,
 			labelFor,
+			labels,
 			layout,
 			stampColors,
 			swipe,

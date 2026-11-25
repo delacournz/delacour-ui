@@ -36,7 +36,7 @@ const SCRUB_FAIL_OFFSET = 16;
  * so the only thing hit-tested is the trigger itself: at least 44pt wide however
  * thin the bars inside it are.
  *
- * To VoiceOver it is one `adjustable` element named "Sections" and valued by the
+ * To VoiceOver it is one `adjustable` element named `labels.trigger` ("Sections") and valued by the
  * active row's title; a swipe up or down moves to the next or previous section,
  * and a double-tap opens the panel.
  */
@@ -52,6 +52,7 @@ export function SectionRailTrigger({ className, children, ref, ...props }: Secti
 		pick,
 		placement,
 		setOpen,
+		spoken,
 		step,
 		triggerRef,
 	} = useSectionRailPart("SectionRail.Trigger");
@@ -144,7 +145,7 @@ export function SectionRailTrigger({ className, children, ref, ...props }: Secti
 			<GestureDetector gesture={gesture}>
 				<View
 					accessibilityActions={ACCESSIBILITY_ACTIONS}
-					accessibilityLabel="Sections"
+					accessibilityLabel={spoken.trigger}
 					accessibilityRole="adjustable"
 					accessibilityState={{ expanded: isOpen }}
 					accessibilityValue={{ text: label }}

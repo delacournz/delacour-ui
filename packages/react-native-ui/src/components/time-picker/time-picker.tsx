@@ -1,5 +1,6 @@
 import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { BottomSheet } from "../bottom-sheet";
 import { useFieldContext } from "../field/field.context";
 import { useFieldControlAccessibility } from "../field/field-control";
@@ -33,7 +34,7 @@ function TimePickerRoot({
 	hourCycle = "auto",
 	locale,
 	format,
-	placeholder = "Select time",
+	placeholder: placeholderProp,
 	presentation = "sheet",
 	visibleRows = TIME_PICKER_DEFAULT_VISIBLE_ROWS,
 	isOpen: isOpenProp,
@@ -44,23 +45,29 @@ function TimePickerRoot({
 	isInvalid,
 	variant = "primary",
 	size = "md",
-	title = "Select time",
-	doneLabel = "Done",
+	title: titleProp,
+	doneLabel: doneLabelProp,
 	clearable = false,
-	clearLabel = "Clear",
+	clearLabel: clearLabelProp,
 	accessibilityLabel,
+	labels: labelsProp,
 	className,
 	testID,
 	children,
 }: TimePickerProps): ReactElement {
+	const labels = useLabels("timePicker", labelsProp);
+	const placeholder = placeholderProp ?? labels.placeholder;
+	const title = titleProp ?? labels.title;
+	const doneLabel = doneLabelProp ?? labels.done;
+	const clearLabel = clearLabelProp ?? labels.clear;
 	const field = useFieldContext();
 	const resolvedDisabled = isDisabled ?? field?.isDisabled ?? false;
 
 	const isInert = resolvedDisabled || isReadOnly;
 	const fieldAccessibility = useFieldControlAccessibility({
-		accessibilityHint: presentation === "sheet" && !isInert ? "Opens time picker" : undefined,
+		accessibilityHint: presentation === "sheet" && !isInert ? labels.triggerHint : undefined,
 		accessibilityLabel,
-		fallbackLabel: "Time",
+		fallbackLabel: labels.trigger,
 		isInvalid,
 	});
 	const resolvedInvalid = fieldAccessibility.isInvalid;
@@ -147,6 +154,7 @@ function TimePickerRoot({
 			locale: resolvedLocale,
 			display,
 			placeholder,
+			labels,
 			isDisabled: resolvedDisabled,
 			isInvalid: resolvedInvalid,
 			isReadOnly,
@@ -179,6 +187,7 @@ function TimePickerRoot({
 			doneLabel,
 			isOpen,
 			isReadOnly,
+			labels,
 			maxTime,
 			minTime,
 			minuteStep,

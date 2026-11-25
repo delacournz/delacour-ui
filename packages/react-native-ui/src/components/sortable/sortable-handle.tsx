@@ -8,7 +8,7 @@ import { resolveSortableHandleLabel, SORTABLE_HANDLE_ICON_TOKEN, sortableVariant
 import { useSortableDragGesture } from "./use-sortable-drag-gesture";
 
 export type SortableHandleProps = ViewProps & {
-	/** What a screen reader calls the handle. Default "Reorder {label}" from the row's `label`, else "Drag to reorder". */
+	/** What a screen reader calls the handle. Default "Reorder {label}" from the row's `label`, else "Drag to reorder", from `labels`. */
 	accessibilityLabel?: string;
 	className?: string;
 };
@@ -62,7 +62,7 @@ export function SortableHandle({
 		<GestureDetector gesture={gesture}>
 			<View
 				accessibilityActions={item.accessibilityActions}
-				accessibilityLabel={accessibilityLabel ?? resolveSortableHandleLabel(item.label)}
+				accessibilityLabel={accessibilityLabel ?? resolveSortableHandleLabel(item.label, root.labels)}
 				accessibilityRole="button"
 				accessibilityState={{ disabled: !item.canDrag }}
 				accessibilityValue={{ text: item.positionText }}

@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { PostLabels } from "../../lib/labels";
 import type { PostSize, PostVariant } from "./post.variants";
 
 export type PostContextValue = {
@@ -6,6 +7,8 @@ export type PostContextValue = {
 	variant: PostVariant;
 	/** Type and gap density. */
 	size: PostSize;
+	/** The spoken strings, resolved once at the root: English, then `DelacourProvider`'s, then `Post`'s `labels` prop. */
+	labels: PostLabels;
 };
 
 const PostContext = createContext<PostContextValue | null>(null);

@@ -1,8 +1,10 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
+import type { SupportLabels } from "../../lib/labels";
 import { Badge } from "../badge";
 import { Item, type ItemProps } from "../item";
 import { Text } from "../text";
+import { useSupportLabels } from "./support.context";
 import type { SupportTicketStatus } from "./support.types";
 import { resolveConversationA11yLabel, resolveConversationDot, resolveTicketStatus } from "./support.utils";
 import { SUPPORT_TICKET_BADGE_VARIANT, supportVariants } from "./support.variants";
@@ -19,6 +21,10 @@ export type SupportConversationProps = Omit<ItemProps, "asChild" | "children" | 
 	unread?: boolean;
 	/** The thread moved but there is nothing new to read — the grey dot. `unread` wins when both are set. */
 	updated?: boolean;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `accessibilityLabel` still wins.
+	 */
+	labels?: Partial<SupportLabels>;
 	className?: string;
 };
 
@@ -40,17 +46,20 @@ export function SupportConversation({
 	unread,
 	updated,
 	accessibilityLabel,
+	labels: labelsProp,
 	...props
 }: SupportConversationProps): ReactElement {
+	const labels = useSupportLabels(labelsProp);
 	const dot = resolveConversationDot({ unread, updated });
-	const ticket = resolveTicketStatus(status);
+	const ticket = resolveTicketStatus(status, labels);
 	const slots = supportVariants({ dot });
-	const meta = [reference, timestamp].filter(Boolean).join(" · ");
+	const meta = labels.meta([reference, timestamp].filter((part): part is string => Boolean(part)));
 
 	return (
 		<Item
 			accessibilityLabel={
-				accessibilityLabel ?? resolveConversationA11yLabel({ title, reference, status, dot, timestamp, preview })
+				accessibilityLabel ??
+				resolveConversationA11yLabel({ title, reference, status, dot, timestamp, preview }, labels)
 			}
 			accessible
 			{...props}

@@ -211,7 +211,7 @@ what is being read. With VoiceOver or TalkBack on, a toast stays at least ten se
 to be read in full.
 
 A toast never takes focus. It is one element: its action is the element's activate action, and
-dismissing it is the escape gesture or the "Dismiss" action. A failure is announced as an alert.
+dismissing it is the escape gesture or the "Dismiss" action. The words it speaks ("Dismiss", "Action" and the title-then-description sentence) are `labels.toast`, set through `DelacourProvider`'s `labels` or a `Toast`'s own `labels` prop; toasts shown with `toast()` take them from the provider. A failure is announced as an alert.
 Under Reduce Motion it fades in without sliding. Android's back button is left to whatever is
 under the toasts.
 
@@ -266,6 +266,7 @@ Takes React Native's `ViewProps`.
   type={{
     status: { type: '"default" | "info" | "success" | "warning" | "destructive"', default: '"default"' },
     onHide: { type: "() => void", description: "Defaults to hiding the toast the viewport is drawing." },
+    labels: { type: "Partial<ToastLabels>", description: "The spoken strings, laid over `DelacourProvider`'s `labels`. An `accessibilityLabel` on a part still wins." },
     className: { type: "string" },
   }}
 />

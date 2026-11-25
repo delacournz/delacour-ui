@@ -13,7 +13,9 @@ import { AccessibilityInfo, PixelRatio, View, type ViewProps } from "react-nativ
 import { useSharedValue } from "react-native-reanimated";
 import { useCSSVariable } from "uniwind";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { themeVariableName } from "../../lib/color";
+import type { SketchLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import { type SketchBrush, type SketchContextValue, SketchProvider } from "./sketch.context";
 import {
@@ -88,6 +90,11 @@ export type SketchProps = Omit<ViewProps, "children"> & {
 	maxSize?: number;
 	onSizeChange?: (size: number) => void;
 
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. An
+	 * `accessibilityLabel` on `Sketch.Tool`, `Sketch.Size`, `Sketch.Undo` or `Sketch.Canvas` still wins.
+	 */
+	labels?: Partial<SketchLabels>;
 	/** Blocks drawing, the tools and undo. The canvas keeps showing the marks at full strength. */
 	isDisabled?: boolean;
 	/** Played on a tool or colour change and on each undo. `false` silences it. Default `"selection"`. */
@@ -129,6 +136,7 @@ function SketchRoot({
 	onSizeChange,
 	isDisabled = false,
 	haptic = "selection",
+	labels: labelsProp,
 	ref,
 	className,
 	children,
@@ -161,6 +169,7 @@ function SketchRoot({
 	});
 	const currentSize = clampSketchSize(rawSize, minSize, maxSize);
 	const [canvasSize, setCanvasSize] = useState<SketchCanvasSize>({ height: 0, width: 0 });
+	const labels = useLabels("sketch", labelsProp);
 
 	// One lookup for every token the sketch can paint with, because the swatch
 	// count is data and a hook cannot run once per swatch. Uniwind takes an
@@ -177,7 +186,7 @@ function SketchRoot({
 		return record;
 	}, [tokenNames, tokenValues]);
 
-	const swatches = useMemo(() => resolveSketchSwatches(colors, tokens), [colors, tokens]);
+	const swatches = useMemo(() => resolveSketchSwatches(colors, tokens, labels), [colors, tokens, labels]);
 	const ink = resolveSketchColor(currentColor, tokens);
 
 	// The pan reads these at touch-down. The setters below write them as they run
@@ -202,8 +211,8 @@ function SketchRoot({
 
 	// The handle reads through refs, so it is one object for the sketch's life and
 	// an export called from a stale closure still sees the drawing as it is now.
-	const latest = useRef({ canvasSize, items: currentItems, maxSize, minSize, tokens });
-	latest.current = { canvasSize, items: currentItems, maxSize, minSize, tokens };
+	const latest = useRef({ canvasSize, items: currentItems, labels, maxSize, minSize, tokens });
+	latest.current = { canvasSize, items: currentItems, labels, maxSize, minSize, tokens };
 
 	const setTool = useCallback(
 		(next: SketchTool) => {
@@ -275,7 +284,7 @@ function SketchRoot({
 				if (next === latest.current.items) return;
 				latest.current.items = next;
 				setItems(next);
-				AccessibilityInfo.announceForAccessibility("Undone");
+				AccessibilityInfo.announceForAccessibility(latest.current.labels.undone);
 			},
 		}),
 		[setItems]
@@ -294,6 +303,7 @@ function SketchRoot({
 			ink,
 			isDisabled,
 			items: currentItems,
+			labels,
 			maxSize,
 			minSize,
 			setCanvasSize,
@@ -320,6 +330,7 @@ function SketchRoot({
 			haptic,
 			ink,
 			isDisabled,
+			labels,
 			maxSize,
 			minSize,
 			setColor,

@@ -1,6 +1,8 @@
 import { type ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { useAnnounce } from "../../hooks/use-announce";
+import { useLabels } from "../../hooks/use-labels";
+import type { TextareaLabels } from "../../lib/labels";
 import { Input, type InputProps } from "../input";
 import { useInputGroupContext } from "../input/input.context";
 import { Text } from "../text";
@@ -63,6 +65,11 @@ export type TextareaProps = Omit<InputProps, "multiline" | "numberOfLines" | "ma
 		 * heard with `showCount`. The count itself stays readable on focus either way.
 		 */
 		announce?: boolean;
+		/**
+		 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English: the
+		 * count's name and the two threshold announcements.
+		 */
+		labels?: Partial<TextareaLabels>;
 	};
 
 /**
@@ -129,6 +136,7 @@ export function Textarea({
 	className,
 	containerClassName,
 	announce: shouldAnnounce = true,
+	labels: labelsProp,
 	style,
 	value,
 	defaultValue,
@@ -158,6 +166,7 @@ export function Textarea({
 		[onChangeText]
 	);
 
+	const labels = useLabels("textarea", labelsProp);
 	const speak = useAnnounce();
 	const band = showCount && maxLength !== undefined ? resolveTextareaBand({ length, maxLength }) : "none";
 	const previousBand = useRef(band);
@@ -166,12 +175,12 @@ export function Textarea({
 		const previous = previousBand.current;
 		previousBand.current = band;
 		if (maxLength === undefined) return;
-		const spoken = resolveTextareaThresholdAnnouncement({ length, maxLength, previous });
+		const spoken = resolveTextareaThresholdAnnouncement({ length, maxLength, previous }, labels);
 		if (!spoken) return;
 		speak(spoken.message, { enabled: shouldAnnounce && showCount === true, politeness: spoken.politeness });
 	}, [band]);
 
-	const count = showCount && maxLength !== undefined ? resolveTextareaCount({ length, maxLength }) : null;
+	const count = showCount && maxLength !== undefined ? resolveTextareaCount({ length, maxLength }, labels) : null;
 
 	return (
 		<View className={slots.root({ className: containerClassName })}>

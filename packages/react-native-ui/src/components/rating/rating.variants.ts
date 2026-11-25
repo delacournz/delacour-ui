@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type RatingLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { TextSize } from "../text/text.variants";
 
@@ -296,9 +297,13 @@ export function formatRatingValue(value: number): string {
 	return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value);
 }
 
-/** What a screen reader says for the value: "3.5 out of 5". */
-export function describeRating(value: number, count: number): string {
-	return `${formatRatingValue(value)} out of ${count}`;
+/** What a screen reader says for the value: "3.5 out of 5" in English. */
+export function describeRating(
+	value: number,
+	count: number,
+	labels: RatingLabels = DELACOUR_DEFAULT_LABELS.rating
+): string {
+	return labels.value(formatRatingValue(value), count);
 }
 
 /** The two tokens a rating's stars are painted with. */

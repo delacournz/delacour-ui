@@ -1,3 +1,4 @@
+export type { StackCardLabels } from "../../lib/labels";
 export { StackCard, type StackCardProps } from "./stack-card";
 export {
 	type StackCardContextValue,

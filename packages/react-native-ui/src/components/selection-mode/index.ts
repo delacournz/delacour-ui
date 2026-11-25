@@ -1,3 +1,4 @@
+export type { SelectionModeLabels } from "../../lib/labels";
 export { SelectionMode, type SelectionModeProps } from "./selection-mode";
 export {
 	type SelectionModeContextValue,

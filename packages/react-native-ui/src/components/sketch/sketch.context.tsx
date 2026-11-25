@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { SketchLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import type { SketchItem, SketchShape, SketchTool } from "./sketch.paths";
 import type { SketchCanvasSize, SketchCommit, SketchHandle } from "./sketch.types";
@@ -21,6 +22,8 @@ export type SketchBrush = {
 };
 
 export type SketchContextValue = {
+	/** The spoken strings, resolved once at the root: explicit prop, then `DelacourProvider`, then English. */
+	labels: SketchLabels;
 	/** Every committed mark, oldest first. */
 	items: readonly SketchItem[];
 	tool: SketchTool;

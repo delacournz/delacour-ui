@@ -1,3 +1,4 @@
+export type { SlideButtonLabels } from "../../lib/labels";
 export { SlideButton, type SlideButtonProps } from "./slide-button";
 export {
 	type SlideButtonContextValue,

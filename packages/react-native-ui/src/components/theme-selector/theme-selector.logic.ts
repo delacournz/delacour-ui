@@ -7,6 +7,8 @@
  * See AGENTS.md.
  */
 
+import { DELACOUR_DEFAULT_LABELS, type ThemeSelectorLabels } from "../../lib/labels";
+
 /** The three choices a theme selector offers. */
 export const THEME_MODES = ["system", "light", "dark"] as const;
 
@@ -18,13 +20,17 @@ export type ThemeFamily = "light" | "dark";
 
 /** Each mode's label, before any override. */
 export const THEME_MODE_LABELS: Record<ThemeMode, string> = {
-	system: "System",
-	light: "Light",
-	dark: "Dark",
+	system: DELACOUR_DEFAULT_LABELS.themeSelector.system,
+	light: DELACOUR_DEFAULT_LABELS.themeSelector.light,
+	dark: DELACOUR_DEFAULT_LABELS.themeSelector.dark,
 };
 
-/** Per-mode label overrides, for localisation. */
-export type ThemeModeLabels = Partial<Record<ThemeMode, string>>;
+/**
+ * Per-mode label overrides.
+ *
+ * @deprecated Use `Partial<ThemeSelectorLabels>`; this is its three mode captions.
+ */
+export type ThemeModeLabels = Partial<Pick<ThemeSelectorLabels, "system" | "light" | "dark">>;
 
 /** One option the selector draws. */
 export type ThemeOption = { mode: ThemeMode; label: string };
@@ -93,8 +99,8 @@ export function resolveNextMode({
 	return pressed;
 }
 
-/** A mode's label: the override when it holds text, otherwise the default. */
-export function resolveModeLabel(mode: ThemeMode, labels?: ThemeModeLabels): string {
+/** A mode's label: the override when it holds text, otherwise the English default. */
+export function resolveModeLabel(mode: ThemeMode, labels?: Partial<ThemeSelectorLabels>): string {
 	const override = labels?.[mode];
 	return override !== undefined && override.trim() !== "" ? override : THEME_MODE_LABELS[mode];
 }
@@ -111,7 +117,7 @@ export function resolveOptions({
 	labels,
 }: {
 	modes?: readonly ThemeMode[];
-	labels?: ThemeModeLabels;
+	labels?: Partial<ThemeSelectorLabels>;
 }): ThemeOption[] {
 	const unique = [...new Set(modes ?? THEME_MODES)];
 	const picked = unique.length > 0 ? unique : THEME_MODES;

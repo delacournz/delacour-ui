@@ -333,3 +333,17 @@ describe("resolveCompletionAnnouncement", () => {
 		expect(resolveCompletionAnnouncement({ isCompleted: true, message: "", wasCompleted: false })).toBeNull();
 	});
 });
+
+describe("resolveCompletionAnnouncement labels", () => {
+	const labels = { completed: "Fertig", hint: "Gedrückt halten" };
+
+	test("speaks the label's completed text", () => {
+		expect(resolveCompletionAnnouncement({ isCompleted: true, labels, wasCompleted: false })).toBe("Fertig");
+	});
+
+	test("an explicit message still wins over the label", () => {
+		expect(resolveCompletionAnnouncement({ isCompleted: true, labels, message: "Paid", wasCompleted: false })).toBe(
+			"Paid"
+		);
+	});
+});

@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import {
 	describeSplitViewChildren,
+	formatSnapPosition,
 	isSnapRangeFeasible,
 	resolveDragHeight,
 	resolveInitialSnapIndex,
@@ -282,6 +283,23 @@ describe("resolveNextIndex", () => {
 	test("wraps when asked", () => {
 		expect(resolveNextIndex({ count: 3, direction: 1, index: 2, wrap: true })).toBe(0);
 		expect(resolveNextIndex({ count: 3, direction: -1, index: 0, wrap: true })).toBe(2);
+	});
+});
+
+describe("labels", () => {
+	const german = {
+		dragArea: "Bereiche ziehen",
+		nextPosition: "Nächste Stellung",
+		position: (current: number, count: number) => `Stellung ${current} von ${count}`,
+	};
+
+	test("formatSnapPosition and resolveSnapAccessibility speak the given labels", () => {
+		expect(formatSnapPosition(1, 3, german)).toBe("Stellung 2 von 3");
+		expect(resolveSnapAccessibility({ count: 3, index: 0 }, german).text).toBe("Stellung 1 von 3");
+	});
+
+	test("without labels they speak English", () => {
+		expect(formatSnapPosition(1, 3)).toBe("Position 2 of 3");
 	});
 });
 

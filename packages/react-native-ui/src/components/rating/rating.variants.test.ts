@@ -219,6 +219,11 @@ describe("formatRatingValue and describeRating", () => {
 		expect(describeRating(3.5, 5)).toBe("3.5 out of 5");
 		expect(describeRating(0, 10)).toBe("0 out of 10");
 	});
+
+	test("custom labels reach the spoken value", () => {
+		const labels = { name: "Note", value: (formatted: string, count: number) => `${formatted} sur ${count}` };
+		expect(describeRating(3.5, 5, labels)).toBe("3.5 sur 5");
+	});
 });
 
 describe("resolveRatingPaint", () => {

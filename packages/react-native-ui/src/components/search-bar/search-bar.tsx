@@ -11,8 +11,10 @@ import {
 } from "react";
 import { Keyboard, type TextInputInstance, View } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { useLabels } from "../../hooks/use-labels";
 import { IconMagnifyingGlass } from "../../icons/central";
 import { composeRefs } from "../../lib/compose-refs";
+import type { SearchBarLabels } from "../../lib/labels";
 import { useFieldContext } from "../field/field.context";
 import { useFieldControlAccessibility } from "../field/field-control";
 import { Icon } from "../icon";
@@ -84,7 +86,7 @@ export type SearchBarProps = Omit<
 	onFocusChange?: (isFocused: boolean) => void;
 	/** When the Cancel action is shown. Defaults to `focus`. */
 	cancel?: SearchBarCancelMode;
-	/** Cancel's text. Defaults to `Cancel`. */
+	/** Cancel's text. Defaults to `labels.cancel`. */
 	cancelLabel?: string;
 	/** Visual variant of the box — `Input`'s. Defaults to `secondary`, the filled box. */
 	variant?: SearchBarVariant;
@@ -102,10 +104,15 @@ export type SearchBarProps = Omit<
 	tokens?: readonly SearchBarToken[];
 	/** A token's remove control was pressed, or Backspace was pressed on an empty field. */
 	onTokenRemove?: (token: SearchBarToken) => void;
-	/** Defaults to `Search`. Also the field's accessible name when no `Field.Label` gives one. */
+	/** Defaults to `labels.placeholder`. Also the field's accessible name when no `Field.Label` gives one. */
 	placeholder?: string;
-	/** Name a screen reader gives the clear button. Defaults to `Clear search`. */
+	/** Name a screen reader gives the clear button. Defaults to `labels.clear`. */
 	clearAccessibilityLabel?: string;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 * `cancelLabel`, `placeholder` and `clearAccessibilityLabel` still win over their keys.
+	 */
+	labels?: Partial<SearchBarLabels>;
 	/** Class for the row holding the field and Cancel. */
 	className?: string;
 	/** The `TextInput` itself — for a sheet's `useBottomSheetInput().ref`, or anything else that needs the node. */
@@ -126,7 +133,7 @@ function SearchBarRoot({
 	onCancel,
 	onFocusChange,
 	cancel: cancelMode = "focus",
-	cancelLabel = "Cancel",
+	cancelLabel: cancelLabelProp,
 	variant = "secondary",
 	size = "md",
 	shape = "pill",
@@ -136,8 +143,9 @@ function SearchBarRoot({
 	isRequired,
 	tokens,
 	onTokenRemove,
-	placeholder = "Search",
-	clearAccessibilityLabel = "Clear search",
+	placeholder: placeholderProp,
+	clearAccessibilityLabel: clearAccessibilityLabelProp,
+	labels: labelsProp,
 	className,
 	inputRef,
 	children,
@@ -154,6 +162,10 @@ function SearchBarRoot({
 	...props
 }: SearchBarProps): ReactElement {
 	const field = useFieldContext();
+	const labels = useLabels("searchBar", labelsProp);
+	const cancelLabel = cancelLabelProp ?? labels.cancel;
+	const placeholder = placeholderProp ?? labels.placeholder;
+	const clearAccessibilityLabel = clearAccessibilityLabelProp ?? labels.clear;
 	const fieldRef = useRef<TextInputInstance | null>(null);
 	const [isFocused, setFocused] = useState(false);
 	const [value, setValue] = useControllableState({
@@ -294,6 +306,7 @@ function SearchBarRoot({
 			isDisabled,
 			isFocused,
 			isLoading,
+			labels,
 			size,
 			testID,
 			value,
@@ -307,6 +320,7 @@ function SearchBarRoot({
 			isDisabled,
 			isFocused,
 			isLoading,
+			labels,
 			size,
 			testID,
 			value,

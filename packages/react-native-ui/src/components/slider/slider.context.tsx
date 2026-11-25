@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { SliderLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import type { SliderRenderProps } from "./slider.types";
 import type { SliderColor, SliderOrientation, SliderSize } from "./slider.variants";
@@ -64,6 +65,8 @@ export type SliderContextValue = {
 	commitValues: (next: number[]) => void;
 	/** Reports the values a drag settled on, once, on release. */
 	commitEnd: (next: number[]) => void;
+	/** The resolved spoken strings, so a hand-placed thumb reads the same set as the root. */
+	labels: SliderLabels;
 	/** The settled state a render function is handed. */
 	renderProps: SliderRenderProps;
 };

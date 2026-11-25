@@ -1,3 +1,4 @@
+export type { SketchLabels } from "../../lib/labels";
 export { Sketch, type SketchProps } from "./sketch";
 export {
 	type SketchBrush,

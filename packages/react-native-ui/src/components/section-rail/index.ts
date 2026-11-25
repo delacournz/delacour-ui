@@ -1,3 +1,4 @@
+export type { SectionRailLabels } from "../../lib/labels";
 export { SectionRail, type SectionRailProps } from "./section-rail";
 export {
 	type SectionRailContextValue,

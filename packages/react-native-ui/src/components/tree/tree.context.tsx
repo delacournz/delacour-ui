@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { TreeLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
 import type { TreeSelectionMode, TreeSize } from "./tree.variants";
 
@@ -12,6 +13,8 @@ export type TreeContextValue = {
 	/** Pressing a branch's row, not just its indicator, opens and closes it. */
 	expandOnPress: boolean;
 	haptic: false | HapticFeedback;
+	/** The resolved spoken strings: English, then the provider's, then the root's `labels`. */
+	labels: TreeLabels;
 	/** Raw rather than resolved, so one item can still disable itself — see `resolveTreeDisabled`. */
 	isDisabled?: boolean;
 	isExpanded: (value: string) => boolean;

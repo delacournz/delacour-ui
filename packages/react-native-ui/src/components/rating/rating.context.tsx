@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { RatingLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import type { RatingColor, RatingSize } from "./rating.variants";
 
@@ -29,6 +30,8 @@ export type RatingContextValue = RatingRenderProps & {
 	setValue: (next: number) => void;
 	/** Reports the value a gesture or an assistive action settled on, once. */
 	commitEnd: (next: number) => void;
+	/** The spoken strings, resolved once at the root. */
+	labels: RatingLabels;
 	/** The settled state a render function is handed. */
 	renderProps: RatingRenderProps;
 };

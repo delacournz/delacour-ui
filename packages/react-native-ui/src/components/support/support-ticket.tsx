@@ -1,6 +1,8 @@
 import type { ReactElement } from "react";
+import type { SupportLabels } from "../../lib/labels";
 import { Badge } from "../badge";
 import { Item, type ItemProps } from "../item";
+import { useSupportLabels } from "./support.context";
 import type { SupportTicketStatus } from "./support.types";
 import { resolveTicketStatus } from "./support.utils";
 import { SUPPORT_TICKET_BADGE_VARIANT } from "./support.variants";
@@ -10,6 +12,10 @@ export type SupportTicketProps = Omit<ItemProps, "asChild" | "children" | "isSel
 	/** The request's reference — `"#4821"`. */
 	reference?: string;
 	status: SupportTicketStatus;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English.
+	 */
+	labels?: Partial<SupportLabels>;
 	className?: string;
 };
 
@@ -17,8 +23,16 @@ export type SupportTicketProps = Omit<ItemProps, "asChild" | "children" | "isSel
  * The request a thread belongs to, pinned at the top of it: the title, its reference and a soft
  * status badge on an outlined `Item`. Give it an `onPress` to open the request's details.
  */
-export function SupportTicket({ title, reference, status, size = "sm", ...props }: SupportTicketProps): ReactElement {
-	const ticket = resolveTicketStatus(status);
+export function SupportTicket({
+	title,
+	reference,
+	status,
+	size = "sm",
+	labels: labelsProp,
+	...props
+}: SupportTicketProps): ReactElement {
+	const labels = useSupportLabels(labelsProp);
+	const ticket = resolveTicketStatus(status, labels);
 
 	return (
 		<Item size={size} variant="outline" {...props}>

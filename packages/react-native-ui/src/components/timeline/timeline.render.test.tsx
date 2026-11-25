@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import type { ReactElement } from "react";
 import { Pressable, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { renderWithProviders, screen } from "../../test/render";
 import { Timeline } from "./timeline";
 import { useTimeline, useTimelineItem } from "./timeline.context";
@@ -384,5 +385,64 @@ describe("Timeline.List", () => {
 			<Timeline.List data={[]} orientation="horizontal" renderItem={() => <Timeline.Item />} value={0} />
 		);
 		expect(screen.queryByLabelText("Placed")).not.toBeOnTheScreen();
+	});
+});
+
+describe("Timeline labels", () => {
+	test("the labels prop words an event's status and tone", async () => {
+		await renderWithProviders(
+			<Timeline labels={{ completed: "erledigt", toneSuccess: "Erfolg" }} value={1}>
+				{events(["success"])}
+			</Timeline>
+		);
+		expect(screen.getByLabelText("Placed")).toHaveAccessibilityValue({ text: "Event 1 of 3, erledigt, Erfolg" });
+		expect(screen.getByLabelText("Packed")).toHaveAccessibilityValue({ text: "Event 2 of 3, current" });
+	});
+
+	test("itemValue replaces the whole sentence, horizontal too", async () => {
+		await renderWithProviders(
+			<Timeline
+				labels={{ itemValue: ({ position, count }) => `Ereignis ${position} von ${count}` }}
+				orientation="horizontal"
+				value={0}
+			>
+				{events()}
+			</Timeline>
+		);
+		expect(screen.getByLabelText("Placed")).toHaveAccessibilityValue({ text: "Ereignis 1 von 3" });
+	});
+
+	test("a LabelsProvider words it, and the prop wins over it", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ timeline: { current: "aktuell" } }}>
+				<Timeline value={1}>{events()}</Timeline>
+				<Timeline labels={{ current: "jetzt" }} value={1}>
+					<Timeline.Item accessibilityLabel="Other" step={1} />
+				</Timeline>
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Packed")).toHaveAccessibilityValue({ text: "Event 2 of 3, aktuell" });
+		expect(screen.getByLabelText("Other")).toHaveAccessibilityValue({ text: "Event 2 of 1, jetzt" });
+	});
+
+	test("Timeline.List reads labels and keeps them off the FlatList", async () => {
+		await renderWithProviders(
+			<Timeline.List
+				data={EVENTS}
+				labels={{ upcoming: "bevorstehend" }}
+				renderItem={({ item }) => <Timeline.Item accessibilityLabel={item.title} />}
+				value={0}
+			/>
+		);
+		expect(screen.getByLabelText("Packed")).toHaveAccessibilityValue({ text: "Event 2 of 3, bevorstehend" });
+	});
+
+	test("an item's own accessibilityValue still wins", async () => {
+		await renderWithProviders(
+			<Timeline labels={{ completed: "erledigt" }} value={1}>
+				<Timeline.Item accessibilityLabel="Own" accessibilityValue={{ text: "Mine" }} step={0} />
+			</Timeline>
+		);
+		expect(screen.getByLabelText("Own")).toHaveAccessibilityValue({ text: "Mine" });
 	});
 });

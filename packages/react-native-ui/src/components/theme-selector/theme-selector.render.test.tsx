@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { Uniwind } from "uniwind";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { ThemeSelector } from "./theme-selector";
@@ -192,5 +193,39 @@ describe("ThemeSelector", () => {
 			"useThemeSelector must be called inside a <ThemeSelector>."
 		);
 		spy.mockRestore();
+	});
+});
+
+describe("ThemeSelector labels", () => {
+	test("a LabelsProvider renames the captions and the group", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ themeSelector: { dark: "Nacht", group: "Darstellung" } }}>
+				<ThemeSelector />
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Darstellung")).toBeOnTheScreen();
+		expect(screen.getByRole("radio", { name: "Nacht" })).toBeOnTheScreen();
+	});
+
+	test("the prop wins key by key, and accessibilityLabel wins over group", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ themeSelector: { dark: "Nacht", light: "Hell" } }}>
+				<ThemeSelector accessibilityLabel="Look" labels={{ dark: "Dunkel", group: "Ignored" }} />
+			</LabelsProvider>
+		);
+		expect(screen.getByLabelText("Look")).toBeOnTheScreen();
+		expect(screen.getByRole("radio", { name: "Dunkel" })).toBeOnTheScreen();
+		expect(screen.getByRole("radio", { name: "Hell" })).toBeOnTheScreen();
+	});
+
+	test("a blank caption never blanks a radio, and Option label still wins", async () => {
+		await renderWithProviders(
+			<ThemeSelector labels={{ light: " " }}>
+				<ThemeSelector.Option value="light" />
+				<ThemeSelector.Option label="Night" value="dark" />
+			</ThemeSelector>
+		);
+		expect(screen.getByRole("radio", { name: "Light" })).toBeOnTheScreen();
+		expect(screen.getByRole("radio", { name: "Night" })).toBeOnTheScreen();
 	});
 });

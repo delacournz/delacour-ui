@@ -40,7 +40,7 @@ export function TimePickerTrigger({ children, className, ...props }: TimePickerT
 			accessibilityLabelledBy={picker.accessibilityLabelledBy}
 			accessibilityRole="button"
 			accessibilityState={{ disabled: picker.isDisabled, expanded: picker.isOpen }}
-			accessibilityValue={{ text: picker.display || "not set" }}
+			accessibilityValue={{ text: picker.display || picker.labels.notSet }}
 			className={resolveTimePickerTriggerClass({
 				className,
 				isDisabled: picker.isDisabled,

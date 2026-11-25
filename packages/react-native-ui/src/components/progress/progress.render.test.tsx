@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "@jest/globals";
 import { Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { renderWithProviders, screen } from "../../test/render";
 import { Progress } from "./progress";
 import { useProgress } from "./progress.context";
@@ -187,6 +188,31 @@ describe("Progress", () => {
 
 		test("useProgress throws", async () => {
 			await expect(renderWithProviders(<Probe />)).rejects.toThrow("useProgress must be called inside a <Progress>.");
+		});
+	});
+
+	describe("labels", () => {
+		const labels = { valueOf: (current: string, max: string) => `${current} sur ${max}` };
+
+		test("the labels prop changes the spoken count", async () => {
+			await renderWithProviders(<Progress accessibilityLabel="Seats" labels={labels} maxValue={24} value={18} />);
+			expect(screen.getByRole("progressbar")).toHaveAccessibilityValue({ text: "18 sur 24" });
+		});
+
+		test("a provider's labels change the spoken count", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ progress: labels }}>
+					<Progress accessibilityLabel="Seats" maxValue={24} value={18} />
+				</LabelsProvider>
+			);
+			expect(screen.getByRole("progressbar")).toHaveAccessibilityValue({ text: "18 sur 24" });
+		});
+
+		test("valueLabel still wins over labels", async () => {
+			await renderWithProviders(
+				<Progress accessibilityLabel="Seats" labels={labels} maxValue={24} value={18} valueLabel="Presque" />
+			);
+			expect(screen.getByRole("progressbar")).toHaveAccessibilityValue({ text: "Presque" });
 		});
 	});
 });

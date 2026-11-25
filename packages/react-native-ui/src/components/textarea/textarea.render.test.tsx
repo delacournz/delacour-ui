@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { useState } from "react";
 import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Input } from "../input";
@@ -276,5 +277,38 @@ describe("Textarea threshold announcements", () => {
 		await renderWithProviders(<Textarea accessibilityLabel="Notes" maxLength={10} />);
 		await fireEvent.changeText(screen.getByLabelText("Notes"), "0123456789");
 		expect(iosSpy).not.toHaveBeenCalled();
+	});
+
+	describe("labels", () => {
+		test("the labels prop names the count and the announcements", async () => {
+			await renderWithProviders(
+				<Textarea
+					accessibilityLabel="Notes"
+					labels={{
+						count: (length, maxLength) => `${length} von ${maxLength} Zeichen`,
+						limitReached: "Zeichenlimit erreicht",
+						remaining: (remaining) => `Noch ${remaining} Zeichen`,
+					}}
+					maxLength={10}
+					showCount
+				/>
+			);
+			expect(screen.getByLabelText("0 von 10 Zeichen")).toBeOnTheScreen();
+			await fireEvent.changeText(screen.getByLabelText("Notes"), "012345678");
+			expect(iosSpy).toHaveBeenLastCalledWith("Noch 1 Zeichen", { queue: true });
+		});
+
+		test("a LabelsProvider supplies them, and the prop wins over it", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ textarea: { limitReached: "Limit" } }}>
+					<Textarea accessibilityLabel="A" maxLength={10} showCount />
+					<Textarea accessibilityLabel="B" labels={{ limitReached: "Schluss" }} maxLength={10} showCount />
+				</LabelsProvider>
+			);
+			await fireEvent.changeText(screen.getByLabelText("A"), "0123456789");
+			expect(iosSpy).toHaveBeenLastCalledWith("Limit", { queue: false });
+			await fireEvent.changeText(screen.getByLabelText("B"), "0123456789");
+			expect(iosSpy).toHaveBeenLastCalledWith("Schluss", { queue: false });
+		});
 	});
 });

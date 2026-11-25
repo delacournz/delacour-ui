@@ -1,3 +1,4 @@
+export type { PopoverLabels } from "../../lib/labels";
 export { Popover, type PopoverProps } from "./popover";
 export {
 	PopoverContext,

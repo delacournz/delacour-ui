@@ -102,7 +102,7 @@ falls into; a two-second hold cannot be done by accident or by habit.
 
 ## Accessibility
 
-- `accessibilityRole="button"`, `accessibilityHint` (default: "Press and hold to confirm"), and
+- `accessibilityRole="button"`, `accessibilityHint` (default `labels.hint`: "Press and hold to confirm"), and
   `accessibilityState={{ disabled, checked: isCompleted }}`.
 - **Decision: activate completes.** The root declares an `activate` accessibility action, and a
   screen reader's activate completes the button outright. A screen reader cannot hold, the hint
@@ -116,6 +116,15 @@ falls into; a two-second hold cannot be done by accident or by habit.
   mounting already completed and the hold's progress are silent. `completedAnnouncement` replaces
   the text (say what a custom `Done` says: "Paid"); `announce={false}` is the opt-out. The pure
   decision is `resolveCompletionAnnouncement`.
+
+- **The spoken strings are the `labels` prop, not literals**: two keys, `hint` (the
+  accessibility hint) and `completed` (the completion announcement), come from `lib/labels`
+  through `useLabels("progressButton", labels)`, resolved once at the root. Precedence is
+  `accessibilityHint` / `completedAnnouncement` ← the root's `labels` ← `DelacourProvider`
+  `labels` ← English. `Label` and `Done` speak nothing of their own, so no context carries the
+  set. `resolveCompletionAnnouncement` takes `labels` (default English); the exported
+  `PROGRESS_BUTTON_DEFAULT_HINT` and `PROGRESS_BUTTON_DEFAULT_COMPLETED_MESSAGE` are deprecated
+  aliases of the English defaults.
 
 ## Out of scope
 

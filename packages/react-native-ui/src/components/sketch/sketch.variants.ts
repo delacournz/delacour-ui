@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { isLiteralColor } from "../../lib/color";
+import { DELACOUR_DEFAULT_LABELS, type SketchLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { isSafeSketchColor, type SketchItem, type SketchShape, type SketchTool } from "./sketch.paths";
 
@@ -14,29 +15,40 @@ export const SKETCH_MAX_SIZE = 24;
 /** The theme token the export paints behind the drawing unless told otherwise. */
 export const SKETCH_EXPORT_BACKGROUND = "background";
 
-/** The size slider's accessible name. */
-export const SKETCH_SIZE_LABEL = "Stroke width";
+/** @deprecated Read `labels.size` from `Sketch`'s `labels` prop or `DelacourProvider`'s `labels`. */
+export const SKETCH_SIZE_LABEL = DELACOUR_DEFAULT_LABELS.sketch.size;
 
 /**
- * What a tool or a shape is called, to a screen reader and in the docs.
- *
- * A `Record` over both unions, so a shape added to `SKETCH_SHAPES` fails the
- * typecheck here until someone names it — a toolbar button with no label is a
- * button VoiceOver reads as "button".
+ * Every tool and shape, as a `Record` over both unions: a shape added to
+ * `SKETCH_SHAPES` fails the typecheck here until it is listed, and then fails
+ * again where `labels.tool` takes it until the catalog's `SketchToolName` names it.
  */
-export const SKETCH_LABELS = {
-	arrow: "Arrow",
-	diamond: "Diamond",
-	ellipse: "Ellipse",
-	eraser: "Eraser",
-	heart: "Heart",
-	line: "Line",
-	pen: "Pen",
-	rectangle: "Rectangle",
-	shape: "Shape",
-	star: "Star",
-	triangle: "Triangle",
-} as const satisfies Record<SketchTool | SketchShape, string>;
+const SKETCH_NAME_KEYS: Record<SketchTool | SketchShape, true> = {
+	arrow: true,
+	diamond: true,
+	ellipse: true,
+	eraser: true,
+	heart: true,
+	line: true,
+	pen: true,
+	rectangle: true,
+	shape: true,
+	star: true,
+	triangle: true,
+};
+
+/**
+ * What a tool or a shape is called, to a screen reader and in the docs, in English.
+ *
+ * @deprecated Read `labels.tool(name)` from `Sketch`'s `labels` prop or
+ * `DelacourProvider`'s `labels`. Kept so existing imports keep working.
+ */
+export const SKETCH_LABELS = Object.fromEntries(
+	(Object.keys(SKETCH_NAME_KEYS) as (SketchTool | SketchShape)[]).map((name) => [
+		name,
+		DELACOUR_DEFAULT_LABELS.sketch.tool(name),
+	])
+) as Record<SketchTool | SketchShape, string>;
 
 /** A swatch's drawn edge in points: `size-button-sm`, pinned to `tokens.css` by a test. */
 export const SKETCH_SWATCH_EDGE_PT = 36;
@@ -146,20 +158,23 @@ export function clampSketchSize(n: number, min: number, max: number): number {
  * It does not describe the drawing — nothing could, honestly — and an eraser
  * counts as a mark, because undo removes it as one.
  */
-export function resolveSketchAccessibilityLabel(items: readonly SketchItem[]): string {
-	if (items.length === 0) return "Drawing, empty";
-	return `Drawing, ${items.length} ${items.length === 1 ? "mark" : "marks"}`;
+export function resolveSketchAccessibilityLabel(
+	items: readonly SketchItem[],
+	labels: SketchLabels = DELACOUR_DEFAULT_LABELS.sketch
+): string {
+	return labels.drawing(items.length);
 }
 
 /** The canvas's spoken actions: undo and clear, offered only while there is something to reverse and the sketch is live. */
 export function resolveSketchAccessibilityActions(
 	items: readonly SketchItem[],
-	isDisabled: boolean
+	isDisabled: boolean,
+	labels: SketchLabels = DELACOUR_DEFAULT_LABELS.sketch
 ): { label: string; name: "undo" | "clear" }[] {
 	if (isDisabled || items.length === 0) return [];
 	return [
-		{ label: "Undo", name: "undo" },
-		{ label: "Clear", name: "clear" },
+		{ label: labels.undo, name: "undo" },
+		{ label: labels.clear, name: "clear" },
 	];
 }
 
@@ -169,10 +184,14 @@ export function resolveSketchAccessibilityActions(
  * A token names itself (`muted-foreground` → "Muted foreground"). A literal
  * has no name a screen reader could say usefully, so it is read by position.
  */
-export function resolveSwatchLabel(color: string, index: number, total: number): string {
-	if (isLiteralColor(color)) return `Colour ${index + 1} of ${total}`;
-	const words = color.replace(/^--/, "").split("-").join(" ");
-	return words.charAt(0).toUpperCase() + words.slice(1);
+export function resolveSwatchLabel(
+	color: string,
+	index: number,
+	total: number,
+	labels: SketchLabels = DELACOUR_DEFAULT_LABELS.sketch
+): string {
+	if (isLiteralColor(color)) return labels.swatchPosition(index + 1, total);
+	return labels.swatchToken(color.replace(/^--/, "").split("-").join(" "));
 }
 
 /**
@@ -204,14 +223,15 @@ export type SketchSwatch = { color: string; ink: string; label: string };
  */
 export function resolveSketchSwatches(
 	colors: readonly string[],
-	tokens: Readonly<Record<string, string | undefined>>
+	tokens: Readonly<Record<string, string | undefined>>,
+	labels: SketchLabels = DELACOUR_DEFAULT_LABELS.sketch
 ): SketchSwatch[] {
 	const swatches: SketchSwatch[] = [];
 	colors.forEach((color, index) => {
 		if (swatches.some((swatch) => swatch.color === color)) return;
 		const ink = resolveSketchColor(color, tokens);
 		if (ink === undefined) return;
-		swatches.push({ color, ink, label: resolveSwatchLabel(color, index, colors.length) });
+		swatches.push({ color, ink, label: resolveSwatchLabel(color, index, colors.length, labels) });
 	});
 	return swatches;
 }

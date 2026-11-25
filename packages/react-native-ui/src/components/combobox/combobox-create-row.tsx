@@ -1,7 +1,6 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { IconPlusSmall } from "../../icons/central";
-import type { ComboboxLabels } from "../../lib/labels";
 import { Icon } from "../icon";
 import type { InputSize } from "../input/input.variants";
 import { Pressable } from "../pressable";
@@ -12,10 +11,8 @@ import { comboboxVariants } from "./combobox.variants";
 export type ComboboxCreateRowProps = {
 	/** The typed text, trimmed — what becomes the value. */
 	query: string;
-	/** What the row reads. */
+	/** What the row reads, and its accessible name. */
 	label: string;
-	/** The resolved strings the accessible name reads. */
-	labels: ComboboxLabels;
 	onPress: (query: string) => void;
 	size: InputSize;
 	isDisabled?: boolean;
@@ -27,14 +24,14 @@ export type ComboboxCreateRowProps = {
  *
  * Select's row slot and label slot, so it is the height and type of the
  * options beneath it, with a leading plus where an option would show its icon.
- * A screen reader hears a button, "Add Fiji".
+ * A screen reader hears a button named by the visible text, `Use “Fiji”`, so the
+ * spoken name contains what is drawn (WCAG 2.5.3).
  *
  * Internal; not on the index.
  */
 export function ComboboxCreateRow({
 	query,
 	label,
-	labels,
 	onPress,
 	size,
 	isDisabled = false,
@@ -45,7 +42,7 @@ export function ComboboxCreateRow({
 
 	return (
 		<Pressable
-			accessibilityLabel={labels.createAccessibility(query)}
+			accessibilityLabel={label}
 			accessibilityRole="button"
 			className={row.row({ className: own.createRow() })}
 			disabled={isDisabled}

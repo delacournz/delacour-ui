@@ -258,3 +258,74 @@ export function resolveComboboxClearHitSlop(size: InputSize, min: number = MIN_H
 		top: vertical?.top ?? 0,
 	};
 }
+
+/** The trigger's accessibility action that clears the selection. */
+export const COMBOBOX_CLEAR_ACTION = "clear";
+
+/** Prefix of the per-chip remove actions; the option's value follows it. */
+export const COMBOBOX_REMOVE_ACTION_PREFIX = "remove:";
+
+export type ComboboxTriggerAction = { name: string; label: string };
+
+export type ComboboxTriggerActionOutcome = { type: "clear" } | { type: "remove"; value: string } | { type: "none" };
+
+/**
+ * The actions the trigger offers in place of the clear button and the chips'
+ * remove controls it hides from assistive technology: `clear` when the button
+ * is drawn, and `remove:<value>` for each drawn chip. Nothing while read-only
+ * or disabled, where those controls are not drawn.
+ */
+export function resolveComboboxTriggerActions({
+	isEditable,
+	canClear,
+	chips,
+	labels,
+}: {
+	isEditable: boolean;
+	canClear: boolean;
+	chips: readonly SelectOption[];
+	labels: { clear: string; removeChip: (label: string) => string };
+}): ComboboxTriggerAction[] {
+	if (!isEditable) return [];
+	const actions: ComboboxTriggerAction[] = [];
+	if (canClear) actions.push({ label: labels.clear, name: COMBOBOX_CLEAR_ACTION });
+	for (const option of chips) {
+		actions.push({ label: labels.removeChip(option.label), name: `${COMBOBOX_REMOVE_ACTION_PREFIX}${option.value}` });
+	}
+	return actions;
+}
+
+/** What an action name does, or `none` for one the trigger did not offer. */
+export function resolveComboboxTriggerActionOutcome(
+	actionName: string,
+	actions: readonly ComboboxTriggerAction[]
+): ComboboxTriggerActionOutcome {
+	if (!actions.some((action) => action.name === actionName)) return { type: "none" };
+	if (actionName === COMBOBOX_CLEAR_ACTION) return { type: "clear" };
+	if (actionName.startsWith(COMBOBOX_REMOVE_ACTION_PREFIX)) {
+		return { type: "remove", value: actionName.slice(COMBOBOX_REMOVE_ACTION_PREFIX.length) };
+	}
+	return { type: "none" };
+}
+
+/**
+ * The trigger's accessible name. While it shows its placeholder (`hasValue`
+ * false) and a field or title names it, the name carries the placeholder too
+ * — "Country, Choose a country" — so the visible text is in it (WCAG 2.5.3).
+ * A shown value stays in the accessibility value, not the name.
+ */
+export function resolveComboboxTriggerLabel({
+	label,
+	placeholder,
+	hasValue,
+	triggerInField,
+}: {
+	label: string | undefined;
+	placeholder: string | undefined;
+	hasValue: boolean;
+	triggerInField: (fieldLabel: string, placeholder: string) => string;
+}): string | undefined {
+	if (!label) return placeholder;
+	if (hasValue || !placeholder || label.includes(placeholder)) return label;
+	return triggerInField(label, placeholder);
+}

@@ -105,6 +105,7 @@ export function SliderThumb({
 		size,
 		isInvalid,
 		isDisabled,
+		labels,
 		updateValue,
 	} = useSliderPart("Slider.Thumb");
 	const field = useFieldContext();
@@ -162,6 +163,7 @@ export function SliderThumb({
 		index,
 		isRequired: fieldAccessibility.isRequired,
 		label: field?.label,
+		labels,
 		override: explicitLabel,
 	});
 	const nudge = step > 0 ? step : (maxValue - minValue) / CONTINUOUS_ACCESSIBILITY_STEPS;

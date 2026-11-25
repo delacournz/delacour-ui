@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import { DELACOUR_DEFAULT_LABELS, type SortableLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import type { HapticFeedback } from "../pressable/pressable";
 
@@ -298,15 +299,18 @@ export function resolveMoveAction(
 }
 
 /** What a screen reader calls a handle that was given no `accessibilityLabel`. */
-export const SORTABLE_DEFAULT_HANDLE_LABEL = "Drag to reorder";
+export const SORTABLE_DEFAULT_HANDLE_LABEL = DELACOUR_DEFAULT_LABELS.sortable.handle;
 
 /** The action names a row publishes. A caller's own action must not reuse them. */
 export const SORTABLE_MOVE_UP_NAME = "moveUp";
 export const SORTABLE_MOVE_DOWN_NAME = "moveDown";
 
 /** "Reorder Milk" for a labelled row, the generic "Drag to reorder" for an unlabelled one. */
-export function resolveSortableHandleLabel(label: string | undefined): string {
-	return label ? `Reorder ${label}` : SORTABLE_DEFAULT_HANDLE_LABEL;
+export function resolveSortableHandleLabel(
+	label: string | undefined,
+	labels: SortableLabels = DELACOUR_DEFAULT_LABELS.sortable
+): string {
+	return label ? labels.handleFor(label) : labels.handle;
 }
 
 /** A named accessibility action, structurally what React Native's `AccessibilityActionInfo` is. */
@@ -322,25 +326,31 @@ export function resolveSortableMoveActions({
 	id,
 	pinned,
 	label,
+	labels = DELACOUR_DEFAULT_LABELS.sortable,
 }: {
 	order: readonly string[];
 	id: string;
 	pinned?: readonly boolean[];
 	label?: string;
+	labels?: SortableLabels;
 }): SortableMoveActionInfo[] {
 	const actions: SortableMoveActionInfo[] = [];
 	if (resolveMoveAction(order, id, "up", pinned).kind === "move") {
-		actions.push({ label: label ? `Move ${label} up` : "Move up", name: SORTABLE_MOVE_UP_NAME });
+		actions.push({ label: label ? labels.moveUpFor(label) : labels.moveUp, name: SORTABLE_MOVE_UP_NAME });
 	}
 	if (resolveMoveAction(order, id, "down", pinned).kind === "move") {
-		actions.push({ label: label ? `Move ${label} down` : "Move down", name: SORTABLE_MOVE_DOWN_NAME });
+		actions.push({ label: label ? labels.moveDownFor(label) : labels.moveDown, name: SORTABLE_MOVE_DOWN_NAME });
 	}
 	return actions;
 }
 
 /** The row's place in the list, as a screen reader hears it. One-based. */
-export function resolveSortablePosition(index: number, count: number): string {
-	return `Position ${index + 1} of ${count}`;
+export function resolveSortablePosition(
+	index: number,
+	count: number,
+	labels: SortableLabels = DELACOUR_DEFAULT_LABELS.sortable
+): string {
+	return labels.position(index + 1, count);
 }
 
 /**

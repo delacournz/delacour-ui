@@ -17,12 +17,9 @@ import {
 } from "./split-view.variants";
 import { SplitViewHandle } from "./split-view-handle";
 
-/** What the drag row is called when the caller names nothing more specific. */
-const DEFAULT_LABEL = "Resize panes";
-
 export type SplitViewDragAreaProps = Omit<ViewProps, "style"> &
 	SplitViewSlotProps & {
-		/** Read before the position. Default "Resize panes". Say which panes: "Resize map". */
+		/** Read before the position. Default: the `dragArea` label, "Resize panes". Say which panes: "Resize map". */
 		accessibilityLabel?: string;
 		/** Default: a `SplitView.Handle`. Pass your own grip, or a label. */
 		children?: ReactNode;
@@ -72,6 +69,7 @@ export function SplitViewDragArea({
 		extent,
 		heights,
 		haptic,
+		labels,
 		setActive,
 		interrupt,
 		settle,
@@ -153,13 +151,14 @@ export function SplitViewDragArea({
 
 	const gesture = useSimultaneousGestures(pan, tap);
 
-	const a11y = resolveSnapAccessibility({ count: snapCount, index: snapIndex });
+	const a11y = resolveSnapAccessibility({ count: snapCount, index: snapIndex }, labels);
+	const activate = useMemo(() => ({ label: labels.nextPosition, name: "activate" }) as const, [labels.nextPosition]);
 	const actions = useMemo(
 		() =>
 			isDisabled
 				? NO_ACTIONS
-				: [...(a11y.canIncrement ? [INCREMENT] : []), ...(a11y.canDecrement ? [DECREMENT] : []), ACTIVATE],
-		[a11y.canDecrement, a11y.canIncrement, isDisabled]
+				: [...(a11y.canIncrement ? [INCREMENT] : []), ...(a11y.canDecrement ? [DECREMENT] : []), activate],
+		[a11y.canDecrement, a11y.canIncrement, activate, isDisabled]
 	);
 
 	const handleAccessibilityAction = useCallback(
@@ -182,7 +181,7 @@ export function SplitViewDragArea({
 		<GestureDetector gesture={gesture}>
 			<Animated.View
 				accessibilityActions={actions}
-				accessibilityLabel={accessibilityLabel ?? DEFAULT_LABEL}
+				accessibilityLabel={accessibilityLabel ?? labels.dragArea}
 				accessibilityRole="adjustable"
 				accessibilityState={{ disabled: isDisabled }}
 				accessibilityValue={{ max: a11y.max, min: a11y.min, now: a11y.now, text: a11y.text }}
@@ -206,5 +205,4 @@ SplitViewDragArea.displayName = "DelacourUI.SplitView.DragArea";
  */
 const INCREMENT = { name: "increment" } as const;
 const DECREMENT = { name: "decrement" } as const;
-const ACTIVATE = { label: "Next position", name: "activate" } as const;
 const NO_ACTIONS: readonly { name: string; label?: string }[] = [];

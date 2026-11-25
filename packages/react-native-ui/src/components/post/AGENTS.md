@@ -57,6 +57,18 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
   and TalkBack skip a transparent view. A disabled or press-less card has no carrier; without
   `onPress` the root is a plain `View`. Passing `accessible` to `Post` yourself merges the card and
   swallows its controls — a development warning says so.
+- **The spoken strings are the `labels` prop, not literals.** The relative time (`timeShort`,
+  `timeSpoken`), the author, community, stat and score labels, the vote arrows and announcement
+  (`upvote`, `downvote`, `voteAnnouncement`), the body toggle (`more`, `less`, `showMore`,
+  `showLess`) and the card carrier (`openPost`, `moreOptions`) come from `lib/labels` through
+  `useLabels("post", labels)`, resolved once on `Post` and shared through `PostContext`. Precedence:
+  a part's own `accessibilityLabel` (or `timestamp`) ← the root's `labels` ← `DelacourProvider`'s
+  `labels` ← English. `PostCardAction` is handed them as a prop. The resolvers (`formatRelativeTime`,
+  `resolveAuthorA11yLabel`, `resolvePostStatLabel`, `resolveVotesLabel`, `resolveVoteAnnouncement`,
+  `resolveBodyToggleA11y`, `resolvePostCardActions`) take `labels` as their last argument, default
+  to English and hold no English themselves; `formatRelativeTime` hands the catalog a bucket
+  (`PostTimeAgo`) and numbers arrive pre-grouped by `formatGroupedNumber`. Month names live in the
+  catalog. `compact` counts (`1.2K`) are not catalogued.
 - **The "more" / "less" toggle is labelled "Show more" / "Show less"** (the visible word is in the
   name) and carries `accessibilityState.expanded`. It is one `Pressable` stop
   (`feedback="none"`) around a plain `Text`: a `Text` with `onPress` is a second VoiceOver stop on iOS.

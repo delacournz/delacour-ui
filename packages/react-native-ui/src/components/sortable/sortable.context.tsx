@@ -1,6 +1,7 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { AccessibilityActionEvent, AccessibilityActionInfo } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
+import type { SortableLabels } from "../../lib/labels";
 import type { SortableDrag } from "./sortable.types";
 import type { SortableActivation, SortableMoveDirection } from "./sortable.variants";
 
@@ -23,6 +24,8 @@ export type SortableContextValue = {
 	/** 0 idle, 1 dragging, 2 landing. A row snaps rather than springs when this reads 0. */
 	phase: SharedValue<number>;
 	isReducedMotion: boolean;
+	/** The resolved spoken strings: `labels` prop over `DelacourProvider` over English. */
+	labels: SortableLabels;
 	drag: SortableDrag;
 	/** A row reports its measured height here. */
 	setHeight: (id: string, height: number) => void;

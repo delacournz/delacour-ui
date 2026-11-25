@@ -76,7 +76,13 @@ and `onValueChange={sections.scrollTo}`.
 
 ## Accessibility
 
-- **The trigger is one `adjustable` element** named "Sections" and valued by the active row's
+- **The spoken strings are the `labels` prop, not literals**: the one key, `trigger` (the
+  trigger's accessible name), comes from `lib/labels` through `useLabels("sectionRail", labels)`,
+  resolved once at the root and carried on the context as `spoken` (`labels` there is already the
+  section titles by value). Precedence is `SectionRail.Trigger`'s own `accessibilityLabel` ← the
+  root's `labels` ← `DelacourProvider` `labels` ← English. No resolver takes labels; the
+  `increment`/`decrement`/`activate` actions carry no label, so the OS words them.
+- **The trigger is one `adjustable` element** named `labels.trigger` ("Sections") and valued by the active row's
   title, which each `Item` registers with the root — the reason the panel stays mounted while
   closed. Swipe up or down steps through the sections in rail order (`resolveAdjacentSection`,
   stops at the ends rather than wrapping); double-tap toggles the panel; `expanded` reflects it.

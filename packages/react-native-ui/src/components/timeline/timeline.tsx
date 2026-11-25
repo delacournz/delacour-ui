@@ -1,6 +1,7 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
 import Animated from "react-native-reanimated";
+import { useLabels } from "../../hooks/use-labels";
 import { type TimelineContextValue, TimelineProvider } from "./timeline.context";
 import type { TimelineAxesProps, TimelineOrientationProps } from "./timeline.types";
 import {
@@ -74,6 +75,7 @@ function TimelineVertical({
 	value = TIMELINE_DEFAULT_VALUE,
 	variant = TIMELINE_DEFAULT_VARIANT,
 	size = TIMELINE_DEFAULT_SIZE,
+	labels: labelsProp,
 	orientation: _orientation,
 	className,
 	children,
@@ -81,10 +83,11 @@ function TimelineVertical({
 }: VerticalProps): ReactElement {
 	const { widths } = useMemo(() => partitionChildren(children), [children]);
 	const count = widths.length;
+	const labels = useLabels("timeline", labelsProp);
 
 	const context = useMemo<TimelineContextValue>(
-		() => ({ activeColumn: null, count, orientation: "vertical", size, value, variant }),
-		[count, size, value, variant]
+		() => ({ activeColumn: null, count, labels, orientation: "vertical", size, value, variant }),
+		[count, labels, size, value, variant]
 	);
 
 	return (
@@ -101,6 +104,7 @@ function TimelineHorizontal({
 	value = TIMELINE_DEFAULT_VALUE,
 	variant = TIMELINE_DEFAULT_VARIANT,
 	size = TIMELINE_DEFAULT_SIZE,
+	labels: labelsProp,
 	orientation: _orientation,
 	snap = false,
 	haptic = false,
@@ -114,10 +118,11 @@ function TimelineHorizontal({
 	const offsets = useMemo(() => resolveTimelineColumnOffsets(widths), [widths]);
 	const { activeColumn, scrollHandler } = useTimelineReadingEdge({ haptic, offsets, onColumnChange });
 	const count = widths.length;
+	const labels = useLabels("timeline", labelsProp);
 
 	const context = useMemo<TimelineContextValue>(
-		() => ({ activeColumn, count, orientation: "horizontal", size, value, variant }),
-		[activeColumn, count, size, value, variant]
+		() => ({ activeColumn, count, labels, orientation: "horizontal", size, value, variant }),
+		[activeColumn, count, labels, size, value, variant]
 	);
 	const slots = timelineVariants({ orientation: "horizontal", size });
 

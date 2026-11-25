@@ -195,7 +195,7 @@ what a screen reader hears before the title.
     hasSkip: { type: "boolean", default: "true" },
     isInteractive: { type: "boolean", default: "false" },
     haptic: { type: "false | HapticFeedback", default: "false" },
-    labels: { type: "Partial<TourLabels>" },
+    labels: { type: "Partial<TourLabels>", description: "Action text and the spoken and visible step position, over `DelacourProvider`'s `labels`." },
     cardClassName: { type: "string" },
     className: { type: "string", description: "The root `View`, which fills its parent." },
     testID: { type: "string", description: "The root's, and the stem of the card's: `-card`, `-next`, `-back`, `-skip`." },

@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
+import type { QuestionnaireLabels } from "../../lib/labels";
 import { Checkbox } from "../checkbox";
 import { Input } from "../input";
 import { Radio } from "../radio";
@@ -34,6 +35,8 @@ export type QuestionnaireControlProps = {
 	size: QuestionnaireSize;
 	isDisabled: boolean;
 	isReadOnly: boolean;
+	/** The questionnaire's resolved spoken strings. */
+	labels: QuestionnaireLabels;
 	/** The questionnaire's `testID`; each element derives its own from it. */
 	testID: string | undefined;
 };
@@ -47,6 +50,8 @@ type KindProps<K extends Question["kind"]> = {
 	size: QuestionnaireSize;
 	isDisabled: boolean;
 	isReadOnly: boolean;
+	/** The questionnaire's resolved spoken strings. */
+	labels: QuestionnaireLabels;
 	/** The questionnaire's `testID`; each element derives its own from it. */
 	testID: string | undefined;
 };
@@ -90,7 +95,16 @@ export function QuestionnaireControl({
 QuestionnaireControl.displayName = "DelacourUI.Questionnaire.Control";
 
 /** `single`: a radio group, plus the Other field while Other is chosen. */
-function SingleControl({ question, answer, store, axes, size, isDisabled, testID }: KindProps<"single">): ReactElement {
+function SingleControl({
+	question,
+	answer,
+	store,
+	axes,
+	size,
+	isDisabled,
+	labels,
+	testID,
+}: KindProps<"single">): ReactElement {
 	const slots = questionnaireVariants({ size });
 	return (
 		<View className={slots.choices()}>
@@ -114,7 +128,7 @@ function SingleControl({ question, answer, store, axes, size, isDisabled, testID
 					</Radio>
 				))}
 			</Radio.Group>
-			<OtherInput answer={answer} axes={axes} question={question} store={store} testID={testID} />
+			<OtherInput answer={answer} axes={axes} labels={labels} question={question} store={store} testID={testID} />
 		</View>
 	);
 }
@@ -128,6 +142,7 @@ function MultipleControl({
 	axes,
 	size,
 	isDisabled,
+	labels,
 	testID,
 }: KindProps<"multiple">): ReactElement {
 	const slots = questionnaireVariants({ size });
@@ -153,7 +168,7 @@ function MultipleControl({
 					</Checkbox>
 				))}
 			</Checkbox.Group>
-			<OtherInput answer={answer} axes={axes} question={question} store={store} testID={testID} />
+			<OtherInput answer={answer} axes={axes} labels={labels} question={question} store={store} testID={testID} />
 		</View>
 	);
 }
@@ -217,7 +232,7 @@ function RatingControl({ question, answer, store, axes, isReadOnly, testID }: Ki
 RatingControl.displayName = "DelacourUI.Questionnaire.Control.Rating";
 
 /** `scale`: a wrapping row of numbered toggles, each read as "7 out of 10", with the end captions under it. */
-function ScaleControl({ question, answer, store, axes, size, testID }: KindProps<"scale">): ReactElement {
+function ScaleControl({ question, answer, store, axes, size, labels, testID }: KindProps<"scale">): ReactElement {
 	const slots = questionnaireVariants({ size });
 	const hasLabels = question.minLabel !== undefined || question.maxLabel !== undefined;
 	return (
@@ -234,7 +249,7 @@ function ScaleControl({ question, answer, store, axes, size, testID }: KindProps
 			>
 				{getScaleValues(question.min, question.max).map((value) => (
 					<ToggleButton
-						accessibilityLabel={formatScaleValue(value, question.max)}
+						accessibilityLabel={formatScaleValue(value, question.max, labels)}
 						key={value}
 						testID={resolveQuestionnaireTestId(testID, question.id, String(value))}
 						value={String(value)}
@@ -255,7 +270,7 @@ function ScaleControl({ question, answer, store, axes, size, testID }: KindProps
 ScaleControl.displayName = "DelacourUI.Questionnaire.Control.Scale";
 
 /** `yesNo`: two wide toggles, either-or. */
-function YesNoControl({ question, answer, store, axes, size, testID }: KindProps<"yesNo">): ReactElement {
+function YesNoControl({ question, answer, store, axes, size, labels, testID }: KindProps<"yesNo">): ReactElement {
 	const slots = questionnaireVariants({ size });
 	return (
 		<ToggleButton.Group
@@ -269,10 +284,10 @@ function YesNoControl({ question, answer, store, axes, size, testID }: KindProps
 			variant={axes.toggleVariant}
 		>
 			<ToggleButton className="flex-1" testID={resolveQuestionnaireTestId(testID, question.id, "yes")} value="yes">
-				{question.yesLabel ?? "Yes"}
+				{question.yesLabel ?? labels.yes}
 			</ToggleButton>
 			<ToggleButton className="flex-1" testID={resolveQuestionnaireTestId(testID, question.id, "no")} value="no">
-				{question.noLabel ?? "No"}
+				{question.noLabel ?? labels.no}
 			</ToggleButton>
 		</ToggleButton.Group>
 	);
@@ -297,12 +312,14 @@ function OtherInput({
 	question,
 	answer,
 	axes,
+	labels,
 	store,
 	testID,
 }: {
 	question: Question;
 	answer: Answer | undefined;
 	axes: QuestionnaireAxes;
+	labels: QuestionnaireLabels;
 	store: (answer: Answer | undefined) => void;
 	testID: string | undefined;
 }): ReactElement | null {
@@ -310,10 +327,10 @@ function OtherInput({
 	const other = answer && (answer.kind === "single" || answer.kind === "multiple") ? (answer.other ?? "") : "";
 	return (
 		<Input
-			accessibilityLabel="Other answer"
+			accessibilityLabel={labels.otherAnswer}
 			autoFocus
 			onChangeText={(text) => store(setOtherText(answer, text))}
-			placeholder="Please specify"
+			placeholder={labels.otherPlaceholder}
 			size={axes.inputSize}
 			testID={resolveQuestionnaireTestId(testID, question.id, "other")}
 			value={other}

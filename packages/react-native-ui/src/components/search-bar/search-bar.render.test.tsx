@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { createRef } from "react";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { SearchBar } from "./search-bar";
@@ -413,6 +414,42 @@ describe("SearchBar", () => {
 			await expect(renderWithProviders(<SearchBar.Cancel />)).rejects.toThrow(
 				"SearchBar.Cancel must be rendered inside a <SearchBar>."
 			);
+		});
+	});
+
+	describe("labels", () => {
+		const german = {
+			cancel: "Abbrechen",
+			clear: "Suche leeren",
+			placeholder: "Suchen",
+			removeToken: (label: string) => `${label} entfernen`,
+		};
+
+		test("the labels prop changes what a screen reader hears", async () => {
+			await renderWithProviders(
+				<SearchBar cancel="always" defaultValue="a" labels={german} onTokenRemove={() => undefined} tokens={TOKENS} />
+			);
+			expect(screen.getByPlaceholderText("Suchen")).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Suche leeren" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Open entfernen" })).toBeOnTheScreen();
+			expect(screen.getByText("Abbrechen", { includeHiddenElements: true })).toBeOnTheScreen();
+		});
+
+		test("DelacourProvider labels reach the bar and its parts", async () => {
+			await renderWithProviders(<SearchBar defaultValue="a" onTokenRemove={() => undefined} tokens={TOKENS} />, {
+				wrapper: ({ children }) => <LabelsProvider labels={{ searchBar: german }}>{children}</LabelsProvider>,
+			});
+			expect(screen.getByLabelText("Suchen")).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Suche leeren" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Mine entfernen" })).toBeOnTheScreen();
+		});
+
+		test("an explicit prop still wins over labels", async () => {
+			await renderWithProviders(
+				<SearchBar clearAccessibilityLabel="Leeren" defaultValue="a" labels={german} placeholder="Name" />
+			);
+			expect(screen.getByRole("button", { name: "Leeren" })).toBeOnTheScreen();
+			expect(screen.getByPlaceholderText("Name")).toBeOnTheScreen();
 		});
 	});
 });

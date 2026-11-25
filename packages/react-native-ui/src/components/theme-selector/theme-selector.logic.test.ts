@@ -158,3 +158,10 @@ describe("resolveOptionTestID", () => {
 		expect(resolveOptionTestID("", "light")).toBeUndefined();
 	});
 });
+
+describe("resolveModeLabel with catalog labels", () => {
+	test("takes a caption from a resolved labels object and ignores group", () => {
+		expect(resolveModeLabel("light", { group: "Look", light: "Tag" })).toBe("Tag");
+		expect(resolveOptions({ labels: { dark: "Nacht" }, modes: ["dark"] })).toEqual([{ label: "Nacht", mode: "dark" }]);
+	});
+});

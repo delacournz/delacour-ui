@@ -1,4 +1,5 @@
 import { describe, expect, jest, test } from "@jest/globals";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Table } from "./table";
 import { useTable } from "./table.context";
@@ -289,6 +290,79 @@ describe("Table", () => {
 				</Table>
 			);
 			expect(screen.getByText("2 columns")).toBeOnTheScreen();
+		});
+	});
+
+	describe("labels", () => {
+		test("the labels prop names cells and the sort state", async () => {
+			await renderWithProviders(
+				<Table
+					columns={COLUMNS}
+					labels={{ cell: (header, value) => `${header}: ${value}`, sortedAscending: "aufsteigend" }}
+				>
+					<Table.Header>
+						<Table.Row>
+							<Table.Head sort={{ direction: "asc", onPress: () => undefined }}>Item</Table.Head>
+						</Table.Row>
+					</Table.Header>
+					<Table.Body>
+						<Table.Row>
+							<Table.Cell>Apples</Table.Cell>
+						</Table.Row>
+					</Table.Body>
+				</Table>
+			);
+			expect(screen.getByLabelText("Item: Apples")).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Item" }).props.accessibilityValue).toEqual({ text: "aufsteigend" });
+		});
+
+		test("a LabelsProvider supplies them and the prop wins; a cell's own label still wins", async () => {
+			await renderWithProviders(
+				<LabelsProvider labels={{ table: { cell: (header, value) => `${header} = ${value}` } }}>
+					<Table columns={COLUMNS}>
+						<Table.Header>
+							<Table.Row>
+								<Table.Head>Item</Table.Head>
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							<Table.Row>
+								<Table.Cell>Apples</Table.Cell>
+								<Table.Cell accessibilityLabel="Mine">x</Table.Cell>
+							</Table.Row>
+						</Table.Body>
+					</Table>
+					<Table columns={COLUMNS} labels={{ cell: (header, value) => `${header} - ${value}` }}>
+						<Table.Header>
+							<Table.Row>
+								<Table.Head>Item</Table.Head>
+							</Table.Row>
+						</Table.Header>
+						<Table.Body>
+							<Table.Row>
+								<Table.Cell>Pears</Table.Cell>
+							</Table.Row>
+						</Table.Body>
+					</Table>
+				</LabelsProvider>
+			);
+			expect(screen.getByLabelText("Item = Apples")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Item - Pears")).toBeOnTheScreen();
+			expect(screen.getByLabelText("Mine")).toBeOnTheScreen();
+		});
+
+		test("a pressable row joins its cell names through labels.row", async () => {
+			await renderWithProviders(
+				<Table columns={COLUMNS} labels={{ row: (parts) => parts.join(" | ") }}>
+					<Table.Body>
+						<Table.Row onPress={() => undefined}>
+							<Table.Cell>Apples</Table.Cell>
+							<Table.Cell>3</Table.Cell>
+						</Table.Row>
+					</Table.Body>
+				</Table>
+			);
+			expect(screen.getByRole("button", { name: "Apples | 3" })).toBeOnTheScreen();
 		});
 	});
 });

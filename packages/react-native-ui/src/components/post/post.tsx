@@ -1,6 +1,8 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View } from "react-native";
+import { useLabels } from "../../hooks/use-labels";
 import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
+import type { PostLabels } from "../../lib/labels";
 import { Pressable, type PressableProps } from "../pressable";
 import { type PostContextValue, PostProvider } from "./post.context";
 import { hasPostCardCarrier } from "./post.utils";
@@ -24,6 +26,12 @@ export type PostProps = Omit<PressableProps, "asChild" | "children"> & {
 	size?: PostSize;
 	/** Opens the post itself. Inner parts keep their own presses. Omit it and the card is a plain view. */
 	onPress?: PressableProps["onPress"];
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English: the time, the
+	 * author, community, stat and score labels, the vote arrows and announcement, the body toggle and
+	 * the card's own screen-reader stop. A part's own `accessibilityLabel` still wins.
+	 */
+	labels?: Partial<PostLabels>;
 	children?: ReactNode;
 	className?: string;
 };
@@ -33,12 +41,14 @@ function PostRoot({
 	size = "default",
 	onPress,
 	onLongPress,
+	labels: labelsProp,
 	disabled = false,
 	className,
 	children,
 	...props
 }: PostProps): ReactElement {
-	const context = useMemo<PostContextValue>(() => ({ variant, size }), [variant, size]);
+	const labels = useLabels("post", labelsProp);
+	const context = useMemo<PostContextValue>(() => ({ variant, size, labels }), [variant, size, labels]);
 	warnInteractiveChildInAccessible({ component: "Post", accessible: props.accessible, children });
 	const rootClass = postVariants({ variant, size, isDisabled: disabled }).root({ className });
 
@@ -64,7 +74,7 @@ function PostRoot({
 				{...props}
 				accessible={false}
 			>
-				{hasCarrier ? <PostCardAction onLongPress={onLongPress} onPress={onPress} /> : null}
+				{hasCarrier ? <PostCardAction labels={labels} onLongPress={onLongPress} onPress={onPress} /> : null}
 				{children}
 			</Pressable>
 		) : (

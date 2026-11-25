@@ -1,3 +1,4 @@
+import { DELACOUR_DEFAULT_LABELS, type SupportLabels } from "../../lib/labels";
 import type { BadgeColor } from "../badge/badge.variants";
 import type { SupportAvailability, SupportTicketStatus } from "./support.types";
 
@@ -5,6 +6,8 @@ export { SUPPORT_AVAILABILITIES, SUPPORT_TICKET_STATUSES } from "./support.types
 
 /** Which dot a past request draws: a reply nobody has read, a thread that moved, or nothing. */
 export type SupportConversationDot = "unread" | "updated" | "none";
+
+const DEFAULT_LABELS = DELACOUR_DEFAULT_LABELS.support;
 
 /** What a ticket status looks like and says. */
 export type SupportTicketStatusInfo = {
@@ -16,29 +19,11 @@ export type SupportTicketStatusInfo = {
 	needsReader: boolean;
 };
 
-const AVAILABILITY_LABEL: Record<SupportAvailability, string> = {
-	online: "Online",
-	away: "Away",
-	offline: "Offline",
-};
-
-const AVAILABILITY_STATUS: Record<SupportAvailability, string> = {
-	online: "We're online",
-	away: "We're away",
-	offline: "We're offline",
-};
-
-const TICKET_STATUS: Record<SupportTicketStatus, SupportTicketStatusInfo> = {
-	open: { label: "Open", color: "info", needsReader: false },
-	pending: { label: "Waiting on you", color: "warning", needsReader: true },
-	solved: { label: "Solved", color: "success", needsReader: false },
-	closed: { label: "Closed", color: "default", needsReader: false },
-};
-
-const DOT_SEGMENT: Record<SupportConversationDot, string | null> = {
-	unread: "unread reply",
-	updated: "updated",
-	none: null,
+const TICKET_STATUS: Record<SupportTicketStatus, Omit<SupportTicketStatusInfo, "label">> = {
+	open: { color: "info", needsReader: false },
+	pending: { color: "warning", needsReader: true },
+	solved: { color: "success", needsReader: false },
+	closed: { color: "default", needsReader: false },
 };
 
 const CALM_TYPING_OPACITIES = [1, 0.6, 0.3] as const;
@@ -51,31 +36,45 @@ function present(value: string | undefined): string | undefined {
 }
 
 /** The short word for an availability — `Online`, `Away`, `Offline`. */
-export function resolveAvailabilityWord(availability: SupportAvailability): string {
-	return AVAILABILITY_LABEL[availability];
+export function resolveAvailabilityWord(
+	availability: SupportAvailability,
+	labels: SupportLabels = DEFAULT_LABELS
+): string {
+	return labels.availability(availability);
 }
 
 /**
  * What the status line shows: the caller's wording when there is any ("Typically replies in under
  * an hour"), else the availability's own sentence ("We're online").
  */
-export function resolveAvailabilityLabel(availability: SupportAvailability, replyTime?: string): string {
-	return present(replyTime) ?? AVAILABILITY_STATUS[availability];
+export function resolveAvailabilityLabel(
+	availability: SupportAvailability,
+	replyTime?: string,
+	labels: SupportLabels = DEFAULT_LABELS
+): string {
+	return present(replyTime) ?? labels.availabilityStatus(availability);
 }
 
 /**
  * What the status line says to a screen reader. The availability leads, because the dot that draws
  * it is decorative and colour alone must not carry it: `"Away. Back tomorrow"`.
  */
-export function resolveStatusA11yLabel(availability: SupportAvailability, replyTime?: string): string {
+export function resolveStatusA11yLabel(
+	availability: SupportAvailability,
+	replyTime?: string,
+	labels: SupportLabels = DEFAULT_LABELS
+): string {
 	const wording = present(replyTime);
-	const word = AVAILABILITY_LABEL[availability];
-	return wording ? `${word}. ${wording}` : word;
+	const word = labels.availability(availability);
+	return wording ? labels.statusSpoken(word, wording) : word;
 }
 
 /** A ticket status's label, soft badge colour, and whether it is waiting on the reader. */
-export function resolveTicketStatus(status: SupportTicketStatus): SupportTicketStatusInfo {
-	return TICKET_STATUS[status];
+export function resolveTicketStatus(
+	status: SupportTicketStatus,
+	labels: SupportLabels = DEFAULT_LABELS
+): SupportTicketStatusInfo {
+	return { label: labels.ticketStatus(status), ...TICKET_STATUS[status] };
 }
 
 /**
@@ -99,37 +98,37 @@ export function resolveConversationDot({
  * here: `"Refund for order #4821, solved, unread reply, 2h. We've issued the refund."`. Absent
  * segments drop out with their commas.
  */
-export function resolveConversationA11yLabel({
-	title,
-	reference,
-	status,
-	dot,
-	timestamp,
-	preview,
-}: {
-	title: string;
-	reference?: string;
-	status: SupportTicketStatus;
-	dot: SupportConversationDot;
-	timestamp?: string;
-	preview?: string;
-}): string {
-	const head = [
+export function resolveConversationA11yLabel(
+	{
 		title,
-		present(reference),
-		TICKET_STATUS[status].label.toLowerCase(),
-		DOT_SEGMENT[dot],
-		present(timestamp),
-	]
-		.filter((segment): segment is string => typeof segment === "string" && segment.length > 0)
-		.join(", ");
+		reference,
+		status,
+		dot,
+		timestamp,
+		preview,
+	}: {
+		title: string;
+		reference?: string;
+		status: SupportTicketStatus;
+		dot: SupportConversationDot;
+		timestamp?: string;
+		preview?: string;
+	},
+	labels: SupportLabels = DEFAULT_LABELS
+): string {
+	const dotSegment = dot === "unread" ? labels.unreadReply : dot === "updated" ? labels.updated : undefined;
+	const head = labels.conversationSpoken(
+		[title, present(reference), labels.ticketStatusSpoken(status), dotSegment, present(timestamp)].filter(
+			(segment): segment is string => typeof segment === "string" && segment.length > 0
+		)
+	);
 	const body = present(preview);
-	return body ? `${head}. ${body}` : head;
+	return body ? labels.conversationWithPreview(head, body) : head;
 }
 
 /** The first word of a name, or a stand-in when the name is blank. */
-function firstName(name: string): string {
-	return name.trim().split(/\s+/)[0] || "Someone";
+function firstName(name: string, labels: SupportLabels): string {
+	return name.trim().split(/\s+/)[0] || labels.someone;
 }
 
 /**
@@ -137,46 +136,58 @@ function firstName(name: string): string {
  * answer the same question and the live one wins — by first name, the way a chat says it. Otherwise
  * the title and availability, or the availability alone.
  */
-export function resolveAgentStatusLine({
-	name,
-	title,
-	availability,
-	typing,
-}: {
-	name: string;
-	title?: string;
-	availability: SupportAvailability;
-	typing?: boolean;
-}): { text: string; live: boolean } {
-	if (typing) return { text: `${firstName(name)} is typing`, live: true };
-	const word = AVAILABILITY_LABEL[availability];
+export function resolveAgentStatusLine(
+	{
+		name,
+		title,
+		availability,
+		typing,
+	}: {
+		name: string;
+		title?: string;
+		availability: SupportAvailability;
+		typing?: boolean;
+	},
+	labels: SupportLabels = DEFAULT_LABELS
+): { text: string; live: boolean } {
+	if (typing) return { text: labels.typing(firstName(name, labels)), live: true };
+	const word = labels.availability(availability);
 	const ownTitle = present(title);
-	return { text: ownTitle ? `${ownTitle} · ${word}` : word, live: false };
+	return { text: ownTitle ? labels.agentStatusLine(ownTitle, word) : word, live: false };
 }
 
 /** The agent row's spoken label — full name, title and availability, or that they are typing. */
-export function resolveAgentA11yLabel({
-	name,
-	title,
-	availability,
-	typing,
-}: {
-	name: string;
-	title?: string;
-	availability: SupportAvailability;
-	typing?: boolean;
-}): string {
-	const fullName = present(name) ?? "Someone";
-	if (typing) return `${fullName} is typing`;
-	return [fullName, present(title), AVAILABILITY_LABEL[availability].toLowerCase()]
-		.filter((segment): segment is string => segment !== undefined)
-		.join(", ");
+export function resolveAgentA11yLabel(
+	{
+		name,
+		title,
+		availability,
+		typing,
+	}: {
+		name: string;
+		title?: string;
+		availability: SupportAvailability;
+		typing?: boolean;
+	},
+	labels: SupportLabels = DEFAULT_LABELS
+): string {
+	const fullName = present(name) ?? labels.someone;
+	if (typing) return labels.typing(fullName);
+	return labels.agentSpoken(
+		[fullName, present(title), labels.availabilitySpoken(availability)].filter(
+			(segment): segment is string => segment !== undefined
+		)
+	);
 }
 
 /** A topic's spoken label: `"Billing. Invoices, refunds and plans"`. */
-export function resolveTopicA11yLabel(label: string, description?: string): string {
+export function resolveTopicA11yLabel(
+	label: string,
+	description?: string,
+	labels: SupportLabels = DEFAULT_LABELS
+): string {
 	const body = present(description);
-	return body ? `${label}. ${body}` : label;
+	return body ? labels.topicSpoken(label, body) : label;
 }
 
 /**
@@ -193,8 +204,8 @@ export function resolveNextTopic(
 }
 
 /** The hint an escalating reply adds, so a screen-reader user hears which reply reaches a person. */
-export function resolveReplyA11yHint(escalates: boolean): string | undefined {
-	return escalates ? "Talk to a person" : undefined;
+export function resolveReplyA11yHint(escalates: boolean, labels: SupportLabels = DEFAULT_LABELS): string | undefined {
+	return escalates ? labels.escalateHint : undefined;
 }
 
 /**

@@ -176,6 +176,14 @@ The pan carries `testID: "stack-card-pan"` so a render test can drive it with `f
   action *button* keeps its own focus — stealing it would break pressing "Like" again — and a
   drag or a `ref` call never takes focus from wherever it is. The empty deck has no focus target;
   the announcement says so.
+- **The spoken strings are the `labels` prop, not literals**: `swipeDown`/`swipeLeft`/`swipeRight`/`swipeUp`,
+  `undo`, `empty`, `position(position, count)` (one-based), `throwAnnouncement`, `emptyAnnouncement` and
+  `undoAnnouncement` come from `lib/labels` through `useLabels("stackCard", labels)`, and the resolved set rides
+  the context (`Card` reads `undo`, `Action` reads `undo`, `labelFor` reads `swipe*`). Precedence is a part's
+  `label` / the root's `directionLabels` ← the root's `labels` ← `DelacourProvider` `labels` ← English.
+  `resolveStackCardPosition` and `resolveStackCardAnnouncement` take `labels` as a defaulted trailing argument.
+  `STACK_CARD_DEFAULT_DIRECTION_LABELS` and `STACK_CARD_ANNOUNCE_EMPTY` alias the defaults;
+  `STACK_CARD_ANNOUNCE_UNDO` / `_NEXT` are deprecated literals.
 - **`announce={false}` is the opt-out** for both the speech and the focus move.
 - Stamps are hidden from assistive technology; the actions say the same thing in
   words.

@@ -8,10 +8,12 @@
 		"layout"
 	],
 	"registryDependencies": [
+		"labels",
 		"pressable",
 		"tv",
 		"use-announce",
-		"use-controllable-state"
+		"use-controllable-state",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -37,7 +39,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/splitter/index.ts",
 			"target": "splitter/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/splitter/splitter-grip.tsx",
@@ -70,6 +78,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
 				}
@@ -90,6 +102,14 @@
 					"to": "@registry/hooks/use-controllable-state"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
 				}
@@ -105,6 +125,10 @@
 			"target": "splitter/splitter.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -123,6 +147,10 @@
 			"target": "splitter/splitter.variants.test.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../styles/theme-tokens.test",
 					"to": "@registry/styles/theme-tokens.test"
@@ -145,6 +173,10 @@
 				{
 					"from": "../../hooks/use-announce",
 					"to": "@registry/hooks/use-announce"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
 				},
 				{
 					"from": "../../test/render",

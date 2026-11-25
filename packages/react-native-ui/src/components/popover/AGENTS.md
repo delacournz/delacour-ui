@@ -112,6 +112,7 @@ half-initialised.
 - **`isUnstyled` strips the surface, the border, the corner and the padding** of the panel and the
   arrow's paint, keeping the gap. `background` is drawn absolutely behind the content, for a
   caller painting their own surface.
+- **The spoken strings are the `labels` prop, not literals.** `labels?: Partial<PopoverLabels>` on `Popover` (`close`): explicit `accessibilityLabel` on `Popover.Close` ← root `labels` ← `DelacourProvider` ← English "Close". The root resolves once with `useLabels("popover", …)` and shares it through `PopoverContext`; the `asChild` Close speaks its child. No resolver takes labels.
 - **The ✕ reaches 44pt through slop alone.** Its 20pt glyph has no padding, so `useMinimumHitSlop` adds 12pt a side (8pt left a 36pt target); no pixel moves.
 - **Triggers donate the press.** `Popover.Trigger asChild` hands the toggle to the child's
   `onPress` and composes the measuring ref onto the child's, for `BottomSheet.Trigger`'s reason —

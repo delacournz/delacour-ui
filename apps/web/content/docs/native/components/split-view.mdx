@@ -241,6 +241,10 @@ function Results() {
       default: '"selection"',
       description: "Played when the stop a release would land on changes.",
     },
+    labels: {
+      type: "Partial<SplitViewLabels>",
+      description: "The spoken strings — dragArea, position(current, count), nextPosition — over `DelacourProvider`'s `labels`. `accessibilityLabel` on the drag row still wins over dragArea.",
+    },
     className: { type: "string" },
     children: { type: "ReactNode", description: "SplitView.Top, SplitView.DragArea and SplitView.Bottom, in that order." },
   }}

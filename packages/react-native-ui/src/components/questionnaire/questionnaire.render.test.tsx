@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
+import type { ReactElement } from "react";
 import { AccessibilityInfo, Text } from "react-native";
+import { LabelsProvider } from "../../hooks/use-labels";
 import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Questionnaire } from "./questionnaire";
 import type { Answers, Question } from "./questionnaire.types";
@@ -522,6 +524,111 @@ describe("Questionnaire: controlled and uncontrolled", () => {
 		);
 		expect(screen.getByText("Do you agree?")).toBeOnTheScreen();
 		expect(onCurrentChange).not.toHaveBeenCalled();
+	});
+});
+
+describe("Questionnaire: labels", () => {
+	const german = {
+		answerRequired: "Antwort erforderlich",
+		back: "Zurück",
+		errorRequired: "Bitte antworten.",
+		next: "Weiter",
+		no: "Nein",
+		otherAnswer: "Andere Antwort",
+		otherPlaceholder: "Bitte angeben",
+		questionAnnouncement: (count: string, title: string) => `${count} - ${title}`,
+		questionCount: (current: number, total: number) => `Frage ${current} von ${total}`,
+		scaleValue: (value: number, max: number) => `${value} von ${max}`,
+		skip: "Überspringen",
+		skipQuestion: "Diese Frage überspringen",
+		submit: "Absenden",
+		yes: "Ja",
+	};
+
+	test("the labels prop changes the buttons, hint, count, error and announcement", async () => {
+		const spy = announce();
+		await renderWithProviders(<Questionnaire haptic={false} labels={german} questions={FLOW} />);
+		expect(screen.getByRole("progressbar", { name: "Frage 1 von 3" })).toBeOnTheScreen();
+		const next = screen.getByRole("button", { name: "Weiter" });
+		expect(next.props.accessibilityHint).toBe("Antwort erforderlich");
+		await fireEvent(next, "accessibilityTap");
+		expect(spy).toHaveBeenCalledWith("Bitte antworten.");
+		await fireEvent.changeText(screen.getByPlaceholderText("Your name"), "Ada");
+		await fireEvent(screen.getByRole("button", { name: "Weiter" }), "accessibilityTap");
+		expect(spy).toHaveBeenCalledWith("Frage 2 von 3 - Do you agree?");
+		expect(screen.getByRole("radio", { name: "Ja" })).toBeOnTheScreen();
+		expect(screen.getByRole("radio", { name: "Nein" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Diese Frage überspringen" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Zurück" })).toBeOnTheScreen();
+	});
+
+	test("the labels prop changes the scale buttons, the Other field and Submit", async () => {
+		await renderWithProviders(<Questionnaire haptic={false} labels={german} questions={[SCALE]} />);
+		expect(screen.getByRole("radio", { name: "2 von 3" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Absenden" })).toBeOnTheScreen();
+	});
+
+	test("the Other field is named by the labels", async () => {
+		await renderWithProviders(<Questionnaire haptic={false} labels={german} questions={[SINGLE]} />);
+		await fireEvent(screen.getByRole("radio", { name: "Something else" }), "accessibilityTap");
+		expect(screen.getByLabelText("Andere Antwort")).toBeOnTheScreen();
+		expect(screen.getByPlaceholderText("Bitte angeben")).toBeOnTheScreen();
+	});
+
+	test("DelacourProvider labels change them too", async () => {
+		await renderWithProviders(
+			<LabelsProvider labels={{ questionnaire: german }}>
+				<Questionnaire haptic={false} questions={FLOW} />
+			</LabelsProvider>
+		);
+		expect(screen.getByRole("progressbar", { name: "Frage 1 von 3" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Weiter" })).toBeOnTheScreen();
+	});
+
+	test("explicit props still win: children, getErrorMessage, yesLabel and noLabel", async () => {
+		const spy = announce();
+		await renderWithProviders(
+			<Questionnaire getErrorMessage={() => "mine"} haptic={false} labels={german} questions={FLOW}>
+				<Questionnaire.Question />
+				<Questionnaire.Footer>
+					<Questionnaire.Next>Go</Questionnaire.Next>
+				</Questionnaire.Footer>
+			</Questionnaire>
+		);
+		await fireEvent(screen.getByRole("button", { name: "Go" }), "accessibilityTap");
+		expect(spy).toHaveBeenCalledWith("mine");
+		expect(screen.queryByRole("button", { name: "Weiter" })).not.toBeOnTheScreen();
+	});
+
+	test("an inline announcement label with the same words does not re-announce the question", async () => {
+		const spy = announce();
+		const flow = (): ReactElement => (
+			<Questionnaire
+				haptic={false}
+				labels={{ questionAnnouncement: (count: string, title: string) => `${count} - ${title}` }}
+				questions={FLOW}
+			/>
+		);
+		const view = await renderWithProviders(flow());
+		await fireEvent.changeText(screen.getByPlaceholderText("Your name"), "Ada");
+		await fireEvent(screen.getByRole("button", { name: "Next" }), "accessibilityTap");
+		const announced = spy.mock.calls.filter(([message]) => message === "Question 2 of 3 - Do you agree?").length;
+		expect(announced).toBe(1);
+		await view.rerender(flow());
+		await view.rerender(flow());
+		expect(spy.mock.calls.filter(([message]) => message === "Question 2 of 3 - Do you agree?")).toHaveLength(1);
+	});
+
+	test("a question's yesLabel and noLabel win over the labels", async () => {
+		await renderWithProviders(
+			<Questionnaire
+				haptic={false}
+				labels={german}
+				questions={[{ ...YES_NO, noLabel: "Nope", yesLabel: "Absolutely" }]}
+			/>
+		);
+		expect(screen.getByRole("radio", { name: "Absolutely" })).toBeOnTheScreen();
+		expect(screen.getByRole("radio", { name: "Nope" })).toBeOnTheScreen();
 	});
 });
 

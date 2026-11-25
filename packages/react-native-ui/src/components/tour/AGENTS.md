@@ -138,8 +138,11 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
   overflow a 320pt phone at the 44pt button height the touch-target rule requires. The footer holds
   the three actions; Skip sits at the start.
 - **Skip is hidden on the last step**, where Done already ends the tour (`resolveTourFooter`).
-- **`TourLabels` gains `announcement`** ("Step 2 of 5"), so the spoken position is translatable
-  alongside the visible one.
+- **Spoken strings are the `labels` prop.** `TourLabels` lives in `lib/labels.ts` (`next`, `back`, `skip`,
+  `finish`, `progress`, `announcement`), resolved once in `Tour` by `useLabels("tour", labels)`: English,
+  then `DelacourProvider`'s `labels`, then the prop. The card reads it; `TOUR_DEFAULT_LABELS` aliases
+  the English and `resolveTourLabels` still merges a partial over it. `announcement` ("Step 2 of 5")
+  makes the spoken position translatable alongside the visible one.
 - **An explicit `placement` flips when only the other side fits**, rather than running the card off
   screen.
 - **`haptic` and `className`** are added to `TourProps`, per the category rule that a component

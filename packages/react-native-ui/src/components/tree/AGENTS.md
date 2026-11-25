@@ -129,6 +129,11 @@ are selected.
 - **A branch offers `expand` or `collapse` as a custom action** — only the one that
   applies, and none while disabled. `resolveTreeAccessibilityAction` refuses an action that
   would change nothing.
+- **The spoken strings are the `labels` prop, not literals**: `level` (a function,
+  "Level 2"), `expand` and `collapse` come from `lib/labels` through `useLabels("tree", labels)`.
+  Precedence is the root's `labels` <- `DelacourProvider` `labels` <- English. The resolved
+  set rides `TreeContextValue`; only `Tree.Trigger` reads it. `resolveTreeAccessibility` takes
+  a defaulted `labels` field in its options object; `resolveTreeAccessibilityAction` takes none.
 - **The chevron and the guide lines are hidden from assistive technology.** They restate
   what the row already announces.
 

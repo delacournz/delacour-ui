@@ -1,3 +1,4 @@
+export type { TagInputLabels } from "../../lib/labels";
 export { TagInput, type TagInputProps } from "./tag-input";
 export { type TagInputContextValue, TagInputProvider, useTagInput, useTagInputContext } from "./tag-input.context";
 export {

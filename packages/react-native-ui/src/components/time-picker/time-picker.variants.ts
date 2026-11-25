@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { cn } from "../../lib/cn";
+import { DELACOUR_DEFAULT_LABELS, type TimePickerLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { type InputBoxState, type InputSize, inputVariants } from "../input/input.variants";
 import {
@@ -292,31 +293,32 @@ export function resolveTimeFromColumn(time: TimeValue, kind: TimeWheelColumnKind
 
 /**
  * What a screen reader speaks for a column's value. The column, not the row,
- * is the accessible element, so this is the whole of what it hears.
+ * is the accessible element, so this is the whole of what it hears. `labels`
+ * is the picker's resolved strings.
  */
-export function resolveColumnAccessibilityValue(kind: TimeWheelColumnKind, label: string): string {
+export function resolveColumnAccessibilityValue(
+	kind: TimeWheelColumnKind,
+	label: string,
+	labels: TimePickerLabels = DELACOUR_DEFAULT_LABELS.timePicker
+): string {
 	switch (kind) {
 		case "hour":
-			return `${Number(label)} o'clock`;
-		case "minute": {
-			const minutes = Number(label);
-			return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`;
-		}
-		case "second": {
-			const seconds = Number(label);
-			return `${seconds} ${seconds === 1 ? "second" : "seconds"}`;
-		}
+			return labels.hourValue(Number(label));
+		case "minute":
+			return labels.minuteValue(Number(label));
+		case "second":
+			return labels.secondValue(Number(label));
 		case "period":
 			return label;
 	}
 }
 
-/** The name a screen reader speaks for each column. */
+/** The name a screen reader speaks for each column — the catalog's English defaults. */
 export const TIME_WHEEL_COLUMN_LABELS: Record<TimeWheelColumnKind, string> = {
-	hour: "Hour",
-	minute: "Minute",
-	second: "Second",
-	period: "AM or PM",
+	hour: DELACOUR_DEFAULT_LABELS.timePicker.hour,
+	minute: DELACOUR_DEFAULT_LABELS.timePicker.minute,
+	second: DELACOUR_DEFAULT_LABELS.timePicker.second,
+	period: DELACOUR_DEFAULT_LABELS.timePicker.period,
 };
 
 /**
@@ -324,22 +326,27 @@ export const TIME_WHEEL_COLUMN_LABELS: Record<TimeWheelColumnKind, string> = {
  *
  * Bare ("Hour") unless the wheel stands in for a whole field, as it does inline:
  * then each column leads with the field's name ("Reminder, Hour") and the
- * required word follows the column it names, as `Slider.Thumb` does. Pure.
+ * required word follows the column it names, as `Slider.Thumb` does. The
+ * required word belongs to `Field`, so `requiredLabel` stays its own argument.
+ * Pure.
  */
 export function resolveColumnAccessibilityLabel({
 	kind,
 	label,
 	isRequired = false,
 	requiredLabel = "required",
+	labels = DELACOUR_DEFAULT_LABELS.timePicker,
 }: {
 	kind: TimeWheelColumnKind;
 	/** The enclosing field's name, when the wheel is the whole control. */
 	label?: string;
 	isRequired?: boolean;
 	requiredLabel?: string;
+	/** The picker's resolved strings. */
+	labels?: TimePickerLabels;
 }): string {
-	const column = TIME_WHEEL_COLUMN_LABELS[kind];
+	const column = labels[kind];
 	const name = label?.trim();
 	if (!name) return column;
-	return isRequired ? `${name}, ${column}, ${requiredLabel}` : `${name}, ${column}`;
+	return labels.column(name, column, isRequired ? requiredLabel : undefined);
 }

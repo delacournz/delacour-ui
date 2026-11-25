@@ -1,3 +1,4 @@
+export type { TimelineLabels } from "../../lib/labels";
 export { Timeline, type TimelineProps } from "./timeline";
 export {
 	type TimelineContextValue,

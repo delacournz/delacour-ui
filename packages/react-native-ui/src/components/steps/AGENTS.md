@@ -104,6 +104,11 @@ internal and drawn by the items themselves.
   its `accessibilityValue.text` is `resolveStepAccessibilityValue` — "Step 2 of 3,
   completed", with ", has an error" and ", loading" appended. VoiceOver reads it
   as "Payment, Step 2 of 3, completed". The current step is `selected`.
+- **The spoken strings are the `labels` prop, not literals**: keys `position`, `completed`,
+  `current`, `upcoming`, `error`, `loading`, `value` come from `lib/labels` through
+  `useLabels("steps", labels)` on the root (own prop over `DelacourProvider`'s `labels` over
+  English) and ride the root context to `Steps.Item`, the only part that reads them.
+  `resolveStepAccessibilityValue` takes `labels` as a defaulted field.
 - **The number does not scale with the OS text size.** The circle is a fixed
   edge, so a scaled numeral would spill out of it, and the position it shows is
   already in the accessibility value. The title and description scale as usual.

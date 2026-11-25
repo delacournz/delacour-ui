@@ -50,7 +50,7 @@ export type RatingStarsProps = Omit<ViewProps, "children" | "style"> & {
  * which is what snaps a controlled rating back when its parent rejects a value.
  *
  * **To assistive technology the row is one `adjustable` control.** Its value is
- * spoken as "3.5 out of 5" and a swipe up or down steps it. A read-only rating
+ * spoken as "3.5 out of 5" (`labels.value`) and a swipe up or down steps it. A read-only rating
  * is an `image` with the same value: something to read, not something to set.
  */
 export function RatingStars({ className, onLayout, ...props }: RatingStarsProps): ReactElement {
@@ -65,6 +65,7 @@ export function RatingStars({ className, onLayout, ...props }: RatingStarsProps)
 		isReadOnly,
 		allowClear,
 		haptic,
+		labels,
 		setValue,
 		commitEnd,
 	} = useRatingPart("Rating.Stars");
@@ -173,10 +174,10 @@ export function RatingStars({ className, onLayout, ...props }: RatingStarsProps)
 		<GestureDetector gesture={gesture}>
 			<View
 				accessibilityActions={isReadOnly ? undefined : ACCESSIBILITY_ACTIONS}
-				accessibilityLabel="Rating"
+				accessibilityLabel={labels.name}
 				accessibilityRole={isReadOnly ? "image" : "adjustable"}
 				accessibilityState={{ disabled: isDisabled }}
-				accessibilityValue={{ max: count, min: 0, now: value, text: describeRating(value, count) }}
+				accessibilityValue={{ max: count, min: 0, now: value, text: describeRating(value, count, labels) }}
 				accessible
 				className={slots.stars({ className })}
 				onAccessibilityAction={handleAccessibilityAction}

@@ -67,7 +67,7 @@ export function StepsItem({
 	...props
 }: StepsItemProps): ReactElement {
 	const root = useStepsPart("Steps.Item");
-	const { value, count, orientation, size, variant, select } = root;
+	const { value, count, orientation, size, variant, select, labels } = root;
 
 	const status = resolveStepStatus({ completed, step, value });
 	const isCurrent = step === value;
@@ -132,7 +132,7 @@ export function StepsItem({
 		);
 
 	const accessibilityValue = {
-		text: resolveStepAccessibilityValue({ count, isInvalid, isLoading, status, step }),
+		text: resolveStepAccessibilityValue({ count, isInvalid, isLoading, labels, status, step }),
 	};
 	const state = { ...accessibilityState, selected: isCurrent };
 

@@ -385,6 +385,12 @@ describe("resolveToastHaptic", () => {
 });
 
 describe("accessibility", () => {
+	test("the announcement takes custom labels, and a title alone needs none", () => {
+		const labels = { announcement: (title: string, description: string) => `${title} – ${description}` };
+		expect(resolveToastAnnouncement({ title: "Fehler", description: "Bank" }, labels)).toBe("Fehler – Bank");
+		expect(resolveToastAnnouncement({ title: "Fehler" }, labels)).toBe("Fehler");
+	});
+
 	test("the announcement is the title, then the description", () => {
 		expect(resolveToastAnnouncement({ title: "Saved" })).toBe("Saved");
 		expect(resolveToastAnnouncement({ title: "Upload failed", description: "Try again" })).toBe(

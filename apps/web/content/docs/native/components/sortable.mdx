@@ -138,7 +138,7 @@ animated style that follows the lift without a render), and `moveUp` / `moveDown
   **Move up** and **Move down** actions and the value "Position 2 of 5". An action reorders
   immediately and announces the new position.
 - A row only offers the moves it can make: none when pinned or disabled, no Move up at the top.
-- The handle is a 44-point button labelled "Drag to reorder"; pass `accessibilityLabel` to change it.
+- The handle is a 44-point button labelled "Drag to reorder" by default; pass `accessibilityLabel`, or set `labels`, to change it.
 - With reduce motion on, rows snap to their slots instead of springing. The row under your finger
   still follows it.
 
@@ -171,6 +171,11 @@ Extends `ViewProps`.
       default: '{ lift: "medium", pass: "selection" }',
     },
     isDisabled: { type: "boolean" },
+    labels: {
+      type: "Partial<SortableLabels>",
+      description:
+        "The spoken strings (handle, move actions, position) over `DelacourProvider`'s `labels`.",
+    },
     scrollRef: { type: "AnimatedRef<Animated.ScrollView>", description: "The enclosing scroller, for auto-scroll." },
     autoscrollThreshold: { type: "number", default: "72" },
     autoscrollSpeed: { type: "number", default: "8" },
@@ -200,7 +205,7 @@ Extends `ViewProps`. Children replace the grip glyph.
 
 <TypeTable
   type={{
-    accessibilityLabel: { type: "string", default: '"Drag to reorder"' },
+    accessibilityLabel: { type: "string", default: '"Drag to reorder" (labels.handle)' },
     className: { type: "string" },
   }}
 />

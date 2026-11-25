@@ -1,3 +1,4 @@
+export type { ProgressLabels } from "../../lib/labels";
 export { Progress, type ProgressProps } from "./progress";
 export {
 	type ProgressContextValue,

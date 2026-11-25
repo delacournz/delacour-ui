@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS, type TimePickerLabels } from "../../lib/labels";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { INPUT_SIZES, INPUT_VARIANTS, inputVariants } from "../input/input.variants";
 import {
@@ -15,6 +16,7 @@ import {
 	TIME_PICKER_DEFAULT_VISIBLE_ROWS,
 	TIME_PICKER_ROW_HEIGHTS,
 	TIME_PICKER_VISIBLE_ROWS,
+	TIME_WHEEL_COLUMN_LABELS,
 	type TimeWheelColumnKind,
 	type TimeWheelColumnModel,
 	timePickerVariants,
@@ -346,5 +348,45 @@ describe("resolveColumnAccessibilityLabel", () => {
 
 	test("treats a blank group name as none", () => {
 		expect(resolveColumnAccessibilityLabel({ kind: "hour", label: "  " })).toBe("Hour");
+	});
+});
+
+describe("resolvers with custom labels", () => {
+	const labels: TimePickerLabels = {
+		...DELACOUR_DEFAULT_LABELS.timePicker,
+		hour: "Stunde",
+		minute: "Minute",
+		second: "Sekunde",
+		period: "AM oder PM",
+		column: (field, column, required) =>
+			required === undefined ? `${field} / ${column}` : `${field} / ${column} / ${required}`,
+		hourValue: (hour) => `${hour} Uhr`,
+		minuteValue: (minutes) => `${minutes} min`,
+		secondValue: (seconds) => `${seconds} s`,
+	};
+
+	test("resolveColumnAccessibilityValue speaks the labels", () => {
+		expect(resolveColumnAccessibilityValue("hour", "3", labels)).toBe("3 Uhr");
+		expect(resolveColumnAccessibilityValue("minute", "30", labels)).toBe("30 min");
+		expect(resolveColumnAccessibilityValue("second", "15", labels)).toBe("15 s");
+		expect(resolveColumnAccessibilityValue("period", "PM", labels)).toBe("PM");
+	});
+
+	test("resolveColumnAccessibilityLabel names the column and lays out the group", () => {
+		expect(resolveColumnAccessibilityLabel({ kind: "hour", labels })).toBe("Stunde");
+		expect(resolveColumnAccessibilityLabel({ kind: "hour", label: "Wecker", labels })).toBe("Wecker / Stunde");
+		expect(
+			resolveColumnAccessibilityLabel({
+				kind: "hour",
+				label: "Wecker",
+				isRequired: true,
+				requiredLabel: "Pflicht",
+				labels,
+			})
+		).toBe("Wecker / Stunde / Pflicht");
+	});
+
+	test("TIME_WHEEL_COLUMN_LABELS aliases the catalog", () => {
+		expect(TIME_WHEEL_COLUMN_LABELS.period).toBe(DELACOUR_DEFAULT_LABELS.timePicker.period);
 	});
 });

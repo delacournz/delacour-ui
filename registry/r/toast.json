@@ -12,12 +12,14 @@
 		"announce",
 		"icon",
 		"icons",
+		"labels",
 		"overlay",
 		"pressable",
 		"spinner",
 		"text",
 		"tv",
-		"use-announce"
+		"use-announce",
+		"use-labels"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -46,7 +48,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/toast/index.ts",
 			"target": "toast/index.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/toast/toast-action.tsx",
@@ -128,6 +136,10 @@
 					"to": "@registry/hooks/use-announce"
 				},
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
 					"from": "../../lib/announce",
 					"to": "@registry/lib/announce"
 				},
@@ -170,7 +182,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/toast/toast.context.tsx",
 			"target": "toast/toast.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/toast/toast.offset.ts",
@@ -203,6 +221,14 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
+				},
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
+				{
 					"from": "../icon",
 					"to": "@registry/ui/icon"
 				}
@@ -213,6 +239,10 @@
 			"target": "toast/toast.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
@@ -280,6 +310,10 @@
 				{
 					"from": "../../hooks/use-announce",
 					"to": "@registry/hooks/use-announce"
+				},
+				{
+					"from": "../../hooks/use-labels",
+					"to": "@registry/hooks/use-labels"
 				},
 				{
 					"from": "../../test/render",

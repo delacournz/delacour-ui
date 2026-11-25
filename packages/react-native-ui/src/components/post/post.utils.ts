@@ -3,8 +3,11 @@
  * spoken labels.
  *
  * Free of React Native imports so it stays unit-testable — it must not
- * pull in React Native's Flow-typed source. See AGENTS.md.
+ * pull in React Native's Flow-typed source. See AGENTS.md. It imports only the
+ * label catalog, which imports nothing, and holds no English of its own.
  */
+
+import { DELACOUR_DEFAULT_LABELS, type PostLabels, type PostTimeAgo } from "../../lib/labels";
 
 const COMPACT_UNITS = [
 	{ size: 1e3, suffix: "K" },
@@ -57,31 +60,10 @@ export function formatGroupedNumber(n: number): string {
 	return sign + digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
-const MONTHS_LONG = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
-] as const;
-
 const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 const WEEK_MS = 7 * DAY_MS;
-
-/** `3 minutes ago`, `1 hour ago`. */
-function spokenAgo(count: number, unit: string): string {
-	return `${count} ${unit}${count === 1 ? "" : "s"} ago`;
-}
 
 /** A relative time, printed and spoken. */
 export type RelativeTime = {
@@ -100,29 +82,32 @@ export type RelativeTime = {
  * the year only when it is not `now`'s. Local calendar, because that is the
  * calendar the reader lives in.
  */
-export function formatRelativeTime(date: Date, now: Date): RelativeTime {
+export function formatRelativeTime(
+	date: Date,
+	now: Date,
+	labels: PostLabels = DELACOUR_DEFAULT_LABELS.post
+): RelativeTime {
 	const time = date.getTime();
 	if (Number.isNaN(time) || Number.isNaN(now.getTime())) return { short: "", spoken: "" };
 
-	const elapsed = now.getTime() - time;
-	if (elapsed < MINUTE_MS) return { short: "now", spoken: "just now" };
-	if (elapsed < HOUR_MS) {
-		const minutes = Math.floor(elapsed / MINUTE_MS);
-		return { short: `${minutes}m`, spoken: spokenAgo(minutes, "minute") };
-	}
-	if (elapsed < DAY_MS) {
-		const hours = Math.floor(elapsed / HOUR_MS);
-		return { short: `${hours}h`, spoken: spokenAgo(hours, "hour") };
-	}
-	if (elapsed < WEEK_MS) {
-		const days = Math.floor(elapsed / DAY_MS);
-		return { short: `${days}d`, spoken: spokenAgo(days, "day") };
-	}
+	const ago = resolveTimeAgo(date, now);
+	return { short: labels.timeShort(ago), spoken: labels.timeSpoken(ago) };
+}
 
-	const month = date.getMonth();
-	const day = date.getDate();
-	const year = date.getFullYear() === now.getFullYear() ? "" : `, ${date.getFullYear()}`;
-	return { short: `${MONTHS_SHORT[month]} ${day}${year}`, spoken: `${MONTHS_LONG[month]} ${day}${year}` };
+/** The bucket `date` falls in relative to `now`, which the labels turn into words. */
+function resolveTimeAgo(date: Date, now: Date): PostTimeAgo {
+	const elapsed = now.getTime() - date.getTime();
+	if (elapsed < MINUTE_MS) return { unit: "now" };
+	if (elapsed < HOUR_MS) return { unit: "minute", count: Math.floor(elapsed / MINUTE_MS) };
+	if (elapsed < DAY_MS) return { unit: "hour", count: Math.floor(elapsed / HOUR_MS) };
+	if (elapsed < WEEK_MS) return { unit: "day", count: Math.floor(elapsed / DAY_MS) };
+	const year = date.getFullYear();
+	return {
+		unit: "date",
+		month: date.getMonth(),
+		day: date.getDate(),
+		year: year === now.getFullYear() ? undefined : year,
+	};
 }
 
 /** One run of a post's body. `raw` is the source text; `value` is what a handler receives. */
@@ -212,32 +197,41 @@ export function tokenizePostBody(body: string): BodyToken[] {
  * `accessibilityState.selected`, which VoiceOver reads as "selected" itself. A
  * string value the same as the label (`Save`) is not said twice.
  */
-export function resolvePostStatLabel(label: string, value: number | string | undefined, _active: boolean): string {
+export function resolvePostStatLabel(
+	label: string,
+	value: number | string | undefined,
+	_active: boolean,
+	labels: PostLabels = DELACOUR_DEFAULT_LABELS.post
+): string {
 	if (value === undefined || value === "") return label;
-	if (typeof value === "number") return `${label}, ${formatGroupedNumber(value)}`;
-	return value === label ? label : `${label}, ${value}`;
+	if (typeof value === "string" && value === label) return label;
+	return labels.stat(label, typeof value === "number" ? formatGroupedNumber(value) : value);
 }
 
 /** The label of a vote group: `Score 1,240`. */
-export function resolveVotesLabel(score: number | string): string {
-	return `Score ${typeof score === "number" ? formatGroupedNumber(score) : score}`;
+export function resolveVotesLabel(score: number | string, labels: PostLabels = DELACOUR_DEFAULT_LABELS.post): string {
+	return labels.score(typeof score === "number" ? formatGroupedNumber(score) : score);
 }
 
 /**
  * What a screen reader says for an author: name, handle, verified, and the time
  * as words — `Aria, @aria, verified, 3 minutes ago` — never `3m`.
  */
-export function resolveAuthorA11yLabel(input: {
-	name: string;
-	handle?: string;
-	verified: boolean;
-	spokenTime: string;
-}): string {
-	const parts = [input.name];
-	if (input.handle) parts.push(input.handle);
-	if (input.verified) parts.push("verified");
-	if (input.spokenTime) parts.push(input.spokenTime);
-	return parts.join(", ");
+export function resolveAuthorA11yLabel(
+	input: {
+		name: string;
+		handle?: string;
+		verified: boolean;
+		spokenTime: string;
+	},
+	labels: PostLabels = DELACOUR_DEFAULT_LABELS.post
+): string {
+	return labels.author({
+		name: input.name,
+		handle: input.handle,
+		isVerified: input.verified,
+		spokenTime: input.spokenTime,
+	});
 }
 
 /** The clamp a body renders with, and which toggle it offers. */
@@ -278,15 +272,18 @@ export type PostCardAction = { name: "longpress"; label: string };
  * `longpress` on every platform so iOS reaches the card's `onLongPress` through the actions rotor.
  * A disabled card, or one with no long press, adds nothing.
  */
-export function resolvePostCardActions({
-	hasLongPress,
-	disabled = false,
-}: {
-	hasLongPress: boolean;
-	disabled?: boolean;
-}): PostCardAction[] {
+export function resolvePostCardActions(
+	{
+		hasLongPress,
+		disabled = false,
+	}: {
+		hasLongPress: boolean;
+		disabled?: boolean;
+	},
+	labels: PostLabels = DELACOUR_DEFAULT_LABELS.post
+): PostCardAction[] {
 	if (disabled || !hasLongPress) return [];
-	return [{ name: "longpress", label: "More options" }];
+	return [{ name: "longpress", label: labels.moreOptions }];
 }
 
 /** Whether a card gets a screen-reader carrier: it has a press or long press and is not disabled. */
@@ -306,6 +303,9 @@ export function hasPostCardCarrier({
  * What the "more" / "less" toggle says to a screen reader: a label that contains the visible word
  * and whether the body is open.
  */
-export function resolveBodyToggleA11y(isExpanded: boolean): { label: string; expanded: boolean } {
-	return isExpanded ? { label: "Show less", expanded: true } : { label: "Show more", expanded: false };
+export function resolveBodyToggleA11y(
+	isExpanded: boolean,
+	labels: PostLabels = DELACOUR_DEFAULT_LABELS.post
+): { label: string; expanded: boolean } {
+	return isExpanded ? { label: labels.showLess, expanded: true } : { label: labels.showMore, expanded: false };
 }

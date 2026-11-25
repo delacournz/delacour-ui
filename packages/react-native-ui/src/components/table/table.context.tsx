@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { TableLabels } from "../../lib/labels";
 import type { TableColumnInput, TableRowTone, TableSection, TableSize, TableVariant } from "./table.variants";
 
 export type TableContextValue = {
@@ -12,6 +13,8 @@ export type TableContextValue = {
 	 * something other than text. A cell's accessible name is prefixed with it.
 	 */
 	headerLabels: readonly (string | undefined)[];
+	/** The resolved spoken strings, so a head, cell or row reads the same set as the root. */
+	labels: TableLabels;
 };
 
 /** Where a row sits, as published by the section around it. */

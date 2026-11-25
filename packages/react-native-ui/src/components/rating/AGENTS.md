@@ -136,7 +136,19 @@ is part of the context's own shape, so it lives beside it.
 - **`Rating.Output` is hidden from assistive technology**, because the row already
   speaks the value and a second, terser reading one swipe later is noise.
 - **Pass `accessibilityLabel` to `Rating.Stars`**, not the root. It defaults to
-  "Rating", which is correct and says nothing about *what* is being rated.
+  `labels.name` ("Rating"), which is correct and says nothing about *what* is
+  being rated.
+- **The spoken strings are the `labels` prop, not literals.** `RatingLabels` has
+  two keys: `name` (the stars' accessible name) and `value` (`(formatted, count)`,
+  "3.5 out of 5"). Precedence: an explicit `accessibilityLabel` /
+  `accessibilityValue` on `Rating.Stars` <- the root's `labels` <-
+  `DelacourProvider`'s `labels` <- English. The root resolves once with
+  `useLabels("rating", labels)` and shares it through the context, so
+  `Rating.Stars` reads it from `useRatingPart` and a custom layout needs one prop.
+  `describeRating` takes `labels` as its last argument (default English) and
+  keeps `formatRatingValue`'s `Intl` formatting on the JS thread. The
+  increment/decrement actions are identifiers with no label, so nothing there is
+  spoken.
 
 ## Axes
 

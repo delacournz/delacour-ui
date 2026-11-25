@@ -306,6 +306,13 @@ describe("resolveProgressAccessibility", () => {
 		expect(value?.text).toMatch(/1,250 of .*2,000/);
 	});
 
+	test("labels.valueOf words the count, and valueLabel still wins", () => {
+		const labels = { valueOf: (current: string, max: string) => `${current} sur ${max}` };
+		const input = { isIndeterminate: false, labels, maxValue: 24, minValue: 0, value: 18 };
+		expect(resolveProgressAccessibility(input).value?.text).toBe("18 sur 24");
+		expect(resolveProgressAccessibility({ ...input, valueLabel: "Presque" }).value?.text).toBe("Presque");
+	});
+
 	test("prefers the caller's own words", () => {
 		expect(
 			resolveProgressAccessibility({

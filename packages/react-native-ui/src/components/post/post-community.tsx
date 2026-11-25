@@ -34,9 +34,9 @@ export function PostCommunity({
 	className,
 	...props
 }: PostCommunityProps): ReactElement {
-	const { variant, size } = usePostPart("Post.Community");
+	const { variant, size, labels } = usePostPart("Post.Community");
 	const slots = postVariants({ variant, size });
-	const label = accessibilityLabel ?? (typeof meta === "string" ? `${name}, ${meta}` : name);
+	const label = accessibilityLabel ?? labels.community(name, typeof meta === "string" ? meta : undefined);
 
 	const content = (
 		<>

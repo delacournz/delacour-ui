@@ -102,6 +102,14 @@ list.
   refusals are announced through `announce`, an injectable seam defaulting to
   `AccessibilityInfo.announceForAccessibility`; `rejectMessages` overrides the
   wording per reason.
+- **Spoken strings are the `labels` prop.** `labels?: Partial<TagInputLabels>` over
+  `DelacourProvider`'s `labels` over English (catalog key `tagInput`): `remove`, `clearAll`,
+  `added`, `removed`, `rejectDuplicate`/`rejectEmpty`/`rejectInvalid`/`rejectMax`, `tags`. The root
+  reads them (announcements, the field's value, the clear control) and hands the chip a resolved
+  `removeAccessibilityLabel` through context. `removeAccessibilityLabel`, `clearAccessibilityLabel`
+  and `rejectMessages` win. The `resolve*Announcement` and `resolveTagsAccessibilityLabel`
+  resolvers take `labels` as a defaulted trailing argument; `DEFAULT_REJECT_MESSAGES` aliases the
+  catalog. `added` takes the whole list so its order is localisable.
 - **The tag count rides on the field's `accessibilityValue`.** A container
   `View` cannot carry a label without folding the chips into it on iOS, so the
   count is read with the field instead: "Recipients, 3 tags".

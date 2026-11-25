@@ -1,5 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { SharedValue } from "react-native-reanimated";
+import type { StackCardLabels } from "../../lib/labels";
 import type { StackCardState } from "./stack-card.types";
 import type { StackCardDirection, StackCardLayout, StackCardStampColor } from "./stack-card.variants";
 
@@ -8,6 +9,8 @@ export type StackCardContextValue = StackCardState & {
 	directions: readonly StackCardDirection[];
 	/** What a screen reader and an action button call each direction. */
 	labelFor: (direction: StackCardDirection) => string;
+	/** The deck's resolved spoken strings. */
+	labels: StackCardLabels;
 	/** The colour of the stamp answering for each direction, which tints its action. */
 	stampColors: Partial<Record<StackCardDirection, StackCardStampColor>>;
 	/** Throws as the top card's own accessibility action does: focus follows to the new top card. */

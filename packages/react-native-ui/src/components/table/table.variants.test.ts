@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { createElement, Fragment, type ReactNode } from "react";
+import type { TableLabels } from "../../lib/labels";
 import {
 	collectTableHeaderLabels,
 	resolveCellAccessibilityLabel,
@@ -570,5 +571,38 @@ describe("resolveTableSortHitSlop", () => {
 		expect(TABLE_SORT_HEIGHT.md + 2 * md.top).toBe(44);
 		const sm = resolveTableSortHitSlop("sm");
 		expect(TABLE_SORT_HEIGHT.sm + 2 * sm.top).toBe(TABLE_ROW_HEIGHT.sm);
+	});
+});
+
+describe("table labels", () => {
+	const custom: TableLabels = {
+		sortedAscending: "auf",
+		sortedDescending: "ab",
+		notSorted: "keine",
+		cell: (header, value) => `${header}: ${value}`,
+		row: (parts) => parts.join(" | "),
+	};
+
+	test("resolveTableSortAccessibility speaks the given labels", () => {
+		const press = () => undefined;
+		expect(resolveTableSortAccessibility({ direction: "asc", onPress: press }, custom)).toEqual({
+			isSortable: true,
+			valueText: "auf",
+		});
+		expect(resolveTableSortAccessibility({ direction: "desc", onPress: press }, custom)).toEqual({
+			isSortable: true,
+			valueText: "ab",
+		});
+		expect(resolveTableSortAccessibility({ onPress: press }, custom)).toEqual({ isSortable: true, valueText: "keine" });
+	});
+
+	test("resolveCellAccessibilityLabel composes through labels.cell, bare value without a header", () => {
+		expect(resolveCellAccessibilityLabel(" Qty ", 3, custom)).toBe("Qty: 3");
+		expect(resolveCellAccessibilityLabel(undefined, 3, custom)).toBe("3");
+	});
+
+	test("resolveTableRowAccessibilityLabel joins through labels.row", () => {
+		expect(resolveTableRowAccessibilityLabel(["a", undefined, "b"], custom)).toBe("a | b");
+		expect(resolveTableRowAccessibilityLabel([undefined], { ...custom, row: () => "" })).toBeUndefined();
 	});
 });

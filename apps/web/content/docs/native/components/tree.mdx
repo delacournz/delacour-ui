@@ -201,6 +201,7 @@ Extends `ViewProps`.
     size: { type: '"sm" | "md"', default: '"md"' },
     isDisabled: { type: "boolean", description: "Disables every node, over a node's own prop." },
     haptic: { type: "false | HapticFeedback", default: '"selection"' },
+    labels: { type: "Partial<TreeLabels>", description: "The spoken strings (`level`, `expand`, `collapse`), laid over `DelacourProvider`'s `labels`." },
     className: { type: "string" },
   }}
 />

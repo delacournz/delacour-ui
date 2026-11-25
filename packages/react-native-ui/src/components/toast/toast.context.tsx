@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { ToastLabels } from "../../lib/labels";
 import type { ToastStatus } from "./toast.store";
 
 /** The action `Toast.Action` lends its root, so a screen reader's `activate` runs it. */
@@ -9,6 +10,8 @@ export type ToastRegisteredAction = {
 
 export type ToastContextValue = {
 	status: ToastStatus;
+	/** The resolved spoken strings: defaults, then the provider's, then the root's `labels`. */
+	labels: ToastLabels;
 	/** Hides the toast — the root's `onHide`, or the viewport's for the toast it is drawing. */
 	hide: () => void;
 	/** `Toast.Action` registers itself here while mounted, and passes `null` on unmount. */

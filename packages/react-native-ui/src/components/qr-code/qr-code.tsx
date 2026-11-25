@@ -1,6 +1,7 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useEffect, useMemo } from "react";
 import { PixelRatio, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import { useLabels } from "../../hooks/use-labels";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { type QRCodeContextValue, QRCodeProvider } from "./qr-code.context";
 import { planQrCode, QR_LOGO_DEFAULT_FRACTION } from "./qr-code.logo";
@@ -8,7 +9,6 @@ import { buildQrPath, resolveRenderScale } from "./qr-code.path";
 import type { QRCodeProps } from "./qr-code.types";
 import {
 	QR_DEFAULT_COLORS,
-	QR_UNAVAILABLE_LABEL,
 	qrCodeVariants,
 	resolveEffectiveEcc,
 	resolveQrLabel,
@@ -48,11 +48,13 @@ function QRCodeRoot({
 	logoSize = QR_LOGO_DEFAULT_FRACTION,
 	accessibilityLabel,
 	isDecorative = false,
+	labels: labelsProp,
 	onEncodeError,
 	className,
 	testID,
 	children,
 }: QRCodeProps): ReactElement {
+	const labels = useLabels("qrCode", labelsProp);
 	const logo = findLogo(children);
 	const hasLogo = logo !== null;
 	const level = resolveEffectiveEcc(errorCorrection ?? "M", hasLogo);
@@ -105,7 +107,7 @@ function QRCodeRoot({
 		() => ({ logoFrame: drawing?.logoFrame ?? null, backgroundColor: tile }),
 		[drawing, tile]
 	);
-	const label = result.ok ? resolveQrLabel(value, accessibilityLabel) : QR_UNAVAILABLE_LABEL;
+	const label = result.ok ? resolveQrLabel(value, accessibilityLabel, labels) : labels.unavailable;
 	const side = drawing ? drawing.units * drawing.moduleDp : 0;
 
 	return (

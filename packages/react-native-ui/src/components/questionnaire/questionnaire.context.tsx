@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { QuestionnaireLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable";
 import type {
 	Answer,
@@ -27,6 +28,8 @@ export type QuestionnaireContextValue = {
 	progress: QuestionnaireProgress;
 	/** "Question 2 of 5" — the count readout and the question's spoken prefix. */
 	countLabel: string;
+	/** The spoken strings, resolved once at the root: English, `DelacourProvider`'s, then the root's `labels`. */
+	labels: QuestionnaireLabels;
 	canBack: boolean;
 	canSkip: boolean;
 	/** The current question is the last visible one: Submit replaces Next. */
@@ -50,7 +53,7 @@ export type QuestionnaireContextValue = {
 	haptic: false | HapticFeedback;
 	/** The root's `testID`, which every part derives its own from. */
 	testID: string | undefined;
-	/** Words an error for a question — the caller's `getErrorMessage`, or the English default. */
+	/** Words an error for a question — the caller's `getErrorMessage`, or the wording from `labels`. */
 	formatError: (error: ValidationError, question: Question) => string;
 	next: () => void;
 	back: () => void;

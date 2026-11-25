@@ -1,8 +1,9 @@
 import type { ReactElement } from "react";
 import { View, type ViewProps } from "react-native";
 import { useAnnouncement } from "../../hooks/use-announce";
+import type { SupportLabels } from "../../lib/labels";
 import { Text } from "../text";
-import { useSupport } from "./support.context";
+import { useSupport, useSupportLabels } from "./support.context";
 import type { SupportAvailability } from "./support.types";
 import { resolveAgentA11yLabel, resolveAgentStatusLine } from "./support.utils";
 import { supportVariants } from "./support.variants";
@@ -28,6 +29,10 @@ export type SupportAgentProps = Omit<ViewProps, "children"> & {
 	 * that speaks typing itself.
 	 */
 	announce?: boolean;
+	/**
+	 * The spoken strings, laid over `DelacourProvider`'s `labels`, which sit over English. `Support`'s `labels` sit under it.
+	 */
+	labels?: Partial<SupportLabels>;
 	className?: string;
 };
 
@@ -49,13 +54,15 @@ export function SupportAgent({
 	availability: availabilityProp,
 	typingTestID,
 	announce = true,
+	labels: labelsProp,
 	className,
 	...props
 }: SupportAgentProps): ReactElement {
 	const { availability: rootAvailability } = useSupport();
 	const availability = availabilityProp ?? rootAvailability;
-	const status = resolveAgentStatusLine({ name, title, availability, typing });
-	const label = resolveAgentA11yLabel({ name, title, availability, typing });
+	const labels = useSupportLabels(labelsProp);
+	const status = resolveAgentStatusLine({ name, title, availability, typing }, labels);
+	const label = resolveAgentA11yLabel({ name, title, availability, typing }, labels);
 	const slots = supportVariants();
 
 	const live = useAnnouncement(typing ? label : null, { channel: "announcement", onMount: true, enabled: announce });

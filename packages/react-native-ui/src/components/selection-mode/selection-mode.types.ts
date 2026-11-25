@@ -1,3 +1,4 @@
+import type { SelectionModeLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
 
 /**
@@ -33,4 +34,6 @@ export type SelectionModeState = {
 	isAllSelected: boolean;
 	/** Played on enter and on every toggle. */
 	haptic: false | HapticFeedback;
+	/** The resolved spoken strings the header and items read. */
+	labels: SelectionModeLabels;
 };

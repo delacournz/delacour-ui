@@ -1,3 +1,4 @@
+export type { TableLabels } from "../../lib/labels";
 export { Table, type TableProps } from "./table";
 export {
 	type TableCellContextValue,

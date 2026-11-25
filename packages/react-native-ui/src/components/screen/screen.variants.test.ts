@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { MIN_HIT_TARGET, resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	CHAT_COMPOSER_GAP,
@@ -646,5 +647,21 @@ describe("resolveScreenErrorAnnouncement", () => {
 	test("falls back to whichever part exists", () => {
 		expect(resolveScreenErrorAnnouncement("", "Gone.")).toBe("Gone.");
 		expect(resolveScreenErrorAnnouncement("Gone", " ")).toBe("Gone");
+	});
+});
+
+describe("screen labels reach the resolvers", () => {
+	const custom = {
+		...DELACOUR_DEFAULT_LABELS.screen,
+		loading: "Laden",
+		errorAnnouncement: (title: string, message: string) => `${title} | ${message}`,
+	};
+	test("the loading label falls back to labels.loading", () => {
+		expect(resolveScreenLoadingLabel(undefined, custom)).toBe("Laden");
+		expect(resolveScreenLoadingLabel(" ", custom)).toBe("Laden");
+		expect(resolveScreenLoadingLabel("Eigen", custom)).toBe("Eigen");
+	});
+	test("the announcement is composed by labels.errorAnnouncement from trimmed parts", () => {
+		expect(resolveScreenErrorAnnouncement(" Fehler ", " Offline. ", custom)).toBe("Fehler | Offline.");
 	});
 });

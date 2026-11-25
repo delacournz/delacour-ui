@@ -1,4 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { SearchBarLabels } from "../../lib/labels";
 import type { SearchBarSize } from "./search-bar.variants";
 
 export type SearchBarContextValue = {
@@ -18,6 +19,8 @@ export type SearchBarContextValue = {
 	cancelLabel: string;
 	/** Name a screen reader gives the clear button. */
 	clearAccessibilityLabel: string;
+	/** The bar's resolved spoken strings: the `labels` prop over the provider over English. */
+	labels: SearchBarLabels;
 	/** The field's `testID`, which the bar's own controls suffix theirs from. */
 	testID: string | undefined;
 	/** Empties the text, reports it immediately and keeps focus and the keyboard. */

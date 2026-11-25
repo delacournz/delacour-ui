@@ -556,6 +556,7 @@ describe("Menu accessibility", () => {
 		await waitFor(() => expect(focused).toHaveLength(1));
 
 		await press("Options");
+		await waitFor(() => expect(screen.queryByRole("menuitem", { name: "Rename" })).toBeNull(), SLOW_EXIT);
 		await waitFor(() => expect(focused).toHaveLength(2), SLOW_EXIT);
 		expect(role(focused[1])).toBe("button");
 	}, 10_000);

@@ -2877,7 +2877,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 124,
+		fileCount: 125,
 		groups: [
 			{
 				name: "tag-input",
@@ -2938,6 +2938,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label-text.ts", target: "src/components/ui/badge/badge-label-text.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
@@ -4397,7 +4398,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 57,
+		fileCount: 58,
 		groups: [
 			{
 				name: "chip",
@@ -4459,6 +4460,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label-text.ts", target: "src/components/ui/badge/badge-label-text.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
@@ -4600,7 +4602,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 183,
+		fileCount: 184,
 		groups: [
 			{
 				name: "combobox",
@@ -4814,6 +4816,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label-text.ts", target: "src/components/ui/badge/badge-label-text.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
@@ -5924,7 +5927,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 110,
+		fileCount: 111,
 		groups: [
 			{
 				name: "kpi",
@@ -5993,6 +5996,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label-text.ts", target: "src/components/ui/badge/badge-label-text.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
@@ -7794,7 +7798,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 95,
+		fileCount: 100,
 		groups: [
 			{
 				name: "calendar",
@@ -7893,6 +7897,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/button/button.types.ts", target: "src/components/ui/button/button.types.ts" },
 					{ source: "packages/react-native-ui/src/components/button/button.variants.ts", target: "src/components/ui/button/button.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/button/index.ts", target: "src/components/ui/button/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -8084,7 +8100,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 164,
+		fileCount: 169,
 		groups: [
 			{
 				name: "date-picker",
@@ -8287,6 +8303,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.variants.ts", target: "src/components/ui/bottom-sheet/bottom-sheet.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/index.ts", target: "src/components/ui/bottom-sheet/index.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/use-bottom-sheet-input.ts", target: "src/components/ui/bottom-sheet/use-bottom-sheet-input.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -8506,7 +8534,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 209,
+		fileCount: 214,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -8711,6 +8739,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.variants.ts", target: "src/components/ui/bottom-sheet/bottom-sheet.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/index.ts", target: "src/components/ui/bottom-sheet/index.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/use-bottom-sheet-input.ts", target: "src/components/ui/bottom-sheet/use-bottom-sheet-input.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -9849,7 +9889,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 127,
+		fileCount: 128,
 		groups: [
 			{
 				name: "search-bar",
@@ -9956,6 +9996,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label-text.ts", target: "src/components/ui/badge/badge-label-text.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
@@ -11111,7 +11152,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 41,
+		fileCount: 42,
 		groups: [
 			{
 				name: "badge",
@@ -11121,6 +11162,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label-text.ts", target: "src/components/ui/badge/badge-label-text.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
@@ -12297,7 +12339,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 118,
+		fileCount: 119,
 		groups: [
 			{
 				name: "support",
@@ -12375,6 +12417,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label-text.ts", target: "src/components/ui/badge/badge-label-text.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
@@ -13868,7 +13911,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 62,
+		fileCount: 63,
 		groups: [
 			{
 				name: "animated-badge",
@@ -13929,6 +13972,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label-text.ts", target: "src/components/ui/badge/badge-label-text.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
@@ -16456,7 +16500,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 44,
+		fileCount: 45,
 		groups: [
 			{
 				name: "pagination",
@@ -16605,6 +16649,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-labels.tsx", target: "src/hooks/use-labels.tsx" },
+				],
+			},
+			{
+				name: "use-minimum-hit-target",
+				title: "useMinimumHitSlop",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-minimum-hit-target.tsx", target: "src/hooks/use-minimum-hit-target.tsx" },
 				],
 			},
 		],

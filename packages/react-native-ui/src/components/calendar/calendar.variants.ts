@@ -1,6 +1,7 @@
 import type { VariantProps } from "tailwind-variants";
 import { type CalendarLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
+import { type HitSlopInsets, resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	type CalendarCell,
 	type CalendarDate,
@@ -543,4 +544,31 @@ export function resolveCalendarAxes({
  */
 export function resolvePartTestID(root: string | undefined, part: string): string | undefined {
 	return root === undefined ? undefined : `${root}-${part}`;
+}
+
+/** The header slot's `gap-1`: the least room between an arrow and the caption, in points. */
+export const CALENDAR_HEADER_GAP = 4;
+
+/**
+ * A paging arrow's `hitSlop`: the full shortfall on every side but the one facing the caption,
+ * which is held to half the header gap. The caption is a pressable of its own and sits later in
+ * the tree, so slop overlapping it would take presses meant for the month picker. The outer edge
+ * borders the calendar's own padding, where nothing competes. `height` is the arrow's
+ * `--spacing-button-*` edge under the resolved theme.
+ *
+ * `prev` sits at the row's start and `next` at its end; in RTL the row is mirrored, so the
+ * caption-facing physical side flips with it.
+ *
+ * Pure, so the matrix is unit-testable. See AGENTS.md.
+ */
+export function resolveCalendarNavHitSlop(
+	height: number,
+	min: number,
+	{ direction, isRTL }: { direction: "prev" | "next"; isRTL: boolean }
+): HitSlopInsets | undefined {
+	const slop = resolveMinimumHitSlop(height, min);
+	if (slop === undefined || typeof slop !== "number") return undefined;
+	const inner = Math.min(slop, CALENDAR_HEADER_GAP / 2);
+	const captionOnRight = (direction === "prev") !== isRTL;
+	return { bottom: slop, left: captionOnRight ? slop : inner, right: captionOnRight ? inner : slop, top: slop };
 }

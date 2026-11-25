@@ -102,6 +102,12 @@ typed text can become a value.
   `labels.triggerInField(label, placeholder)` ("Country, Choose a country") so the
   visible text is in the name (`resolveComboboxTriggerLabel`). A shown value stays
   in the accessibility value. The create row is named by its visible text, `Use “Fiji”`.
+- **The trigger reaches the minimum touch target vertically.** A box drawn at `--spacing-input-*`
+  shorter than the app's 44 grows `hitSlop` up and down by the shortfall, read from the resolved
+  theme (`useThemeLength`), so a denser style's 36pt box gets 4pt each side and the default `md`
+  gets none. Sideways it grows nothing: the box fills its row. The slop reaches into the `Field`'s
+  label gap and a stack's field gap; it can overlap a neighbour only where fields sit closer than
+  the slop. A caller's own `hitSlop` wins.
 - **The chip trigger is Input's multiline box.** With chips the fixed height
   becomes a floor, the vertical padding returns and the row aligns to the first
   line, so wrapped chips grow the field the way a textarea grows. The chip row

@@ -116,6 +116,10 @@ optional Cancel action and debounced change reporting, over `Input.Group`. Root 
   glyph is 16–20pt, so its `hitSlop` grows to the app's 44 up and down, where only the box's
   padding sits. Sideways it stops at the row gap beside it: slop past that would swallow taps meant
   to place the caret at the end of the text.
+- **Cancel is a `Button`, so it reads its slop from the theme.** `size` follows the field, and
+  `Button` sizes its `hitSlop` from the resolved `--spacing-button-*` height, so a denser style's
+  36pt Cancel still reaches 44. The field itself is `Input.Group`'s box, whose own slop belongs to
+  `Input`, not here.
 - **The spoken strings are the `labels` prop, not literals.** `cancel`, `clear`, `placeholder`
   and `removeToken(label)` resolve once at the root, `labels` prop over `DelacourProvider`'s
   `labels` over English, and reach the parts through the context's `labels`. The existing

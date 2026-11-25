@@ -12,6 +12,8 @@ import {
 	COMBOBOX_CLEAR_SIZE,
 	COMBOBOX_DEFAULT_MAX_CHIPS,
 	COMBOBOX_KEYBOARD_ESTIMATE_FRACTION,
+	COMBOBOX_TRIGGER_HEIGHTS,
+	comboboxTriggerHeightVariable,
 	comboboxVariants,
 	resolveComboboxChipColor,
 	resolveComboboxChipSize,
@@ -21,6 +23,7 @@ import {
 	resolveComboboxTriggerActionOutcome,
 	resolveComboboxTriggerActions,
 	resolveComboboxTriggerClass,
+	resolveComboboxTriggerHitSlop,
 	resolveComboboxTriggerLabel,
 	resolveComboboxTriggerText,
 	resolveExpectedKeyboardHeight,
@@ -421,5 +424,35 @@ describe("resolveComboboxTriggerLabel", () => {
 		expect(resolveComboboxTriggerLabel({ ...base, label: undefined, placeholder: "Pick" })).toBe("Pick");
 		expect(resolveComboboxTriggerLabel({ ...base, label: "Country", placeholder: undefined })).toBe("Country");
 		expect(resolveComboboxTriggerLabel({ ...base, label: undefined, placeholder: undefined })).toBeUndefined();
+	});
+});
+
+describe("resolveComboboxTriggerHitSlop", () => {
+	test("the heights restate the --spacing-input-* defaults", () => {
+		expect(COMBOBOX_TRIGGER_HEIGHTS).toEqual({ lg: 52, md: 44, sm: 36 });
+		for (const size of INPUT_SIZES) {
+			const px = TOKENS_CSS.match(new RegExp(`--spacing-input-${size}:\\s*(\\d+)px`))?.[1];
+			expect(Number(px)).toBe(COMBOBOX_TRIGGER_HEIGHTS[size]);
+		}
+	});
+
+	test("names the token of the size", () => {
+		expect(comboboxTriggerHeightVariable("sm")).toBe("--spacing-input-sm");
+		expect(comboboxTriggerHeightVariable("lg")).toBe("--spacing-input-lg");
+	});
+
+	test("grows vertically only, to the minimum", () => {
+		expect(resolveComboboxTriggerHitSlop(36)).toEqual({ bottom: 4, left: 0, right: 0, top: 4 });
+		expect(resolveComboboxTriggerHitSlop(36, 48)).toEqual({ bottom: 6, left: 0, right: 0, top: 6 });
+	});
+
+	test("follows a denser theme's height", () => {
+		expect(resolveComboboxTriggerHitSlop(32)).toEqual({ bottom: 6, left: 0, right: 0, top: 6 });
+		expect(resolveComboboxTriggerHitSlop(36)).toEqual({ bottom: 4, left: 0, right: 0, top: 4 });
+	});
+
+	test("nothing when already at the minimum", () => {
+		expect(resolveComboboxTriggerHitSlop(44)).toBeUndefined();
+		expect(resolveComboboxTriggerHitSlop(52)).toBeUndefined();
 	});
 });

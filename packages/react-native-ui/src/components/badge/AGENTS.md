@@ -12,12 +12,13 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
 | `index.ts` | → `@delacour/react-native-ui/badge` |
 | `badge.tsx` | Root + the `Object.assign` compound surface |
 | `badge-label.tsx` | `Badge.Label` |
+| `badge-label-text.ts` | `badgeLabelText` — the text of the children, for the dismiss control's name |
 | `badge-start-content.tsx` | `Badge.StartContent` |
 | `badge-end-content.tsx` | `Badge.EndContent` |
 | `badge-close-button.tsx` | `Badge.CloseButton`, the dismiss pressable |
 | `badge.context.tsx` | `BadgeContext`, `useBadge()`, `useBadgeContext()`, `useBadgePart()` |
 | `badge.types.ts` | Prop types shared by two or more parts |
-| `badge.variants.ts` | Pure `tv()` slots + `resolveBadgeInteractive`, `resolveBadgeCloseExposure`, `resolveBadgeCloseHitSlop`; no RN imports |
+| `badge.variants.ts` | Pure `tv()` slots + `resolveBadgeInteractive`, `resolveBadgeCloseExposure`, `resolveBadgeCloseHitSlop`, `resolveBadgeCloseLabel`, `badgeCloseSizeVariable`; no RN imports |
 | `badge.variants.test.ts` | |
 | `badge.render.test.tsx` | Mounted under Jest — string children, content-vs-button root, press/long-press/disabled, onClose isolation, compound parts and out-of-root errors |
 
@@ -56,7 +57,20 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   the bare 14–18pt icon, far under the 44pt minimum, but its only neighbour is the
   label a gap away: slop reaching past half that gap would take presses from the
   badge's own body. So the cap, not the minimum, sets it (2, 3, 4pt by size) and
-  the target stays small by design; a caller's own `hitSlop` wins.
+  the target stays small by design: 14 + 4 = 18, 16 + 6 = 22 and 18 + 8 = 26pt
+  at the default icon tokens. The glyph's edge is read live from
+  `--spacing-icon-xs/sm/md` rather than restated, so a denser style is followed,
+  though the cap — half the gap — does not move with it. A caller's own `hitSlop` wins.
+- **The dismiss control is named after its badge.** Slop cannot grow the target to
+  44, so a screen-reader user tells a row of badges apart by name: "Remove Beta",
+  from `labels.removeNamed(text)` where the text is the badge's bare strings and
+  `Badge.Label` children, falling back to `labels.remove` for an icon-only badge. The
+  mirrored `remove` accessibility action on a merged root carries the same name,
+  and `closeAccessibilityLabel` still wins over both. A hand-placed
+  `Badge.CloseButton` reads the text from the badge's context. `removeNamed` is
+  optional and has no default: without it the name is `remove` plus the text, so an
+  app that localised only `remove` keeps its own verb instead of hearing English
+  mid-sentence. Set `removeNamed` where that word order is wrong for the language.
 - **A merged badge offers `remove` as an accessibility action.** A pressable
   root, or a plain one the caller passes `accessible` to, is one accessibility element and iOS folds its children into it, so the ✕
   is unreachable by swipe and its label is read as part of the badge's. It is

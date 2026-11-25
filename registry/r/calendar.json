@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"button",
 		"cn",
+		"direction",
 		"field",
 		"icon",
 		"icons",
@@ -20,7 +21,8 @@
 		"tv",
 		"use-calm-motion",
 		"use-controllable-state",
-		"use-labels"
+		"use-labels",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -107,12 +109,24 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
+				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
 				},
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../direction/direction.context",
+					"to": "@registry/ui/direction/direction.context"
 				},
 				{
 					"from": "../icon",
@@ -226,6 +240,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		},

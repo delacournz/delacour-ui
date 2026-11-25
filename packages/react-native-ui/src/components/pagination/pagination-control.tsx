@@ -4,10 +4,9 @@ import { IconChevronLeft, IconChevronRight } from "../../icons/central";
 import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
-import { usePaginationPart } from "./pagination.context";
+import { usePaginationHitSlop, usePaginationPart } from "./pagination.context";
 import type { PaginationTargetProps } from "./pagination.types";
 import {
-	PAGINATION_HIT_SLOP,
 	type PaginationDirection,
 	paginationVariants,
 	resolveControlForeground,
@@ -43,6 +42,7 @@ export function PaginationControl({
 	...props
 }: PaginationControlProps & { direction: PaginationDirection }): ReactElement {
 	const root = usePaginationPart(direction === "previous" ? "Pagination.Previous" : "Pagination.Next");
+	const minimumHitSlop = usePaginationHitSlop(root.size);
 	const canMove = direction === "previous" ? root.canPrevious : root.canNext;
 	const isDisabled = root.isDisabled || disabled === true || !canMove;
 	const showLabel = hasLabel ?? root.variant === "simple";
@@ -70,7 +70,7 @@ export function PaginationControl({
 			disabled={isDisabled}
 			feedback={feedback}
 			haptic={haptic ?? root.haptic}
-			hitSlop={hitSlop ?? (PAGINATION_HIT_SLOP[root.size] || undefined)}
+			hitSlop={hitSlop ?? minimumHitSlop}
 			onPress={handlePress}
 			{...props}
 		>

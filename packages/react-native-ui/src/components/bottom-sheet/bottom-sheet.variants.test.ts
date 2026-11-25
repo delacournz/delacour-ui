@@ -2,9 +2,12 @@ import { describe, expect, test } from "bun:test";
 import { resolveSheetBottomInset, resolveSheetScrollEndPadding } from "@delacour/react-native-bottom-sheet/core";
 import { declaredTokens, THEME_CSS, tokenValue } from "../../styles/theme-tokens.test";
 import { ICON_FALLBACK_SIZE_CLASS } from "../icon/icon.variants";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	BOTTOM_SHEET_BACKDROP_INDICES,
 	BOTTOM_SHEET_CLOSE_HIT_SLOP,
+	BOTTOM_SHEET_CLOSE_SIZE,
+	BOTTOM_SHEET_CLOSE_SIZE_VARIABLE,
 	BOTTOM_SHEET_FOOTER_GAP,
 	BOTTOM_SHEET_FOOTER_PADDING,
 	BOTTOM_SHEET_OVERLAY_OPACITY,
@@ -260,6 +263,12 @@ describe("bottomSheetVariants slots", () => {
 		// The pressable has no padding or size of its own, so the icon and the
 		// slop are the whole target.
 		expect(fallbackIconEdge() + 2 * BOTTOM_SHEET_CLOSE_HIT_SLOP).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
+	});
+
+	test("the close's slop follows the icon token: default 12, house style (18) 13", () => {
+		expect(BOTTOM_SHEET_CLOSE_SIZE_VARIABLE).toBe("--spacing-icon-lg");
+		expect(resolveMinimumHitSlop(BOTTOM_SHEET_CLOSE_SIZE)).toBe(BOTTOM_SHEET_CLOSE_HIT_SLOP);
+		expect(resolveMinimumHitSlop(18)).toBe(13);
 	});
 
 	test("the grabber is a pill with both dimensions set", () => {

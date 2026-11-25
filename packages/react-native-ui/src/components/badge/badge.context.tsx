@@ -14,6 +14,8 @@ export type BadgeContextValue = {
 	material: BadgeMaterial;
 	/** The resolved spoken strings, so a hand-placed part reads the same set as the root. */
 	labels: BadgeLabels;
+	/** The badge's label text, when its children carry any. Names the dismiss control: "Remove {text}". */
+	labelText?: string | undefined;
 };
 
 const BadgeContext = createContext<BadgeContextValue | null>(null);

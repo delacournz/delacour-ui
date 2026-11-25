@@ -15,11 +15,13 @@ import {
 	type BadgeVariant,
 	badgeVariants,
 	resolveBadgeCloseExposure,
+	resolveBadgeCloseLabel,
 	resolveBadgeInteractive,
 } from "./badge.variants";
 import { BadgeCloseButton } from "./badge-close-button";
 import { BadgeEndContent } from "./badge-end-content";
 import { BadgeLabel } from "./badge-label";
+import { badgeLabelText } from "./badge-label-text";
 import { BadgeStartContent } from "./badge-start-content";
 
 export type BadgeProps = Omit<PressableProps, "asChild" | "busy" | "children" | "disabled"> & {
@@ -33,7 +35,7 @@ export type BadgeProps = Omit<PressableProps, "asChild" | "busy" | "children" | 
 	isDisabled?: boolean;
 	/** Composes a trailing dismiss control in. Its press never reaches `onPress`. */
 	onClose?: () => void;
-	/** Name a screen reader gives the dismiss control. Defaults to `labels.remove`. */
+	/** Name a screen reader gives the dismiss control. With label text it defaults to `labels.removeNamed(label)`, or `labels.remove` followed by the label when that is unset; with none, `labels.remove`. */
 	closeAccessibilityLabel?: string;
 	/** `testID` for the dismiss control, so a test or automation can press it. */
 	closeTestID?: string;
@@ -68,9 +70,10 @@ function BadgeRoot({
 	...props
 }: BadgeProps): ReactElement {
 	const labels = useLabels("badge", labelsProp);
+	const labelText = useMemo(() => badgeLabelText(children), [children]);
 	const context = useMemo<BadgeContextValue>(
-		() => ({ variant, color, size, isDisabled, material, labels }),
-		[variant, color, size, isDisabled, material, labels]
+		() => ({ variant, color, size, isDisabled, material, labels, labelText }),
+		[variant, color, size, isDisabled, material, labels, labelText]
 	);
 
 	const slots = badgeVariants({ color, isDisabled, material, size, variant });
@@ -117,7 +120,10 @@ function BadgeRoot({
 	);
 
 	const actions = closeHidden
-		? [...(accessibilityActions ?? []), { label: closeAccessibilityLabel ?? labels.remove, name: "remove" }]
+		? [
+				...(accessibilityActions ?? []),
+				{ label: closeAccessibilityLabel ?? resolveBadgeCloseLabel(labels, labelText), name: "remove" },
+			]
 		: accessibilityActions;
 
 	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {

@@ -289,6 +289,34 @@ export function resolveMinimumHitTarget({
 	return isMaterialHitTarget && platform === "android" ? MATERIAL_MIN_HIT_TARGET : MIN_HIT_TARGET;
 }
 
+/** Points per `rem` on native, Uniwind's and Tailwind's default root font size. */
+const REM_IN_POINTS = 16;
+
+/** A length a theme variable can hold: `32px`, `2.25rem` or a bare `32`. */
+const THEME_LENGTH = /^(\d+(?:\.\d+)?|\.\d+)(px|rem)?$/;
+
+/**
+ * A theme variable's value — what Uniwind's `useCSSVariable` returns — as points,
+ * or `fallback` when it holds no length.
+ *
+ * On native Uniwind resolves `px` to a number, but a value written with
+ * `updateCSSVariables` arrives as written, so `"32px"` and `"2rem"` are read too.
+ * Anything else (a percentage, `em`, `calc()`, a variable that is not defined)
+ * is not a length a hit target can be sized from, so it falls back rather than
+ * guessing. The fallback is the default token, so a theme that never touches the
+ * variable gets exactly what it got before.
+ *
+ * Pure, so the matrix is unit-testable. See AGENTS.md.
+ */
+export function resolveThemeLength(value: unknown, fallback: number): number {
+	if (typeof value === "number") return Number.isFinite(value) && value >= 0 ? value : fallback;
+	if (typeof value !== "string") return fallback;
+	const match = THEME_LENGTH.exec(value.trim());
+	if (!match) return fallback;
+	const amount = Number(match[1]);
+	return match[2] === "rem" ? amount * REM_IN_POINTS : amount;
+}
+
 /** What a target draws at: one edge for a square, or both for anything else. */
 export type HitTargetSize = number | { height: number; width: number };
 

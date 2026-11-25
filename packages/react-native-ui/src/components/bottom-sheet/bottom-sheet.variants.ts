@@ -37,10 +37,17 @@ export const BOTTOM_SHEET_BACKDROP_INDICES = { appearsOnIndex: 0, disappearsOnIn
  * difference against the 44pt minimum — the case `Checkbox` mints slop for and
  * `Badge.CloseButton` does not need.
  *
- * **12** per side: the default icon is 20pt (`size-icon-lg`), and 20 + 2 × 12
+ * **12** per side by default: the icon is 20pt (`size-icon-lg`), and 20 + 2 × 12
  * is the 44pt minimum. The pressable has no padding or size of its own to count.
+ * This is the default-theme value; the component reads `--spacing-icon-lg` live.
  */
 export const BOTTOM_SHEET_CLOSE_HIT_SLOP = 12;
+
+/** The drawn edge of the default ✕ — `size-icon-lg`'s default, with no padding of its own. */
+export const BOTTOM_SHEET_CLOSE_SIZE = 20;
+
+/** The token the ✕ is drawn from; a denser style sets it lower, so the component reads it live. */
+export const BOTTOM_SHEET_CLOSE_SIZE_VARIABLE = "--spacing-icon-lg";
 
 /**
  * The padding a pinned footer's measured box carries.

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { declaredTokens, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
@@ -10,9 +11,11 @@ import {
 	BADGE_GAPS,
 	BADGE_SIZES,
 	BADGE_VARIANTS,
+	badgeCloseSizeVariable,
 	badgeVariants,
 	resolveBadgeCloseExposure,
 	resolveBadgeCloseHitSlop,
+	resolveBadgeCloseLabel,
 	resolveBadgeInteractive,
 } from "./badge.variants";
 
@@ -333,6 +336,50 @@ describe("the dismiss control's hit target", () => {
 	test("a smaller minimum than the cap allows is honoured uncapped", () => {
 		expect(resolveBadgeCloseHitSlop("md", 18)).toBe(1);
 		expect(resolveBadgeCloseHitSlop("md", 16)).toBeUndefined();
+	});
+});
+
+describe("the dismiss control under a retuned theme", () => {
+	test("its size variable is the icon step the root's icon slot sets", () => {
+		for (const size of BADGE_SIZES) {
+			const token = badgeVariants({ size })
+				.icon()
+				.match(/\bsize-(icon-[\w-]+)\b/)?.[1];
+			expect(`--spacing-${token}`).toBe(badgeCloseSizeVariable(size));
+		}
+	});
+
+	test("the cap stays half the gap whatever the glyph draws at", () => {
+		expect(resolveBadgeCloseHitSlop("md", 44, 12)).toBe(3);
+		expect(resolveBadgeCloseHitSlop("md", 44, 40)).toBe(2);
+		expect(resolveBadgeCloseHitSlop("md", 44, 44)).toBeUndefined();
+	});
+
+	test("an omitted glyph size is the default token's", () => {
+		expect(resolveBadgeCloseHitSlop("lg", 44)).toBe(resolveBadgeCloseHitSlop("lg", 44, BADGE_CLOSE_SIZES.lg));
+	});
+});
+
+describe("resolveBadgeCloseLabel", () => {
+	const labels = { remove: "Remove", removeNamed: (label: string) => `Remove ${label}` };
+
+	test("names the control after the badge's text", () => {
+		expect(resolveBadgeCloseLabel(labels, "Beta")).toBe("Remove Beta");
+		expect(resolveBadgeCloseLabel(labels, "  Beta ")).toBe("Remove Beta");
+	});
+
+	test("the defaults name it in English", () => {
+		expect(resolveBadgeCloseLabel(DELACOUR_DEFAULT_LABELS.badge, "Beta")).toBe("Remove Beta");
+	});
+
+	test("a localised remove with no removeNamed keeps its own verb", () => {
+		expect(resolveBadgeCloseLabel({ remove: "Entfernen" }, "Beta")).toBe("Entfernen Beta");
+		expect(resolveBadgeCloseLabel({ remove: "Entfernen" }, undefined)).toBe("Entfernen");
+	});
+
+	test("falls back to the bare name with no text", () => {
+		expect(resolveBadgeCloseLabel(labels, undefined)).toBe("Remove");
+		expect(resolveBadgeCloseLabel(labels, "   ")).toBe("Remove");
 	});
 });
 

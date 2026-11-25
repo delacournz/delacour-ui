@@ -60,6 +60,13 @@ describe("Combobox", () => {
 		expect(screen.getByRole("button", { name: "Country" })).toBeOnTheScreen();
 	});
 
+	test("a trigger drawn short of the minimum grows vertically with slop; a medium one has none", async () => {
+		await render({ size: "sm" });
+		expect(trigger()).toHaveProp("hitSlop", { bottom: 4, left: 0, right: 0, top: 4 });
+		await render({ size: "md" });
+		expect(trigger().props.hitSlop).toBeUndefined();
+	});
+
 	test("the trigger is busy while loading", async () => {
 		await render({ isLoading: true });
 		expect(trigger()).toBeBusy();

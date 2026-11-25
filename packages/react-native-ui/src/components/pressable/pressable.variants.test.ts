@@ -15,6 +15,7 @@ import {
 	resolvePressableActivation,
 	resolvePressedState,
 	resolveRestOpacity,
+	resolveThemeLength,
 } from "./pressable.variants";
 
 describe("PRESSABLE_FEEDBACK", () => {
@@ -560,5 +561,45 @@ describe("normalizeHitSlop", () => {
 
 	test("missing sides are zero", () => {
 		expect(normalizeHitSlop({ top: 6 })).toEqual({ bottom: 0, left: 0, right: 0, top: 6 });
+	});
+});
+
+describe("resolveThemeLength", () => {
+	test("passes a finite, non-negative number through", () => {
+		expect(resolveThemeLength(32, 36)).toBe(32);
+		expect(resolveThemeLength(0, 36)).toBe(0);
+		expect(resolveThemeLength(17.5, 36)).toBe(17.5);
+	});
+
+	test("reads px, rem and unitless strings", () => {
+		expect(resolveThemeLength("32px", 36)).toBe(32);
+		expect(resolveThemeLength(" 18px ", 20)).toBe(18);
+		expect(resolveThemeLength("2.25rem", 44)).toBe(36);
+		expect(resolveThemeLength("40", 44)).toBe(40);
+	});
+
+	test("falls back on anything it cannot read as a length", () => {
+		for (const value of [
+			undefined,
+			null,
+			"",
+			"auto",
+			"10%",
+			"1em",
+			"calc(2px + 3px)",
+			Number.NaN,
+			-4,
+			Number.POSITIVE_INFINITY,
+			{},
+			true,
+		]) {
+			expect(resolveThemeLength(value, 36)).toBe(36);
+		}
+	});
+
+	test("the resolved length drives the slop: house button-sm 32 needs 6 a side, default 36 needs 4", () => {
+		expect(resolveMinimumHitSlop(resolveThemeLength(32, 36))).toBe(6);
+		expect(resolveMinimumHitSlop(resolveThemeLength(undefined, 36))).toBe(4);
+		expect(resolveMinimumHitSlop(resolveThemeLength("36px", 44))).toBe(4);
 	});
 });

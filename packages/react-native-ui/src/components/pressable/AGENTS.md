@@ -127,6 +127,15 @@ and only `onPress` and `onLongPress` cross back to JS.
   the later sibling first, so overlapping slop gives the press to whichever
   sits later in the tree. Cap at half the gap; the target then falls short of
   44, which is the honest trade for a layout that dense. No pixel moves.
+- **Size the slop from the resolved theme, never from a default token.** A
+  control whose drawn size is a token (`--spacing-button-*`, `--spacing-input-*`,
+  `--spacing-icon-*`) reads it with `useThemeLength(name, fallback)`, which
+  resolves the live value through Uniwind's `useCSSVariable` and
+  `resolveThemeLength` (a number, `px`, `rem` or a bare number; anything else
+  falls back to the default). A constant restating the default shrinks out
+  from under its slop the moment an app applies a denser style: a `sm` button
+  at 32 with 4pt of slop computed for 36 reaches only 40. The fallback is the
+  default token, so an app that never retunes gets exactly what it had.
 - **A className's opacity is multiplied into the press, never overwritten.**
   The press feedback is an animated style, and an animated style owns every key
   it writes on the view — so its resting `opacity: 1` silently replaced a

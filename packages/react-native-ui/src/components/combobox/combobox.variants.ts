@@ -259,6 +259,32 @@ export function resolveComboboxClearHitSlop(size: InputSize, min: number = MIN_H
 	};
 }
 
+/**
+ * The trigger's height per size in points — `--spacing-input-*`, restated so a resolver can do
+ * arithmetic with it. Pinned against `tokens.css` by a test. Defaults only: the trigger reads the
+ * live token with `useThemeLength` and falls back to these.
+ */
+export const COMBOBOX_TRIGGER_HEIGHTS: Record<InputSize, number> = { sm: 36, md: 44, lg: 52 };
+
+/** The theme variable a size's trigger height is drawn from: `--spacing-input-md`. */
+export function comboboxTriggerHeightVariable(size: InputSize): `--spacing-input-${InputSize}` {
+	return `--spacing-input-${size}`;
+}
+
+/**
+ * The trigger's `hitSlop` for a box drawn `height` tall under the resolved theme, grown toward
+ * `min` (the app's minimum touch target).
+ *
+ * Vertical only: the trigger fills its row, so its width is already past any minimum, and the
+ * sides border the screen or a sibling the caller laid out. The slop reaches into the `Field`'s own
+ * gaps (label, description) and, between stacked fields, a gap of 16 or more.
+ */
+export function resolveComboboxTriggerHitSlop(height: number, min: number = MIN_HIT_TARGET): HitSlopInsets | undefined {
+	const vertical = normalizeHitSlop(resolveMinimumHitSlop({ height, width: Number.MAX_SAFE_INTEGER }, min));
+	if (!vertical) return undefined;
+	return { bottom: vertical.bottom, left: 0, right: 0, top: vertical.top };
+}
+
 /** The trigger's accessibility action that clears the selection. */
 export const COMBOBOX_CLEAR_ACTION = "clear";
 
@@ -312,20 +338,25 @@ export function resolveComboboxTriggerActionOutcome(
  * The trigger's accessible name. While it shows its placeholder (`hasValue`
  * false) and a field or title names it, the name carries the placeholder too
  * — "Country, Choose a country" — so the visible text is in it (WCAG 2.5.3).
- * A shown value stays in the accessibility value, not the name.
+ * A shown single value joins the name the same way — "Country, Fiji" — and the trigger then
+ * carries no accessibility value, so it is not spoken twice.
  */
 export function resolveComboboxTriggerLabel({
 	label,
 	placeholder,
 	hasValue,
 	triggerInField,
+	valueText,
 }: {
 	label: string | undefined;
 	placeholder: string | undefined;
 	hasValue: boolean;
+	/** The single selection's drawn text, when the trigger draws it itself — not caller children. */
+	valueText?: string;
 	triggerInField: (fieldLabel: string, placeholder: string) => string;
 }): string | undefined {
 	if (!label) return placeholder;
+	if (hasValue && valueText && !label.includes(valueText)) return triggerInField(label, valueText);
 	if (hasValue || !placeholder || label.includes(placeholder)) return label;
 	return triggerInField(label, placeholder);
 }

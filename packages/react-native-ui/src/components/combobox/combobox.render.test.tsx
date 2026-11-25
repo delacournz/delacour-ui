@@ -52,12 +52,20 @@ describe("Combobox", () => {
 		expect(screen.queryByLabelText("Search")).not.toBeOnTheScreen();
 	});
 
-	test("the trigger's name carries the placeholder while it shows, and a value stays in the value", async () => {
+	test("the trigger's name carries the visible text — the placeholder or the value — with no duplicate value", async () => {
 		await render();
 		expect(screen.getByRole("button", { name: "Country, Choose a country" })).toBeOnTheScreen();
 		expect(screen.getByRole("button", { name: "Country, Choose a country" }).props.accessibilityValue).toBeUndefined();
 		await render({ defaultValue: "fj" });
-		expect(screen.getByRole("button", { name: "Country" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Country, Fiji" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Country, Fiji" }).props.accessibilityValue).toBeUndefined();
+	});
+
+	test("a trigger drawn short of the minimum grows vertically with slop; a medium one has none", async () => {
+		await render({ size: "sm" });
+		expect(trigger()).toHaveProp("hitSlop", { bottom: 4, left: 0, right: 0, top: 4 });
+		await render({ size: "md" });
+		expect(trigger().props.hitSlop).toBeUndefined();
 	});
 
 	test("the trigger is busy while loading", async () => {
@@ -178,7 +186,7 @@ describe("Combobox", () => {
 		expect(onValueChange).toHaveBeenCalledWith("fj");
 		expect(screen.queryByLabelText("Search")).not.toBeOnTheScreen();
 		expect(trigger()).toBeCollapsed();
-		expect(trigger()).toHaveAccessibilityValue({ text: "Fiji" });
+		expect(trigger().props.accessibilityLabel).toBe("Country, Fiji");
 		expect(within(trigger()).getByText("Fiji")).toBeOnTheScreen();
 	});
 
@@ -214,10 +222,10 @@ describe("Combobox", () => {
 
 	test("uncontrolled: defaultValue seeds the trigger and a pick changes it", async () => {
 		await render({ defaultValue: "au" });
-		expect(trigger()).toHaveAccessibilityValue({ text: "Australia" });
+		expect(trigger().props.accessibilityLabel).toBe("Country, Australia");
 		await open();
 		await press(screen.getByRole("radio", { name: "Canada" }));
-		expect(trigger()).toHaveAccessibilityValue({ text: "Canada" });
+		expect(trigger().props.accessibilityLabel).toBe("Country, Canada");
 	});
 
 	test("controlled: a pick reports and waits for the value prop", async () => {
@@ -226,10 +234,10 @@ describe("Combobox", () => {
 		await open();
 		await press(screen.getByRole("radio", { name: "Canada" }));
 		expect(onValueChange).toHaveBeenCalledWith("ca");
-		expect(trigger()).toHaveAccessibilityValue({ text: "Australia" });
+		expect(trigger().props.accessibilityLabel).toBe("Country, Australia");
 
 		await view.rerender(<Combobox options={OPTIONS} placeholder="Choose a country" title="Country" value="ca" />);
-		expect(trigger()).toHaveAccessibilityValue({ text: "Canada" });
+		expect(trigger().props.accessibilityLabel).toBe("Country, Canada");
 	});
 
 	test("choosing the chosen option again keeps it unless isClearable", async () => {
@@ -238,7 +246,7 @@ describe("Combobox", () => {
 		await open();
 		await press(screen.getByRole("radio", { name: "Australia" }));
 		expect(onValueChange).not.toHaveBeenCalledWith(null);
-		expect(trigger()).toHaveAccessibilityValue({ text: "Australia" });
+		expect(trigger().props.accessibilityLabel).toBe("Country, Australia");
 	});
 
 	test("controlled inputValue shows the prop and reports typing", async () => {
@@ -310,7 +318,7 @@ describe("Combobox", () => {
 		await fireEvent.changeText(search(), "Atlantis");
 		await press(screen.getByRole("button", { name: "Use “Atlantis”" }));
 		expect(onValueChange).toHaveBeenCalledWith("Atlantis");
-		expect(trigger()).toHaveAccessibilityValue({ text: "Atlantis" });
+		expect(trigger().props.accessibilityLabel).toBe("Country, Atlantis");
 	});
 
 	test("no create row without allowCustomValue or for an exact label", async () => {
@@ -339,7 +347,7 @@ describe("Combobox", () => {
 		await render({ defaultValue: "fj", isReadOnly: true });
 		await open();
 		expect(screen.queryByLabelText("Search")).not.toBeOnTheScreen();
-		expect(trigger()).toHaveAccessibilityValue({ text: "Fiji" });
+		expect(trigger().props.accessibilityLabel).toBe("Country, Fiji");
 	});
 
 	test("read-only hides the clear button", async () => {

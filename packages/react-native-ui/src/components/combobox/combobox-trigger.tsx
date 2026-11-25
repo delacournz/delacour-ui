@@ -2,7 +2,7 @@ import { type ReactElement, type ReactNode, useEffect } from "react";
 import type { AccessibilityActionEvent } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
-import { useMinimumHitTarget } from "../../hooks/use-minimum-hit-target";
+import { useMinimumHitTarget, useThemeLength } from "../../hooks/use-minimum-hit-target";
 import { IconChevronDownSmall, IconCrossSmall } from "../../icons/central";
 import { warnInteractiveChildInAccessible } from "../../lib/interactive-child";
 import { Slot } from "../../lib/slot";
@@ -14,11 +14,14 @@ import { Spinner } from "../spinner";
 import { Text } from "../text";
 import { useComboboxPart } from "./combobox.context";
 import {
+	COMBOBOX_TRIGGER_HEIGHTS,
+	comboboxTriggerHeightVariable,
 	comboboxVariants,
 	resolveComboboxClearHitSlop,
 	resolveComboboxTriggerActionOutcome,
 	resolveComboboxTriggerActions,
 	resolveComboboxTriggerClass,
+	resolveComboboxTriggerHitSlop,
 	resolveComboboxTriggerLabel,
 	resolveVisibleChips,
 } from "./combobox.variants";
@@ -130,11 +133,14 @@ export function ComboboxTrigger({
 		variant,
 	} = combobox;
 
+	const triggerHeight = useThemeLength(comboboxTriggerHeightVariable(size), COMBOBOX_TRIGGER_HEIGHTS[size]);
+	const triggerHitSlop = resolveComboboxTriggerHitSlop(triggerHeight, minimumHitTarget);
 	const isEditable = !isDisabled && !isReadOnly;
 	const hasValue = selectedOptions.length > 0;
 	const hasChips = selectionMode === "multiple" && hasValue && children === undefined;
 	const hasClear = isClearable && hasValue && isEditable;
 
+	const drawsValue = children === undefined && selectionMode === "single" && triggerText !== undefined;
 	const accessibility = {
 		accessibilityHint: isReadOnly ? undefined : labels.triggerHint,
 		accessibilityLabel: asChild
@@ -144,11 +150,12 @@ export function ComboboxTrigger({
 					label: accessibilityLabel,
 					placeholder,
 					triggerInField: labels.triggerInField,
+					valueText: drawsValue ? triggerText : undefined,
 				}),
 		accessibilityRole: "button" as const,
 		accessibilityState: { busy: isLoading || undefined, expanded: isOpen },
 		// No value at all rather than an empty one: TalkBack reads an empty value as a stray comma.
-		accessibilityValue: triggerText ? { text: triggerText } : undefined,
+		accessibilityValue: triggerText && !(drawsValue && accessibilityLabel) ? { text: triggerText } : undefined,
 		testID,
 	};
 
@@ -261,6 +268,7 @@ export function ComboboxTrigger({
 			})}
 			disabled={isDisabled}
 			feedback={isReadOnly ? "none" : "fade"}
+			hitSlop={triggerHitSlop}
 			onAccessibilityAction={handleAccessibilityAction}
 			onPress={open}
 			{...props}

@@ -23,6 +23,7 @@ While the axes lived under `apps/playground/src/`, only one of them could.
 | `convert.ts` | `…/convert` | a web `globals.css` into this library's `theme.css` — what `delacour theme` runs |
 | `house.ts` | `…/house` | `HOUSE_CONFIG` and `HOUSE_PRESET_CODE` — the studio's own preset, plus `PRESET_SHORTCUTS` both customisers offer |
 | `contrast.ts` | `…/contrast` | `contrastRatio` — WCAG 2 contrast between two `oklch()` literals, dependency-free, for the ramp tests |
+| `contrast-audit.ts` | `…/contrast-audit` | `auditContrast` / `contrastFailures` — every token pair the library draws, checked against WCAG 2.2 AA for one resolved theme |
 
 No `"."` barrel, deliberately. `apps/playground/app.config.ts` reads only
 `FONTS`, and Expo loads that file through Node's CJS resolver — a barrel would
@@ -212,6 +213,31 @@ series — and no amber lighter than about `L 0.67` clears WCAG's 3:1 non-text m
 light ramp starts at amber-600, the light `primary`, and walks Tailwind's steps down to amber-950.
 `contrast.test.ts` holds `chart-1` at 3:1 against both the page and the card and the ramp in
 descending lightness; `contrast.ts` is the pure oklch → sRGB → WCAG helper it reads through.
+
+## The default is held to AA; everything else is audited
+
+`contrast-audit.ts` names every pair the library draws — each surface with its
+`-foreground`, `muted-foreground` on the four surfaces captions sit on,
+`destructive` as error text, and the non-text `input` (a control's edge) and
+`ring` (focus) — and `auditContrast` reports each one's ratio in both modes.
+Text is held to 4.5:1, non-text to 3:1. `border` is deliberately not a pair: a
+divider between surfaces is decoration under SC 1.4.11.
+
+It reads a resolved palette the way the emitted `theme.css` will. Tokens the
+resolver never writes (`success`, `info`, the `-soft` pairs) come from
+`extensionDefaults`, the same table `convertTheme` fills gaps from, and every
+`var()` and `color-mix(in oklch, …)` is evaluated to a literal; translucent
+values are composited over the surface beneath them. It stays dependency-free
+for the same reason `contrast.ts` does. `culori` is a **dev** dependency only:
+the tests cross-check every opaque ratio and the `color-mix` maths against it,
+which is also how Uniwind parses colours at runtime.
+
+`contrast-audit.test.ts` fails on any pair the **default** or the **house**
+preset misses, naming each one. That is why `neutral` and `graphite` are no
+longer shadcn's ramps verbatim (see the comment above `BASE_COLORS`). Every
+other base × accent combination is only required to be readable by the audit;
+`apps/web`'s `/theme` shows its failures to the reader instead of failing a
+build over a palette shadcn ships.
 
 ## Commands
 

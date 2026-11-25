@@ -79,7 +79,7 @@ export const selectionModeVariants = tv({
 		},
 		isSelected: {
 			true: { indicator: "border-primary bg-primary" },
-			false: { indicator: "border-border" },
+			false: { indicator: "border-input" },
 		},
 		isDestructive: {
 			true: { actionLabel: "text-destructive" },

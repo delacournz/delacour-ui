@@ -38,7 +38,7 @@ export type SwitchThumbProps = Omit<ViewProps, "children" | "style"> & {
  * **The colour is not a class.** It fades between two token *values* as the
  * switch travels, and a colour being interpolated cannot be a class — the rule
  * `Checkbox`'s border already follows. The `thumb` slot keeps
- * `bg-muted-foreground` as the resting appearance this style starts from, and nothing else names a
+ * `bg-background` as the resting appearance this style starts from, and nothing else names a
  * background; two sources for one surface is how a class and a style end up
  * disagreeing for a frame on every toggle.
  *

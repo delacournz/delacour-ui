@@ -119,14 +119,14 @@ const EXTENSIONS: Record<string, { dark: string; light: string }> = {
 	// shadcn v4 dropped this and paints its destructive button `text-white`;
 	// five components here still read it. A literal, not `var(--background)`,
 	// which is near-black in dark and would vanish on red.
-	"--destructive-foreground": { light: "oklch(0.985 0 0)", dark: "oklch(0.985 0 0)" },
+	"--destructive-foreground": { light: "oklch(0.985 0 0)", dark: "oklch(0.205 0 0)" },
 	// No shadcn counterpart to derive from, so these stay literal.
-	"--success": { light: "oklch(0.696 0.17 162.48)", dark: "oklch(0.696 0.17 162.48)" },
+	"--success": { light: "oklch(0.508 0.118 165.612)", dark: "oklch(0.696 0.17 162.48)" },
 	"--success-foreground": { light: "oklch(0.985 0 0)", dark: "oklch(0.205 0 0)" },
 	"--warning": { light: "oklch(0.769 0.188 70.08)", dark: "oklch(0.769 0.188 70.08)" },
 	"--warning-foreground": { light: "oklch(0.216 0.006 56.043)", dark: "oklch(0.216 0.006 56.043)" },
-	"--info": { light: "oklch(0.623 0.188 259.81)", dark: "oklch(0.623 0.188 259.81)" },
-	"--info-foreground": { light: "oklch(0.985 0 0)", dark: "oklch(0.985 0 0)" },
+	"--info": { light: "oklch(0.546 0.245 262.881)", dark: "oklch(0.707 0.165 254.624)" },
+	"--info-foreground": { light: "oklch(0.985 0 0)", dark: "oklch(0.205 0 0)" },
 	// A scrim is black in both themes; deriving it from `--foreground` would
 	// paint a white one over a dark app.
 	"--overlay": { light: "oklch(0 0 0 / 45%)", dark: "oklch(0 0 0 / 65%)" },
@@ -159,6 +159,18 @@ function shadowExtensions(): Record<string, { dark: string; light: string }> {
 /** `destructive`, `success`, `warning`, `info` each carry a tinted pair. */
 const SOFT_BASES = ["destructive", "success", "warning", "info"] as const;
 
+/**
+ * How much of the state colour a light `-soft-foreground` keeps before the text
+ * colour takes over. Amber is the one light hue: at 70% its ink sat at 4:1 on
+ * its own tint, so it leans further toward the text to clear AA's 4.5.
+ */
+const SOFT_INK_WEIGHT: Record<(typeof SOFT_BASES)[number], number> = {
+	destructive: 70,
+	success: 70,
+	warning: 55,
+	info: 70,
+};
+
 function softExtensions(): Record<string, { dark: string; light: string }> {
 	const soft: Record<string, { dark: string; light: string }> = {};
 
@@ -170,7 +182,7 @@ function softExtensions(): Record<string, { dark: string; light: string }> {
 		soft[`--${base}-soft-foreground`] = {
 			// Over a dark tint the state colour already reads; mixing it toward a
 			// near-white foreground would only wash it out.
-			light: `color-mix(in oklch, var(--${base}) 70%, var(--foreground))`,
+			light: `color-mix(in oklch, var(--${base}) ${SOFT_INK_WEIGHT[base]}%, var(--foreground))`,
 			dark: `var(--${base})`,
 		};
 	}
@@ -179,6 +191,18 @@ function softExtensions(): Record<string, { dark: string; light: string }> {
 }
 
 const ALL_EXTENSIONS = { ...EXTENSIONS, ...softExtensions() };
+
+/**
+ * The value every added token takes in one mode, keyed WITHOUT the leading `--`.
+ *
+ * What `convertTheme` fills a gap with, exposed so the contrast audit reads a
+ * resolved palette the way the emitted `theme.css` will: `success`, `info` and
+ * the `-soft` pairs are never written by the resolver, so without these the
+ * audit could not see the state colours at all.
+ */
+export function extensionDefaults(mode: "light" | "dark"): Record<string, string> {
+	return Object.fromEntries(Object.entries(ALL_EXTENSIONS).map(([name, value]) => [name.slice(2), value[mode]]));
+}
 
 /** Everything shadcn's own `-foreground` pairing needs, in the order it reads best. */
 export const PREFERRED_ORDER = [

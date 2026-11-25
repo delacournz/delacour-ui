@@ -396,17 +396,27 @@ describe("switch colour tokens", () => {
 		}
 	});
 
-	test("the resting thumb reads at 3:1 or more against the resting track and the surface under it", () => {
-		// With no On/Off text beside it, the knob is the only sign of the state, so
-		// it has to meet the 3:1 non-text contrast minimum (WCAG 1.4.11). The dark
-		// track is translucent, so it is measured over each surface a switch sits on.
+	test("the off state draws exactly these tokens", () => {
+		// Pinned so a swap to a lower-contrast token (`secondary` for the track,
+		// `muted-foreground` for the knob) fails here by name, before the contrast
+		// test has to notice it.
+		expect(SWITCH_TRACK_REST_TOKEN).toBe("input");
+		expect(SWITCH_THUMB_REST_TOKEN).toBe("background");
+		expect(resolveSwitchTrackTokens({ color: "default", isInvalid: false }).rest).toBe("input");
+		expect(resolveSwitchThumbTokens({ color: "default", isInvalid: false }).rest).toBe("background");
+	});
+
+	test("the off track reads at 3:1 against the surface it sits on, and the knob against the track", () => {
+		// WCAG 1.4.11: the track is identifiable against the page and a card, and the
+		// knob's position (the state) against the track. The dark track is
+		// translucent, so it is measured composited over each surface.
 		for (const variant of ["light", "dark"] as const) {
 			const thumb = themeColor(variant, SWITCH_THUMB_REST_TOKEN);
 			for (const surface of ["background", "card"]) {
 				const behind = themeColor(variant, surface);
 				const track = composite(themeColor(variant, SWITCH_TRACK_REST_TOKEN), behind);
+				expect(contrastRatio(track, behind)).toBeGreaterThanOrEqual(3);
 				expect(contrastRatio(thumb, track)).toBeGreaterThanOrEqual(3);
-				expect(contrastRatio(thumb, behind)).toBeGreaterThanOrEqual(3);
 			}
 		}
 	});

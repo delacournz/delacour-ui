@@ -45,13 +45,14 @@ describe("the house preset", () => {
 		expect(dark.primary).toBe("oklch(0.97 0 0)");
 	});
 
-	test("draws hairlines in alpha, so they sit on any surface", () => {
+	test("draws hairlines and control edges in alpha, so they sit on any surface", () => {
 		const { dark, light } = resolveTokens(HOUSE_CONFIG);
 
 		expect(light.border).toBe("oklch(0 0 0 / 12%)");
 		expect(dark.border).toBe("oklch(1 0 0 / 10%)");
-		expect(light.input).toBe("oklch(0 0 0 / 14%)");
-		expect(dark.input).toBe("oklch(1 0 0 / 12%)");
+		// A control's edge is non-text: 3:1 against the page and the card (SC 1.4.11).
+		expect(light.input).toBe("oklch(0 0 0 / 44%)");
+		expect(dark.input).toBe("oklch(1 0 0 / 36%)");
 	});
 
 	test("sits on a graphite page with a lifted card and a recessed sidebar", () => {

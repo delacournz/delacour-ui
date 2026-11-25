@@ -65,7 +65,8 @@ and `useSelectionMode()`.
   of.
 - **The indicator is round on purpose.** A square box is a form control being
   filled in; a round one is a thing picked out of a set. `Checkbox` stays square.
-  22pt (`size-5.5` — the icon scale skips 22), `border-2 border-border`, picked
+  22pt (`size-5.5` — the icon scale skips 22), `border-2 border-input` (a control's edge, 3:1 against the row — the
+  `border` hairline is too faint for the only sign a row can be picked), picked
   `bg-primary` with a `primary-foreground` check. It pops from 0.8 on a spring.
 - **The leading mark pushes the content rather than covering it.** A spacer
   opens from 0 to 34pt (`SELECTION_MODE_INDICATOR_OFFSET`, the mark plus a 12pt

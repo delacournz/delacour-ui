@@ -80,7 +80,7 @@ export const toastVariants = tv({
 		content: "min-w-0 flex-1 gap-0.5",
 		title: "font-semibold text-sm",
 		description: "text-muted-foreground text-sm",
-		action: "-my-1 h-8 items-center justify-center self-center rounded-md px-2",
+		action: "-my-1 min-h-8 items-center justify-center self-center rounded-md px-2",
 		actionLabel: "font-semibold text-primary text-sm",
 		close: "size-5 items-center justify-center self-center rounded-full",
 		/** Edge length an `Icon` composed into the toast inherits. */

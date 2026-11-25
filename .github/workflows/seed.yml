@@ -1,0 +1,64 @@
+name: Seed
+
+# Writes, on every push to `develop`, the caches every pull request's `ci.yml` run restores. A pull
+# request can read caches made on its base branch, and `ci.yml` never runs on `develop` (see
+# AGENTS.md § CI), so without this every pull request's first run starts cold.
+#
+# - `render-timings-<sha>`: each render suite's wall time from a full run, which `ci.yml`'s `render`
+#   shards balance on (`scripts/test-shards.ts`). The newest one wins by prefix.
+# - `jest-…-<sha>`: Jest's transform cache after that run. Content-addressed, so restoring it can only
+#   skip a transform, never change a result.
+#
+# This is a full run of every render suite, so it is also a check: a red Seed run means `develop`'s
+# render suites fail on the merged tree. It writes no status and gates nothing.
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: seed
+  cancel-in-progress: true
+
+env:
+  TURBO_TELEMETRY_DISABLED: 1
+
+jobs:
+  render:
+    name: render (full, recorded)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.4
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-${{ runner.arch }}-
+      - name: Install
+        env:
+          NPM_TOKEN: ${{ github.token }}
+        run: bun install --frozen-lockfile
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/jest
+          key: jest-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'packages/react-native-ui/jest.config.js') }}-${{ github.sha }}
+          restore-keys: |
+            jest-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'packages/react-native-ui/jest.config.js') }}-
+      - name: Run every render suite and record its time
+        run: >-
+          bun scripts/test-shards.ts run --shard 1/1 --record .render-timings.json
+          -- --cacheDirectory=${{ runner.temp }}/jest
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .render-timings.json
+          key: render-timings-${{ github.sha }}

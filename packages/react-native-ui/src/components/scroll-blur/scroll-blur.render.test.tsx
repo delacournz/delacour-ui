@@ -155,12 +155,21 @@ describe("ScrollBlur", () => {
 		});
 
 		test("Reduce Transparency drops the strips even with an engine", async () => {
-			jest.spyOn(AccessibilityInfo, "isReduceTransparencyEnabled").mockResolvedValue(true);
-			await renderWithProviders(<Harness blurProps={{ layer: TestLayer }} />);
-			await act(async () => {
-				await Promise.resolve();
-			});
-			expect(screen.queryAllByTestId("blur-strip", { includeHiddenElements: true })).toHaveLength(0);
+			// React Native's Jest preset already makes this a `jest.fn`, so `jest.spyOn` returns that shared
+			// mock rather than wrapping it, and `restoreAllMocks` cannot undo an implementation set on it.
+			// Set it here and put the preset's back, or every later test in the file reads `true`.
+			const reduceTransparency = jest.mocked(AccessibilityInfo.isReduceTransparencyEnabled);
+			const preset = reduceTransparency.getMockImplementation();
+			reduceTransparency.mockResolvedValue(true);
+			try {
+				await renderWithProviders(<Harness blurProps={{ layer: TestLayer }} />);
+				await act(async () => {
+					await Promise.resolve();
+				});
+				expect(screen.queryAllByTestId("blur-strip", { includeHiddenElements: true })).toHaveLength(0);
+			} finally {
+				reduceTransparency.mockImplementation(preset ?? (() => Promise.resolve(false)));
+			}
 			expect(screen.getByText("Row one")).toBeOnTheScreen();
 		});
 	});

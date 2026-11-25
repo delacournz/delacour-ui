@@ -306,6 +306,14 @@ the first row is still leaving.
   rotor through headings. `Screen.Loading` takes its title through `Navbar.Title`, so it gets the
   same role. A non-string `Navbar.Title` child is passed through untouched — give it the role
   yourself. `Navbar.Subtitle` is not a heading.
+- **Navbar text is capped, not grown.** `h-navbar-row` (56pt) is a fixed layout contract, so it is
+  never `min-h`. `Navbar.Title` and `.Subtitle` carry `SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER` (1.3,
+  below the library's 2x): a stacked title (22.5pt line) and subtitle (20pt line) scale to 55.25pt,
+  inside the row; at 2x they would be 85pt and overflow. One constant, because a title cannot know a
+  subtitle is under it. A caller's `maxFontSizeMultiplier` wins (it spreads after). A test pins
+  the stack against the row height and the token in `tokens.css`. `ScrollHeader`'s bar
+  title and `SelectionMode`'s header count are single lines that fit at the full 2x, so they keep
+  the library default.
 - **`Screen.Loading` and `Screen.Error` speak once when they appear, by one route per platform.** A
   screen that swaps its content for a spinner or an error is otherwise silent to a screen reader,
   and on iOS a live region alone says nothing. Both use `useAnnouncement` with `onMount` and

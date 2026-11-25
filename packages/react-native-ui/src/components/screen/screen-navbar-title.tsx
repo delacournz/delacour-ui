@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from "react";
 import type { TextProps } from "react-native";
 import { Text } from "../text";
-import { screenVariants } from "./screen.variants";
+import { SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER, screenVariants } from "./screen.variants";
 
 export type ScreenNavbarTitleProps = Omit<TextProps, "children"> & {
 	className?: string;
@@ -26,6 +26,7 @@ export function ScreenNavbarTitle({ className, children, ...props }: ScreenNavba
 		<Text
 			accessibilityRole="header"
 			className={screenVariants().navbarTitle({ className })}
+			maxFontSizeMultiplier={SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER}
 			numberOfLines={1}
 			{...props}
 		>

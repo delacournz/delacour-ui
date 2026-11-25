@@ -7,6 +7,7 @@ import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Button } from "../button";
 import { Screen } from "./screen";
 import { type ScreenContextValue, useScreen } from "./screen.context";
+import { SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER } from "./screen.variants";
 
 const tap = (name: string) => fireEvent(screen.getByRole("button", { name }), "accessibilityTap");
 
@@ -30,6 +31,19 @@ describe("Screen", () => {
 		await renderWithProviders(<Basic />);
 		expect(screen.getByRole("header", { name: "Inbox" })).toBeOnTheScreen();
 		expect(screen.getByText("Body copy")).toBeOnTheScreen();
+	});
+
+	test("caps the title and subtitle so a stack fits the navbar row, and a caller's cap wins", async () => {
+		await renderWithProviders(
+			<Screen>
+				<Screen.Navbar>
+					<Screen.Navbar.Title>Inbox</Screen.Navbar.Title>
+					<Screen.Navbar.Subtitle maxFontSizeMultiplier={1.1}>12 unread</Screen.Navbar.Subtitle>
+				</Screen.Navbar>
+			</Screen>
+		);
+		expect(screen.getByText("Inbox").props.maxFontSizeMultiplier).toBe(SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER);
+		expect(screen.getByText("12 unread").props.maxFontSizeMultiplier).toBe(1.1);
 	});
 
 	test("the title and subtitle render their text", async () => {

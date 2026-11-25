@@ -18,6 +18,24 @@ export const SCREEN_EDGES = ["top", "right", "bottom", "left"] as const;
 
 export type ScreenEdge = (typeof SCREEN_EDGES)[number];
 
+/** The navbar control row's height in points — `--spacing-navbar-row` in `tokens.css`. */
+export const SCREEN_NAVBAR_ROW_HEIGHT = 56;
+/** `text-lg leading-tight`: 18 x 1.25. */
+export const SCREEN_NAVBAR_TITLE_LINE_HEIGHT = 22.5;
+/** `text-sm`: its 20pt line height. */
+export const SCREEN_NAVBAR_SUBTITLE_LINE_HEIGHT = 20;
+
+/**
+ * The font-scaling cap for `Screen.Navbar.Title` and `.Subtitle` — below the library's 2x.
+ *
+ * The row is a fixed 56pt layout contract (`h-navbar-row`), so it cannot grow with its text. A
+ * title stacked over a subtitle is 22.5 + 20 = 42.5pt of line height at 1x, and line height scales
+ * with the multiplier: 1.3 keeps the stack at 55.25pt, inside the row. One constant for both
+ * because a title cannot know whether a subtitle sits under it. A lone title or the bar title in
+ * ScrollHeader fits at the full 2x and is left to the library default there.
+ */
+export const SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER = 1.3;
+
 /**
  * Styling for every part of a screen.
  *

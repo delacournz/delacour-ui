@@ -1,5 +1,11 @@
 # @delacour/react-native-charts
 
+## 0.11.0
+
+### Minor Changes
+
+- [#374](https://github.com/delacournz/delacour-ui/pull/374) [`37ed339`](https://github.com/delacournz/delacour-ui/commit/37ed3397e40093d011b977cb69641c8894587d4a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Charts are readable by a screen reader. `Chart` is one accessibility element: an image named by a generated summary — the x range, then each series' lowest, highest and latest value — or, when a `Chart.Tooltip` is placed, an adjustable whose increment and decrement step one datum at a time, moving the tooltip and cursor and reporting the tooltip's readout as its value. `PieChart` is an image named by each slice's share, or, when it is selectable, a summary plus one button per slice that VoiceOver and TalkBack can select. Both take `accessibilityLabel` to replace the summary and `accessible={false}` to leave the tree; `Kpi.Sparkline` now passes `accessible={false}` to its inner chart so it stays one element. A series can be dashed — `dash: [on, off]` on its config entry, or `Chart.Line dash` (`false` for solid) — and `Chart.Legend` draws that series' swatch dashed, so series are told apart by more than colour; legend swatches are hidden from assistive technology. The pure helpers `resolveChartSummary`, `resolveChartReadout` and `stepChartIndex` live in the chart folder. In `@delacour/react-native-charts`, `ChartScrubState` gains `focus`: write a datum index to it and the chart moves the scrub there as a touch would (`useScrubFocus`, mounted by `CartesianChart`); `ChartLine` takes `dash`, with the cap's reach taken out of each dash (`dashIntervals`).
+
 ## 0.10.0
 
 No changes in this release.

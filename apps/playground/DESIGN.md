@@ -6,13 +6,13 @@ colors:
   surface-dark: "oklch(0.204 0 0)"
   sidebar-dark: "oklch(0.178 0 0)"
   hairline-dark: "oklch(1 0 0 / 10%)"
-  input-edge-dark: "oklch(1 0 0 / 12%)"
+  input-edge-dark: "oklch(1 0 0 / 36%)"
   text-dark: "oklch(0.97 0 0)"
   primary-dark: "oklch(0.97 0 0)"
   ground-light: "#ffffff"
   surface-light: "#ffffff"
   hairline-light: "oklch(0 0 0 / 12%)"
-  input-edge-light: "oklch(0 0 0 / 14%)"
+  input-edge-light: "oklch(0 0 0 / 44%)"
   text-light: "oklch(0.269 0 0)"
   primary-light: "oklch(0.269 0 0)"
   destructive-dark: "#ff6467"
@@ -80,8 +80,11 @@ in dark, so the primary button is a high-contrast slab and not a hue.
 
 - **Ground.** White in light, `#131313` in dark. Cards sit one step above (dark `oklch(0.204 0 0)`),
   the sidebar one step below (`oklch(0.178 0 0)`).
-- **Hairlines.** Black at 12% in light, white at 10% in dark; field edges 14% and 12%. Alpha rather
-  than a grey, so an edge reads on any surface it lands on.
+- **Hairlines.** Black at 12% in light, white at 10% in dark. Alpha rather than a grey, so an edge
+  reads on any surface it lands on. They are decorative dividers, which WCAG SC 1.4.11 exempts.
+- **Field edges** are not hairlines: black at 44% in light, white at 36% in dark. A control's edge
+  has to clear 3:1 against the page and a card (SC 1.4.11), and the design system's contrast audit
+  holds the house theme to it.
 - **Muted and secondary fills** are opaque. A tray's frame is the muted fill at 70%.
 - **Status colour** (blue, emerald, amber, red) appears only in badges, alerts and charts, as a soft
   8% (light) or 16% (dark) tint under a full-strength label.

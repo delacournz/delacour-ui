@@ -409,23 +409,10 @@ describe("resolveComboboxTriggerLabel", () => {
 		).toBe("Country, Choose a country");
 	});
 
-	test("a shown single value joins the name, so the visible text is in it", () => {
+	test("a shown value stays in the value, not the name", () => {
 		expect(
-			resolveComboboxTriggerLabel({
-				hasValue: true,
-				label: "Country",
-				placeholder: "Choose a country",
-				triggerInField,
-				valueText: "Fiji",
-			})
-		).toBe("Country, Fiji");
-	});
-
-	test("a value the label already holds, or none known, leaves the name alone", () => {
-		const base = { hasValue: true, placeholder: "Choose a country", triggerInField };
-		expect(resolveComboboxTriggerLabel({ ...base, label: "Country: Fiji", valueText: "Fiji" })).toBe("Country: Fiji");
-		expect(resolveComboboxTriggerLabel({ ...base, label: "Country" })).toBe("Country");
-		expect(resolveComboboxTriggerLabel({ ...base, label: undefined, valueText: "Fiji" })).toBe("Choose a country");
+			resolveComboboxTriggerLabel({ hasValue: true, label: "Country", placeholder: "Choose a country", triggerInField })
+		).toBe("Country");
 	});
 
 	test("no composition when the label already holds the placeholder or either is missing", () => {

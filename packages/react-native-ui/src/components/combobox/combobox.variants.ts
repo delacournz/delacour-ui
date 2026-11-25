@@ -338,25 +338,20 @@ export function resolveComboboxTriggerActionOutcome(
  * The trigger's accessible name. While it shows its placeholder (`hasValue`
  * false) and a field or title names it, the name carries the placeholder too
  * — "Country, Choose a country" — so the visible text is in it (WCAG 2.5.3).
- * A shown single value joins the name the same way — "Country, Fiji" — and the trigger then
- * carries no accessibility value, so it is not spoken twice.
+ * A shown value stays in the accessibility value, not the name.
  */
 export function resolveComboboxTriggerLabel({
 	label,
 	placeholder,
 	hasValue,
 	triggerInField,
-	valueText,
 }: {
 	label: string | undefined;
 	placeholder: string | undefined;
 	hasValue: boolean;
-	/** The single selection's drawn text, when the trigger draws it itself — not caller children. */
-	valueText?: string;
 	triggerInField: (fieldLabel: string, placeholder: string) => string;
 }): string | undefined {
 	if (!label) return placeholder;
-	if (hasValue && valueText && !label.includes(valueText)) return triggerInField(label, valueText);
 	if (hasValue || !placeholder || label.includes(placeholder)) return label;
 	return triggerInField(label, placeholder);
 }

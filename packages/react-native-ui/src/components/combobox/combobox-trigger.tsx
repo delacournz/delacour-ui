@@ -140,7 +140,6 @@ export function ComboboxTrigger({
 	const hasChips = selectionMode === "multiple" && hasValue && children === undefined;
 	const hasClear = isClearable && hasValue && isEditable;
 
-	const drawsValue = children === undefined && selectionMode === "single" && triggerText !== undefined;
 	const accessibility = {
 		accessibilityHint: isReadOnly ? undefined : labels.triggerHint,
 		accessibilityLabel: asChild
@@ -150,12 +149,11 @@ export function ComboboxTrigger({
 					label: accessibilityLabel,
 					placeholder,
 					triggerInField: labels.triggerInField,
-					valueText: drawsValue ? triggerText : undefined,
 				}),
 		accessibilityRole: "button" as const,
 		accessibilityState: { busy: isLoading || undefined, expanded: isOpen },
 		// No value at all rather than an empty one: TalkBack reads an empty value as a stray comma.
-		accessibilityValue: triggerText && !(drawsValue && accessibilityLabel) ? { text: triggerText } : undefined,
+		accessibilityValue: triggerText ? { text: triggerText } : undefined,
 		testID,
 	};
 

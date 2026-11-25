@@ -107,7 +107,7 @@ export const PROGRESS_BUTTON_FILL_FOREGROUND_TOKEN: Record<ProgressButtonVariant
 /**
  * Styling for every part of a progress button.
  *
- * The box is a button's box: `h-button-*`, the button's `px-*` and, as a pill,
+ * The box is a button's box: `min-h-button-*`, the button's `px-*` and, as a pill,
  * `rounded-button-*` — the same tokens `buttonVariants` reads, never new ones,
  * and a test pins them equal. Every variant rests on one surface,
  * `bg-secondary`, and carries its colour in the label and the fill.
@@ -154,7 +154,7 @@ export const progressButtonVariants = tv({
 		// assembled at runtime is never compiled.
 		size: {
 			sm: {
-				root: "h-button-sm px-3",
+				root: "min-h-button-sm px-3",
 				content: "gap-1.5",
 				fillContent: "gap-1.5 px-3",
 				label: "text-button-sm",
@@ -162,14 +162,14 @@ export const progressButtonVariants = tv({
 				icon: "size-icon-sm",
 			},
 			md: {
-				root: "h-button-md px-4",
+				root: "min-h-button-md px-4",
 				fillContent: "px-4",
 				label: "text-button-md",
 				fillLabel: "text-button-md",
 				icon: "size-icon-md",
 			},
 			lg: {
-				root: "h-button-lg px-5",
+				root: "min-h-button-lg px-5",
 				fillContent: "px-5",
 				label: "text-button-lg",
 				fillLabel: "text-button-lg",

@@ -44,9 +44,9 @@ function edgeOf(cls: string): number {
 	return Number(cls.match(/\bsize-(\d+)\b/)?.[1]) * 4;
 }
 
-/** The `h-N` step a class string sets its height from, in points. */
+/** The `min-h-N` step a class string sets its floor height from, in points. */
 function heightOf(cls: string): number {
-	return Number(cls.match(/(?:^|\s)h-(\d+)\b/)?.[1]) * 4;
+	return Number(cls.match(/(?:^|\s)min-h-(\d+)\b/)?.[1]) * 4;
 }
 
 /** Position of a slot's `size-icon-*` token on the shared icon scale. */
@@ -105,6 +105,22 @@ describe("sizes", () => {
 			expect(heightOf(slots.root())).toBe(ATTACHMENT_SIZE_POINTS.chip[size] + 8);
 			expect(slots.root()).toMatch(/\bp-1\b/);
 		}
+	});
+
+	test("a chip's height is a floor, never fixed, so a 2x name can grow it", () => {
+		for (const size of ATTACHMENT_SIZES) {
+			expect(attachmentVariants({ layout: "chip", size }).root()).not.toMatch(/(?:^|\s)h-\d/);
+		}
+	});
+
+	test("override contract: a caller's min-h-* displaces the chip floor; h-* sits beside it", () => {
+		const slots = attachmentVariants({ layout: "chip", size: "md" });
+		const min = slots.root({ className: "min-h-20" });
+		expect(min).toContain("min-h-20");
+		expect(min).not.toContain("min-h-12");
+		const fixed = slots.root({ className: "h-20" });
+		expect(fixed).toContain("h-20");
+		expect(fixed).toContain("min-h-12");
 	});
 
 	test("a stretched chip grows its press target, so the cross sits at the far edge", () => {

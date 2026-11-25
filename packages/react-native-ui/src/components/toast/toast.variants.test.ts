@@ -109,6 +109,22 @@ describe("toastVariants", () => {
 		}
 	});
 
+	test("the action is a floor, so a 2x label grows it, and keeps its centring and overlap", () => {
+		const cls = toastVariants().action();
+		expect(cls).toContain("min-h-8");
+		expect(cls).not.toMatch(/(^|\s)h-/);
+		expect(cls).toContain("-my-1");
+		expect(cls).toContain("items-center");
+		expect(cls).toContain("justify-center");
+		expect(cls).toContain("self-center");
+	});
+
+	test("a caller's min-h-* replaces the action floor", () => {
+		const cls = toastVariants().action({ className: "min-h-10" });
+		expect(cls).toContain("min-h-10");
+		expect(cls).not.toContain("min-h-8");
+	});
+
 	test("the action's label is the primary colour, on the label and not the pressable (rule 1)", () => {
 		expect(toastVariants().actionLabel()).toContain("text-primary");
 		expect(toastVariants().action()).not.toMatch(/\btext-(?!xs|sm|base)/);

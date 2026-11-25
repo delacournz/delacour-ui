@@ -92,7 +92,9 @@ export const BUTTON_FOREGROUND_TOKEN: Record<ButtonVariant, string> = {
  * One slotted `tv()` rather than a call per part, so `size` and `variant` are
  * declared once.
  *
- * A size names tokens rather than raw utilities: `h-button-md` for the height,
+ * A size names tokens rather than raw utilities: `min-h-button-md` for the
+ * height floor (a label grows past it at large text sizes; icon squares keep a
+ * fixed `h-button-*`),
  * `text-button-md` for the label, `rounded-button-md` for the corner,
  * `size-icon-md` for a composed glyph. The values live in `tokens.css`, so a
  * button's icon and the spinner that replaces it resolve to the same edge
@@ -194,9 +196,9 @@ export const buttonVariants = tv({
 		// is why `spinnerPlacement="only"` swaps the content and leaves the
 		// footprint exactly as the caller sized it.
 		size: {
-			sm: { root: "h-button-sm gap-1.5 px-3", label: "text-button-sm", icon: "size-icon-sm" },
-			md: { root: "h-button-md px-4", label: "text-button-md", icon: "size-icon-md" },
-			lg: { root: "h-button-lg px-5", label: "text-button-lg", icon: "size-icon-lg" },
+			sm: { root: "min-h-button-sm gap-1.5 px-3", label: "text-button-sm", icon: "size-icon-sm" },
+			md: { root: "min-h-button-md px-4", label: "text-button-md", icon: "size-icon-md" },
+			lg: { root: "min-h-button-lg px-5", label: "text-button-lg", icon: "size-icon-lg" },
 			"icon-sm": { root: "h-button-sm w-button-sm", label: "text-button-sm", icon: "size-icon-sm" },
 			"icon-md": { root: "h-button-md w-button-md", label: "text-button-md", icon: "size-icon-md" },
 			"icon-lg": { root: "h-button-lg w-button-lg", label: "text-button-lg", icon: "size-icon-lg" },

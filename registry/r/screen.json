@@ -367,11 +367,22 @@
 					"to": "@registry/lib/labels"
 				},
 				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
 					"from": "../pressable/pressable.variants",
 					"to": "@registry/ui/pressable/pressable.variants"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		}
+	],
+	"testRegistryDependencies": [
+		"styles"
 	],
 	"testDependencies": [
 		"@types/bun"

@@ -288,6 +288,10 @@
 				{
 					"from": "../input/input.variants",
 					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		}

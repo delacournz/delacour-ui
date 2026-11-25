@@ -24,6 +24,7 @@ import {
 	avatarVariants,
 	resolveAvatarHitTarget,
 	resolveAvatarInteractive,
+	resolveAvatarLabelFit,
 	resolveAvatarSize,
 } from "./avatar.variants";
 import { AvatarBadge } from "./avatar-badge";
@@ -104,6 +105,7 @@ function AvatarRoot({
 	const slots = avatarVariants({ size, variant, color, isDisabled, hasImage: showsImage });
 
 	const initials = fallback?.trim() || resolveAvatarInitials(name);
+	const labelFit = resolveAvatarLabelFit({ size, glyphs: [...initials].length });
 	const isInteractive = resolveAvatarInteractive({ onPress, onLongPress });
 	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback, isInteractive }, labels);
 
@@ -119,7 +121,13 @@ function AvatarRoot({
 	const face = (
 		<View className={slots.face()}>
 			{initials ? (
-				<Text allowFontScaling={false} className={slots.fallbackLabel()} numberOfLines={1}>
+				<Text
+					adjustsFontSizeToFit
+					className={slots.fallbackLabel()}
+					maxFontSizeMultiplier={labelFit.maxFontSizeMultiplier}
+					minimumFontScale={labelFit.minimumFontScale}
+					numberOfLines={1}
+				>
 					{initials}
 				</Text>
 			) : (

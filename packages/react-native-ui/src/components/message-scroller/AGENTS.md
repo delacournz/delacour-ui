@@ -37,6 +37,7 @@ older history at the top and rises with the keyboard. Compound root plus `Messag
 - **`MessageRunPosition` is restated, not imported.** A bubble declares the same
   `"single" | "first" | "middle" | "last"` union; the two are structurally interchangeable, so the
   position passes straight across without either folder importing the other.
+- **The jump pill (`min-h-9`) and its count chip (`min-h-5 min-w-5`, `rounded-full`) are floors**, so a label scaled to 2× grows them and they stay pills; a caller's `min-h-*` replaces the floor (a bare `h-*` no longer does).
 - **Not inverted.** An inverted list draws newest-first and flips it with a transform, which leaves
   VoiceOver walking the conversation backwards, flips horizontal gestures on rows and makes prepend
   semantics backwards. LegendList's `alignItemsAtEnd` anchors to the bottom with the order intact.

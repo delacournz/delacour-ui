@@ -26,6 +26,13 @@ function StatefulInput() {
 }
 
 describe("Input", () => {
+	test("caps its value at the library's font scale, and a caller's cap wins", async () => {
+		await renderWithProviders(<Input accessibilityLabel="Email" />);
+		expect(screen.getByLabelText("Email").props.maxFontSizeMultiplier).toBe(2);
+		await renderWithProviders(<Input accessibilityLabel="Capped" maxFontSizeMultiplier={1.2} />);
+		expect(screen.getByLabelText("Capped").props.maxFontSizeMultiplier).toBe(1.2);
+	});
+
 	test("is a text field named by its accessibilityLabel", async () => {
 		await renderWithProviders(<Input accessibilityLabel="Email" placeholder="you@example.com" />);
 		expect(screen.getByLabelText("Email")).toBeOnTheScreen();

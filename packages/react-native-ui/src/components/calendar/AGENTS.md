@@ -84,8 +84,10 @@ sheets.
 - **A day cell grows no slop.** Rows touch with no gap and columns share the width, so any slop
   would overlap a neighbour and hand it the press. Under a denser style a cell is as short as
   `--spacing-input-sm|md|lg`; to reach 44, raise the token, not the slop.
-- **The cell is on the input scale** (`h-input-*`, `size-input-*`, `text-input-*`): sm 36, md 44,
-  lg 52. `md` and `lg` meet 44pt.
+- **The cell is on the input scale** (`min-h-input-*`, `min-w-input-*`, `text-input-*`): sm 36,
+  md 44, lg 52 — a floor, not a fixed size, so numerals at 2× text grow the cell instead of
+  clipping; a week's cells share its tallest row height. A caller's `h-*` no longer displaces it —
+  pass `min-h-*`. `md` and `lg` meet 44pt.
 - **The jump view sits over the grid** (`absolute inset-0`) while the weeks are hidden with
   `opacity-0`, not unmounted, so opening it never changes the calendar's height. The weekday row
   hides the same way.

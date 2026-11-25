@@ -199,9 +199,9 @@ export const attachmentVariants = tv({
 		},
 	},
 	compoundVariants: [
-		{ layout: "chip", size: "sm", class: { root: "h-10", preview: "size-8", glyph: "size-icon-sm" } },
-		{ layout: "chip", size: "md", class: { root: "h-12", preview: "size-10", glyph: "size-icon-md" } },
-		{ layout: "chip", size: "lg", class: { root: "h-14", preview: "size-12", glyph: "size-icon-lg" } },
+		{ layout: "chip", size: "sm", class: { root: "min-h-10", preview: "size-8", glyph: "size-icon-sm" } },
+		{ layout: "chip", size: "md", class: { root: "min-h-12", preview: "size-10", glyph: "size-icon-md" } },
+		{ layout: "chip", size: "lg", class: { root: "min-h-14", preview: "size-12", glyph: "size-icon-lg" } },
 		{ layout: "tile", size: "sm", class: { root: "size-20", glyph: "size-icon-lg" } },
 		{ layout: "tile", size: "md", class: { root: "size-24", glyph: "size-icon-xl" } },
 		{ layout: "tile", size: "lg", class: { root: "size-32", glyph: "size-icon-2xl" } },

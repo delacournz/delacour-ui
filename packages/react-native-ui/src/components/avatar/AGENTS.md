@@ -69,12 +69,16 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   32/40/48/64/96 points. `2xl` is the face a profile leads with — what
   [`PageHeader`](../page-header/AGENTS.md) draws by default — and it is a step on
   the scale rather than a `size-24` override so `AVATAR_SIZE_POINTS` never lies
-  about the edge the group maths and initials sizing read. Faces line up against each other and against list rows, and
-  a circle that grew with OS font scaling would break the stack; the initials
-  therefore set `allowFontScaling={false}` and are sized to fit the smallest
-  step. `AVATAR_SIZE_POINTS` restates the scale as numbers because the group's
-  overlap is a runtime margin and cannot be a class; a test pins the two
-  together.
+  about the edge the group maths and initials sizing read. Faces line up against each other and against list rows, so the
+  circle stays fixed — a fixed-size chrome exception WCAG 1.4.4 allows for a
+  glyph-bearing shape, as with a Badge dot. The initials and the `+N` do scale
+  with the user's text size, but bounded to the circle: `resolveAvatarLabelFit`
+  gives each size a `maxFontSizeMultiplier` (the largest at which the glyphs
+  still span 75% of the edge, between 1 and the library's 2×) and a
+  `minimumFontScale` for `adjustsFontSizeToFit` as the last resort, so `sm`
+  (32 pt) never clips. `AVATAR_LABEL_POINTS` and `AVATAR_SIZE_POINTS` restate the
+  scales as numbers (the group's overlap is a runtime margin and cannot be a
+  class); tests pin them to the classes.
 - **An avatar is content until it is given something to do** — the rule
   [`Badge`](../badge/AGENTS.md) follows. With no `onPress` or `onLongPress` it
   is a plain `View` announced as an image (or not announced at all when it has

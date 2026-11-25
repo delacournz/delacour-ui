@@ -76,14 +76,16 @@ export type TextTransform = (typeof TEXT_TRANSFORMS)[number];
 export const TEXT_BASE_CLASS = "font-sans font-normal text-base text-foreground";
 
 /**
- * Cap on OS font scaling.
+ * Cap on OS font scaling: 2×, the 200% WCAG 1.4.4 asks text to reach.
  *
  * Accessibility text sizes are respected — `allowFontScaling` is left at React
- * Native's default — but the library's fixed-height chrome cannot grow with
- * them: `h-button-sm|md|lg` are hard 36/44/52pt and `h-navbar-row` is 56pt, so
- * an uncapped multiplier clips a label rather than enlarging it.
+ * Native's default — up to double the design size. Text-bearing chrome sizes
+ * with `min-h-*` rather than `h-*` (`min-h-button-*`, `min-h-input-*`), so a
+ * control grows with its label instead of clipping it. The cap stays because
+ * iOS's largest accessibility size is over 3×, where a single-line control
+ * stops reading as one.
  */
-export const TEXT_MAX_FONT_SIZE_MULTIPLIER = 1.4;
+export const TEXT_MAX_FONT_SIZE_MULTIPLIER = 2;
 
 /**
  * Styling for one piece of text, on six independent axes.

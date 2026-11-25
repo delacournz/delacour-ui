@@ -1,5 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 
 /** How the fallback surface is painted. Orthogonal to {@link AVATAR_COLORS}. */
 export const AVATAR_VARIANTS = ["soft", "solid"] as const;
@@ -32,6 +33,45 @@ export const AVATAR_SIZE_POINTS: Record<AvatarSize, number> = {
 	xl: 64,
 	"2xl": 96,
 };
+
+/** The label's design font size in points at each size; a test pins it to the `text-*` step of the label slots. */
+export const AVATAR_LABEL_POINTS: Record<AvatarSize, number> = {
+	sm: 12,
+	md: 14,
+	lg: 16,
+	xl: 20,
+	"2xl": 30,
+};
+
+/** Share of the edge a label may span: the chord of the circle that stays inside it. */
+const LABEL_WIDTH_SHARE = 0.75;
+/** Em width of the widest glyph a label holds (a capital `W`, a digit). */
+const WIDEST_GLYPH_EM = 0.9;
+/** The floor `adjustsFontSizeToFit` may shrink to, as a last resort. */
+const LABEL_MIN_FONT_SCALE = 0.7;
+
+/**
+ * How far an avatar's label may scale, so it still fits the fixed circle.
+ *
+ * The circle is a fixed edge on purpose, so the label's growth is bounded by the
+ * circle rather than by the library cap alone: the multiplier is the largest one
+ * at which `glyphs` of the widest glyph still span no more than
+ * {@link LABEL_WIDTH_SHARE} of the edge, clamped between 1 and
+ * `TEXT_MAX_FONT_SIZE_MULTIPLIER`. `minimumFontScale` is the last-resort shrink
+ * `adjustsFontSizeToFit` may apply (iOS honours it; Android shrinks to fit anyway).
+ */
+export function resolveAvatarLabelFit({ size, glyphs }: { size: AvatarSize; glyphs: number }): {
+	maxFontSizeMultiplier: number;
+	minimumFontScale: number;
+} {
+	const room = AVATAR_SIZE_POINTS[size] * LABEL_WIDTH_SHARE;
+	const designWidth = AVATAR_LABEL_POINTS[size] * WIDEST_GLYPH_EM * Math.max(1, glyphs);
+	const fits = Math.floor((room / designWidth) * 100) / 100;
+	return {
+		maxFontSizeMultiplier: Math.min(TEXT_MAX_FONT_SIZE_MULTIPLIER, Math.max(1, fits)),
+		minimumFontScale: LABEL_MIN_FONT_SCALE,
+	};
+}
 
 /**
  * Theme token that gives the fallback glyph its colour.
@@ -81,9 +121,9 @@ export const AVATAR_FOREGROUND_TOKEN: Record<AvatarVariant, Record<AvatarColor, 
  *
  * **A size is an edge, and it is a fixed one** — unlike a badge, whose size is
  * padding. A face lines up against other faces in a group and against rows in a
- * list, and must not grow with OS font scaling; the initials are one or two
- * glyphs and are sized to fit the smallest step. {@link AVATAR_SIZE_POINTS} is
- * the same scale as a number, for the group's overlap.
+ * list, so the circle does not grow with OS font scaling. The initials do scale,
+ * bounded to the circle by {@link resolveAvatarLabelFit}. {@link AVATAR_SIZE_POINTS}
+ * is the same scale as a number, for the group's overlap.
  *
  * **The ring in a group is the page background** — `border-background` on the
  * wrapper around each face, never on the face itself, so a face in a group is the

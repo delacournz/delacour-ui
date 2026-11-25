@@ -65,8 +65,17 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
   makes the corner wider than the bar's inset. A test pins `overflow-hidden` to the tile root.
 - **Sizes are fixed points.** `ATTACHMENT_SIZE_POINTS` holds the preview square for chip and card,
   and the tile's own edge, and a test pins each to its `size-*` class. A tray of mixed
-  attachments lines up whatever the reader's text size; the name and meta still scale. A chip is
-  its preview plus `p-1`, also asserted.
+  attachments lines up whatever the reader's text size; the name and meta still scale, up to the
+  2x `Text` cap. A chip is its preview plus `p-1`, also asserted.
+- **A chip's height is a floor.** The root takes `min-h-10/12/14` (the preview plus inset), not `h-*`,
+  and `items-center` keeps the preview centred, so at the default text size it renders as before and
+  a 2x name/meta grows the chip instead of clipping. A caller's `min-h-*` displaces the floor; a
+  caller's `h-*` no longer does (tailwind-merge keeps the groups apart) and sits beside it. Pinned in
+  the variants test.
+- **A tile caption can't clip.** The tile edge stays fixed (`size-20/24/32`), but the name/meta strip
+  is `absolute` and anchored to the bottom, each line `numberOfLines={1}` with ellipsis, so at 2x it
+  grows upward over the picture (two lines of `text-xs` at 2x fit inside even the 80pt tile) rather
+  than being cut. `Attachment.Name` / `.Meta` use the library `Text`, already capped at 2x.
 - **Radii come off the generic scale.** `rounded-xl` for chip and tile, `rounded-lg` (the card
   corner) for card. No `--radius-attachment-*`.
 - **A kind's tone is data.** `ATTACHMENT_KIND_TONE` maps each kind to a surface and its own

@@ -155,13 +155,28 @@ describe("a multiline field", () => {
 	// the text while still matching a single-line field at rest.
 	test("turns the height into a floor rather than a fixed measure", () => {
 		for (const size of INPUT_SIZES) {
-			const single = inputVariants({ isMultiline: false, size }).root();
 			const multi = inputVariants({ isMultiline: true, size }).root();
-			expect(single).toMatch(/(?<![\w-])h-input-/);
-			expect(single).not.toMatch(/\bmin-h-input-/);
 			expect(multi).toMatch(/\bmin-h-input-/);
 			expect(multi).not.toMatch(/(?<![\w-])h-input-/);
 		}
+	});
+
+	// A 2x value would clip in a fixed height, so a single-line box is a floor too.
+	test("a single-line box is a floor as well, with no vertical padding", () => {
+		for (const size of INPUT_SIZES) {
+			const single = inputVariants({ isMultiline: false, size }).root();
+			expect(single).toMatch(/\bmin-h-input-/);
+			expect(single).not.toMatch(/(?<![\w-])h-input-/);
+			expect(single.split(" ")).toContain("py-0");
+		}
+	});
+
+	test("a caller's min-h displaces the default floor; a caller's h-* sits beside it", () => {
+		expect(inputVariants().root({ className: "min-h-20" })).not.toContain("min-h-input-md");
+		expect(inputVariants().root({ className: "min-h-20" })).toContain("min-h-20");
+		const withH = inputVariants().root({ className: "h-20" });
+		expect(withH).toContain("min-h-input-md");
+		expect(withH).toContain("h-20");
 	});
 
 	test("floors at exactly the height a single-line field takes", () => {
@@ -288,8 +303,8 @@ describe("the standalone and grouped boxes", () => {
 	});
 
 	test("merge an incoming className last, on either path", () => {
-		expect(resolveInputFieldClass({ className: "h-12", isGrouped: false })).toContain("h-12");
-		expect(resolveInputFieldClass({ className: "h-12", isGrouped: false })).not.toContain("h-input-md");
+		expect(resolveInputFieldClass({ className: "min-h-12", isGrouped: false })).toContain("min-h-12");
+		expect(resolveInputFieldClass({ className: "min-h-12", isGrouped: false })).not.toContain("min-h-input-md");
 		expect(resolveInputGroupClass({ className: "w-full" })).toContain("w-full");
 	});
 });

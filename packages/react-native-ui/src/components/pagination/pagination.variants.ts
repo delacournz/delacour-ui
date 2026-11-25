@@ -298,9 +298,10 @@ export function resolveControlForeground(): string {
  * import the root without closing a cycle (AGENTS.md rule 3) yet all of them read
  * the same `size`.
  *
- * **Every target is a square at least as wide as it is tall**, on the button
- * scale — `h-button-*` with `min-w-button-*` — so "7" and "128" share a height
- * and a three-digit page grows sideways rather than clipping.
+ * **Every target is at least a button-scale square** — `min-h-button-*` with
+ * `min-w-button-*` — so "7" and "128" share a height at the default text size, a
+ * three-digit page grows sideways rather than clipping, and a number scaled to 2×
+ * grows the target taller instead of being cut off.
  *
  * **The fade lands on each element, never on the root.** A control already
  * disabled at its end would otherwise fade twice under a disabled root.
@@ -347,27 +348,27 @@ export const paginationVariants = tv({
 		size: {
 			sm: {
 				run: "gap-2",
-				item: "h-button-sm min-w-button-sm rounded-button-sm px-1.5",
+				item: "min-h-button-sm min-w-button-sm rounded-button-sm px-1.5",
 				itemLabel: "text-sm",
-				control: "h-button-sm min-w-button-sm rounded-button-sm",
+				control: "min-h-button-sm min-w-button-sm rounded-button-sm",
 				controlLabel: "text-sm",
 				glyph: "size-icon-sm",
-				ellipsis: "h-button-sm min-w-button-sm",
+				ellipsis: "min-h-button-sm min-w-button-sm",
 				ellipsisLabel: "text-sm",
-				compact: "h-button-sm",
+				compact: "min-h-button-sm",
 				compactLabel: "text-sm",
 				status: "text-xs",
 			},
 			md: {
 				run: "gap-1",
-				item: "h-button-md min-w-button-md rounded-button-md px-2",
+				item: "min-h-button-md min-w-button-md rounded-button-md px-2",
 				itemLabel: "text-base",
-				control: "h-button-md min-w-button-md rounded-button-md",
+				control: "min-h-button-md min-w-button-md rounded-button-md",
 				controlLabel: "text-base",
 				glyph: "size-icon-md",
-				ellipsis: "h-button-md min-w-button-md",
+				ellipsis: "min-h-button-md min-w-button-md",
 				ellipsisLabel: "text-base",
-				compact: "h-button-md",
+				compact: "min-h-button-md",
 				compactLabel: "text-base",
 				status: "text-sm",
 			},

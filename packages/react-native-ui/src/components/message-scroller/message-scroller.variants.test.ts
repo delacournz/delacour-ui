@@ -115,11 +115,28 @@ describe("slots", () => {
 
 	test("the jump button is a pill with a 44pt touch target", () => {
 		const cls = slotClass("jumpButton");
-		expect(cls).toContain("h-9");
+		expect(cls).toContain("min-h-9");
+		expect(cls).not.toMatch(/(^|\s)h-/);
 		expect(cls).toContain("rounded-full");
 		expect(cls).toContain("border-border");
 		expect(cls).toContain("bg-card");
 		expect(cls).toContain("min-w-11");
+	});
+
+	test("the jump pill and count chip are floors, so a 2x label grows them and stays a pill", () => {
+		expect(slotClass("jumpCount")).toContain("min-h-5");
+		expect(slotClass("jumpCount")).toContain("min-w-5");
+		expect(slotClass("jumpCount")).not.toMatch(/(^|\s)h-/);
+		expect(slotClass("jumpCount")).toContain("rounded-full");
+		expect(slotClass("jumpCount")).toContain("items-center");
+		expect(slotClass("jumpCount")).toContain("justify-center");
+		expect(slotClass("jumpButton")).toContain("items-center");
+	});
+
+	test("a caller's min-h-* replaces the floor", () => {
+		expect(messageScrollerVariants().jumpButton({ className: "min-h-12" })).toContain("min-h-12");
+		expect(messageScrollerVariants().jumpButton({ className: "min-h-12" })).not.toContain("min-h-9");
+		expect(messageScrollerVariants().jumpCount({ className: "min-h-6" })).not.toContain("min-h-5");
 	});
 
 	test("the count chip is primary on primary-foreground", () => {

@@ -2,16 +2,19 @@ import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import {
 	AVATAR_BADGE_PLACEMENTS,
 	AVATAR_COLORS,
 	AVATAR_FOREGROUND_TOKEN,
+	AVATAR_LABEL_POINTS,
 	AVATAR_SIZE_POINTS,
 	AVATAR_SIZES,
 	AVATAR_VARIANTS,
 	avatarVariants,
 	resolveAvatarHitTarget,
 	resolveAvatarInteractive,
+	resolveAvatarLabelFit,
 	resolveAvatarOverlap,
 	resolveAvatarSize,
 } from "./avatar.variants";
@@ -284,5 +287,67 @@ describe("resolveAvatarHitTarget", () => {
 			const { edge, cap } = resolveAvatarHitTarget({ size, inGroup: true });
 			expect(resolveMinimumHitSlop(edge, 44, { cap })).toBeUndefined();
 		}
+	});
+});
+
+describe("resolveAvatarLabelFit", () => {
+	test("the font-size table matches the text step each label slot resolves to", () => {
+		const POINTS: Record<string, number> = {
+			"text-xs": 12,
+			"text-sm": 14,
+			"text-base": 16,
+			"text-xl": 20,
+			"text-3xl": 30,
+		};
+		for (const size of AVATAR_SIZES) {
+			for (const slot of ["fallbackLabel", "overflowLabel"] as const) {
+				const cls =
+					avatarVariants({ size })
+						[slot]()
+						.split(" ")
+						.find((c) => c in POINTS) ?? "";
+				expect(POINTS[cls]).toBe(AVATAR_LABEL_POINTS[size]);
+			}
+		}
+	});
+
+	test("never exceeds the library text cap, and never shrinks below the design size", () => {
+		for (const size of AVATAR_SIZES) {
+			for (const glyphs of [1, 2, 3]) {
+				const { maxFontSizeMultiplier } = resolveAvatarLabelFit({ size, glyphs });
+				expect(maxFontSizeMultiplier).toBeLessThanOrEqual(TEXT_MAX_FONT_SIZE_MULTIPLIER);
+				expect(maxFontSizeMultiplier).toBeGreaterThanOrEqual(1);
+			}
+		}
+	});
+
+	test("the largest scaled label fits inside the circle, whenever the cap allows it", () => {
+		for (const size of AVATAR_SIZES) {
+			for (const glyphs of [1, 2, 3]) {
+				const { maxFontSizeMultiplier, minimumFontScale } = resolveAvatarLabelFit({ size, glyphs });
+				const drawn = AVATAR_LABEL_POINTS[size] * maxFontSizeMultiplier * minimumFontScale;
+				expect(drawn).toBeGreaterThan(0);
+			}
+		}
+		const sm = resolveAvatarLabelFit({ size: "sm", glyphs: 2 });
+		const widest = AVATAR_LABEL_POINTS.sm * sm.maxFontSizeMultiplier * 2 * 0.9;
+		expect(widest).toBeLessThanOrEqual(AVATAR_SIZE_POINTS.sm * 0.75 + 0.001);
+	});
+
+	test("a bigger circle lets the text grow at least as far", () => {
+		const caps = AVATAR_SIZES.map((size) => resolveAvatarLabelFit({ size, glyphs: 2 }).maxFontSizeMultiplier);
+		expect([...caps].sort((a, b) => a - b)).toEqual(caps);
+	});
+
+	test("more glyphs never grow further than fewer", () => {
+		for (const size of AVATAR_SIZES) {
+			expect(resolveAvatarLabelFit({ size, glyphs: 3 }).maxFontSizeMultiplier).toBeLessThanOrEqual(
+				resolveAvatarLabelFit({ size, glyphs: 1 }).maxFontSizeMultiplier
+			);
+		}
+	});
+
+	test("a minimum font scale below 1 is offered as the last resort", () => {
+		expect(resolveAvatarLabelFit({ size: "sm", glyphs: 3 }).minimumFontScale).toBeLessThan(1);
 	});
 });

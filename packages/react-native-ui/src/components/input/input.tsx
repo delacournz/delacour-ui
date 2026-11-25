@@ -5,6 +5,7 @@ import { useButtonGroupItemContext } from "../button/button.context";
 import { resolveButtonSizeStep } from "../button/button.variants";
 import { useFieldContext } from "../field/field.context";
 import { useFieldControlAccessibility } from "../field/field-control";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import { useInputGroupContext } from "./input.context";
 import {
 	type InputSize,
@@ -162,6 +163,7 @@ function InputRoot({
 				orientation: member?.orientation ?? "horizontal",
 			})}
 			cursorColorClassName={selectionAccent}
+			maxFontSizeMultiplier={TEXT_MAX_FONT_SIZE_MULTIPLIER}
 			multiline={multiline}
 			placeholderTextColorClassName={resolvePlaceholderAccentClass(placeholderColorClassName)}
 			selectionColorClassName={selectionAccent}

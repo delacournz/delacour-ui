@@ -32,6 +32,11 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
   floating over its list. Declared in both `tokens.css` and theme.css's
   `@variant native` block, per the package rule, and registered in
   `styles/tokens.ts`. The floor is 44pt.
+- **An extended fab's height is a floor, not a size.** With a label it takes
+  `min-h-fab-*`, so a label scaled to 2× grows the pill instead of clipping;
+  a round fab keeps `size-fab-*`, since it holds only a glyph. Because tailwind-merge
+  keeps `h-*` and `min-h-*` apart, a caller's `min-h-*` replaces the floor and a
+  caller's `h-*` no longer does.
 - **Icons on `Fab` are composed; on `Fab.Group` and `Fab.Action` they are a
   prop.** `Fab` matches `Button`: it publishes its icon step (`sm` → `icon-md`,
   `md`/`lg` → `icon-lg`, `resolveFabIconSize`) and its variant's foreground

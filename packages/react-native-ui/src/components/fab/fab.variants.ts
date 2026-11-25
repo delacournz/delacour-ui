@@ -190,7 +190,8 @@ export function resolveActionMotion({ local, travel }: { local: number; travel: 
  * Styling for every part of a fab and its dial.
  *
  * One slotted `tv()` so `size` and `variant` are declared once. A size names
- * tokens: `size-fab-md` for a round fab, `h-fab-md` for an extended one, and the
+ * tokens: `size-fab-md` for a round fab, `min-h-fab-md` for an extended one (a
+ * floor, so a label scaled to 2× grows it instead of clipping), and the
  * action anchor's `w-fab-md`, which centres a small action button on the
  * trigger's own centre line. The values live in `tokens.css`.
  *
@@ -250,9 +251,9 @@ export const fabVariants = tv({
 		{ size: "sm", isExtended: false, class: { root: "size-fab-sm" } },
 		{ size: "md", isExtended: false, class: { root: "size-fab-md" } },
 		{ size: "lg", isExtended: false, class: { root: "size-fab-lg" } },
-		{ size: "sm", isExtended: true, class: { root: "h-fab-sm" } },
-		{ size: "md", isExtended: true, class: { root: "h-fab-md" } },
-		{ size: "lg", isExtended: true, class: { root: "h-fab-lg" } },
+		{ size: "sm", isExtended: true, class: { root: "min-h-fab-sm" } },
+		{ size: "md", isExtended: true, class: { root: "min-h-fab-md" } },
+		{ size: "lg", isExtended: true, class: { root: "min-h-fab-lg" } },
 	],
 	defaultVariants: {
 		size: "md",

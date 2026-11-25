@@ -96,7 +96,7 @@ export const SLIDE_BUTTON_GLYPH_TOKEN = "foreground";
 /**
  * Styling for every part of a slide button.
  *
- * The rail is the same box `Button` draws at each size — `h-button-*` and
+ * The rail is the same box `Button` draws at each size — `min-h-button-*` and
  * `rounded-button-*` — so a slide button stacks level with any button above or
  * below it. The handle is neutral in every variant; only the rail, the trail and
  * the label take the variant's colour. The label's colour sits on the label,
@@ -111,7 +111,7 @@ export const slideButtonVariants = tv({
 	slots: {
 		root: "relative justify-center overflow-hidden",
 		trail: "absolute start-0 top-0 bottom-0",
-		labelFrame: "absolute inset-0 justify-center",
+		labelFrame: "justify-center py-1",
 		label: "text-center font-semibold",
 		labelClip: "absolute start-0 top-0 bottom-0 overflow-hidden",
 		labelOnTrailFrame: "absolute start-0 top-0 bottom-0 justify-center",
@@ -143,19 +143,19 @@ export const slideButtonVariants = tv({
 		},
 		size: {
 			sm: {
-				root: "h-button-sm rounded-button-sm",
+				root: "min-h-button-sm rounded-button-sm",
 				label: "text-button-sm",
 				labelOnTrail: "text-button-sm",
 				thumbGlyph: "size-icon-sm",
 			},
 			md: {
-				root: "h-button-md rounded-button-md",
+				root: "min-h-button-md rounded-button-md",
 				label: "text-button-md",
 				labelOnTrail: "text-button-md",
 				thumbGlyph: "size-icon-md",
 			},
 			lg: {
-				root: "h-button-lg rounded-button-lg",
+				root: "min-h-button-lg rounded-button-lg",
 				label: "text-button-lg",
 				labelOnTrail: "text-button-lg",
 				thumbGlyph: "size-icon-lg",

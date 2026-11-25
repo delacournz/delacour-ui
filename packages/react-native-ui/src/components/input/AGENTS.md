@@ -76,11 +76,16 @@ Root plus `Input.Group` and its parts: `Prefix`, `Suffix`, `Button`,
   would drop the only signal it has that its value is wrong, exactly while the
   value is being corrected. The border, the caret and the decorators all stay
   `destructive`.
-- **A multiline field turns its height into a floor**, and the row aligns to the
+- **Every box height is a floor (`min-h-input-*`), never `h-input-*`.** The value
+  scales to 2x (`TEXT_MAX_FONT_SIZE_MULTIPLIER`, passed to the `TextInput`; a
+  caller's own `maxFontSizeMultiplier` wins), and a fixed height would clip it.
+  At the default scale the floor is the old height. A caller's `h-*` no longer
+  displaces the default — use `min-h-*` to change the floor.
+- **A multiline field also takes vertical padding**, and the row aligns to the
   top with it — centred decorators would drift down the side of a paragraph
   instead of sitting on its first line. `py-0` on the single-line branch is
   load-bearing on Android, where the platform's own vertical padding would
-  otherwise push the value off centre inside a fixed height.
+  otherwise push the value off centre inside the box.
 - **Prefix and suffix share one `decorator` slot and one implementation.** They
   are the same box in different places — the row's `gap` is what separates
   them — so a second identical slot would only be a second thing to keep in step.

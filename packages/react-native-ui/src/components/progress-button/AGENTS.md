@@ -26,7 +26,8 @@ falls into; a two-second hold cannot be done by accident or by habit.
 - **Variants**: `primary`, `secondary`, `destructive`, `success`. **Sizes**: `sm`, `md`, `lg`.
   **Shapes**: `pill` (default), `rounded`. There is no square `icon-*` size: a hold has to
   say what it does, and a glyph alone cannot carry "hold to erase".
-- **The box is the button's box.** `h-button-*`, the button's `px-*`, `text-button-*`,
+- **The box is the button's box.** `min-h-button-*` (a floor, so a label scaled to 2× grows
+  the box instead of clipping; the fill and its copy are `inset-y-0` and follow), the button's `px-*`, `text-button-*`,
   `size-icon-*` and, as a pill, `rounded-button-*` — the tokens `buttonVariants` reads, and a
   test pins them equal to the button's own, so the two sit level in a row and a retune moves
   both. `rounded` is the card corner, `rounded-lg`, so the button sits square with a

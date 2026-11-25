@@ -138,6 +138,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		},
@@ -175,6 +179,10 @@
 				{
 					"from": "../pressable/pressable.variants",
 					"to": "@registry/ui/pressable/pressable.variants"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
 				}
 			]
 		}

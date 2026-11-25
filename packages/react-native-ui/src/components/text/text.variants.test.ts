@@ -419,6 +419,12 @@ describe("TEXT_MAX_FONT_SIZE_MULTIPLIER", () => {
 	test("caps growth without shrinking the default", () => {
 		expect(TEXT_MAX_FONT_SIZE_MULTIPLIER).toBeGreaterThan(1);
 	});
+
+	// WCAG 1.4.4 asks text to resize to 200% without loss of content, so the cap
+	// sits at exactly 2× — chrome grows (`min-h-*`) rather than the text stopping short.
+	test("lets text reach 200% (WCAG 1.4.4)", () => {
+		expect(TEXT_MAX_FONT_SIZE_MULTIPLIER).toBe(2);
+	});
 });
 
 describe("the kicker variant", () => {

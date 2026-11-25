@@ -34,9 +34,10 @@ disabled. The caller owns fetching and slicing.
 
 - **Variants**: `numbers` (the run of pages and gaps between the arrows), `compact` (one
   "3 / 12" readout between them) and `simple` (the arrows alone, labelled "Previous" and
-  "Next"). **Sizes**: `sm` and `md`, on the button scale — `h-button-*` with `min-w-button-*`,
-  so every target is a square at least as wide as it is tall and "128" grows sideways rather
-  than clipping.
+  "Next"). **Sizes**: `sm` and `md`, on the button scale — `min-h-button-*` with `min-w-button-*`,
+  so every target is at least a square, "128" grows sideways rather than clipping, and a number
+  scaled to 2× grows the target taller (page numbers are text, so no fixed `h-*`). A caller's
+  `h-*` no longer displaces the height; a `min-h-*` does.
 - **The `numbers` run is fixed-length.** Once `count` exceeds
   `resolvePaginationRunLength` — `2 × boundaries + 2 × siblings + 3` — every page draws exactly
   that many tokens. The window of siblings slides *inside* the run, pinned against an end until
@@ -106,8 +107,8 @@ disabled. The caller owns fetching and slicing.
 - **Ellipsis**: "Jump forward 5 pages" / "Jump back 5 pages" — "…" names nothing.
 - **Compact**: one `adjustable` element whose value is "Page 3 of 12" and whose increment and
   decrement actions move a page, so a VoiceOver swipe works the whole control from one stop. Its
-  readout does not scale with the OS text size: it shares a row with fixed-size targets, and the
-  page is already in the accessibility value.
+  readout scales with the OS text size up to the library cap (2×): the box is `min-h-button-*`,
+  so a larger readout grows the row instead of clipping.
 - **RTL**: the row flips by itself; `resolveControlGlyph` mirrors the chevrons so Previous
   still points to the start.
 

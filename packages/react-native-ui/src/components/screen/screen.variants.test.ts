@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
+import { THEME_CSS, TOKENS_CSS } from "../../styles/theme-tokens.test";
 import { MIN_HIT_TARGET, resolveMinimumHitSlop } from "../pressable/pressable.variants";
+import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import {
 	CHAT_COMPOSER_GAP,
 	footerAboveKeyboard,
@@ -18,6 +20,10 @@ import {
 	SCREEN_EDGES,
 	SCREEN_FLOATING_BOTTOM_GAP,
 	SCREEN_FOOTER_PADDING,
+	SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER,
+	SCREEN_NAVBAR_ROW_HEIGHT,
+	SCREEN_NAVBAR_SUBTITLE_LINE_HEIGHT,
+	SCREEN_NAVBAR_TITLE_LINE_HEIGHT,
 	SCREEN_PLACEMENTS,
 	SCREEN_SCROLL_INSET_MODES,
 	screenVariants,
@@ -663,5 +669,27 @@ describe("screen labels reach the resolvers", () => {
 	});
 	test("the announcement is composed by labels.errorAnnouncement from trimmed parts", () => {
 		expect(resolveScreenErrorAnnouncement(" Fehler ", " Offline. ", custom)).toBe("Fehler | Offline.");
+	});
+});
+
+describe("navbar text scaling", () => {
+	test("pins the row height against the --spacing-navbar-row token", () => {
+		expect(TOKENS_CSS).toContain(`--spacing-navbar-row: ${SCREEN_NAVBAR_ROW_HEIGHT}px`);
+		expect(THEME_CSS).toContain(`--spacing-navbar-row: ${SCREEN_NAVBAR_ROW_HEIGHT}px`);
+	});
+	test("a stacked title and subtitle fit the row at the cap", () => {
+		const stacked =
+			(SCREEN_NAVBAR_TITLE_LINE_HEIGHT + SCREEN_NAVBAR_SUBTITLE_LINE_HEIGHT) * SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER;
+		expect(stacked).toBeLessThanOrEqual(SCREEN_NAVBAR_ROW_HEIGHT);
+	});
+	test("the cap is below the library's and above 1", () => {
+		expect(SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER).toBeLessThan(TEXT_MAX_FONT_SIZE_MULTIPLIER);
+		expect(SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER).toBeGreaterThan(1);
+	});
+	test("a lone title at the library's 2x still fits (why scroll-header and selection-mode need no cap)", () => {
+		expect(SCREEN_NAVBAR_TITLE_LINE_HEIGHT * TEXT_MAX_FONT_SIZE_MULTIPLIER).toBeLessThanOrEqual(
+			SCREEN_NAVBAR_ROW_HEIGHT
+		);
+		expect(24 * TEXT_MAX_FONT_SIZE_MULTIPLIER).toBeLessThanOrEqual(SCREEN_NAVBAR_ROW_HEIGHT);
 	});
 });

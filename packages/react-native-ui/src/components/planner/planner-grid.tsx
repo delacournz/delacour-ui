@@ -1,6 +1,6 @@
-import { type ReactElement, useEffect, useMemo } from "react";
+import { type ReactElement, useCallback, useEffect, useMemo } from "react";
 import { type LayoutChangeEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, {
 	Easing,
 	useAnimatedStyle,
@@ -78,28 +78,30 @@ export function PlannerGrid({
 		translateX.value = withTiming(0, { duration: PLANNER_PAGE_DURATION, easing: PAGE_EASING });
 	}, [monthKey, opacity, pendingRef, reduceMotion, translateX, width]);
 
-	const gesture = useMemo(() => {
-		const release = (translation: number, velocity: number, span: number): void => {
+	const release = useCallback(
+		(translation: number, velocity: number, span: number): void => {
 			const direction = resolveSwipePage(translation, velocity, span);
 			if (direction !== 0) page(direction, "swipe");
-		};
+		},
+		[page]
+	);
 
-		return Gesture.Pan()
-			.enabled(isSwipeEnabled)
-			.activeOffsetX([-PLANNER_PAN.activateX, PLANNER_PAN.activateX])
-			.failOffsetY([-PLANNER_PAN.failY, PLANNER_PAN.failY])
-			.onUpdate((event) => {
-				"worklet";
-				if (!reduceMotion) translateX.value = event.translationX;
-			})
-			.onEnd((event) => {
-				"worklet";
-				// Settle back regardless: an accepted month replaces this with its own
-				// slide, and a refused one must not leave the grid half off-screen.
-				translateX.value = withTiming(0, { duration: PLANNER_PAGE_DURATION, easing: PAGE_EASING });
-				scheduleOnRN(release, event.translationX, event.velocityX, width.value);
-			});
-	}, [isSwipeEnabled, page, reduceMotion, translateX, width]);
+	const gesture = usePanGesture({
+		enabled: isSwipeEnabled,
+		activeOffsetX: [-PLANNER_PAN.activateX, PLANNER_PAN.activateX],
+		failOffsetY: [-PLANNER_PAN.failY, PLANNER_PAN.failY],
+		onUpdate: (event) => {
+			"worklet";
+			if (!reduceMotion) translateX.value = event.translationX;
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			// Settle back regardless: an accepted month replaces this with its own
+			// slide, and a refused one must not leave the grid half off-screen.
+			translateX.value = withTiming(0, { duration: PLANNER_PAGE_DURATION, easing: PAGE_EASING });
+			scheduleOnRN(release, event.translationX, event.velocityX, width.value);
+		},
+	});
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		opacity: opacity.value,

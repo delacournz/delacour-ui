@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AccessibilityInfo, Platform } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
 import { LabelsProvider } from "../../hooks/use-labels";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { NumberInput } from "./number-input";
 import type { NumberInputValue } from "./number-input.format";
@@ -403,7 +403,7 @@ describe("NumberInput", () => {
 					/>
 				</Field>
 			);
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(focus).toHaveBeenCalledTimes(1);
 		});
 

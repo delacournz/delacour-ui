@@ -33,12 +33,12 @@ section to read first — what follows is only where a switch differs.
 ## Gesture
 
 - **The root is not a `Pressable`**, for `Slider`'s three reasons: its
-  `Gesture.Tap()` would fire `onPress` on every toggle, its root `Animated.View`
+  tap would fire `onPress` on every toggle, its root `Animated.View`
   already owns `transform` — which is exactly what a thumb's position is — and a
   thumb inside its own pressable would nest a descendant recogniser in the
   root's. `HapticFeedback` and `playHaptic` are imported from `pressable.tsx`,
   which is what that export is for.
-- **One `Gesture.Pan()` serves the tap and the drag, and there is no `Tap` to
+- **One `usePanGesture` serves the tap and the drag, and there is no tap to
   race it.** A release whose finger barely moved *is* the tap, which
   `resolveSwitchRelease` decides along with everything else: tap slop first, then
   a flick's velocity, then the position. Two recognisers would have to negotiate
@@ -65,20 +65,32 @@ section to read first — what follows is only where a switch differs.
   only a state to end up in. `onFinalize` is still the callback because it is the
   one that fires on every path, the never-activated one included — which is
   exactly the path a stationary tap takes.
+- **The release reads the drag from a shared value, not from `onFinalize`'s
+  event.** Gesture Handler 3 hands `onFinalize` the pointer's position and
+  nothing else — no translation, no velocity — so `onUpdate` records the last
+  `translationX`, `translationY` and `velocityX` into `moved`, and `onBegin`
+  zeroes it. A stationary tap never reaches `onUpdate`, which is why the reset is
+  on the grab rather than the release: without it a tap would settle with the
+  previous drag's numbers.
 - **A cancelled pan commits nothing.** `onFinalize` also runs when the system,
-  a parent, or a disable under the finger cancels the pan. On `CANCELLED`, or
-  when the switch is disabled, it springs the thumb back to the current state,
-  releases the press scale and clears the drag flag, with no haptic and no
-  change. It checks `CANCELLED` only, never `success`: on iOS a stationary press
-  never activates the pan and finalizes as `FAILED`, and that press is the tap.
-- **The pan carries ``.withTestId(`${testID}-pan`)``** when the root has a
+  a parent, or a disable under the finger cancels the pan. Then, or when the
+  switch is disabled, it springs the thumb back to the current state, releases
+  the press scale and clears the drag flag, with no haptic and no change.
+  Gesture Handler 3 reports `FAILED` and `CANCELLED` alike as `event.canceled`,
+  and on iOS a stationary press never activates the pan and finalizes as
+  `FAILED` — that press is the tap. So a pan counts as cancelled only when it
+  was `canceled` after activating (`wasActivated`, set in `onActivate`), or
+  `canceled` before its last finger lifted (`wasLifted`, set in `onTouchesUp`).
+  **Verify on an iOS device** that a stationary tap still toggles: it relies on
+  the touch-up reaching the worklet before the FAILED state change.
+- **The pan carries ``testID: `${testID}-pan` ``** when the root has a
   `testID`, so a render test can drive it with `fireGestureHandler`. No visual
   effect.
-- **`isDisabled` is checked in `toggle`, not only on the pan.** `.enabled()` gates
+- **`isDisabled` is checked in `toggle`, not only on the pan.** `enabled` gates
   the gesture, but a screen reader's activation and an enclosing `Field`'s label
   press both arrive through `toggle`, so a guard on the pan alone let a disabled
   switch flip under VoiceOver and TalkBack. The first render test caught it.
-- **`minDistance(0)` and `shouldCancelWhenOutside(false)`**, for the reasons
+- **`minDistance: 0` and `shouldCancelWhenOutside: false`**, for the reasons
   [Slider](../slider/AGENTS.md) sets out. The cost is the same one: a drag that
   starts on the switch is the switch's, so you cannot scroll a list by putting
   your finger on one.

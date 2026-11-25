@@ -112,8 +112,8 @@ no context.
 - **Pause and resume are accessibility actions on the ring's element** — the one already `accessible`
   text element — and only while `spin` is `loop`. Nothing is added to a still or controlled ring.
 - **Press-to-pause is a `LongPress` with `minDuration(0)` on the ring.** It sets the pressed flag in
-  both `onBegin` and `onStart` — on the iOS simulator `onBegin` never fired for it, and the ring
-  kept turning under the finger until `onStart` set it too — and clears it in `onFinalize`, so a scroll that takes the touch over still resumes the ring. It is a hold, not a
+  both `onBegin` and `onActivate` — on the iOS simulator `onBegin` never fired for it, and the ring
+  kept turning under the finger until `onActivate` set it too — and clears it in `onFinalize`, so a scroll that takes the touch over still resumes the ring. It is a hold, not a
   press action, which is why it is a raw gesture rather than a `Pressable`. `centerContent` sits
   above the ring with `pointerEvents="box-none"`: a button there keeps its own tap, and a touch on
   empty middle reaches the ring.

@@ -1,6 +1,6 @@
-import { type ReactElement, useCallback, useMemo, useState } from "react";
+import { type ReactElement, useCallback, useState } from "react";
 import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useFieldContext } from "../field/field.context";
@@ -94,52 +94,37 @@ export function ColorPickerTrack({
 		setGeometry((current) => ({ ...current, thumb }));
 	}, []);
 
-	const gesture = useMemo(() => {
-		const applyTouch = (x: number) => {
-			"worklet";
-			const thumb = thumbSize.value;
-			const value = trackToValue(x - thumb / 2, width.value - thumb, spec.max);
-			const next = isHue ? { ...live.value, h: value } : { ...live.value, a: value };
-			live.value = next;
-			if (hasChangeListener) scheduleOnRN(dragChange, next);
-		};
+	const applyTouch = (x: number) => {
+		"worklet";
+		const thumb = thumbSize.value;
+		const value = trackToValue(x - thumb / 2, width.value - thumb, spec.max);
+		const next = isHue ? { ...live.value, h: value } : { ...live.value, a: value };
+		live.value = next;
+		if (hasChangeListener) scheduleOnRN(dragChange, next);
+	};
 
-		return Gesture.Pan()
-			.enabled(!isDisabled && !isReadOnly)
-			.minDistance(0)
-			.shouldCancelWhenOutside(false)
-			.onBegin((event) => {
-				"worklet";
-				isGrabbed.value = true;
-				scheduleOnRN(beginDrag);
-				if (haptic !== false) playHaptic(haptic);
-				applyTouch(event.x);
-			})
-			.onUpdate((event) => {
-				"worklet";
-				applyTouch(event.x);
-			})
-			.onFinalize(() => {
-				"worklet";
-				isGrabbed.value = false;
-				if (haptic !== false) playHaptic("light");
-				scheduleOnRN(endDrag, live.value);
-			});
-	}, [
-		beginDrag,
-		dragChange,
-		endDrag,
-		haptic,
-		hasChangeListener,
-		isDisabled,
-		isGrabbed,
-		isHue,
-		isReadOnly,
-		live,
-		spec.max,
-		thumbSize,
-		width,
-	]);
+	const gesture = usePanGesture({
+		enabled: !isDisabled && !isReadOnly,
+		minDistance: 0,
+		shouldCancelWhenOutside: false,
+		onBegin: (event) => {
+			"worklet";
+			isGrabbed.value = true;
+			scheduleOnRN(beginDrag);
+			if (haptic !== false) playHaptic(haptic);
+			applyTouch(event.x);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			applyTouch(event.x);
+		},
+		onFinalize: () => {
+			"worklet";
+			isGrabbed.value = false;
+			if (haptic !== false) playHaptic("light");
+			scheduleOnRN(endDrag, live.value);
+		},
+	});
 
 	const x = useDerivedValue(() => {
 		const thumb = thumbSize.value;

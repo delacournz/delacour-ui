@@ -12,7 +12,7 @@ import {
 	useState,
 } from "react";
 import { type AccessibilityActionEvent, I18nManager, type LayoutChangeEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture, useTapGesture } from "react-native-gesture-handler";
 import Animated, {
 	useAnimatedStyle,
 	useReducedMotion,
@@ -196,107 +196,78 @@ function SwipeRoot({
 		[isReducedMotion, offset, rowOpacity]
 	);
 
-	const pan = useMemo(
-		() =>
-			Gesture.Pan()
-				.withTestId("swipe-pan")
-				.enabled(!isDisabled)
-				.activeOffsetX([-10, 10])
-				.failOffsetY([-8, 8])
-				.onStart(() => {
-					"worklet";
-					isActive.value = true;
-					grabbed.value = offset.value;
-					isPastFull.value = false;
-				})
-				.onUpdate((event) => {
-					"worklet";
-					const raw = grabbed.value + (IS_RTL ? -event.translationX : event.translationX);
-					const isUnbacked = (raw > 0 && startWidth <= 0) || (raw < 0 && endWidth <= 0);
-					const next = isUnbacked ? raw * SWIPE_RUBBER_BAND : raw;
-					offset.value = next;
+	const pan = usePanGesture({
+		testID: "swipe-pan",
+		enabled: !isDisabled,
+		activeOffsetX: [-10, 10],
+		failOffsetY: [-8, 8],
+		onActivate: () => {
+			"worklet";
+			isActive.value = true;
+			grabbed.value = offset.value;
+			isPastFull.value = false;
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const raw = grabbed.value + (IS_RTL ? -event.translationX : event.translationX);
+			const isUnbacked = (raw > 0 && startWidth <= 0) || (raw < 0 && endWidth <= 0);
+			const next = isUnbacked ? raw * SWIPE_RUBBER_BAND : raw;
+			offset.value = next;
 
-					if (!isFullSwipe || haptic === false || rowWidth.value <= 0) return;
-					const width = next > 0 ? startWidth : endWidth;
-					const isPast = width > 0 && Math.abs(next) > width + SWIPE_FULL_FRACTION * rowWidth.value;
-					if (isPast === isPastFull.value) return;
-					isPastFull.value = isPast;
-					if (isPast) playHaptic(haptic);
-				})
-				.onFinalize((event) => {
-					"worklet";
-					if (!isActive.value) return;
-					isActive.value = false;
+			if (!isFullSwipe || haptic === false || rowWidth.value <= 0) return;
+			const width = next > 0 ? startWidth : endWidth;
+			const isPast = width > 0 && Math.abs(next) > width + SWIPE_FULL_FRACTION * rowWidth.value;
+			if (isPast === isPastFull.value) return;
+			isPastFull.value = isPast;
+			if (isPast) playHaptic(haptic);
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (!isActive.value) return;
+			isActive.value = false;
 
-					// `resolveSwipeRelease`, restated: a worklet body stays self-contained.
-					const current = offset.value;
-					const velocity = IS_RTL ? -event.velocityX : event.velocityX;
-					const projected = current + velocity * SWIPE_PROJECTION;
-					const isCrossing = current !== 0 && Math.sign(projected) !== Math.sign(current);
-					const side: SwipeSide = projected > 0 ? "start" : "end";
-					const width = side === "start" ? startWidth : endWidth;
-					const fullAt = width + SWIPE_FULL_FRACTION * rowWidth.value;
-					const isClosing = projected === 0 || isCrossing || width <= 0;
-					const isFull =
-						!isClosing &&
-						isFullSwipe &&
-						rowWidth.value > 0 &&
-						Math.abs(current) > fullAt &&
-						Math.abs(projected) > fullAt;
-					const isOpening = !isClosing && !isFull && Math.abs(projected) > width / 2;
-					const direction = side === "start" ? 1 : -1;
+			// `resolveSwipeRelease`, restated: a worklet body stays self-contained.
+			const current = offset.value;
+			const velocity = IS_RTL ? -event.velocityX : event.velocityX;
+			const projected = current + velocity * SWIPE_PROJECTION;
+			const isCrossing = current !== 0 && Math.sign(projected) !== Math.sign(current);
+			const side: SwipeSide = projected > 0 ? "start" : "end";
+			const width = side === "start" ? startWidth : endWidth;
+			const fullAt = width + SWIPE_FULL_FRACTION * rowWidth.value;
+			const isClosing = projected === 0 || isCrossing || width <= 0;
+			const isFull =
+				!isClosing && isFullSwipe && rowWidth.value > 0 && Math.abs(current) > fullAt && Math.abs(projected) > fullAt;
+			const isOpening = !isClosing && !isFull && Math.abs(projected) > width / 2;
+			const direction = side === "start" ? 1 : -1;
 
-					if (isFull) {
-						if (isReducedMotion) {
-							rowOpacity.value = withTiming(0, { duration: SWIPE_REDUCED_DURATION }, (finished) => {
-								if (finished) scheduleOnRN(completeFullSwipe, side);
-							});
-						} else {
-							offset.value = withTiming(
-								direction * rowWidth.value,
-								{ duration: SWIPE_FLY_OFF_DURATION },
-								(finished) => {
-									if (finished) scheduleOnRN(completeFullSwipe, side);
-								}
-							);
-						}
-						return;
-					}
+			if (isFull) {
+				if (isReducedMotion) {
+					rowOpacity.value = withTiming(0, { duration: SWIPE_REDUCED_DURATION }, (finished) => {
+						if (finished) scheduleOnRN(completeFullSwipe, side);
+					});
+				} else {
+					offset.value = withTiming(direction * rowWidth.value, { duration: SWIPE_FLY_OFF_DURATION }, (finished) => {
+						if (finished) scheduleOnRN(completeFullSwipe, side);
+					});
+				}
+				return;
+			}
 
-					const target = isOpening ? direction * width : 0;
-					offset.value = isReducedMotion
-						? withTiming(target, { duration: SWIPE_REDUCED_DURATION })
-						: withSpring(target, { ...SWIPE_SPRING, velocity });
-					scheduleOnRN(settle, isOpening ? side : null);
-				}),
-		[
-			completeFullSwipe,
-			endWidth,
-			grabbed,
-			haptic,
-			isActive,
-			isDisabled,
-			isFullSwipe,
-			isPastFull,
-			isReducedMotion,
-			offset,
-			rowOpacity,
-			rowWidth,
-			settle,
-			startWidth,
-		]
-	);
+			const target = isOpening ? direction * width : 0;
+			offset.value = isReducedMotion
+				? withTiming(target, { duration: SWIPE_REDUCED_DURATION })
+				: withSpring(target, { ...SWIPE_SPRING, velocity });
+			scheduleOnRN(settle, isOpening ? side : null);
+		},
+	});
 
-	const shieldTap = useMemo(
-		() =>
-			Gesture.Tap()
-				.withTestId("swipe-shield")
-				.onEnd(() => {
-					"worklet";
-					scheduleOnRN(close);
-				}),
-		[close]
-	);
+	const shieldTap = useTapGesture({
+		testID: "swipe-shield",
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(close);
+		},
+	});
 
 	const rowStyle = useAnimatedStyle(() => ({
 		opacity: rowOpacity.value,

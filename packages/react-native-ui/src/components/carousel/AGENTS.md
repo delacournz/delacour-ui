@@ -91,16 +91,17 @@ file stable: its functions are the contract both consume.
 - **The pan claims its axis and yields the other**: `activeOffset` ±10 on the
   travel axis under `failOffset` ±10 across it. That is what lets a horizontal
   carousel sit in `Screen.ScrollArea` and a `Pressable` in a slide still tap. Not
-  `blocksExternalGesture` — React Native's `ScrollView` has no handler tag.
+  `block` — React Native's `ScrollView` has no handler tag.
 - **The origin is back-computed at activation** (`resolvePanOrigin`), or the slide
   jumps by the 10 points it took to activate. A grab mid-spring resumes from where
   the slide is.
-- **The spring is cancelled in `onStart`, never `onBegin`.** Most touches fail on
+- **The spring is cancelled in `onActivate`, never `onBegin`.** Most touches fail on
   the cross axis; cancelling on touch-down would freeze the run for every vertical
   scroll that began on it.
 - **The settle is in `onFinalize`**, the one callback on END, FAILED and
   CANCELLED, guarded by an `isDragging` flag so a tap that never activated does not
-  retarget anything.
+  retarget anything. `onFinalize`'s event carries no velocity, so the release
+  velocity is captured in `onDeactivate` (0 when `canceled`) into a shared value.
 - **A flick moves at most one slide.** `resolveSettleTarget` commits on 300 pt/s
   or a quarter of a pitch, and never further than the next slide, however hard the
   throw. Past a non-looping end the drag is a rubber band capped at half a slide.
@@ -208,4 +209,4 @@ file stable: its functions are the contract both consume.
   `vertical` are stills. The photos load from the network, so check every poster
   after a capture — the first `peek` poster caught its active slide still empty.
 
-- **The pan carries `.withTestId("carousel-pan")`.** A render test reaches the drag only through Gesture Handler's `fireGestureHandler`, which finds a gesture by that id. It changes nothing on screen.
+- **The pan carries `testID: "carousel-pan"`.** A render test reaches the drag only through Gesture Handler's `fireGestureHandler`, which finds a gesture by that id. It changes nothing on screen.

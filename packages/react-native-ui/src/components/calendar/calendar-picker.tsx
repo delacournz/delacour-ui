@@ -1,10 +1,12 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
 import { type LayoutChangeEvent, ScrollView, type ScrollViewInstance, View, type ViewProps } from "react-native";
 import {
-	Gesture,
+	type ComposedGesture,
 	GestureDetector,
-	type GestureType,
-	type LegacySimultaneousGesture,
+	type PanGesture,
+	useNativeGesture,
+	usePanGesture,
+	useSimultaneousGestures,
 } from "react-native-gesture-handler";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
@@ -30,31 +32,32 @@ const CROSSFADE_MS = 150;
  * put; only a fast flick scrolled. The native handler cannot hold the pan off by itself on iOS:
  * its recognizer only mirrors the scroll view's pan, so `blocksExternalGesture` on it never makes
  * the content pan wait, and `shouldActivateOnStart` stops the scroll too. Two pieces are needed
- * together: a plain `Pan`, recognized beside the native scroll, that blocks the content pan, and a
+ * together: a plain pan, recognized beside the native scroll, that blocks the content pan, and a
  * native handler declared simultaneous with that pan, as the engine's own scrollables declare
  * theirs. Without the second the scroll view waits on the blocked pan and nothing moves; without
  * the first the sheet moves with the list. A drag on the years now scrolls them; the handle and
  * the header still move or close the sheet.
  *
- * `testID` names the blocking pan for Gesture Handler's Jest utilities.
+ * Hooks run on every render, so with no `external` both are mounted disabled, and the caller
+ * renders no detector for them. `testID` names the blocking pan for Gesture Handler's Jest
+ * utilities, and only while there is something to block.
  */
-export function resolveYearListGesture(external: GestureType, testID?: string): LegacySimultaneousGesture {
-	const blocker = Gesture.Pan().blocksExternalGesture(external);
-	return Gesture.Simultaneous(
-		Gesture.Native().simultaneousWithExternalGesture(external),
-		testID ? blocker.withTestId(testID) : blocker
-	);
+export function useYearListGesture(external: PanGesture | undefined, testID?: string): ComposedGesture {
+	const hasExternal = external !== undefined;
+	const native = useNativeGesture({ enabled: hasExternal, simultaneousWith: external });
+	const blocker = usePanGesture({
+		testID: hasExternal ? testID : undefined,
+		enabled: hasExternal,
+		block: external,
+	});
+	return useSimultaneousGestures(native, blocker);
 }
 
-/** Wraps the year list in `resolveYearListGesture` when the calendar was given a gesture to block. */
+/** Wraps the year list in `useYearListGesture` when the calendar was given a gesture to block. */
 function YearListGesture({ children }: { children: ReactNode }): ReactElement {
 	const { testID, yearListBlocksGesture } = useCalendarPart("Calendar.Picker");
-	const panTestID = resolvePartTestID(testID, "years-pan");
-	const gesture = useMemo(
-		() => (yearListBlocksGesture ? resolveYearListGesture(yearListBlocksGesture, panTestID) : null),
-		[panTestID, yearListBlocksGesture]
-	);
-	if (!gesture) return <>{children}</>;
+	const gesture = useYearListGesture(yearListBlocksGesture, resolvePartTestID(testID, "years-pan"));
+	if (!yearListBlocksGesture) return <>{children}</>;
 	return <GestureDetector gesture={gesture}>{children}</GestureDetector>;
 }
 YearListGesture.displayName = "DelacourUI.Calendar.Picker.YearListGesture";

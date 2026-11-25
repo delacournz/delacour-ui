@@ -1,6 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { type LayoutChangeEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, {
 	Easing,
 	useAnimatedStyle,
@@ -96,51 +96,49 @@ export function CalendarGrid({ className, renderDay, ...props }: CalendarGridPro
 		[monthKey, page]
 	);
 
-	const pan = useMemo(
-		() =>
-			Gesture.Pan()
-				.enabled(swipeToPage && view === "days" && !isDisabled)
-				.activeOffsetX([-PAN_ACTIVATE_X, PAN_ACTIVATE_X])
-				.failOffsetY([-PAN_FAIL_Y, PAN_FAIL_Y])
-				.onUpdate((event) => {
-					"worklet";
-					const blocked = (event.translationX > 0 && !canGoPrev) || (event.translationX < 0 && !canGoNext);
-					translateX.value = blocked ? event.translationX * BOUND_RESISTANCE : event.translationX;
-				})
-				.onEnd((event) => {
-					"worklet";
-					const direction = resolvePageDirection({
-						canGoNext,
-						canGoPrev,
-						translationX: event.translationX,
-						velocityX: event.velocityX,
-						width: width.value,
-					});
+	const pan = usePanGesture({
+		enabled: swipeToPage && view === "days" && !isDisabled,
+		activeOffsetX: [-PAN_ACTIVATE_X, PAN_ACTIVATE_X],
+		failOffsetY: [-PAN_FAIL_Y, PAN_FAIL_Y],
+		onUpdate: (event) => {
+			"worklet";
+			const blocked = (event.translationX > 0 && !canGoPrev) || (event.translationX < 0 && !canGoNext);
+			translateX.value = blocked ? event.translationX * BOUND_RESISTANCE : event.translationX;
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (event.canceled) return;
+			const direction = resolvePageDirection({
+				canGoNext,
+				canGoPrev,
+				translationX: event.translationX,
+				velocityX: event.velocityX,
+				width: width.value,
+			});
 
-					if (direction === 0) {
-						const blocked = (event.translationX > 0 && !canGoPrev) || (event.translationX < 0 && !canGoNext);
-						if (blocked) playHaptic("light");
-						translateX.value = withSpring(0, SETTLE_SPRING);
-						return;
-					}
+			if (direction === 0) {
+				const blocked = (event.translationX > 0 && !canGoPrev) || (event.translationX < 0 && !canGoNext);
+				if (blocked) playHaptic("light");
+				translateX.value = withSpring(0, SETTLE_SPRING);
+				return;
+			}
 
-					playHaptic("selection");
-					if (isCalm) {
-						translateX.value = 0;
-						scheduleOnRN(page, direction);
-						return;
-					}
-					translateX.value = withTiming(-direction * width.value, SLIDE, (finished) => {
-						"worklet";
-						if (finished) scheduleOnRN(finishSwipe, direction);
-					});
-				})
-				.onFinalize((_event, success) => {
-					"worklet";
-					if (!success) translateX.value = withSpring(0, SETTLE_SPRING);
-				}),
-		[canGoNext, canGoPrev, finishSwipe, isCalm, isDisabled, page, swipeToPage, translateX, view, width]
-	);
+			playHaptic("selection");
+			if (isCalm) {
+				translateX.value = 0;
+				scheduleOnRN(page, direction);
+				return;
+			}
+			translateX.value = withTiming(-direction * width.value, SLIDE, (finished) => {
+				"worklet";
+				if (finished) scheduleOnRN(finishSwipe, direction);
+			});
+		},
+		onFinalize: (event) => {
+			"worklet";
+			if (event.canceled) translateX.value = withSpring(0, SETTLE_SPRING);
+		},
+	});
 
 	// The new month slides in from the side the old one left by. Skipped on the first render — a
 	// calendar does not animate onto the screen — and for a jump, which has no side.

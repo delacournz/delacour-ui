@@ -522,9 +522,10 @@ describe("DatePicker initialView", () => {
 	test("in the sheet, the year list blocks the sheet's content pan", async () => {
 		await renderWithProviders(<Picker defaultOpen initialView="years" {...bounds} />, { wrapper: Providers });
 		expect(screen.getByTestId("stay-calendar-years")).toBeOnTheScreen();
-		const blocked = getByGestureTestId("stay-calendar-years-pan").config.blocksHandlers ?? [];
+		const blocker = getByGestureTestId("stay-calendar-years-pan");
+		const blocked = "gestureRelations" in blocker ? blocker.gestureRelations.blocksHandlers : [];
 		expect(blocked).toHaveLength(1);
-		expect(blocked[0]?.handlerName).toBe("PanGestureHandler");
+		expect(blocked[0]).not.toBe(blocker.handlerTag);
 	});
 
 	test("inline, the year list blocks nothing", async () => {

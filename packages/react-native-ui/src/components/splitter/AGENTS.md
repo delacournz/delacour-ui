@@ -98,7 +98,7 @@ imports this folder's maths leaf rather than copying it.
 
 ## Gesture
 
-- **One pan per handle, `minDistance(0)` and `shouldCancelWhenOutside(false)`**,
+- **One pan per handle, `minDistance: 0` and `shouldCancelWhenOutside: false`**,
   for `Slider.Track`'s reasons: it wins the race against a scroll view's slop,
   and a finger dragging a seam to the box's edge routinely leaves the handle.
 - **The drag resolves against a snapshot.** `onBegin` copies `sizes`;
@@ -115,7 +115,7 @@ imports this folder's maths leaf rather than copying it.
   would leave every later seam off the grid. The rounded seam is run back
   through `resolveDrag`, so an off-grid floor still holds. A tap moves nothing
   and settles nothing.
-- **A double tap resets, and runs `Simultaneous` with the pan.** `Exclusive`
+- **A double tap resets, and runs through `useSimultaneousGestures` with the pan.** `Exclusive`
   would make the pan wait for the tap to fail — a dead zone at the start of
   every drag.
 - **The edge haptic fires on the way in.** A worklet remembers whether the
@@ -211,6 +211,6 @@ wins the touch".
 
 ## Render test hooks
 
-The handle's pan and double-tap carry `.withTestId("splitter-handle-<index>-pan")` and
+The handle's pan and double-tap carry `testID: "splitter-handle-<index>-pan"` and
 `"splitter-handle-<index>-reset"` so `fireGestureHandler` can drive them under Jest. A drag needs the
 root measured first: fire a `layout` event on the root. Inert in production; cannot move pixels.

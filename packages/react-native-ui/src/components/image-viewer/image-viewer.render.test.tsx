@@ -10,7 +10,7 @@ import { useImageViewer } from "./image-viewer.context";
 
 /*
  * Not reachable under Jest: pinch, pan, double-tap, single-tap and the dismiss drag (the layer's
- * gestures carry no `.withTestId`), the flight from the Trigger's frame (refs are null, so the
+ * gestures carry no `testID`), the flight from the Trigger's frame (refs are null, so the
  * viewer opens with the origin this suite's stub reports), and focus hand-off. Zoom is covered only to the extent
  * the accessibility actions are announced.
  */

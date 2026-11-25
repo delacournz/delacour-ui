@@ -85,8 +85,8 @@ Display names: `DelacourUI.Marquee`, `.Group`, `.Group.Provider`, `.Track`, `.Sc
   while held, else the signed speed — and eases `velocity` to it over `easeMs` with
   `ReduceMotion.Never` (calm motion is handled one level up, where the track is never mounted). A
   held strip decelerates rather than freezing mid-frame, and a speed change mid-flight glides.
-- **Press-to-hold is a gesture that never activates.** `Gesture.Manual()` sets the finger-down flag
-  on touches-down and fails itself on touches-up or cancel, which finalizes and clears the flag. It
+- **Press-to-hold is a gesture that never activates.** `useManualGesture` sets the finger-down flag
+  on touches-down and fails itself on touches-up or cancel (`GestureStateManager.fail(event.handlerTag)`), which finalizes and clears the flag. It
   stays in `BEGAN` the whole time, so it cancels nothing beneath it. A long press with no minimum
   duration was the first idea, and it would have activated the instant the finger landed and
   cancelled a child `Pressable`'s tap; running it alongside would mean naming every child's gesture,
@@ -139,7 +139,7 @@ Verified on an iPhone 17 simulator (iOS, dev client), 2026-10-05:
 - **Press-to-hold.** Two frames 1.5 s apart during a long press on `hold-to-pause` are pixel-identical;
   frames after release differ — the strip holds and resumes.
 - **A child press while moving.** On `cards`, pressing a moving `Item` fired its `onPress`
-  ("Tapped Wellington") — the never-activating `Gesture.Manual` steals nothing.
+  ("Tapped Wellington") — the never-activating `useManualGesture` steals nothing.
 - **Duplicates hidden.** With copy 2's "Motion" on screen, the AX tree held no "Motion" — only
   copy 1's items are exposed.
 - **Calm motion.** With the OS Reduce Motion on, `badges` rendered a `ScrollView` holding one copy,

@@ -19,7 +19,7 @@ sheets.
 | `calendar-weekdays.tsx` | `Calendar.Weekdays` — short names shown, full names spoken |
 | `calendar-grid.tsx` | `Calendar.Grid` — six weeks, the paging pan and slide, hosts the picker |
 | `calendar-day.tsx` | `Calendar.Day` — one cell: band, circle, number or custom content |
-| `calendar-picker.tsx` | `Calendar.Picker` — the months and years jump views; `resolveYearListGesture` |
+| `calendar-picker.tsx` | `Calendar.Picker` — the months and years jump views; `useYearListGesture` |
 | `calendar.context.tsx` | `CalendarContext`, `useCalendar()`, `useCalendarContext()`, `useCalendarPart()` |
 | `calendar.types.ts` | `CalendarSelection` (the mode union), `CalendarProps`, `CalendarCaptionLayout` |
 | `calendar.date.ts` | **Shared leaf.** `CalendarDate` maths, matchers, grid, selection rules, `Intl` formatters. No React Native |
@@ -120,19 +120,19 @@ sheets.
 
 ## Paging
 
-- **A Gesture Handler pan on `Calendar.Grid`**, `activeOffsetX` ±12 and `failOffsetY` ±12: it
+- **A Gesture Handler `usePanGesture` on `Calendar.Grid`**, `activeOffsetX` ±12 and `failOffsetY` ±12: it
   claims a sideways drag and gives up a vertical one, so the calendar lives inside a `ScrollView`
   or a sheet without stealing its scroll.
 - **In a bottom sheet the year list blocks the sheet's content pan** (`yearListBlocksGesture`,
-  `resolveYearListGesture`). The content pan claims a drag after six points, before a `ScrollView`
+  `useYearListGesture`). The content pan claims a drag after six points, before a `ScrollView`
   starts to scroll, so a slow drag on the years moved the sheet and the list stayed still. Given a
   gesture, the list's native scroll — declared simultaneous with that gesture, as the engine's own
-  scrollables declare theirs — runs beside a plain `Pan` that blocks it, and every drag on the years
+  scrollables declare theirs (`useNativeGesture({ simultaneousWith })`) — runs beside a plain `usePanGesture` that blocks it (`block`), and every drag on the years
   scrolls them; the handle and header still move the sheet. A drag down at the top of the list does
   not pull the sheet down — that is the trade. Both halves are needed, and each was seen failing
   alone on an iOS simulator: the blocker without the simultaneous declaration left the scroll view
   waiting on the blocked pan, so neither the list nor the sheet moved; the simultaneous declaration
-  without the blocker moved both. `Gesture.Native().blocksExternalGesture(…)` fails too (its
+  without the blocker moved both. A native gesture that blocks the content pan itself (`blocksExternalGesture` on the native handler) fails too (its
   recognizer only mirrors the scroll view's pan, so the sheet still moved), and so does adding
   `shouldActivateOnStart(true)` (the sheet stopped and so did the list). The engine's `BottomSheet.ScrollView`
   is a body scrollable that writes the sheet's content height, so nesting one here would break the

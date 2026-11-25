@@ -12,7 +12,11 @@ React Native component kit. Do not add one, and do not port patterns from one.
 - **tailwind-variants** (`tv`) — variant systems
 - **react-native-reanimated** — UI-thread animation
 - **react-native-worklets** — worklet threading (`scheduleOnRN`, `scheduleOnUI`)
-- **react-native-gesture-handler** — the Gesture API
+- **react-native-gesture-handler** 3 — the gesture hooks (`usePanGesture`,
+  `useTapGesture`, `useSimultaneousGestures`). Never the v2 builder
+  (`Gesture.Pan()`), which v3 keeps only for compatibility. A hook runs every
+  render, so a gesture a component does not always need is mounted with
+  `enabled: false` rather than skipped — see [Pressable](src/components/pressable/AGENTS.md)
 - **react-native-pulsar** — worklet-callable haptics
 - **Central Icons** — the icon set (never Lucide, Hugeicons, or anything else)
 
@@ -418,6 +422,22 @@ its slot set, so a sibling would buy nothing but a second file to open.
     request when it opens. Tests, docs, comments and logic no capture exercises
     are exempt. The full rule is under Conventions in the root `AGENTS.md`; the
     `recapture-previews` skill walks it.
+14. **Gestures are Gesture Handler 3 hooks, and a worklet never holds a
+    capture-free arrow.** `usePanGesture`, `useTapGesture` and friends, composed
+    with `useSimultaneousGestures` / `useExclusiveGestures` /
+    `useCompetingGestures` — never the legacy `Gesture.*()` builder. Two rules
+    keep Metro and the UI thread happy, and `tsc` and Biome pass both mistakes:
+    - **No `...spread` in a gesture hook's config.** The Worklets Babel plugin
+      throws on it and Metro answers every request with a 500. Write each key
+      conditionally — `activeOffsetX: isClaim ? range : undefined` — which
+      Gesture Handler reads as unset.
+    - **No `list.map((x) => x.y)` or `sort((a, b) => a - b)` inside a worklet
+      in component or hook scope.** The React Compiler hoists a capture-free
+      arrow to a module-level `_temp`, and the UI thread throws "Tried to
+      synchronously call a Remote Function" on the first gesture. Write a loop.
+
+    `apps/playground/src/worklet-transform.test.ts` runs both plugins over every
+    file that imports a worklet library and fails by name on either.
 
 ## Sizing
 

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Pressable } from "./pressable";
 
 const ACTIVATE = { nativeEvent: { actionName: "activate" } };
@@ -51,7 +51,7 @@ describe("Pressable", () => {
 		test("a touch still presses it", async () => {
 			const onPress = jest.fn();
 			await renderWithProviders(<Pressable accessible={false} onPress={onPress} testID="row" />);
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(onPress).toHaveBeenCalledTimes(1);
 		});
 	});

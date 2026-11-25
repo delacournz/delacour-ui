@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Pressable } from "../pressable";
 import { Checkbox } from "./checkbox";
@@ -129,7 +129,7 @@ describe("Checkbox", () => {
 				<Checkbox onCheckedChange={onCheckedChange} />
 			</Field>
 		);
-		await fireEvent.press(screen.getByTestId("row"));
+		await pressGesture("row");
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
 		expect(screen.getByRole("checkbox")).toBeChecked();
 	});
@@ -142,7 +142,7 @@ describe("Checkbox", () => {
 				<Checkbox isDisabled onCheckedChange={onCheckedChange} />
 			</Field>
 		);
-		await fireEvent.press(screen.getByTestId("row"));
+		await pressGesture("row");
 		expect(onCheckedChange).not.toHaveBeenCalled();
 		expect(screen.getByRole("checkbox")).not.toBeChecked();
 	});

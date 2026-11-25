@@ -97,11 +97,11 @@ is part of the context's own shape, so it lives beside it.
 - **Neither the row nor a star is a `Pressable`**, for the reasons
   [Slider](../slider/AGENTS.md) gives for its track: a tap-to-set would fire
   `onPress` every time, and a `Pressable` per star would nest five taps inside the
-  row's pan. One `Gesture.Pan()` on the row reads the star under the finger. What
+  row's pan. One `usePanGesture` on the row reads the star under the finger. What
   is inherited is `playHaptic`, the one haptic switch.
 - **The value is written in `onBegin`**, because a pan activates on the first
-  movement and a stationary tap would never reach `onUpdate`. `minDistance(0)`
-  wins the touch from an enclosing scroll view and `shouldCancelWhenOutside(false)`
+  movement and a stationary tap would never reach `onUpdate`. `minDistance: 0`
+  wins the touch from an enclosing scroll view and `shouldCancelWhenOutside: false`
   keeps a drag past the last star tracking — both exactly as `Slider.Track`.
 - **Each star's cell carries the gap as padding**, so every cell is the same width
   and a star's half is the half of its cell. A `gap-*` on the row would leave dead
@@ -120,7 +120,7 @@ is part of the context's own shape, so it lives beside it.
   distance rate limit as there is on `Slider`: the stops are a star apart, so a
   flick across ten of them is ten ticks a hand can feel.
 
-- **The pan carries `.withTestId(RATING_GESTURE_TEST_ID)`**, exported from
+- **The pan carries `testID: RATING_GESTURE_TEST_ID`**, exported from
   `rating-stars.tsx`, so a render test can drive it with `fireGestureHandler`. It changes
   no pixels and no behaviour.
 

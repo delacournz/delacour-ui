@@ -98,7 +98,7 @@ and then switch it to controlled on the first press. Pass `tab ?? null`.
 The pan claims sideways and gives up vertical, so a pager works inside
 [`Screen.ScrollArea`](/docs/native/components/screen). A horizontal scrollable *inside* a panel is
 yours to settle — the pager publishes its pan on `useTabsMotion()`, and you write
-`Gesture.Native().blocksExternalGesture(panGesture)`.
+`useNativeGesture({ block: panGesture })`.
 
 ## Scrolling
 

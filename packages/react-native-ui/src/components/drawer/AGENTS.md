@@ -72,11 +72,11 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
 - **A haptic marks the threshold, nothing else.** `selection` each time the drag crosses 40% — the
   moment letting go changes what happens — in both directions, from the worklet through `playHaptic`.
   None on open.
-- **The pan's worklets live in the hook.** `useDrawerPan` builds them inside a `useMemo`, so they may
+- **The pan's worklets live in the hook.** `useDrawerPan` passes them to `usePanGesture` inside the hook, so they may
   call `drawer.variants`' module-scope worklets; those are flat — a module-scope worklet never calls
   another function — which is why each restates the edge's sign rather than sharing a helper.
-  Per-gesture memory (`isDragging`, `isPastThreshold`) is shared values. A touch that never activated
-  returns early from `onFinalize`, so a tap during a dismiss cannot restart a restore under it.
+  Per-gesture memory (`isDragging`, `isPastThreshold`) is shared values. The release is `onDeactivate` (Gesture Handler 3's `onFinalize` carries no translation or velocity) and
+  `isDragging` gates it, so a tap during a dismiss cannot restart a restore under it.
 - **Reduce motion fades, and the swipe still works.** Under `useReducedMotion()` the open and close do
   not slide — the panel fades in place on `progress` — but a drag still moves it: that is direct
   manipulation, not animation. `isMotionCalm` does not still it, per the foundation.

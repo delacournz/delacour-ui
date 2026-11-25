@@ -1,6 +1,6 @@
 import { type ReactElement, useCallback, useMemo } from "react";
 import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useFieldContext } from "../field/field.context";
@@ -26,7 +26,7 @@ export type ColorPickerAreaProps = Omit<ViewProps, "children" | "style"> & {
 /**
  * Saturation across, brightness down, over the current hue.
  *
- * **The drag never renders React.** One `Gesture.Pan()` writes the live model on
+ * **The drag never renders React.** One `usePanGesture` writes the live model on
  * the UI thread; the hue layer, the thumb and every other part read that shared
  * value in animated styles. JavaScript hears about a frame only when a caller
  * passed `onValueChange`, and the settled state catches up on release.
@@ -79,51 +79,38 @@ export function ColorPickerArea({
 		[height, width]
 	);
 
-	const gesture = useMemo(() => {
-		// Beside its callers rather than at module scope — see Slider's AGENTS.md on
-		// module-scope worklets binding in source order.
-		const applyTouch = (x: number, y: number) => {
-			"worklet";
-			const { s, v } = areaToHsv(x, y, width.value, height.value);
-			const next = { ...live.value, s, v };
-			live.value = next;
-			if (hasChangeListener) scheduleOnRN(dragChange, next);
-		};
+	// Beside its callers rather than at module scope — see Slider's AGENTS.md on
+	// module-scope worklets binding in source order.
+	const applyTouch = (x: number, y: number) => {
+		"worklet";
+		const { s, v } = areaToHsv(x, y, width.value, height.value);
+		const next = { ...live.value, s, v };
+		live.value = next;
+		if (hasChangeListener) scheduleOnRN(dragChange, next);
+	};
 
-		return Gesture.Pan()
-			.enabled(!isDisabled && !isReadOnly)
-			.minDistance(0)
-			.shouldCancelWhenOutside(false)
-			.onBegin((event) => {
-				"worklet";
-				isGrabbed.value = true;
-				scheduleOnRN(beginDrag);
-				if (haptic !== false) playHaptic(haptic);
-				applyTouch(event.x, event.y);
-			})
-			.onUpdate((event) => {
-				"worklet";
-				applyTouch(event.x, event.y);
-			})
-			.onFinalize(() => {
-				"worklet";
-				isGrabbed.value = false;
-				if (haptic !== false) playHaptic("light");
-				scheduleOnRN(endDrag, live.value);
-			});
-	}, [
-		beginDrag,
-		dragChange,
-		endDrag,
-		haptic,
-		hasChangeListener,
-		height,
-		isDisabled,
-		isGrabbed,
-		isReadOnly,
-		live,
-		width,
-	]);
+	const gesture = usePanGesture({
+		enabled: !isDisabled && !isReadOnly,
+		minDistance: 0,
+		shouldCancelWhenOutside: false,
+		onBegin: (event) => {
+			"worklet";
+			isGrabbed.value = true;
+			scheduleOnRN(beginDrag);
+			if (haptic !== false) playHaptic(haptic);
+			applyTouch(event.x, event.y);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			applyTouch(event.x, event.y);
+		},
+		onFinalize: () => {
+			"worklet";
+			isGrabbed.value = false;
+			if (haptic !== false) playHaptic("light");
+			scheduleOnRN(endDrag, live.value);
+		},
+	});
 
 	const x = useDerivedValue(() => hsvToArea(live.value.s, live.value.v, width.value, height.value).x);
 	const y = useDerivedValue(() => hsvToArea(live.value.s, live.value.v, width.value, height.value).y);

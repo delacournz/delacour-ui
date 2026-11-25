@@ -1,6 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useLayoutEffect, useMemo } from "react";
 import { type AccessibilityActionEvent, type LayoutChangeEvent, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, useExclusiveGestures, usePanGesture, useTapGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { FlowNodeProvider, useFlowGroup, useFlowPart } from "./flow.context";
@@ -125,52 +125,43 @@ export function FlowNode({
 
 	const start = useSharedValue<FlowPoint>({ x: 0, y: 0 });
 
-	const gesture = useMemo(() => {
-		const pan = Gesture.Pan()
-			.enabled(drag.canDrag)
-			.minDistance(FLOW_DEFAULTS.dragMinDistance)
-			.maxPointers(1)
-			.onStart(() => {
-				start.value = positionValue.value;
-			})
-			.onUpdate((event) => {
-				const zoom = viewport.value.zoom;
-				const next = { x: start.value.x + event.translationX / zoom, y: start.value.y + event.translationY / zoom };
-				if (isClamped && groupPosition && groupSize) {
-					positionValue.value = flowGeometry().clampPositionToRect(next, sizeValue.value, {
-						...groupPosition.value,
-						...groupSize.value,
-					});
-				} else {
-					positionValue.value = next;
-				}
-			})
-			.onEnd((_event, success) => {
-				if (success) scheduleOnRN(reportMove, positionValue.value);
-			})
-			.blocksExternalGesture(...canvasGestures);
+	const pan = usePanGesture({
+		enabled: drag.canDrag,
+		minDistance: FLOW_DEFAULTS.dragMinDistance,
+		maxPointers: 1,
+		block: canvasGestures,
+		onActivate: () => {
+			"worklet";
+			start.value = positionValue.value;
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const zoom = viewport.value.zoom;
+			const next = { x: start.value.x + event.translationX / zoom, y: start.value.y + event.translationY / zoom };
+			if (isClamped && groupPosition && groupSize) {
+				positionValue.value = flowGeometry().clampPositionToRect(next, sizeValue.value, {
+					...groupPosition.value,
+					...groupSize.value,
+				});
+			} else {
+				positionValue.value = next;
+			}
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(reportMove, positionValue.value);
+		},
+	});
 
-		const tap = Gesture.Tap()
-			.enabled(onPress !== undefined)
-			.onEnd((_event, success) => {
-				if (success) scheduleOnRN(press);
-			});
+	const tap = useTapGesture({
+		enabled: onPress !== undefined,
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(press);
+		},
+	});
 
-		return { composed: Gesture.Exclusive(pan, tap), pan };
-	}, [
-		canvasGestures,
-		drag.canDrag,
-		groupPosition,
-		groupSize,
-		isClamped,
-		onPress,
-		positionValue,
-		press,
-		reportMove,
-		sizeValue,
-		start,
-		viewport,
-	]);
+	const gesture = useExclusiveGestures(pan, tap);
 
 	const positionStyle = useAnimatedStyle(() => ({
 		transform: [{ translateX: positionValue.value.x }, { translateY: positionValue.value.y }],
@@ -228,13 +219,13 @@ export function FlowNode({
 	);
 
 	const nodeContext = useMemo(
-		() => ({ entry, id, nodeGesture: gesture.pan, notifyHandles: notifyRegistry }),
-		[entry, gesture.pan, id, notifyRegistry]
+		() => ({ entry, id, nodeGesture: pan, notifyHandles: notifyRegistry }),
+		[entry, pan, id, notifyRegistry]
 	);
 
 	return (
 		<FlowNodeProvider value={nodeContext}>
-			<GestureDetector gesture={gesture.composed}>
+			<GestureDetector gesture={gesture}>
 				<Animated.View
 					accessibilityActions={accessibility.actions}
 					accessibilityLabel={label}

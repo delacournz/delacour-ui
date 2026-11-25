@@ -1,6 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type LayoutChangeEvent, Platform, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, {
 	Easing,
 	type SharedValue,
@@ -225,64 +225,61 @@ export function ToastViewportItem({
 		speak(announcement, { politeness: resolveToastPoliteness(status) });
 	}, [revision]);
 
-	const pan = useMemo(
-		() =>
-			Gesture.Pan()
-				.withTestId(`toast-${id}-pan`)
-				.activeOffsetX([-10, 10])
-				.activeOffsetY([-10, 10])
-				.onBegin(() => {
-					"worklet";
-					scheduleOnRN(setTouched, true);
-				})
-				.onUpdate((event) => {
-					"worklet";
-					const drag = resolveToastDrag({
-						placement,
-						translationX: event.translationX,
-						translationY: event.translationY,
-					});
-					dragX.value = drag.x;
-					dragY.value = drag.y;
-				})
-				.onEnd((event, success) => {
-					"worklet";
-					// A pan the system cancelled (a notification shade, an alert) is not a
-					// release: the toast goes back to rest, however far it was dragged.
-					if (!success) {
-						dragX.value = withSpring(0, SETTLE_SPRING);
-						dragY.value = withSpring(0, SETTLE_SPRING);
-						return;
-					}
-					const release = resolveToastRelease({
-						placement,
-						translationX: event.translationX,
-						translationY: event.translationY,
-						velocityX: event.velocityX,
-						velocityY: event.velocityY,
-						width: width.value,
-						height: height.value,
-					});
-					if (release.kind === "settle") {
-						dragX.value = withSpring(0, SETTLE_SPRING);
-						dragY.value = withSpring(0, SETTLE_SPRING);
-						return;
-					}
-					if (release.axis === "x") {
-						dragX.value = withTiming(release.direction * (width.value + 48), { duration: SWIPE_OUT_MS });
-					} else {
-						dragY.value = withTiming(release.direction * (height.value + edgeOffset + 24), {
-							duration: SWIPE_OUT_MS,
-						});
-					}
-					scheduleOnRN(hide);
-				})
-				.onFinalize(() => {
-					"worklet";
-					scheduleOnRN(setTouched, false);
-				}),
-		[id, placement, dragX, dragY, width, height, edgeOffset, hide]
-	);
+	const pan = usePanGesture({
+		testID: `toast-${id}-pan`,
+		activeOffsetX: [-10, 10],
+		activeOffsetY: [-10, 10],
+		onBegin: () => {
+			"worklet";
+			scheduleOnRN(setTouched, true);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const drag = resolveToastDrag({
+				placement,
+				translationX: event.translationX,
+				translationY: event.translationY,
+			});
+			dragX.value = drag.x;
+			dragY.value = drag.y;
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			// A pan the system cancelled (a notification shade, an alert) is not a
+			// release: the toast goes back to rest, however far it was dragged.
+			if (event.canceled) {
+				dragX.value = withSpring(0, SETTLE_SPRING);
+				dragY.value = withSpring(0, SETTLE_SPRING);
+				return;
+			}
+			const release = resolveToastRelease({
+				placement,
+				translationX: event.translationX,
+				translationY: event.translationY,
+				velocityX: event.velocityX,
+				velocityY: event.velocityY,
+				width: width.value,
+				height: height.value,
+			});
+			if (release.kind === "settle") {
+				dragX.value = withSpring(0, SETTLE_SPRING);
+				dragY.value = withSpring(0, SETTLE_SPRING);
+				return;
+			}
+			if (release.axis === "x") {
+				dragX.value = withTiming(release.direction * (width.value + 48), { duration: SWIPE_OUT_MS });
+			} else {
+				dragY.value = withTiming(release.direction * (height.value + edgeOffset + 24), {
+					duration: SWIPE_OUT_MS,
+				});
+			}
+			scheduleOnRN(hide);
+		},
+		onFinalize: () => {
+			"worklet";
+			scheduleOnRN(setTouched, false);
+		},
+	});
 
 	const animatedStyle = useAnimatedStyle(() => {
 		const stack = resolveToastDepthStyle(depthValue.value, placement);

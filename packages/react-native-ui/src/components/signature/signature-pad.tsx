@@ -1,6 +1,6 @@
-import { type ReactElement, useCallback, useEffect, useMemo, useRef } from "react";
+import { type ReactElement, useCallback, useEffect, useRef } from "react";
 import { type AccessibilityActionEvent, type LayoutChangeEvent, Platform, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
@@ -38,7 +38,7 @@ export type SignaturePadProps = Omit<ViewProps, "children" | "style"> & {
  * The drawing surface: the gesture, the ink, the guideline, the placeholder and
  * the whole accessibility surface.
  *
- * **Drawing happens on the UI thread.** One `Gesture.Pan()` samples the finger
+ * **Drawing happens on the UI thread.** One `usePanGesture` samples the finger
  * into a shared value and the live stroke is a Skia path traced from it on the
  * UI thread, so a finger moving across the pad renders nothing in React. When
  * the finger lifts, the stroke crosses to the JS thread once and joins the
@@ -143,39 +143,36 @@ export function SignaturePad({
 		});
 	}, [isDrawing, live, liveStroke, strokes]);
 
-	const gesture = useMemo(
-		() =>
-			Gesture.Pan()
-				.withTestId(SIGNATURE_PAD_GESTURE_ID)
-				.enabled(isInteractive)
-				.minDistance(0)
-				.shouldCancelWhenOutside(false)
-				.onBegin((event) => {
-					"worklet";
-					liveStroke.value += 1;
-					startTime.value = Date.now();
-					isDrawing.value = 1;
-					live.value = [{ t: 0, x: event.x, y: event.y }];
-					if (haptic !== false) playHaptic(haptic);
-					scheduleOnRN(beginStroke);
-				})
-				.onUpdate((event) => {
-					"worklet";
-					const next: SignaturePoint = { t: Date.now() - startTime.value, x: event.x, y: event.y };
-					if (!shouldAddPoint(live.value[live.value.length - 1], next, minDistance)) return;
-					live.modify((points) => {
-						"worklet";
-						points.push(next);
-						return points;
-					});
-				})
-				.onFinalize(() => {
-					"worklet";
-					if (live.value.length === 0) return;
-					scheduleOnRN(handleStrokeEnd, live.value.slice(), liveStroke.value);
-				}),
-		[beginStroke, handleStrokeEnd, haptic, isDrawing, isInteractive, live, liveStroke, minDistance, startTime]
-	);
+	const gesture = usePanGesture({
+		testID: SIGNATURE_PAD_GESTURE_ID,
+		enabled: isInteractive,
+		minDistance: 0,
+		shouldCancelWhenOutside: false,
+		onBegin: (event) => {
+			"worklet";
+			liveStroke.value += 1;
+			startTime.value = Date.now();
+			isDrawing.value = 1;
+			live.value = [{ t: 0, x: event.x, y: event.y }];
+			if (haptic !== false) playHaptic(haptic);
+			scheduleOnRN(beginStroke);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const next: SignaturePoint = { t: Date.now() - startTime.value, x: event.x, y: event.y };
+			if (!shouldAddPoint(live.value[live.value.length - 1], next, minDistance)) return;
+			live.modify((points) => {
+				"worklet";
+				points.push(next);
+				return points;
+			});
+		},
+		onFinalize: () => {
+			"worklet";
+			if (live.value.length === 0) return;
+			scheduleOnRN(handleStrokeEnd, live.value.slice(), liveStroke.value);
+		},
+	});
 
 	const placeholderStyle = useAnimatedStyle(() => {
 		const opacity = isEmpty && isDrawing.value === 0 ? 1 : 0;

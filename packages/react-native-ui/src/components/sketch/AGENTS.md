@@ -64,9 +64,9 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
 
 ## Gesture
 
-- **One `Gesture.Pan()` on the canvas, `minDistance(0)`, `maxPointers(1)`.**
+- **One `usePanGesture` on the canvas, `minDistance: 0`, `maxPointers: 1`.**
   `onBegin` starts the stroke — a pan activates on movement, so a tap never
-  reaches `onStart`, and a pen tap must leave a dot. `onFinalize` commits, because
+  reaches `onActivate`, and a pen tap must leave a dot. `onFinalize` commits, because
   it is the one callback every path reaches. Nothing runs on the JS thread during
   a stroke.
 - **The tool is snapshotted at touch-down.** Tool, shape, ink and width live in
@@ -90,7 +90,7 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
   outside it.** So the eraser cuts committed ink as it moves, and the stroke
   being drawn is never erased by itself. Both paths are always mounted, empty
   between strokes.
-- **The pan carries `.withTestId(SKETCH_PAN_TEST_ID)` (`"sketch-pan"`)**, exported from `sketch-canvas.tsx`, so a render test can drive a stroke with Gesture Handler's `fireGestureHandler`. No behaviour change.
+- **The pan carries `testID: SKETCH_PAN_TEST_ID` (`"sketch-pan"`)**, exported from `sketch-canvas.tsx`, so a render test can drive a stroke with Gesture Handler's `fireGestureHandler`. No behaviour change.
 - **A shape drag under 4pt on both axes commits nothing**; a tap with a shape tool
   is not a shape. Line and arrow follow the drag; the rest use its normalised
   bounds, so dragging up-left draws the same rectangle as down-right.

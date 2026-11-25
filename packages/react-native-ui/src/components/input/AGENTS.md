@@ -97,7 +97,8 @@ Root plus `Input.Group` and its parts: `Prefix`, `Suffix`, `Button`,
   makes [`Pressable`](../pressable/AGENTS.md) drop its `button` role and its
   activation, so TalkBack no longer stops on an unnamed button in front of the
   field and the controls inside it (NumberInput's steppers included). The gutter
-  press is a touch convenience; a screen reader focuses the field itself.
+  press is a touch convenience; a screen reader focuses the field itself. `Input.Group`'s
+  `testID` lands on the box, so a render test reaches that press as `${testID}-press`.
 - **There is no `Input.Label`, `Input.Description` or `Input.ErrorMessage`.**
   [`Text.Label`](../text/AGENTS.md) and `Text.Caption` already are those, and a label defined twice is
   a type scale that can drift. `apps/playground`'s `/input/form` is what the

@@ -1,6 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo } from "react";
 import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { Canvas, Group, Path, Picture, Skia } from "react-native-skia";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
@@ -107,106 +107,82 @@ export function SketchCanvas({ children, className, onLayout, ...props }: Sketch
 		});
 	}, [items, committedSeq, liveD, liveKind, strokeSeq]);
 
-	const gesture = useMemo(
-		() =>
-			Gesture.Pan()
-				.withTestId(SKETCH_PAN_TEST_ID)
-				.enabled(!isDisabled && isMeasured)
-				.minDistance(0)
-				.maxPointers(1)
-				.shouldCancelWhenOutside(false)
-				.onBegin((event) => {
-					"worklet";
-					const point = { x: event.x, y: event.y };
-					strokeSeq.value += 1;
-					const current = toolValue.value;
-					liveWidth.value = sizeValue.value;
-					liveFrom.value = point;
+	const gesture = usePanGesture({
+		testID: SKETCH_PAN_TEST_ID,
+		enabled: !isDisabled && isMeasured,
+		minDistance: 0,
+		maxPointers: 1,
+		shouldCancelWhenOutside: false,
+		onBegin: (event) => {
+			"worklet";
+			const point = { x: event.x, y: event.y };
+			strokeSeq.value += 1;
+			const current = toolValue.value;
+			liveWidth.value = sizeValue.value;
+			liveFrom.value = point;
 
-					if (current === "shape") {
-						if (inkValue.value === "") {
-							liveKind.value = LIVE_NONE;
-							return;
-						}
-						liveKind.value = LIVE_INK;
-						liveLayer.value = LIVE_INK;
-						liveColor.value = inkValue.value;
-						liveShape.value = shapeValue.value;
-						livePath.value = null;
-						liveD.value = "";
-						return;
-					}
-
-					if (current === "pen" && inkValue.value === "") {
-						liveKind.value = LIVE_NONE;
-						return;
-					}
-
-					liveKind.value = current === "eraser" ? LIVE_ERASE : LIVE_INK;
-					liveLayer.value = liveKind.value;
-					liveColor.value = inkValue.value;
-					const started = startSketchPath(point);
-					livePath.value = started;
-					liveD.value = finishSketchPath(started);
-				})
-				.onUpdate((event) => {
-					"worklet";
-					if (liveKind.value === LIVE_NONE) return;
-					const point = { x: event.x, y: event.y };
-					const path = livePath.value;
-					if (path === null) {
-						liveD.value = buildSketchShapePath(liveShape.value, liveFrom.value, point, liveWidth.value) ?? "";
-						return;
-					}
-					const next = appendSketchSegment(path, point);
-					if (next === path) return;
-					livePath.value = next;
-					liveD.value = finishSketchPath(next);
-				})
-				.onFinalize(() => {
-					"worklet";
-					const kind = liveKind.value;
+			if (current === "shape") {
+				if (inkValue.value === "") {
 					liveKind.value = LIVE_NONE;
-					const d = liveD.value;
-					const path = livePath.value;
-					livePath.value = null;
-					if (kind === LIVE_NONE || d === "") return;
+					return;
+				}
+				liveKind.value = LIVE_INK;
+				liveLayer.value = LIVE_INK;
+				liveColor.value = inkValue.value;
+				liveShape.value = shapeValue.value;
+				livePath.value = null;
+				liveD.value = "";
+				return;
+			}
 
-					const seq = strokeSeq.value;
-					const width = liveWidth.value;
-					if (kind === LIVE_ERASE) {
-						scheduleOnRN(handleCommit, { d, kind: "erase", width }, seq);
-						return;
-					}
-					if (path === null) {
-						scheduleOnRN(
-							handleCommit,
-							{ color: liveColor.value, d, kind: "shape", shape: liveShape.value, width },
-							seq
-						);
-						return;
-					}
-					scheduleOnRN(handleCommit, { color: liveColor.value, d, kind: "stroke", width }, seq);
-				}),
-		[
-			handleCommit,
-			inkValue,
-			isDisabled,
-			isMeasured,
-			liveColor,
-			liveD,
-			liveFrom,
-			liveKind,
-			liveLayer,
-			livePath,
-			liveShape,
-			liveWidth,
-			shapeValue,
-			sizeValue,
-			strokeSeq,
-			toolValue,
-		]
-	);
+			if (current === "pen" && inkValue.value === "") {
+				liveKind.value = LIVE_NONE;
+				return;
+			}
+
+			liveKind.value = current === "eraser" ? LIVE_ERASE : LIVE_INK;
+			liveLayer.value = liveKind.value;
+			liveColor.value = inkValue.value;
+			const started = startSketchPath(point);
+			livePath.value = started;
+			liveD.value = finishSketchPath(started);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			if (liveKind.value === LIVE_NONE) return;
+			const point = { x: event.x, y: event.y };
+			const path = livePath.value;
+			if (path === null) {
+				liveD.value = buildSketchShapePath(liveShape.value, liveFrom.value, point, liveWidth.value) ?? "";
+				return;
+			}
+			const next = appendSketchSegment(path, point);
+			if (next === path) return;
+			livePath.value = next;
+			liveD.value = finishSketchPath(next);
+		},
+		onFinalize: () => {
+			"worklet";
+			const kind = liveKind.value;
+			liveKind.value = LIVE_NONE;
+			const d = liveD.value;
+			const path = livePath.value;
+			livePath.value = null;
+			if (kind === LIVE_NONE || d === "") return;
+
+			const seq = strokeSeq.value;
+			const width = liveWidth.value;
+			if (kind === LIVE_ERASE) {
+				scheduleOnRN(handleCommit, { d, kind: "erase", width }, seq);
+				return;
+			}
+			if (path === null) {
+				scheduleOnRN(handleCommit, { color: liveColor.value, d, kind: "shape", shape: liveShape.value, width }, seq);
+				return;
+			}
+			scheduleOnRN(handleCommit, { color: liveColor.value, d, kind: "stroke", width }, seq);
+		},
+	});
 
 	// The layer outlives the stroke on purpose: after release the live path stays
 	// up until the committed copy renders, and it has to stay in the layer it was

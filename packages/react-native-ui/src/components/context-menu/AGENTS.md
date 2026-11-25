@@ -31,7 +31,7 @@ because the target is the content. Compound root plus `ContextMenu.Trigger`,
   `Menu.Item` and the other rows come from `../menu/<leaf>`, never from `../menu`
   — the folder index would pull Menu's root and could close a cycle (rule 3).
   A restyled copy would be a second press fill and a second placement that drift.
-- **One recogniser decides up front.** `Gesture.Exclusive(longPress, tap)`, with
+- **One recogniser decides up front.** `useExclusiveGestures(longPress, tap)`, with
   `LongPress().minDuration(delay).maxDistance(slop)`: the tap waits for the hold
   to fail, so a hold that opens the menu never also fires `onPress`. That is why
   `onPress` is the trigger's prop — a pressable inside it would race the hold
@@ -79,7 +79,7 @@ because the target is the content. Compound root plus `ContextMenu.Trigger`,
 - **Rows are taller and icons trail.** `ContextMenu.Item` is `Menu.Item` with
   `iconPlacement="trailing"` and `min-h-12` merged over the row's `min-h-11`.
   The other row kinds are re-exported unchanged.
-- **The haptic fires at hold acceptance**, in the long-press `onStart` on the UI
+- **The haptic fires at hold acceptance**, in the long-press `onActivate` on the UI
   thread, before the open crosses to JS. The root's `haptic` is Menu's: played
   when a row is chosen. Both are off by default.
 

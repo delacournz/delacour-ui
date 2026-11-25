@@ -54,7 +54,7 @@ and `onValueChange={sections.scrollTo}`.
 
 - **The trigger is not a `Pressable`.** Its one touch is a tap (open) or a scrub (open, follow the
   finger, commit on release), and a `Pressable` would nest a second tap inside the scrub's pan —
-  `Rating.Stars`' reason. `Gesture.Exclusive(pan, tap)` decides it: the pan activates after 4pt of
+  `Rating.Stars`' reason. `useExclusiveGestures(pan, tap)` decides it: the pan activates after 4pt of
   vertical travel and fails after 16pt sideways, and the tap fires only when the pan never does.
 - **The scrub runs on the UI thread.** Each bar reports its box through `onLayout`; the root keeps
   them in a map and publishes them, sorted by `resolveBarOrder`, to a shared value. The worklet

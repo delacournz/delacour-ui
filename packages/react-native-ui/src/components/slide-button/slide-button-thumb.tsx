@@ -20,7 +20,7 @@ export type SlideButtonThumbProps = Omit<ViewProps, "children" | "style"> & {
  * Composed in automatically when the children hold none, and drawn last however
  * the children were ordered, so it always passes *over* the label.
  *
- * **It holds no gesture of its own.** One `Gesture.Pan()` on the rail drives it,
+ * **It holds no gesture of its own.** One `usePanGesture` on the rail drives it,
  * so a drag that lands on the rail beside the handle still moves it — the same
  * trade `Switch.Thumb` and `Slider.Thumb` make.
  *

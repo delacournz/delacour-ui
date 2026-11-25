@@ -9,7 +9,7 @@ import {
 	useRef,
 } from "react";
 import { type AccessibilityActionEvent, I18nManager, type LayoutChangeEvent, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
 	type SharedValue,
@@ -266,83 +266,69 @@ function SlideButtonRoot({
 		[handleWidth, offset, pinned, travel]
 	);
 
-	const gesture = useMemo(() => {
-		const settle = (target: number, velocity: number) => {
+	const settle = (target: number, velocity: number) => {
+		"worklet";
+		offset.value = isReducedMotion
+			? withTiming(target, { duration: SLIDE_BUTTON_REDUCED_MOTION_MS })
+			: withSpring(target, { ...SLIDE_BUTTON_SPRING, velocity });
+	};
+
+	// Disabled still claims the drag and then does nothing with it. A disabled
+	// recognizer lets the touch through to whatever sits behind — inside a
+	// stack with a full-screen back swipe, a drag on a refused slide navigated
+	// back.
+	const gesture = usePanGesture({
+		testID: SLIDE_BUTTON_GESTURE_TEST_ID,
+		activeOffsetX: [-SLIDE_BUTTON_ACTIVE_OFFSET_X, SLIDE_BUTTON_ACTIVE_OFFSET_X],
+		failOffsetY: [-SLIDE_BUTTON_FAIL_OFFSET_Y, SLIDE_BUTTON_FAIL_OFFSET_Y],
+		onActivate: () => {
 			"worklet";
-			offset.value = isReducedMotion
-				? withTiming(target, { duration: SLIDE_BUTTON_REDUCED_MOTION_MS })
-				: withSpring(target, { ...SLIDE_BUTTON_SPRING, velocity });
-		};
+			if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value })) return;
+			cancelAnimation(offset);
+			grabbed.value = offset.value;
+			armed.value = false;
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const span = travel.value;
+			if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value }) || span <= 0) return;
 
-		// Disabled still claims the drag and then does nothing with it. A disabled
-		// recognizer lets the touch through to whatever sits behind — inside a
-		// stack with a full-screen back swipe, a drag on a refused slide navigated
-		// back.
-		return Gesture.Pan()
-			.withTestId(SLIDE_BUTTON_GESTURE_TEST_ID)
-			.activeOffsetX([-SLIDE_BUTTON_ACTIVE_OFFSET_X, SLIDE_BUTTON_ACTIVE_OFFSET_X])
-			.failOffsetY([-SLIDE_BUTTON_FAIL_OFFSET_Y, SLIDE_BUTTON_FAIL_OFFSET_Y])
-			.onStart(() => {
-				"worklet";
-				if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value })) return;
-				cancelAnimation(offset);
-				grabbed.value = offset.value;
-				armed.value = false;
-			})
-			.onUpdate((event) => {
-				"worklet";
-				const span = travel.value;
-				if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value }) || span <= 0) return;
+			// No easing on the way out: the handle tracks the finger exactly.
+			const next = Math.min(span, Math.max(0, grabbed.value + event.translationX * direction));
+			offset.value = next;
 
-				// No easing on the way out: the handle tracks the finger exactly.
-				const next = Math.min(span, Math.max(0, grabbed.value + event.translationX * direction));
-				offset.value = next;
-
-				// The tick plays on the crossing, not on every frame past it, and
-				// re-arms if the drag drops back under.
-				const isArmed = isSlideArmed({ offset: next, threshold: resolvedThreshold, travel: span });
-				if (isArmed === armed.value) return;
-				armed.value = isArmed;
-				if (isArmed && haptic !== false) playHaptic(haptic);
-			})
-			.onEnd((event, success) => {
-				"worklet";
-				if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value })) return;
-				armed.value = false;
-				const velocity = event.velocityX * direction;
-				const release = resolveSlideRelease({
-					lookahead: SLIDE_BUTTON_LOOKAHEAD,
-					offset: offset.value,
-					threshold: resolvedThreshold,
-					travel: travel.value,
-					velocity,
-				});
-
-				// A pan cancelled by a scroll taking over goes home whatever its position.
-				if (!success || release === "return") {
-					settle(0, velocity);
-					return;
-				}
-
-				pinned.value = true;
-				settle(travel.value, velocity);
-				if (haptic !== false) playHaptic("success");
-				scheduleOnRN(complete);
+			// The tick plays on the crossing, not on every frame past it, and
+			// re-arms if the drag drops back under.
+			const isArmed = isSlideArmed({ offset: next, threshold: resolvedThreshold, travel: span });
+			if (isArmed === armed.value) return;
+			armed.value = isArmed;
+			if (isArmed && haptic !== false) playHaptic(haptic);
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value })) return;
+			armed.value = false;
+			const velocity = event.velocityX * direction;
+			const release = resolveSlideRelease({
+				lookahead: SLIDE_BUTTON_LOOKAHEAD,
+				offset: offset.value,
+				threshold: resolvedThreshold,
+				travel: travel.value,
+				velocity,
 			});
-	}, [
-		armed,
-		complete,
-		direction,
-		grabbed,
-		haptic,
-		isDisabled,
-		isLoading,
-		isReducedMotion,
-		offset,
-		pinned,
-		resolvedThreshold,
-		travel,
-	]);
+
+			// A pan cancelled by a scroll taking over goes home whatever its position.
+			if (event.canceled || release === "return") {
+				settle(0, velocity);
+				return;
+			}
+
+			pinned.value = true;
+			settle(travel.value, velocity);
+			if (haptic !== false) playHaptic("success");
+			scheduleOnRN(complete);
+		},
+	});
 
 	const activate = useCallback(() => {
 		if (!isSlideDraggable({ isDisabled, isLoading, isPinned: pinned.value })) return;

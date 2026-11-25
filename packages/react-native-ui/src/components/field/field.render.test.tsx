@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { useEffect } from "react";
 import { AccessibilityInfo, Platform, Text, View } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
-import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
+import { act, fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Checkbox } from "../checkbox";
 import { Slider } from "../slider";
 import { Switch } from "../switch";
@@ -79,12 +79,12 @@ describe("Field", () => {
 			);
 			expect(screen.getByRole("switch")).not.toBeChecked();
 
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(onSelectedChange).toHaveBeenCalledTimes(1);
 			expect(onSelectedChange).toHaveBeenLastCalledWith(true);
 			expect(screen.getByRole("switch")).toBeChecked();
 
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(onSelectedChange).toHaveBeenLastCalledWith(false);
 			expect(screen.getByRole("switch")).not.toBeChecked();
 		});
@@ -97,7 +97,7 @@ describe("Field", () => {
 					<Checkbox onCheckedChange={onCheckedChange} />
 				</Field>
 			);
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(onCheckedChange).toHaveBeenCalledTimes(1);
 			expect(onCheckedChange).toHaveBeenLastCalledWith(true);
 			expect(screen.getByRole("checkbox")).toBeChecked();
@@ -123,7 +123,7 @@ describe("Field", () => {
 				</Field>
 			);
 			expect(screen.getByRole("switch")).toBeDisabled();
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			await fireEvent(screen.getByTestId("row"), "accessibilityAction", { nativeEvent: { actionName: "activate" } });
 			expect(onSelectedChange).not.toHaveBeenCalled();
 			expect(screen.getByRole("switch")).not.toBeChecked();
@@ -138,7 +138,7 @@ describe("Field", () => {
 				</Field>
 			);
 			expect(screen.getByRole("checkbox")).toBeDisabled();
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(onCheckedChange).not.toHaveBeenCalled();
 		});
 
@@ -151,7 +151,7 @@ describe("Field", () => {
 				</Field>
 			);
 			expect(screen.getByRole("switch")).toBeDisabled();
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(onSelectedChange).not.toHaveBeenCalled();
 			expect(screen.getByRole("switch")).not.toBeChecked();
 		});
@@ -165,7 +165,7 @@ describe("Field", () => {
 				</Field>
 			);
 			expect(screen.getByRole("checkbox")).toBeDisabled();
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(onCheckedChange).not.toHaveBeenCalled();
 			expect(screen.getByRole("checkbox")).not.toBeChecked();
 		});

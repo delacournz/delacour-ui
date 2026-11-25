@@ -1,5 +1,5 @@
 import { type ReactElement, useLayoutEffect, useMemo } from "react";
-import { StyleSheet, View, type ViewStyle } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { bottomBand } from "../core";
 import { useMeasureHeight } from "../layout/use-measure-height";
@@ -65,11 +65,16 @@ export function BottomSheetFooter({
 		transform: [{ translateY: footerTop.value }],
 	}));
 
-	const inner = useMemo<ViewStyle>(() => {
+	// Typed by `flatten` from the `style` prop, not as `ViewStyle`: React Native
+	// 0.88's `View` takes its generated style type, and in an Expo app
+	// `expo/types` widens the public `ViewStyle` with web-only values the
+	// generated one refuses, so a `ViewStyle` handed back to the `View` fails
+	// to typecheck there — and only there.
+	const inner = useMemo(() => {
 		const flat = StyleSheet.flatten([padding === undefined ? null : { padding }, style]) ?? {};
 		return flat;
 	}, [padding, style]);
-	const surface = useMemo<ViewStyle>(() => {
+	const surface = useMemo(() => {
 		if (!sticky) return inner;
 		const own = inner.paddingBottom ?? inner.paddingVertical ?? inner.padding ?? 0;
 		return { ...inner, paddingBottom: (typeof own === "number" ? own : 0) + band };

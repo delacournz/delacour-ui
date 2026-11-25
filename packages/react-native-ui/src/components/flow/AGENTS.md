@@ -87,7 +87,9 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
   crosses as a signed distance in graph units, so the marks scale with the zoom and stay sharp at
   any of it. Runtime SkSL has no `fwidth`, so the antialias width — one device pixel in graph
   units — is a uniform, `1 / (zoom × PixelRatio)`.
-- **Gestures nest innermost-first.** A handle's drag blocks its node's and the canvas's, a
+- **Gestures nest innermost-first.** Each is a Gesture Handler 3 hook (`usePanGesture`, `usePinchGesture`,
+  composed with `useSimultaneousGestures` / `useExclusiveGestures`) and the blocking is the `block` config
+  key, which names the other gestures; the canvas's pan and pinch ride in context for that. A handle's drag blocks its node's and the canvas's, a
   node's drag blocks the canvas's, and a node that cannot be dragged lets the canvas pan
   straight through it. The canvas's pan and pinch are simultaneous and both incremental, so a
   two-finger gesture pans and zooms about the fingers at once without either clobbering the other.

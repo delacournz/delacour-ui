@@ -570,7 +570,7 @@ describe("Questionnaire: labels", () => {
 
 	test("the Other field is named by the labels", async () => {
 		await renderWithProviders(<Questionnaire haptic={false} labels={german} questions={[SINGLE]} />);
-		await fireEvent.press(screen.getByRole("radio", { name: "Something else" }));
+		await fireEvent(screen.getByRole("radio", { name: "Something else" }), "accessibilityTap");
 		expect(screen.getByLabelText("Andere Antwort")).toBeOnTheScreen();
 		expect(screen.getByPlaceholderText("Bitte angeben")).toBeOnTheScreen();
 	});

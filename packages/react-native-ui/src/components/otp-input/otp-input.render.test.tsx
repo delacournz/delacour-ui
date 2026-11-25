@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globa
 import { act, createRef } from "react";
 import { TextInput } from "react-native";
 import { LabelsProvider } from "../../hooks/use-labels";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { OtpInput, type OtpInputRef } from "./otp-input";
 
@@ -354,7 +354,7 @@ describe("OtpInput", () => {
 					<OtpInput />
 				</Field>
 			);
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(focus).toHaveBeenCalledTimes(1);
 		});
 
@@ -367,7 +367,7 @@ describe("OtpInput", () => {
 					<OtpInput isDisabled />
 				</Field>
 			);
-			await fireEvent.press(screen.getByTestId("row"));
+			await pressGesture("row");
 			expect(focus).not.toHaveBeenCalled();
 		});
 	});

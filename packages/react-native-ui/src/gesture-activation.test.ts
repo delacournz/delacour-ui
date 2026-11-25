@@ -9,7 +9,7 @@ const COMPONENTS = join(SRC, "components");
  * Every Gesture Handler tap a screen reader can land on has a way to be
  * activated without a touch.
  *
- * A `Gesture.Tap()` or `Gesture.LongPress()` only ever sees touches. VoiceOver's
+ * A `useTapGesture` or `useLongPressGesture` only ever sees touches. VoiceOver's
  * double-tap reaches it by accident — UIKit synthesises a touch at the
  * element's centre when nothing answers `accessibilityActivate` — and TalkBack's
  * never does: its double-tap performs `ACTION_CLICK`, which React Native routes
@@ -63,7 +63,7 @@ function componentFiles(dir: string): string[] {
 	});
 }
 
-const TAP = /Gesture\.(Tap|LongPress)\(/;
+const TAP = /\buse(Tap|LongPress)Gesture\(/;
 const EXPOSED = /\baccessible\b(?!\s*=\s*\{\s*false\s*\})|\baccessibilityRole\b|\brole=/;
 const SHARED_PATH = /\bresolvePressableActivation\(/;
 const OWNED_ACTIVATE = /name:\s*"activate"/;

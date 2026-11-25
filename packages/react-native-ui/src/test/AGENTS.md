@@ -58,13 +58,18 @@ describe("Button", () => {
 
 **Touches go through Gesture Handler, and Jest has no touch system.** `userEvent.press` calls an
 `onPress` prop on a host view, and these components have none: the `Animated.View` under a
-`GestureDetector` receives touches natively. So a test drives a control the way an assistive
-technology does, which is a real path every control must honour anyway:
+`GestureDetector` receives touches natively. `fireEvent.press` fails too, silently: Gesture
+Handler 3's detector puts a host view above the control whose `onStartShouldSetResponder` declines,
+and Testing Library reads that as a touch the device would not deliver, so the press never reaches
+the composite's `onPress`. So a test drives a control the way an assistive technology does, which
+is a real path every control must honour anyway — and a touch-only press, on a row or box that is
+`accessible={false}` and has no activation to fire, goes through `pressGesture`:
 
 | To | Fire |
 | --- | --- |
 | Activate (iOS VoiceOver double-tap) | `fireEvent(el, "accessibilityTap")` |
 | Activate (Android TalkBack) | `fireEvent(el, "accessibilityAction", { nativeEvent: { actionName: "activate" } })` |
+| Touch a `Pressable` that is no accessibility element (a `Field` row, an `Input.Group` box) | `pressGesture(testID)` — its tap, `${testID}-press`, through `fireGestureHandler` |
 | Step an adjustable (`Slider`, `NumberInput`) | `accessibilityAction` with `increment` / `decrement` |
 | Long press | `accessibilityAction` with `longpress` |
 | Type | `fireEvent.changeText(input, "text")`, or `userEvent.type` on a real `TextInput` |
@@ -72,7 +77,7 @@ technology does, which is a real path every control must honour anyway:
 
 A behaviour that only a drag can reach — a `Sortable` reorder, a `Swipe` reveal — is driven with
 Gesture Handler's `fireGestureHandler` from `react-native-gesture-handler/jest-utils`, which needs the
-gesture to carry `.withTestId(...)`. Add one to the component when the test needs it; that is a
+gesture hook's config to carry a `testID`. Add one to the component when the test needs it; that is a
 legitimate change. If a behaviour still cannot be reached, test what can and say so in a comment
 above the `describe`.
 

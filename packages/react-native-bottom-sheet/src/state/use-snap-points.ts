@@ -36,8 +36,19 @@ export function useSnapPoints(
 		});
 		if (snapPoints.indexOf(dynamic) !== -1) return snapPoints;
 
-		const merged = [...snapPoints, dynamic];
-		merged.sort((a, b) => a - b);
+		// Inserted in place rather than `sort((a, b) => a - b)`: the list is already
+		// ascending, and a capture-free comparator is hoisted by the React Compiler
+		// to a module function the UI thread cannot call.
+		const merged: number[] = [];
+		let isPlaced = false;
+		for (const point of snapPoints) {
+			if (!isPlaced && dynamic < point) {
+				merged.push(dynamic);
+				isPlaced = true;
+			}
+			merged.push(point);
+		}
+		if (!isPlaced) merged.push(dynamic);
 		return merged;
 	});
 }

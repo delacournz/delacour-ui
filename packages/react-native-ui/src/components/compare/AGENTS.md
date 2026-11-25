@@ -56,18 +56,19 @@ in two themes, a redesign against the original. Compound root plus `Compare.Befo
 - **One gesture on the root; the handle holds none.** Not a `Pressable`, for Slider's three
   reasons (a nested Tap inside a Pan, an animated style fighting for `transform`, `onPress` on every
   drag). `HapticFeedback` / `playHaptic` come from the `pressable.tsx` leaf.
-- **`grab="handle"` (default).** `onTouchesDown` fails the pan (`manager.fail()`) when the touch is
+- **`grab="handle"` (default).** `onTouchesDown` fails the pan (`GestureStateManager.fail(event.handlerTag)`) when the touch is
   outside the band, so a vertical flick on the image goes to the scroll view with no dead zone.
-  `minDistance(0)` claims a touch on the band at once. `onBegin` repeats the band test (the order
+  `minDistance: 0` claims a touch on the band at once. `onBegin` repeats the band test (the order
   of `onTouchesDown` and `onBegin` is not something to lean on) and records where on the band the
   finger landed, so grabbing the capsule off-centre does not jump the seam by up to 22pt.
-- **`grab="anywhere"`.** Activation is axis-aware — `activeOffsetX(±8)` with `failOffsetY(±12)`
+- **`grab="anywhere"`.** Activation is axis-aware — `activeOffsetX: ±8` with `failOffsetY: ±12`
   horizontally, swapped when vertical — so the scroll view wins a cross-axis flick. A tap jumps
-  the seam through a separate `Gesture.Tap()` raced against the pan, **not** a write in the pan's
+  the seam through a separate `useTapGesture` raced against the pan (`useCompetingGestures`, disabled in handle mode), **not** a write in the pan's
   `onBegin`: `onBegin` also fires at the start of a vertical flick the scroll goes on to win, and
   the seam would jump under every scroll.
-- **`shouldCancelWhenOutside(false)`** — a drag that leaves the frame keeps tracking.
-- **A `tracking` shared flag gates `onUpdate` and the release.** `onFinalize` fires on paths where
+- **`shouldCancelWhenOutside: false`** — a drag that leaves the frame keeps tracking.
+- **A `tracking` shared flag gates `onUpdate` and the release.** The release runs from `onDeactivate` (the only event carrying `velocityX/Y`) and again from `onFinalize(0)`;
+  `onFinalize` fires on paths where
   the drag never began (a failed band test); without the flag those would snap and commit.
 - **Snapping applies on release only.** A live-snapping seam feels sticky. The release clamps,
   snaps within `snapThreshold`, ticks if it lands on a point, and springs
@@ -138,7 +139,7 @@ in two themes, a redesign against the original. Compound root plus `Compare.Befo
 ## Inside a scroll view
 
 `Screen.ScrollArea` is React Native's `ScrollView`, which has no handler to negotiate with. In
-`grab="handle"` the band claims its touch at `minDistance(0)` and fails everything else, so the
+`grab="handle"` the band claims its touch at `minDistance: 0` and fails everything else, so the
 scroll keeps the rest of the frame. On iOS a `ScrollView` delays content touches; pass
 `delaysContentTouches={false}` for an instant grab, as Slider's docs say.
 

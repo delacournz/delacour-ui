@@ -8,7 +8,7 @@ import {
 	View,
 	type ViewProps,
 } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, useLongPressGesture } from "react-native-gesture-handler";
 import Animated, { type SharedValue, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useResolveClassNames } from "uniwind";
 import { type LoopingMotion, useLoopingMotion } from "../../hooks/use-looping-motion";
@@ -82,24 +82,28 @@ function useNaturalWidth(key: string): [number | null, (event: LayoutChangeEvent
 }
 
 /**
- * Press-to-pause: a hold on the ring, read on the UI thread. `onBegin` and `onStart` both set the
- * flag — on the iOS simulator `onBegin` never fired for this gesture.
+ * Press-to-pause: a hold on the ring, read on the UI thread. `onBegin` and `onActivate` both set
+ * the flag — on the iOS simulator `onBegin` never fired for this gesture.
  */
-function createPressGesture(isPressed: SharedValue<boolean>, isEnabled: boolean) {
-	return Gesture.LongPress()
-		.minDuration(0)
-		.maxDistance(Number.MAX_SAFE_INTEGER)
-		.shouldCancelWhenOutside(false)
-		.enabled(isEnabled)
-		.onBegin(() => {
+function usePressGesture(isPressed: SharedValue<boolean>, isEnabled: boolean) {
+	return useLongPressGesture({
+		minDuration: 0,
+		maxDistance: Number.MAX_SAFE_INTEGER,
+		shouldCancelWhenOutside: false,
+		enabled: isEnabled,
+		onBegin: () => {
+			"worklet";
 			isPressed.value = true;
-		})
-		.onStart(() => {
+		},
+		onActivate: () => {
+			"worklet";
 			isPressed.value = true;
-		})
-		.onFinalize(() => {
+		},
+		onFinalize: () => {
+			"worklet";
 			isPressed.value = false;
-		});
+		},
+	});
 }
 
 /**
@@ -154,7 +158,7 @@ function CircularTextRoot({
 	}));
 
 	const pauseActions = resolvePauseActions(spin.kind, pause, motion);
-	const press = createPressGesture(isPressed, pause.kind === "press" && spin.kind === "loop");
+	const press = usePressGesture(isPressed, pause.kind === "press" && spin.kind === "loop");
 	const type = toRingTypography(typography);
 	const box = resolveRingBox(radius, type.fontSize, side);
 	const baseline = resolveBaselineRadius(radius, type.fontSize, side);

@@ -1,4 +1,4 @@
-import type { GestureType } from "react-native-gesture-handler";
+import type { PanGesture } from "react-native-gesture-handler";
 
 /**
  * A haptic, as a worklet. The engine imports nothing from a haptics library;
@@ -23,8 +23,8 @@ export type SheetPanOptions = SheetHaptics & {
 
 /** The two pans, ready for a `GestureDetector` each. */
 export type SheetPans = {
-	handle: GestureType;
-	content: GestureType;
+	handle: PanGesture;
+	content: PanGesture;
 };
 
 /** Seconds of release velocity the snap projects along — the `0.2` the previous engine used. */

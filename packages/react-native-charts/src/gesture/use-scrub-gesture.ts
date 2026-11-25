@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Gesture, type GestureType } from "react-native-gesture-handler";
+import { type ComposedGesture, type PanGesture, type SingleGesture, usePanGesture } from "react-native-gesture-handler";
 import { type SharedValue, useAnimatedReaction } from "react-native-reanimated";
 import { closestIndex } from "../core/interaction/closest-index";
 import { getYForX } from "../core/interaction/y-for-x";
@@ -16,7 +16,7 @@ export type UseScrubGestureOptions = {
 	readonly model: SharedValue<ScrubModel>;
 	readonly config?: ScrubConfig;
 	/** The scrollable's gesture to out-prioritise, for `behaviour: "block"`. */
-	readonly blocks?: GestureType;
+	readonly blocks?: SingleGesture | ComposedGesture;
 };
 
 /**
@@ -33,12 +33,16 @@ export type UseScrubGestureOptions = {
  * a bar has no curve to slide along — so every series reports its snapped
  * point twice.
  *
- * The handlers are built inside this `useMemo`, so they close over
+ * The handlers close over `apply`, a hook-scope worklet that reaches
  * `closestIndex`, `getYForX`, `invertValue` and `clamp` in the ordinary way.
  * See the package AGENTS.md: that is legal precisely because these are not
  * module-scope worklets.
+ *
+ * The pan hook runs on every render — the rules of hooks allow no early return —
+ * so a chart with nothing to scrub still holds one, disabled, and `null` is
+ * returned in its place so no overlay is mounted for it.
  */
-export function useScrubGesture(options: UseScrubGestureOptions): GestureType | null {
+export function useScrubGesture(options: UseScrubGestureOptions): PanGesture | null {
 	const { state, model, config, blocks } = options;
 	const enabled = (config?.enabled ?? true) && state !== undefined;
 	const behaviour = config?.behaviour ?? "hold";
@@ -47,46 +51,49 @@ export function useScrubGesture(options: UseScrubGestureOptions): GestureType | 
 
 	const apply = useScrubApply(state, model);
 
-	return useMemo(() => {
-		if (state === undefined || apply === null) return null;
+	// Only the options the behaviour names. `activateAfterLongPress`, the offsets
+	// and `block` each change how the pan activates, so the others are left
+	// `undefined`, which Gesture Handler drops before the config reaches native.
+	// One literal rather than a spread: the Worklets plugin rejects a spread in a
+	// gesture hook's config.
+	const claimOffset: [number, number] = [-activationDistance, activationDistance];
+	const isClaim = behaviour === "claim";
 
-		const finish = (): void => {
+	const pan = usePanGesture({
+		activateAfterLongPress: behaviour === "hold" ? holdDuration : undefined,
+		activeOffsetX: isClaim ? claimOffset : undefined,
+		failOffsetY: isClaim ? claimOffset : undefined,
+		block: behaviour === "block" ? blocks : undefined,
+		enabled: enabled && apply !== null,
+		averageTouches: true,
+		// A finger dragged above or below the plot keeps scrubbing. Cancelling
+		// there strands the dot mid-gesture for anyone whose thumb drifts.
+		shouldCancelWhenOutside: false,
+		onActivate: (event) => {
 			"worklet";
+			if (state === undefined || apply === null) return;
+			// A touch takes over from a focus request, and clearing it lets the
+			// same datum be asked for again once the finger lifts.
+			state.focus.value = -1;
+			state.isActive.value = true;
+			apply(event.x, event.y);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			if (apply === null) return;
+			apply(event.x, event.y);
+		},
+		// onFinalize, never onDeactivate alone: it is the one callback that runs
+		// on every path out of the gesture, so the dot is never stranded on screen
+		// until the next touch.
+		onFinalize: () => {
+			"worklet";
+			if (state === undefined) return;
 			state.isActive.value = false;
-		};
+		},
+	});
 
-		let pan = Gesture.Pan()
-			.enabled(enabled)
-			.averageTouches(true)
-			// A finger dragged above or below the plot keeps scrubbing. Cancelling
-			// there strands the dot mid-gesture for anyone whose thumb drifts.
-			.shouldCancelWhenOutside(false)
-			.onStart((event) => {
-				"worklet";
-				// A touch takes over from a focus request, and clearing it lets the
-				// same datum be asked for again once the finger lifts.
-				state.focus.value = -1;
-				state.isActive.value = true;
-				apply(event.x, event.y);
-			})
-			.onUpdate((event) => {
-				"worklet";
-				apply(event.x, event.y);
-			})
-			// onFinalize, never onEnd: a gesture that fails after activating never
-			// fires onEnd, and the dot is stranded on screen until the next touch.
-			.onFinalize(finish);
-
-		if (behaviour === "hold") pan = pan.activateAfterLongPress(holdDuration);
-		if (behaviour === "claim") {
-			pan = pan
-				.activeOffsetX([-activationDistance, activationDistance])
-				.failOffsetY([-activationDistance, activationDistance]);
-		}
-		if (behaviour === "block" && blocks !== undefined) pan = pan.blocksExternalGesture(blocks);
-
-		return pan;
-	}, [state, apply, enabled, behaviour, holdDuration, activationDistance, blocks]);
+	return state === undefined || apply === null ? null : pan;
 }
 
 /**

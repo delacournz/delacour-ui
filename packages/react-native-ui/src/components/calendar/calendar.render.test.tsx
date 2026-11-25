@@ -1,19 +1,26 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Text } from "react-native";
-import { Gesture } from "react-native-gesture-handler";
+import { type PanGesture, usePanGesture } from "react-native-gesture-handler";
 import { getByGestureTestId } from "react-native-gesture-handler/jest-utils";
 import { LabelsProvider } from "../../hooks/use-labels";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, renderHook, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { Calendar } from "./calendar";
 import type { CalendarDate } from "./calendar.date";
-import { resolveYearListGesture } from "./calendar-picker";
+import { useYearListGesture } from "./calendar-picker";
 
 const day = (year: number, month: number, d: number): CalendarDate => ({ day: d, month, year });
 
 /** Opens on October 2026 through `defaultMonth`; the ids come from the root testID. */
 const OCT = day(2026, 10, 1);
 const press = (id: string) => fireEvent(screen.getByTestId(`cal-day-${id}`), "accessibilityTap");
+
+/** A calendar handed a Gesture Handler 3 pan to block, as `DatePicker` hands it its sheet's. */
+function CalendarInSheet({ onPan }: { onPan: (pan: PanGesture) => void }) {
+	const external = usePanGesture({});
+	onPan(external);
+	return <Calendar initialView="years" locale="en" testID="cal" yearListBlocksGesture={external} />;
+}
 
 describe("Calendar", () => {
 	beforeEach(() => {
@@ -386,12 +393,17 @@ describe("Calendar", () => {
 		});
 
 		test("yearListBlocksGesture wraps the year list in a pan that blocks the gesture given", async () => {
-			const external = Gesture.Pan();
+			let external: PanGesture | undefined;
 			await renderWithProviders(
-				<Calendar initialView="years" locale="en" testID="cal" yearListBlocksGesture={external} />
+				<CalendarInSheet
+					onPan={(pan) => {
+						external = pan;
+					}}
+				/>
 			);
 			expect(screen.getByTestId("cal-years")).toBeOnTheScreen();
-			expect(getByGestureTestId("cal-years-pan").config.blocksHandlers).toEqual([external]);
+			const blocker = getByGestureTestId("cal-years-pan");
+			expect("gestureRelations" in blocker && blocker.gestureRelations.blocksHandlers).toEqual([external?.handlerTag]);
 
 			await fireEvent(screen.getByTestId("cal-year-1990"), "accessibilityTap");
 			expect(screen.getByRole("button", { name: "1990" })).toBeOnTheScreen();
@@ -467,15 +479,23 @@ describe("Calendar", () => {
 	});
 });
 
-describe("resolveYearListGesture", () => {
-	test("runs the native scroll beside a pan that blocks the external gesture", () => {
-		const external = Gesture.Pan();
-		const [native, blocker] = resolveYearListGesture(external).toGestureArray();
-		expect(native?.handlerName).toBe("NativeViewGestureHandler");
-		expect(native?.config.simultaneousWith).toEqual([external]);
-		expect(native?.config.blocksHandlers).toBeUndefined();
-		expect(blocker?.handlerName).toBe("PanGestureHandler");
-		expect(blocker?.config.blocksHandlers).toEqual([external]);
+describe("useYearListGesture", () => {
+	test("runs the native scroll beside a pan that blocks the external gesture", async () => {
+		const { result } = await renderHook(() => {
+			const external = usePanGesture({});
+			return { external, gesture: useYearListGesture(external, "years-pan") };
+		});
+		const { external, gesture } = result.current;
+		const [native, blocker] = gesture.gestures;
+		expect(native?.type).toBe("NativeViewGestureHandler");
+		expect(native && "gestureRelations" in native && native.gestureRelations.simultaneousHandlers).toContain(
+			external.handlerTag
+		);
+		expect(native && "gestureRelations" in native && native.gestureRelations.blocksHandlers).toEqual([]);
+		expect(blocker?.type).toBe("PanGestureHandler");
+		expect(blocker && "gestureRelations" in blocker && blocker.gestureRelations.blocksHandlers).toEqual([
+			external.handlerTag,
+		]);
 	});
 	describe("labels", () => {
 		const german = {

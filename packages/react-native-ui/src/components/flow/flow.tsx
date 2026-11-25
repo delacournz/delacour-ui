@@ -11,7 +11,14 @@ import {
 	useState,
 } from "react";
 import { type LayoutChangeEvent, StyleSheet, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+	GestureDetector,
+	type PanGesture,
+	type PinchGesture,
+	usePanGesture,
+	usePinchGesture,
+	useSimultaneousGestures,
+} from "react-native-gesture-handler";
 import Animated, {
 	useAnimatedStyle,
 	useDerivedValue,
@@ -285,47 +292,54 @@ function FlowRoot({
 	const panLast = useSharedValue<FlowPoint>({ x: 0, y: 0 });
 	const pinchLast = useSharedValue(1);
 
-	const canvas = useMemo(() => {
-		const pan = Gesture.Pan()
-			.enabled(canPan && !isLocked)
-			.maxPointers(2)
-			.onStart(() => {
-				panLast.value = { x: 0, y: 0 };
-			})
-			.onUpdate((event) => {
-				const current = viewport.value;
-				viewport.value = {
-					x: current.x + event.translationX - panLast.value.x,
-					y: current.y + event.translationY - panLast.value.y,
-					zoom: current.zoom,
-				};
-				panLast.value = { x: event.translationX, y: event.translationY };
-			})
-			.onEnd(() => {
-				scheduleOnRN(reportViewport, viewport.value);
-			});
+	const pan = usePanGesture({
+		enabled: canPan && !isLocked,
+		maxPointers: 2,
+		onActivate: () => {
+			"worklet";
+			panLast.value = { x: 0, y: 0 };
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const current = viewport.value;
+			viewport.value = {
+				x: current.x + event.translationX - panLast.value.x,
+				y: current.y + event.translationY - panLast.value.y,
+				zoom: current.zoom,
+			};
+			panLast.value = { x: event.translationX, y: event.translationY };
+		},
+		onDeactivate: () => {
+			"worklet";
+			scheduleOnRN(reportViewport, viewport.value);
+		},
+	});
 
-		const pinch = Gesture.Pinch()
-			.enabled(canZoom && !isLocked)
-			.onStart(() => {
-				pinchLast.value = 1;
-			})
-			.onUpdate((event) => {
-				const factor = event.scale / pinchLast.value;
-				const focal = { x: event.focalX, y: event.focalY };
-				viewport.value = flowGeometry().zoomAround(viewport.value, factor, focal, minZoom, maxZoom);
-				pinchLast.value = event.scale;
-			})
-			.onEnd(() => {
-				scheduleOnRN(reportViewport, viewport.value);
-			});
+	const pinch = usePinchGesture({
+		enabled: canZoom && !isLocked,
+		onActivate: () => {
+			"worklet";
+			pinchLast.value = 1;
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const factor = event.scale / pinchLast.value;
+			const focal = { x: event.focalX, y: event.focalY };
+			viewport.value = flowGeometry().zoomAround(viewport.value, factor, focal, minZoom, maxZoom);
+			pinchLast.value = event.scale;
+		},
+		onDeactivate: () => {
+			"worklet";
+			scheduleOnRN(reportViewport, viewport.value);
+		},
+	});
 
-		return { composed: Gesture.Simultaneous(pan, pinch), list: [pan, pinch] };
-	}, [canPan, canZoom, isLocked, maxZoom, minZoom, panLast, pinchLast, reportViewport, viewport]);
+	const canvasGesture = useSimultaneousGestures(pan, pinch);
+	const canvasGestures = useMemo<(PanGesture | PinchGesture)[]>(() => [pan, pinch], [pan, pinch]);
 
 	const context = useMemo<FlowContextValue>(
 		() => ({
-			canvasGestures: canvas.list,
+			canvasGestures,
 			connect,
 			container,
 			entries,
@@ -347,7 +361,7 @@ function FlowRoot({
 			zoomBy,
 		}),
 		[
-			canvas.list,
+			canvasGestures,
 			connect,
 			container,
 			entries,
@@ -387,7 +401,7 @@ function FlowRoot({
 
 	return (
 		<FlowProvider value={context}>
-			<GestureDetector gesture={canvas.composed}>
+			<GestureDetector gesture={canvasGesture}>
 				<View className={slots.root({ className })} onLayout={handleLayout} testID={testID}>
 					<View
 						accessibilityElementsHidden

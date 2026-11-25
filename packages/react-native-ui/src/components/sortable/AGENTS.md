@@ -15,7 +15,7 @@ outside the gesture.
 | `sortable.tsx` | Root — every shared value a drag touches, the `drag` worklets, auto-scroll, the `Object.assign` |
 | `sortable-item.tsx` | `Sortable.Item` — measures itself, follows the finger or its shift, owns the row's context |
 | `sortable-handle.tsx` | `Sortable.Handle` — the 44pt pan surface and, in `handle` mode, the accessible element |
-| `use-sortable-drag-gesture.ts` | The `Gesture.Pan` both parts build — a relay to the root's worklets |
+| `use-sortable-drag-gesture.ts` | The `usePanGesture` both parts build — a relay to the root's worklets |
 | `sortable.context.tsx` | The list and row contexts, `useSortableItem` and the part hooks |
 | `sortable.types.ts` | `SortableReorderDetails` and `SortableDrag`, shared by root, context and gesture |
 | `sortable.variants.ts` | Pure `tv()` slots + every resolver, worklet-safe, no RN imports |
@@ -96,13 +96,13 @@ outside the gesture.
 
 ## Gesture
 
-- **`handle` (default)** puts the pan on `Sortable.Handle` with `minDistance(0)`, the
+- **`handle` (default)** puts the pan on `Sortable.Handle` with `minDistance: 0`, the
   `Slider.Track` reasoning: a React Native scroll view races the pan, and one that activates on
   touch wins its slop. The rest of the row stays free for taps and scrolls.
-- **`long-press`** puts `activateAfterLongPress(longPressDelay)` on the row; a move before the hold
+- **`long-press`** puts `activateAfterLongPress: longPressDelay` on the row; a move before the hold
   completes belongs to the scroll view.
-- **`shouldCancelWhenOutside(false)`** — a drag leaves the handle's 44pt square at once.
-- **`onFinalize` drops the row**, since it is the one callback a cancelled gesture also reaches.
+- **`shouldCancelWhenOutside: false`** — a drag leaves the handle's 44pt square at once.
+- **`onFinalize` drops the row**, since it is the one callback every path reaches — a cancelled gesture and one that never activated included.
 - **The handle is not a `Pressable`.** A tap recogniser inside would race the pan for the touch, and
   a press means nothing here.
 

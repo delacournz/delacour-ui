@@ -12,7 +12,7 @@ import {
 	useState,
 } from "react";
 import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, {
 	Easing,
 	ReduceMotion,
@@ -252,57 +252,54 @@ function ProgressButtonRoot({
 	// A pan with no minimum distance begins on touch-down and finalizes on
 	// release or cancel, which is the whole hold. A long-press gesture fires once
 	// and cannot tell "still holding" from "held long enough".
-	const gesture = useMemo(
-		() =>
-			Gesture.Pan()
-				.minDistance(0)
-				.enabled(!isDisabled)
-				.shouldCancelWhenOutside(false)
-				.onBegin(() => {
+	const gesture = usePanGesture({
+		minDistance: 0,
+		enabled: !isDisabled,
+		shouldCancelWhenOutside: false,
+		onBegin: () => {
+			"worklet";
+			if (isLocked.value === 1) return;
+			isHolding.value = 1;
+			if (haptic) playHaptic(haptic);
+			const from = Math.min(1, Math.max(0, progress.value));
+			progress.value = withTiming(
+				1,
+				{ duration: holdDuration * (1 - from), easing: Easing.linear, reduceMotion: ReduceMotion.Never },
+				(finished) => {
 					"worklet";
-					if (isLocked.value === 1) return;
-					isHolding.value = 1;
-					if (haptic) playHaptic(haptic);
-					const from = Math.min(1, Math.max(0, progress.value));
-					progress.value = withTiming(
-						1,
-						{ duration: holdDuration * (1 - from), easing: Easing.linear, reduceMotion: ReduceMotion.Never },
-						(finished) => {
-							"worklet";
-							if (!finished || isLocked.value === 1) return;
-							isLocked.value = 1;
-							isHolding.value = 0;
-							if (haptic) playHaptic("success");
-							scheduleOnRN(complete);
-						}
-					);
-				})
-				.onUpdate((event) => {
-					"worklet";
-					if (isHolding.value === 0 || isLocked.value === 1) return;
-					const drift = event.translationX * event.translationX + event.translationY * event.translationY;
-					if (drift <= PROGRESS_BUTTON_MAX_DRIFT * PROGRESS_BUTTON_MAX_DRIFT) return;
+					if (!finished || isLocked.value === 1) return;
+					isLocked.value = 1;
 					isHolding.value = 0;
-					const from = Math.min(1, Math.max(0, progress.value));
-					progress.value = withTiming(0, {
-						duration: holdDuration * from,
-						easing: Easing.linear,
-						reduceMotion: ReduceMotion.Never,
-					});
-				})
-				.onFinalize(() => {
-					"worklet";
-					if (isHolding.value === 0 || isLocked.value === 1) return;
-					isHolding.value = 0;
-					const from = Math.min(1, Math.max(0, progress.value));
-					progress.value = withTiming(0, {
-						duration: holdDuration * from,
-						easing: Easing.linear,
-						reduceMotion: ReduceMotion.Never,
-					});
-				}),
-		[complete, haptic, holdDuration, isDisabled, isHolding, isLocked, progress]
-	);
+					if (haptic) playHaptic("success");
+					scheduleOnRN(complete);
+				}
+			);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			if (isHolding.value === 0 || isLocked.value === 1) return;
+			const drift = event.translationX * event.translationX + event.translationY * event.translationY;
+			if (drift <= PROGRESS_BUTTON_MAX_DRIFT * PROGRESS_BUTTON_MAX_DRIFT) return;
+			isHolding.value = 0;
+			const from = Math.min(1, Math.max(0, progress.value));
+			progress.value = withTiming(0, {
+				duration: holdDuration * from,
+				easing: Easing.linear,
+				reduceMotion: ReduceMotion.Never,
+			});
+		},
+		onFinalize: () => {
+			"worklet";
+			if (isHolding.value === 0 || isLocked.value === 1) return;
+			isHolding.value = 0;
+			const from = Math.min(1, Math.max(0, progress.value));
+			progress.value = withTiming(0, {
+				duration: holdDuration * from,
+				easing: Easing.linear,
+				reduceMotion: ReduceMotion.Never,
+			});
+		},
+	});
 
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {

@@ -4,7 +4,7 @@ import { resetAnnouncer } from "../../hooks/use-announce";
 import { LabelsProvider } from "../../hooks/use-labels";
 import { IconBubble2, IconHeart } from "../../icons/central";
 import type { PostLabels } from "../../lib/labels";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Post } from "./post";
 import { usePost } from "./post.context";
 
@@ -45,7 +45,7 @@ describe("Post", () => {
 				<Post.Body>Hi</Post.Body>
 			</Post>
 		);
-		await fireEvent.press(screen.getByTestId("card"));
+		await pressGesture("card");
 		expect(onPress).toHaveBeenCalledTimes(1);
 	});
 
@@ -338,13 +338,13 @@ describe("Post", () => {
 			});
 			expect(screen.getAllByRole("button")).toHaveLength(1);
 			expect(screen.getByText("more").props.onPress).toBeUndefined();
-			await fireEvent.press(screen.getByTestId("body-more"));
+			await fireEvent(screen.getByTestId("body-more"), "accessibilityTap");
 			expect(screen.getByRole("button", { name: "Show less" })).toBeOnTheScreen();
 			expect(screen.getByRole("button", { name: "Show less" }).props.accessibilityState).toMatchObject({
 				expanded: true,
 			});
 
-			await fireEvent.press(screen.getByRole("button", { name: "Show less" }));
+			await fireEvent(screen.getByRole("button", { name: "Show less" }), "accessibilityTap");
 			expect(screen.getByRole("button", { name: "Show more" })).toBeOnTheScreen();
 		});
 	});
@@ -551,8 +551,9 @@ describe("Post", () => {
 				setOS("android");
 				const view = await renderWithProviders(tree({ score: 5 }));
 				expect(screen.getByLabelText("Score 5").props.accessibilityLiveRegion).toBeUndefined();
-				const onDownvote = screen.getByRole("button", { name: "Downvote" });
-				await fireEvent.press(onDownvote);
+				await fireEvent(screen.getByRole("button", { name: "Downvote" }), "accessibilityAction", {
+					nativeEvent: { actionName: "activate" },
+				});
 				await view.rerender(tree({ score: 4, vote: "down" }));
 				expect(polite).toHaveBeenCalledTimes(1);
 				expect(polite).toHaveBeenCalledWith("Downvoted, score 4");

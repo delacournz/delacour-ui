@@ -12,7 +12,7 @@ import {
 	useState,
 } from "react";
 import { AccessibilityInfo, type LayoutChangeEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, useCompetingGestures, usePanGesture, useTapGesture } from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
 	useAnimatedReaction,
@@ -278,71 +278,59 @@ function FlipCardRoot(props: FlipCardProps): ReactElement {
 	);
 
 	const isY = axis === "y";
-	const gesture = useMemo(() => {
-		if (trigger === "press") {
-			return Gesture.Tap()
-				.enabled(!isDisabled)
-				.shouldCancelWhenOutside(true)
-				.onBegin(() => {
-					"worklet";
-					pressed.value = withSpring(1, FLIP_CARD_PRESS_SPRING);
-				})
-				.onEnd(() => {
-					"worklet";
-					scheduleOnRN(flip);
-				})
-				.onFinalize(() => {
-					"worklet";
-					pressed.value = withSpring(0, FLIP_CARD_PRESS_SPRING);
-				});
-		}
+	// Both hooks run every render, so the trigger that is not in use is mounted
+	// with `enabled: false` rather than skipped.
+	const tap = useTapGesture({
+		enabled: trigger === "press" && !isDisabled,
+		shouldCancelWhenOutside: true,
+		onBegin: () => {
+			"worklet";
+			pressed.value = withSpring(1, FLIP_CARD_PRESS_SPRING);
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled) scheduleOnRN(flip);
+		},
+		onFinalize: () => {
+			"worklet";
+			pressed.value = withSpring(0, FLIP_CARD_PRESS_SPRING);
+		},
+	});
 
-		const pan = Gesture.Pan().enabled(trigger === "swipe" && !isDisabled);
-		// Activates only along the drag axis and fails across it, so a vertical
-		// scroll that starts on a left/right card still scrolls.
-		const oriented = isY
-			? pan.activeOffsetX([-10, 10]).failOffsetY([-14, 14])
-			: pan.activeOffsetY([-10, 10]).failOffsetX([-14, 14]);
+	// Activates only along the drag axis and fails across it, so a vertical
+	// scroll that starts on a left/right card still scrolls.
+	const pan = usePanGesture({
+		enabled: trigger === "swipe" && !isDisabled,
+		activeOffsetX: isY ? [-10, 10] : undefined,
+		failOffsetY: isY ? [-14, 14] : undefined,
+		activeOffsetY: isY ? undefined : [-10, 10],
+		failOffsetX: isY ? undefined : [-14, 14],
+		onActivate: () => {
+			"worklet";
+			cancelAnimation(rotation);
+			dragStart.value = rotation.value;
+			dragFrom.value = rotation.value < 90 ? 0 : 180;
+		},
+		onUpdate: (event) => {
+			"worklet";
+			// Under calm motion nothing scrubs: a turn that followed the finger
+			// would be the very motion the setting asked to remove.
+			if (isCalm) return;
+			const distance = swipeDistance ?? (isY ? width.value : height.value);
+			const delta = isY ? event.translationX : -event.translationY;
+			rotation.value = resolveRubberBand(rotationFromDrag(dragStart.value, delta, distance));
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			const distance = swipeDistance ?? (isY ? width.value : height.value);
+			const delta = isY ? event.translationX : -event.translationY;
+			const velocity = resolveSwipeVelocity(isY ? event.velocityX : -event.velocityY, distance);
+			const reached = isCalm ? rotationFromDrag(dragStart.value, delta, distance) : rotation.value;
+			scheduleOnRN(commitTo, resolveFlipTarget(reached, velocity, dragFrom.value), velocity);
+		},
+	});
 
-		return oriented
-			.onStart(() => {
-				"worklet";
-				cancelAnimation(rotation);
-				dragStart.value = rotation.value;
-				dragFrom.value = rotation.value < 90 ? 0 : 180;
-			})
-			.onUpdate((event) => {
-				"worklet";
-				// Under calm motion nothing scrubs: a turn that followed the finger
-				// would be the very motion the setting asked to remove.
-				if (isCalm) return;
-				const distance = swipeDistance ?? (isY ? width.value : height.value);
-				const delta = isY ? event.translationX : -event.translationY;
-				rotation.value = resolveRubberBand(rotationFromDrag(dragStart.value, delta, distance));
-			})
-			.onEnd((event) => {
-				"worklet";
-				const distance = swipeDistance ?? (isY ? width.value : height.value);
-				const delta = isY ? event.translationX : -event.translationY;
-				const velocity = resolveSwipeVelocity(isY ? event.velocityX : -event.velocityY, distance);
-				const reached = isCalm ? rotationFromDrag(dragStart.value, delta, distance) : rotation.value;
-				scheduleOnRN(commitTo, resolveFlipTarget(reached, velocity, dragFrom.value), velocity);
-			});
-	}, [
-		commitTo,
-		dragFrom,
-		dragStart,
-		flip,
-		height,
-		isCalm,
-		isDisabled,
-		isY,
-		pressed,
-		rotation,
-		swipeDistance,
-		trigger,
-		width,
-	]);
+	const gesture = useCompetingGestures(tap, pan);
 
 	const pressStyle = useAnimatedStyle(() => ({
 		transform: [{ scale: 1 - pressed.value * (1 - FLIP_CARD_PRESSED_SCALE) }],

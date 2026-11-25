@@ -1,5 +1,4 @@
-import { useMemo } from "react";
-import { Gesture, type LegacyPanGesture } from "react-native-gesture-handler";
+import { type PanGesture, usePanGesture } from "react-native-gesture-handler";
 import { cancelAnimation, Easing, type SharedValue, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { OVERLAY_MOTION } from "../overlay/overlay.variants";
@@ -47,62 +46,65 @@ const PAN_RANGE: [number, number] = [-DRAWER_PAN_ACTIVE_OFFSET, DRAWER_PAN_ACTIV
  * worklets in `drawer.variants` — those, being module-scope, call nothing.
  * Per-gesture memory lives in shared values: each worklet gets its own copy of
  * a captured `let`.
+ *
+ * The release is `onDeactivate`, not `onFinalize`: Gesture Handler 3's
+ * `onFinalize` event carries only the pointer's position, no translation or
+ * velocity, and `onDeactivate` runs on every path out of an ACTIVE pan.
  */
-export function useDrawerPan({ edge, extent, isEnabled, drag, onDismiss }: UseDrawerPanOptions): LegacyPanGesture {
+export function useDrawerPan({ edge, extent, isEnabled, drag, onDismiss }: UseDrawerPanOptions): PanGesture {
 	const isDragging = useSharedValue(false);
 	const isPastThreshold = useSharedValue(false);
 
-	return useMemo(() => {
-		const isHorizontal = edge === "left" || edge === "right";
-		const sign = edge === "left" || edge === "top" ? -1 : 1;
-		const pan = Gesture.Pan().enabled(isEnabled).shouldCancelWhenOutside(false);
-		if (isHorizontal) {
-			pan.activeOffsetX(PAN_RANGE).failOffsetY(PAN_RANGE);
-		} else {
-			pan.activeOffsetY(PAN_RANGE).failOffsetX(PAN_RANGE);
-		}
+	const isHorizontal = edge === "left" || edge === "right";
+	const sign = edge === "left" || edge === "top" ? -1 : 1;
 
-		return pan
-			.onStart(() => {
-				"worklet";
-				cancelAnimation(drag);
-				isDragging.value = true;
-				isPastThreshold.value = false;
-			})
-			.onUpdate((event) => {
-				"worklet";
-				const translation = isHorizontal ? event.translationX : event.translationY;
-				drag.value = resolveDrawerDrag(edge, translation);
+	return usePanGesture({
+		enabled: isEnabled,
+		shouldCancelWhenOutside: false,
+		activeOffsetX: isHorizontal ? PAN_RANGE : undefined,
+		failOffsetY: isHorizontal ? PAN_RANGE : undefined,
+		activeOffsetY: isHorizontal ? undefined : PAN_RANGE,
+		failOffsetX: isHorizontal ? undefined : PAN_RANGE,
+		onActivate: () => {
+			"worklet";
+			cancelAnimation(drag);
+			isDragging.value = true;
+			isPastThreshold.value = false;
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const translation = isHorizontal ? event.translationX : event.translationY;
+			drag.value = resolveDrawerDrag(edge, translation);
 
-				const isPast = resolveDrawerDragFraction(edge, translation, extent) > DRAWER_DISMISS_FRACTION;
-				if (isPast !== isPastThreshold.value) {
-					isPastThreshold.value = isPast;
-					playHaptic("selection");
-				}
-			})
-			.onFinalize((event) => {
-				"worklet";
-				// A touch that never activated — a tap, a scroll across the axis —
-				// must not touch `drag`: a dismiss may still be animating it.
-				if (!isDragging.value) return;
-				isDragging.value = false;
+			const isPast = resolveDrawerDragFraction(edge, translation, extent) > DRAWER_DISMISS_FRACTION;
+			if (isPast !== isPastThreshold.value) {
+				isPastThreshold.value = isPast;
+				playHaptic("selection");
+			}
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			// Only an activated pan reaches here, but a dismiss may still be animating
+			// `drag` under a touch that began late: the flag keeps one release per drag.
+			if (!isDragging.value) return;
+			isDragging.value = false;
 
-				const translation = isHorizontal ? event.translationX : event.translationY;
-				const velocity = isHorizontal ? event.velocityX : event.velocityY;
-				const release = resolveDrawerRelease({ edge, extent, translation, velocity });
+			const translation = isHorizontal ? event.translationX : event.translationY;
+			const velocity = isHorizontal ? event.velocityX : event.velocityY;
+			const release = resolveDrawerRelease({ edge, extent, translation, velocity });
 
-				if (release === "dismiss") {
-					const duration = resolveDrawerExitDuration({
-						remaining: Math.max(0, extent - Math.abs(drag.value)),
-						velocity,
-					});
-					drag.value = withTiming(sign * extent, { duration, easing: Easing.linear }, (finished) => {
-						if (finished) scheduleOnRN(onDismiss);
-					});
-					return;
-				}
+			if (release === "dismiss") {
+				const duration = resolveDrawerExitDuration({
+					remaining: Math.max(0, extent - Math.abs(drag.value)),
+					velocity,
+				});
+				drag.value = withTiming(sign * extent, { duration, easing: Easing.linear }, (finished) => {
+					if (finished) scheduleOnRN(onDismiss);
+				});
+				return;
+			}
 
-				drag.value = withTiming(0, { duration: OVERLAY_MOTION.enterMs, easing: RESTORE_EASING });
-			});
-	}, [drag, edge, extent, isDragging, isEnabled, isPastThreshold, onDismiss]);
+			drag.value = withTiming(0, { duration: OVERLAY_MOTION.enterMs, easing: RESTORE_EASING });
+		},
+	});
 }

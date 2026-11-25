@@ -120,7 +120,7 @@ over its table.
 
 ## Motion
 
-- **Pan on the drag row only**: `minDistance(0)`, `shouldCancelWhenOutside(false)`
+- **Pan on the drag row only**: `minDistance: 0`, `shouldCancelWhenOutside: false`
   — the `Slider.Track` recipe. A scrollable in either pane is unaffected.
 - **The drag follows the finger from a snapshot**, rubber-banded past the
   lowest and highest stop (`rubberBand`, iOS's `0.55` coefficient over half the

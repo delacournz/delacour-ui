@@ -41,7 +41,7 @@ row.
 | `stack-card.variants.test.ts` | |
 | `stack-card.render.test.tsx` | Mounted under Jest — the top card's accessibility actions and labels, announcements and focus, throw and undo by action, button and ref, `onSwipe`/`onIndexChange`/`onEmpty`, controlled and declined throws, disabled, and a drag (`stack-card-pan`) past and short of the threshold |
 
-The pan carries `.withTestId("stack-card-pan")` so a render test can drive it with `fireGestureHandler`.
+The pan carries `testID: "stack-card-pan"` so a render test can drive it with `fireGestureHandler`.
 
 ## Axes
 
@@ -87,10 +87,12 @@ The pan carries `.withTestId("stack-card-pan")` so a render test can drive it wi
   gives and returns reads as "not that way".
 - **A horizontal-only deck lets vertical drags through** — `activeOffsetX` and
   `failOffsetY`, so it sits inside a vertical `ScrollView`. Vertical-only is the
-  mirror. A deck that throws all four ways claims both axes with `minDistance`
+  mirror. A deck that throws all four ways claims both axes with `minDistance: 10`
   and **must not be nested in a scroller** — the doc comment says so. This is
-  the opposite of `Slider`'s `minDistance(0)`: a slider must win every touch on
+  the opposite of `Slider`'s `minDistance: 0`: a slider must win every touch on
   its track, a deck must give up the ones that are scrolls.
+- **The throw runs in `onDeactivate`, skipped when `canceled`.** What `onEnd` did on success is `onDeactivate` on a
+  clean release; a cancelled pan falls through to `onFinalize`, which settles the card back as before.
 - **A controlled deck that does not move `index` declines.** A throw calls
   `onSwipe`, then `onIndexChange`, and records the throw as pending. The effect
   after the next render compares: an index that moved is accepted and pushed to

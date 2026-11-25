@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { useState } from "react";
 import { TextInput } from "react-native";
-import { fireEvent, renderWithProviders, screen, userEvent } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen, userEvent } from "../../test/render";
 import { Field } from "../field";
 import { Input } from "./input";
 
@@ -222,13 +222,11 @@ describe("Input", () => {
 		test("a press on the box's gutter still focuses the field", async () => {
 			const focus = jest.spyOn(TextInput.prototype, "focus");
 			await renderWithProviders(
-				<Input.Group>
+				<Input.Group testID="box">
 					<Input accessibilityLabel="Search" />
 				</Input.Group>
 			);
-			const box = screen.getByLabelText("Search").parent?.parent;
-			if (!box) throw new Error("no box");
-			await fireEvent.press(box);
+			await pressGesture("box");
 			expect(focus).toHaveBeenCalled();
 			focus.mockRestore();
 		});

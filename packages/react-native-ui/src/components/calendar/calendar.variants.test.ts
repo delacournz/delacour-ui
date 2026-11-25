@@ -544,13 +544,49 @@ describe("resolveCalendarNavHitSlop", () => {
 		expect(CALENDAR_HEADER_GAP).toBe(4);
 	});
 
-	test("grows the arrow to the minimum vertically, and sideways only to half the header gap", () => {
-		expect(resolveCalendarNavHitSlop(36, 44)).toEqual({ bottom: 4, left: 2, right: 2, top: 4 });
-		expect(resolveCalendarNavHitSlop(32, 44)).toEqual({ bottom: 6, left: 2, right: 2, top: 6 });
-		expect(resolveCalendarNavHitSlop(32, 48)).toEqual({ bottom: 8, left: 2, right: 2, top: 8 });
+	test("grows the arrow to the minimum, holding only the caption-facing edge to half the header gap", () => {
+		expect(resolveCalendarNavHitSlop(36, 44, { direction: "prev", isRTL: false })).toEqual({
+			bottom: 4,
+			left: 4,
+			right: 2,
+			top: 4,
+		});
+		expect(resolveCalendarNavHitSlop(36, 44, { direction: "next", isRTL: false })).toEqual({
+			bottom: 4,
+			left: 2,
+			right: 4,
+			top: 4,
+		});
+		expect(resolveCalendarNavHitSlop(32, 44, { direction: "prev", isRTL: false })).toEqual({
+			bottom: 6,
+			left: 6,
+			right: 2,
+			top: 6,
+		});
+		expect(resolveCalendarNavHitSlop(32, 48, { direction: "next", isRTL: false })).toEqual({
+			bottom: 8,
+			left: 2,
+			right: 8,
+			top: 8,
+		});
+	});
+
+	test("in RTL the row is mirrored, so the caption sits on the other side", () => {
+		expect(resolveCalendarNavHitSlop(36, 44, { direction: "prev", isRTL: true })).toEqual({
+			bottom: 4,
+			left: 2,
+			right: 4,
+			top: 4,
+		});
+		expect(resolveCalendarNavHitSlop(36, 44, { direction: "next", isRTL: true })).toEqual({
+			bottom: 4,
+			left: 4,
+			right: 2,
+			top: 4,
+		});
 	});
 
 	test("an arrow already at the minimum gets none", () => {
-		expect(resolveCalendarNavHitSlop(44, 44)).toBeUndefined();
+		expect(resolveCalendarNavHitSlop(44, 44, { direction: "prev", isRTL: false })).toBeUndefined();
 	});
 });

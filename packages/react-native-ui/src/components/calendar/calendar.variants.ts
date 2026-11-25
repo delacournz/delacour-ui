@@ -550,17 +550,25 @@ export function resolvePartTestID(root: string | undefined, part: string): strin
 export const CALENDAR_HEADER_GAP = 4;
 
 /**
- * A paging arrow's `hitSlop`: the full shortfall top and bottom, where nothing sits, and at most
- * half the header gap either side, so the slop never lands on the caption beside it, which is a
- * control of its own and sits later in the tree. `height` is the arrow's `--spacing-button-*` edge
- * under the resolved theme. Under a dense style the arrow stays narrower than the minimum rather
- * than take presses meant for the caption.
+ * A paging arrow's `hitSlop`: the full shortfall on every side but the one facing the caption,
+ * which is held to half the header gap. The caption is a pressable of its own and sits later in
+ * the tree, so slop overlapping it would take presses meant for the month picker. The outer edge
+ * borders the calendar's own padding, where nothing competes. `height` is the arrow's
+ * `--spacing-button-*` edge under the resolved theme.
+ *
+ * `prev` sits at the row's start and `next` at its end; in RTL the row is mirrored, so the
+ * caption-facing physical side flips with it.
  *
  * Pure, so the matrix is unit-testable. See AGENTS.md.
  */
-export function resolveCalendarNavHitSlop(height: number, min: number): HitSlopInsets | undefined {
-	const vertical = resolveMinimumHitSlop({ height, width: Number.MAX_SAFE_INTEGER }, min);
-	if (vertical === undefined || typeof vertical === "number") return undefined;
-	const side = Math.min(vertical.top, CALENDAR_HEADER_GAP / 2);
-	return { ...vertical, left: side, right: side };
+export function resolveCalendarNavHitSlop(
+	height: number,
+	min: number,
+	{ direction, isRTL }: { direction: "prev" | "next"; isRTL: boolean }
+): HitSlopInsets | undefined {
+	const slop = resolveMinimumHitSlop(height, min);
+	if (slop === undefined || typeof slop !== "number") return undefined;
+	const inner = Math.min(slop, CALENDAR_HEADER_GAP / 2);
+	const captionOnRight = (direction === "prev") !== isRTL;
+	return { bottom: slop, left: captionOnRight ? slop : inner, right: captionOnRight ? inner : slop, top: slop };
 }

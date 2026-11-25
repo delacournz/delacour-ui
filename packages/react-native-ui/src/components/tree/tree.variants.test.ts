@@ -158,14 +158,10 @@ describe("selected cue beyond colour (WCAG 1.4.1, 1.4.11)", () => {
 	});
 
 	test("the bar holds 3:1 against the page and the selected fill, light and dark", () => {
-		for (const [nth, label] of [
-			[0, "light"],
-			[1, "dark"],
-		] as const) {
+		for (const nth of [0, 1]) {
 			const primary = token("primary", nth);
 			expect(contrastRatio(primary, token("background", nth))).toBeGreaterThanOrEqual(3);
 			expect(contrastRatio(primary, token("accent", nth))).toBeGreaterThanOrEqual(3);
-			expect(label.length).toBeGreaterThan(0);
 		}
 	});
 });

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text } from "react-native";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Pressable } from "./pressable";
 
 const ACTIVATE = { nativeEvent: { actionName: "activate" } };
@@ -17,6 +17,45 @@ afterEach(() => {
 });
 
 describe("Pressable", () => {
+	describe("accessible={false}", () => {
+		test.each(["android", "ios"] as const)("on %s it is no element: no role, no state, no activation", async (os) => {
+			setPlatform(os);
+			await renderWithProviders(
+				<Pressable accessible={false} onLongPress={() => {}} onPress={() => {}} testID="row">
+					<Text>Accept the terms</Text>
+				</Pressable>
+			);
+			const row = screen.getByTestId("row");
+			expect(row.props.accessible).toBe(false);
+			expect(row.props.accessibilityRole).toBeUndefined();
+			expect(row.props.accessibilityState).toBeUndefined();
+			expect(row.props.accessibilityActions).toBeUndefined();
+			expect(row.props.onAccessibilityTap).toBeUndefined();
+			expect(row.props.importantForAccessibility).toBe("no");
+		});
+
+		test("a caller's importantForAccessibility still wins", async () => {
+			await renderWithProviders(
+				<Pressable
+					accessible={false}
+					importantForAccessibility="no-hide-descendants"
+					onPress={() => {}}
+					testID="scrim"
+				/>
+			);
+			expect(screen.getByTestId("scrim", { includeHiddenElements: true }).props.importantForAccessibility).toBe(
+				"no-hide-descendants"
+			);
+		});
+
+		test("a touch still presses it", async () => {
+			const onPress = jest.fn();
+			await renderWithProviders(<Pressable accessible={false} onPress={onPress} testID="row" />);
+			await pressGesture("row");
+			expect(onPress).toHaveBeenCalledTimes(1);
+		});
+	});
+
 	test("is a button with its content as the accessible name", async () => {
 		await renderWithProviders(
 			<Pressable>

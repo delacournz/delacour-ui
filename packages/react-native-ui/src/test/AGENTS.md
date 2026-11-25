@@ -62,12 +62,14 @@ describe("Button", () => {
 Handler 3's detector puts a host view above the control whose `onStartShouldSetResponder` declines,
 and Testing Library reads that as a touch the device would not deliver, so the press never reaches
 the composite's `onPress`. So a test drives a control the way an assistive technology does, which
-is a real path every control must honour anyway:
+is a real path every control must honour anyway — and a touch-only press, on a row or box that is
+`accessible={false}` and has no activation to fire, goes through `pressGesture`:
 
 | To | Fire |
 | --- | --- |
 | Activate (iOS VoiceOver double-tap) | `fireEvent(el, "accessibilityTap")` |
 | Activate (Android TalkBack) | `fireEvent(el, "accessibilityAction", { nativeEvent: { actionName: "activate" } })` |
+| Touch a `Pressable` that is no accessibility element (a `Field` row, an `Input.Group` box) | `pressGesture(testID)` — its tap, `${testID}-press`, through `fireGestureHandler` |
 | Step an adjustable (`Slider`, `NumberInput`) | `accessibilityAction` with `increment` / `decrement` |
 | Long press | `accessibilityAction` with `longpress` |
 | Type | `fireEvent.changeText(input, "text")`, or `userEvent.type` on a real `TextInput` |

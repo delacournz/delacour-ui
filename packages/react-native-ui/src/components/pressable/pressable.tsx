@@ -166,6 +166,7 @@ export function Pressable({
 	pressedScale,
 	pressedOpacity,
 	asChild = false,
+	accessible,
 	accessibilityState,
 	accessibilityActions,
 	onAccessibilityAction,
@@ -203,7 +204,11 @@ export function Pressable({
 		() => (hasSlop ? { bottom: slopBottom, left: slopLeft, right: slopRight, top: slopTop } : undefined),
 		[hasSlop, slopBottom, slopLeft, slopRight, slopTop]
 	);
+	// `${testID}-press` lets a render test fire the tap through Gesture Handler's
+	// `fireGestureHandler`, the only way a test reaches a touch. Inert in production.
+	const pressTestID = props.testID ? `${props.testID}-press` : undefined;
 	const tap = useTapGesture({
+		testID: pressTestID,
 		enabled: interactive,
 		shouldCancelWhenOutside: true,
 		hitSlop: gestureSlop,
@@ -245,11 +250,17 @@ export function Pressable({
 	// the prop's default — see `resolvePressableAccessibilityState`.
 	const state: AccessibilityState = resolvePressableAccessibilityState({ accessibilityState, busy, disabled });
 
+	// `accessible={false}` makes this layout that happens to take a touch — a
+	// field's row, an input group's box — so it carries no role, state or
+	// activation. Left with them, TalkBack stops on it as an unnamed button in
+	// front of the control it wraps. See AGENTS.md.
+	const isElement = accessible !== false;
 	const activation = resolvePressableActivation({
 		accessibilityActions,
 		hasAccessibilityTap: onAccessibilityTap !== undefined,
 		hasLongPress: onLongPress !== undefined,
 		hasPress: onPress !== undefined,
+		isAccessible: isElement,
 		platform: Platform.OS,
 	});
 	// Built once and spread last at both render sites, after `{...props}`, so a
@@ -277,10 +288,17 @@ export function Pressable({
 			: onAccessibilityTap,
 	};
 
+	// `accessible` is what makes the view an accessibility element on iOS:
+	// without it the role, state and label never reach VoiceOver — a composed
+	// label on an icon-sized button included. It also merges the children into
+	// one element, which is what a control should be.
+	const exposure = isElement
+		? { accessibilityRole: "button" as const, accessibilityState: state, accessible: true }
+		: { accessible: false, importantForAccessibility: "no" as const };
+
 	const content = asChild ? (
 		renderAsChild(children, {
-			accessibilityState: state,
-			accessible: true,
+			...(isElement ? { accessibilityState: state, accessible: true } : exposure),
 			className,
 			hitSlop,
 			ref,
@@ -290,13 +308,7 @@ export function Pressable({
 		})
 	) : (
 		<Animated.View
-			accessibilityRole="button"
-			accessibilityState={state}
-			// Without this the view is not an accessibility element on iOS, and the
-			// role, state and label above never reach VoiceOver — a composed label
-			// on an icon-sized button included. It also merges the children into one
-			// element, which is what a control should be.
-			accessible
+			{...exposure}
 			className={className}
 			hitSlop={hitSlop}
 			ref={ref}

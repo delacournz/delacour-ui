@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { Platform, Text, View } from "react-native";
 import { LabelsProvider } from "../../hooks/use-labels";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Badge } from "./badge";
 import { useBadge } from "./badge.context";
 
@@ -107,7 +107,7 @@ describe("Badge", () => {
 					Tag
 				</Badge>
 			);
-			await fireEvent(screen.getByTestId("close", { includeHiddenElements: true }), "accessibilityTap");
+			await pressGesture("close");
 			expect(onClose).toHaveBeenCalledTimes(1);
 			expect(onPress).not.toHaveBeenCalled();
 		});

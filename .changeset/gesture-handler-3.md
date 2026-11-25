@@ -30,5 +30,7 @@ Two public types change with it:
 - `useScrubGesture({ blocks })` takes a Gesture Handler 3 gesture, and returns a `PanGesture` (or `null`).
 - `Calendar`'s `yearListBlocksGesture` takes a Gesture Handler 3 `PanGesture` — the bottom-sheet engine's
   `pans.content`, as `DatePicker` already passes it.
+- `Input.Group` takes a `testID`, set on its box. A `Pressable`'s tap is `${testID}-press` to Gesture
+  Handler's test utilities, so a render test can press a touch-only row or box.
 - The bottom-sheet engine's `SheetPans` are `PanGesture`s, and its scrollables relate to the content pan with
   `useNativeGesture({ simultaneousWith })`.

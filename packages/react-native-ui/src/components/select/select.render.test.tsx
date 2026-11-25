@@ -1,7 +1,7 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { LabelsProvider } from "../../hooks/use-labels";
-import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
+import { act, fireEvent, pressGesture, renderWithProviders, screen, waitFor } from "../../test/render";
 import { BottomSheetProvider } from "../bottom-sheet";
 import { Button } from "../button";
 import { Field } from "../field";
@@ -549,14 +549,14 @@ describe("Select states", () => {
 describe("Select in a Field", () => {
 	test("takes its name from Field.Label and opens when the label is tapped", async () => {
 		await renderWithProviders(
-			<Field>
+			<Field testID="field">
 				<Field.Label>Role</Field.Label>
 				<Select options={OPTIONS} placeholder="Choose" />
 			</Field>,
 			{ wrapper: Sheets }
 		);
 		expect(screen.getByRole("button", { name: "Role" })).toBeOnTheScreen();
-		await tap(screen.getByText("Role", { includeHiddenElements: true }));
+		await pressGesture("field");
 		expect(screen.getByRole("button", { name: "Role" })).toBeExpanded();
 		expect(screen.getByRole("radio", { name: "Designer" })).toBeOnTheScreen();
 	});

@@ -1,6 +1,6 @@
 import { describe, expect, jest, test } from "@jest/globals";
 import { LabelsProvider } from "../../hooks/use-labels";
-import { fireEvent, renderWithProviders, screen } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { DirectionProvider, directionContextValue } from "../direction/direction.context";
 import { Chip } from "./chip";
 
@@ -253,7 +253,7 @@ describe("Chip", () => {
 					React
 				</Chip>
 			);
-			await fireEvent(screen.getByTestId("close", { includeHiddenElements: true }), "accessibilityTap");
+			await pressGesture("close");
 			expect(onClose).toHaveBeenCalledTimes(1);
 			expect(onPress).not.toHaveBeenCalled();
 			expect(onSelectedChange).not.toHaveBeenCalled();

@@ -36,6 +36,8 @@ import { InputGroupSeparator } from "./input-group-separator";
 import { InputGroupSuffix } from "./input-group-suffix";
 
 export type InputGroupProps = {
+	/** A test id for the box. Its touch-only gutter press is `${testID}-press` to Gesture Handler. */
+	testID?: string;
 	/** Visual variant of the box. Read by the `Input` inside it. */
 	variant?: InputVariant;
 	/** Size of the box, the field's type scale and a decorator's icon. */
@@ -61,6 +63,7 @@ function InputGroupRoot({
 	isDisabled,
 	className,
 	children,
+	testID,
 }: InputGroupProps): ReactElement {
 	const fieldRef = useRef<TextInputInstance | null>(null);
 	const field = useFieldContext();
@@ -121,6 +124,10 @@ function InputGroupRoot({
 	// The row is rendered whether or not a block is, so adding one moves
 	// nothing that was already there — the field is never remounted, and never
 	// loses focus, when a toolbar appears above it.
+	//
+	// The box is `accessible={false}`, which makes the pressable no element at
+	// all — no role, no activation — so a screen reader skips straight to the
+	// field and the controls beside it. The gutter press is for touch only.
 	return (
 		<InputGroupProvider value={context}>
 			<Pressable
@@ -129,6 +136,7 @@ function InputGroupRoot({
 				disabled={resolvedIsMemberDisabled}
 				feedback="none"
 				onPress={focusField}
+				testID={testID}
 			>
 				<InputGroupPlacementProvider value="box">{sections.start}</InputGroupPlacementProvider>
 				<View className={resolveInputGroupRowClass(box)}>

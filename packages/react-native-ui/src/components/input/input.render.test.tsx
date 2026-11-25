@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { useState } from "react";
 import { TextInput } from "react-native";
-import { fireEvent, renderWithProviders, screen, userEvent } from "../../test/render";
+import { fireEvent, pressGesture, renderWithProviders, screen, userEvent } from "../../test/render";
 import { Field } from "../field";
 import { Input } from "./input";
 
@@ -155,6 +155,20 @@ describe("Input", () => {
 			expect(screen.getAllByLabelText("Amount")).toHaveLength(1);
 		});
 
+		test("an Input.Group inside an invalid Field passes the Field's invalid state and error to the hint", async () => {
+			await renderWithProviders(
+				<Field isInvalid>
+					<Field.Label>Email</Field.Label>
+					<Input.Group>
+						<Input.Group.Prefix>@</Input.Group.Prefix>
+						<Input defaultValue="not-an-email" />
+					</Input.Group>
+					<Field.Error>Enter a valid email address.</Field.Error>
+				</Field>
+			);
+			expect(screen.getByLabelText("Email")).toHaveProp("accessibilityHint", "Invalid: Enter a valid email address.");
+		});
+
 		test("an own accessibilityLabel is kept verbatim, required or not", async () => {
 			await renderWithProviders(<Input accessibilityLabel="Name" isRequired />);
 			expect(screen.getByLabelText("Name")).toBeOnTheScreen();
@@ -185,6 +199,36 @@ describe("Input", () => {
 			expect(screen.getByLabelText("Amount")).toBeOnTheScreen();
 			expect(screen.getByText("$", { includeHiddenElements: true })).toBeOnTheScreen();
 			expect(screen.getByText("NZD", { includeHiddenElements: true })).toBeOnTheScreen();
+		});
+
+		test("the box is not a focus stop: no role, no actions, only the controls inside are reachable", async () => {
+			await renderWithProviders(
+				<Input.Group>
+					<Input accessibilityLabel="Search" />
+					<Input.Group.Button accessibilityLabel="Clear" onPress={() => {}}>
+						Go
+					</Input.Group.Button>
+				</Input.Group>
+			);
+			expect(screen.getAllByRole("button")).toHaveLength(1);
+			const field = screen.getByLabelText("Search");
+			const box = field.parent?.parent;
+			expect(box).toBeTruthy();
+			expect(box?.props.accessibilityRole).toBeUndefined();
+			expect(box?.props.accessibilityActions ?? []).toHaveLength(0);
+			expect(box?.props.accessible).not.toBe(true);
+		});
+
+		test("a press on the box's gutter still focuses the field", async () => {
+			const focus = jest.spyOn(TextInput.prototype, "focus");
+			await renderWithProviders(
+				<Input.Group testID="box">
+					<Input accessibilityLabel="Search" />
+				</Input.Group>
+			);
+			await pressGesture("box");
+			expect(focus).toHaveBeenCalled();
+			focus.mockRestore();
 		});
 
 		test("a text affix is hidden from the accessibility tree", async () => {

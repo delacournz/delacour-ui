@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { useEffect } from "react";
 import { AccessibilityInfo, Platform, Text, View } from "react-native";
 import { resetAnnouncer } from "../../hooks/use-announce";
-import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
+import { act, fireEvent, pressGesture, renderWithProviders, screen } from "../../test/render";
 import { Checkbox } from "../checkbox";
 import { Slider } from "../slider";
 import { Switch } from "../switch";
@@ -68,7 +69,7 @@ describe("Field", () => {
 	});
 
 	describe("label press", () => {
-		test("an activation on the row toggles a Switch", async () => {
+		test("a press on the row toggles a Switch", async () => {
 			const onSelectedChange = jest.fn();
 			await renderWithProviders(
 				<Field testID="row">
@@ -78,17 +79,17 @@ describe("Field", () => {
 			);
 			expect(screen.getByRole("switch")).not.toBeChecked();
 
-			await fireEvent(screen.getByTestId("row"), "accessibilityTap");
+			await pressGesture("row");
 			expect(onSelectedChange).toHaveBeenCalledTimes(1);
 			expect(onSelectedChange).toHaveBeenLastCalledWith(true);
 			expect(screen.getByRole("switch")).toBeChecked();
 
-			await fireEvent(screen.getByTestId("row"), "accessibilityTap");
+			await pressGesture("row");
 			expect(onSelectedChange).toHaveBeenLastCalledWith(false);
 			expect(screen.getByRole("switch")).not.toBeChecked();
 		});
 
-		test("an activation on the row ticks a Checkbox", async () => {
+		test("a press on the row ticks a Checkbox", async () => {
 			const onCheckedChange = jest.fn();
 			await renderWithProviders(
 				<Field testID="row">
@@ -96,7 +97,7 @@ describe("Field", () => {
 					<Checkbox onCheckedChange={onCheckedChange} />
 				</Field>
 			);
-			await fireEvent(screen.getByTestId("row"), "accessibilityTap");
+			await pressGesture("row");
 			expect(onCheckedChange).toHaveBeenCalledTimes(1);
 			expect(onCheckedChange).toHaveBeenLastCalledWith(true);
 			expect(screen.getByRole("checkbox")).toBeChecked();
@@ -122,7 +123,7 @@ describe("Field", () => {
 				</Field>
 			);
 			expect(screen.getByRole("switch")).toBeDisabled();
-			await fireEvent(screen.getByTestId("row"), "accessibilityTap");
+			await pressGesture("row");
 			await fireEvent(screen.getByTestId("row"), "accessibilityAction", { nativeEvent: { actionName: "activate" } });
 			expect(onSelectedChange).not.toHaveBeenCalled();
 			expect(screen.getByRole("switch")).not.toBeChecked();
@@ -137,7 +138,7 @@ describe("Field", () => {
 				</Field>
 			);
 			expect(screen.getByRole("checkbox")).toBeDisabled();
-			await fireEvent(screen.getByTestId("row"), "accessibilityTap");
+			await pressGesture("row");
 			expect(onCheckedChange).not.toHaveBeenCalled();
 		});
 
@@ -150,7 +151,7 @@ describe("Field", () => {
 				</Field>
 			);
 			expect(screen.getByRole("switch")).toBeDisabled();
-			await fireEvent(screen.getByTestId("row"), "accessibilityTap");
+			await pressGesture("row");
 			expect(onSelectedChange).not.toHaveBeenCalled();
 			expect(screen.getByRole("switch")).not.toBeChecked();
 		});
@@ -164,7 +165,7 @@ describe("Field", () => {
 				</Field>
 			);
 			expect(screen.getByRole("checkbox")).toBeDisabled();
-			await fireEvent(screen.getByTestId("row"), "accessibilityTap");
+			await pressGesture("row");
 			expect(onCheckedChange).not.toHaveBeenCalled();
 			expect(screen.getByRole("checkbox")).not.toBeChecked();
 		});
@@ -516,5 +517,37 @@ describe("Field", () => {
 			expect(screen.getByText("Described.")).toBeOnTheScreen();
 			expect(screen.getByText("Broken.")).toBeOnTheScreen();
 		});
+	});
+});
+
+/** Counts its own mounts, so a remount of the field's subtree shows up. */
+function MountProbe({ onMount }: { onMount: () => void }) {
+	useEffect(onMount, []);
+	return null;
+}
+
+describe("Field row", () => {
+	test("a control registering its press does not remount the field's other parts", async () => {
+		const onMount = jest.fn();
+		await renderWithProviders(
+			<Field>
+				<MountProbe onMount={onMount} />
+				<Checkbox>Accept the terms</Checkbox>
+			</Field>
+		);
+		expect(onMount).toHaveBeenCalledTimes(1);
+	});
+
+	test("the row is no accessibility element: the control inside is the only stop", async () => {
+		await renderWithProviders(
+			<Field testID="row">
+				<Checkbox>Accept the terms</Checkbox>
+			</Field>
+		);
+		const row = screen.getByTestId("row");
+		expect(row.props.accessibilityRole).toBeUndefined();
+		expect(row.props.accessibilityActions).toBeUndefined();
+		expect(screen.queryAllByRole("button")).toHaveLength(0);
+		expect(screen.getByRole("checkbox", { name: "Accept the terms" })).toBeOnTheScreen();
 	});
 });

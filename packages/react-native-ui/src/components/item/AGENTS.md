@@ -72,7 +72,10 @@ A row of media, text and actions, for lists and settings. Compound root plus
   the drawn control with `accessibilityElementsHidden` and
   `importantForAccessibility="no-hide-descendants"`. `Pressable` keeps its own
   `activate` / `longpress` and forwards every other action to the caller. Nothing
-  is mirrored automatically.
+  is mirrored automatically. `accessible={false}` on a pressable item is not a
+  fourth way out: it makes the row no element at all, so its own `onPress` and
+  `onLongPress` become touch-only on both platforms (see
+  [`Pressable`](../pressable/AGENTS.md)).
 - **`isSelected` lays `bg-accent` over any surface**, the muted fill included —
   declared after `surface` in the `tv()` so tailwind-merge drops the losing
   `bg-*`. It also sets `accessibilityState.selected`. What marks the choice (a

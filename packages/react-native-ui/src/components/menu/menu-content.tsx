@@ -11,7 +11,16 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { I18nManager, Modal, ScrollView, useWindowDimensions, View, type ViewProps } from "react-native";
+import {
+	AppState,
+	I18nManager,
+	Modal,
+	Platform,
+	ScrollView,
+	useWindowDimensions,
+	View,
+	type ViewProps,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -88,8 +97,8 @@ export type MenuContentProps = Omit<ViewProps, "children"> & {
  * **Accessibility goes through `useModalAccessibility`**, without a portal id —
  * the `Modal` is the layer, so the panel is its own top. The escape scrub
  * closes it. Once the enter has run, focus lands on the first heading or enabled
- * row (the panel itself when there is neither); once the exit has run, it goes
- * back to the trigger.
+ * row (the panel itself when there is neither); once the exit has run and the `Modal` has unmounted (on Android, a beat
+ * later, once its window has closed), it goes back to the trigger.
  *
  * A caller's `Menu.Background` child is lifted out and drawn behind the
  * scroller in place of the default one.
@@ -195,12 +204,42 @@ export function MenuContent({
 		else focusInitial();
 	}, [focusInitial]);
 
+	const isRestorePending = useRef(false);
+
 	const handleExited = useCallback(() => {
+		isRestorePending.current = true;
 		setPresent(false);
 		setLocked(null);
 		setMeasuredHeight(null);
-		restoreFocus();
-	}, [restoreFocus]);
+	}, []);
+
+	// Focus goes back only once the Modal has unmounted. On Android the Modal is a
+	// separate Dialog window, and `onDismiss` is iOS-only, so the event waits for
+	// the activity's window to take focus back (AppState's Android-only `focus`);
+	// sent while the dialog is still the focused window, TalkBack drops it and
+	// lands on the screen's first control instead. A fallback timer covers a
+	// window that never lost focus.
+	useEffect(() => {
+		if (isPresent || !isRestorePending.current) return;
+		isRestorePending.current = false;
+		if (Platform.OS !== "android") {
+			restoreFocus();
+			return;
+		}
+		let isDone = false;
+		const restore = () => {
+			if (isDone) return;
+			isDone = true;
+			restoreFocus();
+		};
+		const subscription = AppState.addEventListener("focus", restore);
+		const fallback = setTimeout(restore, MENU_ANDROID_RESTORE_FALLBACK_MS);
+		return () => {
+			isDone = true;
+			subscription.remove();
+			clearTimeout(fallback);
+		};
+	}, [isPresent, restoreFocus]);
 
 	const progress = useSharedValue(0);
 
@@ -303,6 +342,9 @@ export function MenuContent({
 MenuContent.displayName = "DelacourUI.Menu.Content";
 
 const fill = { flex: 1 };
+
+/** How long Android waits for the activity window to regain focus before sending focus back anyway. */
+const MENU_ANDROID_RESTORE_FALLBACK_MS = 600;
 
 type PanelFrameInput = {
 	align: MenuAlign;

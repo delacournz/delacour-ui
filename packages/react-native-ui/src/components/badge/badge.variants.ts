@@ -306,7 +306,9 @@ export function resolveBadgeCloseHitSlop(
 
 /**
  * The dismiss control's accessible name: `removeNamed(text)` when the badge has
- * label text, else the bare `remove`.
+ * label text, else the bare `remove`. With no `removeNamed` it composes
+ * `remove` and the text ("Remove Beta"), so an app that localised only `remove`
+ * keeps its own verb rather than switching to English mid-sentence.
  *
  * The slop cannot grow past half the gap, so the target stays under the minimum
  * and a screen-reader user is the one left to tell a row of identical "Remove"
@@ -317,7 +319,8 @@ export function resolveBadgeCloseLabel(
 	text: string | undefined
 ): string {
 	const trimmed = text?.trim();
-	return trimmed ? labels.removeNamed(trimmed) : labels.remove;
+	if (!trimmed) return labels.remove;
+	return labels.removeNamed?.(trimmed) ?? `${labels.remove} ${trimmed}`;
 }
 
 /**

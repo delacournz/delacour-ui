@@ -67,8 +67,10 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   `Badge.Label` children, falling back to `labels.remove` for an icon-only badge. The
   mirrored `remove` accessibility action on a merged root carries the same name,
   and `closeAccessibilityLabel` still wins over both. A hand-placed
-  `Badge.CloseButton` reads the text from the badge's context. A localisation
-  overrides `removeNamed` as well as `remove`.
+  `Badge.CloseButton` reads the text from the badge's context. `removeNamed` is
+  optional and has no default: without it the name is `remove` plus the text, so an
+  app that localised only `remove` keeps its own verb instead of hearing English
+  mid-sentence. Set `removeNamed` where that word order is wrong for the language.
 - **A merged badge offers `remove` as an accessibility action.** A pressable
   root, or a plain one the caller passes `accessible` to, is one accessibility element and iOS folds its children into it, so the ✕
   is unreachable by swipe and its label is read as part of the badge's. It is

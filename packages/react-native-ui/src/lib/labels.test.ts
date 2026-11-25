@@ -50,7 +50,7 @@ describe("DELACOUR_DEFAULT_LABELS", () => {
 
 	test("badge, chip, contextMenu and dialog are today's English", () => {
 		expect(DELACOUR_DEFAULT_LABELS.badge.remove).toBe("Remove");
-		expect(DELACOUR_DEFAULT_LABELS.badge.removeNamed("Beta")).toBe("Remove Beta");
+		expect(DELACOUR_DEFAULT_LABELS.badge.removeNamed).toBeUndefined();
 		expect(DELACOUR_DEFAULT_LABELS.chip.remove).toBe("Remove");
 		expect(DELACOUR_DEFAULT_LABELS.contextMenu.show).toBe("Show menu");
 		expect(DELACOUR_DEFAULT_LABELS.dialog.close).toBe("Close");

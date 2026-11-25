@@ -82,9 +82,10 @@ export type BadgeLabels = {
 	remove: string;
 	/**
 	 * The dismiss control's name when the badge has a label, so a row of dismissible badges is not
-	 * a row of identical "Remove" stops: "Remove Beta".
+	 * a row of identical "Remove" stops. Optional: without it the name is `remove` and the label,
+	 * "Remove Beta", so a localised `remove` keeps its verb. Set it where that word order is wrong.
 	 */
-	removeNamed: (label: string) => string;
+	removeNamed?: (label: string) => string;
 };
 
 /** BottomSheet's spoken strings. The skin hands them to the engine's parts. */
@@ -1489,7 +1490,6 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 	},
 	badge: {
 		remove: "Remove",
-		removeNamed: (label) => `Remove ${label}`,
 	},
 	bottomSheet: {
 		close: "Close",

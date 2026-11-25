@@ -80,6 +80,11 @@ export type AvatarLabels = {
 export type BadgeLabels = {
 	/** The dismiss control's accessible name, and the root's remove action when it folds the control in. */
 	remove: string;
+	/**
+	 * The dismiss control's name when the badge has a label, so a row of dismissible badges is not
+	 * a row of identical "Remove" stops: "Remove Beta".
+	 */
+	removeNamed: (label: string) => string;
 };
 
 /** BottomSheet's spoken strings. The skin hands them to the engine's parts. */
@@ -1484,6 +1489,7 @@ export const DELACOUR_DEFAULT_LABELS: DelacourLabels = {
 	},
 	badge: {
 		remove: "Remove",
+		removeNamed: (label) => `Remove ${label}`,
 	},
 	bottomSheet: {
 		close: "Close",

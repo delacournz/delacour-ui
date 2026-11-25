@@ -3,7 +3,7 @@ import type { ReactElement, ReactNode } from "react";
 import { AccessibilityInfo } from "react-native";
 import { CalmMotionProvider } from "../../hooks/use-calm-motion";
 import { resetScreenReaderStore } from "../../hooks/use-looping-motion";
-import { act, fireEvent, renderWithProviders, screen } from "../../test/render";
+import { act, fireEvent, renderWithProviders, screen, waitFor } from "../../test/render";
 import { TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
 import { TextAnimation } from "./text-animation";
 
@@ -377,7 +377,7 @@ describe("TextAnimation looping motion", () => {
 	test("Typing shows the resting phrase while a screen reader is on", async () => {
 		isReaderOn = true;
 		await renderWithProviders(<TextAnimation.Typing testID="typing">{["One", "Two"]}</TextAnimation.Typing>);
-		await act(async () => {});
-		expect(screen.getByText("T", { includeHiddenElements: true })).toBeOnTheScreen();
+		// The screen-reader status arrives through a promise, so wait for the rest rather than one tick.
+		await waitFor(() => expect(screen.getByText("T", { includeHiddenElements: true })).toBeOnTheScreen());
 	});
 });

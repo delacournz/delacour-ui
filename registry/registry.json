@@ -1705,6 +1705,9 @@
 				"ui/fab/fab.variants.ts",
 				"ui/fab/index.ts"
 			],
+			"testRegistryDependencies": [
+				"cn"
+			],
 			"testDependencies": [
 				"@types/bun"
 			],
@@ -3958,6 +3961,9 @@
 				"ui/screen/screen.variants.ts",
 				"ui/screen/use-screen-labels.ts",
 				"ui/screen/use-screen-scroll-insets.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
 			],
 			"testDependencies": [
 				"@types/bun"

@@ -178,11 +178,18 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
 					"from": "../icon/icon.variants",
 					"to": "@registry/ui/icon/icon.variants"
 				}
 			]
 		}
+	],
+	"testRegistryDependencies": [
+		"cn"
 	],
 	"testDependencies": [
 		"@types/bun"

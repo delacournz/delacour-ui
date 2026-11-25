@@ -1,5 +1,11 @@
 # delacour
 
+## 0.11.0
+
+### Minor Changes
+
+- [#389](https://github.com/delacournz/delacour-ui/pull/389) [`2194b90`](https://github.com/delacournz/delacour-ui/commit/2194b90ce6af831c84516114cc408d89e95b3db7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - The default theme clears WCAG 2.2 AA. `theme.css` darkens `--muted-foreground`, `--input` and `--ring` so captions read at 4.5:1 and a control's edge and the focus ring at 3:1; light `--success` and `--info` move to emerald-700 and blue-600 under white ink; dark `--info` moves to blue-400, and dark `--destructive-foreground` and `--info-foreground` carry dark ink; `--warning-soft-foreground` leans further toward the text. `delacour theme` fills the same values into a converted shadcn file. An off Switch's knob is now the page colour, so it reads 3:1 on the darker track. A secondary Radio's unselected ring and SelectionMode's unpicked mark are drawn in `input` rather than the `border` hairline. ScrollText's un-revealed floor rises from 0.15 to 0.6 opacity, and an effect's `from` below 0.6 is now clamped up to it. A selected Tree row carries a leading `primary` bar and a semibold label, not just a fill. `/theme` lists every token pair a built theme leaves below AA.
+
 ## 0.10.0
 
 No changes in this release.

@@ -1,5 +1,20 @@
 # @delacour/react-native-bottom-sheet
 
+## 0.11.0
+
+### Minor Changes
+
+- [#351](https://github.com/delacournz/delacour-ui/pull/351) [`bb0fea1`](https://github.com/delacournz/delacour-ui/commit/bb0fea160465c81a658b2412ad4dff5aba2ec0bc) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - BottomSheet is a modal surface for screen readers whenever it is open, with or without an `Overlay`. VoiceOver's escape scrub closes a dismissible sheet from anywhere in the panel (it was only on the handle, and closed a non-dismissible sheet there). Once the sheet settles open, focus moves to its `Title` (or the panel), and once it settles closed, back to the `Trigger` that opened it. `Trigger` reports `expanded` while open. Only the top sheet of a host holds focus. A new root `modal` prop (default `true`) opts a persistent sheet out, and an `Overlay` with `enableTouchThrough` makes the sheet non-modal on its own.
+
+### Patch Changes
+
+- [#387](https://github.com/delacournz/delacour-ui/pull/387) [`4e8701e`](https://github.com/delacournz/delacour-ui/commit/4e8701e74fc19f0877b4e27620a1b4e3bb660778) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Screen-reader fixes from device verification:
+
+  - `Pressable` with `accessible={false}` no longer exposes a `button` role, state or `activate` / `longpress` actions, and defaults `importantForAccessibility` to `"no"`. TalkBack stopped on these as unnamed buttons. This changes `Field`'s row, `Input.Group`'s box (and so `NumberInput`, `SearchBar`), `TagInput`'s box and `Post`'s card on Android: each is now skipped, and the control inside (or `Post`'s carrier) is the stop. A pressable `GridItem` or `Item` given `accessible={false}` loses its own `activate` / `longpress` the same way, so its press is touch-only; where it must stay reachable, keep the tile or row one stop and mirror its inner controls as named `accessibilityActions` instead.
+  - `Field` keeps one row element for its whole life instead of swapping a `View` for a `Pressable` when a control registers, so its parts no longer remount. A `NumberInput`'s `Field.Error` is announced once instead of twice.
+  - `Menu` returns focus to its trigger on Android once the activity window has regained focus from the `Modal`'s window.
+  - `BottomSheet` returns focus to its trigger on Android once the app behind a modal sheet is visible to TalkBack again.
+
 ## 0.10.0
 
 No changes in this release.

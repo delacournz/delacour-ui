@@ -1,6 +1,7 @@
 import type { VariantProps } from "tailwind-variants";
 import { type CalendarLabels, DELACOUR_DEFAULT_LABELS } from "../../lib/labels";
 import { tv } from "../../lib/tv";
+import { type HitSlopInsets, resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	type CalendarCell,
 	type CalendarDate,
@@ -543,4 +544,23 @@ export function resolveCalendarAxes({
  */
 export function resolvePartTestID(root: string | undefined, part: string): string | undefined {
 	return root === undefined ? undefined : `${root}-${part}`;
+}
+
+/** The header slot's `gap-1`: the least room between an arrow and the caption, in points. */
+export const CALENDAR_HEADER_GAP = 4;
+
+/**
+ * A paging arrow's `hitSlop`: the full shortfall top and bottom, where nothing sits, and at most
+ * half the header gap either side, so the slop never lands on the caption beside it, which is a
+ * control of its own and sits later in the tree. `height` is the arrow's `--spacing-button-*` edge
+ * under the resolved theme. Under a dense style the arrow stays narrower than the minimum rather
+ * than take presses meant for the caption.
+ *
+ * Pure, so the matrix is unit-testable. See AGENTS.md.
+ */
+export function resolveCalendarNavHitSlop(height: number, min: number): HitSlopInsets | undefined {
+	const vertical = resolveMinimumHitSlop({ height, width: Number.MAX_SAFE_INTEGER }, min);
+	if (vertical === undefined || typeof vertical === "number") return undefined;
+	const side = Math.min(vertical.top, CALENDAR_HEADER_GAP / 2);
+	return { ...vertical, left: side, right: side };
 }

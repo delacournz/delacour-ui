@@ -6,6 +6,7 @@ import {
 	CALENDAR_DAY_TONES,
 	CALENDAR_DEFAULT_SIZE,
 	CALENDAR_DEFAULT_VARIANT,
+	CALENDAR_HEADER_GAP,
 	CALENDAR_RANGE_ROLES,
 	CALENDAR_SIZES,
 	CALENDAR_VARIANTS,
@@ -14,6 +15,7 @@ import {
 	isDateSelected,
 	reconcileVisibleMonth,
 	resolveCalendarAxes,
+	resolveCalendarNavHitSlop,
 	resolveCaptionLabel,
 	resolveCaptionPage,
 	resolveCommittedPageDirection,
@@ -533,5 +535,22 @@ describe("calendar labels", () => {
 		expect(resolveDayAccessibilityLabel("Freitag", { isToday: false, rangeRole: "end" }, german)).toBe(
 			"Freitag / Ende"
 		);
+	});
+});
+
+describe("resolveCalendarNavHitSlop", () => {
+	test("CALENDAR_HEADER_GAP is the header slot's gap-1", () => {
+		expect(calendarVariants().header()).toContain("gap-1");
+		expect(CALENDAR_HEADER_GAP).toBe(4);
+	});
+
+	test("grows the arrow to the minimum vertically, and sideways only to half the header gap", () => {
+		expect(resolveCalendarNavHitSlop(36, 44)).toEqual({ bottom: 4, left: 2, right: 2, top: 4 });
+		expect(resolveCalendarNavHitSlop(32, 44)).toEqual({ bottom: 6, left: 2, right: 2, top: 6 });
+		expect(resolveCalendarNavHitSlop(32, 48)).toEqual({ bottom: 8, left: 2, right: 2, top: 8 });
+	});
+
+	test("an arrow already at the minimum gets none", () => {
+		expect(resolveCalendarNavHitSlop(44, 44)).toBeUndefined();
 	});
 });

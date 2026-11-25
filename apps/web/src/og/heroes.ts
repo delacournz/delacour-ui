@@ -147,15 +147,15 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("../../public/previews/badge/variants-and-colours/dark.png?inline"),
 	},
 	"bottom-sheet-engine/anatomy/two-snap-points": {
-		cut: "0c7e666aa8e7",
+		cut: "5e7d7c4ecf6c",
 		load: () => import("./frames/bottom-sheet-engine/anatomy/two-snap-points.png?inline"),
 	},
 	"bottom-sheet-engine/detached/floating-card": {
-		cut: "5ab8aab12ec0",
+		cut: "42e2d0b8424c",
 		load: () => import("./frames/bottom-sheet-engine/detached/floating-card.png?inline"),
 	},
 	"bottom-sheet-engine/footer/sticky-on-a-short-sheet": {
-		cut: "625a7925c421",
+		cut: "c07a42af8466",
 		load: () => import("./frames/bottom-sheet-engine/footer/sticky-on-a-short-sheet.png?inline"),
 	},
 	"bottom-sheet-engine/keyboard/interactive-with-sticky-footer": {
@@ -163,7 +163,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("./frames/bottom-sheet-engine/keyboard/interactive-with-sticky-footer.png?inline"),
 	},
 	"bottom-sheet-engine/portal/two-sheets-stacked": {
-		cut: "5d55bea2136f",
+		cut: "54525881ab9f",
 		load: () => import("./frames/bottom-sheet-engine/portal/two-sheets-stacked.png?inline"),
 	},
 	"bottom-sheet-engine/scrollables/scroll-view-two-snap-points": {
@@ -175,7 +175,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("./frames/bottom-sheet-engine/steps/three-step-form.png?inline"),
 	},
 	"bottom-sheet/anatomy/the-whole-composition": {
-		cut: "43edbb550de8",
+		cut: "a94f454b13a5",
 		load: () => import("./frames/bottom-sheet/anatomy/the-whole-composition.png?inline"),
 	},
 	"breadcrumb/ellipsis-sheet": {
@@ -212,7 +212,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"combobox/single": { cut: "6a3012b8eb54", load: () => import("./frames/combobox/single.png?inline") },
 	"compare/anatomy": { load: () => import("../../public/previews/compare/anatomy/dark.png?inline") },
 	"context-menu/message-actions": {
-		cut: "0c55c2766e09",
+		cut: "4cba0e0dedcc",
 		load: () => import("./frames/context-menu/message-actions.png?inline"),
 	},
 	"countdown/segmented": { load: () => import("../../public/previews/countdown/segmented/dark.png?inline") },
@@ -221,7 +221,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		cut: "3839b45439d2",
 		load: () => import("./frames/date-time-picker/tabs-layout.png?inline"),
 	},
-	"dialog/confirm": { cut: "e2b7824ce5b9", load: () => import("./frames/dialog/confirm.png?inline") },
+	"dialog/confirm": { cut: "242545de178c", load: () => import("./frames/dialog/confirm.png?inline") },
 	"direction/toggle": { load: () => import("../../public/previews/direction/toggle/dark.png?inline") },
 	"drawer/navigation": { cut: "a14153d3c8a8", load: () => import("./frames/drawer/navigation.png?inline") },
 	"empty-state/anatomy": { load: () => import("../../public/previews/empty-state/anatomy/dark.png?inline") },
@@ -249,7 +249,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"markdown-editor/basic": { load: () => import("../../public/previews/markdown-editor/basic/dark.png?inline") },
 	"marker/conversation": { load: () => import("../../public/previews/marker/conversation/dark.png?inline") },
 	"marquee/two-rows": { load: () => import("../../public/previews/marquee/two-rows/dark.png?inline") },
-	"menu/actions": { cut: "2fe7ccc2f3a9", load: () => import("./frames/menu/actions.png?inline") },
+	"menu/actions": { cut: "ae78184688eb", load: () => import("./frames/menu/actions.png?inline") },
 	"message-scroller/basic": { load: () => import("../../public/previews/message-scroller/basic/dark.png?inline") },
 	"message/status": { load: () => import("../../public/previews/message/status/dark.png?inline") },
 	"meter/anatomy": { load: () => import("../../public/previews/meter/anatomy/dark.png?inline") },
@@ -258,7 +258,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"page-header/in-a-screen": { load: () => import("../../public/previews/page-header/in-a-screen/dark.png?inline") },
 	"pagination/numbers": { load: () => import("../../public/previews/pagination/numbers/dark.png?inline") },
 	"planner/training-plan": { load: () => import("../../public/previews/planner/training-plan/dark.png?inline") },
-	"popover/basic": { cut: "6008fd59fe46", load: () => import("./frames/popover/basic.png?inline") },
+	"popover/basic": { cut: "46ced8a69df0", load: () => import("./frames/popover/basic.png?inline") },
 	"post/feed-card": { load: () => import("../../public/previews/post/feed-card/dark.png?inline") },
 	"pressable/named-feedback": { load: () => import("../../public/previews/pressable/named-feedback/dark.png?inline") },
 	"progress-button/hold-to-erase": {
@@ -329,7 +329,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"timeline/horizontal": { load: () => import("../../public/previews/timeline/horizontal/dark.png?inline") },
 	"toast/statuses": { cut: "80a40f41f026", load: () => import("./frames/toast/statuses.png?inline") },
 	"toggle-button/variants": { load: () => import("../../public/previews/toggle-button/variants/dark.png?inline") },
-	"tooltip/icon-buttons": { cut: "98365e2d4e0f", load: () => import("./frames/tooltip/icon-buttons.png?inline") },
+	"tooltip/icon-buttons": { cut: "cbb353ebfee0", load: () => import("./frames/tooltip/icon-buttons.png?inline") },
 	"tour/interactive": { load: () => import("../../public/previews/tour/interactive/dark.png?inline") },
 	"tree/file-browser": { load: () => import("../../public/previews/tree/file-browser/dark.png?inline") },
 };

@@ -93,7 +93,10 @@ and `GridItem.Actions`.
   tappable but unreachable by a screen reader. Development warns once per
   control (`warnInteractiveChildInAccessible`, which reads props, so a control a
   composite child draws itself is not seen). Two fixes: `accessible={false}` on
-  the tile, so each control is its own stop (the warning honours it); or keep one
+  the tile, so each control is its own stop (the warning honours it) — and the
+  tile is then no element at all, so a pressable tile's own `onPress` and
+  `onLongPress` are touch-only on both platforms (see
+  [`Pressable`](../pressable/AGENTS.md)); or keep one
   stop and mirror the control as a named `accessibilityActions` entry plus
   `onAccessibilityAction` on the tile, hiding the drawn control with
   `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`.

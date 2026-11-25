@@ -11,7 +11,16 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { I18nManager, Modal, Platform, ScrollView, useWindowDimensions, View, type ViewProps } from "react-native";
+import {
+	AppState,
+	I18nManager,
+	Modal,
+	Platform,
+	ScrollView,
+	useWindowDimensions,
+	View,
+	type ViewProps,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -205,9 +214,11 @@ export function MenuContent({
 	}, []);
 
 	// Focus goes back only once the Modal has unmounted. On Android the Modal is a
-	// separate Dialog window that is still the focused window in the tick the exit
-	// ends, and `onDismiss` is iOS-only, so the event is deferred past the window's
-	// teardown; sent earlier it lands on whatever Android focuses when the dialog goes.
+	// separate Dialog window, and `onDismiss` is iOS-only, so the event waits for
+	// the activity's window to take focus back (AppState's Android-only `focus`);
+	// sent while the dialog is still the focused window, TalkBack drops it and
+	// lands on the screen's first control instead. A fallback timer covers a
+	// window that never lost focus.
 	useEffect(() => {
 		if (isPresent || !isRestorePending.current) return;
 		isRestorePending.current = false;
@@ -215,8 +226,19 @@ export function MenuContent({
 			restoreFocus();
 			return;
 		}
-		const timer = setTimeout(restoreFocus, MENU_ANDROID_RESTORE_DELAY_MS);
-		return () => clearTimeout(timer);
+		let isDone = false;
+		const restore = () => {
+			if (isDone) return;
+			isDone = true;
+			restoreFocus();
+		};
+		const subscription = AppState.addEventListener("focus", restore);
+		const fallback = setTimeout(restore, MENU_ANDROID_RESTORE_FALLBACK_MS);
+		return () => {
+			isDone = true;
+			subscription.remove();
+			clearTimeout(fallback);
+		};
 	}, [isPresent, restoreFocus]);
 
 	const progress = useSharedValue(0);
@@ -321,8 +343,8 @@ MenuContent.displayName = "DelacourUI.Menu.Content";
 
 const fill = { flex: 1 };
 
-/** How long after the Modal unmounts Android is given to close its window before focus is sent. */
-const MENU_ANDROID_RESTORE_DELAY_MS = 120;
+/** How long Android waits for the activity window to regain focus before sending focus back anyway. */
+const MENU_ANDROID_RESTORE_FALLBACK_MS = 600;
 
 type PanelFrameInput = {
 	align: MenuAlign;

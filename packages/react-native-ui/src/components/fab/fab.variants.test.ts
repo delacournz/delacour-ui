@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { cn } from "../../lib/cn";
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
 	FAB_ACTION_START_SCALE,
@@ -174,15 +175,23 @@ describe("fabVariants", () => {
 		}
 	});
 
-	test("an extended fab takes the height and pads its sides instead of fixing a width", () => {
-		const heights = { sm: "h-fab-sm", md: "h-fab-md", lg: "h-fab-lg" } as const;
+	test("an extended fab takes the height as a floor and pads its sides instead of fixing a width", () => {
+		const heights = { sm: "min-h-fab-sm", md: "min-h-fab-md", lg: "min-h-fab-lg" } as const;
 		for (const size of FAB_SIZES) {
 			const root = classes(fabVariants({ size, isExtended: true }).root());
 			expect(root).toContain(heights[size]);
+			// A fixed height would clip a label scaled to 2× (TEXT_MAX_FONT_SIZE_MULTIPLIER).
+			expect(root.some((name) => /^h-/.test(name))).toBe(false);
 			expect(root).toContain("px-5");
 			expect(root).toContain("gap-2");
 			expect(root.some((name) => name.startsWith("size-"))).toBe(false);
 		}
+	});
+
+	test("a caller's min-h replaces an extended fab's floor", () => {
+		const root = classes(cn(fabVariants({ size: "md", isExtended: true }).root(), "min-h-16"));
+		expect(root).toContain("min-h-16");
+		expect(root).not.toContain("min-h-fab-md");
 	});
 
 	test("fills each variant from its own semantic surface", () => {

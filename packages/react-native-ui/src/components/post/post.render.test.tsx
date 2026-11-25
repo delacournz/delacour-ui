@@ -38,24 +38,14 @@ describe("Post", () => {
 		expect(screen.getByLabelText("r/reactnative, 5h ago")).toBeOnTheScreen();
 	});
 
-	test("a card with onPress reports it, and not when disabled", async () => {
+	test("a card with onPress reports a press", async () => {
 		const onPress = jest.fn();
-		const onLongPress = jest.fn();
-		const view = await renderWithProviders(
-			<Post onLongPress={onLongPress} onPress={onPress} testID="card">
+		await renderWithProviders(
+			<Post onLongPress={() => {}} onPress={onPress} testID="card">
 				<Post.Body>Hi</Post.Body>
 			</Post>
 		);
-		const card = screen.getByTestId("card");
-		await fireEvent(card, "accessibilityTap");
-		expect(onPress).toHaveBeenCalledTimes(1);
-
-		await view.rerender(
-			<Post disabled onLongPress={onLongPress} onPress={onPress} testID="card">
-				<Post.Body>Hi</Post.Body>
-			</Post>
-		);
-		await fireEvent(screen.getByTestId("card"), "accessibilityTap");
+		await fireEvent.press(screen.getByTestId("card"));
 		expect(onPress).toHaveBeenCalledTimes(1);
 	});
 
@@ -131,31 +121,18 @@ describe("Post", () => {
 		}
 	});
 
-	test("on Android the card answers activate and longpress, and ignores them when disabled", async () => {
+	test("on Android the card itself is no stop: no role-bearing actions, the carrier is the way in", async () => {
 		const platform = Platform.OS;
 		Platform.OS = "android";
 		try {
-			const onPress = jest.fn();
-			const onLongPress = jest.fn();
-			const view = await renderWithProviders(
-				<Post onLongPress={onLongPress} onPress={onPress} testID="card">
+			await renderWithProviders(
+				<Post onLongPress={() => {}} onPress={() => {}} testID="card">
 					<Post.Body>Hi</Post.Body>
 				</Post>
 			);
-			await fireEvent(screen.getByTestId("card"), "accessibilityAction", { nativeEvent: { actionName: "activate" } });
-			await fireEvent(screen.getByTestId("card"), "accessibilityAction", { nativeEvent: { actionName: "longpress" } });
-			expect(onPress).toHaveBeenCalledTimes(1);
-			expect(onLongPress).toHaveBeenCalledTimes(1);
-
-			await view.rerender(
-				<Post disabled onLongPress={onLongPress} onPress={onPress} testID="card">
-					<Post.Body>Hi</Post.Body>
-				</Post>
-			);
-			await fireEvent(screen.getByTestId("card"), "accessibilityAction", { nativeEvent: { actionName: "activate" } });
-			await fireEvent(screen.getByTestId("card"), "accessibilityAction", { nativeEvent: { actionName: "longpress" } });
-			expect(onPress).toHaveBeenCalledTimes(1);
-			expect(onLongPress).toHaveBeenCalledTimes(1);
+			const card = screen.getByTestId("card");
+			expect(card.props.accessibilityActions).toBeUndefined();
+			expect(card.props.importantForAccessibility).toBe("no");
 		} finally {
 			Platform.OS = platform;
 		}

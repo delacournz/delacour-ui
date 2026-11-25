@@ -556,7 +556,7 @@ describe("Select in a Field", () => {
 			{ wrapper: Sheets }
 		);
 		expect(screen.getByRole("button", { name: "Role" })).toBeOnTheScreen();
-		await tap(screen.getByText("Role", { includeHiddenElements: true }));
+		await fireEvent.press(screen.getByText("Role", { includeHiddenElements: true }));
 		expect(screen.getByRole("button", { name: "Role" })).toBeExpanded();
 		expect(screen.getByRole("radio", { name: "Designer" })).toBeOnTheScreen();
 	});

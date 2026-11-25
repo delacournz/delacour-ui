@@ -377,7 +377,6 @@ describe("TextAnimation looping motion", () => {
 	test("Typing shows the resting phrase while a screen reader is on", async () => {
 		isReaderOn = true;
 		await renderWithProviders(<TextAnimation.Typing testID="typing">{["One", "Two"]}</TextAnimation.Typing>);
-		await act(async () => {});
-		expect(screen.getByText("T", { includeHiddenElements: true })).toBeOnTheScreen();
+		expect(await screen.findByText("T", { includeHiddenElements: true })).toBeOnTheScreen();
 	});
 });

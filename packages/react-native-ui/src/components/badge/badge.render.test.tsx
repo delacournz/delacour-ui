@@ -84,9 +84,52 @@ describe("Badge", () => {
 	});
 
 	describe("onClose", () => {
-		test("composes a dismiss button named Remove by default", async () => {
+		test("composes a dismiss button named after the badge's label", async () => {
 			await renderWithProviders(<Badge onClose={() => undefined}>Tag</Badge>);
-			expect(screen.getByRole("button", { name: "Remove" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Remove Tag" })).toBeOnTheScreen();
+		});
+
+		test("two badges in a row give their dismiss controls distinct names", async () => {
+			await renderWithProviders(
+				<View>
+					<Badge onClose={() => undefined}>Alpha</Badge>
+					<Badge onClose={() => undefined}>Beta</Badge>
+				</View>
+			);
+			expect(screen.getByRole("button", { name: "Remove Alpha" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Remove Beta" })).toBeOnTheScreen();
+		});
+
+		test("a Badge.Label's text names the control, and an icon-only badge keeps the bare name", async () => {
+			await renderWithProviders(
+				<View>
+					<Badge onClose={() => undefined}>
+						<Badge.Label>Premium</Badge.Label>
+					</Badge>
+					<Badge closeTestID="bare" onClose={() => undefined} />
+				</View>
+			);
+			expect(screen.getByRole("button", { name: "Remove Premium" })).toBeOnTheScreen();
+			expect(screen.getByTestId("bare")).toHaveProp("accessibilityLabel", "Remove");
+		});
+
+		test("a hand-placed Badge.CloseButton reads the badge's label too", async () => {
+			await renderWithProviders(
+				<Badge>
+					Tag
+					<Badge.CloseButton onPress={() => undefined} />
+				</Badge>
+			);
+			expect(screen.getByRole("button", { name: "Remove Tag" })).toBeOnTheScreen();
+		});
+
+		test("a localised removeNamed names the control", async () => {
+			await renderWithProviders(
+				<Badge labels={{ removeNamed: (label) => `Quitar ${label}` }} onClose={() => undefined}>
+					Tag
+				</Badge>
+			);
+			expect(screen.getByRole("button", { name: "Quitar Tag" })).toBeOnTheScreen();
 		});
 
 		test("closeAccessibilityLabel renames it and closeTestID finds it", async () => {
@@ -124,7 +167,7 @@ describe("Badge", () => {
 					Tag
 				</Badge>
 			);
-			const close = screen.getByRole("button", { name: "Remove" });
+			const close = screen.getByRole("button", { name: "Remove Tag" });
 			expect(close).toBeDisabled();
 			await fireEvent(close, "accessibilityTap");
 			expect(onClose).not.toHaveBeenCalled();
@@ -160,7 +203,7 @@ describe("Badge", () => {
 				</Badge>
 			);
 			const root = screen.getByTestId("badge");
-			expect(root.props.accessibilityActions).toEqual([{ label: "Remove", name: "remove" }]);
+			expect(root.props.accessibilityActions).toEqual([{ label: "Remove React", name: "remove" }]);
 			expect(screen.getByTestId("close", { includeHiddenElements: true })).toHaveProp("accessible", false);
 			await fireEvent(root, "accessibilityAction", { nativeEvent: { actionName: "remove" } });
 			expect(onClose).toHaveBeenCalledTimes(1);
@@ -195,7 +238,7 @@ describe("Badge", () => {
 			const root = screen.getByTestId("badge");
 			expect(root.props.accessibilityActions).toEqual([
 				{ label: "Share", name: "share" },
-				{ label: "Remove", name: "remove" },
+				{ label: "Remove React", name: "remove" },
 			]);
 			await fireEvent(root, "accessibilityAction", { nativeEvent: { actionName: "share" } });
 			expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
@@ -217,7 +260,7 @@ describe("Badge", () => {
 			const root = screen.getByTestId("badge");
 			expect(root.props.accessibilityActions).toEqual([
 				{ label: "Share", name: "share" },
-				{ label: "Remove", name: "remove" },
+				{ label: "Remove React", name: "remove" },
 			]);
 			await fireEvent(root, "accessibilityAction", { nativeEvent: { actionName: "share" } });
 			expect(onAccessibilityAction).toHaveBeenCalledTimes(1);
@@ -241,7 +284,7 @@ describe("Badge", () => {
 				</Badge>
 			);
 			expect(screen.getByTestId("badge").props.accessibilityActions).toBeUndefined();
-			expect(screen.getByRole("button", { name: "Remove" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Remove Tag" })).toBeOnTheScreen();
 		});
 
 		test("the dismiss control carries capped slop, and a caller's hitSlop wins", async () => {
@@ -348,26 +391,33 @@ describe("Badge", () => {
 	describe("labels", () => {
 		test("the labels prop names the dismiss control", async () => {
 			await renderWithProviders(
-				<Badge labels={{ remove: "Entfernen" }} onClose={() => undefined}>
+				<Badge labels={{ removeNamed: (label) => `${label} entfernen` }} onClose={() => undefined}>
 					React
 				</Badge>
 			);
-			expect(screen.getByRole("button", { name: "Entfernen" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "React entfernen" })).toBeOnTheScreen();
+		});
+
+		test("the labels prop's remove names a badge with no text", async () => {
+			await renderWithProviders(
+				<Badge closeTestID="close" labels={{ remove: "Entfernen" }} onClose={() => undefined} />
+			);
+			expect(screen.getByTestId("close")).toHaveProp("accessibilityLabel", "Entfernen");
 		});
 
 		test("a LabelsProvider names it too, and the prop wins over it", async () => {
 			await renderWithProviders(
-				<LabelsProvider labels={{ badge: { remove: "Entfernen" } }}>
+				<LabelsProvider labels={{ badge: { removeNamed: (label) => `Entfernen ${label}` } }}>
 					<Badge testID="a" onClose={() => undefined}>
 						A
 					</Badge>
-					<Badge labels={{ remove: "Weg" }} onClose={() => undefined}>
+					<Badge labels={{ removeNamed: (label) => `Weg ${label}` }} onClose={() => undefined}>
 						B
 					</Badge>
 				</LabelsProvider>
 			);
-			expect(screen.getByRole("button", { name: "Entfernen" })).toBeOnTheScreen();
-			expect(screen.getByRole("button", { name: "Weg" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Entfernen A" })).toBeOnTheScreen();
+			expect(screen.getByRole("button", { name: "Weg B" })).toBeOnTheScreen();
 		});
 
 		test("closeAccessibilityLabel still wins over labels", async () => {
@@ -381,11 +431,18 @@ describe("Badge", () => {
 
 		test("a pressable badge's folded remove action is labelled from labels", async () => {
 			await renderWithProviders(
-				<Badge labels={{ remove: "Entfernen" }} onClose={() => undefined} onPress={() => undefined} testID="root">
+				<Badge
+					labels={{ removeNamed: (label) => `${label} entfernen` }}
+					onClose={() => undefined}
+					onPress={() => undefined}
+					testID="root"
+				>
 					React
 				</Badge>
 			);
-			expect(screen.getByTestId("root").props.accessibilityActions).toEqual([{ label: "Entfernen", name: "remove" }]);
+			expect(screen.getByTestId("root").props.accessibilityActions).toEqual([
+				{ label: "React entfernen", name: "remove" },
+			]);
 		});
 	});
 });

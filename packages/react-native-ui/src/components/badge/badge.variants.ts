@@ -1,4 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
+import type { BadgeLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
 import { MIN_HIT_TARGET, resolveMinimumHitSlop } from "../pressable/pressable.variants";
 
@@ -256,8 +257,19 @@ export function resolveBadgeInteractive({
 	return onPress !== undefined || onLongPress !== undefined;
 }
 
-/** Edge, in points, of the dismiss glyph at each size: the `--spacing-icon-*` step the `icon` slot sets. */
+/**
+ * Edge, in points, of the dismiss glyph at each size: the `--spacing-icon-*` step the `icon` slot sets.
+ * These are the default tokens' values; the control reads the live token through
+ * {@link badgeCloseSizeVariable} so a theme that retunes the icon steps is followed.
+ */
 export const BADGE_CLOSE_SIZES: Record<BadgeSize, number> = { sm: 14, md: 16, lg: 18 };
+
+const BADGE_ICON_STEPS = { sm: "xs", md: "sm", lg: "md" } as const satisfies Record<BadgeSize, string>;
+
+/** The theme variable the dismiss glyph's edge is drawn from at `size`: `--spacing-icon-xs` for `sm`, and so on. */
+export function badgeCloseSizeVariable(size: BadgeSize): `--spacing-icon-${(typeof BADGE_ICON_STEPS)[BadgeSize]}` {
+	return `--spacing-icon-${BADGE_ICON_STEPS[size]}`;
+}
 
 /** The gap, in points, the root sets between its children at each size: `gap-1`, `gap-1.5`, `gap-2`. */
 export const BADGE_GAPS: Record<BadgeSize, number> = { sm: 4, md: 6, lg: 8 };
@@ -277,14 +289,35 @@ export const BADGE_CLOSE_HIT_SLOP_CAP: Record<BadgeSize, number> = {
 
 /**
  * The `hitSlop` for the dismiss glyph at `size`, bounded by
- * {@link BADGE_CLOSE_HIT_SLOP_CAP}. `min` is the app's minimum touch target.
- * Pure, so it is unit-testable; the component reaches it through `useMinimumHitSlop`.
+ * {@link BADGE_CLOSE_HIT_SLOP_CAP}. `min` is the app's minimum touch target and
+ * `closeSize` the glyph's edge under the resolved theme (default: the default
+ * token's). The cap does not move with the glyph — it is half the gap — so a
+ * smaller glyph leaves the target smaller still, which is what the distinct
+ * accessible name ({@link resolveBadgeCloseLabel}) is for.
+ * Pure, so it is unit-testable; the component reaches it with the live theme.
  */
 export function resolveBadgeCloseHitSlop(
 	size: BadgeSize,
-	min = MIN_HIT_TARGET
+	min = MIN_HIT_TARGET,
+	closeSize: number = BADGE_CLOSE_SIZES[size]
 ): ReturnType<typeof resolveMinimumHitSlop> {
-	return resolveMinimumHitSlop(BADGE_CLOSE_SIZES[size], min, { cap: BADGE_CLOSE_HIT_SLOP_CAP[size] });
+	return resolveMinimumHitSlop(closeSize, min, { cap: BADGE_CLOSE_HIT_SLOP_CAP[size] });
+}
+
+/**
+ * The dismiss control's accessible name: `removeNamed(text)` when the badge has
+ * label text, else the bare `remove`.
+ *
+ * The slop cannot grow past half the gap, so the target stays under the minimum
+ * and a screen-reader user is the one left to tell a row of identical "Remove"
+ * stops apart. Pure, so it is unit-testable.
+ */
+export function resolveBadgeCloseLabel(
+	labels: Pick<BadgeLabels, "remove" | "removeNamed">,
+	text: string | undefined
+): string {
+	const trimmed = text?.trim();
+	return trimmed ? labels.removeNamed(trimmed) : labels.remove;
 }
 
 /**

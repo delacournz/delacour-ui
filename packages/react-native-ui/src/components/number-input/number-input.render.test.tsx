@@ -403,7 +403,7 @@ describe("NumberInput", () => {
 					/>
 				</Field>
 			);
-			await fireEvent(screen.getByTestId("row"), "accessibilityTap");
+			await fireEvent.press(screen.getByTestId("row"));
 			expect(focus).toHaveBeenCalledTimes(1);
 		});
 
@@ -597,5 +597,49 @@ describe("NumberInput labels", () => {
 		);
 		expect(screen.getByRole("button", { name: "Moins" })).toBeOnTheScreen();
 		expect(screen.getByRole("button", { name: "Augmenter" })).toBeOnTheScreen();
+	});
+});
+
+describe("NumberInput in a Field", () => {
+	let spoken: jest.SpiedFunction<typeof AccessibilityInfo.announceForAccessibilityWithOptions>;
+
+	beforeEach(() => {
+		resetAnnouncer();
+		setPlatform("ios");
+		jest.spyOn(AccessibilityInfo, "announceForAccessibility").mockImplementation(() => {});
+		spoken = jest.spyOn(AccessibilityInfo, "announceForAccessibilityWithOptions").mockImplementation(() => {});
+		spoken.mockClear();
+	});
+
+	afterEach(() => {
+		setPlatform(originalOS);
+		jest.restoreAllMocks();
+	});
+
+	function InvalidTerm() {
+		const [months, setMonths] = useState<NumberInputValue>(14);
+		return (
+			<Field isInvalid={months !== null && months > 12}>
+				<Field.Label>Term in months</Field.Label>
+				<NumberInput commitMode="validate" max={12} min={1} onValueChange={setMonths} value={months} />
+				<Field.Description>Between 1 and 12.</Field.Description>
+				<Field.Error>A term runs at most 12 months.</Field.Error>
+			</Field>
+		);
+	}
+
+	test("an invalid value speaks its Field.Error once at mount", async () => {
+		await renderWithProviders(<InvalidTerm />);
+		const errors = spoken.mock.calls.filter(([message]) => message === "A term runs at most 12 months.");
+		expect(errors).toHaveLength(1);
+		expect(spoken).toHaveBeenCalledTimes(1);
+	});
+
+	test("the group box is not a focus stop and the parts are reachable by role and name", async () => {
+		await renderWithProviders(<InvalidTerm />);
+		expect(screen.getByRole("button", { name: "Decrease" })).toBeOnTheScreen();
+		expect(screen.getByRole("button", { name: "Increase" })).toBeOnTheScreen();
+		expect(screen.getByRole("adjustable", { name: "Term in months" })).toBeOnTheScreen();
+		expect(screen.getAllByRole("button")).toHaveLength(2);
 	});
 });

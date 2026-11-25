@@ -190,6 +190,46 @@ describe("isPressableInteractive", () => {
 });
 
 describe("resolvePressableActivation", () => {
+	test("accessible={false} adds no 'activate' on Android, so TalkBack has no reason to stop on it", () => {
+		expect(
+			resolvePressableActivation({
+				hasAccessibilityTap: false,
+				hasPress: true,
+				isAccessible: false,
+				platform: "android",
+			})
+		).toEqual({
+			accessibilityActions: undefined,
+			routesActivate: false,
+			routesLongPress: false,
+			wiresAccessibilityTap: false,
+		});
+	});
+
+	test("accessible={false} wires no onAccessibilityTap on iOS", () => {
+		const resolved = resolvePressableActivation({
+			hasAccessibilityTap: false,
+			hasLongPress: true,
+			hasPress: true,
+			isAccessible: false,
+			platform: "ios",
+		});
+		expect(resolved.wiresAccessibilityTap).toBe(false);
+		expect(resolved.accessibilityActions).toBeUndefined();
+	});
+
+	test("accessible={false} keeps a caller's own actions: they are the caller's to remove", () => {
+		const actions = [{ label: "Remove", name: "remove" }];
+		const resolved = resolvePressableActivation({
+			accessibilityActions: actions,
+			hasAccessibilityTap: false,
+			hasPress: true,
+			isAccessible: false,
+			platform: "android",
+		});
+		expect(resolved.accessibilityActions).toBe(actions);
+	});
+
 	test("iOS wires onAccessibilityTap and adds no custom action", () => {
 		expect(resolvePressableActivation({ hasAccessibilityTap: false, hasPress: true, platform: "ios" })).toEqual({
 			accessibilityActions: undefined,

@@ -1,5 +1,5 @@
 import { type ReactElement, useCallback, useId, useMemo, useState } from "react";
-import { View, type ViewProps } from "react-native";
+import type { ViewProps } from "react-native";
 import { Pressable } from "../pressable";
 import { type FieldContextValue, FieldProvider } from "./field.context";
 import { type FieldOrientation, fieldVariants, resolveFieldInteractive } from "./field.variants";
@@ -103,26 +103,21 @@ function FieldRoot({
 
 	const rootClassName = fieldVariants({ isDisabled, isInvalid, orientation }).root({ className });
 
-	// A field is layout until a control asks for the row — see `resolveFieldInteractive`.
-	if (!resolveFieldInteractive(controlPress)) {
-		return (
-			<FieldProvider value={context}>
-				<View accessibilityRole="none" className={rootClassName} {...props} />
-			</FieldProvider>
-		);
-	}
-
+	// One element type for the life of the field. Swapping a `View` for a
+	// `Pressable` when a control registers its press remounted every part —
+	// a `Field.Error` announced itself a second time, a typed value was lost.
+	// The row is `accessible={false}`, so it is no element to a screen reader:
+	// the control inside is. With no press registered it is disabled, and a
+	// touch on static text goes nowhere. See `resolveFieldInteractive`.
+	const isInteractive = resolveFieldInteractive(controlPress);
 	return (
 		<FieldProvider value={context}>
 			<Pressable
-				// The control inside is the accessibility element, not this row.
-				// Without it a screen reader would announce the label twice and
-				// offer a wrapper with no state of its own.
 				accessible={false}
 				className={rootClassName}
-				disabled={isDisabled}
+				disabled={isDisabled || !isInteractive}
 				feedback="none"
-				onPress={controlPress}
+				onPress={isInteractive ? controlPress : undefined}
 				{...props}
 			/>
 		</FieldProvider>
@@ -163,9 +158,10 @@ function FieldRoot({
  * **The whole row drives the control**, once one offers a press through the same
  * context — so tapping "Accept the terms", or the description under it, ticks
  * the `Checkbox` beside it. A checkbox in a form is a small square next to a
- * sentence, and the sentence is the part people aim at. The row is a `Pressable`
- * with `feedback="none"` only while a control has registered; a field of static
- * text mounts no gesture detector at all.
+ * sentence, and the sentence is the part people aim at. The row is always a
+ * `Pressable` with `feedback="none"`, disabled until a control registers, so a
+ * registration never remounts the parts. It is no accessibility element: the
+ * control inside is.
  *
  * The text parts render the `Text` presets and pass a colour, never a size —
  * `Field.Label` *is* `Text.Label`. There is no `Field.Title`: on the web it

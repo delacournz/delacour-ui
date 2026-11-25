@@ -129,7 +129,7 @@ describe("Checkbox", () => {
 				<Checkbox onCheckedChange={onCheckedChange} />
 			</Field>
 		);
-		await tap(screen.getByTestId("row"));
+		await fireEvent.press(screen.getByTestId("row"));
 		expect(onCheckedChange).toHaveBeenCalledWith(true);
 		expect(screen.getByRole("checkbox")).toBeChecked();
 	});
@@ -142,7 +142,7 @@ describe("Checkbox", () => {
 				<Checkbox isDisabled onCheckedChange={onCheckedChange} />
 			</Field>
 		);
-		await tap(screen.getByTestId("row"));
+		await fireEvent.press(screen.getByTestId("row"));
 		expect(onCheckedChange).not.toHaveBeenCalled();
 		expect(screen.getByRole("checkbox")).not.toBeChecked();
 	});

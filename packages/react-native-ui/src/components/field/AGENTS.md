@@ -41,19 +41,28 @@ A form field's layout, and the one place its state is written down. Root plus
   no `:has()`. Do not go looking for one again.
 - **The whole row drives the control, once one offers a press.** A control
   registers a callback through the same context the state cascades down, and the
-  row becomes a `Pressable` with `feedback="none"` that calls it — so tapping
+  row's `Pressable` (`feedback="none"`) calls it — so tapping
   "Accept the terms", or the description under it, ticks the
   [`Checkbox`](../checkbox/AGENTS.md) beside
   it. A checkbox in a form is a small square next to a sentence, and the sentence
   is what people aim at. This is [`Input.Group`](../input/AGENTS.md)'s trick one level out: that group
   is a pressable whose press focuses the field through a ref on its context.
   `resolveFieldInteractive` is the decision and it is pure, so it is
-  unit-testable. A field of static text registers nothing and stays a `View` — mounting a
-  detector regardless would put one under every label and description in a form,
-  the thing [`Badge`](../badge/AGENTS.md) refuses for a list of fifty tags. The row is
-  `accessible={false}`, so the control stays the element a screen reader sees,
-  and the inner detector claims a tap on the box itself rather than firing both.
-  A field holds one control, so a second registration replaces the first.
+  unit-testable. A field of static text registers nothing, so its row is
+  disabled and a touch on it goes nowhere. The inner detector claims a tap on
+  the control itself rather than firing both. A field holds one control, so a
+  second registration replaces the first.
+- **The row is one element type for the field's whole life.** It used to be a
+  `View` that turned into a `Pressable` when a control registered, and React
+  remounted every part under it: a `Field.Error` around a
+  [`NumberInput`](../number-input/AGENTS.md) announced itself twice at load. The
+  cost is one detector per field, not one per label or description, which is
+  still not the fifty-detector list [`Badge`](../badge/AGENTS.md) refuses.
+- **The row is no accessibility element.** It is `accessible={false}`, which
+  makes [`Pressable`](../pressable/AGENTS.md) drop its `button` role and its
+  activation. Before that, TalkBack stopped on an unnamed button in front of
+  the control. The row's press is a touch convenience; a screen reader reaches
+  the control directly.
 - **The label names the control, through the same context.** `Field.Label`
   registers its text with `registerLabel`, the mirror of `registerPress`: a
   control hands its press up, a label hands its name down. A control with no

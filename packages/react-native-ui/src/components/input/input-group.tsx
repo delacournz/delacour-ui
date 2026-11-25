@@ -121,6 +121,10 @@ function InputGroupRoot({
 	// The row is rendered whether or not a block is, so adding one moves
 	// nothing that was already there — the field is never remounted, and never
 	// loses focus, when a toolbar appears above it.
+	//
+	// The box is `accessible={false}`, which makes the pressable no element at
+	// all — no role, no activation — so a screen reader skips straight to the
+	// field and the controls beside it. The gutter press is for touch only.
 	return (
 		<InputGroupProvider value={context}>
 			<Pressable

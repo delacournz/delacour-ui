@@ -253,7 +253,7 @@ describe("Chip", () => {
 					React
 				</Chip>
 			);
-			await fireEvent(screen.getByTestId("close", { includeHiddenElements: true }), "accessibilityTap");
+			await fireEvent.press(screen.getByTestId("close", { includeHiddenElements: true }));
 			expect(onClose).toHaveBeenCalledTimes(1);
 			expect(onPress).not.toHaveBeenCalled();
 			expect(onSelectedChange).not.toHaveBeenCalled();

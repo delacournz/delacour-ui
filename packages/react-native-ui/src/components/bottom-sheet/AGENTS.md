@@ -162,7 +162,7 @@ read those before touching behaviour, because behaviour is not here.
   do not hide anything. Under Jest's
   inline teleport (`isTeleportInline()`) it hides nothing, as `OverlayProvider`
   does. Focus in (title) and out (trigger), the escape scrub and the trigger's
-  `expanded` state are the engine's; see its components `AGENTS.md`.
+  `expanded` state are the engine's; see its components `AGENTS.md`. On Android the engine returns focus to the trigger 120ms after the close settles, so this provider has un-hidden the app by then.
 - **The overlay's opacity is 1**, because `--overlay` carries its own alpha and
   the two theme variants carry different ones. `BOTTOM_SHEET_OVERLAY_OPACITY`
   and `BOTTOM_SHEET_BACKDROP_INDICES` restate the engine's defaults so a test

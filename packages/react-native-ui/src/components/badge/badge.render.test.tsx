@@ -107,7 +107,7 @@ describe("Badge", () => {
 					Tag
 				</Badge>
 			);
-			await fireEvent(screen.getByTestId("close", { includeHiddenElements: true }), "accessibilityTap");
+			await fireEvent.press(screen.getByTestId("close", { includeHiddenElements: true }));
 			expect(onClose).toHaveBeenCalledTimes(1);
 			expect(onPress).not.toHaveBeenCalled();
 		});

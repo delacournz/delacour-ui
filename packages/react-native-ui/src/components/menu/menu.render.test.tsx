@@ -456,6 +456,7 @@ describe("Menu", () => {
  * 120ms exit to reach their callbacks, as they do on a device.
  */
 describe("Menu accessibility", () => {
+	const SLOW_EXIT = { timeout: 4000 };
 	const focused: unknown[] = [];
 	const anchor = { height: 40, width: 120, x: 10, y: 100 };
 
@@ -555,9 +556,25 @@ describe("Menu accessibility", () => {
 		await waitFor(() => expect(focused).toHaveLength(1));
 
 		await press("Options");
-		await waitFor(() => expect(focused).toHaveLength(2));
+		await waitFor(() => expect(screen.queryByRole("menuitem", { name: "Rename" })).toBeNull(), SLOW_EXIT);
+		await waitFor(() => expect(focused).toHaveLength(2), SLOW_EXIT);
 		expect(role(focused[1])).toBe("button");
-	});
+	}, 10_000);
+
+	test("on Android focus returns after the Modal's window is gone, not in the tick the exit ends", async () => {
+		Platform.OS = "android";
+		await renderWithProviders(<ItemsMenu defaultOpen />, { wrapper: Overlays });
+		await place();
+		await waitFor(() => expect(focused).toHaveLength(1));
+
+		await fireEvent(screen.getByRole("button", { name: "Options" }), "accessibilityAction", {
+			nativeEvent: { actionName: "activate" },
+		});
+		await waitFor(() => expect(screen.queryByRole("menuitem", { name: "Rename" })).toBeNull(), SLOW_EXIT);
+		expect(focused).toHaveLength(1);
+		await waitFor(() => expect(focused).toHaveLength(2), SLOW_EXIT);
+		expect(role(focused[1])).toBe("button");
+	}, 10_000);
 });
 
 describe("Menu labels", () => {

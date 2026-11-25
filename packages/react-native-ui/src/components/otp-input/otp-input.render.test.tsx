@@ -6,8 +6,6 @@ import { fireEvent, renderWithProviders, screen } from "../../test/render";
 import { Field } from "../field";
 import { OtpInput, type OtpInputRef } from "./otp-input";
 
-const tap = (element: Parameters<typeof fireEvent>[0]) => fireEvent(element, "accessibilityTap");
-
 describe("OtpInput", () => {
 	test("is one text field named by its accessibilityLabel, defaulting to Verification code", async () => {
 		await renderWithProviders(<OtpInput accessibilityLabel="Login code" />);
@@ -356,7 +354,7 @@ describe("OtpInput", () => {
 					<OtpInput />
 				</Field>
 			);
-			await tap(screen.getByTestId("row"));
+			await fireEvent.press(screen.getByTestId("row"));
 			expect(focus).toHaveBeenCalledTimes(1);
 		});
 
@@ -369,7 +367,7 @@ describe("OtpInput", () => {
 					<OtpInput isDisabled />
 				</Field>
 			);
-			await tap(screen.getByTestId("row"));
+			await fireEvent.press(screen.getByTestId("row"));
 			expect(focus).not.toHaveBeenCalled();
 		});
 	});

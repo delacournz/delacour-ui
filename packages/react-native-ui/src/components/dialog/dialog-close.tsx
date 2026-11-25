@@ -1,11 +1,11 @@
 import { type ReactElement, useCallback } from "react";
-import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
+import { useMinimumHitSlop, useThemeLength } from "../../hooks/use-minimum-hit-target";
 import { IconCrossSmall } from "../../icons/central";
 import { Slot } from "../../lib/slot";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { useDialogPart } from "./dialog.context";
-import { DIALOG_CLOSE_SIZE, dialogVariants } from "./dialog.variants";
+import { DIALOG_CLOSE_SIZE, DIALOG_CLOSE_SIZE_VARIABLE, dialogVariants } from "./dialog.variants";
 
 export type DialogCloseProps =
 	/** Donates the close to the single child — a `Button` in the footer, say. */
@@ -18,7 +18,8 @@ export type DialogCloseProps =
  *
  * Without children it is the ✕ in the card's corner: this library's
  * `Pressable` with `fade` feedback — a scale on a glyph this small reads as a
- * jitter — 12pt of slop because a bare glyph has no capsule to bring it toward
+ * jitter — slop sized from the theme's `--spacing-icon-lg` (12pt by default,
+ * 13 under a denser style) because a bare glyph has no capsule to bring it toward
  * 44pt, and the catalog's `close` as its label (`labels` on the root; an own
  * `accessibilityLabel` wins). It sits out of the flow; `Dialog.Title`
  * reserves the clearance.
@@ -41,7 +42,7 @@ export type DialogCloseProps =
  */
 export function DialogClose(props: DialogCloseProps): ReactElement {
 	const { close, labels } = useDialogPart("Dialog.Close");
-	const slop = useMinimumHitSlop(DIALOG_CLOSE_SIZE);
+	const slop = useMinimumHitSlop(useThemeLength(DIALOG_CLOSE_SIZE_VARIABLE, DIALOG_CLOSE_SIZE));
 	const { onPress } = props;
 
 	const handlePress = useCallback(() => {

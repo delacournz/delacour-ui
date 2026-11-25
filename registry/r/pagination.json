@@ -15,7 +15,8 @@
 		"text",
 		"tv",
 		"use-controllable-state",
-		"use-labels"
+		"use-labels",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -147,12 +148,20 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
+				{
 					"from": "../../lib/labels",
 					"to": "@registry/lib/labels"
 				},
 				{
 					"from": "../pressable/pressable",
 					"to": "@registry/ui/pressable/pressable"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		},
@@ -202,6 +211,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		}

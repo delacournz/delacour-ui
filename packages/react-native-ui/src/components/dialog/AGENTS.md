@@ -70,8 +70,10 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   ancestor/descendant pair are not simultaneous, so a pressable wrapped around a `Button` never
   fires. The child has to be something that handles `onPress`.
 - **The corner ✕ presses with `fade` and slop that reaches 44pt.** A scale on a glyph this small reads as a
-  jitter, and a bare glyph has no capsule, so its 20pt edge plus `useMinimumHitSlop` (12pt a side; 14 under
-  `isMaterialHitTarget` on Android) is the target. It sits out of the flow, and
+  jitter, and a bare glyph has no capsule, so its drawn edge plus `useMinimumHitSlop` is the target. The
+  edge is read from the theme's `--spacing-icon-lg` (`useThemeLength`, falling back to
+  `DIALOG_CLOSE_SIZE`, 20): 12pt a side by default, 13 under a denser style whose glyph is 18, and 14
+  under `isMaterialHitTarget` on Android. `DIALOG_CLOSE_HIT_SLOP` is the default-theme value only. It sits out of the flow, and
   `Dialog.Title`'s `pr-8` reserves its clearance on every dialog, so adding a close never reflows
   the title.
 - **The title and description carry no type of their own.** They *are* `Text.Header` and a muted

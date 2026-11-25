@@ -124,3 +124,14 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   minimum and the face stays the size it was. Inside `Avatar.Group` the slop is
   capped at 0: the faces overlap, and slop would hand the press to the later face
   rather than the one under the finger. A caller's own `hitSlop` wins.
+- **Avatar slop is theme-safe because a face is not a button token.** The edge is `size-8` …
+  `size-24`, the base spacing scale, which a density style (`--spacing-button-*`) does not
+  retune, so `AVATAR_SIZE_POINTS` stays the drawn edge and no live read is needed. A face
+  sized from a `--spacing-button-*` token would have to read it with `useThemeLength`.
+- **A pressable avatar is named for the person, not for its initials, on purpose.** The
+  drawn "RK" is an abbreviation of the name `Rawiri Kemp`, not a label of its own; naming the
+  control "RK" would tell a screen reader nothing, and "RK, Rawiri Kemp" reads the person twice.
+  The full name is the control's purpose, which is what a name must give. A person using
+  speech input says that name, or the number Voice Control overlays on it. Where the drawn text
+  is itself the label (`fallback` with no `name`) the two are identical. Pass `accessibilityLabel`
+  to name the action ("Open Rawiri Kemp's profile") when the person alone is not enough.

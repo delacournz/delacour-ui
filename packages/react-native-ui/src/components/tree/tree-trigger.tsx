@@ -41,6 +41,10 @@ export type TreeTriggerProps = Omit<
  * `onPress` runs after that. With nothing to do, the press has no handler and no
  * haptic.
  *
+ * A selected row also draws a leading `primary` bar and a heavier label, so
+ * selection never rests on the fill alone (WCAG 1.4.1). The bar is decorative:
+ * `selected` is already announced.
+ *
  * `className` styles the outer row — fill, height, fade; every other prop reaches
  * the `Pressable` body. Bare text is wrapped in a `Tree.Label`, and an indicator
  * is composed in when the children hold none.
@@ -98,11 +102,23 @@ export function TreeTrigger({
 
 	const { indicator, body, actions } = useMemo(() => splitChildren(children), [children]);
 
+	const selectedMarker =
+		isSelected && tree.selectionMode !== "none" ? (
+			<View
+				accessibilityElementsHidden
+				className={slots.marker()}
+				importantForAccessibility="no-hide-descendants"
+				pointerEvents="none"
+				testID="tree-selected-marker"
+			/>
+		) : null;
+
 	return (
 		<View
 			className={slots.trigger({ className })}
 			style={{ paddingStart: TREE_ROW_INSET + resolveTreeIndent(level, tree.indent) }}
 		>
+			{selectedMarker}
 			<IconDefaultsProvider value={iconDefaults}>
 				{indicator}
 				<Pressable

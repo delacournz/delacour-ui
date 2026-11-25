@@ -281,6 +281,24 @@ const SHOTS: Shot[] = [
 		frame: "desktop",
 		theme: "dark",
 	},
+	{
+		id: "79-theme-contrast-default-desktop-dark",
+		path: "/theme?preset=AQAAAAAbAAB9#theme-contrast-heading",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "80-theme-contrast-zinc-desktop-light",
+		path: "/theme?preset=AQACAgIbAAAv#theme-contrast-heading",
+		frame: "desktop",
+		theme: "light",
+	},
+	{
+		id: "81-theme-contrast-zinc-phone-dark",
+		path: "/theme?preset=AQACAgIbAAAv#theme-contrast-heading",
+		frame: "phone",
+		theme: "dark",
+	},
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

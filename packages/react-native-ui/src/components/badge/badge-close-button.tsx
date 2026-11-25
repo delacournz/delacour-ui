@@ -1,10 +1,16 @@
 import type { ReactElement } from "react";
-import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
+import { useMinimumHitTarget, useThemeLength } from "../../hooks/use-minimum-hit-target";
 import { IconCrossSmall } from "../../icons/central";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { useBadgePart } from "./badge.context";
-import { BADGE_CLOSE_HIT_SLOP_CAP, BADGE_CLOSE_SIZES, badgeVariants } from "./badge.variants";
+import {
+	BADGE_CLOSE_SIZES,
+	badgeCloseSizeVariable,
+	badgeVariants,
+	resolveBadgeCloseHitSlop,
+	resolveBadgeCloseLabel,
+} from "./badge.variants";
 
 export type BadgeCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "children" | "disabled">;
 
@@ -24,7 +30,10 @@ export type BadgeCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "c
  *
  * The glyph is 14–18pt, so it carries `hitSlop` up to the app's minimum target,
  * capped at half the badge's gap so it never takes a press from the label beside
- * it. A caller's own `hitSlop` wins.
+ * it. The glyph's edge is read from the theme's `--spacing-icon-*` token, so a
+ * denser style is followed. Capped slop leaves the target under the minimum, so
+ * the control is named after its badge — "Remove Beta" — not a bare "Remove".
+ * A caller's own `hitSlop` and `accessibilityLabel` win.
  *
  * `fade` rather than the root's `scale` — a spring on a glyph this small reads
  * as a jitter rather than as a press.
@@ -36,12 +45,13 @@ export function BadgeCloseButton({
 	hitSlop,
 	...props
 }: BadgeCloseButtonProps): ReactElement {
-	const { size, isDisabled, material, labels } = useBadgePart("Badge.CloseButton");
-	const slop = useMinimumHitSlop(BADGE_CLOSE_SIZES[size], { cap: BADGE_CLOSE_HIT_SLOP_CAP[size] });
+	const { size, isDisabled, material, labels, labelText } = useBadgePart("Badge.CloseButton");
+	const closeSize = useThemeLength(badgeCloseSizeVariable(size), BADGE_CLOSE_SIZES[size]);
+	const slop = resolveBadgeCloseHitSlop(size, useMinimumHitTarget(), closeSize);
 
 	return (
 		<Pressable
-			accessibilityLabel={accessibilityLabel ?? labels.remove}
+			accessibilityLabel={accessibilityLabel ?? resolveBadgeCloseLabel(labels, labelText)}
 			accessibilityRole="button"
 			className={badgeVariants({ material, size }).closeButton({ className })}
 			disabled={isDisabled}

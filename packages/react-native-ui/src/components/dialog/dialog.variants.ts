@@ -37,6 +37,9 @@ export const DIALOG_SCRIM_TOKEN = "overlay";
 /** The drawn edge of the default ✕ — `Icon`'s `size-icon-lg`, with no padding of its own. */
 export const DIALOG_CLOSE_SIZE = 20;
 
+/** The token the ✕ is drawn from; `DIALOG_CLOSE_SIZE` is its default. A denser style sets it lower (18), so the component reads it live. */
+export const DIALOG_CLOSE_SIZE_VARIABLE = "--spacing-icon-lg";
+
 /** Slop that takes the ✕ to 44pt — a bare glyph has no capsule. The component asks `useMinimumHitSlop` so Android can opt up to 48. */
 export const DIALOG_CLOSE_HIT_SLOP = resolveMinimumHitSlop(DIALOG_CLOSE_SIZE);
 

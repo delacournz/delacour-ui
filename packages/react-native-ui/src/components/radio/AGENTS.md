@@ -31,6 +31,8 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
 
 ## Design
 
+- **An unselected ring is `border-input` in both variants**, never the `border`
+  hairline: it is the control's only edge and has to read at 3:1.
 - **Variants**: `primary`, `secondary` — `secondary` fills the ring, `primary`
   leaves it hollow. **Sizes**: `sm`, `md`, `lg`. **Orientations**, on the group
   only: `vertical` stacks the radios, `horizontal` lays them out in a wrapping

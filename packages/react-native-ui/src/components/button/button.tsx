@@ -1,5 +1,5 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
-import { useMinimumHitSlop } from "../../hooks/use-minimum-hit-target";
+import { useMinimumHitSlop, useThemeLength } from "../../hooks/use-minimum-hit-target";
 import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
@@ -7,15 +7,18 @@ import { TextClassProvider } from "../text/text.context";
 import { type ButtonContextValue, ButtonProvider, useButtonGroupItemContext } from "./button.context";
 import {
 	BUTTON_FOREGROUND_TOKEN,
+	BUTTON_HEIGHTS,
 	type ButtonLayout,
 	type ButtonMaterial,
 	type ButtonSize,
 	type ButtonSpinnerPlacement,
 	type ButtonVariant,
+	buttonHeightVariable,
 	buttonVariants,
 	resolveButtonFeedback,
 	resolveButtonHitTarget,
 	resolveButtonLayout,
+	resolveButtonSizeStep,
 	resolveGroupedButtonSize,
 	resolveSpinnerSwapIndex,
 } from "./button.variants";
@@ -95,10 +98,15 @@ function ButtonRoot({
 		[iconClassName, resolvedVariant]
 	);
 
-	// `sm` and `icon-sm` draw at 36pt; slop takes the target to the app's
+	// The step's height under the resolved theme, not the default token: a denser
+	// style draws `sm` at 32 and `md` at 36, and slop takes either to the app's
 	// minimum without moving a pixel. A caller's own `hitSlop` wins outright.
+	const height = useThemeLength(
+		buttonHeightVariable(resolvedSize),
+		BUTTON_HEIGHTS[resolveButtonSizeStep(resolvedSize)]
+	);
 	const minimumHitSlop = useMinimumHitSlop(
-		resolveButtonHitTarget({ orientation: item?.orientation, size: resolvedSize })
+		resolveButtonHitTarget({ height, orientation: item?.orientation, size: resolvedSize })
 	);
 
 	const label = accessibilityLabel ?? (layout.isSpinnerOnly ? textOf(children) : undefined);

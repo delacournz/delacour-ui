@@ -259,6 +259,32 @@ export function resolveComboboxClearHitSlop(size: InputSize, min: number = MIN_H
 	};
 }
 
+/**
+ * The trigger's height per size in points — `--spacing-input-*`, restated so a resolver can do
+ * arithmetic with it. Pinned against `tokens.css` by a test. Defaults only: the trigger reads the
+ * live token with `useThemeLength` and falls back to these.
+ */
+export const COMBOBOX_TRIGGER_HEIGHTS: Record<InputSize, number> = { sm: 36, md: 44, lg: 52 };
+
+/** The theme variable a size's trigger height is drawn from: `--spacing-input-md`. */
+export function comboboxTriggerHeightVariable(size: InputSize): `--spacing-input-${InputSize}` {
+	return `--spacing-input-${size}`;
+}
+
+/**
+ * The trigger's `hitSlop` for a box drawn `height` tall under the resolved theme, grown toward
+ * `min` (the app's minimum touch target).
+ *
+ * Vertical only: the trigger fills its row, so its width is already past any minimum, and the
+ * sides border the screen or a sibling the caller laid out. The slop reaches into the `Field`'s own
+ * gaps (label, description) and, between stacked fields, a gap of 16 or more.
+ */
+export function resolveComboboxTriggerHitSlop(height: number, min: number = MIN_HIT_TARGET): HitSlopInsets | undefined {
+	const vertical = normalizeHitSlop(resolveMinimumHitSlop({ height, width: Number.MAX_SAFE_INTEGER }, min));
+	if (!vertical) return undefined;
+	return { bottom: vertical.bottom, left: 0, right: 0, top: vertical.top };
+}
+
 /** The trigger's accessibility action that clears the selection. */
 export const COMBOBOX_CLEAR_ACTION = "clear";
 

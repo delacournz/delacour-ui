@@ -96,8 +96,41 @@ export const CHIP_HIT_SLOP: Record<ChipSize, { top: number; bottom: number; left
  */
 export const CHIP_CLOSE_SIZE: Record<ChipSize, number> = { sm: 14, md: 16, lg: 18 };
 
+const CHIP_ICON_STEPS = { sm: "xs", md: "sm", lg: "md" } as const satisfies Record<ChipSize, string>;
+
+/** The theme variable the close glyph's edge is drawn from at `size`: `--spacing-icon-xs` for `sm`, and so on. */
+export function chipCloseSizeVariable(size: ChipSize): `--spacing-icon-${(typeof CHIP_ICON_STEPS)[ChipSize]}` {
+	return `--spacing-icon-${CHIP_ICON_STEPS[size]}`;
+}
+
 /**
- * How far the close glyph's slop may reach on any side, in points.
+ * The chip's drawn height in points: line height + `py` + the border (26 / 34 /
+ * 42). Not a token, so it is restated here and pinned by a test.
+ */
+export const CHIP_HEIGHTS: Record<ChipSize, number> = { sm: 26, md: 34, lg: 42 };
+
+/**
+ * Room between the glyph's trailing edge and its chip's, plus half a `gap-2`:
+ * the `px-*` + border − the glyph's `-mr-*`, then 4. The vertical room depends
+ * on the glyph's edge, so see {@link resolveChipCloseHitCap}.
+ */
+const CHIP_CLOSE_TRAILING_ROOM: Record<ChipSize, number> = { sm: 13, md: 13, lg: 15 };
+
+/**
+ * How far the close glyph's slop may reach on any side for a glyph of edge
+ * `closeSize`: the tighter of the room above and below it (inside the chip, then
+ * half a `gap-2`) and the room trailing it. A smaller glyph under a denser theme
+ * has more room above and below, never more than the trailing edge allows.
+ * At the default glyph this is {@link CHIP_CLOSE_HIT_CAP}.
+ */
+export function resolveChipCloseHitCap(size: ChipSize, closeSize: number = CHIP_CLOSE_SIZE[size]): number {
+	const vertical = (CHIP_HEIGHTS[size] - closeSize) / 2 + 4;
+	return Math.max(0, Math.min(vertical, CHIP_CLOSE_TRAILING_ROOM[size]));
+}
+
+/**
+ * How far the close glyph's slop may reach on any side, in points, at the
+ * default glyph size.
  *
  * The glyph sits inside its chip, so slop is free up to the chip's own edge
  * and then half a `gap-2` (4) beyond it, no further: past that it lands on the
@@ -133,17 +166,18 @@ export const CHIP_CLOSE_HIT_SLOP: Record<ChipSize, number> = {
 
 /**
  * The close glyph's `hitSlop` at `size` for a minimum target of `min`: half the
- * shortfall on each side, held to {@link CHIP_CLOSE_HIT_CAP}, and the leading
+ * shortfall on each side, held to {@link resolveChipCloseHitCap}, and the leading
  * side (left, or right when `isRTL`) held to {@link CHIP_CLOSE_LEADING_CAP} so
- * it stays off the label. Pure, so it is unit-testable.
+ * it stays off the label. `closeSize` is the glyph's edge under the resolved
+ * theme (default: the default token's). Pure, so it is unit-testable.
  */
 export function resolveChipCloseHitSlop(
 	size: ChipSize,
 	min: number = MIN_HIT_TARGET,
-	{ isRTL = false }: { isRTL?: boolean } = {}
+	{ isRTL = false, closeSize = CHIP_CLOSE_SIZE[size] }: { isRTL?: boolean; closeSize?: number } = {}
 ): HitSlopInsets {
 	const insets = normalizeHitSlop(
-		resolveMinimumHitSlop(CHIP_CLOSE_SIZE[size], min, { cap: CHIP_CLOSE_HIT_CAP[size] })
+		resolveMinimumHitSlop(closeSize, min, { cap: resolveChipCloseHitCap(size, closeSize) })
 	) ?? { bottom: 0, left: 0, right: 0, top: 0 };
 	const leading = Math.min(CHIP_CLOSE_LEADING_CAP[size], isRTL ? insets.right : insets.left);
 	return isRTL ? { ...insets, right: leading } : { ...insets, left: leading };

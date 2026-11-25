@@ -257,6 +257,14 @@ describe("the indicator slot", () => {
 		}
 	});
 
+	test("an unselected ring is drawn in input, never the border hairline, in either variant", () => {
+		for (const variant of ["primary", "secondary"] as const) {
+			const indicator = radioVariants({ variant, isSelected: false }).indicator();
+			expect(indicator).toContain("border-input");
+			expect(indicator).not.toContain("border-border");
+		}
+	});
+
 	test("carries no text colour, in any cell", () => {
 		for (const cell of CELLS) {
 			expect(radioVariants(cell).indicator()).not.toMatch(/\btext-/);

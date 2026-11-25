@@ -296,6 +296,8 @@ export const treeVariants = tv({
 		actions: "flex-row items-center gap-2 ps-2",
 		/** The children of an open branch. */
 		group: "w-full",
+		/** The selected row's leading bar — a non-colour cue (WCAG 1.4.1), `primary` against the page for 3:1. */
+		marker: "absolute start-0 inset-y-1.5 w-1 rounded-full bg-primary",
 		/** A branch's guide — a hairline down its group, under its indicator. */
 		line: "absolute top-0 bottom-0 w-px bg-border",
 	},
@@ -305,7 +307,7 @@ export const treeVariants = tv({
 			md: { trigger: "min-h-11", press: "gap-2", indicator: "w-6", glyph: "size-icon-sm" },
 		},
 		isSelected: {
-			true: { trigger: "bg-accent", label: "text-accent-foreground" },
+			true: { trigger: "bg-accent", label: "font-semibold text-accent-foreground" },
 			false: { label: "text-foreground" },
 		},
 		// The empty `false` branch is load-bearing typing: a map with only `true`

@@ -17,6 +17,7 @@ import {
 	BUTTON_VARIANTS,
 	type ButtonIconSize,
 	type ButtonLabelSize,
+	buttonHeightVariable,
 	buttonVariants,
 	resolveButtonFeedback,
 	resolveButtonHitTarget,
@@ -1036,6 +1037,28 @@ describe("resolveButtonHitTarget", () => {
 		for (const size of ["md", "lg", "icon-md", "icon-lg"] as const) {
 			expect(resolveMinimumHitSlop(resolveButtonHitTarget({ size }))).toBeUndefined();
 		}
+	});
+
+	test("the theme's resolved height wins over the default token: house sm 32, md 36", () => {
+		expect(resolveButtonHitTarget({ height: 32, size: "sm" })).toEqual({ height: 32, width: UNBOUNDED });
+		expect(resolveMinimumHitSlop(resolveButtonHitTarget({ height: 32, size: "icon-sm" }))).toBe(6);
+		expect(resolveMinimumHitSlop(resolveButtonHitTarget({ height: 36, size: "md" }))).toEqual({
+			bottom: 4,
+			left: 0,
+			right: 0,
+			top: 4,
+		});
+		expect(resolveMinimumHitSlop(resolveButtonHitTarget({ height: 36, size: "icon-md" }))).toBe(4);
+		expect(resolveButtonHitTarget({ height: 32, orientation: "horizontal", size: "icon-sm" })).toEqual({
+			height: 32,
+			width: UNBOUNDED,
+		});
+	});
+
+	test("buttonHeightVariable names the token each step draws from", () => {
+		expect(buttonHeightVariable("sm")).toBe("--spacing-button-sm");
+		expect(buttonHeightVariable("icon-md")).toBe("--spacing-button-md");
+		expect(buttonHeightVariable("icon-lg")).toBe("--spacing-button-lg");
 	});
 
 	test("inside a group the slop never reaches along the run, into a neighbour", () => {

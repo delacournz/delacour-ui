@@ -75,6 +75,15 @@ sheets.
   `showOutsideDays={false}` is an empty cell of the same height, never a missing one.
 - **The whole cell is the target**, not the circle. A column on a phone is wider than the circle
   is tall, and the gap belongs to whichever day it sits beside.
+- **An arrow's slop is sized from the theme and never reaches the caption.** `icon-sm` draws at
+  `--spacing-button-sm`, read live, so a denser style's 32pt arrow still reaches 44 up and down.
+  `resolveCalendarNavHitSlop` holds only the caption-facing side to half the header's `gap-1`
+  (2pt): the caption is a pressable of its own, and slop overlapping it would hand a press meant
+  for the month picker to whichever sits later in the tree. The outer side grows fully, so a
+  default 36pt arrow is 42 wide and a dense 32pt one 40. The side flips with RTL.
+- **A day cell grows no slop.** Rows touch with no gap and columns share the width, so any slop
+  would overlap a neighbour and hand it the press. Under a denser style a cell is as short as
+  `--spacing-input-sm|md|lg`; to reach 44, raise the token, not the slop.
 - **The cell is on the input scale** (`h-input-*`, `size-input-*`, `text-input-*`): sm 36, md 44,
   lg 52. `md` and `lg` meet 44pt.
 - **The jump view sits over the grid** (`absolute inset-0`) while the weeks are hidden with

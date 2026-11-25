@@ -42,6 +42,13 @@ export type BaseColor = {
  * derived in `theme.css` from `background`, `foreground` or `secondary`, so it
  * follows a base colour without being restated; writing them out would freeze
  * them at neutral's values the moment a different ramp was applied.
+ *
+ * Two ramps are NOT shadcn's as shipped. `neutral` — the default, what `delacour
+ * init` writes — and the house `graphite` are held to WCAG 2.2 AA by
+ * `contrast-audit.test.ts`, so each darkens `muted-foreground`, `input`, `ring`
+ * and `sidebar-ring` until every text pair clears 4.5:1 and a control's edge and
+ * the focus ring clear 3:1. The other five are transcribed untouched; `/theme`
+ * flags whatever they miss.
  */
 export const BASE_COLORS: readonly BaseColor[] = [
 	{
@@ -59,13 +66,13 @@ export const BASE_COLORS: readonly BaseColor[] = [
 			secondary: "oklch(0.97 0 0)",
 			"secondary-foreground": "oklch(0.205 0 0)",
 			muted: "oklch(0.97 0 0)",
-			"muted-foreground": "oklch(0.556 0 0)",
+			"muted-foreground": "oklch(0.539 0 0)",
 			accent: "oklch(0.97 0 0)",
 			"accent-foreground": "oklch(0.205 0 0)",
 			destructive: "oklch(0.577 0.245 27.325)",
 			border: "oklch(0.922 0 0)",
-			input: "oklch(0.922 0 0)",
-			ring: "oklch(0.708 0 0)",
+			input: "oklch(0.65 0 0)",
+			ring: "oklch(0.556 0 0)",
 			"chart-1": "oklch(0.87 0 0)",
 			"chart-2": "oklch(0.556 0 0)",
 			"chart-3": "oklch(0.439 0 0)",
@@ -78,7 +85,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 			"sidebar-accent": "oklch(0.97 0 0)",
 			"sidebar-accent-foreground": "oklch(0.205 0 0)",
 			"sidebar-border": "oklch(0.922 0 0)",
-			"sidebar-ring": "oklch(0.708 0 0)",
+			"sidebar-ring": "oklch(0.556 0 0)",
 		},
 		dark: {
 			background: "oklch(0.145 0 0)",
@@ -97,7 +104,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 			"accent-foreground": "oklch(0.985 0 0)",
 			destructive: "oklch(0.704 0.191 22.216)",
 			border: "oklch(1 0 0 / 10%)",
-			input: "oklch(1 0 0 / 15%)",
+			input: "oklch(1 0 0 / 36%)",
 			ring: "oklch(0.556 0 0)",
 			"chart-1": "oklch(0.87 0 0)",
 			"chart-2": "oklch(0.556 0 0)",
@@ -574,10 +581,10 @@ export const BASE_COLORS: readonly BaseColor[] = [
 			"muted-foreground": "oklch(0.439 0 0)",
 			accent: "oklch(0.955 0 0)",
 			"accent-foreground": "oklch(0.269 0 0)",
-			destructive: "oklch(0.637 0.237 25.331)",
+			destructive: "oklch(0.577 0.245 27.325)",
 			border: "oklch(0 0 0 / 12%)",
-			input: "oklch(0 0 0 / 14%)",
-			ring: "oklch(0.708 0 0)",
+			input: "oklch(0 0 0 / 44%)",
+			ring: "oklch(0.556 0 0)",
 			"chart-1": "oklch(0.646 0.222 41.116)",
 			"chart-2": "oklch(0.6 0.118 184.704)",
 			"chart-3": "oklch(0.398 0.07 227.392)",
@@ -590,7 +597,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 			"sidebar-accent": "oklch(0.955 0 0)",
 			"sidebar-accent-foreground": "oklch(0.269 0 0)",
 			"sidebar-border": "oklch(0 0 0 / 10%)",
-			"sidebar-ring": "oklch(0.708 0 0)",
+			"sidebar-ring": "oklch(0.556 0 0)",
 		},
 		dark: {
 			background: "oklch(0.188 0 0)",
@@ -609,7 +616,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 			"accent-foreground": "oklch(0.97 0 0)",
 			destructive: "oklch(0.704 0.191 22.216)",
 			border: "oklch(1 0 0 / 10%)",
-			input: "oklch(1 0 0 / 12%)",
+			input: "oklch(1 0 0 / 36%)",
 			ring: "oklch(0.556 0 0)",
 			"chart-1": "oklch(0.623 0.214 259.815)",
 			"chart-2": "oklch(0.696 0.17 162.48)",

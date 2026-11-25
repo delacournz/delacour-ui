@@ -58,7 +58,10 @@ export default {
 			specsDir: "e2e/previews",
 			platform: "ios",
 			profile: "iphone-17-pro",
-			app: true,
+			// The dev client, pinned: warden's e2e now defaults to the repacked `simulator`
+			// kind, which starts no Metro, so the specs' cold-start wait for the home
+			// screen's navbar timed out on the springboard for every demo.
+			app: { kind: "dev" },
 			metro: { launchArgs: DEV_MENU_OFF, prewarm: true, readyTimeout: "5m" },
 			isolate: "device",
 			shutdown: "idle",

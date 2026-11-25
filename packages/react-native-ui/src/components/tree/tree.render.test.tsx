@@ -156,6 +156,17 @@ describe("Tree", () => {
 			expect(screen.getByRole("button", { name: "index.ts" }).props.accessibilityState).not.toHaveProperty("selected");
 		});
 
+		test("a selected row draws a leading bar; an unselected one does not", async () => {
+			await renderWithProviders(<Demo defaultExpanded={["src"]} defaultValue="index" selectionMode="single" />);
+			expect(screen.getAllByTestId("tree-selected-marker", { includeHiddenElements: true })).toHaveLength(1);
+		});
+
+		test("a none-mode tree draws no bar, even on a pressed row", async () => {
+			await renderWithProviders(<Demo defaultExpanded={["src"]} selectionMode="none" />);
+			await activate(screen.getByRole("button", { name: "index.ts" }));
+			expect(screen.queryAllByTestId("tree-selected-marker", { includeHiddenElements: true })).toHaveLength(0);
+		});
+
 		test("single, uncontrolled: defaultValue seeds it and a press moves it", async () => {
 			const onValueChange = jest.fn();
 			await renderWithProviders(

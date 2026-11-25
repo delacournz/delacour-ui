@@ -107,19 +107,24 @@ The reference implementation for the patterns in the package
   the left edge unless it also sets `self-center`. This is what made an earlier
   `only` implementation collapse a full-width button into a small box flush
   left. Prefer not taking the width at all.
-- **`sm` and `icon-sm` reach 44pt with `hitSlop`, not with size.** Both draw
-  at 36. `resolveButtonHitTarget` says what the button draws at — a labelled
-  button's height (its width follows the label), an `icon-*` button's square —
-  and `useMinimumHitSlop` grows it to the app's minimum: 4pt a side, or 6 on
-  Android under `DelacourProvider isMaterialHitTarget`. `md` and `lg` get
-  nothing. Inside a `Button.Group` the axis the run lies along gets none, so a
+- **A short button reaches 44pt with `hitSlop`, not with size, sized from the
+  theme's height.** By default `sm` and `icon-sm` draw at 36; a denser style
+  (the playground's house style: `sm` 32, `md` 36) shortens `md` as well. The
+  button reads its step's `--spacing-button-*` through `useThemeLength`
+  (`buttonHeightVariable`, falling back to `BUTTON_HEIGHTS`), so the slop
+  follows `updateCSSVariables` and the light/dark switch. `resolveButtonHitTarget`
+  says what the button draws at — a labelled button's height (its width follows
+  the label), an `icon-*` button's square — and `useMinimumHitSlop` grows it to
+  the app's minimum: 4pt a side at 36, 6 at 32, more on Android under
+  `DelacourProvider isMaterialHitTarget`. At 44 and above it gets nothing. Inside a `Button.Group` the axis the run lies along gets none, so a
   member's slop never lands on its neighbour. Two `sm` / `icon-sm` buttons
   that abut outside a `Button.Group` need their own `hitSlop` with nothing on
   the shared edge: the later one is hit-tested first and its slop takes presses
   on the drawn neighbour (Map's zoom pair does this). A caller's `hitSlop` wins
-  outright. The heights are `BUTTON_HEIGHTS`, pinned to `--spacing-button-*`;
-  an app that retunes density at runtime moves the drawn height and not the
-  slop, which is the trade for not measuring every button on layout.
+  outright. The theme token is read, not the layout: a caller's `className`
+  that overrides the height is not seen, and that caller passes its own
+  `hitSlop`. `BUTTON_HEIGHTS` stays the default-token table, pinned to
+  `tokens.css`.
   On Android the slop does not land yet: the root's `overflow-hidden`
   (load-bearing, see above) stops Gesture Handler's orchestrator descending
   into the button for a touch outside its bounds — see

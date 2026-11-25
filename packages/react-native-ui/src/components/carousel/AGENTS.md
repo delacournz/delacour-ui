@@ -126,6 +126,9 @@ file stable: its functions are the contract both consume.
 - **Dots stretch by width, not `scaleX`** — a scaled `rounded-full` is an ellipse
   (`Tabs.Indicator`'s reason). Past `maxDots` (default 7) the row is a window
   centred on the active dot.
+- **Previous and Next are `Button`s and size their own slop from the theme.** `icon-sm` reads
+  `--spacing-button-sm`, so a denser style's 32pt arrow still reaches 44. Controls hold them
+  twelve points from the dots, so their slop overlaps nothing.
 - **The caption fades with its slide's offset**, full on the active slide and
   gone one slide out, so a peeking neighbour shows its picture and not its words.
   Colour sits on the `Text` (rule 1); the frame carries layout and the scrim.

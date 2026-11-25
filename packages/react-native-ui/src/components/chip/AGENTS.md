@@ -74,10 +74,15 @@ and `Chip.CloseButton`.
 - **Hit slop is vertical and capped at four points.** Chips wrap with `gap-2`;
   slop past half that gap reaches into the neighbouring row and makes a tap
   between two chips ambiguous. `CHIP_HIT_SLOP` is never horizontal for the same
-  reason, so `sm` and `md` chips fall short of 44 tall on purpose. The close
-  glyph is 14–18 points and bare, so it grows with `useMinimumHitSlop` on every
-  side, capped by `CHIP_CLOSE_HIT_CAP` at its chip's edge plus half a gap — more
-  would land on the next chip, and the later sibling wins the press. Its leading
+  reason, so `sm` and `md` chips fall short of 44 tall on purpose: 26 + 8 = 34 and
+  34 + 8 = 42, and `lg` 42 + 4 = 46. The chip's height is line height + `py` +
+  border, not a token, so no theme retune moves it and `CHIP_HIT_SLOP` stays a
+  constant. The close glyph is bare and drawn at `--spacing-icon-xs/sm/md`
+  (14–18 by default), read live with `useThemeLength`, so it grows with the
+  theme's value on every side, capped by `resolveChipCloseHitCap` at its chip's
+  edge plus half a gap — more would land on the next chip, and the later sibling
+  wins the press. `CHIP_CLOSE_SIZE` and `CHIP_CLOSE_HIT_CAP` stay the default-token
+  values. Its leading
   side stops at `CHIP_CLOSE_LEADING_CAP`, half the label gap: the close button is
   the inner target, hit-tested first, so more would remove a pressable chip on a
   press meant to toggle it.

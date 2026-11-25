@@ -19,7 +19,7 @@ colors:
   on-primary-dark: "oklch(0.269 0 0)"
   on-primary-light: "oklch(0.985 0 0)"
   error-dark: "oklch(0.704 0.191 22.216)"
-  error-light: "oklch(0.637 0.237 25.331)"
+  error-light: "oklch(0.577 0.245 27.325)"
   capture-dark: "oklch(0.188 0 0)"
   capture-light: "oklch(1 0 0)"
 typography:

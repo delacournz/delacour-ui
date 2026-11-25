@@ -157,8 +157,9 @@ function GridItemRoot({
  * `GridItem.Actions` (development warns): give the tile `accessible={false}`,
  * or mirror the control as a named `accessibilityActions` entry on the tile and
  * hide the drawn one from assistive technology. `accessible={false}` makes a
- * pressable tile layout to a screen reader, so its own `onPress` and
- * `onLongPress` are touch-only; mirror them too when they must stay reachable.
+ * pressable tile plain layout to a screen reader, so its own `onPress` and
+ * `onLongPress` are touch-only; when they must stay reachable, keep the tile one
+ * stop and mirror the controls instead.
  *
  * @example
  * <GridItem.Group columns={4} gap={12}>

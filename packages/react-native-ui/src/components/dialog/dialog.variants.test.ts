@@ -1,8 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
+import { resolveMinimumHitSlop } from "../pressable/pressable.variants";
 import {
 	DIALOG_CLOSE_HIT_SLOP,
 	DIALOG_CLOSE_SIZE,
+	DIALOG_CLOSE_SIZE_VARIABLE,
 	DIALOG_ENTER_SCALE,
 	DIALOG_ENTER_TRANSLATE_Y,
 	DIALOG_FOOTER_VARIANTS,
@@ -180,6 +182,19 @@ describe("motion constants", () => {
 describe("DIALOG_CLOSE_HIT_SLOP", () => {
 	test("brings a bare corner glyph up toward the 44pt minimum", () => {
 		expect(DIALOG_CLOSE_SIZE + 2 * Number(DIALOG_CLOSE_HIT_SLOP)).toBeGreaterThanOrEqual(44);
+	});
+});
+
+describe("the close's size follows the theme", () => {
+	test("names the icon token, whose default is the constant", () => {
+		expect(DIALOG_CLOSE_SIZE_VARIABLE).toBe("--spacing-icon-lg");
+		expect(DIALOG_CLOSE_SIZE).toBe(20);
+	});
+
+	test("the house style's 18pt glyph gets 13pt of slop, not the default 12", () => {
+		expect(resolveMinimumHitSlop(DIALOG_CLOSE_SIZE)).toBe(12);
+		expect(resolveMinimumHitSlop(18)).toBe(13);
+		expect(resolveMinimumHitSlop(18, 48)).toBe(15);
 	});
 });
 

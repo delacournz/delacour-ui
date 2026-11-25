@@ -2,14 +2,9 @@ import { type ReactElement, useCallback, useEffect } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
-import { usePaginationPart } from "./pagination.context";
+import { usePaginationHitSlop, usePaginationPart } from "./pagination.context";
 import type { PaginationTargetProps } from "./pagination.types";
-import {
-	formatPageLabel,
-	PAGINATION_FILL_DURATION_MS,
-	PAGINATION_HIT_SLOP,
-	paginationVariants,
-} from "./pagination.variants";
+import { formatPageLabel, PAGINATION_FILL_DURATION_MS, paginationVariants } from "./pagination.variants";
 
 export type PaginationItemProps = PaginationTargetProps & {
 	/** The page this item moves to, one-based. */
@@ -28,7 +23,9 @@ export type PaginationItemProps = PaginationTargetProps & {
  * value, so an item that mounts current — the window sliding a new page in — is
  * drawn filled rather than fading up from nothing.
  *
- * An `sm` item draws at 36pt and carries 4pt of `hitSlop` to reach 44.
+ * Slop follows the theme's `--spacing-button-*` height: an `sm` item draws at 36pt by
+ * default and carries 4pt to reach 44, a denser style's 32 gets 6pt top and bottom and
+ * 4pt either side (half the run's gap, so neighbours never overlap).
  */
 export function PaginationItem({
 	page,
@@ -43,6 +40,7 @@ export function PaginationItem({
 	...props
 }: PaginationItemProps): ReactElement {
 	const root = usePaginationPart("Pagination.Item");
+	const minimumHitSlop = usePaginationHitSlop(root.size);
 	const isCurrent = page === root.page;
 	const isDisabled = root.isDisabled || disabled === true;
 	const slots = paginationVariants({ isCurrent, isDisabled, size: root.size });
@@ -67,7 +65,7 @@ export function PaginationItem({
 			disabled={isDisabled}
 			feedback={feedback}
 			haptic={haptic ?? root.haptic}
-			hitSlop={hitSlop ?? (PAGINATION_HIT_SLOP[root.size] || undefined)}
+			hitSlop={hitSlop ?? minimumHitSlop}
 			onPress={handlePress}
 			{...props}
 		>

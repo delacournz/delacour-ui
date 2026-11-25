@@ -81,11 +81,16 @@ disabled. The caller owns fetching and slicing.
   root disables every target.
 - **The fade lands on each element, never on the root.** A control already disabled at its end
   would otherwise fade twice under a disabled root.
-- **44pt targets in `sm`.** An `sm` target draws at 36 and carries 4pt of `hitSlop` on every
-  side (`PAGINATION_HIT_SLOP`). The `sm` run's gap is eight, so one target's slop meets its
-  neighbour's exactly and never overlaps it — an overlap would hand the press to whichever
-  sibling sits later in the tree. The suite reads both numbers back out of `tokens.css` and the
-  `run` slot.
+- **Slop follows the theme's height, not a constant.** Each target reads the resolved
+  `--spacing-button-sm` / `-md` and `resolvePaginationHitSlop` grows it toward the app's minimum.
+  A slop fixed from the default heights (36 and 44) left a denser style's targets at 40 (`sm` 32)
+  and 36 (`md` 36), under the minimum, with no sign anything had changed. The cross axis (top and
+  bottom) grows fully; the run axis is capped at half the run's gap (`PAGINATION_RUN_GAP`, 8 in `sm`
+  and 4 in `md`), because two slops meeting in a gap hand the press to whichever sibling sits later
+  in the tree. Under the default theme nothing is capped and nothing changes (`PAGINATION_HIT_SLOP`
+  keeps those numbers). Under a denser one the run axis can stay short of the minimum rather than
+  overlap: `sm` at 32 reaches 40 wide and 44 tall, `md` at 36 reaches 40 wide and 44 tall. A caller's
+  own `hitSlop` wins.
 
 ## Accessibility
 

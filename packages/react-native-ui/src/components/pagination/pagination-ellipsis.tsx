@@ -1,14 +1,9 @@
 import { type ReactElement, useCallback } from "react";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
-import { usePaginationPart } from "./pagination.context";
+import { usePaginationHitSlop, usePaginationPart } from "./pagination.context";
 import type { PaginationTargetProps } from "./pagination.types";
-import {
-	formatEllipsisLabel,
-	PAGINATION_HIT_SLOP,
-	paginationVariants,
-	resolveEllipsisTarget,
-} from "./pagination.variants";
+import { formatEllipsisLabel, paginationVariants, resolveEllipsisTarget } from "./pagination.variants";
 
 export type PaginationEllipsisProps = PaginationTargetProps & {
 	/** Which way the gap jumps: `-1` back, `1` forward. */
@@ -33,6 +28,7 @@ export function PaginationEllipsis({
 	...props
 }: PaginationEllipsisProps): ReactElement {
 	const root = usePaginationPart("Pagination.Ellipsis");
+	const minimumHitSlop = usePaginationHitSlop(root.size);
 	const isDisabled = root.isDisabled || disabled === true;
 	const slots = paginationVariants({ isDisabled, size: root.size });
 
@@ -49,7 +45,7 @@ export function PaginationEllipsis({
 			disabled={isDisabled}
 			feedback={feedback}
 			haptic={haptic ?? root.haptic}
-			hitSlop={hitSlop ?? (PAGINATION_HIT_SLOP[root.size] || undefined)}
+			hitSlop={hitSlop ?? minimumHitSlop}
 			onPress={handlePress}
 			{...props}
 		>

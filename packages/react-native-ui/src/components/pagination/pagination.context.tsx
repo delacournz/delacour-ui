@@ -1,7 +1,17 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import { useMinimumHitTarget, useThemeLength } from "../../hooks/use-minimum-hit-target";
 import type { PaginationLabels } from "../../lib/labels";
 import type { HapticFeedback } from "../pressable/pressable";
-import type { PaginationSize, PaginationToken, PaginationVariant } from "./pagination.variants";
+import type { HitSlopInsets } from "../pressable/pressable.variants";
+import {
+	PAGINATION_DEFAULT_HEIGHT,
+	PAGINATION_RUN_GAP,
+	type PaginationSize,
+	type PaginationToken,
+	type PaginationVariant,
+	paginationHeightVariable,
+	resolvePaginationHitSlop,
+} from "./pagination.variants";
 
 export type PaginationContextValue = {
 	/** The current page, one-based and already clamped into `[1, max(1, count)]`. */
@@ -78,4 +88,15 @@ export function usePaginationPart(component: string): PaginationContextValue {
 		throw new Error(`${component} must be rendered inside a <Pagination>.`);
 	}
 	return context;
+}
+
+/**
+ * The `hitSlop` every target of a `size` carries: its drawn height is read from
+ * the resolved theme's `--spacing-button-*`, so a denser style gets the slop it
+ * needs rather than the default's. Internal; a caller's own `hitSlop` wins at
+ * each part.
+ */
+export function usePaginationHitSlop(size: PaginationSize): number | HitSlopInsets | undefined {
+	const height = useThemeLength(paginationHeightVariable(size), PAGINATION_DEFAULT_HEIGHT[size]);
+	return resolvePaginationHitSlop(height, useMinimumHitTarget(), PAGINATION_RUN_GAP[size]);
 }

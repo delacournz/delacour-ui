@@ -1,6 +1,7 @@
 import type { VariantProps } from "tailwind-variants";
 import { DELACOUR_DEFAULT_LABELS, type PaginationLabels } from "../../lib/labels";
 import { tv } from "../../lib/tv";
+import type { HitSlopInsets } from "../pressable/pressable.variants";
 
 /**
  * What the run between the arrows shows. `numbers` is a fixed-width run of page
@@ -44,15 +45,55 @@ export const PAGINATION_NARROWEST_ROW = 343;
 export const PAGINATION_MIN_TARGET = 44;
 
 /**
- * Slop on every side of each target, in points.
+ * Slop on every side of each target under the **default** theme, in points.
  *
  * An `sm` target draws at 36 (`--spacing-button-sm`) and reaches 44 with four
- * either side. The run's `sm` gap is eight, so one target's slop meets its
- * neighbour's exactly and never overlaps it — an overlap would hand the press to
- * whichever sibling happens to sit later in the tree. The suite reads both
- * numbers back out of `tokens.css` and the `run` slot.
+ * either side; `md` draws at 44 and needs none. These are the default tokens'
+ * numbers only: a denser style draws `sm` at 32 and `md` at 36, and the parts
+ * read the live token through {@link resolvePaginationHitSlop} instead. The
+ * suite pins this table to what that resolver gives for the default heights.
  */
 export const PAGINATION_HIT_SLOP: Record<PaginationSize, number> = { sm: 4, md: 0 };
+
+/**
+ * The gap between neighbouring targets in the run, in points — the `run` slot's
+ * `gap-2` and `gap-1`, restated so slop can be capped by it. A test pins it to
+ * the slot.
+ */
+export const PAGINATION_RUN_GAP: Record<PaginationSize, number> = { sm: 8, md: 4 };
+
+/**
+ * The `hitSlop` that takes a target drawn `height` points high toward `min`,
+ * without letting one target's slop reach its neighbour's.
+ *
+ * Targets are at least as wide as they are tall, so `height` stands for both
+ * edges. **The cross axis (top and bottom) grows fully** — nothing sits above or
+ * below a run — so `height + 2 × slop` reaches `min`. **The run axis (left and
+ * right) is capped at half `gap`**: two slops meeting in the gap would hand the
+ * press to whichever sibling is later in the tree. Under the default theme the
+ * cap never bites; under a denser one the run axis can stay short of `min`
+ * (the width then falls short by the gap's remainder) rather than overlap.
+ *
+ * `undefined` when the target already reaches `min`, or `height` is not a number.
+ *
+ * Pure, so the matrix is unit-testable. See AGENTS.md.
+ */
+export function resolvePaginationHitSlop(height: number, min: number, gap: number): number | HitSlopInsets | undefined {
+	if (!Number.isFinite(height)) return undefined;
+	const vertical = Math.max(0, (min - height) / 2);
+	const horizontal = Math.min(Math.max(0, gap) / 2, vertical);
+	if (vertical === 0) return undefined;
+	if (horizontal === vertical) return vertical;
+	return { bottom: vertical, left: horizontal, right: horizontal, top: vertical };
+}
+
+/** The theme variable a size's target is drawn at: `--spacing-button-sm` or `-md`. */
+export function paginationHeightVariable(size: PaginationSize): `--spacing-button-${PaginationSize}` {
+	return `--spacing-button-${size}`;
+}
+
+/** The `--spacing-button-*` default each size falls back to when the theme holds none. */
+export const PAGINATION_DEFAULT_HEIGHT: Record<PaginationSize, number> = { sm: 36, md: 44 };
 
 /** One entry in the run: a page, or a gap that jumps the way it points. */
 export type PaginationToken = { kind: "page"; page: number } | { kind: "ellipsis"; direction: -1 | 1 };

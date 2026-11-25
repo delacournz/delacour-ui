@@ -17,6 +17,7 @@ import {
 	PAGINATION_HIT_SLOP,
 	PAGINATION_MIN_TARGET,
 	PAGINATION_NARROWEST_ROW,
+	PAGINATION_RUN_GAP,
 	PAGINATION_SIZES,
 	PAGINATION_VARIANTS,
 	type PaginationToken,
@@ -27,6 +28,7 @@ import {
 	resolveEllipsisTarget,
 	resolveItemForeground,
 	resolvePageCorrection,
+	resolvePaginationHitSlop,
 	resolvePaginationRange,
 	resolvePaginationRunLength,
 	resolvePaginationStatus,
@@ -437,6 +439,61 @@ describe("paginationVariants", () => {
 			const gapPx = step(cls(paginationVariants({ size }).run()), "gap") * 4;
 			expect(gapPx).toBeGreaterThanOrEqual(2 * PAGINATION_HIT_SLOP[size]);
 		}
+	});
+});
+
+describe("hit slop from the theme's height", () => {
+	test("the run gap constant is the run slot's gap", () => {
+		for (const size of PAGINATION_SIZES) {
+			const gapPx = step(cls(paginationVariants({ size }).run()), "gap") * 4;
+			expect(PAGINATION_RUN_GAP[size]).toBe(gapPx);
+		}
+	});
+
+	test("the default heights reproduce the constant: sm 36 gets 4, md 44 gets none", () => {
+		expect(resolvePaginationHitSlop(36, 44, PAGINATION_RUN_GAP.sm)).toBe(PAGINATION_HIT_SLOP.sm);
+		expect(resolvePaginationHitSlop(44, 44, PAGINATION_RUN_GAP.md)).toBeUndefined();
+	});
+
+	test("a denser sm (32) grows the cross axis by 6 and holds the run axis at half the 8pt gap", () => {
+		expect(resolvePaginationHitSlop(32, 44, PAGINATION_RUN_GAP.sm)).toEqual({
+			bottom: 6,
+			left: 4,
+			right: 4,
+			top: 6,
+		});
+	});
+
+	test("a denser md (36) grows the cross axis by 4 and holds the run axis at half the 4pt gap", () => {
+		expect(resolvePaginationHitSlop(36, 44, PAGINATION_RUN_GAP.md)).toEqual({
+			bottom: 4,
+			left: 2,
+			right: 2,
+			top: 4,
+		});
+	});
+
+	test("the run axis never exceeds half the gap, so neighbouring slops cannot overlap", () => {
+		for (const height of [24, 28, 32, 36, 40, 44]) {
+			for (const size of PAGINATION_SIZES) {
+				const slop = resolvePaginationHitSlop(height, 44, PAGINATION_RUN_GAP[size]);
+				const run = typeof slop === "number" ? slop : (slop?.left ?? 0);
+				expect(2 * run).toBeLessThanOrEqual(PAGINATION_RUN_GAP[size]);
+			}
+		}
+	});
+
+	test("the cross axis always reaches the minimum, and a Material 48 minimum grows it further", () => {
+		for (const height of [32, 36, 44]) {
+			const slop = resolvePaginationHitSlop(height, 48, 4);
+			const cross = typeof slop === "number" ? slop : (slop?.top ?? 0);
+			expect(height + 2 * cross).toBeGreaterThanOrEqual(48);
+		}
+	});
+
+	test("a target already at the minimum, or an unreadable height, is handled", () => {
+		expect(resolvePaginationHitSlop(48, 44, 8)).toBeUndefined();
+		expect(resolvePaginationHitSlop(Number.NaN, 44, 8)).toBeUndefined();
 	});
 });
 

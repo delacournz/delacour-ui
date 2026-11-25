@@ -9,12 +9,15 @@ import {
 	CHIP_CLOSE_SIZE,
 	CHIP_COLORS,
 	CHIP_FOREGROUND_TOKEN,
+	CHIP_HEIGHTS,
 	CHIP_HIT_SLOP,
 	CHIP_SIZES,
 	CHIP_SURFACES,
 	CHIP_VARIANTS,
+	chipCloseSizeVariable,
 	chipVariants,
 	resolveChipCloseExposure,
+	resolveChipCloseHitCap,
 	resolveChipCloseHitSlop,
 	resolveChipForegroundToken,
 	resolveChipMode,
@@ -380,5 +383,46 @@ describe("resolveChipCloseExposure", () => {
 describe("CHIP_CLOSE_HIT_SLOP", () => {
 	test("is the 44pt slop held to each size's cap", () => {
 		expect(CHIP_CLOSE_HIT_SLOP).toEqual({ sm: 10, md: 13, lg: 13 });
+	});
+});
+
+describe("the close glyph under a retuned theme", () => {
+	test("its size variable is the icon step the root's icon slot sets", () => {
+		for (const size of CHIP_SIZES) {
+			const token = chipVariants({ size })
+				.icon()
+				.match(/\bsize-(icon-[\w-]+)\b/)?.[1];
+			expect(`--spacing-${token}`).toBe(chipCloseSizeVariable(size));
+		}
+	});
+
+	test("the restated chip heights are line height + py + border", () => {
+		expect(CHIP_HEIGHTS).toEqual({ sm: 26, md: 34, lg: 42 });
+	});
+
+	test("at the default glyph the cap is the published constant", () => {
+		for (const size of CHIP_SIZES) {
+			expect(resolveChipCloseHitCap(size)).toBe(CHIP_CLOSE_HIT_CAP[size]);
+			expect(resolveChipCloseHitSlop(size, 44, { closeSize: CHIP_CLOSE_SIZE[size] })).toEqual(
+				resolveChipCloseHitSlop(size)
+			);
+		}
+	});
+
+	test("a smaller glyph gets more slop, held to the room above, below and trailing it", () => {
+		const slop = resolveChipCloseHitSlop("md", 44, { closeSize: 12 });
+		expect(slop.top).toBe(13);
+		expect(slop.bottom).toBe(13);
+		expect(slop.right).toBe(13);
+		expect(resolveChipCloseHitCap("sm", 8)).toBe(13);
+	});
+
+	test("a larger glyph is capped by the room above and below it", () => {
+		expect(resolveChipCloseHitCap("sm", 20)).toBe(7);
+		expect(resolveChipCloseHitSlop("sm", 44, { closeSize: 20 }).top).toBe(7);
+	});
+
+	test("the leading side still stops at half the label gap", () => {
+		expect(resolveChipCloseHitSlop("md", 44, { closeSize: 12 }).left).toBe(CHIP_CLOSE_LEADING_CAP.md);
 	});
 });

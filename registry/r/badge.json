@@ -64,6 +64,11 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/react-native-ui/src/components/badge/badge-label-text.ts",
+			"target": "badge/badge-label-text.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/badge/badge-label.tsx",
 			"target": "badge/badge-label.tsx",
 			"namespace": "ui",
@@ -131,6 +136,10 @@
 			"target": "badge/badge.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/labels",
+					"to": "@registry/lib/labels"
+				},
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"

@@ -8,7 +8,9 @@
 		"pressable"
 	],
 	"dependencies": [],
-	"expoDependencies": [],
+	"expoDependencies": [
+		"uniwind"
+	],
 	"devDependencies": [],
 	"files": [
 		{

@@ -20,7 +20,8 @@
 		"text",
 		"tv",
 		"use-keyboard-state-sync",
-		"use-labels"
+		"use-labels",
+		"use-minimum-hit-target"
 	],
 	"dependencies": [
 		"@delacour/react-native-bottom-sheet",
@@ -60,6 +61,10 @@
 			"target": "bottom-sheet/bottom-sheet-close.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-minimum-hit-target",
+					"to": "@registry/hooks/use-minimum-hit-target"
+				},
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
@@ -318,6 +323,10 @@
 				{
 					"from": "../icon/icon.variants",
 					"to": "@registry/ui/icon/icon.variants"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				},
 				{
 					"from": "@delacour/react-native-ui/bottom-sheet",

@@ -111,7 +111,7 @@ export const slideButtonVariants = tv({
 	slots: {
 		root: "relative justify-center overflow-hidden",
 		trail: "absolute start-0 top-0 bottom-0",
-		labelFrame: "justify-center py-2",
+		labelFrame: "justify-center py-1",
 		label: "text-center font-semibold",
 		labelClip: "absolute start-0 top-0 bottom-0 overflow-hidden",
 		labelOnTrailFrame: "absolute start-0 top-0 bottom-0 justify-center",

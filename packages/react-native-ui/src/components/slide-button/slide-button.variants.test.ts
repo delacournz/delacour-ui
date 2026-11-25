@@ -234,9 +234,9 @@ describe("slideButtonVariants", () => {
 		}
 	});
 
-	test("the label frame is in flow, so the rail grows with its text, and centres it", () => {
+	test("the label frame is in flow, so the rail grows with its text, and centres it, padded by the handle inset (py-1 = SLIDE_BUTTON_INSET) so a dense preset still sits level with Button at 1×", () => {
 		const frame = slideButtonVariants().labelFrame().split(/\s+/);
-		expect(frame).toEqual(expect.arrayContaining(["justify-center", "py-2"]));
+		expect(frame).toEqual(expect.arrayContaining(["justify-center", "py-1"]));
 		expect(frame).not.toContain("absolute");
 		expect(slideButtonVariants().label()).toContain("text-center");
 		expect(slideButtonVariants().label()).not.toContain("absolute");

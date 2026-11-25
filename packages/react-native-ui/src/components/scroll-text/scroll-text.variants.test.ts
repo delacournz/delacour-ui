@@ -398,10 +398,11 @@ describe("resolveEffectFrame", () => {
 		expect(resolveEffectFrame({ kind: "fade" }, 0).opacity).toBe(SCROLL_TEXT_MIN_OPACITY);
 	});
 
-	test("reduce motion pins every effect at full opacity once revealed", () => {
-		for (const kind of SCROLL_TEXT_EFFECT_KINDS) {
-			expect(resolveEffectFrame(DEFAULT_EFFECTS[kind], 1, true).opacity).toBe(1);
-		}
+	test("reduce motion drops rise's travel and leaves the fade alone", () => {
+		const still = resolveEffectFrame(DEFAULT_EFFECTS.rise, 0, true);
+		expect(still.translate).toBe(0);
+		expect(still.opacity).toBe(resolveEffectFrame(DEFAULT_EFFECTS.rise, 0).opacity);
+		expect(resolveEffectFrame(DEFAULT_EFFECTS.rise, 0).translate).toBeGreaterThan(0);
 	});
 
 	for (const kind of SCROLL_TEXT_EFFECT_KINDS) {

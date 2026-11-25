@@ -1,6 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import {
+	SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER,
+	SCREEN_NAVBAR_SUBTITLE_LINE_HEIGHT,
+	SCREEN_NAVBAR_TITLE_LINE_HEIGHT,
+} from "../../react-native-ui/src/components/screen/screen.variants";
 import { BASE_COLORS } from "./base-colors";
 import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig, palettesForBaseColor } from "./config";
 import { FONT_GROUPS, FONTS, fontByName } from "./fonts";
@@ -347,6 +352,19 @@ describe("the resolver", () => {
 
 		for (const step of ["sm", "md", "lg"] as const) {
 			expect(resolved.light[`radius-button-${step}`]).toBe(style?.geometry[`radius-button-${step}`] as number);
+		}
+	});
+});
+
+describe("navbar text cap", () => {
+	test("a stacked navbar title and subtitle fit every style's navbar row at the cap", () => {
+		const stacked =
+			(SCREEN_NAVBAR_TITLE_LINE_HEIGHT + SCREEN_NAVBAR_SUBTITLE_LINE_HEIGHT) * SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER;
+		for (const style of STYLES) {
+			expect({ style: style.name, fits: stacked <= style.geometry["spacing-navbar-row"] }).toEqual({
+				style: style.name,
+				fits: true,
+			});
 		}
 	});
 });

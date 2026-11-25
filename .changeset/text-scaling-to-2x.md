@@ -9,4 +9,4 @@ Text scales to 2× the design size (WCAG 1.4.4), and the chrome that holds it gr
 - **Override change:** a caller's `h-*` no longer replaces these defaults, because `h-*` and `min-h-*` are separate tailwind-merge groups; pass `min-h-*` to change the floor.
 - Avatar initials, the AvatarGroup `+N` count and the compact Pagination readout no longer set `allowFontScaling={false}`. Avatar labels scale as far as the fixed circle allows (`resolveAvatarLabelFit`), then shrink to fit.
 - TimePicker wheel rows are fixed points the snap maths reads, so their text caps at `TIME_PICKER_ROW_MAX_FONT_SIZE_MULTIPLIER` (1.5).
-- `Screen.Navbar.Title` and `.Subtitle` cap at `SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER` (1.3), so a stacked title and subtitle stay inside the fixed 56pt navbar row.
+- `Screen.Navbar.Title` and `.Subtitle` cap at `SCREEN_NAVBAR_MAX_FONT_SIZE_MULTIPLIER` (1.15), so a stacked title and subtitle stay inside the fixed navbar row under every design-system style.

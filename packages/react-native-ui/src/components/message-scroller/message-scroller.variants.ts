@@ -33,7 +33,7 @@ const JUMP_SLIDE_PX = 8;
  *   keyboard comes from `bottomInset` and the keyboard's shared value, never from a class.
  * - **The pill is a card with a border and no shadow.** No component in this package draws one —
  *   React Native's shadow props differ by platform — and a bordered card already separates it from
- *   the bubbles behind it. `min-w-11` with the 36pt height plus a hit slop gives a 44pt target.
+ *   the bubbles behind it. `min-w-11` with the 36pt minimum height plus a hit slop gives a 44pt target.
  * - **Rows carry no spacing between messages.** That rhythm is the bubble's, so there is one source
  *   of it; the separator and divider pad themselves with `py-3`.
  */
@@ -43,9 +43,9 @@ export const messageScrollerVariants = tv({
 		content: MESSAGE_SCROLLER_CONTENT_CLASS,
 		jumpButtonContainer: "absolute inset-x-0 bottom-3 flex-row px-screen-gutter",
 		jumpButton:
-			"h-9 min-w-11 flex-row items-center justify-center gap-2 rounded-full border border-border bg-card px-3",
+			"min-h-9 min-w-11 flex-row items-center justify-center gap-2 rounded-full border border-border bg-card px-3",
 		jumpLabel: "text-sm font-medium text-card-foreground",
-		jumpCount: "h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5",
+		jumpCount: "min-h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5",
 		jumpCountLabel: "text-xs font-semibold text-primary-foreground",
 		dateSeparator: "flex-row items-center gap-3 py-3",
 		dateLabel: "text-xs font-medium text-muted-foreground",

@@ -7798,7 +7798,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 95,
+		fileCount: 100,
 		groups: [
 			{
 				name: "calendar",
@@ -7897,6 +7897,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/button/button.types.ts", target: "src/components/ui/button/button.types.ts" },
 					{ source: "packages/react-native-ui/src/components/button/button.variants.ts", target: "src/components/ui/button/button.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/button/index.ts", target: "src/components/ui/button/index.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -8088,7 +8100,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 164,
+		fileCount: 169,
 		groups: [
 			{
 				name: "date-picker",
@@ -8291,6 +8303,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.variants.ts", target: "src/components/ui/bottom-sheet/bottom-sheet.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/index.ts", target: "src/components/ui/bottom-sheet/index.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/use-bottom-sheet-input.ts", target: "src/components/ui/bottom-sheet/use-bottom-sheet-input.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{
@@ -8510,7 +8534,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 209,
+		fileCount: 214,
 		groups: [
 			{
 				name: "date-time-picker",
@@ -8715,6 +8739,18 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.variants.ts", target: "src/components/ui/bottom-sheet/bottom-sheet.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/index.ts", target: "src/components/ui/bottom-sheet/index.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/use-bottom-sheet-input.ts", target: "src/components/ui/bottom-sheet/use-bottom-sheet-input.ts" },
+				],
+			},
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
 				],
 			},
 			{

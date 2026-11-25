@@ -539,6 +539,7 @@
 			"registryDependencies": [
 				"button",
 				"cn",
+				"direction",
 				"field",
 				"icon",
 				"icons",

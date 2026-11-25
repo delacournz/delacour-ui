@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"button",
 		"cn",
+		"direction",
 		"field",
 		"icon",
 		"icons",
@@ -122,6 +123,10 @@
 				{
 					"from": "../button/button.variants",
 					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../direction/direction.context",
+					"to": "@registry/ui/direction/direction.context"
 				},
 				{
 					"from": "../icon",
